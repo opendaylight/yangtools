@@ -134,7 +134,7 @@ final class INode<K, V> extends BasicNode {
     private boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
-            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct);
 
             if (m instanceof CNode) {
                 // 1) a multiway node
@@ -224,7 +224,7 @@ final class INode<K, V> extends BasicNode {
     private Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
-            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct);
 
             if (m instanceof CNode) {
                 // 1) a multiway node
@@ -362,7 +362,7 @@ final class INode<K, V> extends BasicNode {
     private Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
             final TrieMap<K, V> ct) {
         while (true) {
-            final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+            final MainNode<K, V> m = GCAS_READ(ct);
 
             if (m instanceof CNode) {
                 // 1) a multinode
@@ -448,7 +448,7 @@ final class INode<K, V> extends BasicNode {
             justification = "Returning null Optional indicates the need to restart.")
     private Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
-        final MainNode<K, V> m = GCAS_READ(ct); // use -Yinline!
+        final MainNode<K, V> m = GCAS_READ(ct);
 
         if (m instanceof CNode) {
             final CNode<K, V> cn = (CNode<K, V>) m;
@@ -545,15 +545,13 @@ final class INode<K, V> extends BasicNode {
 
             final int pos = Integer.bitCount(bmp & (flag - 1));
             final BasicNode sub = cn.array[pos];
-            if (sub == this) {
-                if (nonlive instanceof TNode) {
-                    final TNode<?, ?> tn = (TNode<?, ?>) nonlive;
-                    final MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - LEVEL_BITS);
-                    if (!parent.GCAS(cn, ncn, ct)) {
-                        if (ct.readRoot().gen == startgen) {
-                            // Tail recursion: cleanParent(nonlive, parent, ct, hc, lev, startgen);
-                            continue;
-                        }
+            if (sub == this && nonlive instanceof TNode) {
+                final TNode<?, ?> tn = (TNode<?, ?>) nonlive;
+                final MainNode<K, V> ncn = cn.updatedAt(pos, tn.copyUntombed(), gen).toContracted(lev - LEVEL_BITS);
+                if (!parent.GCAS(cn, ncn, ct)) {
+                    if (ct.readRoot().gen == startgen) {
+                        // Tail recursion: cleanParent(nonlive, parent, ct, hc, lev, startgen);
+                        continue;
                     }
                 }
             }
@@ -571,21 +569,5 @@ final class INode<K, V> extends BasicNode {
 
     int size(final ImmutableTrieMap<?, ?> ct) {
         return GCAS_READ(ct).size(ct);
-    }
-
-    // /* this is a quiescent method! */
-    // def string(lev: Int) = "%sINode -> %s".format("  " * lev, mainnode
-    // match {
-    // case null => "<null>"
-    // case tn: TNode[_, _] => "TNode(%s, %s, %d, !)".format(tn.k, tn.v,
-    // tn.hc)
-    // case cn: CNode[_, _] => cn.string(lev)
-    // case ln: LNode[_, _] => ln.string(lev)
-    // case x => "<elem: %s>".format(x)
-    // })
-
-    @Override
-    String string(final int lev) {
-        return "INode";
     }
 }
