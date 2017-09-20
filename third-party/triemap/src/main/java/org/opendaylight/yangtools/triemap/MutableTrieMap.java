@@ -172,7 +172,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
     private void inserthc(final K key, final int hc, final V value) {
         // TODO: this is called from serialization only, which means we should not be observing any races,
         //       hence we should not need to pass down the entire tree, just equality (I think).
-        final boolean success = RDCSS_READ_ROOT().rec_insert(key, value, hc, 0, null, this);
+        final boolean success = RDCSS_READ_ROOT().recInsert(key, value, hc, 0, null, this);
         Verify.verify(success, "Concurrent modification during serialization of map %s", this);
     }
 
@@ -180,7 +180,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         Optional<V> res;
         do {
             // Keep looping as long as we do not get a reply
-            res = RDCSS_READ_ROOT().rec_insertif(key, value, hc, cond, 0, null, this);
+            res = RDCSS_READ_ROOT().recInsertIf(key, value, hc, cond, 0, null, this);
         } while (res == null);
 
         return res;
@@ -190,7 +190,7 @@ public final class MutableTrieMap<K, V> extends TrieMap<K, V> {
         Optional<V> res;
         do {
             // Keep looping as long as we do not get a reply
-            res = RDCSS_READ_ROOT().rec_remove(key, cond, hc, 0, null, this);
+            res = RDCSS_READ_ROOT().recRemove(key, cond, hc, 0, null, this);
         } while (res == null);
 
         return res;
