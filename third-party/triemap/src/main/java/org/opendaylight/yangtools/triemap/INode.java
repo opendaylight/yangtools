@@ -126,12 +126,12 @@ final class INode<K, V> extends BasicNode {
      *
      * @return true if successful, false otherwise
      */
-    boolean rec_insert(final K key, final V value, final int hc, final int lev, final INode<K, V> parent,
+    boolean recInsert(final K key, final V value, final int hc, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct) {
-        return rec_insert(key, value, hc, lev, parent, gen, ct);
+        return recInsert(key, value, hc, lev, parent, gen, ct);
     }
 
-    private boolean rec_insert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
+    private boolean recInsert(final K k, final V v, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct);
@@ -151,7 +151,7 @@ final class INode<K, V> extends BasicNode {
                     if (cnAtPos instanceof INode) {
                         final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
-                            return in.rec_insert(k, v, hc, lev + LEVEL_BITS, this, startgen, ct);
+                            return in.recInsert(k, v, hc, lev + LEVEL_BITS, this, startgen, ct);
                         }
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
                             // Tail recursion: return rec_insert(k, v, hc, lev, parent, startgen, ct);
@@ -214,14 +214,14 @@ final class INode<K, V> extends BasicNode {
      * @return null if unsuccessful, Option[V] otherwise (indicating
      *         previous value bound to the key)
      */
-    Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
+    Optional<V> recInsertIf(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final TrieMap<K, V> ct) {
-        return rec_insertif(k, v, hc, cond, lev, parent, gen, ct);
+        return recInsertIf(k, v, hc, cond, lev, parent, gen, ct);
     }
 
     @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
             justification = "Returning null Optional indicates the need to restart.")
-    private Optional<V> rec_insertif(final K k, final V v, final int hc, final Object cond, final int lev,
+    private Optional<V> recInsertIf(final K k, final V v, final int hc, final Object cond, final int lev,
             final INode<K, V> parent, final Gen startgen, final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct);
@@ -241,7 +241,7 @@ final class INode<K, V> extends BasicNode {
                     if (cnAtPos instanceof INode) {
                         final INode<K, V> in = (INode<K, V>) cnAtPos;
                         if (startgen == in.gen) {
-                            return in.rec_insertif(k, v, hc, cond, lev + LEVEL_BITS, this, startgen, ct);
+                            return in.recInsertIf(k, v, hc, cond, lev + LEVEL_BITS, this, startgen, ct);
                         }
 
                         if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
@@ -355,11 +355,11 @@ final class INode<K, V> extends BasicNode {
      * @return null if no value has been found, RESTART if the operation
      *         wasn't successful, or any other value otherwise
      */
-    Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final TrieMap<K, V> ct) {
-        return rec_lookup(k, hc, lev, parent, gen, ct);
+    Object recLookup(final K k, final int hc, final int lev, final INode<K, V> parent, final TrieMap<K, V> ct) {
+        return recLookup(k, hc, lev, parent, gen, ct);
     }
 
-    private Object rec_lookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
+    private Object recLookup(final K k, final int hc, final int lev, final INode<K, V> parent, final Gen startgen,
             final TrieMap<K, V> ct) {
         while (true) {
             final MainNode<K, V> m = GCAS_READ(ct);
@@ -382,7 +382,7 @@ final class INode<K, V> extends BasicNode {
                 if (sub instanceof INode) {
                     final INode<K, V> in = (INode<K, V>) sub;
                     if (ct.isReadOnly() || (startgen == in.gen)) {
-                        return in.rec_lookup(k, hc, lev + LEVEL_BITS, this, startgen, ct);
+                        return in.recLookup(k, hc, lev + LEVEL_BITS, this, startgen, ct);
                     }
 
                     if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
@@ -439,14 +439,14 @@ final class INode<K, V> extends BasicNode {
      * @return null if not successful, an Optional indicating the previous
      *         value otherwise
      */
-    Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
+    Optional<V> recRemove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final TrieMap<K, V> ct) {
-        return rec_remove(k, cond, hc, lev, parent, gen, ct);
+        return recRemove(k, cond, hc, lev, parent, gen, ct);
     }
 
     @SuppressFBWarnings(value = "NP_OPTIONAL_RETURN_NULL",
             justification = "Returning null Optional indicates the need to restart.")
-    private Optional<V> rec_remove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
+    private Optional<V> recRemove(final K k, final Object cond, final int hc, final int lev, final INode<K, V> parent,
             final Gen startgen, final TrieMap<K, V> ct) {
         final MainNode<K, V> m = GCAS_READ(ct);
 
@@ -465,10 +465,10 @@ final class INode<K, V> extends BasicNode {
             if (sub instanceof INode) {
                 final INode<K, V> in = (INode<K, V>) sub;
                 if (startgen == in.gen) {
-                    res = in.rec_remove(k, cond, hc, lev + LEVEL_BITS, this, startgen, ct);
+                    res = in.recRemove(k, cond, hc, lev + LEVEL_BITS, this, startgen, ct);
                 } else {
                     if (GCAS(cn, cn.renewed(startgen, ct), ct)) {
-                        res = rec_remove(k, cond, hc, lev, parent, startgen, ct);
+                        res = recRemove(k, cond, hc, lev, parent, startgen, ct);
                     } else {
                         res = null;
                     }

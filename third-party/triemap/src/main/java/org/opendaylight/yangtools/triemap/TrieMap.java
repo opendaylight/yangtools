@@ -220,7 +220,7 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
         Object res;
         do {
             // Keep looping as long as RESTART is being indicated
-            res = RDCSS_READ_ROOT().rec_lookup(key, hc, 0, null, this);
+            res = RDCSS_READ_ROOT().recLookup(key, hc, 0, null, this);
         } while (res == RESTART);
 
         return (V) res;
