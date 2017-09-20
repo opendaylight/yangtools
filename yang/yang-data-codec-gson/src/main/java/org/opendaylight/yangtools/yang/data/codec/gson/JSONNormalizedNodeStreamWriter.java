@@ -38,7 +38,7 @@ import org.w3c.dom.NodeList;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     /**
      * RFC6020 deviation: we are not required to emit empty containers unless they
      * are marked as 'presence'.
@@ -78,7 +78,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      *
      * <p>
      * This instance of writer can be used only to emit one top level element,
-     * otherwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON. Closing this instance will close
+     * the writer too.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -88,7 +89,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+        return new JSONNormalizedNodeExclusiveStreamWriter(codecFactory, path, jsonWriter,
             new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
@@ -102,7 +103,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * Returned writer can be used emit multiple top level element,
      * but does not start / close parent JSON object, which must be done
      * by user providing {@code jsonWriter} instance in order for
-     * JSON to be valid.
+     * JSON to be valid. Closing this instance <strong>will not</strong>
+     * close the wrapped writer; the caller must take care of that.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -112,7 +114,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
+        return new JSONNormalizedNodeNestedStreamWriter(codecFactory, path, jsonWriter,
             new JSONStreamWriterSharedRootContext(initialNs));
     }
 
@@ -333,9 +335,33 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         writer.flush();
     }
 
-    @Override
-    public void close() throws IOException {
-        flush();
+    void closeWriter() throws IOException {
         writer.close();
+    }
+
+    private static class JSONNormalizedNodeExclusiveStreamWriter extends JSONNormalizedNodeStreamWriter {
+        private JSONNormalizedNodeExclusiveStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
+                final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+            super(codecFactory, path, writer, rootContext);
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            closeWriter();
+        }
+    }
+
+    private static class JSONNormalizedNodeNestedStreamWriter extends JSONNormalizedNodeStreamWriter {
+        private JSONNormalizedNodeNestedStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
+                final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+            super(codecFactory, path, writer, rootContext);
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            // The caller "owns" the writer, let them close it
+        }
     }
 }
