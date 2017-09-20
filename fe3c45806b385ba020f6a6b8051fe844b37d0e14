@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ba1f61a0_961e890a",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 60,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-20T14:45:20Z",
+      "side": 1,
+      "message": "final fields should always appear before non-final fields.",
+      "range": {
+        "startLine": 60,
+        "startChar": 0,
+        "endLine": 60,
+        "endChar": 33
+      },
+      "revId": "fe3c45806b385ba020f6a6b8051fe844b37d0e14",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ba1f61a0_5629b135",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 345,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-09-20T14:45:20Z",
+      "side": 1,
+      "message": "please factor this out in an object-oriented manner: make JSONNormalizedNodeStreamWriter abstract and created two dedicated classes for each specialized behavior.",
+      "range": {
+        "startLine": 343,
+        "startChar": 0,
+        "endLine": 345,
+        "endChar": 9
+      },
+      "revId": "fe3c45806b385ba020f6a6b8051fe844b37d0e14",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
