@@ -38,7 +38,33 @@ import org.w3c.dom.NodeList;
  * <p>
  * Values of leaf and leaf-list are NOT translated according to codecs.
  */
-public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+    private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
+        Exclusive(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
+                final JSONStreamWriterRootContext rootContext) {
+            super(codecFactory, path, writer, rootContext);
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            closeWriter();
+        }
+    }
+
+    private static final class Nested extends JSONNormalizedNodeStreamWriter {
+        Nested(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
+                final JSONStreamWriterRootContext rootContext) {
+            super(codecFactory, path, writer, rootContext);
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            // The caller "owns" the writer, let them close it
+        }
+    }
+
     /**
      * RFC6020 deviation: we are not required to emit empty containers unless they
      * are marked as 'presence'.
@@ -58,8 +84,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
-            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
+            final JSONStreamWriterRootContext rootContext) {
         this.writer = Preconditions.checkNotNull(writer);
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
@@ -78,7 +104,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      *
      * <p>
      * This instance of writer can be used only to emit one top level element,
-     * otherwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON. Closing this instance will close
+     * the writer too.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -88,8 +115,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+        return new Exclusive(codecFactory, path, jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -102,7 +128,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * Returned writer can be used emit multiple top level element,
      * but does not start / close parent JSON object, which must be done
      * by user providing {@code jsonWriter} instance in order for
-     * JSON to be valid.
+     * JSON to be valid. Closing this instance <strong>will not</strong>
+     * close the wrapped writer; the caller must take care of that.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -112,12 +139,11 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory, path, jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
+    public final void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         final LeafSchemaNode schema = tracker.leafNode(name);
         final JSONCodec<?> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
@@ -126,13 +152,13 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @Override
-    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startLeafSet(name);
         context = new JSONStreamWriterListContext(context, name);
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
+    public final void leafSetEntryNode(final QName name, final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
         final JSONCodec<?> codec = codecs.codecFor(schema);
         context.emittingChild(codecs.getSchemaContext(), writer);
@@ -140,7 +166,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @Override
-    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startLeafSet(name);
         context = new JSONStreamWriterListContext(context, name);
     }
@@ -151,7 +177,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      */
     @SuppressWarnings("unused")
     @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         final SchemaNode schema = tracker.startContainerNode(name);
 
         // FIXME this code ignores presence for containers
@@ -160,50 +186,50 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @Override
-    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startList(name);
         context = new JSONStreamWriterListContext(context, name);
     }
 
     @Override
-    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startListItem(name);
         context = new JSONStreamWriterObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS);
     }
 
     @Override
-    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startList(name);
         context = new JSONStreamWriterListContext(context, name);
     }
 
     @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
+    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
         tracker.startListItem(identifier);
         context = new JSONStreamWriterObjectContext(context, identifier, DEFAULT_EMIT_EMPTY_CONTAINERS);
     }
 
     @Override
-    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         tracker.startList(name);
         context = new JSONStreamWriterListContext(context, name);
     }
 
     @Override
-    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
+    public final void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
         tracker.startChoiceNode(name);
         context = new JSONStreamWriterInvisibleContext(context);
     }
 
     @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) {
+    public final void startAugmentationNode(final AugmentationIdentifier identifier) {
         tracker.startAugmentationNode(identifier);
         context = new JSONStreamWriterInvisibleContext(context);
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
+    public final void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
         @SuppressWarnings("unused")
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
@@ -215,19 +241,29 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint)
+            throws IOException {
         tracker.startYangModeledAnyXmlNode(name);
         context = new JSONStreamWriterNamedObjectContext(context, name, true);
     }
 
     @Override
-    public void endNode() throws IOException {
+    public final void endNode() throws IOException {
         tracker.endNode();
         context = context.endNode(codecs.getSchemaContext(), writer);
 
         if (context instanceof JSONStreamWriterRootContext) {
             context.emitEnd(writer);
         }
+    }
+
+    @Override
+    public final void flush() throws IOException {
+        writer.flush();
+    }
+
+    final void closeWriter() throws IOException {
+        writer.close();
     }
 
     @SuppressWarnings("unchecked")
@@ -326,16 +362,5 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         return ANYXML_ARRAY_ELEMENT_ID.equals(node.getNodeName())
                 && !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName())
                 && TEXT_NODE != firstChild.getNodeType();
-    }
-
-    @Override
-    public void flush() throws IOException {
-        writer.flush();
-    }
-
-    @Override
-    public void close() throws IOException {
-        flush();
-        writer.close();
     }
 }
