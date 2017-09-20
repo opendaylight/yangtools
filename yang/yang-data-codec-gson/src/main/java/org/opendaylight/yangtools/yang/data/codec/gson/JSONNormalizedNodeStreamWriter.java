@@ -57,13 +57,15 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     private final JSONCodecFactory codecs;
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
+    private final boolean shared;
 
     private JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path,
-            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
+            final JsonWriter writer, final JSONStreamWriterRootContext rootContext, final boolean shared) {
         this.writer = Preconditions.checkNotNull(writer);
         this.codecs = Preconditions.checkNotNull(codecFactory);
         this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
         this.context = Preconditions.checkNotNull(rootContext);
+        this.shared = shared;
     }
 
     /**
@@ -78,7 +80,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      *
      * <p>
      * This instance of writer can be used only to emit one top level element,
-     * otherwise it will produce incorrect JSON.
+     * otherwise it will produce incorrect JSON. Closing this instance will close
+     * the writer too.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -89,7 +92,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
         return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
-            new JSONStreamWriterExclusiveRootContext(initialNs));
+            new JSONStreamWriterExclusiveRootContext(initialNs), false);
     }
 
     /**
@@ -102,7 +105,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
      * Returned writer can be used emit multiple top level element,
      * but does not start / close parent JSON object, which must be done
      * by user providing {@code jsonWriter} instance in order for
-     * JSON to be valid.
+     * JSON to be valid. Closing this instance <strong>will not</strong>
+     * close the wrapped writer; the caller must take care of that.
      *
      * @param codecFactory JSON codec factory
      * @param path Schema Path
@@ -113,7 +117,7 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
         return new JSONNormalizedNodeStreamWriter(codecFactory, path, jsonWriter,
-            new JSONStreamWriterSharedRootContext(initialNs));
+            new JSONStreamWriterSharedRootContext(initialNs), true);
     }
 
     @Override
@@ -336,6 +340,8 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     @Override
     public void close() throws IOException {
         flush();
-        writer.close();
+        if (!shared) {
+            writer.close();
+        }
     }
 }
