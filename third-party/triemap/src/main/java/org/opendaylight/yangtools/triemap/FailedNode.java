@@ -24,11 +24,6 @@ final class FailedNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    String string(final int lev) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     int trySize() {
         throw new UnsupportedOperationException();
     }

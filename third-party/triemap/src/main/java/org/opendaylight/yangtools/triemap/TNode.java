@@ -51,12 +51,6 @@ final class TNode<K, V> extends MainNode<K, V> implements EntryNode<K, V> {
     }
 
     @Override
-    String string(final int lev) {
-        // ("  " * lev) + "TNode(%s, %s, %x, !)".format(k, v, hc);
-        return "TNode";
-    }
-
-    @Override
     public K getKey() {
         return key;
     }

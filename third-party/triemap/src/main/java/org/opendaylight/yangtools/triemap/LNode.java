@@ -69,10 +69,4 @@ final class LNode<K, V> extends MainNode<K, V> {
     int size(final ImmutableTrieMap<?, ?> ct) {
         return size;
     }
-
-    @Override
-    String string(final int lev) {
-        // (" " * lev) + "LNode(%s)".format(listmap.mkString(", "))
-        return "LNode";
-    }
 }

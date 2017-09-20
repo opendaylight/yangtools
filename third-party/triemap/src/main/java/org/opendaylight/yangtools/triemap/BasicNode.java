@@ -17,5 +17,4 @@ package org.opendaylight.yangtools.triemap;
 
 abstract class BasicNode {
 
-    abstract String string(int lev);
 }

@@ -41,12 +41,6 @@ final class SNode<K, V> extends BasicNode implements EntryNode<K, V> {
     }
 
     @Override
-    String string(final int lev) {
-        // ("  " * lev) + "SNode(%s, %s, %x)".format(k, v, hc);
-        return "SNode";
-    }
-
-    @Override
     public K getKey() {
         return key;
     }

@@ -203,37 +203,6 @@ final class CNode<K, V> extends MainNode<K, V> {
     }
 
     @Override
-    String string(final int lev) {
-        // "CNode %x\n%s".format(bitmap, array.map(_.string(lev +
-        // 1)).mkString("\n"));
-        return "CNode";
-    }
-
-    /*
-     * quiescently consistent - don't call concurrently to anything
-     * involving a GCAS!!
-     */
-    // protected Seq<K,V> collectElems() {
-    // array flatMap {
-    // case sn: SNode[K, V] => Some(sn.kvPair)
-    // case in: INode[K, V] => in.mainnode match {
-    // case tn: TNode[K, V] => Some(tn.kvPair)
-    // case ln: LNode[K, V] => ln.listmap.toList
-    // case cn: CNode[K, V] => cn.collectElems
-    // }
-    // }
-    // }
-
-    // protected Seq<String> collectLocalElems() {
-    // // array flatMap {
-    // // case sn: SNode[K, V] => Some(sn.kvPair._2.toString)
-    // // case in: INode[K, V] => Some(in.toString.drop(14) + "(" + in.gen +
-    // ")")
-    // // }
-    // return null;
-    // }
-
-    @Override
     public String toString() {
         // val elems = collectLocalElems
         // "CNode(sz: %d; %s)".format(elems.size,
