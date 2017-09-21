@@ -1,7 +1,7 @@
 {
     "complexjson:cont1": {
-        "lf15_11" : "one two",        
-        "lf13" : "lf13 value",        
+        "lf15_11" : "one two",
+        "lf13" : "lf13 value",
         "lf15_21" : "lf15_21 value",
         "lf15_12" : "complexjson:lf11"
     }
