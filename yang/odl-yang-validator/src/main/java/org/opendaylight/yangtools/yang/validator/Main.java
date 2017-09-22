@@ -47,6 +47,7 @@ import org.slf4j.LoggerFactory;
  *  -r, --recursive       recursive search of directories specified by -p option
  *  -v,--verbose          shows details about the results of test running.
  *  -o, --output          path to output file for logs
+ *  -m, --module-name     validate yang by module name.
  */
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
@@ -79,6 +80,10 @@ public class Main {
         output.setRequired(false);
         options.addOption(output);
 
+        final Option moduleName = new Option("m", "module-name", true, "validate yang by module name.");
+        moduleName.setRequired(false);
+        options.addOption(moduleName);
+
         final Option feature = new Option(
                 "f",
                 "features",
@@ -106,16 +111,23 @@ public class Main {
         }
 
         if (arguments.hasOption("verbose")) {
-            setLoggingLevel(Level.DEBUG);
+            LOG_ROOT.setLevel(Level.DEBUG);
         } else {
-            setLoggingLevel(Level.ERROR);
+            LOG_ROOT.setLevel(Level.ERROR);
         }
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
-        final List<String> yangFiles = Arrays.asList(arguments.getArgs());
+
+        final List<String> yangFiles = new ArrayList<>();
+        final boolean hasModuleName = arguments.hasOption("module-name");
+        if (hasModuleName) {
+            yangFiles.addAll(Arrays.asList(arguments.getOptionValues("module-name")));
+        }
+        yangFiles.addAll(Arrays.asList(arguments.getArgs()));
+
         final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
 
-        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
+        runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"), hasModuleName);
 
         LOG_ROOT.getLoggerContext().reset();
     }
@@ -151,13 +163,9 @@ public class Main {
         }
     }
 
-    private static void setLoggingLevel(final Level level) {
-        LOG_ROOT.setLevel(level);
-    }
-
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
-            final HashSet<QName> supportedFeatures, final boolean recursiveSearch) {
+            final HashSet<QName> supportedFeatures, final boolean recursiveSearch, final boolean hasModuleName) {
         LOG.info("Yang model dirs: {} ", yangLibDirs);
         LOG.info("Yang model files: {} ", yangFiles);
         LOG.info("Supported features: {} ", supportedFeatures);
@@ -230,8 +238,8 @@ public class Main {
     }
 
     private static void printHelp(final Options options, final HelpFormatter formatter) {
-        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-v verbose] yangFiles...",
-                options);
+        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-m module-name]"
+                + "[-v verbose] yangFiles...", options);
     }
 
     private static void printMemoryInfo(final String info) {
