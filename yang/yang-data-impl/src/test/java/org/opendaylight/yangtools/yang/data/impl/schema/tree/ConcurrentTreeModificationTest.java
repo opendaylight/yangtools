@@ -579,7 +579,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
-        modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
+        modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
         modificationTree1.ready();
         modificationTree2.ready();
 
