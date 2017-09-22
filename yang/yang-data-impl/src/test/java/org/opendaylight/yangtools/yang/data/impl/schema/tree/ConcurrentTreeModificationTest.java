@@ -108,6 +108,11 @@ public class ConcurrentTreeModificationTest {
         inMemoryDataTree.validate(modificationTree1);
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare1);
+        final InMemoryDataTreeSnapshot initialDataTreeSnapshot2 = inMemoryDataTree.takeSnapshot();
+        final DataTreeModification modificationTree3 = initialDataTreeSnapshot2.newModification();
+        modificationTree3.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
+        modificationTree3.ready();
+        inMemoryDataTree.validate(modificationTree3);
 
         try {
             inMemoryDataTree.validate(modificationTree2);
@@ -579,7 +584,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
 
         modificationTree1.delete(TestModel.TEST_PATH);
-        modificationTree2.merge(OUTER_LIST_2_PATH, BAR_NODE);
+        modificationTree2.write(OUTER_LIST_2_PATH, BAR_NODE);
         modificationTree1.ready();
         modificationTree2.ready();
 
