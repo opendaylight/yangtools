@@ -46,6 +46,7 @@ import org.slf4j.LoggerFactory;
  *  -r, --recursive       recursive search of directories specified by -p option
  *  -v,--verbose          shows details about the results of test running.
  *  -o, --output          path to output file for logs. Output file will be overwritten.
+ *  -m, --module-name     validate yang by module name.
  */
 public class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
@@ -78,6 +79,10 @@ public class Main {
                 new Option("o", "output", true, "path to output file for logs. Output file will be overwritten");
         output.setRequired(false);
         options.addOption(output);
+
+        final Option moduleName = new Option("m", "module-name", true, "validate yang model by module name.");
+        moduleName.setRequired(false);
+        options.addOption(moduleName);
 
         final Option feature = new Option(
                 "f",
@@ -113,7 +118,13 @@ public class Main {
         }
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
-        final List<String> yangFiles = Arrays.asList(arguments.getArgs());
+
+        final List<String> yangFiles = new ArrayList<>();
+        if (arguments.hasOption("module-name")) {
+            yangFiles.addAll(Arrays.asList(arguments.getOptionValues("module-name")));
+        }
+        yangFiles.addAll(Arrays.asList(arguments.getArgs()));
+
         final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
 
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
@@ -218,8 +229,8 @@ public class Main {
     }
 
     private static void printHelp(final Options options, final HelpFormatter formatter) {
-        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-v verbose] yangFiles...",
-                options);
+        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-m module-name]"
+                + "[-v verbose] yangFiles...", options);
     }
 
     private static void printMemoryInfo(final String info) {
