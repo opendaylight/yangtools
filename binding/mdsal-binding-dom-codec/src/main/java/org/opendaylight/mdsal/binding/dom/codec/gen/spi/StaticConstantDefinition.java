@@ -26,7 +26,6 @@ public class StaticConstantDefinition {
     private final Object value;
 
     public StaticConstantDefinition(final String name, final Class<?> type, final Object value) {
-        super();
         this.name = Preconditions.checkNotNull(name);
         this.type = Preconditions.checkNotNull(type);
         this.value = Preconditions.checkNotNull(value);

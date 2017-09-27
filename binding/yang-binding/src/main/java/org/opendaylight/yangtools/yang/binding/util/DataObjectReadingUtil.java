@@ -138,7 +138,6 @@ public class DataObjectReadingUtil {
 
         @SuppressWarnings("unchecked")
         public DataObjectReadingStrategy(final Class parentType, final Class childType) {
-            super();
             checkArgument(DataContainer.class.isAssignableFrom(parentType));
             checkArgument(DataContainer.class.isAssignableFrom(childType));
             this.parentType = parentType;

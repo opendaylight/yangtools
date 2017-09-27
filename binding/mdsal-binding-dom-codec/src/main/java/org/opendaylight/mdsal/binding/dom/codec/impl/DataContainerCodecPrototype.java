@@ -40,7 +40,6 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     @SuppressWarnings({"rawtypes", "unchecked"})
     private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg, final T nodeSchema,
             final CodecContextFactory factory) {
-        super();
         this.bindingClass = cls;
         this.yangArg = arg;
         this.schema = nodeSchema;

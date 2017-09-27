@@ -15,7 +15,6 @@ public class NodeChildKey implements //
 	private final int id;
 
     public NodeChildKey(int id) {
-        super();
         this.id = id;
     }
 

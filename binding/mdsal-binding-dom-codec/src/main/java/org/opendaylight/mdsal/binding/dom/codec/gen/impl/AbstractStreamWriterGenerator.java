@@ -72,7 +72,6 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
     }
 
     protected AbstractStreamWriterGenerator(final JavassistUtils utils) {
-        super();
         this.javassist = Preconditions.checkNotNull(utils,"JavassistUtils instance is required.");
         this.serializeArguments = new CtClass[] {
                 javassist.asCtClass(DataObjectSerializerRegistry.class),
