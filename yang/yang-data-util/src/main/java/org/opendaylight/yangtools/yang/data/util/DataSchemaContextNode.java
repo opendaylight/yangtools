@@ -53,7 +53,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     }
 
     protected DataSchemaContextNode(final T identifier, final SchemaNode schema) {
-        super();
         this.identifier = identifier;
         if (schema instanceof DataSchemaNode) {
             this.dataSchemaNode = (DataSchemaNode) schema;

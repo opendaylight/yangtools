@@ -38,7 +38,6 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
 
     private SingleModuleYinStatementWriter(final XMLStreamWriter writer, final URI moduleNamespace,
             final Map<String, URI> prefixToNs) {
-        super();
         this.writer = writer;
         this.currentModuleNs = moduleNamespace;
         this.prefixToNamespace = HashBiMap.create(prefixToNs);

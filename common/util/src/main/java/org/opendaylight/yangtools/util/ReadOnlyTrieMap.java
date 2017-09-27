@@ -33,7 +33,6 @@ final class ReadOnlyTrieMap<K, V> extends ForwardingMap<K, V> {
     private volatile ImmutableTrieMap<K, V> readOnly;
 
     ReadOnlyTrieMap(final MutableTrieMap<K, V> map, final int size) {
-        super();
         this.readWrite = Preconditions.checkNotNull(map);
         this.size = size;
     }
