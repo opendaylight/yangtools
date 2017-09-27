@@ -39,7 +39,6 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
      * See {@link LinkedBlockingQueue#LinkedBlockingQueue()}.
      */
     public TrackingLinkedBlockingQueue() {
-        super();
     }
 
     /**

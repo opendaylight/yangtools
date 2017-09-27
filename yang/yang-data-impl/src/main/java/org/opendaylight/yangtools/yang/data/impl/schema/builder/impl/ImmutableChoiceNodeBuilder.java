@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, ChoiceNode> {
 
     protected ImmutableChoiceNodeBuilder() {
-        super();
     }
 
     protected ImmutableChoiceNodeBuilder(final int sizeHint) {

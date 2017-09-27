@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 public class ImmutableAugmentationNodeBuilder extends AbstractImmutableDataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> {
 
     protected ImmutableAugmentationNodeBuilder() {
-        super();
     }
 
     protected ImmutableAugmentationNodeBuilder(final int sizeHint) {

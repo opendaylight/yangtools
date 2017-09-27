@@ -17,7 +17,6 @@ public class ReflectiveExceptionMapperTest {
         private static final long serialVersionUID = 1L;
 
         NoArgumentCtorException() {
-            super();
         }
     }
 

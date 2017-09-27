@@ -31,7 +31,6 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex, final String description,
             final String reference, final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
-        super();
         this.regEx = Preconditions.checkNotNull(regex, "regex must not be null.");
         this.rawRegEx = Preconditions.checkNotNull(rawRegex, "raw regex must not be null.");
         this.description = description;
