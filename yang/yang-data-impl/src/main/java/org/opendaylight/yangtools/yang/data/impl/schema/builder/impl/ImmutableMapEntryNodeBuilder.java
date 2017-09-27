@@ -31,7 +31,6 @@ public class ImmutableMapEntryNodeBuilder
     protected final Map<QName, PathArgument> childrenQNamesToPaths;
 
     protected ImmutableMapEntryNodeBuilder() {
-        super();
         this.childrenQNamesToPaths = new LinkedHashMap<>();
     }
 

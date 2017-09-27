@@ -52,7 +52,6 @@ public class EvenMoreObjectsTest {
         }
 
         Thing(final String name, final Integer age) {
-            super();
             this.name = name;
             this.age = age;
         }

@@ -32,7 +32,6 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     public RangeConstraintEffectiveImpl(final Number min, final Number max, final String description,
             final String reference, final String errorAppTag, final String errorMessage) {
-        super();
         this.min = Preconditions.checkNotNull(min, "min must not be null.");
         this.max = Preconditions.checkNotNull(max, "max must not be null.");
         this.description = description;
