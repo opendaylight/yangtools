@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Factory methods for creating {@link ExecutorService} instances with specific configurations.
@@ -17,6 +19,8 @@ import java.util.concurrent.TimeUnit;
  * @author Thomas Pantelis
  */
 public final class SpecialExecutors {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SpecialExecutors.class);
 
     private SpecialExecutors() {
     }
@@ -46,11 +50,24 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param uncaughtExceptionHandlerLogger
+     *               the slf4j Logger to use for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedFastThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix, Logger uncaughtExceptionHandlerLogger) {
+        return new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix,
+                uncaughtExceptionHandlerLogger);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedFastThreadPool(int, int, String, Logger)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedFastThreadPool(int maximumPoolSize,
             int maximumQueueSize, String threadPrefix) {
-        return new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        return newBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix, LOG);
     }
 
     /**
@@ -66,15 +83,27 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param uncaughtExceptionHandlerLogger
+     *               the slf4j Logger to use for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBlockingBoundedFastThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
+            int maximumQueueSize, String threadPrefix, Logger uncaughtExceptionHandlerLogger) {
 
-        FastThreadPoolExecutor executor =
-                new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        FastThreadPoolExecutor executor = new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix,
+                uncaughtExceptionHandlerLogger);
         executor.setRejectedExecutionHandler(CountingRejectedExecutionHandler.newCallerRunsPolicy());
         return executor;
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBlockingBoundedFastThreadPool(int, int, String, Logger)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBlockingBoundedFastThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix) {
+        return newBlockingBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix, LOG);
     }
 
     /**
@@ -105,8 +134,19 @@ public final class SpecialExecutors {
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedCachedThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix, Logger uncaughtExceptionHandlerLogger) {
+        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix,
+                uncaughtExceptionHandlerLogger);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedCachedThreadPool(int, int, String, Logger)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedCachedThreadPool(int maximumPoolSize,
             int maximumQueueSize, String threadPrefix) {
-        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix, LOG);
     }
 
     /**
@@ -125,12 +165,22 @@ public final class SpecialExecutors {
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBlockingBoundedCachedThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
+            int maximumQueueSize, String threadPrefix, Logger uncaughtExceptionHandlerLogger) {
 
-        CachedThreadPoolExecutor executor =
-                new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        CachedThreadPoolExecutor executor = new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize,
+                threadPrefix, uncaughtExceptionHandlerLogger);
         executor.setRejectedExecutionHandler(CountingRejectedExecutionHandler.newCallerRunsPolicy());
         return executor;
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBlockingBoundedCachedThreadPool(int, int, String, Logger)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBlockingBoundedCachedThreadPool(int maximumPoolSize, int maximumQueueSize,
+            String threadPrefix) {
+        return newBlockingBoundedCachedThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix, LOG);
     }
 
     /**
@@ -143,11 +193,22 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for the thread created by this executor.
+     * @param uncaughtExceptionHandlerLogger
+     *               the slf4j Logger to use for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedSingleThreadExecutor(int maximumQueueSize,
-            String threadPrefix) {
+            String threadPrefix, Logger uncaughtExceptionHandlerLogger) {
         return new FastThreadPoolExecutor(1, maximumQueueSize, Long.MAX_VALUE, TimeUnit.SECONDS,
-                threadPrefix);
+                threadPrefix, uncaughtExceptionHandlerLogger);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedSingleThreadExecutor(int, String, Logger)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedSingleThreadExecutor(int maximumQueueSize, String threadPrefix) {
+        return newBoundedSingleThreadExecutor(maximumQueueSize, threadPrefix, LOG);
     }
 }
