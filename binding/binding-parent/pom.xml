@@ -23,7 +23,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <yangtools.version>2.0.0-SNAPSHOT</yangtools.version>
+        <yangtools.version>1.2.0</yangtools.version>
         <mdsal.version>2.4.0-SNAPSHOT</mdsal.version>
         <mdsalmodel.version>0.12.0-SNAPSHOT</mdsalmodel.version>
         <salGeneratorPath>${project.build.directory}/generated-sources/mdsal-binding</salGeneratorPath>
