@@ -30,7 +30,7 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/augment-uses-to-augment");
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
