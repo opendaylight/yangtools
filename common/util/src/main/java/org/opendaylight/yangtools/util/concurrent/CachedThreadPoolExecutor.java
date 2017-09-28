@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -19,6 +18,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.LoggerFactory;
 
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors reusing previously
@@ -50,8 +50,11 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
-    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
+    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix,
+            Class<?> loggerIdentity) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.
         // We don't specify any core threads (first parameter) so, when a task is submitted,
         // the base class will always try to offer to the queue. If there is an existing waiting
@@ -67,14 +70,23 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         this.threadPrefix = requireNonNull(threadPrefix);
         this.maximumQueueSize = maximumQueueSize;
 
-        setThreadFactory(new ThreadFactoryBuilder().setDaemon(true)
-                                            .setNameFormat(this.threadPrefix + "-%d").build());
+        setThreadFactory(ThreadFactoryProvider.builder().namePrefix(threadPrefix)
+                .logger(LoggerFactory.getLogger(loggerIdentity)).build().get());
 
         executorQueue = (ExecutorQueue)super.getQueue();
 
         rejectedTaskHandler = new RejectedTaskHandler(
                 executorQueue.getBackingQueue(), CountingRejectedExecutionHandler.newAbortPolicy());
         super.setRejectedExecutionHandler(rejectedTaskHandler);
+    }
+
+    /**
+     * Constructor.
+     * @deprecated Please use {@link #CachedThreadPoolExecutor(int, int, String, Class)} instead.
+     */
+    @Deprecated
+    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
+        this(maximumPoolSize, maximumQueueSize, threadPrefix, CachedThreadPoolExecutor.class);
     }
 
     @Override

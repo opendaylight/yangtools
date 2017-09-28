@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import org.slf4j.LoggerFactory;
 
 /**
  * A ThreadPoolExecutor with a specified bounded queue capacity that favors creating new threads
@@ -39,10 +39,39 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
+    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix,
+            Class<?> loggerIdentity) {
+        this(maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
+              threadPrefix, loggerIdentity);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @deprecated Please use
+     *             {@link #FastThreadPoolExecutor(int, int, String, Class)}
+     *             instead.
+     */
+    @Deprecated
     public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
         this(maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
               threadPrefix);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @deprecated Please use
+     *             {@link #FastThreadPoolExecutor(int, int, long, TimeUnit, String, Class)}
+     *             instead.
+     */
+    @Deprecated
+    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
+            final TimeUnit unit, final String threadPrefix) {
+        this(maximumPoolSize, maximumQueueSize, keepAliveTime, unit, threadPrefix, FastThreadPoolExecutor.class);
     }
 
     /**
@@ -58,9 +87,11 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      *            the time unit for the keepAliveTime argument
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
     public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
-            final TimeUnit unit, final String threadPrefix) {
+            final TimeUnit unit, final String threadPrefix, Class<?> loggerIdentity) {
         // We use all core threads (the first 2 parameters below equal) so, when a task is submitted,
         // if the thread limit hasn't been reached, a new thread will be spawned to execute
         // the task even if there is an existing idle thread in the pool. This is faster than
@@ -73,8 +104,8 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
         this.threadPrefix = threadPrefix;
         this.maximumQueueSize = maximumQueueSize;
 
-        setThreadFactory(new ThreadFactoryBuilder().setDaemon(true)
-                                                 .setNameFormat(threadPrefix + "-%d").build());
+        setThreadFactory(ThreadFactoryProvider.builder().namePrefix(threadPrefix)
+                .logger(LoggerFactory.getLogger(loggerIdentity)).build().get());
 
         if (keepAliveTime > 0) {
             // Need to specifically configure core threads to timeout.

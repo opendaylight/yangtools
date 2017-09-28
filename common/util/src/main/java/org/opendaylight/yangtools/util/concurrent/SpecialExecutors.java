@@ -46,11 +46,23 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedFastThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix, Class<?> loggerIdentity) {
+        return new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix, loggerIdentity);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedFastThreadPool(int, int, String, Class)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedFastThreadPool(int maximumPoolSize,
             int maximumQueueSize, String threadPrefix) {
-        return new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        return newBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix, SpecialExecutors.class);
     }
 
     /**
@@ -66,15 +78,28 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for threads created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBlockingBoundedFastThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
+            int maximumQueueSize, String threadPrefix, Class<?> loggerIdentity) {
 
-        FastThreadPoolExecutor executor =
-                new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        FastThreadPoolExecutor executor = new FastThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix,
+                loggerIdentity);
         executor.setRejectedExecutionHandler(CountingRejectedExecutionHandler.newCallerRunsPolicy());
         return executor;
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBlockingBoundedFastThreadPool(int, int, String, Class)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBlockingBoundedFastThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix) {
+        return newBlockingBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix,
+                SpecialExecutors.class);
     }
 
     /**
@@ -105,8 +130,18 @@ public final class SpecialExecutors {
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedCachedThreadPool(int maximumPoolSize,
+            int maximumQueueSize, String threadPrefix, Class<?> loggerIdentity) {
+        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix, loggerIdentity);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedCachedThreadPool(int, int, String, Class)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedCachedThreadPool(int maximumPoolSize,
             int maximumQueueSize, String threadPrefix) {
-        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix, SpecialExecutors.class);
     }
 
     /**
@@ -125,12 +160,23 @@ public final class SpecialExecutors {
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBlockingBoundedCachedThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
+            int maximumQueueSize, String threadPrefix, Class<?> loggerIdentity) {
 
-        CachedThreadPoolExecutor executor =
-                new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix);
+        CachedThreadPoolExecutor executor = new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize,
+                threadPrefix, loggerIdentity);
         executor.setRejectedExecutionHandler(CountingRejectedExecutionHandler.newCallerRunsPolicy());
         return executor;
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBlockingBoundedCachedThreadPool(int, int, String, Class)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBlockingBoundedCachedThreadPool(int maximumPoolSize, int maximumQueueSize,
+            String threadPrefix) {
+        return newBlockingBoundedCachedThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix,
+                SpecialExecutors.class);
     }
 
     /**
@@ -143,11 +189,22 @@ public final class SpecialExecutors {
      *            the capacity of the queue.
      * @param threadPrefix
      *            the name prefix for the thread created by this executor.
+     * @param loggerIdentity
+     *               the class to use as logger name for logging uncaught exceptions from the threads.
      * @return a new ExecutorService with the specified configuration.
      */
     public static ExecutorService newBoundedSingleThreadExecutor(int maximumQueueSize,
-            String threadPrefix) {
+            String threadPrefix, Class<?> loggerIdentity) {
         return new FastThreadPoolExecutor(1, maximumQueueSize, Long.MAX_VALUE, TimeUnit.SECONDS,
-                threadPrefix);
+                threadPrefix, loggerIdentity);
+    }
+
+    /**
+     * Deprecated variant.
+     * @deprecated Please use {@link #newBoundedSingleThreadExecutor(int, String, Class)} instead.
+     */
+    @Deprecated
+    public static ExecutorService newBoundedSingleThreadExecutor(int maximumQueueSize, String threadPrefix) {
+        return newBoundedSingleThreadExecutor(maximumQueueSize, threadPrefix, SpecialExecutors.class);
     }
 }
