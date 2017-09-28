@@ -78,7 +78,7 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);

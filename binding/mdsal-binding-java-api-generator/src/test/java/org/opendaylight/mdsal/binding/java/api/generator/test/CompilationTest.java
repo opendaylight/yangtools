@@ -664,7 +664,7 @@ public class CompilationTest extends BaseCompilationTest {
 
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
