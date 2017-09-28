@@ -47,7 +47,7 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
     }
 
     /**
-     * Returns s counting handler for rejected tasks that runs the rejected task directly in the
+     * Returns a counting handler for rejected tasks that runs the rejected task directly in the
      * calling thread of the execute method, unless the executor has been shut down, in which case
      * the task is discarded.
      */
@@ -63,7 +63,7 @@ public class CountingRejectedExecutionHandler implements RejectedExecutionHandle
     }
 
     /**
-     * Returns a counting handler for rejected tasks that that blocks on the
+     * Returns a counting handler for rejected tasks that blocks on the
      * {@link ThreadPoolExecutor}'s backing queue until it can add the task to the queue.
      */
     public static CountingRejectedExecutionHandler newCallerWaitsPolicy() {
