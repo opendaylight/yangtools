@@ -13,7 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Factory methods for creating {@link ExecutorService} instances with specific configurations.
-
+ *
  * @author Thomas Pantelis
  */
 public final class SpecialExecutors {
