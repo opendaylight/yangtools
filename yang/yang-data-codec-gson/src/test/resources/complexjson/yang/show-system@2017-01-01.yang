@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2017 Juniper Networks, Inc.
+ * All rights reserved.
+ */
+ module show-system {
+  namespace "show-system";
+  prefix show-system;
+
+  revision 2017-01-01 {
+  }
+
+  container bla {
+    anyxml alarm-information;
+  }
+ }

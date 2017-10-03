@@ -16,10 +16,13 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.dom.DOMSource;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -33,6 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
+import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -140,6 +144,42 @@ public class AnyXmlSupportTest {
         final JsonElement expected = parser.parse(inputJson);
         final JsonElement actual = parser.parse(serializationResult);
         assertTrue(expected.equals(actual));
+    }
+
+    @Test
+    public void anyXmlRestconf() throws Exception {
+        final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
+                "/yang-modeled-anyxml/xml/alarm.xml");
+
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        xmlParser.parse(reader);
+
+        assertNotNull(result.getResult());
+        assertTrue(result.getResult() instanceof ContainerNode);
+        final ContainerNode data = (ContainerNode) result.getResult();
+
+        // check the result, its nowhere close to the xml
+        final String s = normalizedNodeToJsonStreamTransformation(new StringWriter(), data);
+    }
+
+    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
+                                                                   final NormalizedNode<?, ?> inputStructure) throws IOException {
+
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
+                createExclusiveWriter(JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                        JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
+        nodeWriter.write(inputStructure);
+
+        nodeWriter.close();
+        return writer.toString();
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode<?, ?> transformedInput, final QName anyxmlName) {
