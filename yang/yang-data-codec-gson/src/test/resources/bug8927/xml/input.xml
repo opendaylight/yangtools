@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<foo xmlns="bug8927.test">
+    <alarm-information xmlns="bug8927.test">
+        <alarm-summary>
+            <active-alarm-count/>
+        </alarm-summary>
+        <alarm-detail>
+            <alarm-time>
+                2017-08-02 19:03:44 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-description>desc</alarm-description>
+            <alarm-short-description>gnf-creation</alarm-short-description>
+            <alarm-type>License</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-description>VMHost RE 0 host application failed</alarm-description>
+            <alarm-short-description>VMHost RE 0 host ap</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>PDM 0 incompatible with chassis type</alarm-description>
+            <alarm-short-description>PDM 0 incompatible</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>PDM 1 incompatible with chassis type</alarm-description>
+            <alarm-short-description>PDM 1 incompatible</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>PDM 2 incompatible with chassis type</alarm-description>
+            <alarm-short-description>PDM 2 incompatible</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>PDM 3 incompatible with chassis type</alarm-description>
+            <alarm-short-description>PDM 3 incompatible</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 1</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 2</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 3</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 4</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 10</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 11</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 12</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Major</alarm-class>
+            <alarm-description>No Input Feed Selected for PSM 13</alarm-description>
+            <alarm-short-description>No Input Feed Selec</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-description>VMHost RE 1 host application failed</alarm-description>
+            <alarm-short-description>VMHost RE 1 host ap</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-description>Check plane 1 Fabric Chip</alarm-description>
+            <alarm-short-description>Check plane 1 FCHIP</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+    </alarm-information>
+</foo>
+</root>
