@@ -1,0 +1,12 @@
+module bug8927 {
+    namespace "bug8927.test";
+    prefix tst;
+
+    revision 2017-01-01 {
+    }
+
+    container foo {
+        anyxml alarm-information;
+    }
+}
+

@@ -18,7 +18,15 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamReader;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.codec.xml.XmlParserStream;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class TestUtils {
 
@@ -26,11 +34,11 @@ public class TestUtils {
     }
 
     static String loadTextFile(final File file) throws IOException {
-        FileReader fileReader = new FileReader(file);
-        BufferedReader bufReader = new BufferedReader(fileReader);
+        final FileReader fileReader = new FileReader(file);
+        final BufferedReader bufReader = new BufferedReader(fileReader);
 
         String line = null;
-        StringBuilder result = new StringBuilder();
+        final StringBuilder result = new StringBuilder();
         while ((line = bufReader.readLine()) != null) {
             result.append(line);
         }
@@ -42,9 +50,18 @@ public class TestUtils {
         return loadTextFile(new File(TestUtils.class.getResource(relativePath).toURI()));
     }
 
+    static void loadXmlToNormalizedNodes(final InputStream xmlInputStream, final NormalizedNodeResult result,
+            final SchemaContext schemaContext) throws Exception {
+        final XMLInputFactory factory = XMLInputFactory.newInstance();
+        final XMLStreamReader reader = factory.createXMLStreamReader(xmlInputStream);
+        final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
+        xmlParser.parse(reader);
+    }
+
     static JsonObject childObject(final JsonObject jsonObject, final String... names) {
-        for (String name : names) {
-            JsonObject childJsonObject = jsonObject.getAsJsonObject(name);
+        for (final String name : names) {
+            final JsonObject childJsonObject = jsonObject.getAsJsonObject(name);
             if (childJsonObject != null) {
                 return childJsonObject;
             }
@@ -53,8 +70,8 @@ public class TestUtils {
     }
 
     static JsonPrimitive childPrimitive(final JsonObject jsonObject, final String... names) {
-        for (String name : names) {
-            JsonPrimitive childJsonPrimitive = jsonObject.getAsJsonPrimitive(name);
+        for (final String name : names) {
+            final JsonPrimitive childJsonPrimitive = jsonObject.getAsJsonPrimitive(name);
             if (childJsonPrimitive != null) {
                 return childJsonPrimitive;
             }
@@ -63,8 +80,8 @@ public class TestUtils {
     }
 
     static JsonArray childArray(final JsonObject jsonObject, final String... names) {
-        for (String name : names) {
-            JsonArray childJsonArray = jsonObject.getAsJsonArray(name);
+        for (final String name : names) {
+            final JsonArray childJsonArray = jsonObject.getAsJsonArray(name);
             if (childJsonArray != null) {
                 return childJsonArray;
             }
@@ -72,12 +89,12 @@ public class TestUtils {
         return null;
     }
 
-    static JsonObject resolveCont1(String jsonOutput) {
-        JsonParser parser = new JsonParser();
-        JsonElement rootElement = parser.parse(jsonOutput);
+    static JsonObject resolveCont1(final String jsonOutput) {
+        final JsonParser parser = new JsonParser();
+        final JsonElement rootElement = parser.parse(jsonOutput);
         assertTrue(rootElement.isJsonObject());
-        JsonObject rootObject = rootElement.getAsJsonObject();
-        JsonObject cont1 = childObject(rootObject, "complexjson:cont1", "cont1");
+        final JsonObject rootObject = rootElement.getAsJsonObject();
+        final JsonObject cont1 = childObject(rootObject, "complexjson:cont1", "cont1");
         return cont1;
     }
 
