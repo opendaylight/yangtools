@@ -1,0 +1,121 @@
+{
+  "bug8927:foo": {
+    "alarm-information": {
+      "alarm-summary": {
+        "active-alarm-count": null
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-08-02 19:03:44 UTC",
+        "alarm-class": "Minor",
+        "alarm-description": "desc",
+        "alarm-short-description": "gnf-creation",
+        "alarm-type": "License"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Minor",
+        "alarm-description": "VMHost RE 0 host application failed",
+        "alarm-short-description": "VMHost RE 0 host ap",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "PDM 0 incompatible with chassis type",
+        "alarm-short-description": "PDM 0 incompatible",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "PDM 1 incompatible with chassis type",
+        "alarm-short-description": "PDM 1 incompatible",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "PDM 2 incompatible with chassis type",
+        "alarm-short-description": "PDM 2 incompatible",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "PDM 3 incompatible with chassis type",
+        "alarm-short-description": "PDM 3 incompatible",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 1",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 2",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 3",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 4",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 10",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 11",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 12",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Major",
+        "alarm-description": "No Input Feed Selected for PSM 13",
+        "alarm-short-description": "No Input Feed Selec",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Minor",
+        "alarm-description": "VMHost RE 1 host application failed",
+        "alarm-short-description": "VMHost RE 1 host ap",
+        "alarm-type": "Chassis"
+      },
+      "alarm-detail": {
+        "alarm-time": "2017-07-25 16:04:31 UTC",
+        "alarm-class": "Minor",
+        "alarm-description": "Check plane 1 Fabric Chip",
+        "alarm-short-description": "Check plane 1 FCHIP",
+        "alarm-type": "Chassis"
+      }
+    }
+  }
+}
