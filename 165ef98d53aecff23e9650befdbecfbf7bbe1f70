@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_26793394",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 169,
+      "author": {
+        "id": 3741
+      },
+      "writtenOn": "2017-10-03T18:50:24Z",
+      "side": 1,
+      "message": "There\u0027s any \u0027assert\u0027 for that?",
+      "range": {
+        "startLine": 169,
+        "startChar": 8,
+        "endLine": 169,
+        "endChar": 92
+      },
+      "revId": "165ef98d53aecff23e9650befdbecfbf7bbe1f70",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_e6471b4a",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 183,
+      "author": {
+        "id": 3741
+      },
+      "writtenOn": "2017-10-03T18:50:24Z",
+      "side": 1,
+      "message": "Just a tip:\n\nCould you please create an Utility class for that? In order to avoid duplicated code?\n\nthanks,",
+      "range": {
+        "startLine": 172,
+        "startChar": 3,
+        "endLine": 183,
+        "endChar": 5
+      },
+      "revId": "165ef98d53aecff23e9650befdbecfbf7bbe1f70",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
