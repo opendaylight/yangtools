@@ -7,10 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
-import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
-import static org.w3c.dom.Node.ELEMENT_NODE;
-import static org.w3c.dom.Node.TEXT_NODE;
-
 import com.google.common.base.Preconditions;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -29,8 +25,14 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
+
+import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
+import static org.w3c.dom.Node.ELEMENT_NODE;
+import static org.w3c.dom.Node.TEXT_NODE;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -233,77 +235,84 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     private void writeAnyXmlValue(final DOMSource anyXmlValue) throws IOException {
-        final Node documentNode = anyXmlValue.getNode();
-        final Node firstChild = documentNode.getFirstChild();
-        if (ELEMENT_NODE == firstChild.getNodeType() && !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName())) {
-            writer.beginObject();
-            traverseAnyXmlValue(documentNode);
-            writer.endObject();
+        writeXmlNode(anyXmlValue.getNode());
+    }
+
+    private void writeXmlNode(final Node node) throws IOException {
+        final Element firstChildElement = getFirstChildElement(node);
+        if (firstChildElement == null) {
+            writeXmlValue(node);
+        } else if (ANYXML_ARRAY_ELEMENT_ID.equals(firstChildElement.getNodeName())) {
+            writer.beginArray();
+            writeArray(firstChildElement);
+            writer.endArray();
         } else {
-            traverseAnyXmlValue(documentNode);
+            writer.beginObject();
+            writeObject(firstChildElement);
+            writer.endObject();
         }
     }
 
-    private void traverseAnyXmlValue(final Node node) throws IOException {
-        final NodeList children = node.getChildNodes();
-        boolean inArray = false;
+    private void writeArray(Node node) throws IOException {
+        while (node != null) {
+            if (ELEMENT_NODE == node.getNodeType()) {
+                writeXmlNode(node);
+            }
+            node = node.getNextSibling();
+        }
+    }
 
+    private void writeObject(Node node) throws IOException {
+        while (node != null) {
+            if (ELEMENT_NODE == node.getNodeType()) {
+                writer.name(node.getNodeName());
+                writeXmlNode(node);
+            }
+            node = node.getNextSibling();
+        }
+    }
+
+    private void writeXmlValue(final Node node) throws IOException {
+        final String childNodeText = getFirstChildText(node).getWholeText().trim();
+        if (NUMBER_PATTERN.matcher(childNodeText).matches()) {
+            writer.value(parseNumber(childNodeText));
+            return;
+        }
+        switch (childNodeText) {
+            case "null":
+                writer.nullValue();
+                break;
+            case "false":
+                writer.value(false);
+                break;
+            case "true":
+                writer.value(true);
+                break;
+            default:
+                writer.value(childNodeText);
+        }
+    }
+
+    private static Element getFirstChildElement(final Node node) {
+        final NodeList children = node.getChildNodes();
         for (int i = 0, length = children.getLength(); i < length; i++) {
             final Node childNode = children.item(i);
-            boolean inObject = false;
-
             if (ELEMENT_NODE == childNode.getNodeType()) {
-                final Node firstChild = childNode.getFirstChild();
-                // beginning of an array
-                if (ANYXML_ARRAY_ELEMENT_ID.equals(childNode.getNodeName()) && !inArray) {
-                    writer.beginArray();
-                    inArray = true;
-                    // object at the beginning of the array
-                    if (isJsonObjectInArray(childNode, firstChild)) {
-                        writer.beginObject();
-                        inObject = true;
-                    }
-                    // object in the array
-                } else if (isJsonObjectInArray(childNode, firstChild)) {
-                    writer.beginObject();
-                    inObject = true;
-                    // object
-                } else if (isJsonObject(firstChild)) {
-                    writer.name(childNode.getNodeName());
-                    writer.beginObject();
-                    inObject = true;
-                    // name
-                } else if (!inArray){
-                    writer.name(childNode.getNodeName());
-                }
+                return (Element) childNode;
             }
+        }
+        return null;
+    }
 
-            // text value, i.e. a number, string, boolean or null
+    private static Text getFirstChildText(final Node node) {
+        final NodeList children = node.getChildNodes();
+        for (int i = 0, length = children.getLength(); i < length; i++) {
+            final Node childNode = children.item(i);
             if (TEXT_NODE == childNode.getNodeType()) {
-                final String childNodeText = childNode.getNodeValue();
-                if (NUMBER_PATTERN.matcher(childNodeText).matches()) {
-                    writer.value(parseNumber(childNodeText));
-                } else if ("true".equals(childNodeText) || "false".equals(childNodeText)) {
-                    writer.value(Boolean.parseBoolean(childNodeText));
-                } else if ("null".equals(childNodeText)) {
-                    writer.nullValue();
-                } else {
-                    writer.value(childNodeText);
-                }
-
-                return;
-            }
-
-            traverseAnyXmlValue(childNode);
-
-            if (inObject) {
-                writer.endObject();
+                return (Text) childNode;
             }
         }
-
-        if (inArray) {
-            writer.endArray();
-        }
+        return null;
     }
 
     // json numbers are 64 bit wide floating point numbers - in java terms it is either long or double
@@ -313,16 +322,6 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
         }
 
         return Double.valueOf(numberText);
-    }
-
-    private static boolean isJsonObject(final Node firstChild) {
-        return !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName()) && TEXT_NODE != firstChild.getNodeType();
-    }
-
-    private static boolean isJsonObjectInArray(final Node node, final Node firstChild) {
-        return ANYXML_ARRAY_ELEMENT_ID.equals(node.getNodeName())
-                && !ANYXML_ARRAY_ELEMENT_ID.equals(firstChild.getNodeName())
-                && TEXT_NODE != firstChild.getNodeType();
     }
 
     @Override
