@@ -8,14 +8,20 @@
 
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
+import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadXmlToNormalizedNodes;
 
+import com.google.common.base.Optional;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -86,8 +92,8 @@ public class AnyXmlSupportTest {
         // serialization
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-            JsonWriterFactory.createJsonWriter(writer, 2));
+                JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+                JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);
         nodeWriter.close();
@@ -128,8 +134,8 @@ public class AnyXmlSupportTest {
         // serialization
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-            JsonWriterFactory.createJsonWriter(writer, 2));
+                JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+                JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(transformedInput);
         nodeWriter.close();
@@ -139,6 +145,41 @@ public class AnyXmlSupportTest {
         final JsonElement expected = parser.parse(inputJson);
         final JsonElement actual = parser.parse(serializationResult);
         assertTrue(expected.equals(actual));
+    }
+
+    @Test
+    public void bug8297Test() throws Exception {
+        final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class
+                .getResourceAsStream("/bug8927/xml/input.xml");
+        final NormalizedNodeResult result = new NormalizedNodeResult();
+        loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
+
+        assertNotNull(result.getResult());
+        assertTrue(result.getResult() instanceof ContainerNode);
+
+        final Optional<DataContainerChild<? extends PathArgument, ?>> data = ((ContainerNode) result.getResult())
+                .getChild(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
+        assertTrue(data.isPresent());
+        final String jsonOutput = normalizedNodeToJsonStreamTransformation(new StringWriter(), data.get());
+
+        final JsonParser parser = new JsonParser();
+        final JsonElement expextedJson = parser
+                .parse(new FileReader(new File(getClass().getResource("/bug8927/json/expected.json").toURI())));
+        final JsonElement serializedJson = parser.parse(jsonOutput);
+
+        assertEquals(expextedJson, serializedJson);
+    }
+
+    private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
+            final NormalizedNode<?, ?> inputStructure) throws IOException {
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+                JSONCodecFactory.create(schemaContext), SchemaPath.ROOT, null,
+                JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
+        nodeWriter.write(inputStructure);
+
+        nodeWriter.close();
+        return writer.toString();
     }
 
     private static DOMSource getParsedAnyXmlValue(final NormalizedNode<?, ?> transformedInput, final QName anyxmlName) {
