@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_48c1c9e3",
+        "filename": "yang/yang-data-codec-gson/src/test/resources/bug8927/xml/input.xml",
+        "patchSetId": 7
+      },
+      "lineNbr": 9,
+      "author": {
+        "id": 3127
+      },
+      "writtenOn": "2017-10-06T11:19:24Z",
+      "side": 1,
+      "message": "I think we should remove the references to juniper namespaces since they dont even have a purpose here.",
+      "range": {
+        "startLine": 9,
+        "startChar": 24,
+        "endLine": 9,
+        "endChar": 93
+      },
+      "revId": "3e0289073f30bb58e275bcb916654d0cdcf0fb45",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
