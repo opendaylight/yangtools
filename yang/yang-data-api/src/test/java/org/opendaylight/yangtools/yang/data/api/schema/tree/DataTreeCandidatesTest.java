@@ -86,7 +86,7 @@ public class DataTreeCandidatesTest {
         verify(mockedModification, times(1)).createCursor(any(YangInstanceIdentifier.class));
         verify(mockedCursor, times(1)).delete(any(PathArgument.class));
 
-        doReturn(true).when(mockedRootPath).isEmpty();
+        doReturn(Boolean.TRUE).when(mockedRootPath).isEmpty();
         try {
             DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
             fail("An IllegalArgumentException should have been thrown!");
