@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -15,8 +17,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -716,14 +720,19 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             int thisSize = childNames.size();
             int otherSize = otherChildNames.size();
             if (thisSize == otherSize) {
-                Iterator<QName> otherIterator = otherChildNames.iterator();
-                for (QName name : childNames) {
-                    int child = name.compareTo(otherIterator.next());
-                    if (child != 0) {
-                        return child;
-                    }
+                // Quick Set-based comparison
+                if (childNames.equals(otherChildNames)) {
+                    return 0;
                 }
-                return 0;
+
+                // We already know the sets are not equal, but have equal size, hence the sets differ in their elements,
+                // but potentially share a common set of elements. The most consistent way of comparing them is using
+                // total ordering defined by QName's compareTo. Hence convert both sets to lists ordered
+                // by QName.compareTo() and decide on the first differing element.
+                final List<QName> diff = new ArrayList<>(Sets.symmetricDifference(childNames, otherChildNames));
+                verify(!diff.isEmpty(), "Augmentation identifiers %s and %s report no difference", this, o);
+                diff.sort(QName::compareTo);
+                return childNames.contains(diff.get(0)) ? -1 : 1;
             } else if (thisSize < otherSize) {
                 return 1;
             } else {
