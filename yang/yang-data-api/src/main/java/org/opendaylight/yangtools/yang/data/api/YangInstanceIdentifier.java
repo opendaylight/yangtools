@@ -17,6 +17,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.io.Serializable;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -716,14 +717,28 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             int thisSize = childNames.size();
             int otherSize = otherChildNames.size();
             if (thisSize == otherSize) {
-                Iterator<QName> otherIterator = otherChildNames.iterator();
-                for (QName name : childNames) {
-                    int child = name.compareTo(otherIterator.next());
-                    if (child != 0) {
-                        return child;
+                // Quick Set-based comparison
+                if (childNames.equals(otherChildNames)) {
+                    return 0;
+                }
+
+                // We already know the sets are not equal, but have equal size, hence the sets differ in their elements,
+                // but potentially share a common set of elements. The most consistent way of comparing them is using
+                // total ordering defined by QName's compareTo. Hence convert both sets to lists ordered
+                // by QName.compareTo() and decide on the first differing element.
+                final List<QName> myChildren = new ArrayList<>(childNames);
+                myChildren.sort(QName::compareTo);
+                final List<QName> otherChildren = new ArrayList<>(otherChildNames);
+                otherChildren.sort(QName::compareTo);
+
+                for (int i = 0; i < thisSize; ++i) {
+                    final int cmp = myChildren.get(i).compareTo(otherChildren.get(i));
+                    if (cmp != 0) {
+                        return cmp;
                     }
                 }
-                return 0;
+
+                throw new IllegalStateException("Identifier " + this + " and " + o + " found to be strangely equal");
             } else if (thisSize < otherSize) {
                 return 1;
             } else {

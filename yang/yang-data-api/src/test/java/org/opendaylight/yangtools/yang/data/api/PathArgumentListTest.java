@@ -114,7 +114,7 @@ public class PathArgumentListTest {
         assertTrue(yangInstanceIdentifier.pathArgumentsEqual(yangInstanceIdentifier));
         assertEquals(pathArgumentToRoot, stackedPathArguments.get(0));
         assertEquals(4, stackedPathArguments.size());
-        assertEquals(true, stackedPathArguments.contains(pathArgumentToRoot));
+        assertTrue(stackedPathArguments.contains(pathArgumentToRoot));
         assertEquals(0, stackedPathArguments.indexOf(pathArgumentToRoot));
         assertEquals(0, stackedPathArguments.lastIndexOf(pathArgumentToRoot));
 
@@ -125,7 +125,7 @@ public class PathArgumentListTest {
         assertEquals(qNameRoot, rootQname);
         assertEquals(qNameLeaf, leafQname);
         assertEquals(4, stackedReversePathArguments.size());
-        assertEquals(true, stackedReversePathArguments.contains(pathArgumentToRoot));
+        assertTrue(stackedReversePathArguments.contains(pathArgumentToRoot));
         assertEquals(3, stackedReversePathArguments.indexOf(pathArgumentToRoot));
         assertEquals(3, stackedReversePathArguments.lastIndexOf(pathArgumentToRoot));
 
