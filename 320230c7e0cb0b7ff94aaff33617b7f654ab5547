@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_16540b53",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/LoggingThreadUncaughtExceptionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-10-09T20:37:59Z",
+      "side": 1,
+      "message": "java.util.Objects.requireNonNull",
+      "range": {
+        "startLine": 10,
+        "startChar": 14,
+        "endLine": 10,
+        "endChar": 63
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_d6d1d3ce",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/SpecialExecutors.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-10-09T20:37:59Z",
+      "side": 1,
+      "message": "I am not sure this should be leaking into APIs. Perhaps provide a \u0027Class\u003c?\u003e loggerIdentity\u0027 instead?",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 31
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_b6d6dfc3",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ThreadFactoryProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-10-09T20:37:59Z",
+      "side": 1,
+      "message": "guavaBuilder::setPriority",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 75
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
