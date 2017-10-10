@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_c6e9201c",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 324,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-10-10T22:36:31Z",
+      "side": 1,
+      "message": "return;\n}\n\nswitch (childNodeText) {\ncase \"null\":\n    writer.nullValue();\n    break;\ncase \"false\":\n    writer.value(false);\n    break;\ncase \"true\":\n    writer.value(true);\n    break;\ndefault:\n    writer.value(childNodeText);\n}",
+      "range": {
+        "startLine": 318,
+        "startChar": 0,
+        "endLine": 324,
+        "endChar": 9
+      },
+      "revId": "04857aa07e0c52098997bf2c8c7f646c30cd85f2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
