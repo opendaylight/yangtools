@@ -59,23 +59,23 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private static Object createDefaultObject(final DataSchemaNode schema, final Codec<Object, Object> codec,
                                               final SchemaContext schemaContext) {
         if (schema instanceof LeafSchemaNode) {
-            Object defaultValue = ((LeafSchemaNode) schema).getDefault();
+            java.util.Optional<? extends Object> defaultValue = ((LeafSchemaNode) schema).getType().getDefaultValue();
             TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
-            if (defaultValue != null) {
+            if (defaultValue.isPresent()) {
                 if (type instanceof IdentityrefTypeDefinition) {
-                    return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
+                    return qnameDomValueFromString(codec, schema, (String) defaultValue.get(), schemaContext);
                 }
-                return domValueFromString(codec, type, defaultValue);
+                return domValueFromString(codec, type, defaultValue.get());
             }
 
-            while (type.getBaseType() != null && type.getDefaultValue() == null) {
+            while (type.getBaseType() != null && !type.getDefaultValue().isPresent()) {
                 type = type.getBaseType();
             }
 
             defaultValue = type.getDefaultValue();
-            if (defaultValue != null) {
+            if (defaultValue.isPresent()) {
                 if (type instanceof IdentityrefTypeDefinition) {
-                    return qnameDomValueFromString(codec, schema, (String) defaultValue, schemaContext);
+                    return qnameDomValueFromString(codec, schema, (String) defaultValue.get(), schemaContext);
                 }
                 return domValueFromString(codec, type, defaultValue);
             }
@@ -90,9 +90,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
         if (prefixEndIndex != -1) {
             String defaultValuePrefix = defaultValue.substring(0, prefixEndIndex);
 
-            Module module = schemaContext.findModuleByNamespaceAndRevision(schema.getQName().getNamespace(),
-                    schema.getQName().getRevision());
-
+            Module module = schemaContext.findModule(schema.getQName().getModule()).get();
             if (module.getPrefix().equals(defaultValuePrefix)) {
                 qname = QName.create(module.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
                 return codec.deserialize(qname);
@@ -101,8 +99,8 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
             Set<ModuleImport> imports = module.getImports();
             for (ModuleImport moduleImport : imports) {
                 if (moduleImport.getPrefix().equals(defaultValuePrefix)) {
-                    Module importedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
-                        moduleImport.getRevision());
+                    Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
+                        moduleImport.getRevision()).get();
                     qname = QName.create(importedModule.getQNameModule(), defaultValue.substring(prefixEndIndex + 1));
                     return codec.deserialize(qname);
                 }

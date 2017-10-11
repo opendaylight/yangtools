@@ -39,11 +39,11 @@ public class RpcMethodInvokerWithInputTest {
 
     private static final class TestImplClassWithInput implements RpcService {
 
-        static Future testMethod(RpcService testArg, DataObject data) {
+        static Future<?> testMethod(final RpcService testArg, final DataObject data) {
             return Futures.immediateFuture(null);
         }
 
-        static Future testMethodWithException(RpcService testArg, DataObject data) throws Exception {
+        static Future<?> testMethodWithException(final RpcService testArg, final DataObject data) throws Exception {
             throw new InternalError();
         }
     }

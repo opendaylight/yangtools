@@ -44,23 +44,23 @@ public class NotificationListenerInvokerTest {
         final NotificationListener notificationListener = mock(NotificationListener.class);
         final MethodHandle methodHandle = mock(MethodHandle.class);
         final NotificationListenerInvoker notificationListenerInvoker =
-                new NotificationListenerInvoker(ImmutableMap.of(QName.create("test"), methodHandle));
+                new NotificationListenerInvoker(ImmutableMap.of(QName.create("test", "test"), methodHandle));
 
-        notificationListenerInvoker.invokeNotification(notificationListener, QName.create("test"), null);
+        notificationListenerInvoker.invokeNotification(notificationListener, QName.create("test", "test"), null);
         fail("Expected WrongMethodTypeException, no method to invoke is supplied");
     }
 
     public interface TestInterface extends NotificationListener, Augmentation {
-        QName QNAME = QName.create("test");
+        QName QNAME = QName.create("test", "test");
         void onTestNotificationInterface(TestNotificationInterface notif);
     }
 
     private interface TestPrivateInterface extends NotificationListener, Augmentation {
-        QName QNAME = QName.create("test");
+        QName QNAME = QName.create("test", "test");
         void onTestNotificationInterface(TestNotificationInterface notif);
     }
 
     private interface TestNotificationInterface extends Notification {
-        QName QNAME = QName.create("test");
+        QName QNAME = QName.create("test", "test");
     }
 }

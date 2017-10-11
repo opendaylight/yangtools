@@ -43,26 +43,26 @@ public class AbstractMappedRpcInvokerTest {
 
         final RpcServiceInvoker testRpcInvoker =
                 new TestRpcInvokerImpl(ImmutableMap.of(
-                        "tstWithoutInput", methodWithoutInput,
-                        "tstWithInput", methodWithInput));
+                        "(test)tstWithoutInput", methodWithoutInput,
+                        "(test)tstWithInput", methodWithInput));
 
         final Field testInvokerMapField = testRpcInvoker.getClass().getSuperclass().getDeclaredField("map");
         testInvokerMapField.setAccessible(true);
         final Map<String, RpcMethodInvoker> testInvokerMap =
                 (Map<String, RpcMethodInvoker>) testInvokerMapField.get(testRpcInvoker);
 
-        assertTrue(testInvokerMap.get("tstWithInput") instanceof RpcMethodInvokerWithInput);
-        assertTrue(testInvokerMap.get("tstWithoutInput") instanceof RpcMethodInvokerWithoutInput);
+        assertTrue(testInvokerMap.get("(test)tstWithInput") instanceof RpcMethodInvokerWithInput);
+        assertTrue(testInvokerMap.get("(test)tstWithoutInput") instanceof RpcMethodInvokerWithoutInput);
 
         final Crate crateWithoutInput =
-                (Crate) testRpcInvoker.invokeRpc(rpcService, QName.create("tstWithoutInput"), null).get();
+                (Crate) testRpcInvoker.invokeRpc(rpcService, QName.create("test", "tstWithoutInput"), null).get();
         assertEquals(TestRpcService.methodWithoutInput(rpcService).get().getRpcService(),
                 crateWithoutInput.getRpcService());
         assertFalse(crateWithoutInput.getDataObject().isPresent());
 
         final DataObject dataObject = mock(DataObject.class);
         final Crate crateWithInput =
-                (Crate) testRpcInvoker.invokeRpc(rpcService, QName.create("tstWithInput"), dataObject).get();
+                (Crate) testRpcInvoker.invokeRpc(rpcService, QName.create("test", "tstWithInput"), dataObject).get();
         assertEquals(TestRpcService.methodWithInput(rpcService, dataObject).get().getRpcService(),
                 crateWithInput.getRpcService());
         assertTrue(crateWithInput.getDataObject().isPresent());
@@ -71,12 +71,12 @@ public class AbstractMappedRpcInvokerTest {
 
     private class TestRpcInvokerImpl extends AbstractMappedRpcInvoker<String> {
 
-        TestRpcInvokerImpl(Map<String, Method> map) {
+        TestRpcInvokerImpl(final Map<String, Method> map) {
             super(map);
         }
 
         @Override
-        protected String qnameToKey(QName qname) {
+        protected String qnameToKey(final QName qname) {
             return qname.toString();
         }
     }
@@ -85,7 +85,7 @@ public class AbstractMappedRpcInvokerTest {
         private final RpcService rpcService;
         private final ThreadLocal<Optional<DataObject>> dataObject;
 
-        Crate(@Nonnull RpcService rpcService, @Nullable DataObject dataObject) {
+        Crate(@Nonnull final RpcService rpcService, @Nullable final DataObject dataObject) {
             this.rpcService = rpcService;
             this.dataObject = new ThreadLocal<Optional<DataObject>>() {
                 @Override
@@ -105,11 +105,11 @@ public class AbstractMappedRpcInvokerTest {
     }
 
     static class TestRpcService implements RpcService {
-        static Future<Crate> methodWithoutInput(RpcService testArgument) {
+        static Future<Crate> methodWithoutInput(final RpcService testArgument) {
             return Futures.immediateFuture(new Crate(testArgument, null));
         }
 
-        static Future<Crate> methodWithInput(RpcService testArgument, DataObject testArgument2) {
+        static Future<Crate> methodWithInput(final RpcService testArgument, final DataObject testArgument2) {
             return Futures.immediateFuture(new Crate(testArgument, testArgument2));
         }
     }

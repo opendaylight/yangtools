@@ -11,8 +11,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Arrays;
@@ -87,9 +89,10 @@ public class Bug1276Test extends BaseCompilationTest {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
+    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
+            throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);

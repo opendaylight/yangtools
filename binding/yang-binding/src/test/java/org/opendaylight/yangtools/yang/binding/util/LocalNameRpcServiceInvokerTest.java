@@ -12,24 +12,25 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMap;
 import java.net.URI;
-import java.util.Date;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 public class LocalNameRpcServiceInvokerTest {
 
     private static RpcServiceInvoker rpcServiceInvoker;
-    private static final QNameModule Q_NAME_MODULE =
-            QNameModule.create(URI.create("testURI"), new Date(System.currentTimeMillis()));
+    private static final QNameModule Q_NAME_MODULE = QNameModule.create(URI.create("testURI"),
+        Revision.of("2017-10-26"));
     private static final RpcService RPC_SERVICE = mock(RpcService.class);
 
     @BeforeClass
     public static void setUp() throws Exception {
         rpcServiceInvoker = LocalNameRpcServiceInvoker.instanceFor(
-                Q_NAME_MODULE, ImmutableMap.of(QName.create("test"), Object.class.getDeclaredMethod("hashCode")));
+                Q_NAME_MODULE, ImmutableMap.of(QName.create(Q_NAME_MODULE, "test"),
+                    Object.class.getDeclaredMethod("hashCode")));
 
         assertNotNull(rpcServiceInvoker);
     }
@@ -41,6 +42,6 @@ public class LocalNameRpcServiceInvokerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void qnameToKeyWithNullTest() throws Exception {
-        rpcServiceInvoker.invokeRpc(RPC_SERVICE, QName.create("test"), null);
+        rpcServiceInvoker.invokeRpc(RPC_SERVICE, QName.create("", "test"), null);
     }
 }

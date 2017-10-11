@@ -47,7 +47,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
@@ -312,7 +312,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         }
 
         @SuppressWarnings("unchecked")
-        final Entry<AugmentationIdentifier, AugmentationSchema> augSchema = factory().getRuntimeContext()
+        final Entry<AugmentationIdentifier, AugmentationSchemaNode> augSchema = factory().getRuntimeContext()
                 .getResolvedAugmentationSchema(getSchema(), augClass);
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
@@ -321,7 +321,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     Object getBindingChildValue(final Method method, final NormalizedNodeContainer domData) {
         final NodeCodecContext<?> childContext = byMethod.get(method).get();
         @SuppressWarnings("unchecked")
-        final Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
+        final java.util.Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
         if (domChild.isPresent()) {
             return childContext.deserializeObject(domChild.get());
         } else if (childContext instanceof LeafNodeCodecContext) {
@@ -359,7 +359,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             }
         }
         for (final DataContainerCodecPrototype<?> value : byStreamAugmented.values()) {
-            final Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
+            final java.util.Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
             if (augData.isPresent()) {
                 map.put(value.getBindingClass(), value.get().deserializeObject(augData.get()));
             }

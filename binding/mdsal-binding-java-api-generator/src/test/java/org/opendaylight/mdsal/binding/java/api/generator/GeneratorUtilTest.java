@@ -87,7 +87,7 @@ public class GeneratorUtilTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void constructTest() throws Throwable {
-        final Constructor constructor = GeneratorUtil.class.getDeclaredConstructor();
+        final Constructor<GeneratorUtil> constructor = GeneratorUtil.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();

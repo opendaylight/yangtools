@@ -34,7 +34,7 @@ public class MissingSchemaException extends IllegalArgumentException {
     }
 
     static void checkModulePresent(final SchemaContext schemaContext, final QName name) {
-        if (schemaContext.findModuleByNamespaceAndRevision(name.getNamespace(), name.getRevision()) == null) {
+        if (!schemaContext.findModule(name.getModule()).isPresent()) {
             throw MissingSchemaException.create("Module %s is not present in current schema context.",
                 name.getModule());
         }

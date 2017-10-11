@@ -11,14 +11,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
 
-import com.google.common.util.concurrent.CheckedFuture;
+import com.google.common.util.concurrent.ListenableFuture;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextListener;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
@@ -45,8 +44,7 @@ final class SimpleBindingRuntimeContextService extends
     }
 
     @Override
-    public CheckedFuture<? extends YangTextSchemaSource, SchemaSourceException> getSource(
-            final SourceIdentifier sourceIdentifier) {
+    public ListenableFuture<? extends YangTextSchemaSource> getSource(final SourceIdentifier sourceIdentifier) {
         return sourceProvider.getSource(sourceIdentifier);
     }
 

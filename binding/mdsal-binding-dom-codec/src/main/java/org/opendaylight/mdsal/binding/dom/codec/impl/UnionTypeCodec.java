@@ -73,8 +73,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             final BindingCodecContext bindingCodecContext, final Set<UnionValueOptionContext> values,
             final TypeDefinition<?> subtype) throws NoSuchMethodException {
         final SchemaContext schemaContext = bindingCodecContext.getRuntimeContext().getSchemaContext();
-        final Module module = schemaContext.findModuleByNamespaceAndRevision(subtype.getQName().getNamespace(),
-                subtype.getQName().getRevision());
+        final Module module = schemaContext.findModule(subtype.getQName().getModule()).get();
         final RevisionAwareXPath xpath = ((LeafrefTypeDefinition) subtype).getPathStatement();
         // find schema node in schema context by xpath of leafref
         final SchemaNode dataNode;

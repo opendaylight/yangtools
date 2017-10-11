@@ -13,13 +13,12 @@ import static org.junit.Assert.assertNotNull;
 
 import java.lang.reflect.Constructor;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.Constants;
 
 public class ConstantsTest {
 
     @Test
     public void constructTest() throws Throwable {
-        final Constructor constructor = Constants.class.getDeclaredConstructor();
+        final Constructor<?> constructor = Constants.class.getDeclaredConstructor();
         assertFalse(constructor.isAccessible());
         constructor.setAccessible(true);
         assertNotNull(constructor.newInstance());

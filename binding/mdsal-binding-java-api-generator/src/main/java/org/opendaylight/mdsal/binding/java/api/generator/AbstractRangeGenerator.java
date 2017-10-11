@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
@@ -85,7 +84,8 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
         final AbstractRangeGenerator<?> gen = GENERATORS.get(value.getClass().getName());
         final Number check = gen.convert(ret);
         if (!value.equals(check)) {
-            LOG.warn("Number class conversion from {} to {} truncated value {} to {}", value.getClass(), type, value, ret);
+            LOG.warn("Number class conversion from {} to {} truncated value {} to {}", value.getClass(), type, value,
+                ret);
         }
 
         return ret;
@@ -110,14 +110,14 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param constraints Restrictions which need to be applied.
      * @return Method source code.
      */
-    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull final String checkerName, @Nonnull final Collection<RangeConstraint> constraints);
+    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull final String checkerName,
+            @Nonnull final RangeConstraint<?> constraints);
 
     private static String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
 
-    String generateRangeChecker(@Nonnull final String member, @Nonnull final Collection<RangeConstraint> constraints) {
-        Preconditions.checkArgument(!constraints.isEmpty(), "Restrictions may not be empty");
+    String generateRangeChecker(@Nonnull final String member, @Nonnull final RangeConstraint<?> constraints) {
         return generateRangeCheckerImplementation(rangeCheckerName(member), constraints);
     }
 

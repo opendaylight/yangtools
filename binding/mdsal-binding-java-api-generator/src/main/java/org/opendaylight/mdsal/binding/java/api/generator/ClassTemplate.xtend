@@ -84,7 +84,7 @@ class ClassTemplate extends BaseTemplate {
         this.consts = genType.constantDefinitions
         this.enclosedGeneratedTypes = genType.enclosedTypes
 
-        if (restrictions !== null && !restrictions.rangeConstraints.nullOrEmpty) {
+        if (restrictions !== null && restrictions.rangeConstraint.present) {
             rangeGenerator = AbstractRangeGenerator.forType(findProperty(genType, "value").returnType)
             Preconditions.checkNotNull(rangeGenerator)
         } else {
@@ -122,11 +122,11 @@ class ClassTemplate extends BaseTemplate {
             «generateFields»
 
             «IF restrictions !== null»
-                «IF !restrictions.lengthConstraints.nullOrEmpty»
-                    «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraints)»
+                «IF restrictions.lengthConstraint.present»
+                    «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraint.get)»
                 «ENDIF»
-                «IF !restrictions.rangeConstraints.nullOrEmpty»
-                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraints)»
+                «IF restrictions.rangeConstraint.present»
+                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.get)»
                 «ENDIF»
             «ENDIF»
 
@@ -283,12 +283,12 @@ class ClassTemplate extends BaseTemplate {
     def private generateRestrictions(Type type, String paramName, Type returnType) '''
         «val restrictions = type.getRestrictions»
         «IF restrictions !== null»
-            «IF !restrictions.lengthConstraints.empty || !restrictions.rangeConstraints.empty»
+            «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»
             if («paramName» != null) {
-                «IF !restrictions.lengthConstraints.empty»
+                «IF restrictions.lengthConstraint.present»
                     «LengthGenerator.generateLengthCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
-                «IF !restrictions.rangeConstraints.empty»
+                «IF restrictions.rangeConstraint.present»
                     «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
                 }

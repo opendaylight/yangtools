@@ -41,7 +41,7 @@ public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         final List<File> sourceFiles = getSourceFiles("/compilation/union-typedef");
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
         generator.generateToFile(sourcesOutputDir);

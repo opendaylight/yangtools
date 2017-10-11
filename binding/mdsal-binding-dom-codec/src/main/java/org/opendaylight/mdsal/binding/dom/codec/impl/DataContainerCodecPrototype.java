@@ -18,8 +18,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -68,7 +68,7 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
-            final AugmentationSchema schema, final CodecContextFactory factory) {
+            final AugmentationSchemaNode schema, final CodecContextFactory factory) {
         return new DataContainerCodecPrototype(augClass, arg, schema, factory);
     }
 
@@ -132,9 +132,9 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
             }
         } else if (schema instanceof ChoiceSchemaNode) {
             return new ChoiceNodeCodecContext(this);
-        } else if (schema instanceof AugmentationSchema) {
+        } else if (schema instanceof AugmentationSchemaNode) {
             return new AugmentationNodeContext(this);
-        } else if (schema instanceof ChoiceCaseNode) {
+        } else if (schema instanceof CaseSchemaNode) {
             return new CaseNodeCodecContext(this);
         }
         throw new IllegalArgumentException("Unsupported type " + bindingClass + " " + schema);

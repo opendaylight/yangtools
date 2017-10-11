@@ -12,12 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.BindingGeneratorImpl;
@@ -31,25 +26,13 @@ import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.GeneratedTOBuilderImpl;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ClassCodeGeneratorTest {
-
-    private final static List<File> testModels = new ArrayList<>();
-
-    @BeforeClass
-    public static void loadTestResources() throws URISyntaxException {
-        final File listModelFile = new File(ClassCodeGeneratorTest.class
-                .getResource("/list-composite-key.yang").toURI());
-        testModels.add(listModelFile);
-    }
-
     @Test
-    public void compositeKeyClassTest() throws IOException, SourceException, ReactorException {
+    public void compositeKeyClassTest() {
 
-        final SchemaContext context = YangParserTestUtils.parseYangSources(testModels);
+        final SchemaContext context = YangParserTestUtils.parseYangResource("/list-composite-key.yang");
 
         assertNotNull(context);
         final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
@@ -83,7 +66,8 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr.contains("public CompositeKeyListKey(java.lang.Byte _key1, java.lang.String _key2)"));
+                    assertTrue(outputStr.contains(
+                        "public CompositeKeyListKey(java.lang.Byte _key1, java.lang.String _key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;

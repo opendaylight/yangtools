@@ -21,7 +21,9 @@ import static org.opendaylight.mdsal.binding.java.api.generator.test.Compilation
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -110,9 +112,10 @@ public class Bug532Test extends BaseCompilationTest {
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
+    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
+            throws IOException, URISyntaxException {
         final List<File> sourceFiles = getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);

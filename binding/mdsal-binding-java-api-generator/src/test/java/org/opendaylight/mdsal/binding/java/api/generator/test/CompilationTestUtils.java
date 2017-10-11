@@ -21,6 +21,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -396,20 +397,20 @@ public class CompilationTestUtils {
         return result;
     }
 
-    static List<File> getSourceFiles(final String path) throws Exception {
+    static List<File> getSourceFiles(final String path) throws FileNotFoundException, URISyntaxException {
         final URI resPath = BaseCompilationTest.class.getResource(path).toURI();
         final File sourcesDir = new File(resPath);
-        if (sourcesDir.exists()) {
-            final List<File> sourceFiles = new ArrayList<>();
-            final File[] fileArray = sourcesDir.listFiles();
-            if (fileArray == null) {
-                throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
-            }
-            sourceFiles.addAll(Arrays.asList(fileArray));
-            return sourceFiles;
-        } else {
+        if (!sourcesDir.exists()) {
             throw new FileNotFoundException("Testing files were not found(" + sourcesDir.getName() + ")");
         }
+
+        final List<File> sourceFiles = new ArrayList<>();
+        final File[] fileArray = sourcesDir.listFiles();
+        if (fileArray == null) {
+            throw new IllegalArgumentException("Unable to locate files in " + sourcesDir);
+        }
+        sourceFiles.addAll(Arrays.asList(fileArray));
+        return sourceFiles;
     }
 
     static void deleteTestDir(final File file) {

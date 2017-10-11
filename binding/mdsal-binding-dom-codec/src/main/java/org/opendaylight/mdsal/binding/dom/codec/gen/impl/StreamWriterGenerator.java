@@ -14,8 +14,8 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -75,7 +75,7 @@ public final class StreamWriterGenerator extends AbstractStreamWriterGenerator {
     }
 
     @Override
-    protected DataObjectSerializerSource generateCaseSerializer(final GeneratedType type, final ChoiceCaseNode node) {
+    protected DataObjectSerializerSource generateCaseSerializer(final GeneratedType type, final CaseSchemaNode node) {
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
@@ -97,7 +97,7 @@ public final class StreamWriterGenerator extends AbstractStreamWriterGenerator {
 
     @Override
     protected DataObjectSerializerSource generateSerializer(final GeneratedType type,
-            final AugmentationSchema schema) {
+            final AugmentationSchemaNode schema) {
         return new DataNodeContainerSerializerSource(this, type, schema) {
             @Override
             public CharSequence emitStartEvent() {

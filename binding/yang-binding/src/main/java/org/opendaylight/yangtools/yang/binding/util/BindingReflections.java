@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -241,7 +242,7 @@ public final class BindingReflections {
     }
 
     public static QNameModule getQNameModule(final YangModuleInfo modInfo) {
-        return QNameModule.create(URI.create(modInfo.getNamespace()), QName.parseRevision(modInfo.getRevision()));
+        return QNameModule.create(URI.create(modInfo.getNamespace()), Revision.ofNullable(modInfo.getRevision()));
     }
 
     /**

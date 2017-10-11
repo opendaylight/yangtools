@@ -160,7 +160,7 @@ public class InstanceIdentifierTest {
         final InstanceIdentifierBuilder instanceIdentifierBuilder = instanceIdentifier1.builder();
         assertEquals(instanceIdentifier1.hashCode(), instanceIdentifierBuilder.hashCode());
         assertNotNull(instanceIdentifierBuilder.augmentation(InstantiatedFoo.class));
-        assertNotNull(instanceIdentifierBuilder.toInstance());
+        assertNotNull(instanceIdentifierBuilder.build());
     }
 
     @Test
@@ -185,7 +185,7 @@ public class InstanceIdentifierTest {
 
     @Test
     public void keyOfTest() throws Exception {
-        final Identifier identifier = mock(Identifier.class);
+        final Identifier<?> identifier = mock(Identifier.class);
         assertEquals(identifier, InstanceIdentifier.keyOf(
                 new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, identifier)));
     }
@@ -202,7 +202,7 @@ public class InstanceIdentifierTest {
 
         final ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
         final ObjectInputStream inputStream = new ObjectInputStream(byteArrayInputStream);
-        final InstanceIdentifier deserialized = (InstanceIdentifier) inputStream.readObject();
+        final InstanceIdentifier<?> deserialized = (InstanceIdentifier<?>) inputStream.readObject();
 
         assertEquals(instanceIdentifier, deserialized);
     }

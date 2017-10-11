@@ -15,6 +15,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
@@ -70,9 +72,10 @@ public class Bug5151Test extends BaseCompilationTest {
         return false;
     }
 
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
+    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
+            throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);
@@ -87,9 +90,9 @@ public class Bug5151Test extends BaseCompilationTest {
         for (File file : dirFiles) {
             if (file.isDirectory()) {
                 return getFiles(file, files);
-            } else {
-                files.put(file.getName(), file);
             }
+
+            files.put(file.getName(), file);
         }
         return files;
     }

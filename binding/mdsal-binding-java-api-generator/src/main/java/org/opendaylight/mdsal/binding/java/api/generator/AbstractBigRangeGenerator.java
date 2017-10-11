@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 import com.google.common.collect.Range;
-import java.util.Collection;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
@@ -36,7 +36,8 @@ abstract class AbstractBigRangeGenerator<T extends Number & Comparable<T>> exten
     }
 
     @Override
-    protected final String generateRangeCheckerImplementation(final String checkerName, @Nonnull final Collection<RangeConstraint> constraints) {
+    protected final String generateRangeCheckerImplementation(final String checkerName, @Nonnull final RangeConstraint<?> constraint) {
+        final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
         final String fieldName = checkerName.toUpperCase() + "_RANGES";
         final StringBuilder sb = new StringBuilder();
 
@@ -50,9 +51,9 @@ abstract class AbstractBigRangeGenerator<T extends Number & Comparable<T>> exten
         .append(") java.lang.reflect.Array.newInstance(").append(RANGE).append(".class, ").append(constraints.size()).append(");\n");
 
         int i = 0;
-        for (RangeConstraint r : constraints) {
-            final String min = format(getValue(r.getMin()));
-            final String max = format(getValue(r.getMax()));
+        for (Range<? extends Number> r : constraints) {
+            final String min = format(getValue(r.lowerEndpoint()));
+            final String max = format(getValue(r.upperEndpoint()));
 
             sb.append("    a[").append(i++).append("] = ").append(RANGE).append(".closed(").append(min).append(", ").append(max).append(");\n");
         }

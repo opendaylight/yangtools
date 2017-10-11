@@ -26,7 +26,7 @@ public class QNameRpcServiceInvokerTest {
     @Test(expected = IllegalArgumentException.class)
     public void qnameToKeyTest() throws Exception {
         final RpcService rpcService = mock(RpcService.class);
-        QNameRpcServiceInvoker.instanceFor(ImmutableMap.of()).invokeRpc(rpcService, QName.create("test"), null);
+        QNameRpcServiceInvoker.instanceFor(ImmutableMap.of()).invokeRpc(rpcService, QName.create("", "test"), null);
         fail("Expected exception: constructed with empty map");
     }
 }

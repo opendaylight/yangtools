@@ -11,6 +11,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.List;
@@ -23,14 +25,14 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
     @Test
-    public void testAugmentToUsesInAugment() throws Exception {
+    public void testAugmentToUsesInAugment() throws IOException, URISyntaxException {
         final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "augment-uses-to-augment");
         assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
         final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "augment-uses-to-augment");
         assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
 
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/augment-uses-to-augment");
-        final SchemaContext context = YangParserTestUtils.parseYangSources(sourceFiles);
+        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         generator.generateToFile(sourcesOutputDir);

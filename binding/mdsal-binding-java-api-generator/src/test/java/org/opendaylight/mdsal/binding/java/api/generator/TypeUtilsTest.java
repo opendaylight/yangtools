@@ -14,7 +14,6 @@ import static org.mockito.Mockito.mock;
 import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Constructor;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.TypeUtils;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
@@ -51,7 +50,7 @@ public class TypeUtilsTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void constructTest() throws Throwable {
-        final Constructor constructor = TypeUtils.class.getDeclaredConstructor();
+        final Constructor<TypeUtils> constructor = TypeUtils.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();

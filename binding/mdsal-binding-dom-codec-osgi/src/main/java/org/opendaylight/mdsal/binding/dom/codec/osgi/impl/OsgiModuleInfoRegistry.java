@@ -80,7 +80,7 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
 
         @Override
         @SuppressWarnings("checkstyle:illegalCatch")
-        public void close() throws Exception {
+        public void close() {
             try {
                 inner.close();
             } finally {

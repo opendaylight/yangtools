@@ -18,9 +18,9 @@ import org.junit.Test;
 public class KeyedInstanceIdentifierTest {
 
     @Test
-    public void basicTest() throws Exception {
-        final Identifier key = mock(Identifier.class);
-        final KeyedInstanceIdentifier keyedInstanceIdentifier =
+    public void basicTest() {
+        final Identifier<?> key = mock(Identifier.class);
+        final KeyedInstanceIdentifier<?, ?> keyedInstanceIdentifier =
                 new KeyedInstanceIdentifier(Identifiable.class, ImmutableList.of(), false, 0, key);
 
         assertEquals(key, keyedInstanceIdentifier.getKey());

@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -224,8 +224,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
-            if (leaf instanceof TypedSchemaNode) {
-                getterToLeafSchema.put(getGetterName(leaf.getQName(), ((TypedSchemaNode) leaf).getType()), leaf);
+            if (leaf instanceof TypedDataSchemaNode) {
+                getterToLeafSchema.put(getGetterName(leaf.getQName(), ((TypedDataSchemaNode) leaf).getType()), leaf);
             }
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
@@ -272,9 +272,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
-        Preconditions.checkArgument(schema instanceof TypedSchemaNode, "Unsupported leaf node type %s", schema);
+        Preconditions.checkArgument(schema instanceof TypedDataSchemaNode, "Unsupported leaf node type %s", schema);
 
-        return getCodec(valueType, ((TypedSchemaNode)schema).getType());
+        return getCodec(valueType, ((TypedDataSchemaNode)schema).getType());
     }
 
     Codec<Object, Object> getCodec(final Class<?> valueType, final TypeDefinition<?> instantiatedType) {

@@ -27,14 +27,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D,ChoiceSchemaNode> {
+final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCodecContext<D, ChoiceSchemaNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceNodeCodecContext.class);
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangCaseChild;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byClass;
@@ -51,7 +51,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         for (final Class<?> caze : factory().getRuntimeContext().getCases(getBindingClass())) {
             // We try to load case using exact match thus name
             // and original schema must equals
-            final DataContainerCodecPrototype<ChoiceCaseNode> cazeDef = loadCase(caze);
+            final DataContainerCodecPrototype<CaseSchemaNode> cazeDef = loadCase(caze);
             // If we have case definition, this case is instantiated
             // at current location and thus is valid in context of parent choice
             if (cazeDef != null) {
@@ -65,7 +65,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
                 // Updates collection of YANG instance identifier to case
                 for (final DataSchemaNode cazeChild : cazeDef.getSchema().getChildNodes()) {
                     if (cazeChild.isAugmenting()) {
-                        final AugmentationSchema augment = SchemaUtils.findCorrespondingAugment(cazeDef.getSchema(),
+                        final AugmentationSchemaNode augment = SchemaUtils.findCorrespondingAugment(cazeDef.getSchema(),
                             cazeChild);
                         if (augment != null) {
                             byYangCaseChildBuilder.put(SchemaUtils.getNodeIdentifierForAugmentation(augment), cazeDef);
@@ -128,8 +128,8 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         return byCaseChildClass.keySet();
     }
 
-    protected DataContainerCodecPrototype<ChoiceCaseNode> loadCase(final Class<?> childClass) {
-        final Optional<ChoiceCaseNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(getSchema(),
+    protected DataContainerCodecPrototype<CaseSchemaNode> loadCase(final Class<?> childClass) {
+        final Optional<CaseSchemaNode> childSchema = factory().getRuntimeContext().getCaseSchemaDefinition(getSchema(),
             childClass);
         if (childSchema.isPresent()) {
             return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());

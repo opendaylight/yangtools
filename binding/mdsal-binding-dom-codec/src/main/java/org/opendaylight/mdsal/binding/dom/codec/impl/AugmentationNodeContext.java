@@ -12,12 +12,12 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 final class AugmentationNodeContext<D extends DataObject & Augmentation<?>>
-        extends DataObjectCodecContext<D, AugmentationSchema> {
+        extends DataObjectCodecContext<D, AugmentationSchemaNode> {
 
-    AugmentationNodeContext(final DataContainerCodecPrototype<AugmentationSchema> prototype) {
+    AugmentationNodeContext(final DataContainerCodecPrototype<AugmentationSchemaNode> prototype) {
         super(prototype);
     }
 

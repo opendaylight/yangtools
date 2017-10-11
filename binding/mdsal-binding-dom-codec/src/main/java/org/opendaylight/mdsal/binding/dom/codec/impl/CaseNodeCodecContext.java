@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 
-final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D,ChoiceCaseNode> {
-    CaseNodeCodecContext(final DataContainerCodecPrototype<ChoiceCaseNode> prototype) {
+final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseSchemaNode> {
+    CaseNodeCodecContext(final DataContainerCodecPrototype<CaseSchemaNode> prototype) {
         super(prototype);
     }
 

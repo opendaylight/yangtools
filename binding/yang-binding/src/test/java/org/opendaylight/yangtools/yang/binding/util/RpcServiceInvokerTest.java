@@ -13,11 +13,11 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 public class RpcServiceInvokerTest {
 
@@ -26,17 +26,14 @@ public class RpcServiceInvokerTest {
         final Method method = this.getClass().getDeclaredMethod("testMethod");
         method.setAccessible(true);
         assertNotNull(RpcServiceInvoker.from(ImmutableMap.of(
-                QName.create(QNameModule.create(URI.create("testURI"),
-                        new Date(System.currentTimeMillis())),"test"), method,
-                QName.create(QNameModule.create(URI.create("testURI2"),
-                        new Date(System.currentTimeMillis())),"test"), method)));
+            QName.create(QNameModule.create(URI.create("testURI"), Revision.of("2017-10-26")),"test"), method,
+            QName.create(QNameModule.create(URI.create("testURI2"), Revision.of("2017-10-26")),"test"), method)));
         assertNotNull(RpcServiceInvoker.from(ImmutableMap.of(
-                QName.create(QNameModule.create(URI.create("testURI"),
-                        new Date(System.currentTimeMillis())),"test"), method)));
+            QName.create(QNameModule.create(URI.create("testURI"), Revision.of("2017-10-26")), "test"), method)));
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void fromWithExceptionTest() throws Exception {
+    public void fromWithExceptionTest() {
         RpcServiceInvoker.from(RpcService.class);
         fail("Expected IllegalArgumentException");
     }

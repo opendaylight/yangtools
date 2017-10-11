@@ -106,7 +106,7 @@ class EnumTemplate extends BaseTemplate {
     def writeEnumeration(Enumeration enumeration)
     '''
     «FOR v : enumeration.values SEPARATOR ",\n" AFTER ";"»
-    «writeEnumItem(v.name, v.mappedName, v.value, v.description)»«
+    «writeEnumItem(v.name, v.mappedName, v.value, v.description.orElse(null))»«
     ENDFOR»
     '''
 }

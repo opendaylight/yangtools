@@ -16,10 +16,7 @@ import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
 import java.io.IOException
 import java.io.InputStream
-import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.Collections
-import java.util.Date
 import java.util.HashSet
 import java.util.LinkedHashMap
 import java.util.Map
@@ -27,7 +24,7 @@ import java.util.Optional
 import java.util.Set
 import java.util.TreeMap
 import java.util.function.Function
-import org.eclipse.xtend.lib.Property
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.WildcardType
@@ -36,6 +33,7 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
 import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
+import org.opendaylight.yangtools.yang.common.Revision
 
 class YangModuleInfoTemplate {
 
@@ -44,10 +42,10 @@ class YangModuleInfoTemplate {
     val Map<String, String> importMap = new LinkedHashMap()
     val Function<Module, Optional<String>> moduleFilePathResolver
 
-    @Property
+    @Accessors
     val String packageName;
 
-    @Property
+    @Accessors
     val String modelBindingProviderName;
 
     new(Module module, SchemaContext ctx, Function<Module, Optional<String>> moduleFilePathResolver) {
@@ -55,8 +53,8 @@ class YangModuleInfoTemplate {
         this.module = module
         this.ctx = ctx
         this.moduleFilePathResolver = moduleFilePathResolver
-        _packageName = getRootPackageName(module.getQNameModule());
-        _modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»''';
+        packageName = getRootPackageName(module.getQNameModule());
+        modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»''';
     }
 
     def String generate() {
@@ -67,8 +65,11 @@ class YangModuleInfoTemplate {
 
                 private final «String.importedName» name = "«module.name»";
                 private final «String.importedName» namespace = "«module.namespace.toString»";
-                «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
-                private final «String.importedName» revision = "«df.format(module.revision)»";
+                «IF module.revision.isPresent»
+                private final «String.importedName» revision = "«module.revision.get.toString»";
+                «ELSE»
+                private final «String.importedName» revision = null;
+                «ENDIF»
                 private final «String.importedName» resourcePath = "«sourcePath(module)»";
 
                 private final «Set.importedName»<YangModuleInfo> importedModules;
@@ -112,7 +113,7 @@ class YangModuleInfoTemplate {
                     «val rev = imp.revision»
                     «IF rev === null»
                         «val Set<Module> modules = ctx.modules»
-                        «val TreeMap<Date, Module> sorted = new TreeMap()»
+                        «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap()»
                         «FOR module : modules»
                             «IF module.name.equals(name)»
                                 «sorted.put(module.revision, module)»
@@ -120,7 +121,7 @@ class YangModuleInfoTemplate {
                         «ENDFOR»
                         set.add(«getRootPackageName(sorted.lastEntry().value.QNameModule)».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«getRootPackageName((ctx.findModuleByName(name, rev).QNameModule))».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«getRootPackageName((ctx.findModule(name, rev).get.QNameModule))».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
@@ -308,8 +309,11 @@ class YangModuleInfoTemplate {
 
                 private final «String.importedName» name = "«submodule.name»";
                 private final «String.importedName» namespace = "«submodule.namespace.toString»";
-                «val DateFormat df = new SimpleDateFormat("yyyy-MM-dd")»
-                private final «String.importedName» revision = "«df.format(submodule.revision)»";
+                «IF submodule.revision.isPresent»
+                private final «String.importedName» revision = "«submodule.revision.get.toString»";
+                «ELSE»
+                private final «String.importedName» revision = null;
+                «ENDIF»
                 private final «String.importedName» resourcePath = "«sourcePath(submodule)»";
 
                 private final «Set.importedName»<YangModuleInfo> importedModules;
@@ -322,5 +326,4 @@ class YangModuleInfoTemplate {
             }
         «ENDFOR»
     '''
-
 }

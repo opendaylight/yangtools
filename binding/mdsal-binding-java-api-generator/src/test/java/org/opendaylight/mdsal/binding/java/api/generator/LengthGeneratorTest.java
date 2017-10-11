@@ -9,13 +9,12 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 
 import java.lang.reflect.Constructor;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.LengthGenerator;
 
 public class LengthGeneratorTest {
 
     @Test(expected = UnsupportedOperationException.class)
     public void constructTest() throws Throwable {
-        final Constructor constructor = LengthGenerator.class.getDeclaredConstructor();
+        final Constructor<LengthGenerator> constructor = LengthGenerator.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();
