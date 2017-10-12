@@ -256,7 +256,11 @@ public final class YangParserTestUtils {
      * @return effective schema context
      */
     public static SchemaContext parseYangResources(final Class<?> clazz, final String... resources) {
-        final List<YangTextSchemaSource> sources = new ArrayList<>(resources.length);
+        return parseYangResources(clazz, Arrays.asList(resources));
+    }
+
+    public static SchemaContext parseYangResources(final Class<?> clazz, final Collection<String> resources) {
+        final List<YangTextSchemaSource> sources = new ArrayList<>(resources.size());
         for (final String r : resources) {
             sources.add(YangTextSchemaSource.forResource(clazz, r));
         }
