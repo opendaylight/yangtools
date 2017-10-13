@@ -100,7 +100,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     /**
      * Returns a suboperation for specified tree node.
      *
-     * @return Reference to suboperation for specified tree node, {@link Optional#absent()}
+     * @return Reference to suboperation for specified tree node, {@link Optional#empty()}
      *         if suboperation is not supported for specified tree node.
      */
     @Override
