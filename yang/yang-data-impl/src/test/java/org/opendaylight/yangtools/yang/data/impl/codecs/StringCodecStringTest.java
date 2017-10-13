@@ -29,7 +29,6 @@ public class StringCodecStringTest {
 
         assertEquals("serialize", "foo", codec.serialize("foo"));
         assertEquals("serialize", "", codec.serialize(""));
-        assertEquals("serialize", "", codec.serialize(null));
     }
 
     @SuppressWarnings("unchecked")
@@ -40,6 +39,5 @@ public class StringCodecStringTest {
 
         assertEquals("deserialize", "bar", codec.deserialize("bar"));
         assertEquals("deserialize", "", codec.deserialize(""));
-        assertEquals("deserialize", "", codec.deserialize(null));
     }
 }

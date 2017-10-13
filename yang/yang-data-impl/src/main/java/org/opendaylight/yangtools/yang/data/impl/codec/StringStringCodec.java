@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableRangeSet;
@@ -15,7 +16,6 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.collect.TreeRangeSet;
 import java.util.Collection;
-import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -56,17 +56,13 @@ public class StringStringCodec extends TypeDefinitionAwareCodec<String, StringTy
 
     @Override
     public final String deserialize(final String stringRepresentation) {
-        if (stringRepresentation == null) {
-            // FIXME: These seems buggy, but someone may be using this behaviour
-            return "";
-        }
-        validate(stringRepresentation);
+        validate(requireNonNull(stringRepresentation));
         return stringRepresentation;
     }
 
     @Override
     public final String serialize(final String data) {
-        return Objects.toString(data, "");
+        return requireNonNull(data);
     }
 
     void validate(final String str) {
