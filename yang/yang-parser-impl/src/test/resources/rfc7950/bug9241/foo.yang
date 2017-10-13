@@ -1,0 +1,25 @@
+module foo {
+    namespace foo;
+    prefix foo;
+    yang-version 1.1;
+
+    revision 2017-10-13;
+
+    container action-cont {
+        action action-in-cont {
+
+        }
+    }
+
+    augment "/action-cont/action-in-cont/input" {
+        leaf augmented-leaf-in-input {
+            type string;
+        }
+    }
+
+    augment "/action-cont/action-in-cont/output" {
+        leaf augmented-leaf-in-output {
+            type string;
+        }
+    }
+}
