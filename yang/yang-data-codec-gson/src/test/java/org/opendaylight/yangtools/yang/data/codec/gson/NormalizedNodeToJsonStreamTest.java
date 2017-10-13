@@ -29,6 +29,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -297,7 +298,7 @@ public class NormalizedNodeToJsonStreamTest {
         final StringWriter writer = new StringWriter();
         final ContainerNode emptyStructure = Builders.containerBuilder()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(CONT_1))
-                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, null)).build();
+                .addChild(ImmutableNodes.leafNode(EMPTY_LEAF, Empty.getInstance())).build();
         final String jsonOutput = normalizedNodeToJsonStreamTransformation(writer, emptyStructure);
         final JsonObject cont1 = resolveCont1(jsonOutput);
         final JsonElement emptyObj = cont1.get("empty");

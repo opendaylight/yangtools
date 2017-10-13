@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 /**
@@ -25,11 +27,10 @@ public abstract class SimpleNodeDataWithSchema extends AbstractNodeDataWithSchem
     }
 
     public void setValue(final Object value) {
-        this.value = value;
+        this.value = requireNonNull(value);
     }
 
     public Object getValue() {
         return value;
     }
-
 }

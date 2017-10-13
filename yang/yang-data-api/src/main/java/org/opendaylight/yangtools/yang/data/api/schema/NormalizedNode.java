@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,12 +36,12 @@ public interface NormalizedNode<K extends PathArgument, V> extends Identifiable<
      * @return Node identifier, non-null.
      */
     @Override
-    K getIdentifier();
+    @Nonnull K getIdentifier();
 
     /**
      * Value of node.
      *
      * @return Value of the node, may be null.
      */
-    V getValue();
+    @Nonnull V getValue();
 }
