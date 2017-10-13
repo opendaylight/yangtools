@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import javax.annotation.Nonnull;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -15,10 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  * AN normalizedNode.
  */
 public interface AnyXmlNode extends AttributesContainer, DataContainerChild<NodeIdentifier, DOMSource> {
-
-    @Override
-    NodeIdentifier getIdentifier();
-
     /**
      * Return value represented as a DOMSource. Returned source contains top level element
      * that duplicates the anyxml node.
@@ -26,5 +23,5 @@ public interface AnyXmlNode extends AttributesContainer, DataContainerChild<Node
      * @return anyxml node value represented as DOMSource.
      */
     @Override
-    DOMSource getValue();
+    @Nonnull DOMSource getValue();
 }

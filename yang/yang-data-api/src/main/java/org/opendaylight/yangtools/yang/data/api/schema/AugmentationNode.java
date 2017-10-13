@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -34,8 +35,8 @@ public interface AugmentationNode extends MixinNode, DataContainerNode<Augmentat
      * This is sufficient to identify instance of augmentation, since RFC6020 states that <code>augment</code>
      * that augment statement must not add multiple nodes from same namespace / module to the target node.
      *
-     * @return Identifier which uniquelly identifies augmentation in particular subtree.
+     * @return Identifier which uniquely identifies augmentation in particular subtree.
      */
     @Override
-    AugmentationIdentifier getIdentifier();
+    @Nonnull AugmentationIdentifier getIdentifier();
 }

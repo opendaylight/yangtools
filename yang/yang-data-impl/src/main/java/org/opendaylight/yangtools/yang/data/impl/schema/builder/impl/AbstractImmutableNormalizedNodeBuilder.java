@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,10 +25,12 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     private V value;
 
     protected final I getNodeIdentifier() {
+        checkState(nodeIdentifier != null, "Identifier has not been set");
         return nodeIdentifier;
     }
 
     protected final V getValue() {
+        checkState(value != null, "Value has not been set");
         return value;
     }
 
@@ -34,20 +39,20 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I,V,R> withValue(final V value) {
-        this.value = value;
+    public NormalizedNodeAttrBuilder<I, V, R> withValue(final V value) {
+        this.value = requireNonNull(value);
         return this;
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I,V,R> withNodeIdentifier(final I nodeIdentifier) {
-        this.nodeIdentifier = nodeIdentifier;
+    public NormalizedNodeAttrBuilder<I, V, R> withNodeIdentifier(final I nodeIdentifier) {
+        this.nodeIdentifier = requireNonNull(nodeIdentifier);
         return this;
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I,V,R> withAttributes(final Map<QName, String> attributes) {
-        this.attributes = attributes;
+    public NormalizedNodeAttrBuilder<I, V, R> withAttributes(final Map<QName, String> attributes) {
+        this.attributes = requireNonNull(attributes);
         return this;
     }
 }
