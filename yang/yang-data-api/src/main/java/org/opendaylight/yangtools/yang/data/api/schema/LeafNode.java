@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
@@ -27,5 +28,5 @@ public interface LeafNode<T> extends AttributesContainer, DataContainerChild<Nod
      * @return Returned value of this leaf node. Value SHOULD meet criteria defined by schema.
      */
     @Override
-    T getValue();
+    @Nonnull T getValue();
 }

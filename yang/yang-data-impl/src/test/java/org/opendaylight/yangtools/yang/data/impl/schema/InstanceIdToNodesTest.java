@@ -67,6 +67,7 @@ public class InstanceIdToNodesTest {
 
     @Test
     public void testInAugment() throws Exception {
+        final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf).withValue("").build();
         final ContainerNode expectedFilter = Builders
                 .containerBuilder()
                 .withNodeIdentifier(rootContainer)
@@ -77,11 +78,10 @@ public class InstanceIdToNodesTest {
                                         Builders.augmentationBuilder()
                                                 .withNodeIdentifier(augmentation)
                                                 .withChild(
-                                                        Builders.leafBuilder().withNodeIdentifier(augmentedLeaf)
-                                                                .build()).build()).build()).build();
+                                                        leaf).build()).build()).build();
 
         final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf));
+                YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf), leaf);
         assertEquals(expectedFilter, filter);
     }
 
@@ -107,6 +107,7 @@ public class InstanceIdToNodesTest {
 
     @Test
     public void testListChoice() throws Exception {
+        final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(leafFromCase).withValue("").build();
         final ContainerNode expectedFilter = Builders
                 .containerBuilder()
                 .withNodeIdentifier(rootContainer)
@@ -124,14 +125,14 @@ public class InstanceIdToNodesTest {
                                                 .withChild(
                                                         Builders.choiceBuilder()
                                                                 .withNodeIdentifier(choice)
-                                                                .withChild(
-                                                                        Builders.leafBuilder()
-                                                                                .withNodeIdentifier(leafFromCase)
-                                                                                .build()).build()).build()).build())
+                                                                .withChild(leaf)
+                                                                .build())
+                                                .build())
+                                .build())
                 .build();
 
         final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
-                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey, choice, leafFromCase));
+                YangInstanceIdentifier.create(rootContainer, outerList, outerListWithKey, choice, leafFromCase), leaf);
         assertEquals(expectedFilter, filter);
     }
 
@@ -157,6 +158,7 @@ public class InstanceIdToNodesTest {
                                                                 .withChild(
                                                                         Builders.leafBuilder()
                                                                                 .withNodeIdentifier(leafFromCase)
+                                                                                .withValue("")
                                                                                 .build()).build()).build()).build())
                 .build();
 

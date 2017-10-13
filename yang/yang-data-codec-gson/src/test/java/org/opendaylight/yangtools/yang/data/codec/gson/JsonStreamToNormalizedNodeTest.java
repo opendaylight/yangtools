@@ -24,6 +24,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -164,7 +165,7 @@ public class JsonStreamToNormalizedNodeTest {
         final String inputJson = loadTextFile("/complexjson/type-empty.json");
         final ContainerNode awaitedStructure = containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(CONT_1))
-                .addChild(leafNode(EMPTY_LEAF, null))
+                .addChild(leafNode(EMPTY_LEAF, Empty.getInstance()))
                 .build();
 
         verifyTransformationToNormalizedNode(inputJson, awaitedStructure);

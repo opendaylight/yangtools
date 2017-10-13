@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
+import org.opendaylight.yangtools.yang.common.Empty;
 
-final class EmptyJSONCodec implements JSONCodec<Void> {
+final class EmptyJSONCodec implements JSONCodec<Empty> {
 
     static final EmptyJSONCodec INSTANCE = new EmptyJSONCodec();
 
@@ -20,17 +21,17 @@ final class EmptyJSONCodec implements JSONCodec<Void> {
     }
 
     @Override
-    public Class<Void> getDataType() {
-        return Void.class;
+    public Class<Empty> getDataType() {
+        return Empty.class;
     }
 
     @Override
-    public Void parseValue(final Object ctx, final String input) {
-        return null;
+    public Empty parseValue(final Object ctx, final String input) {
+        return Empty.getInstance();
     }
 
     @Override
-    public void writeValue(final JsonWriter ctx, final Void value) throws IOException {
+    public void writeValue(final JsonWriter ctx, final Empty value) throws IOException {
         ctx.beginArray();
         ctx.value((String) null);
         ctx.endArray();
