@@ -78,7 +78,7 @@ public class InstanceIdToNodesTest {
                                                 .withNodeIdentifier(augmentation)
                                                 .withChild(
                                                         Builders.leafBuilder().withNodeIdentifier(augmentedLeaf)
-                                                                .build()).build()).build()).build();
+                                                        .withValue("").build()).build()).build()).build();
 
         final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
                 YangInstanceIdentifier.create(rootContainer, outerContainer, augmentation, augmentedLeaf));
@@ -127,7 +127,11 @@ public class InstanceIdToNodesTest {
                                                                 .withChild(
                                                                         Builders.leafBuilder()
                                                                                 .withNodeIdentifier(leafFromCase)
-                                                                                .build()).build()).build()).build())
+                                                                                .withValue("")
+                                                                                .build())
+                                                                .build())
+                                                .build())
+                                .build())
                 .build();
 
         final NormalizedNode<?, ?> filter = ImmutableNodes.fromInstanceId(ctx,
@@ -157,6 +161,7 @@ public class InstanceIdToNodesTest {
                                                                 .withChild(
                                                                         Builders.leafBuilder()
                                                                                 .withNodeIdentifier(leafFromCase)
+                                                                                .withValue("")
                                                                                 .build()).build()).build()).build())
                 .build();
 

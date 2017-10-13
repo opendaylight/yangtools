@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -22,10 +24,12 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     private V value;
 
     protected final I getNodeIdentifier() {
+        checkState(nodeIdentifier != null, "Identifier has not been set");
         return nodeIdentifier;
     }
 
     protected final V getValue() {
+        checkState(value != null, "Value has not been set");
         return value;
     }
 

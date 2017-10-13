@@ -14,6 +14,7 @@ import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwa
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.toEnumTypeDefinition;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.codec.UnionCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -62,8 +63,7 @@ public class UnionCodecStringTest {
         assertEquals("deserialize", 123, codec.deserialize("123"));
         assertEquals("deserialize", -123, codec.deserialize("-123"));
         assertEquals("deserialize", 41234567890L, codec.deserialize("41234567890"));
-        assertEquals("deserialize", null, codec.deserialize(""));
-        assertEquals("deserialize", null, codec.deserialize(null));
+        assertEquals("deserialize", Empty.getInstance(), codec.deserialize(""));
 
         deserializeWithExpectedIllegalArgEx(codec, "enum3");
         deserializeWithExpectedIllegalArgEx(codec, "123o");
