@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.data.api.codec;
 
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.common.Empty;
 
-public interface EmptyCodec<T>  extends Codec<T,Void> {
+public interface EmptyCodec<T> extends Codec<T, Empty> {
     @Override
-    T serialize(Void data);
+    T serialize(Empty data);
 
     @Override
-    Void deserialize(T data);
+    Empty deserialize(T data);
 }

@@ -8,28 +8,30 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Strings;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.codec.EmptyCodec;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
-final class EmptyStringCodec extends TypeDefinitionAwareCodec<Void, EmptyTypeDefinition> implements
+final class EmptyStringCodec extends TypeDefinitionAwareCodec<Empty, EmptyTypeDefinition> implements
         EmptyCodec<String> {
     static final EmptyStringCodec INSTANCE = new EmptyStringCodec();
 
     private EmptyStringCodec() {
-        super(Optional.empty(), Void.class);
+        super(Optional.empty(), Empty.class);
     }
 
     @Override
-    public String serialize(final Void data) {
+    public String serialize(final Empty data) {
+        requireNonNull(data);
         return "";
     }
 
     @Override
-    public Void deserialize(final String stringRepresentation) {
-        checkArgument(Strings.isNullOrEmpty(stringRepresentation), "The value must be empty");
-        return null;
+    public Empty deserialize(final String stringRepresentation) {
+        checkArgument(stringRepresentation.isEmpty(), "The value must be empty");
+        return Empty.getInstance();
     }
 }
