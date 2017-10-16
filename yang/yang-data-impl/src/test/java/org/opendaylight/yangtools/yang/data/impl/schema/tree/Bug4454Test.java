@@ -32,10 +32,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -98,15 +100,15 @@ public class Bug4454Test {
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
-    private InMemoryDataTree inMemoryDataTree;
+    private DataTree inMemoryDataTree;
 
     @Before
     public void prepare() throws IOException, YangSyntaxErrorException, ReactorException, URISyntaxException {
         SchemaContext schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(schemaContext);
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        inMemoryDataTree =  InMemoryDataTreeFactory.getInstance().create(
+            DataTreeConfiguration.DEFAULT_OPERATIONAL, schemaContext);
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
@@ -121,7 +123,7 @@ public class Bug4454Test {
 
     @Test
     public void minMaxListDeleteWriteTest() throws DataValidationFailedException {
-        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
 
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
@@ -171,7 +173,7 @@ public class Bug4454Test {
 
         assertFalse(inMemoryDataTree.toString().contains("list"));
 
-        InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(!minMaxListRead.isPresent());
 
@@ -192,10 +194,10 @@ public class Bug4454Test {
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree1);
         inMemoryDataTree.commit(prepare);
 
-        InMemoryDataTreeSnapshot test = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test = inMemoryDataTree.takeSnapshot();
         testLoop(test, "bar", "test");
 
-        InMemoryDataTreeModification tempMod = test.newModification();
+        DataTreeModification tempMod = test.newModification();
         tempMod.write(pathToBaz, newNode2);
         tempMod.write(pathToBaz, newNode1);
         tempMod.merge(pathToBaz, newNode2);
@@ -206,10 +208,10 @@ public class Bug4454Test {
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(tempMod);
         inMemoryDataTree.commit(prepare1);
 
-        InMemoryDataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
         testLoop(test1, "bar", "test1");
 
-        InMemoryDataTreeModification tempMod1 = test1.newModification();
+        DataTreeModification tempMod1 = test1.newModification();
         tempMod1.write(MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
 
         tempMod1.ready();
@@ -217,12 +219,12 @@ public class Bug4454Test {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(tempMod1);
         inMemoryDataTree.commit(prepare2);
 
-        InMemoryDataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test2 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test2.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 3);
 
-        InMemoryDataTreeModification tempMod2 = test2.newModification();
+        DataTreeModification tempMod2 = test2.newModification();
         tempMod2.write(MIN_MAX_LIST_PATH, mapNodeBaz);
         tempMod2.write(pathToBaz, newNode2);
 
@@ -231,13 +233,13 @@ public class Bug4454Test {
         final DataTreeCandidate prepare3 = inMemoryDataTree.prepare(tempMod2);
         inMemoryDataTree.commit(prepare3);
 
-        InMemoryDataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test3 = inMemoryDataTree.takeSnapshot();
         minMaxListRead = test3.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 1);
         assertTrue(minMaxListRead.get().getValue().toString().contains("test2"));
 
-        InMemoryDataTreeModification tempMod3 = test3.newModification();
+        DataTreeModification tempMod3 = test3.newModification();
         tempMod3.merge(MIN_MAX_LIST_PATH, mapNodeBar);
         tempMod3.merge(pathToBar, newNode1);
 
@@ -246,7 +248,7 @@ public class Bug4454Test {
         final DataTreeCandidate prepare4 = inMemoryDataTree.prepare(tempMod3);
         inMemoryDataTree.commit(prepare4);
 
-        InMemoryDataTreeSnapshot test4 = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test4 = inMemoryDataTree.takeSnapshot();
         testLoop(test4, "test1", "test2");
     }
 
@@ -276,9 +278,9 @@ public class Bug4454Test {
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
-        InMemoryDataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot test1 = inMemoryDataTree.takeSnapshot();
 
-        InMemoryDataTreeModification tempMod1 = test1.newModification();
+        DataTreeModification tempMod1 = test1.newModification();
         tempMod1.write(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         tempMod1.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
         tempMod1.ready();
@@ -287,7 +289,7 @@ public class Bug4454Test {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(tempMod1);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
@@ -299,7 +301,7 @@ public class Bug4454Test {
 
     @Test(expected = DataValidationFailedException.class)
     public void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
@@ -347,7 +349,7 @@ public class Bug4454Test {
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
                 .withChild(fooEntryNode).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         Map<QName, Object> key = new HashMap<>();
         key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
@@ -376,13 +378,13 @@ public class Bug4454Test {
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
     }
 
-    private static void testLoop(final InMemoryDataTreeSnapshot snapshot, final String first, final String second) {
+    private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshot.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
