@@ -84,7 +84,8 @@ public class BuilderTest {
             3);
     private static final int SIZE = 3;
     private static final NodeWithValue<String> BAR_PATH = new NodeWithValue<>(LEAF_LIST_MAIN, "bar");
-    private static final LeafSetEntryNode LEAF_SET_ENTRY_NODE = ImmutableLeafSetEntryNodeBuilder.create()
+    private static final LeafSetEntryNode<String> LEAF_SET_ENTRY_NODE =
+            ImmutableLeafSetEntryNodeBuilder.<String>create()
             .withNodeIdentifier(BAR_PATH)
             .withValue("bar")
             .build();
@@ -139,7 +140,7 @@ public class BuilderTest {
 
     @Test
     public void immutableOrderedLeafSetNodeBuilderTest() {
-        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.create()
+        final NormalizedNode<?, ?> orderedLeafSet = ImmutableOrderedLeafSetNodeBuilder.<String>create()
                 .withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST)
                 .withChild(LEAF_SET_ENTRY_NODE)
                 .withChildValue("baz")
@@ -314,7 +315,7 @@ public class BuilderTest {
     }
 
     private static LeafSetNode<?> getImmutableLeafSetNode() {
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> leafSetBuilder = Builders.leafSetBuilder();
+        final ListNodeBuilder<String, LeafSetEntryNode<String>> leafSetBuilder = Builders.<String>leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST);
         leafSetBuilder.addChild(LEAF_SET_ENTRY_NODE);
         return leafSetBuilder.build();
