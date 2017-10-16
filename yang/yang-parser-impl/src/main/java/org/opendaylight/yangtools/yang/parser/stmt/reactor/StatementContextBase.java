@@ -557,7 +557,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
         final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
         Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
-            "Namespace {} does not support listeners", type);
+            "Namespace %s does not support listeners", type);
 
         final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
         casted.addValueListener(new ValueAddedListener<K>(this, key) {
