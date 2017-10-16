@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidates;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
@@ -62,10 +63,12 @@ public class DataTreeCandidatesTest {
     }
 
     @Test
-    public void testRootedCandidate() throws Exception {
-        final DataTree innerDataTree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL,
-            TestModel.INNER_CONTAINER_PATH);
-        innerDataTree.setSchemaContext(SCHEMA_CONTEXT);
+    public void testRootedCandidate() throws DataValidationFailedException {
+        final DataTree innerDataTree = InMemoryDataTreeFactory.getInstance().create(
+            new DataTreeConfiguration.Builder(TreeType.OPERATIONAL)
+            .setMandatoryNodesValidation(true)
+            .setRootPath(TestModel.INNER_CONTAINER_PATH)
+            .setUniqueIndexes(true).build(), SCHEMA_CONTEXT);
 
         final LeafNode<String> leaf = ImmutableLeafNodeBuilder.<String>create()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.VALUE_QNAME))

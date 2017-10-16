@@ -20,9 +20,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -32,14 +35,14 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 public class Bug2690Test {
     private static final String ODL_DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
     private SchemaContext schemaContext;
-    private InMemoryDataTree inMemoryDataTree;
+    private DataTree inMemoryDataTree;
 
     @Before
     public void prepare() throws ReactorException {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(
+            DataTreeConfiguration.DEFAULT_OPERATIONAL, schemaContext);
     }
 
     public static SchemaContext createTestContext() throws ReactorException {
@@ -65,7 +68,7 @@ public class Bug2690Test {
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode2).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, cont1);
         modificationTree.merge(TestModel.TEST_PATH, cont2);
         modificationTree.ready();
@@ -74,8 +77,8 @@ public class Bug2690Test {
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
 
-        final InMemoryDataTreeSnapshot snapshotAfterTx = inMemoryDataTree.takeSnapshot();
-        final InMemoryDataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
+        final DataTreeSnapshot snapshotAfterTx = inMemoryDataTree.takeSnapshot();
+        final DataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
         final Optional<NormalizedNode<?, ?>> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?,?,?>)readNode.get()).getValue().size());

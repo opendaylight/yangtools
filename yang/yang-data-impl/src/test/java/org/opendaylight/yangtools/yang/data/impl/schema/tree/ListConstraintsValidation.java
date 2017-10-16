@@ -27,10 +27,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
@@ -67,15 +69,15 @@ public class ListConstraintsValidation {
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
 
     private SchemaContext schemaContext;
-    private InMemoryDataTree inMemoryDataTree;
+    private DataTree inMemoryDataTree;
 
     @Before
     public void prepare() {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree =  (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
+        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
         inMemoryDataTree.setSchemaContext(schemaContext);
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
 
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
@@ -99,7 +101,7 @@ public class ListConstraintsValidation {
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(MIN_MAX_LIST_PATH, mapNode1);
         modificationTree.merge(MIN_MAX_LIST_PATH, mapNode2);
         // TODO: check why write and then merge on list commits only "bar" child
@@ -109,7 +111,7 @@ public class ListConstraintsValidation {
         final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
@@ -117,7 +119,7 @@ public class ListConstraintsValidation {
 
     @Test(expected = DataValidationFailedException.class)
     public void minMaxListFail() throws DataValidationFailedException {
-        InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "foo");
         final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME, MIN_MAX_KEY_LEAF_QNAME, "bar");
@@ -140,7 +142,7 @@ public class ListConstraintsValidation {
         DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
-        InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_PATH);
         assertTrue(minMaxListRead.isPresent());
         assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 2);
@@ -195,7 +197,7 @@ public class ListConstraintsValidation {
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> masterContainer = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
         assertTrue(masterContainer.isPresent());
         final Optional<NormalizedNodeContainer<?, ?, ?>> leafList = ((NormalizedNodeContainer) masterContainer.get())
@@ -257,7 +259,7 @@ public class ListConstraintsValidation {
         final DataTreeCandidate prepare1 = inMemoryDataTree.prepare(modificationTree);
         inMemoryDataTree.commit(prepare1);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> unkeyedListRead = snapshotAfterCommit.readNode(UNKEYED_LIST_PATH);
         assertTrue(unkeyedListRead.isPresent());
         assertTrue(((UnkeyedListNode) unkeyedListRead.get()).getSize() == 1);

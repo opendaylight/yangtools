@@ -15,9 +15,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -32,8 +32,8 @@ public class Bug3674Test {
 
     @Before
     public void setUp() throws ReactorException, IOException, YangSyntaxErrorException {
-        tree = InMemoryDataTreeFactory.getInstance().create(TreeType.OPERATIONAL);
-        tree.setSchemaContext(TestModel.createTestContext());
+        tree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            TestModel.createTestContext());
 
         // Create the top-level container
         final DataTreeModification mod = tree.takeSnapshot().newModification();
