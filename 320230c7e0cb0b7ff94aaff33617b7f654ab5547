@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_d82f2ba0",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/LoggingThreadUncaughtExceptionHandler.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-10-16T18:38:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_16540b53",
+      "range": {
+        "startLine": 10,
+        "startChar": 14,
+        "endLine": 10,
+        "endChar": 63
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_d6d1d3ce",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/SpecialExecutors.java",
         "patchSetId": 4
@@ -48,6 +72,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_38180781",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/SpecialExecutors.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 14,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-10-16T18:38:54Z",
+      "side": 1,
+      "message": "As we\u0027re all sl4fj everywhere anyway, I didn\u0027t think this would be a problem, and would have thought that passing such a Logger instead of a Class makes the contract more not less clear, but in the interest of moving ahead and finally just get this merged, I\u0027ve changed it anyway - OK now?  (Hope I understood your objection correctly, it\u0027s obviously not about the import but about the parameters of type Logger in the methods everywhere?)",
+      "parentUuid": "9a245df4_d6d1d3ce",
+      "range": {
+        "startLine": 13,
+        "startChar": 0,
+        "endLine": 14,
+        "endChar": 31
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_b6d6dfc3",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ThreadFactoryProvider.java",
         "patchSetId": 4
@@ -59,6 +107,30 @@
       "writtenOn": "2017-10-09T20:37:59Z",
       "side": 1,
       "message": "guavaBuilder::setPriority",
+      "range": {
+        "startLine": 64,
+        "startChar": 29,
+        "endLine": 64,
+        "endChar": 75
+      },
+      "revId": "320230c7e0cb0b7ff94aaff33617b7f654ab5547",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_f81dcf74",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/ThreadFactoryProvider.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 64,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-10-16T18:38:54Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_b6d6dfc3",
       "range": {
         "startLine": 64,
         "startChar": 29,
