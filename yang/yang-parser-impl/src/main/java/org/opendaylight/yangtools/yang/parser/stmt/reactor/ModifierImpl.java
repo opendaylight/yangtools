@@ -21,13 +21,11 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.ContextMutation;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.OnNamespaceItemAdded;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase.OnPhaseFinished;
@@ -59,11 +57,6 @@ final class ModifierImpl implements ModelActionBuilder {
 
     private void checkNotRegistered() {
         Preconditions.checkState(action == null, "Action was already registered.");
-    }
-
-    private static IllegalStateException shouldNotHappenProbablyBug(final SourceException cause) {
-        return new IllegalStateException("Source exception during registering prerequisite. This is probably bug.",
-            cause);
     }
 
     private boolean removeSatisfied() {
@@ -101,28 +94,20 @@ final class ModifierImpl implements ModelActionBuilder {
                     final ModelProcessingPhase phase)  {
         checkNotRegistered();
 
-        try {
-            AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
-            addReq(addedToNs);
-            contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, addedToNs);
-            return addedToNs;
-        } catch (SourceException e) {
-            throw shouldNotHappenProbablyBug(e);
-        }
+        AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
+        addReq(addedToNs);
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, addedToNs);
+        return addedToNs;
     }
 
     private <C extends StmtContext<?, ?, ?>> AbstractPrerequisite<C> requiresCtxImpl(final C context,
             final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        try {
-            PhaseFinished<C> phaseFin = new PhaseFinished<>();
-            addReq(phaseFin);
-            contextImpl(context).addPhaseCompletedListener(phase, phaseFin);
-            return phaseFin;
-        } catch (SourceException e) {
-            throw shouldNotHappenProbablyBug(e);
-        }
+        PhaseFinished<C> phaseFin = new PhaseFinished<>();
+        addReq(phaseFin);
+        contextImpl(context).addPhaseCompletedListener(phase, phaseFin);
+        return phaseFin;
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -132,15 +117,11 @@ final class ModifierImpl implements ModelActionBuilder {
                 final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        try {
-            PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(phase);
-            addReq(mod);
-            addMutation(mod);
-            contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
-            return mod;
-        } catch (SourceException e) {
-            throw shouldNotHappenProbablyBug(e);
-        }
+        PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(phase);
+        addReq(mod);
+        addMutation(mod);
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
+        return mod;
     }
 
     private static StatementContextBase<?,?,?> contextImpl(final Object value) {
@@ -163,11 +144,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(final CT context,
             final ModelProcessingPhase phase) {
-        try {
-            return addMutation(new PhaseMutation<>(contextImpl(context), phase));
-        } catch (InferenceException e) {
-            throw shouldNotHappenProbablyBug(e);
-        }
+        return addMutation(new PhaseMutation<>(contextImpl(context), phase));
     }
 
     @Nonnull
@@ -239,11 +216,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     public <N extends IdentifierNamespace<?, ?>> Prerequisite<Mutable<?, ?, ?>> mutatesNs(
             final Mutable<?, ?, ?> context, final Class<N> namespace) {
-        try {
-            return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
-        } catch (SourceException e) {
-            throw shouldNotHappenProbablyBug(e);
-        }
+        return addMutation(new NamespaceMutation<>(contextImpl(context), namespace));
     }
 
     @Nonnull
