@@ -234,7 +234,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 }
             }
 
-            targetCtx.addEffectiveSubstatement(stmtCtxToBeAdded.createCopy(targetCtx, CopyType.ORIGINAL));
+            copyStatement(stmtCtxToBeAdded, targetCtx);
         }
 
         private static void performDeviateReplace(final StatementContextBase<?, ?, ?> deviateStmtCtx,
@@ -260,7 +260,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             for (final StmtContext<?, ?, ?> targetCtxSubstatement : targetCtx.effectiveSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtx.removeStatementFromEffectiveSubstatements(stmtToBeReplaced);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    copyStatement(stmtCtxToBeReplaced, targetCtx);
                     return;
                 }
             }
@@ -268,7 +268,7 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             for (final Mutable<?, ?, ?> targetCtxSubstatement : targetCtx.mutableDeclaredSubstatements()) {
                 if (stmtToBeReplaced.equals(targetCtxSubstatement.getPublicDefinition())) {
                     targetCtxSubstatement.setIsSupportedToBuildEffective(false);
-                    targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
+                    copyStatement(stmtCtxToBeReplaced, targetCtx);
                     return;
                 }
             }
@@ -318,6 +318,17 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
             LOG.error("Deviation cannot delete substatement {} with argument '{}' in target node {} because it does " +
                     "not exist in the target node. At line: {}", stmtToBeDeleted.getStatementName(), stmtArgument,
                     targetCtx.getStatementArgument(), stmtCtxToBeDeleted.getStatementSourceReference());
+        }
+
+        private static void copyStatement(final Mutable<?, ?, ?> stmtCtxToBeCopied,
+                final StatementContextBase<?, ?, ?> targetCtx) {
+            // we need to make a copy of the statement context only if it is an unknown statement, otherwise
+            // we can reuse the original statement context
+            if (!StmtContextUtils.isUnknownStatement(stmtCtxToBeCopied)) {
+                targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied);
+            } else {
+                targetCtx.addEffectiveSubstatement(stmtCtxToBeCopied.createCopy(targetCtx, CopyType.ORIGINAL));
+            }
         }
 
         private static boolean statementsAreEqual(final StatementDefinition firstStmtDef, final String firstStmtArg,
