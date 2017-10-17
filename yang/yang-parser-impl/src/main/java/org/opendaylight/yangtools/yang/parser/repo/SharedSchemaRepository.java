@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -29,13 +30,24 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
  */
 @Beta
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
-    private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cache =
-            CacheBuilder.newBuilder().softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
+    @Deprecated
+    private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cacheByFilter = CacheBuilder.newBuilder()
+            .softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
                 @Override
                 public SchemaContextFactory load(@Nonnull final SchemaSourceFilter key) {
                     return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
                 }
             });
+
+    private final LoadingCache<SchemaContextFactoryConfiguration, SchemaContextFactory> cacheByConfig = CacheBuilder
+            .newBuilder().softValues()
+            .build(new CacheLoader<SchemaContextFactoryConfiguration, SchemaContextFactory>() {
+                @Override
+                public SchemaContextFactory load(@Nonnull final SchemaContextFactoryConfiguration key) {
+                    return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
+                }
+            });
+
     private final String id;
 
     public SharedSchemaRepository(final String id) {
@@ -48,8 +60,14 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     }
 
     @Override
+    @Deprecated
     public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
-        return cache.getUnchecked(filter);
+        return cacheByFilter.getUnchecked(filter);
+    }
+
+    @Override
+    public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaContextFactoryConfiguration config) {
+        return cacheByConfig.getUnchecked(config);
     }
 
     @Override
