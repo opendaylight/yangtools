@@ -1,0 +1,32 @@
+module root-module {
+    namespace rm-ns;
+    prefix rm;
+
+    import imp-module {
+        prefix im;
+    }
+
+    import imp-module-2 {
+        prefix im2;
+    }
+
+    revision 2017-10-13;
+
+    deviation "/im:my-leaf" {
+        deviate replace {
+            type im2:new-type;
+        }
+    }
+
+    deviation "/im:my-leaf-2" {
+        deviate replace {
+            type new-type;
+        }
+    }
+
+    typedef new-type {
+        type int32 {
+            range 10..15;
+        }
+    }
+}
