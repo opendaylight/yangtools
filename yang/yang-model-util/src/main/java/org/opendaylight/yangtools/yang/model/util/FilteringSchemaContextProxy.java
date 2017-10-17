@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Lists;
@@ -42,7 +43,6 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final Set<Module> filteredModules;
 
     //collections to be filled in with filtered data
-    private final Map<ModuleIdentifier, String> identifiersToSources;
     private final SetMultimap<URI, Module> namespaceToModules;
     private final SetMultimap<String, Module> nameToModules;
 
@@ -92,12 +92,10 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         for (final Module module :filteredModules) {
             nameMap.put(module.getName(), module);
             nsMap.put(module.getNamespace(), module);
-            identifiersToSourcesBuilder.put(module, module.getSource());
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
-        identifiersToSources = identifiersToSourcesBuilder.build();
     }
 
     private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
@@ -148,11 +146,6 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         }
 
         return relatedModules;
-    }
-
-    @Override
-    protected Map<ModuleIdentifier, String> getIdentifiersToSources() {
-        return identifiersToSources;
     }
 
     @Override
@@ -264,5 +257,10 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
             return String.format("ModuleId{name='%s', rev=%s}",name,rev);
         }
+    }
+
+    @Override
+    public Set<ModuleIdentifier> getAllModuleIdentifiers() {
+        return ImmutableSet.copyOf(filteredModules);
     }
 }

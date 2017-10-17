@@ -279,11 +279,6 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public String getSource() {
-        return null;
-    }
-
-    @Override
     public URI getNamespace() {
         return getQNameModule().getNamespace();
     }

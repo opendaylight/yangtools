@@ -18,11 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 abstract class AbstractSchemaContext extends CommonContainerSchemaNode implements SchemaContext {
 
     @Override
-    public final Optional<String> getModuleSource(final ModuleIdentifier moduleIdentifier) {
-        throw new UnsupportedOperationException("Not implemented");
-    }
-
-    @Override
     public Module findModuleByName(final String name, final Date revision) {
         throw new UnsupportedOperationException("Not implemented");
     }
