@@ -32,8 +32,11 @@ import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -54,23 +57,38 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             .weakValues().build();
     private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
-    private final SharedSchemaRepository repository;
-    // FIXME: ignored right now
-    private final SchemaSourceFilter filter;
+    private final SchemaRepository repository;
+    private final SchemaContextFactoryConfiguration config;
 
     // FIXME SchemaRepository should be the type for repository parameter instead of SharedSchemaRepository
     //       (final implementation)
+    @Deprecated
     SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
         this.repository = Preconditions.checkNotNull(repository);
-        this.filter = Preconditions.checkNotNull(filter);
+        this.config = SchemaContextFactoryConfiguration.newBuilder().setFilter(filter).build();
+    }
+
+    SharedSchemaContextFactory(final SchemaRepository repository, final SchemaContextFactoryConfiguration config) {
+        this.repository = Preconditions.checkNotNull(repository);
+        this.config = Preconditions.checkNotNull(config);
     }
 
     @Override
+    @Deprecated
     public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.revisionCache,
-                new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
+                statementParserMode == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
+                new AssembleSources(SchemaContextFactoryConfiguration.newBuilder()
+                        .setFilter(config.getSchemaSourceFilter()).setStatementParserMode(statementParserMode)
+                        .setSupportedFeatures(supportedFeatures).build()));
+    }
+
+    @Override
+    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
+        return createSchemaContext(requiredSources,
+                config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
+                new AssembleSources(config));
     }
 
     private ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
@@ -172,15 +190,12 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
 
-        private final Optional<Set<QName>> supportedFeatures;
-        private final StatementParserMode statementParserMode;
+        private final SchemaContextFactoryConfiguration config;
         private final Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private AssembleSources(final Optional<Set<QName>> supportedFeatures,
-                final StatementParserMode statementParserMode) {
-            this.supportedFeatures = supportedFeatures;
-            this.statementParserMode = Preconditions.checkNotNull(statementParserMode);
-            switch (statementParserMode) {
+        private AssembleSources(@Nonnull final SchemaContextFactoryConfiguration config) {
+            this.config = config;
+            switch (config.getStatementParserMode()) {
                 case SEMVER_MODE:
                     this.getIdentifier = ASTSchemaSource::getSemVerIdentifier;
                     break;
@@ -198,7 +213,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
             LOG.debug("Resolving dependency reactor {}", deps);
 
-            final DependencyResolver res = this.statementParserMode == StatementParserMode.SEMVER_MODE
+            final StatementParserMode statementParserMode = config.getStatementParserMode();
+            final DependencyResolver res = statementParserMode == StatementParserMode.SEMVER_MODE
                     ? SemVerDependencyResolver.create(deps) : RevisionDependencyResolver.create(deps);
             if (!res.getUnresolvedSources().isEmpty()) {
                 LOG.debug("Omitting models {} due to unsatisfied imports {}", res.getUnresolvedSources(),
@@ -208,8 +224,14 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             }
 
             final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode);
+            final Optional<Set<QName>> supportedFeatures = config.getSupportedFeatures();
             if (supportedFeatures.isPresent()) {
                 reactor.setSupportedFeatures(supportedFeatures.get());
+            }
+            final Optional<Map<QNameModule, Set<QNameModule>>> modulesDeviatedByModules = config
+                    .getModulesDeviatedByModules();
+            if (modulesDeviatedByModules.isPresent()) {
+                reactor.setModulesWithSupportedDeviations(modulesDeviatedByModules.get());
             }
 
             for (final Entry<SourceIdentifier, ASTSchemaSource> e : srcs.entrySet()) {

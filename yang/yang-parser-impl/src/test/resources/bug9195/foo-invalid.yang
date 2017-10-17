@@ -1,0 +1,12 @@
+module foo {
+    namespace foo-ns;
+    prefix foo;
+
+    revision 2017-05-16;
+
+    deviation "/my-foo-cont" {
+        deviate not-supported;
+    }
+
+    container my-foo-cont {}
+}
