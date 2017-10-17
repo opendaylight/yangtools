@@ -20,6 +20,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -139,20 +140,31 @@ public class SchemaSourceTransformerTest {
     }
 
     private class Provider extends AbstractSchemaRepository {
-
+        @Deprecated
         @Override
         public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
+            return null;
+        }
+
+        @Override
+        public SchemaContextFactory createSchemaContextFactory(
+                @Nonnull final SchemaContextFactoryConfiguration config) {
             return null;
         }
 
     }
 
     private class Consumer extends AbstractSchemaRepository {
-
+        @Deprecated
         @Override
         public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
             return null;
         }
 
+        @Override
+        public SchemaContextFactory createSchemaContextFactory(
+                @Nonnull final SchemaContextFactoryConfiguration config) {
+            return null;
+        }
     }
 }

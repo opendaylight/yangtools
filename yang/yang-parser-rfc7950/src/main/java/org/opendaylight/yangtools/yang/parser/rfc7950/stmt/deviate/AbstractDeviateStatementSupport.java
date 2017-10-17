@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.SetMultimap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
@@ -204,7 +205,7 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
     private static boolean isDeviationSupported(final Mutable<DeviateKind, DeviateStatement,
             EffectiveStatement<DeviateKind, DeviateStatement>> deviateStmtCtx,
             final SchemaNodeIdentifier deviationTarget) {
-        final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
+        final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules = deviateStmtCtx.getFromNamespace(
                 ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES);
         if (modulesDeviatedByModules == null) {
             return true;

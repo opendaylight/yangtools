@@ -9,8 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
-import java.util.Map;
-import java.util.Set;
+import com.google.common.collect.SetMultimap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -22,8 +21,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
  */
 @Beta
 public interface ModulesDeviatedByModules
-        extends IdentifierNamespace<ModulesDeviatedByModules.SupportedModules, Map<QNameModule, Set<QNameModule>>> {
-    NamespaceBehaviour<SupportedModules, Map<QNameModule, Set<QNameModule>>, @NonNull ModulesDeviatedByModules>
+        extends IdentifierNamespace<ModulesDeviatedByModules.SupportedModules, SetMultimap<QNameModule, QNameModule>> {
+    NamespaceBehaviour<SupportedModules, SetMultimap<QNameModule, QNameModule>, @NonNull ModulesDeviatedByModules>
         BEHAVIOUR = NamespaceBehaviour.global(ModulesDeviatedByModules.class);
 
     enum SupportedModules {

@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -78,7 +78,7 @@ final class YangParserImpl implements YangParser {
 
     @Override
     public YangParser setModulesWithSupportedDeviations(
-            final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
+            final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         buildAction.setModulesWithSupportedDeviations(modulesDeviatedByModules);
         return this;
     }

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.model.parser.api;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -131,7 +131,7 @@ public interface YangParser {
      *            SchemaContext. If the map is empty, no deviations encountered will be supported.
      */
     YangParser setModulesWithSupportedDeviations(
-            @Nonnull Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules);
+            @Nonnull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
 
     /**
      * Build the declared view of a combined view of declared statements.

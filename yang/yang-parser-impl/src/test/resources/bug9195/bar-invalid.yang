@@ -1,0 +1,19 @@
+module bar {
+    namespace bar-ns;
+    prefix bar;
+
+    import baz {
+        prefix baz;
+        revision-date 2017-05-16;
+    }
+
+    revision 2017-05-16;
+
+    deviation "/baz:my-baz-cont/bar:my-aug-cont" {
+        deviate not-supported;
+    }
+
+    augment "/baz:my-baz-cont" {
+        container my-aug-cont {}
+    }
+}

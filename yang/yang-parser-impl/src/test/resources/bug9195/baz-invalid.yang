@@ -1,0 +1,8 @@
+module baz {
+    namespace baz-ns;
+    prefix baz;
+
+    revision 2017-05-16;
+
+    container my-baz-cont {}
+}

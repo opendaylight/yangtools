@@ -13,8 +13,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSetMultimap;
+import com.google.common.collect.SetMultimap;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayList;
@@ -134,9 +135,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
                     ImmutableSet.copyOf(supportedFeatures));
     }
 
-    void setModulesDeviatedByModules(final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
+    void setModulesDeviatedByModules(final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         addToNs(ModulesDeviatedByModules.class, SupportedModules.SUPPORTED_MODULES,
-                    ImmutableMap.copyOf(modulesDeviatedByModules));
+                    ImmutableSetMultimap.copyOf(modulesDeviatedByModules));
     }
 
     @Override

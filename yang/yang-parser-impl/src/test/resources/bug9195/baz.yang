@@ -1,0 +1,26 @@
+module baz {
+    namespace baz-ns;
+    prefix baz-prefix;
+
+    import foo {
+        prefix foo;
+        revision-date 2017-05-16;
+    }
+
+    import bar {
+        prefix bar;
+        revision-date 2017-05-16;
+    }
+
+    revision 2017-05-16;
+
+    deviation "/foo:my-foo-cont-b" {
+        deviate not-supported;
+    }
+
+    deviation "/bar:my-bar-cont-a" {
+        deviate not-supported;
+    }
+
+    container my-baz-cont {}
+}

@@ -1,0 +1,19 @@
+module bar {
+    namespace bar-ns;
+    prefix bar-prefix;
+
+    import foo {
+        prefix foo;
+        revision-date 2017-05-16;
+    }
+
+    revision 2017-05-16;
+
+    deviation "/foo:my-foo-cont-a" {
+        deviate not-supported;
+    }
+
+    container my-bar-cont-a {}
+
+    container my-bar-cont-b {}
+}
