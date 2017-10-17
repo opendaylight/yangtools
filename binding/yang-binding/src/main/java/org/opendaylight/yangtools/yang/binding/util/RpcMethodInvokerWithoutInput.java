@@ -20,17 +20,18 @@ class RpcMethodInvokerWithoutInput extends RpcMethodInvoker {
     private static final MethodType INVOCATION_SIGNATURE = MethodType.methodType(Future.class, RpcService.class);
     private final MethodHandle handle;
 
-    RpcMethodInvokerWithoutInput(MethodHandle methodHandle) {
+    RpcMethodInvokerWithoutInput(final MethodHandle methodHandle) {
         this.handle = methodHandle.asType(INVOCATION_SIGNATURE);
     }
 
     @Override
-    public Future<RpcResult<?>> invokeOn(RpcService impl, DataObject input) {
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public Future<RpcResult<?>> invokeOn(final RpcService impl, final DataObject input) {
         try {
             return (Future<RpcResult<?>>) handle.invokeExact(impl);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
-
 }

@@ -14,7 +14,7 @@ import java.io.IOException;
  */
 public interface DataObjectSerializer {
     /**
-     * Writes stream events representing object to supplied stream
+     * Writes stream events representing object to supplied stream.
      *
      * @param obj
      *            Source of stream events

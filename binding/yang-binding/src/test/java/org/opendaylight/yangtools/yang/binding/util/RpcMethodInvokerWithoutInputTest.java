@@ -24,25 +24,27 @@ public class RpcMethodInvokerWithoutInputTest {
     public void invokeOnTest() throws Exception {
         final MethodHandle methodHandle = MethodHandles.lookup().unreflect(
                 TestImplClassWithoutInput.class.getDeclaredMethod("testMethod", RpcService.class));
-        final RpcMethodInvokerWithoutInput rpcMethodInvokerWithoutInput = new RpcMethodInvokerWithoutInput(methodHandle);
-        assertNotNull(rpcMethodInvokerWithoutInput.invokeOn(TEST_IMPL_CLASS, null));
+        final RpcMethodInvokerWithoutInput invokerWithoutInput = new RpcMethodInvokerWithoutInput(methodHandle);
+        assertNotNull(invokerWithoutInput.invokeOn(TEST_IMPL_CLASS, null));
     }
 
     @Test(expected = InternalError.class)
     public void invokeOnWithException() throws Exception {
         final MethodHandle methodHandle = MethodHandles.lookup().unreflect(
                 TestImplClassWithoutInput.class.getDeclaredMethod("testMethodWithException", RpcService.class));
-        final RpcMethodInvokerWithoutInput rpcMethodInvokerWithoutInput = new RpcMethodInvokerWithoutInput(methodHandle);
-        rpcMethodInvokerWithoutInput.invokeOn(TEST_IMPL_CLASS, null);
+        final RpcMethodInvokerWithoutInput invokerWithoutInput = new RpcMethodInvokerWithoutInput(methodHandle);
+        invokerWithoutInput.invokeOn(TEST_IMPL_CLASS, null);
     }
 
     private static final class TestImplClassWithoutInput implements RpcService {
 
-        static Future testMethod(RpcService testArgument) {
+        @SuppressWarnings("unused")
+        static Future<?> testMethod(final RpcService testArgument) {
             return Futures.immediateFuture(null);
         }
 
-        static Future testMethodWithException(RpcService testArgument) throws Exception {
+        @SuppressWarnings("unused")
+        static Future<?> testMethodWithException(final RpcService testArgument) throws Exception {
             throw new InternalError();
         }
     }

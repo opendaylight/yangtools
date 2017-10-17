@@ -8,16 +8,11 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Augmentation (extension) of other interface.
- * 
- * This interface uniquely bounds Augmentation to generated 
- * interface.
- * 
- * All interfaces generated from YANG Augmentation statement
- * must implement this interface with parameter <code>P</code>
+ * Augmentation (extension) of other interface. This interface uniquely bounds Augmentation to generated  interface.
+ *
+ * <p>
+ * All interfaces generated from YANG Augmentation statement must implement this interface with parameter <code>P</code>
  * which uniquely points to it's target class.
- * 
- * 
  *
  * @param <T> Class to which this implementation is extension.
  */

@@ -31,7 +31,7 @@ public class AugmentationFieldGetterTest {
         assertTrue(getGetter(TestAugmentationWrongTypeClass.class).getAugmentations(null).isEmpty());
 
         final AugmentationFieldGetter augmentationFieldGetter = getGetter(TestAugmentationClass.class);
-        final Augmentation augmentation = mock(Augmentation.class);
+        final Augmentation<?> augmentation = mock(Augmentation.class);
         final TestAugmentationClass testAugmentationClass = new TestAugmentationClass();
 
         testAugmentationClass.addAugmentation(augmentation, augmentation);
@@ -52,9 +52,9 @@ public class AugmentationFieldGetterTest {
     }
 
     private final class TestAugmentationClass {
-        private Map augmentation = new HashMap();
+        private final Map<Augmentation<?>, Augmentation<?>> augmentation = new HashMap<>();
 
-        void addAugmentation(Augmentation key, Augmentation value){
+        void addAugmentation(final Augmentation<?> key, final Augmentation<?> value) {
             augmentation.put(key, value);
         }
     }

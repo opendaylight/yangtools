@@ -24,18 +24,18 @@ import org.slf4j.LoggerFactory;
 /**
  * Provides single method invocation of RPCs on supplied instance.
  *
- * Rpc Service invoker provides common invocation interface for any subtype of {@link RpcService}.
+ * <p>
+ * RPC Service invoker provides common invocation interface for any subtype of {@link RpcService}.
  * via {@link #invokeRpc(RpcService, QName, DataObject)} method.
  */
 public abstract class RpcServiceInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(RpcServiceInvoker.class);
 
     /**
-     * Creates RPCServiceInvoker for specified RpcService type
+     * Creates RPCServiceInvoker for specified RpcService type.
      *
      * @param type RpcService interface, which was generated from model.
      * @return Cached instance of {@link RpcServiceInvoker} for supplied RPC type.
-     *
      */
     public static RpcServiceInvoker from(final Class<? extends RpcService> type) {
         return ClassBasedRpcServiceInvoker.instanceFor(type);
@@ -54,7 +54,8 @@ public abstract class RpcServiceInvoker {
         for (QName qname : qnameToMethod.keySet()) {
             if (module != null) {
                 if (!module.equals(qname.getModule())) {
-                    LOG.debug("QNames from different modules {} and {}, falling back to QName map", module, qname.getModule());
+                    LOG.debug("QNames from different modules {} and {}, falling back to QName map", module,
+                        qname.getModule());
                     return QNameRpcServiceInvoker.instanceFor(qnameToMethod);
                 }
             } else {
@@ -74,5 +75,6 @@ public abstract class RpcServiceInvoker {
      * @param input Input data for RPC.
      * @return Future which will complete once rpc procesing is finished.
      */
-    public abstract Future<RpcResult<?>> invokeRpc(@Nonnull final RpcService impl, @Nonnull final QName rpcName, @Nullable final DataObject input);
+    public abstract Future<RpcResult<?>> invokeRpc(@Nonnull RpcService impl, @Nonnull QName rpcName,
+            @Nullable DataObject input);
 }

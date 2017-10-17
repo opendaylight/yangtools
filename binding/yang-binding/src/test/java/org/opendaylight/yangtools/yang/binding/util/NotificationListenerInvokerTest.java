@@ -12,6 +12,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.WrongMethodTypeException;
 import org.junit.Test;
@@ -28,11 +29,12 @@ public class NotificationListenerInvokerTest {
     }
 
     @Test(expected = IllegalStateException.class)
+    @SuppressWarnings("checkstyle:illegalThrows")
     public void fromWithExceptionTest() throws Throwable {
         try {
             NotificationListenerInvoker.from(TestPrivateInterface.class);
             fail("Expected IllegalAccessException");
-        } catch (Exception e) {
+        } catch (UncheckedExecutionException e) {
             throw e.getCause();
         }
     }

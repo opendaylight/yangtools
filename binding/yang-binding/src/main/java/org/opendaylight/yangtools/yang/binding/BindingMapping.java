@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
@@ -88,19 +89,22 @@ public final class BindingMapping {
         final char[] chars = namespace.toCharArray();
         for (int i = 0; i < chars.length; ++i) {
             switch (chars[i]) {
-            case '/':
-            case ':':
-            case '-':
-            case '@':
-            case '$':
-            case '#':
-            case '\'':
-            case '*':
-            case '+':
-            case ',':
-            case ';':
-            case '=':
-                chars[i] = '.';
+                case '/':
+                case ':':
+                case '-':
+                case '@':
+                case '$':
+                case '#':
+                case '\'':
+                case '*':
+                case '+':
+                case ',':
+                case ';':
+                case '=':
+                    chars[i] = '.';
+                    break;
+                default:
+                    // no-op
             }
         }
 
@@ -138,14 +142,14 @@ public final class BindingMapping {
         return PACKAGE_INTERNER.intern(builder.toString());
     }
 
-    public static String getMethodName(final QName name) {
-        checkArgument(name != null, "Name should not be null.");
-        return getMethodName(name.getLocalName());
-    }
-
     public static String getClassName(final String localName) {
         checkArgument(localName != null, "Name should not be null.");
         return toFirstUpper(toCamelCase(localName));
+    }
+
+    public static String getClassName(final QName name) {
+        checkArgument(name != null, "Name should not be null.");
+        return toFirstUpper(toCamelCase(name.getLocalName()));
     }
 
     public static String getMethodName(final String yangIdentifier) {
@@ -153,9 +157,9 @@ public final class BindingMapping {
         return toFirstLower(toCamelCase(yangIdentifier));
     }
 
-    public static String getClassName(final QName name) {
+    public static String getMethodName(final QName name) {
         checkArgument(name != null, "Name should not be null.");
-        return toFirstUpper(toCamelCase(name.getLocalName()));
+        return getMethodName(name.getLocalName());
     }
 
     public static String getGetterSuffix(final QName name) {
@@ -195,52 +199,44 @@ public final class BindingMapping {
     }
 
     /**
-     * Returns the {@link String} {@code s} with an
-     * {@link Character#isUpperCase(char) upper case} first character. This
+     * Returns the {@link String} {@code s} with an {@link Character#isUpperCase(char) upper case} first character. This
      * function is null-safe.
      *
-     * @param s
-     *            the string that should get an upper case first character. May
-     *            be <code>null</code>.
-     * @return the {@link String} {@code s} with an upper case first character
-     *         or <code>null</code> if the input {@link String} {@code s} was
-     *         <code>null</code>.
+     * @param str the string that should get an upper case first character. May be <code>null</code>.
+     * @return the {@link String} {@code str} with an upper case first character or <code>null</code> if the input
+     *         {@link String} {@code str} was <code>null</code>.
      */
-    public static String toFirstUpper(final String s) {
-        if (s == null || s.length() == 0) {
-            return s;
+    public static String toFirstUpper(final String str) {
+        if (str == null || str.length() == 0) {
+            return str;
         }
-        if (Character.isUpperCase(s.charAt(0))) {
-            return s;
+        if (Character.isUpperCase(str.charAt(0))) {
+            return str;
         }
-        if (s.length() == 1) {
-            return s.toUpperCase();
+        if (str.length() == 1) {
+            return str.toUpperCase();
         }
-        return s.substring(0, 1).toUpperCase() + s.substring(1);
+        return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
     /**
-     * Returns the {@link String} {@code s} with an
-     * {@link Character#isLowerCase(char) lower case} first character. This
+     * Returns the {@link String} {@code s} with a {@link Character#isLowerCase(char) lower case} first character. This
      * function is null-safe.
      *
-     * @param s
-     *            the string that should get an lower case first character. May
-     *            be <code>null</code>.
-     * @return the {@link String} {@code s} with an lower case first character
-     *         or <code>null</code> if the input {@link String} {@code s} was
-     *         <code>null</code>.
+     * @param str the string that should get an lower case first character. May be <code>null</code>.
+     * @return the {@link String} {@code str} with an lower case first character or <code>null</code> if the input
+     *         {@link String} {@code str} was <code>null</code>.
      */
-    private static String toFirstLower(final String s) {
-        if (s == null || s.length() == 0) {
-            return s;
+    private static String toFirstLower(final String str) {
+        if (str == null || str.length() == 0) {
+            return str;
         }
-        if (Character.isLowerCase(s.charAt(0))) {
-            return s;
+        if (Character.isLowerCase(str.charAt(0))) {
+            return str;
         }
-        if (s.length() == 1) {
-            return s.toLowerCase();
+        if (str.length() == 1) {
+            return str.toLowerCase();
         }
-        return s.substring(0, 1).toLowerCase() + s.substring(1);
+        return str.substring(0, 1).toLowerCase() + str.substring(1);
     }
 }

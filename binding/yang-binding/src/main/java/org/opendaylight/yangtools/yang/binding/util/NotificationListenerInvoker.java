@@ -29,16 +29,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Provides single method invocation of notificatoin callbacks on supplied instance.
  *
+ * <p>
  * Notification Listener invoker provides common invocation interface for any subtype of {@link NotificationListener}.
  * via {@link #invokeNotification(NotificationListener, QName, DataContainer)} method.
- *
  */
 public final class NotificationListenerInvoker {
 
     private static final Lookup LOOKUP = MethodHandles.publicLookup();
 
-    private static final LoadingCache<Class<? extends NotificationListener>, NotificationListenerInvoker> INVOKERS = CacheBuilder
-            .newBuilder().weakKeys()
+    private static final LoadingCache<Class<? extends NotificationListener>, NotificationListenerInvoker> INVOKERS =
+            CacheBuilder .newBuilder().weakKeys()
             .build(new CacheLoader<Class<? extends NotificationListener>, NotificationListenerInvoker>() {
 
                 private NotificationListenerInvoker createInvoker(
@@ -47,7 +47,7 @@ public final class NotificationListenerInvoker {
                 }
 
                 private Map<QName, MethodHandle> createInvokerMap(final Class<? extends NotificationListener> key) {
-                    final Builder<QName, MethodHandle> ret = ImmutableMap.<QName, MethodHandle> builder();
+                    final Builder<QName, MethodHandle> ret = ImmutableMap.builder();
                     for (final Method method : key.getMethods()) {
                         if (BindingReflections.isNotificationCallback(method)) {
 
@@ -56,7 +56,7 @@ public final class NotificationListenerInvoker {
                             MethodHandle handle;
                             try {
                                 handle = LOOKUP.unreflect(method).asType(MethodType.methodType(void.class,
-                                        NotificationListener.class, DataContainer.class));
+                                    NotificationListener.class, DataContainer.class));
                                 ret.put(name, handle);
                             } catch (final IllegalAccessException e) {
                                 throw new IllegalStateException("Can not access public method.", e);
@@ -68,7 +68,7 @@ public final class NotificationListenerInvoker {
                 }
 
                 @Override
-                public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) throws Exception {
+                public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) {
                     return createInvoker(key);
                 }
 
@@ -81,14 +81,12 @@ public final class NotificationListenerInvoker {
     }
 
     /**
-     *
-     * Creates RPCServiceInvoker for specified RpcService type
+     * Creates RPCServiceInvoker for specified RpcService type.
      *
      * @param type
      *            RpcService interface, which was generated from model.
      * @return Cached instance of {@link NotificationListenerInvoker} for
      *         supplied RPC type.
-     *
      */
     public static NotificationListenerInvoker from(final Class<? extends NotificationListener> type) {
         Preconditions.checkArgument(type.isInterface());
@@ -106,8 +104,8 @@ public final class NotificationListenerInvoker {
      *            Name of RPC to be invoked.
      * @param input
      *            Input data for RPC.
-     *
      */
+    @SuppressWarnings("checkstyle:illegalCatch")
     public void invokeNotification(@Nonnull final NotificationListener impl, @Nonnull final QName rpcName,
             @Nullable final DataContainer input) {
         Preconditions.checkNotNull(impl, "implemetation must be supplied");
@@ -116,8 +114,8 @@ public final class NotificationListenerInvoker {
         try {
             invoker.invokeExact(impl, input);
         } catch (final Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
-
 }

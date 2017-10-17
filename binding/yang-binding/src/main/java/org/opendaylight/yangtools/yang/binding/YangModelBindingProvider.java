@@ -10,22 +10,14 @@ package org.opendaylight.yangtools.yang.binding;
 import java.util.ServiceLoader;
 
 /**
- *
- * Provider of YangModuleInfo for specified package / model.
- *
- * Implementation of this interface should be discoverable
- * via {@link ServiceLoader}
- *
- *
- *
+ * Provider of YangModuleInfo for specified package / model. Implementations of this interface should be discoverable
+ * via {@link ServiceLoader}.
  */
 public interface YangModelBindingProvider {
-
     /**
-     * YangModuleInfo associated to package
+     * Returns YangModuleInfo associated with a package.
      *
-     * @return
+     * @return YangModuleInfo associated with a package.
      */
     YangModuleInfo getModuleInfo();
-
 }

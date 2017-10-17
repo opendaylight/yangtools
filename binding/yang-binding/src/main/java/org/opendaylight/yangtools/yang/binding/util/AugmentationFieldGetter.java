@@ -36,7 +36,6 @@ abstract class AugmentationFieldGetter {
     };
 
     private static final AugmentationFieldGetter AUGMENTATION_HOLDER_GETTER = new AugmentationFieldGetter() {
-
         @Override
         @SuppressWarnings({"unchecked", "rawtypes"})
         protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
@@ -44,20 +43,19 @@ abstract class AugmentationFieldGetter {
         }
     };
 
-    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS = CacheBuilder.newBuilder().weakKeys().build(
-            new AugmentationGetterLoader());
+    private static final LoadingCache<Class<?>, AugmentationFieldGetter> AUGMENTATION_GETTERS =
+            CacheBuilder.newBuilder().weakKeys().build(new AugmentationGetterLoader());
 
     /**
-     *
-     * Retrieves augmentations from supplied object
+     * Retrieves augmentations from supplied object.
      *
      * @param input Input Data object, from which augmentations should be extracted
      * @return Map of Augmentation class to augmentation
      */
-    protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input);
+    protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(Object input);
 
     public static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
-        if(AugmentationHolder.class.isAssignableFrom(clz)) {
+        if (AugmentationHolder.class.isAssignableFrom(clz)) {
             return AUGMENTATION_HOLDER_GETTER;
         }
         return AUGMENTATION_GETTERS.getUnchecked(clz);
@@ -96,6 +94,7 @@ abstract class AugmentationFieldGetter {
         }
 
         @Override
+        @SuppressWarnings("checkstyle:illegalCatch")
         protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
             try {
                 return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) fieldGetter.invokeExact(input);

@@ -13,10 +13,11 @@ import com.google.common.collect.Iterables;
 import java.util.Objects;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
-final class InstanceIdentifierBuilderImpl<T extends DataObject> implements InstanceIdentifier.InstanceIdentifierBuilder<T> {
+final class InstanceIdentifierBuilderImpl<T extends DataObject> implements InstanceIdentifierBuilder<T> {
     private final ImmutableList.Builder<PathArgument> pathBuilder = ImmutableList.builder();
     private final HashCodeBuilder<PathArgument> hashBuilder;
     private final Iterable<? extends PathArgument> basePath;
@@ -28,7 +29,8 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         this.basePath = null;
     }
 
-    InstanceIdentifierBuilderImpl(final PathArgument item, final Iterable<? extends PathArgument> pathArguments, final int hash, final boolean wildcard) {
+    InstanceIdentifierBuilderImpl(final PathArgument item, final Iterable<? extends PathArgument> pathArguments,
+            final int hash, final boolean wildcard) {
         this.hashBuilder = new HashCodeBuilder<>(hash);
         this.basePath = pathArguments;
         this.wildcard = wildcard;
@@ -41,23 +43,22 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
         if (obj instanceof InstanceIdentifierBuilderImpl) {
             InstanceIdentifierBuilderImpl<T> otherBuilder = (InstanceIdentifierBuilderImpl<T>) obj;
-            return wildcard == otherBuilder.wildcard &&
-                    Objects.equals(basePath, otherBuilder.basePath) &&
-                    Objects.equals(arg, otherBuilder.arg) &&
-                    Objects.equals(hashBuilder.build(), otherBuilder.hashBuilder.build());
+            return wildcard == otherBuilder.wildcard && Objects.equals(basePath, otherBuilder.basePath)
+                    && Objects.equals(arg, otherBuilder.arg)
+                    && Objects.equals(hashBuilder.build(), otherBuilder.hashBuilder.build());
         }
         return false;
     }
 
     @SuppressWarnings("unchecked")
     <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
-        arg = new Item<N>(container);
+        arg = new Item<>(container);
         hashBuilder.addArgument(arg);
         pathBuilder.add(arg);
 
@@ -69,8 +70,9 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @SuppressWarnings("unchecked")
-    <N extends DataObject & Identifiable<K>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> listItem, final K listKey) {
-        arg = new IdentifiableItem<N, K>(listItem, listKey);
+    <N extends DataObject & Identifiable<K>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(
+            final Class<N> listItem, final K listKey) {
+        arg = new IdentifiableItem<>(listItem, listKey);
         hashBuilder.addArgument(arg);
         pathBuilder.add(arg);
         return (InstanceIdentifierBuilderImpl<N>) this;
@@ -82,20 +84,22 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @Override
-    public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> child(final Class<N> listItem, final K listKey) {
+    public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N>
+            child(final Class<N> listItem, final K listKey) {
         return addNode(listItem, listKey);
     }
 
     /**
      * Build an identifier which refers to a specific augmentation of the current InstanceIdentifier referenced by
-     * the builder
+     * the builder.
      *
-     * @param container
-     * @param <N>
-     * @return
+     * @param container Augmentation to be added
+     * @param <N> Augmentation type
+     * @return This builder
      */
     @Override
-    public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilderImpl<N> augmentation(final Class<N> container) {
+    public <N extends DataObject & Augmentation<? super T>> InstanceIdentifierBuilderImpl<N> augmentation(
+            final Class<N> container) {
         return addNode(container);
     }
 
@@ -111,11 +115,14 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         }
 
         @SuppressWarnings("unchecked")
-        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
+        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments,
+            hashBuilder.build(), wildcard);
         return ret;
     }
 
-    /*
+    /**
+     * Build the resulting InstanceIdentifier.
+     *
      * @deprecated Use #build() instead.
      */
     @Override

@@ -8,13 +8,11 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Data Container - object contains structured data
- * 
- * Marker interface which must be implmeneted by all interfaces
+ * Data Container - object contains structured data. Marker interface which must be implmeneted by all interfaces
  * generated for YANG:
  * <ul>
  * <li>Rpc Input
- * <li>Output 
+ * <li>Output
  * <li>Notification
  * <li>Container
  * <li>List

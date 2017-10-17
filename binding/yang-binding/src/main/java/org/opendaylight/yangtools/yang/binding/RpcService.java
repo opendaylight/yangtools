@@ -8,8 +8,7 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Marker interface for tagging generated YANG Modules
- *
+ * Marker interface for tagging generated YANG Modules.
  */
 public interface RpcService {
 

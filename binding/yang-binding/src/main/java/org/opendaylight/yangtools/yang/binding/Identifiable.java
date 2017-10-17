@@ -9,17 +9,16 @@ package org.opendaylight.yangtools.yang.binding;
 
 
 /**
- * Identifiable object, which could be identified by it's key
- * 
- * @author ttkacik
+ * Identifiable object, which could be identified by it's key.
  *
  * @param <T> Identifier class for this object
+ *
+ * @author ttkacik
  */
 public interface Identifiable<T extends Identifier<? extends Identifiable<T>>> {
-    
     /**
-     * Returns an unique key for the object
-     * 
+     * Returns an unique key for the object.
+     *
      * @return Key for the object
      */
     T getKey();

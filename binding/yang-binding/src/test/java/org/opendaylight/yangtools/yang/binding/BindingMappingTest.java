@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Date;
 import org.junit.Test;
@@ -43,16 +44,16 @@ public class BindingMappingTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    @SuppressWarnings("checkstyle:illegalThrows")
     public void privateConstructTest() throws Throwable {
-        final Constructor<BindingMapping> bindingMappingConstructor =
-                BindingMapping.class.getDeclaredConstructor();
+        final Constructor<BindingMapping> bindingMappingConstructor = BindingMapping.class.getDeclaredConstructor();
         assertFalse(bindingMappingConstructor.isAccessible());
 
         bindingMappingConstructor.setAccessible(true);
         try {
             bindingMappingConstructor.newInstance();
             fail("Expected exception for calling private constructor");
-        } catch (Exception e) {
+        } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }

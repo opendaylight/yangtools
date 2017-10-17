@@ -18,6 +18,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.UnmodifiableIterator;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Before;
@@ -49,7 +50,7 @@ public class DataObjectReadingUtilTest {
 
         final ImmutableSet<Entry<InstanceIdentifier<? extends DataObject>, DataObject>> entries = map.entrySet();
         final UnmodifiableIterator<Entry<InstanceIdentifier<? extends DataObject>, DataObject>> it = entries.iterator();
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             entry = it.next();
         }
     }
@@ -101,13 +102,14 @@ public class DataObjectReadingUtilTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    @SuppressWarnings("checkstyle:illegalThrows")
     public void testPrivateConstructor() throws Throwable {
         assertFalse(DataObjectReadingUtil.class.getDeclaredConstructor().isAccessible());
-        final Constructor constructor = DataObjectReadingUtil.class.getDeclaredConstructor();
+        final Constructor<?> constructor = DataObjectReadingUtil.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();
-        } catch (Exception e) {
+        } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }

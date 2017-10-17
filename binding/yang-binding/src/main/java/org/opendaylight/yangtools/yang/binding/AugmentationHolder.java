@@ -10,19 +10,15 @@ package org.opendaylight.yangtools.yang.binding;
 import java.util.Map;
 
 /**
+ * Augmentable (extensible) object which could carry additional data defined by third-party extension, without
+ * introducing conflict between various extension.
  *
- * Augmentable (extensible) object which could carry additional data defined by
- * third-party extension, without introducing conflict between various
- * extension.
- *
- *
- * @author Tony Tkacik
  * @param <T>
  *            Base class which should is target
  *            for augmentations.
+ * @author Tony Tkacik
  */
 public interface AugmentationHolder<T> {
-
     /**
      * Returns map of all augmentations.
      *

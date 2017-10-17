@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.binding.util.BindingReflections.findHierarchicalParent;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.Future;
@@ -46,7 +47,7 @@ public class BindingReflectionsTest {
 
         assertNull(findHierarchicalParent(mock(DataObject.class)));
         assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(FooChild.class));
-        final ChildOf childOf = mock(FooChild.class);
+        final ChildOf<?> childOf = mock(FooChild.class);
         doReturn(FooChild.class).when(childOf).getImplementedInterface();
         assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(childOf));
         assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
@@ -61,13 +62,14 @@ public class BindingReflectionsTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
+    @SuppressWarnings("checkstyle:illegalThrows")
     public void testPrivateConstructor() throws Throwable {
         assertFalse(BindingReflections.class.getDeclaredConstructor().isAccessible());
-        final Constructor constructor = BindingReflections.class.getDeclaredConstructor();
+        final Constructor<?> constructor = BindingReflections.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();
-        } catch (Exception e) {
+        } catch (InvocationTargetException e) {
             throw e.getCause();
         }
     }

@@ -9,12 +9,12 @@ package org.opendaylight.yangtools.yang.binding.test.mock;
 
 import org.opendaylight.yangtools.yang.binding.Identifier;
 
-public class NodeKey implements //
-        Identifier<Node> {
-	private static final long serialVersionUID = 1L;
-	private final int id;
+public class NodeKey implements Identifier<Node> {
+    private static final long serialVersionUID = 1L;
 
-    public NodeKey(int id) {
+    private final int id;
+
+    public NodeKey(final int id) {
         this.id = id;
     }
 
@@ -24,23 +24,24 @@ public class NodeKey implements //
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + id;
-        return result;
+        return Integer.hashCode(id);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
+    public boolean equals(final Object obj) {
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         NodeKey other = (NodeKey) obj;
-        if (id != other.id)
+        if (id != other.id) {
             return false;
+        }
         return true;
     }
 }

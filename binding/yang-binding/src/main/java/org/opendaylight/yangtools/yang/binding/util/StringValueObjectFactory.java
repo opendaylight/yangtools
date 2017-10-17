@@ -24,9 +24,11 @@ import org.slf4j.LoggerFactory;
  * Utility class for instantiating value-type generated objects with String being the base type. Unlike the normal
  * constructor, instances of this class bypass string validation.
  *
+ * <p>
  * THE USE OF THIS CLASS IS DANGEROUS AND SHOULD ONLY BE USED TO IMPLEMENT WELL-AUDITED AND CORRECT UTILITY METHODS
  * SHIPPED WITH MODELS TO PROVIDE INSTANTIATION FROM TYPES DIFFERENT THAN STRING.
  *
+ * <p>
  * APPLICATION CODE <em>MUST NOT</em> USE THIS CLASS DIRECTLY. VIOLATING THIS CONSTRAINT HAS SECURITY AND CORRECTNESS
  * IMPLICATIONS ON EVERY USER INTERACTING WITH THE RESULTING OBJECTS.
  *
@@ -113,6 +115,7 @@ public final class StringValueObjectFactory<T> {
         return false;
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     public T newInstance(final String string) {
         Preconditions.checkNotNull(string, "Argument may not be null");
 
@@ -122,7 +125,8 @@ public final class StringValueObjectFactory<T> {
             LOG.trace("Instantiated new object {} value {}", ret.getClass(), string);
             return ret;
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
 

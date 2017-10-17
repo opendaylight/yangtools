@@ -41,10 +41,11 @@ abstract class AbstractMappedRpcInvoker<T> extends RpcServiceInvoker {
         this.map = b.build();
     }
 
-    protected abstract T qnameToKey(final QName qname);
+    protected abstract T qnameToKey(QName qname);
 
     @Override
-    public final Future<RpcResult<?>> invokeRpc(@Nonnull final RpcService impl, @Nonnull final QName rpcName, @Nullable final DataObject input) {
+    public final Future<RpcResult<?>> invokeRpc(@Nonnull final RpcService impl, @Nonnull final QName rpcName,
+            @Nullable final DataObject input) {
         Preconditions.checkNotNull(impl, "Implementation must be supplied");
 
         RpcMethodInvoker invoker = map.get(qnameToKey(rpcName));

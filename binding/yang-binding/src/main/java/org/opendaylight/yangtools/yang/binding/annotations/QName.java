@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.binding.annotations;
 
-
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 

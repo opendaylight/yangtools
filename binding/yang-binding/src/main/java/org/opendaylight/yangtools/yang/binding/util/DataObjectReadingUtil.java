@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.binding.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -33,24 +34,26 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
 public class DataObjectReadingUtil {
 
-    private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY = new AugmentationReadingStrategy();
+    private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY =
+            new AugmentationReadingStrategy();
 
     private DataObjectReadingUtil() {
         throw new UnsupportedOperationException("Utility class. Instantion is not allowed.");
     }
 
     /**
+     * Read data from parent at specified path.
      *
      * @param parent
      *            Parent object on which read operation will be performed
      * @param parentPath
      *            Path, to parent object.
      * @param childPath
-     *            Path, which is nested to parent, and should be readed.
+     *            Path, which is nested to parent, and should be read.
      * @return Value of object.
      */
-    public static final <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(final P parent,
-            final InstanceIdentifier<P> parentPath, final InstanceIdentifier<T> childPath) {
+    public static final <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(
+            final P parent, final InstanceIdentifier<P> parentPath, final InstanceIdentifier<T> childPath) {
         checkArgument(parent != null, "Parent must not be null.");
         checkArgument(parentPath != null, "Parent path must not be null");
         checkArgument(childPath != null, "Child path must not be null");
@@ -58,13 +61,11 @@ public class DataObjectReadingUtil {
 
         List<PathArgument> pathArgs = subList(parentPath.getPathArguments(), childPath.getPathArguments());
         @SuppressWarnings("rawtypes")
-        Map<InstanceIdentifier, DataContainer> lastFound = Collections
-                .<InstanceIdentifier, DataContainer> singletonMap(parentPath, parent);
+        Map<InstanceIdentifier, DataContainer> lastFound = Collections.singletonMap(parentPath, parent);
         for (PathArgument pathArgument : pathArgs) {
             @SuppressWarnings("rawtypes")
             final ImmutableMap.Builder<InstanceIdentifier, DataContainer> potentialBuilder = ImmutableMap.builder();
-            for (@SuppressWarnings("rawtypes")
-            Entry<InstanceIdentifier, DataContainer> entry : lastFound.entrySet()) {
+            for (@SuppressWarnings("rawtypes") Entry<InstanceIdentifier, DataContainer> entry : lastFound.entrySet()) {
                 potentialBuilder.putAll(readData(entry, pathArgument));
             }
             lastFound = potentialBuilder.build();
@@ -94,7 +95,7 @@ public class DataObjectReadingUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static final Map<InstanceIdentifier, DataContainer> readData(final DataContainer parent,
+    private static Map<InstanceIdentifier, DataContainer> readData(final DataContainer parent,
             final InstanceIdentifier parentPath, final PathArgument child) {
         checkArgument(parent != null, "Object should not be null.");
         checkArgument(child != null, "Child argument should not be null");
@@ -137,7 +138,7 @@ public class DataObjectReadingUtil {
         private final Method getterMethod;
 
         @SuppressWarnings("unchecked")
-        public DataObjectReadingStrategy(final Class parentType, final Class childType) {
+        DataObjectReadingStrategy(final Class parentType, final Class childType) {
             checkArgument(DataContainer.class.isAssignableFrom(parentType));
             checkArgument(DataContainer.class.isAssignableFrom(childType));
             this.parentType = parentType;
@@ -146,7 +147,7 @@ public class DataObjectReadingUtil {
         }
 
         @SuppressWarnings("unchecked")
-        public DataObjectReadingStrategy(final Class parentType, final Class childType, final Method getter) {
+        DataObjectReadingStrategy(final Class parentType, final Class childType, final Method getter) {
             this.parentType = parentType;
             this.childType = childType;
             this.getterMethod = getter;
@@ -185,8 +186,8 @@ public class DataObjectReadingUtil {
 
     @SuppressWarnings("rawtypes")
     private static class ContainerReadingStrategy extends DataObjectReadingStrategy {
-
-        public ContainerReadingStrategy(final Class<? extends DataContainer> parent, final Class<? extends DataContainer> child) {
+        ContainerReadingStrategy(final Class<? extends DataContainer> parent,
+                final Class<? extends DataContainer> child) {
             super(parent, child);
             checkArgument(child.isAssignableFrom(getGetterMethod().getReturnType()));
         }
@@ -218,8 +219,7 @@ public class DataObjectReadingUtil {
 
     @SuppressWarnings("rawtypes")
     private static class ListItemReadingStrategy extends DataObjectReadingStrategy {
-
-        public ListItemReadingStrategy(final Class<? extends DataContainer> parent, final Class child) {
+        ListItemReadingStrategy(final Class<? extends DataContainer> parent, final Class child) {
             super(parent, child);
             checkArgument(Iterable.class.isAssignableFrom(getGetterMethod().getReturnType()));
         }
@@ -253,8 +253,7 @@ public class DataObjectReadingUtil {
 
         private Map<InstanceIdentifier, DataContainer> readAll(final Iterable<Identifiable> dataList,
                 final InstanceIdentifier parentPath) {
-            Builder<InstanceIdentifier, DataContainer> result = ImmutableMap
-                    .<InstanceIdentifier, DataContainer> builder();
+            Builder<InstanceIdentifier, DataContainer> result = ImmutableMap.builder();
             for (Identifiable item : dataList) {
                 @SuppressWarnings("unchecked")
                 InstanceIdentifier childPath = parentPath.child(getChildType(), item.getKey());
@@ -264,8 +263,9 @@ public class DataObjectReadingUtil {
         }
 
         @SuppressWarnings("unchecked")
-        private static Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(final Iterable<Identifiable> dataList,
-                final IdentifiableItem childArgument, final InstanceIdentifier parentPath) {
+        private static Map<InstanceIdentifier, DataContainer> readUsingIdentifiableItem(
+                final Iterable<Identifiable> dataList, final IdentifiableItem childArgument,
+                final InstanceIdentifier parentPath) {
             final Identifier<?> key = childArgument.getKey();
             for (Identifiable item : dataList) {
                 if (key.equals(item.getKey()) && item instanceof DataContainer) {
@@ -282,8 +282,7 @@ public class DataObjectReadingUtil {
     }
 
     private static final class AugmentationReadingStrategy extends DataObjectReadingStrategy {
-
-        public AugmentationReadingStrategy() {
+        AugmentationReadingStrategy() {
             super(Augmentable.class, Augmentation.class, null);
         }
 
@@ -293,13 +292,13 @@ public class DataObjectReadingUtil {
                 final PathArgument childArgument, final InstanceIdentifier builder) {
             checkArgument(childArgument instanceof Item<?>, "Path Argument must be Item without keys");
             DataContainer aug = read(parent, childArgument.getType());
-            if (aug != null) {
-                @SuppressWarnings("unchecked")
-                final InstanceIdentifier childPath = builder.child(childArgument.getType());
-                return Collections.singletonMap(childPath, aug);
-            } else {
+            if (aug == null) {
                 return Collections.emptyMap();
             }
+
+            @SuppressWarnings("unchecked")
+            final InstanceIdentifier childPath = builder.child(childArgument.getType());
+            return Collections.singletonMap(childPath, aug);
         }
 
         @Override
@@ -315,29 +314,25 @@ public class DataObjectReadingUtil {
     }
 
     /**
-     * Create sublist view of child from element on [size-of-parent] position to
-     * last element.
+     * Create sublist view of child from element on [size-of-parent] position to last element.
      *
-     * @param parent
-     * @param child
      * @return sublist view of child argument
      * @throws IllegalArgumentException
      *             if parent argument is bigger than child
      */
     private static <P, C> List<C> subList(final Iterable<P> parent, final Iterable<C> child) {
-        Iterator<P> iParent = parent.iterator();
+        Iterator<P> parentIt = parent.iterator();
         List<C> result = new ArrayList<>();
         for (C arg : child) {
-            if (iParent.hasNext()) {
-                iParent.next();
+            if (parentIt.hasNext()) {
+                parentIt.next();
             } else {
                 result.add(arg);
             }
         }
-        if (iParent.hasNext()) {
+        if (parentIt.hasNext()) {
             throw new IllegalArgumentException("Parent argument is bigger than child.");
         }
         return result;
     }
-
 }

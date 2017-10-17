@@ -16,22 +16,23 @@ import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 class RpcMethodInvokerWithInput extends RpcMethodInvoker {
+    private static final MethodType INVOCATION_SIGNATURE = MethodType.methodType(Future.class, RpcService.class,
+        DataObject.class);
 
-    private static final MethodType INVOCATION_SIGNATURE =
-            MethodType.methodType(Future.class, RpcService.class, DataObject.class);
     private final MethodHandle handle;
 
-    RpcMethodInvokerWithInput(MethodHandle methodHandle) {
+    RpcMethodInvokerWithInput(final MethodHandle methodHandle) {
         this.handle = methodHandle.asType(INVOCATION_SIGNATURE);
     }
 
     @Override
-    public Future<RpcResult<?>> invokeOn(RpcService impl, DataObject input) {
+    @SuppressWarnings("checkstyle:illegalCatch")
+    public Future<RpcResult<?>> invokeOn(final RpcService impl, final DataObject input) {
         try {
             return (Future<RpcResult<?>>) handle.invokeExact(impl,input);
         } catch (Throwable e) {
-            throw Throwables.propagate(e);
+            Throwables.throwIfUnchecked(e);
+            throw new RuntimeException(e);
         }
     }
-
 }

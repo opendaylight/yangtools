@@ -7,29 +7,28 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
-import java.io.InputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Set;
 
 public interface YangModuleInfo {
 
     /**
-     * Returns yang module name
+     * Returns YANG module name.
      *
-     * @return
+     * @return YANG module name.
      */
     String getName();
 
     /**
+     * Returns revision of YANG module.
      *
-     * Returns revision of yang module.
-     *
-     * @return
+     * @return YANG module revision.
      */
     String getRevision();
 
     /**
-     * Returns XML namespace associated to the YANG module
+     * Returns XML namespace associated to the YANG module.
      *
      * @return XML namespace associated to the YANG module.
      */

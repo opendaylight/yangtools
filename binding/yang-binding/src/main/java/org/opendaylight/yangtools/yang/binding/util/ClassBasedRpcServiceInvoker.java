@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class ClassBasedRpcServiceInvoker extends AbstractMappedRpcInvoker<String> {
-    private static final LoadingCache<Class<? extends RpcService>, RpcServiceInvoker> INVOKERS = CacheBuilder.newBuilder()
-            .weakKeys()
+    private static final LoadingCache<Class<? extends RpcService>, RpcServiceInvoker> INVOKERS =
+            CacheBuilder.newBuilder().weakKeys()
             .build(new CacheLoader<Class<? extends RpcService>, RpcServiceInvoker>() {
                 @Override
                 public RpcServiceInvoker load(final Class<? extends RpcService> key) {
