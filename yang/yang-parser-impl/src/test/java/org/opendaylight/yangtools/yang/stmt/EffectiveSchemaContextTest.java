@@ -102,7 +102,7 @@ public class EffectiveSchemaContextTest {
 
         Module fooModule = schemaContext.findModuleByName(
                 "foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-21"));
-        assertFalse(schemaContext.getModuleSource(fooModule).isPresent());
+        assertNotNull(fooModule);
 
         assertEquals(3, schemaContext.getAllModuleIdentifiers().size());
         assertEquals(3, ((EffectiveSchemaContext) schemaContext).getRootDeclaredStatements().size());
