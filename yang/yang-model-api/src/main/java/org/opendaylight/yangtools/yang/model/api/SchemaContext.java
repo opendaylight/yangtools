@@ -117,17 +117,6 @@ public interface SchemaContext extends ContainerSchemaNode {
     }
 
     /**
-     * Get yang source code represented as string for matching
-     * {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier}.
-     *
-     * @param moduleIdentifier must provide a non-null
-     *        {@link org.opendaylight.yangtools.yang.model.api.ModuleIdentifier#getName()}, other methods might return
-     *        null.
-     * @return value iif matching module is found in schema context.
-     */
-    Optional<String> getModuleSource(ModuleIdentifier moduleIdentifier);
-
-    /**
      * Get all module and submodule identifiers.
      */
     Set<ModuleIdentifier> getAllModuleIdentifiers();
