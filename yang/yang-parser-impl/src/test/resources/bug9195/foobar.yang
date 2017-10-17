@@ -1,0 +1,24 @@
+module foobar {
+    namespace foobar-ns;
+    prefix foobar-prefix;
+
+    import foo {
+        prefix foo;
+        revision-date 2017-05-16;
+    }
+
+    import bar {
+        prefix bar;
+        revision-date 2017-05-16;
+    }
+
+    revision 2017-05-16;
+
+    deviation "/foo:my-foo-cont-c" {
+        deviate not-supported;
+    }
+
+    deviation "/bar:my-bar-cont-b" {
+        deviate not-supported;
+    }
+}

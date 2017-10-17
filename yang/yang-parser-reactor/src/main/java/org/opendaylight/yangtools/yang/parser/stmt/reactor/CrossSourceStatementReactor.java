@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.SetMultimap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
@@ -177,7 +178,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         public BuildAction setModulesWithSupportedDeviations(
-                @Nonnull final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
+                @Nonnull final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
             checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
             context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
             modulesDeviatedByModulesSet = true;
