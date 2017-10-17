@@ -37,11 +37,11 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     }
 
     @Override
-    protected void addYangPathArgument(final InstanceIdentifier.PathArgument arg, final List<YangInstanceIdentifier.PathArgument> builder) {
+    protected void addYangPathArgument(final InstanceIdentifier.PathArgument arg,
+            final List<YangInstanceIdentifier.PathArgument> builder) {
         /*
-         * DOM Instance Identifier for list is always represent by two
-         * entries one for map and one for children. This is also true for
-         * wildcarded instance identifiers
+         * DOM Instance Identifier for list is always represent by two entries one for map and one for children. This
+         * is also true for wildcarded instance identifiers
          */
         if (builder == null) {
             return;
@@ -62,13 +62,12 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
         if (dom instanceof MapEntryNode && keyGetter.equals(method)) {
             NodeIdentifierWithPredicates identifier = ((MapEntryNode) dom).getIdentifier();
             return codec.deserialize(identifier).getKey();
-        } else {
-            return super.getBindingChildValue(method, dom);
         }
+        return super.getBindingChildValue(method, dom);
     }
 
     @Override
-    protected InstanceIdentifier.PathArgument getBindingPathArgument(final org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument domArg) {
+    protected InstanceIdentifier.PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
         if (domArg instanceof NodeIdentifierWithPredicates) {
             return codec.deserialize((NodeIdentifierWithPredicates) domArg);
         }
@@ -82,7 +81,7 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        if(arg instanceof IdentifiableItem) {
+        if (arg instanceof IdentifiableItem) {
             return codec.serialize((IdentifiableItem<?,?>) arg);
         }
         return super.serializePathArgument(arg);
@@ -90,11 +89,9 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        if(arg instanceof NodeIdentifierWithPredicates) {
+        if (arg instanceof NodeIdentifierWithPredicates) {
             return codec.deserialize((NodeIdentifierWithPredicates) arg);
         }
         return super.deserializePathArgument(arg);
     }
-
-
 }

@@ -51,16 +51,24 @@ public class UnionValueOptionContextTest {
     }
 
     protected static final class TestDataObject1 {
-        public void foo() {}
+        public void foo() {
+
+        }
     }
 
     protected static final class TestDataObject2 {
-        public void foo() {}
+        public void foo() {
+
+        }
     }
 
     public static final class TestUnion {
-        public TestUnion(final TestDataObject1 arg) { }
-        public TestUnion(final TestDataObject2 arg) { }
-    }
+        public TestUnion(final TestDataObject1 arg) {
 
+        }
+
+        public TestUnion(final TestDataObject2 arg) {
+
+        }
+    }
 }

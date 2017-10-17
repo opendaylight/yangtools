@@ -11,12 +11,11 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 
 /**
- * Interface which sould be implemented by proxy {@link java.lang.reflect.InvocationHandler}
- * to obtain augmentations from proxy implementations of {@link org.opendaylight.yangtools.yang.binding.Augmentable}
- * object.
+ * Interface which sould be implemented by proxy {@link java.lang.reflect.InvocationHandler} to obtain augmentations
+ * from proxy implementations of {@link org.opendaylight.yangtools.yang.binding.Augmentable} object.
  *
- * If implemented proxy does not implement this interface, its augmentations are not
- * properly serialized / deserialized.
+ * <p>
+ * If implemented proxy does not implement this interface, its augmentations are not properly serialized / deserialized.
  */
 public interface AugmentationReader {
 

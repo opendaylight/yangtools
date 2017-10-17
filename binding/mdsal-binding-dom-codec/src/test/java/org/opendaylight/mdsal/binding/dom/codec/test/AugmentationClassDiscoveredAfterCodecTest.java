@@ -37,11 +37,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * This sets of tests are designed in way, that schema context contains models for all
- * augmentations, but backing class loading strategy is not aware of some of the classes, and
- * becames aware of them after codec was used.
+ * This sets of tests are designed in way, that schema context contains models for all augmentations, but backing class
+ * loading strategy is not aware of some of the classes, and becames aware of them after codec was used.
  *
- * Idea of this suite is to test that codecs will work even if situation like this happens.
+ * <p>
+ * The idea of this suite is to test that codecs will work even if situation like this happens.
  */
 public class AugmentationClassDiscoveredAfterCodecTest {
 

@@ -12,11 +12,10 @@ import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 
 /**
- * Thrown when Java Binding class was used in data for which codec does not
- * have schema.
+ * Thrown when Java Binding class was used in data for which codec does not have schema.
  *
- * By serialization /  deserialization of this exception {@link #getBindingClass()}
- * will return null.
+ * <p>
+ * By serialization /  deserialization of this exception {@link #getBindingClass()} will return null.
  */
 public class MissingSchemaForClassException extends MissingSchemaException {
 
@@ -44,7 +43,7 @@ public class MissingSchemaForClassException extends MissingSchemaException {
         } else {
             schema = runtimeContext.getSchemaDefinition(bindingClass);
         }
-        if(schema == null) {
+        if (schema == null) {
             throw MissingSchemaForClassException.forClass(bindingClass);
         }
     }

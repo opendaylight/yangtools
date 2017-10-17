@@ -96,7 +96,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                     if (!Arrays.equals((byte[]) thisValue, (byte[]) otherValue)) {
                         return false;
                     }
-                } else if (!Objects.equals(thisValue, otherValue)){
+                } else if (!Objects.equals(thisValue, otherValue)) {
                     return false;
                 }
             }
@@ -116,7 +116,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     private static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentations(final Object dataObject) {
         if (dataObject instanceof AugmentationReader) {
             return ((AugmentationReader) dataObject).getAugmentations(dataObject);
-        } else if (dataObject instanceof Augmentable<?>){
+        } else if (dataObject instanceof Augmentable<?>) {
             return BindingReflections.getAugmentations((Augmentable<?>) dataObject);
         }
 
@@ -188,8 +188,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         Preconditions.checkNotNull(cls,"Supplied augmentation must not be null.");
 
         @SuppressWarnings({"unchecked","rawtypes"})
-        final Optional<DataContainerCodecContext<?,?>> augCtx= context.possibleStreamChild((Class) cls);
-        if(augCtx.isPresent()) {
+        final Optional<DataContainerCodecContext<?, ?>> augCtx = context.possibleStreamChild((Class) cls);
+        if (augCtx.isPresent()) {
             final Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.get().getDomPathArgument());
             if (augData.isPresent()) {
                 return augCtx.get().deserialize(augData.get());

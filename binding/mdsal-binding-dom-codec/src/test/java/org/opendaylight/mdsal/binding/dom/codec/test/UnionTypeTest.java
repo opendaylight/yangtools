@@ -37,9 +37,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableCo
 
 public class UnionTypeTest extends AbstractBindingRuntimeTest {
 
-    private static final String testString = "testtesttest";
+    private static final String TEST_STRING = "testtesttest";
 
-    public static final QName WRAPPER_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:union", "2015-01-21", "wrapper");
+    public static final QName WRAPPER_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:union",
+        "2015-01-21", "wrapper");
     public static final QName WRAP_LEAF_QNAME = QName.create(WRAPPER_QNAME, "wrap");
 
     private BindingNormalizedNodeCodecRegistry registry;
@@ -54,13 +55,14 @@ public class UnionTypeTest extends AbstractBindingRuntimeTest {
 
     @Test
     public void unionTest() {
-        TopLevel topLevel = TopLevelBuilder.getDefaultInstance(testString);
+        TopLevel topLevel = TopLevelBuilder.getDefaultInstance(TEST_STRING);
         Wrapper wrapper = new WrapperBuilder().setWrap(topLevel).build();
-        NormalizedNode<?, ?> topLevelEntry = registry.toNormalizedNode(InstanceIdentifier.builder(Wrapper.class).build(), wrapper).getValue();
+        NormalizedNode<?, ?> topLevelEntry = registry.toNormalizedNode(InstanceIdentifier.create(Wrapper.class),
+            wrapper).getValue();
 
         ContainerNode containerNode = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(WRAPPER_QNAME))
-                .withChild(ImmutableNodes.leafNode(WRAP_LEAF_QNAME, testString))
+                .withChild(ImmutableNodes.leafNode(WRAP_LEAF_QNAME, TEST_STRING))
                 .build();
         Assert.assertEquals(topLevelEntry, containerNode);
     }

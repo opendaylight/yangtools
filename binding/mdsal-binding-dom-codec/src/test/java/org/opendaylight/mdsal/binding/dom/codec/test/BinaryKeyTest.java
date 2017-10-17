@@ -60,6 +60,6 @@ public class BinaryKeyTest extends AbstractBindingRuntimeTest {
 
     private BinaryList process(final BinaryList binaryList) {
         final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(instanceIdentifier, binaryList).getValue();
-        return registry.deserializeFunction(instanceIdentifier).apply(Optional.<NormalizedNode<?, ?>>of(domTreeEntry)).get();
+        return registry.deserializeFunction(instanceIdentifier).apply(Optional.of(domTreeEntry)).get();
     }
 }

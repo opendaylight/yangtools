@@ -38,7 +38,8 @@ public abstract class AbstractSource {
         return commonInvoke(object, methodName).append(arg).append(')');
     }
 
-    protected static final CharSequence invoke(final CharSequence object, final String methodName, final Object... args) {
+    protected static final CharSequence invoke(final CharSequence object, final String methodName,
+            final Object... args) {
         final StringBuilder sb = commonInvoke(object, methodName);
 
         final UnmodifiableIterator<Object> iterator = Iterators.forArray(args);
@@ -72,6 +73,10 @@ public abstract class AbstractSource {
         return cast(type.getFullyQualifiedName(), value);
     }
 
+    protected static final CharSequence cast(final String type, final CharSequence value) {
+        return "((" + type + ") " + value + ')';
+    }
+
     protected static final CharSequence forEach(final String iterable, final String iteratorName,
             final String valueType, final String valueName, final CharSequence body) {
         final StringBuilder sb = new StringBuilder();
@@ -84,9 +89,5 @@ public abstract class AbstractSource {
 
     protected static final CharSequence statement(final CharSequence statement) {
         return new StringBuilder(statement).append(";\n");
-    }
-
-    protected static final CharSequence cast(final String type, final CharSequence value) {
-        return "((" + type + ") " + value + ')';
     }
 }

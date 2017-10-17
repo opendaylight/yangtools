@@ -14,13 +14,11 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
- * Navigable tree representing hierarchy of Binding to Normalized Node codecs
- *
- * This navigable tree is associated to conrete set of YANG models, represented by SchemaContext and
- * provides access to subtree specific serialization context.
- *
- * TODO: Add more detailed documentation
- **/
+ * Navigable tree representing hierarchy of Binding to Normalized Node codecs. This navigable tree is associated to
+ * a concrete set of YANG models, represented by SchemaContext and provides access to subtree specific serialization
+ * context.
+ */
+// TODO: Add more detailed documentation
 public interface BindingCodecTree {
 
     @Nullable

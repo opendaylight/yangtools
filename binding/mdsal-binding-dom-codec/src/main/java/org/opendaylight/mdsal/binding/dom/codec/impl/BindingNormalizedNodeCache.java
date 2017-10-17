@@ -21,7 +21,7 @@ final class BindingNormalizedNodeCache extends CacheLoader<DataObject, Normalize
     final DataContainerCodecContext<?, ?> subtreeRoot;
     final AbstractBindingNormalizedNodeCacheHolder cacheHolder;
 
-    public BindingNormalizedNodeCache(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
+    BindingNormalizedNodeCache(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
             final DataContainerCodecContext<?, ?> subtreeRoot) {
         this.cacheHolder = Preconditions.checkNotNull(cacheHolder, "cacheHolder");
         this.subtreeRoot = Preconditions.checkNotNull(subtreeRoot, "subtreeRoot");
@@ -33,9 +33,8 @@ final class BindingNormalizedNodeCache extends CacheLoader<DataObject, Normalize
     }
 
     /**
-     * Returns cached NormalizedNode representation of DataObject.
-     *
-     * If representation is not cached, serializes DataObject and updates cache with representation.
+     * Returns cached NormalizedNode representation of DataObject. If the representation is not cached, serializes
+     * DataObject and updates cache with representation.
      *
      * @param obj Binding object to be deserialized
      * @return NormalizedNode representation of binding object.

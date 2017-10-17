@@ -14,18 +14,19 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 abstract class AugmentableDataNodeContainerEmitterSource extends DataNodeContainerSerializerSource {
     private static final String AUGMENTABLE_SERIALIZER = "AUGMENTABLE_SERIALIZER";
 
-    public AugmentableDataNodeContainerEmitterSource(final AbstractStreamWriterGenerator generator, final GeneratedType type, final DataNodeContainer node) {
+    AugmentableDataNodeContainerEmitterSource(final AbstractStreamWriterGenerator generator, final GeneratedType type,
+            final DataNodeContainer node) {
         super(generator, type, node);
         /*
-         * Eventhough intuition says the serializer could reference the generator directly,
-         * that is not true in OSGi environment -- so we need to resolve the reference first
-         * and inject it as a static constant.
+         * Eventhough intuition says the serializer could reference the generator directly, that is not true in OSGi
+         * environment -- so we need to resolve the reference first and inject it as a static constant.
          */
-        staticConstant(AUGMENTABLE_SERIALIZER, DataObjectSerializerImplementation.class, StreamWriterGenerator.AUGMENTABLE);
+        staticConstant(AUGMENTABLE_SERIALIZER, DataObjectSerializerImplementation.class,
+            StreamWriterGenerator.AUGMENTABLE);
     }
 
     @Override
-    protected void emitAfterBody(final StringBuilder b) {
-        b.append(statement(invoke(AUGMENTABLE_SERIALIZER, "serialize", REGISTRY, INPUT, STREAM)));
+    protected void emitAfterBody(final StringBuilder sb) {
+        sb.append(statement(invoke(AUGMENTABLE_SERIALIZER, "serialize", REGISTRY, INPUT, STREAM)));
     }
 }

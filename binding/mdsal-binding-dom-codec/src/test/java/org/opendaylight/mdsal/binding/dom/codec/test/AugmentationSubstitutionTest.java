@@ -60,7 +60,8 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
             .build();
         final TopLevelList baTree = new TopLevelListBuilder()
             .setKey(TOP_FOO_KEY)
-            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData()).build())
+            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
+                .build())
             .build();
         final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
         final NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
@@ -71,10 +72,13 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
     public void copyBuilderWithAugmenationsTest() {
         final TopLevelList manuallyConstructed = new TopLevelListBuilder()
             .setKey(TOP_FOO_KEY)
-            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData()).build())
+            .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
+                .build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, manuallyConstructed).getValue();
-        final TopLevelList deserialized = registry.deserializeFunction(BA_TOP_LEVEL_LIST).apply(Optional.<NormalizedNode<?, ?>>of(domTreeEntry)).get();
+        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, manuallyConstructed)
+                .getValue();
+        final TopLevelList deserialized = registry.deserializeFunction(BA_TOP_LEVEL_LIST)
+                .apply(Optional.of(domTreeEntry)).get();
         assertEquals(manuallyConstructed, deserialized);
         final TopLevelList copiedFromDeserialized = new TopLevelListBuilder(deserialized).build();
         assertEquals(manuallyConstructed, copiedFromDeserialized);
@@ -82,11 +86,10 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
 
     private static RpcComplexUsesAugment createComplexData() {
         return new RpcComplexUsesAugmentBuilder()
-        .setContainerWithUses(new ContainerWithUsesBuilder()
-            .setLeafFromGrouping("foo")
-        .build())
-        .setListViaUses(Collections.<ListViaUses>emptyList())
-        .build();
+                .setContainerWithUses(new ContainerWithUsesBuilder()
+                    .setLeafFromGrouping("foo")
+                    .build())
+                .setListViaUses(Collections.<ListViaUses>emptyList())
+                .build();
     }
-
 }

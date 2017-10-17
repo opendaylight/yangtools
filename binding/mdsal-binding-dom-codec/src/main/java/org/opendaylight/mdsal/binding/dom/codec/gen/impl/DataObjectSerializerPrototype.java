@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 
 /**
  * Prototype of a DataObjectSerializerImplementation. This is a template class, which the
- * {@link AbstractStreamWriterGenerator} uses to instantiate {@link DataObjectSerializerImplementation}
- * on a per-type basis. During that time, the {@link #serialize(DataObjectSerializerRegistry, DataObject, BindingStreamEventWriter)}
+ * {@link AbstractStreamWriterGenerator} uses to instantiate {@link DataObjectSerializerImplementation} on a per-type
+ * basis. During that time, the {@link #serialize(DataObjectSerializerRegistry, DataObject, BindingStreamEventWriter)}
  * method will be replaced by the real implementation.
  */
 final class DataObjectSerializerPrototype implements DataObjectSerializerImplementation {
@@ -35,7 +35,8 @@ final class DataObjectSerializerPrototype implements DataObjectSerializerImpleme
     }
 
     @Override
-    public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj, final BindingStreamEventWriter stream) {
+    public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj,
+            final BindingStreamEventWriter stream) {
         throw new UnsupportedOperationException("Prototype body, this code should never be invoked.");
     }
 }

@@ -67,7 +67,7 @@ public class AugmentableDispatchSerializer implements DataObjectSerializerImplem
          * value, which effectively could be used to remove augmentation
          * from builder / DTO.
          */
-        if(value == null) {
+        if (value == null) {
             return;
         }
         Preconditions.checkArgument(value instanceof DataObject);

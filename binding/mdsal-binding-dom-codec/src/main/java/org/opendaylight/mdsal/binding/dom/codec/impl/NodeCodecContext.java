@@ -23,40 +23,38 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
- * Location specific context for schema nodes, which contains codec specific
- * information to properly serialize / deserialize from Java YANG Binding data
- * to NormalizedNode data.
+ * Location specific context for schema nodes, which contains codec specific information to properly serialize
+ * and deserialize from Java YANG Binding data to NormalizedNode data.
  *
+ * <p>
  * Two core subtypes of codec context are available:
  * <ul>
- * <li>{@link LeafNodeCodecContext} - Context for nodes, which does not contain
- * any nested YANG modeled substructures.</li>
- * <li>{@link DataObjectCodecContext} - Context for nodes, which does contain
- * nested YANG modeled substructures. This context nodes contains context
- * for children nodes.</li>
+ * <li>{@link LeafNodeCodecContext} - Context for nodes, which does not contain any nested YANG modeled substructures.
+ * </li>
+ * <li>{@link DataObjectCodecContext} - Context for nodes, which does contain nested YANG modeled substructures. This
+ * context nodes contains context for children nodes.</li>
  * </ul>
  */
 abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTreeNode<D> {
 
     /**
-     * Returns Yang Instance Identifier Path Argument of current node
+     * Returns Yang Instance Identifier Path Argument of current node.
      *
      * @return DOM Path Argument of node
      */
     protected abstract YangInstanceIdentifier.PathArgument getDomPathArgument();
 
     /**
+     * Immutable factory, which provides access to runtime context, create leaf nodes and provides path argument codecs.
      *
-     * Immutable factory, which provides access to runtime context,
-     * create leaf nodes and provides path argument codecs.
      * <p>
-     * During lifetime of factory all calls for same arguments to method must return
-     * equal result (not necessary same instance of result).
-     *
+     * During lifetime of factory all calls for same arguments to method must return equal result (not necessary same
+     * instance of result).
      */
     protected interface CodecContextFactory {
         /**
          * Returns immutable runtime context associated with this factory.
+         *
          * @return runtime context
          */
         BindingRuntimeContext getRuntimeContext();
@@ -71,7 +69,7 @@ abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTre
         ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodes(Class<?> type, DataNodeContainer schema);
 
         /**
-         * Returns Path argument codec for list item
+         * Returns Path argument codec for list item.
          *
          * @param type Type of list item
          * @param schema Schema of list item
@@ -84,9 +82,7 @@ abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTre
     }
 
     /**
-     *
-     * Serializes supplied Binding Path Argument
-     * and adds all necessary YANG instance identifiers to supplied list.
+     * Serializes supplied Binding Path Argument and adds all necessary YANG instance identifiers to supplied list.
      *
      * @param arg Binding Path Argument
      * @param builder DOM Path argument.

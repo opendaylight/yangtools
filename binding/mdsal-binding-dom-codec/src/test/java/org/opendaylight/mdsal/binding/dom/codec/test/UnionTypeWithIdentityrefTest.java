@@ -29,8 +29,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 public class UnionTypeWithIdentityrefTest extends AbstractBindingRuntimeTest {
-    private static final String identOneString = "IdentOne";
-    public static final QName NODE_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:bug:6066", "2016-06-07", "union-node");
+    private static final String IDENT_ONE_STRING = "IdentOne";
+    public static final QName NODE_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:bug:6066",
+        "2016-06-07", "union-node");
     public static final QName NODE_LEAF_QNAME = QName.create(NODE_QNAME, "value");
 
     private BindingNormalizedNodeCodecRegistry registry;
@@ -59,7 +60,7 @@ public class UnionTypeWithIdentityrefTest extends AbstractBindingRuntimeTest {
 
     @Test
     public void bug6006Test() {
-        DataObject unionNodeObj = createValueNode(identOneString);
+        DataObject unionNodeObj = createValueNode(IDENT_ONE_STRING);
         UnionType unionTypeObj = ((UnionNode) unionNodeObj).getValue();
         assertEquals(null, unionTypeObj.getUint8());
         assertEquals(IdentOne.class, unionTypeObj.getIdentityref());

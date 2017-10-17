@@ -52,7 +52,8 @@ public class NotificationProcessingTest extends AbstractBindingRuntimeTest {
         assertNotNull("Serialization must not return null obejct.",dom);
         assertEquals(TwoLevelListChanged.QNAME,dom.getIdentifier().getNodeType());
 
-        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.create(true, TwoLevelListChanged.QNAME),dom);
+        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.create(true,
+            TwoLevelListChanged.QNAME),dom);
         assertNotNull(bindingDeserialized);
         assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
         assertEquals(bindingOriginal,bindingDeserialized);

@@ -18,7 +18,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCaching
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -56,14 +55,14 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     /**
-     * Returns nested node context using supplied YANG Instance Identifier
+     * Returns nested node context using supplied YANG Instance Identifier.
      *
      * @param arg Yang Instance Identifier Argument
      * @return Context of child
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public abstract NodeCodecContext<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg);
+    public abstract NodeCodecContext<?> yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
 
     /**
      * Returns nested node context using supplied Binding Instance Identifier
@@ -74,23 +73,21 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public @Nullable DataContainerCodecContext<?,?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
+    @Nullable
+    public DataContainerCodecContext<?,?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         final DataContainerCodecContext<?,?> child = streamChild(arg.getType());
-        if(child != null) {
+        if (child != null) {
             if (builder != null) {
                 child.addYangPathArgument(arg,builder);
             }
             return child;
         }
-        throw new IllegalArgumentException("SUpplied argument is not valid child");
+        throw new IllegalArgumentException("Supplied argument is not valid child");
     }
 
     /**
      * Returns deserialized Binding Path Argument from YANG instance identifier.
-     *
-     * @param domArg
-     * @return
      */
     protected PathArgument getBindingPathArgument(final YangInstanceIdentifier.PathArgument domArg) {
         return bindingArg();
@@ -107,29 +104,26 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     /**
-     *
-     * Returns child context as if it was walked by
-     * {@link BindingStreamEventWriter}. This means that to enter case, one
+     * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
      * must issue getChild(ChoiceClass).getChild(CaseClass).
      *
-     * @param childClass
+     * @param childClass child class
      * @return Context of child node or null, if supplied class is not subtree child
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
     @Override
-    public abstract @Nullable <DV extends DataObject> DataContainerCodecContext<DV,?> streamChild(final Class<DV> childClass) throws IllegalArgumentException;
+    public abstract @Nullable <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
 
     /**
-     *
-     * Returns child context as if it was walked by
-     * {@link BindingStreamEventWriter}. This means that to enter case, one
+     * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
      * must issue getChild(ChoiceClass).getChild(CaseClass).
      *
-     * @param childClass
+     * @param childClass child class
      * @return Context of child or Optional absent is supplied class is not applicable in context.
      */
     @Override
-    public abstract <DV extends DataObject> Optional<DataContainerCodecContext<DV,?>> possibleStreamChild(final Class<DV> childClass);
+    public abstract <C extends DataObject> Optional<DataContainerCodecContext<C,?>> possibleStreamChild(
+            Class<C> childClass);
 
     @Override
     public String toString() {
@@ -139,7 +133,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     @Override
     public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
             final ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
-        if(cacheSpecifier.isEmpty()) {
+        if (cacheSpecifier.isEmpty()) {
             return new NonCachingCodec<>(this);
         }
         return new CachingNormalizedNodeCodec<>(this,ImmutableSet.copyOf(cacheSpecifier));
@@ -181,7 +175,7 @@ abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCod
     }
 
     DataObjectSerializer eventStreamSerializer() {
-        if(eventStreamSerializer == null) {
+        if (eventStreamSerializer == null) {
             eventStreamSerializer = factory().getEventStreamSerializer(getBindingClass());
         }
         return eventStreamSerializer;

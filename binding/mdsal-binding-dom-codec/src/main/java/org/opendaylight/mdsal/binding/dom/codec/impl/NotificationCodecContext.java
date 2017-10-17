@@ -15,9 +15,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
-final class NotificationCodecContext<D extends DataObject & Notification> extends DataObjectCodecContext<D,NotificationDefinition> {
+final class NotificationCodecContext<D extends DataObject & Notification>
+        extends DataObjectCodecContext<D, NotificationDefinition> {
 
-    public NotificationCodecContext(final Class<?> key, final NotificationDefinition schema, final CodecContextFactory factory) {
+    NotificationCodecContext(final Class<?> key, final NotificationDefinition schema,
+            final CodecContextFactory factory) {
         super(DataContainerCodecPrototype.from(key, schema, factory));
     }
 

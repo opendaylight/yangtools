@@ -26,7 +26,8 @@ final class UnionValueOptionContext {
     private final MethodHandle getter;
     private final MethodHandle unionCtor;
 
-    UnionValueOptionContext(final Class<?> unionType, final Class<?> valueType, final Method getter, final Codec<Object, Object> codec) {
+    UnionValueOptionContext(final Class<?> unionType, final Class<?> valueType, final Method getter,
+            final Codec<Object, Object> codec) {
         this.bindingType = Preconditions.checkNotNull(valueType);
         this.codec = Preconditions.checkNotNull(codec);
 
@@ -50,6 +51,7 @@ final class UnionValueOptionContext {
         return baValue == null ? null : codec.serialize(baValue);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     Object deserializeUnion(final Object input) {
         // Side-step potential exceptions by checking the type if it is available
         if (codec instanceof EncapsulatedValueCodec && !((EncapsulatedValueCodec) codec).canAcceptObject(input)) {
@@ -75,6 +77,7 @@ final class UnionValueOptionContext {
         }
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     Object getValueFrom(final Object input) {
         try {
             return getter.invokeExact(input);

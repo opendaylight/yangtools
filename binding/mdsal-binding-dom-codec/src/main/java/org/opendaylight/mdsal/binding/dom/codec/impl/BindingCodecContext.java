@@ -125,7 +125,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         DataContainerCodecContext<?,?> currentNode = root;
         for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
             currentNode = currentNode.bindingPathArgumentChild(bindingArg, builder);
-            Preconditions.checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.",binding);
+            Preconditions.checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.", binding);
         }
         return currentNode;
     }
@@ -148,7 +148,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         ListNodeCodecContext<?> currentList = null;
 
         for (final YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
-            Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?,?>, "Unexpected child of non-container node %s", currentNode);
+            Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?,?>,
+                "Unexpected child of non-container node %s", currentNode);
             final DataContainerCodecContext<?,?> previous = (DataContainerCodecContext<?,?>) currentNode;
             final NodeCodecContext<?> nextNode = previous.yangPathArgumentChild(domArg);
 
@@ -161,7 +162,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
              * Identifier as Item or IdentifiableItem
              */
             if (currentList != null) {
-                Preconditions.checkArgument(currentList == nextNode, "List should be referenced two times in YANG Instance Identifier %s", dom);
+                Preconditions.checkArgument(currentList == nextNode,
+                        "List should be referenced two times in YANG Instance Identifier %s", dom);
 
                 // We entered list, so now we have all information to emit
                 // list path using second list argument.
@@ -229,8 +231,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
-    private static String getGetterName(final QName qName, final TypeDefinition<?> typeDef) {
-        final String suffix = BindingMapping.getGetterSuffix(qName);
+    private static String getGetterName(final QName qname, final TypeDefinition<?> typeDef) {
+        final String suffix = BindingMapping.getGetterSuffix(qname);
         if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
             return "is" + suffix;
         }
@@ -257,7 +259,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
                 } else {
-                    continue; // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
+                    // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
+                    continue;
                 }
                 final Codec<Object, Object> codec = getCodec(valueType, schema);
                 final LeafNodeCodecContext<?> leafNode = new LeafNodeCodecContext<>(schema, codec, method,
@@ -293,13 +296,15 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return ValueTypeCodec.NOOP_CODEC;
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     private Codec<Object, Object> getCodecForBindingClass(final Class<?> valueType, final TypeDefinition<?> typeDef) {
         if (typeDef instanceof IdentityrefTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, identityCodec);
         } else if (typeDef instanceof InstanceIdentifierTypeDefinition) {
             return ValueTypeCodec.encapsulatedValueCodecFor(valueType, instanceIdentifierCodec);
         } else if (typeDef instanceof UnionTypeDefinition) {
-            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) typeDef, this);
+            final Callable<UnionTypeCodec> loader = UnionTypeCodec.loader(valueType, (UnionTypeDefinition) typeDef,
+                this);
             try {
                 return loader.call();
             } catch (final Exception e) {

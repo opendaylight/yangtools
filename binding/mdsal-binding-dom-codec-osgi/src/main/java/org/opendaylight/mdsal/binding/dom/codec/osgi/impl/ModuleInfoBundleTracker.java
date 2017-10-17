@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Tracks bundles and attempts to retrieve YangModuleInfo, which is then fed into ModuleInfoRegistry
+ * Tracks bundles and attempts to retrieve YangModuleInfo, which is then fed into ModuleInfoRegistry.
  */
 final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collection<ObjectRegistration<YangModuleInfo>>> {
     private static final Logger LOG = LoggerFactory.getLogger(ModuleInfoBundleTracker.class);
@@ -54,6 +54,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public Collection<ObjectRegistration<YangModuleInfo>> addingBundle(final Bundle bundle, final BundleEvent event) {
         final URL resource = bundle.getEntry(YANG_MODLE_BINDING_PROVIDER_SERVICE);
         if (resource == null) {
@@ -104,6 +105,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public void removedBundle(final Bundle bundle, final BundleEvent event,
             final Collection<ObjectRegistration<YangModuleInfo>> regs) {
         if (regs == null) {

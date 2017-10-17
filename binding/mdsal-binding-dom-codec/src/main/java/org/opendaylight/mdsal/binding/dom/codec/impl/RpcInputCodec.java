@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  * {@link UnmappedRpcInputCodec} and {@link ContainerNodeCodecContext}, which results in bimorphic invocation in
  * {@link BindingNormalizedNodeCodecRegistry#fromNormalizedNodeRpcData()}.
  *
+ * <p>
  * Without this interface we could end up with megamorphic invocation, as the two implementations cannot share class
  * hierarchy.
  *

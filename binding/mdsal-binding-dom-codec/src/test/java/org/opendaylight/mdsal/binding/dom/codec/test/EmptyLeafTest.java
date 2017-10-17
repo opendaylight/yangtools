@@ -62,8 +62,10 @@ public class EmptyLeafTest extends AbstractBindingRuntimeTest {
             .setKey(TOP_FOO_KEY)
             .setChoiceInList(new EmptyLeafBuilder().setEmptyType(true).build())
             .build();
-        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, withEmptyCase);
-        final Entry<InstanceIdentifier<?>, DataObject> readed = registry.fromNormalizedNode(dom.getKey(),dom.getValue());
+        final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST,
+            withEmptyCase);
+        final Entry<InstanceIdentifier<?>, DataObject> readed = registry.fromNormalizedNode(dom.getKey(),
+            dom.getValue());
         final ChoiceInList list = ((TopLevelList) readed.getValue()).getChoiceInList();
         assertTrue(list instanceof EmptyLeaf);
         assertTrue(((EmptyLeaf) list).isEmptyType());

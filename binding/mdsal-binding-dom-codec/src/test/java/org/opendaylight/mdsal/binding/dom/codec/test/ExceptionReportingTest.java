@@ -45,44 +45,45 @@ public class ExceptionReportingTest {
 
     private static final QName TOP_QNAME = Top.QNAME;
     private static final YangInstanceIdentifier BI_TOP_PATH = YangInstanceIdentifier.builder().node(TOP_QNAME).build();
-    private static final YangInstanceIdentifier BI_TREE_LEAF_ONLY = FULL_CODEC.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
+    private static final YangInstanceIdentifier BI_TREE_LEAF_ONLY = FULL_CODEC.toYangInstanceIdentifier(
+        BA_TREE_LEAF_ONLY);
 
-
-    @Test(expected=MissingSchemaException.class)
+    @Test(expected = MissingSchemaException.class)
     public void testDOMTop() {
         CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(BI_TOP_PATH);
     }
 
-    @Test(expected=MissingSchemaException.class)
+    @Test(expected = MissingSchemaException.class)
     public void testDOMAugment() {
         CODEC_WITHOUT_TOP.fromYangInstanceIdentifier(BI_TREE_LEAF_ONLY);
     }
 
-    @Test(expected=MissingSchemaForClassException.class)
+    @Test(expected = MissingSchemaForClassException.class)
     public void testBindingTop() {
         CODEC_WITHOUT_TOP.toYangInstanceIdentifier(BA_TOP_LEVEL_LIST);
     }
 
-    @Test(expected=MissingSchemaForClassException.class)
+    @Test(expected = MissingSchemaForClassException.class)
     public void testBindingAugment() {
         ONLY_TOP_CODEC.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY);
     }
 
-    @Test(expected=IncorrectNestingException.class)
+    @Test(expected = IncorrectNestingException.class)
     public void testBindingSkippedRoot() {
         FULL_CODEC.toYangInstanceIdentifier(InstanceIdentifier.create(TopLevelList.class));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    @Test(expected=IncorrectNestingException.class)
+    @Test(expected = IncorrectNestingException.class)
     public void testBindingIncorrectAugment() {
-        FULL_CODEC.toYangInstanceIdentifier(InstanceIdentifier.create(Top.class).augmentation((Class) TreeComplexUsesAugment.class));
+        FULL_CODEC.toYangInstanceIdentifier(InstanceIdentifier.create(Top.class).augmentation(
+            (Class) TreeComplexUsesAugment.class));
     }
 
-
+    @SuppressWarnings("checkstyle:illegalCatch")
     private static BindingNormalizedNodeCodecRegistry codec(final Class<?>... classes) {
         final ModuleInfoBackedContext ctx = ModuleInfoBackedContext.create();
-        for(final Class<?> clazz : classes) {
+        for (final Class<?> clazz : classes) {
             YangModuleInfo modInfo;
             try {
                 modInfo = BindingReflections.getModuleInfo(clazz);
@@ -94,9 +95,9 @@ public class ExceptionReportingTest {
         final SchemaContext schema = ctx.tryToCreateSchemaContext().get();
         final BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(ctx, schema);
         final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        final BindingNormalizedNodeCodecRegistry registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
+        final BindingNormalizedNodeCodecRegistry registry = new BindingNormalizedNodeCodecRegistry(
+            StreamWriterGenerator.create(utils));
         registry.onBindingRuntimeContextUpdated(runtimeCtx);
         return registry;
     }
-
 }

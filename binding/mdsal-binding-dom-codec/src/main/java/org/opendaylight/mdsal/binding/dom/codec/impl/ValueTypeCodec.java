@@ -23,28 +23,20 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
  */
 abstract class ValueTypeCodec implements Codec<Object, Object> {
 
-    private static final Cache<Class<?>, SchemaUnawareCodec> staticCodecs = CacheBuilder.newBuilder().weakKeys()
+    private static final Cache<Class<?>, SchemaUnawareCodec> STATIC_CODECS = CacheBuilder.newBuilder().weakKeys()
             .build();
 
-
     /**
-     * Marker interface for codecs, which functionality will not be
-     * affected by schema change (introduction of new YANG modules)
-     * they may have one static instance generated when
-     * first time needed.
-     *
+     * Marker interface for codecs, which functionality will not be affected by schema change (introduction of new YANG
+     * modules) they may have one static instance generated when first time needed.
      */
     interface SchemaUnawareCodec extends Codec<Object,Object> {
 
     }
 
-
     /**
-     *
-     * No-op Codec, Java YANG Binding uses same types as NormalizedNode model
-     * for base YANG types, representing numbers, binary and strings.
-     *
-     *
+     * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
+     * binary and strings.
      */
     public static final SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
 
@@ -62,19 +54,16 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
     public static final SchemaUnawareCodec EMPTY_CODEC = new SchemaUnawareCodec() {
 
         @Override
-        public Object serialize(final Object arg0) {
-            // Empty type has null value in NormalizedNode and Composite Node
-            // representation
+        public Object serialize(final Object input) {
+            // Empty type has null value in NormalizedNode and Composite Node representation
             return null;
         }
 
         @Override
-        public Object deserialize(final Object arg0) {
-            /* Empty type has boolean.TRUE representation in Binding-aware world
-            *  otherwise it is null / false.
-            *  So when codec is triggered, empty leaf is present, that means we
-            *  are safe to return true.
-            */
+        public Object deserialize(final Object input) {
+            /* Empty type has boolean.TRUE representation in Binding-aware world otherwise it is null / false.
+             * So when codec is triggered, empty leaf is present, that means we are safe to return true.
+             */
             return Boolean.TRUE;
         }
     };
@@ -89,15 +78,17 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
         return def instanceof EmptyTypeDefinition ? EMPTY_CODEC : NOOP_CODEC;
     }
 
-    private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz, final Callable<? extends SchemaUnawareCodec> loader) {
+    private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz,
+            final Callable<? extends SchemaUnawareCodec> loader) {
         try {
-            return staticCodecs.get(typeClz, loader);
+            return STATIC_CODECS.get(typeClz, loader);
         } catch (ExecutionException e) {
             throw new IllegalStateException(e);
         }
     }
 
-    private static Callable<? extends SchemaUnawareCodec> getCodecLoader(final Class<?> typeClz, final TypeDefinition<?> def) {
+    private static Callable<? extends SchemaUnawareCodec> getCodecLoader(final Class<?> typeClz,
+            final TypeDefinition<?> def) {
 
         TypeDefinition<?> rootType = def;
         while (rootType.getBaseType() != null) {

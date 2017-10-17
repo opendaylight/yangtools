@@ -87,8 +87,9 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
             @Override
             public RpcInputCodec load(final SchemaPath key) {
                 final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key);
-                if (schema instanceof EffectiveStatement &&
-                        ((EffectiveStatement) schema).getDeclared().getStatementSource() != StatementSource.DECLARATION) {
+                if (schema instanceof EffectiveStatement
+                        && ((EffectiveStatement) schema).getDeclared().getStatementSource()
+                        != StatementSource.DECLARATION) {
                     // This is an implicitly-defined input or output statement. We do not have a corresponding
                     // data representation, so we hard-wire it to null.
                     return UnmappedRpcInputCodec.getInstance();
@@ -120,7 +121,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
      *
      * @param factory
      *            CodecContextFactory
-     * @return
+     * @return A new root node
      */
     static SchemaRootCodecContext<?> create(final CodecContextFactory factory) {
         final DataContainerCodecPrototype<SchemaContext> prototype = DataContainerCodecPrototype.rootPrototype(factory);
@@ -130,38 +131,32 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     @SuppressWarnings("unchecked")
     @Override
-    public <DV extends DataObject> DataContainerCodecContext<DV, ?> streamChild(final Class<DV> childClass)
-            throws IllegalArgumentException {
+    public <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(final Class<C> childClass) {
         /* FIXME: This is still not solved for RPCs
          * TODO: Probably performance wise RPC, Data and Notification loading cache
          *       should be merge for performance resons. Needs microbenchmark to
          *       determine which is faster (keeping them separate or in same cache).
          */
         if (Notification.class.isAssignableFrom(childClass)) {
-            return (DataContainerCodecContext<DV, ?>) getNotification((Class<? extends Notification>)childClass);
+            return (DataContainerCodecContext<C, ?>) getNotification((Class<? extends Notification>)childClass);
         }
-        return (DataContainerCodecContext<DV, ?>) getOrRethrow(childrenByClass,childClass);
+        return (DataContainerCodecContext<C, ?>) getOrRethrow(childrenByClass,childClass);
     }
 
     @Override
-    public <E extends DataObject> Optional<DataContainerCodecContext<E,?>> possibleStreamChild(final Class<E> childClass) {
+    public <C extends DataObject> Optional<DataContainerCodecContext<C, ?>> possibleStreamChild(
+            final Class<C> childClass) {
         throw new UnsupportedOperationException("Not supported");
     }
 
     @Override
     public DataContainerCodecContext<?,?> yangPathArgumentChild(final PathArgument arg) {
-        return getOrRethrow(childrenByQName,arg.getNodeType());
+        return getOrRethrow(childrenByQName, arg.getNodeType());
     }
 
     @Override
     public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
-        throw new UnsupportedOperationException(
-                "Could not create Binding data representation for root");
-    }
-
-
-    ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
-        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
+        throw new UnsupportedOperationException("Could not create Binding data representation for root");
     }
 
     NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
@@ -172,13 +167,18 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getOrRethrow(notificationsByPath, notification);
     }
 
+    ContainerNodeCodecContext<?> getRpc(final Class<? extends DataContainer> rpcInputOrOutput) {
+        return getOrRethrow(rpcDataByClass, rpcInputOrOutput);
+    }
+
     RpcInputCodec<?> getRpc(final SchemaPath notification) {
         return getOrRethrow(rpcDataByPath, notification);
     }
 
     private DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
         final QName qname = BindingReflections.findQName(key);
-        final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname),key,"%s is not top-level item.",key);
+        final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname), key,
+            "%s is not top-level item.", key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 

@@ -42,6 +42,7 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
         this.runtimeContext = checkNotNull(runtimeContext);
     }
 
+    @SuppressWarnings("checkstyle:illegalCatch")
     synchronized void updateService() {
         final SchemaContext context;
         try {
@@ -78,6 +79,7 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
         }
 
         @Override
+        @SuppressWarnings("checkstyle:illegalCatch")
         public void close() throws Exception {
             try {
                 inner.close();

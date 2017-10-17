@@ -67,7 +67,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
      *            - union values
      * @param subtype
      *            - subtype of union
-     * @throws NoSuchMethodException
+     * @throws NoSuchMethodException when the getter method is not found
      */
     private static void addLeafrefValueCodec(final Class<?> unionCls, final UnionTypeDefinition unionType,
             final BindingCodecContext bindingCodecContext, final Set<UnionValueOptionContext> values,

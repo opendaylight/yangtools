@@ -12,11 +12,10 @@ package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
  */
 abstract class AbstractGenerator {
     /**
-     * Ensure that the serializer class for specified class is loaded
-     * and return its name.
+     * Ensure that the serializer class for specified class is loaded and return its name.
      *
      * @param cls Data object class
      * @return Serializer class name
      */
-    protected abstract String loadSerializerFor(final Class<?> cls);
+    protected abstract String loadSerializerFor(Class<?> cls);
 }

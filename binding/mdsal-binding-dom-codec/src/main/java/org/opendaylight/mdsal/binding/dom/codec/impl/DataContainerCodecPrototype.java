@@ -38,8 +38,8 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     private volatile DataContainerCodecContext<?,T> instance = null;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg, final T nodeSchema,
-            final CodecContextFactory factory) {
+    private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg,
+            final T nodeSchema, final CodecContextFactory factory) {
         this.bindingClass = cls;
         this.yangArg = arg;
         this.schema = nodeSchema;
@@ -47,10 +47,17 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         this.bindingArg = new InstanceIdentifier.Item(bindingClass);
 
         if (arg instanceof AugmentationIdentifier) {
-            this.namespace = Iterables.getFirst(((AugmentationIdentifier) arg).getPossibleChildNames(), null).getModule();
+            this.namespace = Iterables.getFirst(((AugmentationIdentifier) arg).getPossibleChildNames(), null)
+                    .getModule();
         } else {
             this.namespace = arg.getNodeType().getModule();
         }
+    }
+
+    static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
+        final SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
+        final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
+        return new DataContainerCodecPrototype<>(DataRoot.class, arg, schema, factory);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -59,22 +66,16 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
         return new DataContainerCodecPrototype(cls, NodeIdentifier.create(schema.getQName()), schema, factory);
     }
 
-    static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
-        final SchemaContext schema = factory.getRuntimeContext().getSchemaContext();
-        final NodeIdentifier arg = NodeIdentifier.create(schema.getQName());
-        return new DataContainerCodecPrototype<SchemaContext>(DataRoot.class, arg, schema, factory);
-    }
-
-
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
             final AugmentationSchema schema, final CodecContextFactory factory) {
         return new DataContainerCodecPrototype(augClass, arg, schema, factory);
     }
 
-    static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass, final NotificationDefinition schema, final CodecContextFactory factory) {
+    static DataContainerCodecPrototype<NotificationDefinition> from(final Class<?> augClass,
+            final NotificationDefinition schema, final CodecContextFactory factory) {
         final PathArgument arg = NodeIdentifier.create(schema.getQName());
-        return new DataContainerCodecPrototype<NotificationDefinition>(augClass,arg, schema, factory);
+        return new DataContainerCodecPrototype<>(augClass,arg, schema, factory);
     }
 
     protected T getSchema() {

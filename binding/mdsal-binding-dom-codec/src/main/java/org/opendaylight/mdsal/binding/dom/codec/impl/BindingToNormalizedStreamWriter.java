@@ -33,13 +33,15 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
     private final NormalizedNodeStreamWriter delegate;
     private final NodeCodecContext<?> rootNodeSchema;
 
-    BindingToNormalizedStreamWriter(final NodeCodecContext<?> rootNodeSchema, final NormalizedNodeStreamWriter delegate) {
+    BindingToNormalizedStreamWriter(final NodeCodecContext<?> rootNodeSchema,
+            final NormalizedNodeStreamWriter delegate) {
         this.rootNodeSchema = Preconditions.checkNotNull(rootNodeSchema);
         this.delegate = Preconditions.checkNotNull(delegate);
     }
 
-    static BindingToNormalizedStreamWriter create(final NodeCodecContext<?> schema, final NormalizedNodeStreamWriter delegate) {
-            return new BindingToNormalizedStreamWriter(schema, delegate);
+    static BindingToNormalizedStreamWriter create(final NodeCodecContext<?> schema,
+            final NormalizedNodeStreamWriter delegate) {
+        return new BindingToNormalizedStreamWriter(schema, delegate);
     }
 
     private void emitSchema(final Object schema) {

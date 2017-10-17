@@ -47,7 +47,8 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
     protected final DataNodeContainer schemaNode;
     private final GeneratedType dtoType;
 
-    DataNodeContainerSerializerSource(final AbstractGenerator generator, final GeneratedType type, final DataNodeContainer node) {
+    DataNodeContainerSerializerSource(final AbstractGenerator generator, final GeneratedType type,
+            final DataNodeContainer node) {
         super(generator);
         this.dtoType = Preconditions.checkNotNull(type);
         this.schemaNode = Preconditions.checkNotNull(node);
@@ -62,35 +63,36 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
 
     @Override
     protected CharSequence getSerializerBody() {
-        final StringBuilder b = new StringBuilder();
-        b.append("{\n");
-        b.append(statement(assign(DataObjectSerializerRegistry.class.getName(), REGISTRY, "$1")));
-        b.append(statement(assign(dtoType.getFullyQualifiedName(), INPUT,
+        final StringBuilder sb = new StringBuilder();
+        sb.append("{\n");
+        sb.append(statement(assign(DataObjectSerializerRegistry.class.getName(), REGISTRY, "$1")));
+        sb.append(statement(assign(dtoType.getFullyQualifiedName(), INPUT,
                 cast(dtoType.getFullyQualifiedName(), "$2"))));
-        b.append(statement(assign(BindingStreamEventWriter.class.getName(), STREAM, cast(BindingStreamEventWriter.class.getName(), "$3"))));
-        b.append(statement(assign(BindingSerializer.class.getName(), SERIALIZER, null)));
-        b.append("if (");
-        b.append(STREAM);
-        b.append(" instanceof ");
-        b.append(BindingSerializer.class.getName());
-        b.append(") {");
-        b.append(statement(assign(SERIALIZER, cast(BindingSerializer.class.getName(), STREAM))));
-        b.append('}');
-        b.append(statement(emitStartEvent()));
+        sb.append(statement(assign(BindingStreamEventWriter.class.getName(), STREAM,
+            cast(BindingStreamEventWriter.class.getName(), "$3"))));
+        sb.append(statement(assign(BindingSerializer.class.getName(), SERIALIZER, null)));
+        sb.append("if (");
+        sb.append(STREAM);
+        sb.append(" instanceof ");
+        sb.append(BindingSerializer.class.getName());
+        sb.append(") {");
+        sb.append(statement(assign(SERIALIZER, cast(BindingSerializer.class.getName(), STREAM))));
+        sb.append('}');
+        sb.append(statement(emitStartEvent()));
 
-        emitBody(b);
-        emitAfterBody(b);
-        b.append(statement(endNode()));
-        b.append(statement("return null"));
-        b.append('}');
-        return b;
+        emitBody(sb);
+        emitAfterBody(sb);
+        sb.append(statement(endNode()));
+        sb.append(statement("return null"));
+        sb.append('}');
+        return sb;
     }
 
     /**
      * Allows for customization of emitting code, which is processed after
      * normal DataNodeContainer body. Ideal for augmentations or others.
      */
-    protected void emitAfterBody(final StringBuilder b) {
+    protected void emitAfterBody(final StringBuilder sb) {
         // No-op
     }
 
@@ -123,7 +125,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         return prefix + BindingMapping.getGetterSuffix(node.getQName());
     }
 
-    private void emitBody(final StringBuilder b) {
+    private void emitBody(final StringBuilder sb) {
         final Map<String, Type> getterToType = collectAllProperties(dtoType, new HashMap<String, Type>());
         for (final DataSchemaNode schemaChild : schemaNode.getChildNodes()) {
             if (!schemaChild.isAugmenting()) {
@@ -133,8 +135,9 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
                     // FIXME AnyXml nodes are ignored, since their type cannot be found in generated bindnig
                     // Bug-706 https://bugs.opendaylight.org/show_bug.cgi?id=706
                     if (schemaChild instanceof AnyXmlSchemaNode) {
-                        LOG.warn("Node {} will be ignored. AnyXml is not yet supported from binding aware code." +
-                                "Binding Independent code can be used to serialize anyXml nodes.", schemaChild.getPath());
+                        LOG.warn("Node {} will be ignored. AnyXml is not yet supported from binding aware code."
+                                + "Binding Independent code can be used to serialize anyXml nodes.",
+                                schemaChild.getPath());
                         continue;
                     }
 
@@ -142,26 +145,26 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
                         String.format("Unable to find type for child node %s. Expected child nodes: %s",
                             schemaChild.getPath(), getterToType));
                 }
-                emitChild(b, getter, childType, schemaChild);
+                emitChild(sb, getter, childType, schemaChild);
             }
         }
     }
 
-    private void emitChild(final StringBuilder b, final String getterName, final Type childType,
+    private void emitChild(final StringBuilder sb, final String getterName, final Type childType,
             final DataSchemaNode schemaChild) {
-        b.append(statement(assign(childType, getterName, cast(childType, invoke(INPUT, getterName)))));
+        sb.append(statement(assign(childType, getterName, cast(childType, invoke(INPUT, getterName)))));
 
-        b.append("if (").append(getterName).append(" != null) {\n");
-        emitChildInner(b, getterName, childType, schemaChild);
-        b.append("}\n");
+        sb.append("if (").append(getterName).append(" != null) {\n");
+        emitChildInner(sb, getterName, childType, schemaChild);
+        sb.append("}\n");
     }
 
-    private void emitChildInner(final StringBuilder b, final String getterName, final Type childType,
+    private void emitChildInner(final StringBuilder sb, final String getterName, final Type childType,
             final DataSchemaNode child) {
         if (child instanceof LeafSchemaNode) {
-            b.append(statement(leafNode(child.getQName().getLocalName(), getterName)));
+            sb.append(statement(leafNode(child.getQName().getLocalName(), getterName)));
         } else if (child instanceof AnyXmlSchemaNode) {
-            b.append(statement(anyxmlNode(child.getQName().getLocalName(), getterName)));
+            sb.append(statement(anyxmlNode(child.getQName().getLocalName(), getterName)));
         } else if (child instanceof LeafListSchemaNode) {
             final CharSequence startEvent;
             if (((LeafListSchemaNode) child).isUserOrdered()) {
@@ -169,26 +172,28 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             } else {
                 startEvent = startLeafSet(child.getQName().getLocalName(),invoke(getterName, "size"));
             }
-            b.append(statement(startEvent));
+            sb.append(statement(startEvent));
             final Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
-            b.append(forEach(getterName, valueType, statement(leafSetEntryNode(CURRENT))));
-            b.append(statement(endNode()));
+            sb.append(forEach(getterName, valueType, statement(leafSetEntryNode(CURRENT))));
+            sb.append(statement(endNode()));
         } else if (child instanceof ListSchemaNode) {
             final Type valueType = ((ParameterizedType) childType).getActualTypeArguments()[0];
             final ListSchemaNode casted = (ListSchemaNode) child;
-            emitList(b, getterName, valueType, casted);
+            emitList(sb, getterName, valueType, casted);
         } else if (child instanceof ContainerSchemaNode) {
-            b.append(tryToUseCacheElse(getterName,statement(staticInvokeEmitter(childType, getterName))));
+            sb.append(tryToUseCacheElse(getterName,statement(staticInvokeEmitter(childType, getterName))));
         } else if (child instanceof ChoiceSchemaNode) {
             final String propertyName = CHOICE_PREFIX + childType.getName();
-            staticConstant(propertyName, DataObjectSerializerImplementation.class, ChoiceDispatchSerializer.from(loadClass(childType)));
-            b.append(tryToUseCacheElse(getterName,statement(invoke(propertyName, StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(),getterName), STREAM))));
+            staticConstant(propertyName, DataObjectSerializerImplementation.class,
+                ChoiceDispatchSerializer.from(loadClass(childType)));
+            sb.append(tryToUseCacheElse(getterName,statement(invoke(propertyName,
+                StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(), getterName),
+                STREAM))));
         }
     }
 
     private static StringBuilder tryToUseCacheElse(final String getterName, final CharSequence statement) {
         final StringBuilder b = new StringBuilder();
-
         b.append("if ( ");
         b.append(SERIALIZER).append("== null || ");
         b.append(invoke(SERIALIZER, "serialize", getterName)).append("== null");
@@ -198,11 +203,11 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         return b;
     }
 
-    private void emitList(final StringBuilder b, final String getterName, final Type valueType,
+    private void emitList(final StringBuilder sb, final String getterName, final Type valueType,
             final ListSchemaNode child) {
         final CharSequence startEvent;
 
-        b.append(statement(assign("int", "_count", invoke(getterName, "size"))));
+        sb.append(statement(assign("int", "_count", invoke(getterName, "size"))));
         if (child.getKeyDefinition().isEmpty()) {
             startEvent = startUnkeyedList(classReference(valueType), "_count");
         } else if (child.isUserOrdered()) {
@@ -210,8 +215,9 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         } else {
             startEvent = startMapNode(classReference(valueType), "_count");
         }
-        b.append(statement(startEvent));
-        b.append(forEach(getterName, valueType, tryToUseCacheElse(CURRENT,statement(staticInvokeEmitter(valueType, CURRENT)))));
-        b.append(statement(endNode()));
+        sb.append(statement(startEvent));
+        sb.append(forEach(getterName, valueType, tryToUseCacheElse(CURRENT, statement(staticInvokeEmitter(valueType,
+            CURRENT)))));
+        sb.append(statement(endNode()));
     }
 }

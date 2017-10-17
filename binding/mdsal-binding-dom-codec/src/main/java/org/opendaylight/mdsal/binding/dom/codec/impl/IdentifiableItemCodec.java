@@ -34,7 +34,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     private final MethodHandle ctorInvoker;
     private final MethodHandle ctor;
 
-    public IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
+    IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
             final Class<?> identifiable, final Map<QName, ValueContext> keyValueContexts) {
         this.schema = schema;
         this.identifiable = identifiable;
@@ -85,6 +85,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
         final Object[] bindingValues = new Object[keysInBindingOrder.size()];
         int offset = 0;

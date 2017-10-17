@@ -18,12 +18,13 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
  * Serializer of Binding objects to Normalized Node which uses {@link BindingNormalizedNodeCache} to
  * cache already serialized values.
  *
+ * <p>
  * This serializer implements {@link BindingStreamEventWriter} along with {@link BindingSerializer}.
  *
+ * <p>
  * {@link BindingSerializer} interface is used by generated implementations of
  * {@link org.opendaylight.yangtools.yang.binding.DataObjectSerializer} to provide Binding object
  * for inspection and to prevent streaming of already serialized object.
- *
  */
 final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEventWriter implements
         BindingSerializer<Object, DataObject> {
@@ -53,10 +54,12 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
     /**
      * Serializes input if it is cached, returns null otherwise.
      *
+     * <p>
      * If input is cached it uses {@link NormalizedNodeWriterWithAddChild#addChild(NormalizedNode)}
      * to provide already serialized value to underlying NormalizedNodeWriter in order to reuse
      * value instead of creating new one using Normalized Node stream APIs.
      *
+     * <p>
      * Note that this optional is serialization of child node invoked from
      * {@link org.opendaylight.yangtools.yang.binding.DataObjectSerializer}, which may opt-out from
      * streaming of data when non-null result is returned.
@@ -68,18 +71,6 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             final NormalizedNode<?, ?> domData = cachingSerializer.get(input);
             domWriter.addChild(domData);
             return domData;
-        }
-        return null;
-    }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private BindingNormalizedNodeCache getCacheSerializer(final Class type) {
-        if (cacheHolder.isCached(type)) {
-            final DataContainerCodecContext<?, ?> currentCtx = (DataContainerCodecContext<?, ?>) delegate.current();
-            if (type.equals(currentCtx.getBindingClass())) {
-                return cacheHolder.getCachingSerializer(currentCtx);
-            }
-            return cacheHolder.getCachingSerializer(currentCtx.streamChild(type));
         }
         return null;
     }
@@ -100,6 +91,18 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             return cache.get(data);
         }
         return serializeUsingStreamWriter(cacheHolder, subtreeRoot, data);
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private BindingNormalizedNodeCache getCacheSerializer(final Class type) {
+        if (cacheHolder.isCached(type)) {
+            final DataContainerCodecContext<?, ?> currentCtx = (DataContainerCodecContext<?, ?>) delegate.current();
+            if (type.equals(currentCtx.getBindingClass())) {
+                return cacheHolder.getCachingSerializer(currentCtx);
+            }
+            return cacheHolder.getCachingSerializer(currentCtx.streamChild(type));
+        }
+        return null;
     }
 
     /**

@@ -59,6 +59,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public Object deserialize(final Object input) {
         try {
             return constructor.invokeExact(input);
@@ -69,6 +70,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     }
 
     @Override
+    @SuppressWarnings("checkstyle:illegalCatch")
     public Object serialize(final Object input) {
         try {
             return getter.invokeExact(input);

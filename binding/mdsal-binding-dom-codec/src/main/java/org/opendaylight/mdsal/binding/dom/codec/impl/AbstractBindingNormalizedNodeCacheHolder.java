@@ -15,22 +15,18 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
- *
- * Abstract Holder of Binding to Normalized Node caches indexed by {@link DataContainerCodecContext}
- * to which cache is associated.
- *
+ * Abstract Holder of Binding to Normalized Node caches indexed by {@link DataContainerCodecContext} to which cache is
+ * associated.
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
 
     private final Set<Class<? extends DataObject>> cachedValues;
     private final LoadingCache<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache> caches = CacheBuilder
             .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache>() {
-
                 @Override
-                public BindingNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) throws Exception {
+                public BindingNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) {
                     return new BindingNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this, key);
                 }
-
             });
 
     protected AbstractBindingNormalizedNodeCacheHolder(final Set<Class<? extends DataObject>> cacheSpec) {
