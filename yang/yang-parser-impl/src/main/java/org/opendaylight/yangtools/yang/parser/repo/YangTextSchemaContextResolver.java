@@ -186,7 +186,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private static SourceIdentifier guessSourceIdentifier(final String fileName) {
         try {
             return YangTextSchemaSource.identifierFromFilename(fileName);
-        } catch (IllegalArgumentException e) {
+        } catch (final IllegalArgumentException e) {
             LOG.warn("Invalid file name format in '{}'", fileName, e);
             return RevisionSourceIdentifier.create(fileName);
         }
@@ -236,9 +236,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 try {
                     sc = Optional.of(f.get());
                     break;
-                } catch (InterruptedException e) {
+                } catch (final InterruptedException e) {
                     throw new RuntimeException("Interrupted while assembling schema context", e);
-                } catch (ExecutionException e) {
+                } catch (final ExecutionException e) {
                     LOG.info("Failed to fully assemble schema context for {}", sources, e);
                     final Throwable cause = e.getCause();
                     Verify.verify(cause instanceof SchemaResolutionException);
@@ -301,9 +301,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
 
         try {
             return future.get();
-        } catch (InterruptedException e) {
+        } catch (final InterruptedException e) {
             throw new RuntimeException("Interrupted while waiting for SchemaContext assembly", e);
-        } catch (ExecutionException e) {
+        } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof SchemaResolutionException) {
                 throw (SchemaResolutionException) cause;
