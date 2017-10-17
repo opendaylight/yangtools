@@ -1,0 +1,12 @@
+module imp-module-2 {
+    namespace imp2-ns;
+    prefix imp2;
+
+    revision 2017-10-13;
+
+    typedef new-type {
+        type string {
+            length 10..15;
+        }
+    }
+}

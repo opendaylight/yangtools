@@ -1,0 +1,14 @@
+module imp-module {
+    namespace imp-ns;
+    prefix imp;
+
+    revision 2017-10-13;
+
+    leaf my-leaf {
+        type string;
+    }
+
+    leaf my-leaf-2 {
+        type string;
+    }
+}
