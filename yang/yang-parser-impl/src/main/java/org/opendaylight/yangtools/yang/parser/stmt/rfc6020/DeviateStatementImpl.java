@@ -102,6 +102,9 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                 YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,
                 YangStmtMapping.MIN_ELEMENTS, YangStmtMapping.MAX_ELEMENTS);
 
+        private static final Set<YangStmtMapping> IMPLICIT_STATEMENTS = ImmutableSet.of(YangStmtMapping.CONFIG,
+                YangStmtMapping.MANDATORY, YangStmtMapping.MAX_ELEMENTS, YangStmtMapping.MIN_ELEMENTS);
+
         public Definition() {
             super(YangStmtMapping.DEVIATE);
         }
@@ -268,6 +271,14 @@ public class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind>
                     targetCtx.addEffectiveSubstatement(stmtCtxToBeReplaced.createCopy(targetCtx, CopyType.ORIGINAL));
                     return;
                 }
+            }
+
+            // This is a special case when deviate replace of a config/mandatory/max/min-elements substatement targets
+            // a node which does not contain an explicitly declared config/mandatory/max/min-elements.
+            // However, according to RFC6020/RFC7950, these properties are always implicitly present.
+            if (IMPLICIT_STATEMENTS.contains(stmtToBeReplaced)) {
+                addStatement(stmtCtxToBeReplaced, targetCtx);
+                return;
             }
 
             throw new InferenceException(stmtCtxToBeReplaced.getStatementSourceReference(), "Deviation cannot " +

@@ -1,0 +1,18 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-10-13;
+
+    container bar-cont {
+
+    }
+
+    leaf-list bar-leaf-list {
+        type int32;
+    }
+
+    leaf bar-leaf {
+        type int32;
+    }
+}
