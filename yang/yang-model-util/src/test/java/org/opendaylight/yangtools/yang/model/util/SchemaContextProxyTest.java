@@ -567,8 +567,6 @@ public class SchemaContextProxyTest {
 
                 assertEquals(module, filteringSchemaContextProxy.findModuleByNamespaceAndRevision(module.getNamespace(),
                             module.getRevision()));
-
-                assertEquals(module.getSource(), filteringSchemaContextProxy.getModuleSource(module).get());
             }
         }
     }
@@ -656,7 +654,6 @@ public class SchemaContextProxyTest {
         final URI newNamespace = URI.create(namespace.toString() + ":" + name);
         doReturn(newNamespace).when(mockedModule).getNamespace();
         doReturn(QNameModule.create(newNamespace, revision)).when(mockedModule).getQNameModule();
-        doReturn(TEST_SOURCE).when(mockedModule).getSource();
         doReturn(new HashSet<>()).when(mockedModule).getSubmodules();
         doReturn(mockedModule.getQNameModule().toString()).when(mockedModule).toString();
         mockModuleImport(mockedModule);

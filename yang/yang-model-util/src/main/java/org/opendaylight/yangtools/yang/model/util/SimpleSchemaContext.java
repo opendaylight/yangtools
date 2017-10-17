@@ -10,14 +10,12 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
@@ -104,10 +102,6 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
         return toStringHelper.add("modules", modules);
     }
 
-    @Override
-    protected final Map<ModuleIdentifier, String> getIdentifiersToSources() {
-        return ImmutableMap.of();
-    }
 
     @Override
     protected final SetMultimap<URI, Module> getNamespaceToModules() {

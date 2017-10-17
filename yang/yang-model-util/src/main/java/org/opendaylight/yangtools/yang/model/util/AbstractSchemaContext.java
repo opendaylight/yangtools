@@ -17,8 +17,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -29,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -51,13 +48,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     protected static final TreeSet<Module> createModuleSet() {
         return new TreeSet<>(REVISION_COMPARATOR);
     }
-
-    /**
-     * Returns the ModuleIdentifier-to-YANG source mapping.
-     *
-     * @return yang sources where key is ModuleIdentifier
-     */
-    protected abstract Map<ModuleIdentifier, String> getIdentifiersToSources();
 
     /**
      * Returns the namespace-to-module mapping.
@@ -235,16 +225,5 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public Set<AugmentationSchema> getAvailableAugmentations() {
         return Collections.emptySet();
-    }
-
-    //FIXME: should work for submodules too
-    @Override
-    public Set<ModuleIdentifier> getAllModuleIdentifiers() {
-        return getIdentifiersToSources().keySet();
-    }
-
-    @Override
-    public Optional<String> getModuleSource(final ModuleIdentifier moduleIdentifier) {
-        return Optional.ofNullable(getIdentifiersToSources().get(moduleIdentifier));
     }
 }
