@@ -1,0 +1,29 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    import bar {
+        prefix bar;
+    }
+
+    revision 2017-10-13;
+
+    deviation "/bar:bar-cont" {
+        deviate replace {
+            config false;
+        }
+    }
+
+    deviation "/bar:bar-leaf-list" {
+        deviate replace {
+            min-elements 5;
+            max-elements 10;
+        }
+    }
+
+    deviation "/bar:bar-leaf" {
+        deviate replace {
+            mandatory true;
+        }
+    }
+}
