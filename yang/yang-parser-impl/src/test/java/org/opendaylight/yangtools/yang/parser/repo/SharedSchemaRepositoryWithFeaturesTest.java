@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
@@ -46,8 +47,9 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
+        final ListenableFuture<SchemaContext> testSchemaContextFuture = fact.createSchemaContext(
+                ImmutableList.of(foobar.getId()),
+                SchemaContextFactoryConfiguration.newBuilder().setSupportedFeatures(supportedFeatures).build());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
@@ -133,8 +135,9 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
+        final ListenableFuture<SchemaContext> testSchemaContextFuture = fact.createSchemaContext(
+                ImmutableList.of(foobar.getId()),
+                SchemaContextFactoryConfiguration.newBuilder().setSupportedFeatures(supportedFeatures).build());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 

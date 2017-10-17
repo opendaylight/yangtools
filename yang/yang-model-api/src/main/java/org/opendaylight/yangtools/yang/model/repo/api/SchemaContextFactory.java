@@ -34,7 +34,7 @@ public interface SchemaContextFactory {
      */
     default ListenableFuture<SchemaContext> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources) {
-        return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE);
+        return createSchemaContext(requiredSources, SchemaContextFactoryConfiguration.getDefault());
     }
 
     /**
@@ -48,9 +48,13 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     * @deprecated Use
+     *             {@link #createSchemaContext(Collection, SchemaContextFactoryConfiguration)}
+     *             instead.
      */
-    default ListenableFuture<SchemaContext> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode) {
+    @Deprecated
+    default ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+            final StatementParserMode statementParserMode) {
         return createSchemaContext(requiredSources, statementParserMode, null);
     }
 
@@ -66,7 +70,11 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     * @deprecated Use
+     *             {@link #createSchemaContext(Collection, SchemaContextFactoryConfiguration)}
+     *             instead.
      */
+    @Deprecated
     default ListenableFuture<SchemaContext> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
@@ -86,7 +94,30 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail
      *         with an explanation why the creation of the schema context
      *         failed.
+     * @deprecated Use
+     *             {@link #createSchemaContext(Collection, SchemaContextFactoryConfiguration)}
+     *             instead.
      */
-    ListenableFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
-            StatementParserMode statementParserMode, Set<QName> supportedFeatures);
+    @Deprecated
+    default ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
+        return createSchemaContext(requiredSources, SchemaContextFactoryConfiguration.newBuilder(statementParserMode)
+                .setSupportedFeatures(supportedFeatures).build());
+    }
+
+    /**
+     * Create a new schema context containing specified sources, pulling in any
+     * dependencies they may have. The result schema context is created according to supplied
+     * configuration.
+     *
+     * @param requiredSources
+     *            a collection of sources which are required to be present
+     * @param config
+     *            configuration of SchemaContextFactory and yang statement parser
+     * @return A checked future, which will produce a schema context, or fail
+     *         with an explanation why the creation of the schema context
+     *         failed.
+     */
+    ListenableFuture<SchemaContext> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources,
+            @Nonnull SchemaContextFactoryConfiguration config);
 }

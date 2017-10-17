@@ -17,6 +17,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -46,14 +47,15 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()),
-                    StatementParserMode.SEMVER_MODE);
+        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture = fact.createSchemaContext(
+                ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()),
+                SchemaContextFactoryConfiguration.newBuilder(StatementParserMode.SEMVER_MODE).build());
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
-        final ListenableFuture<SchemaContext> barSchemaContextFuture = fact
-                .createSchemaContext(ImmutableList.of(bar.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
+        final ListenableFuture<SchemaContext> barSchemaContextFuture = fact.createSchemaContext(
+                ImmutableList.of(bar.getId(), semVer.getId()),
+                SchemaContextFactoryConfiguration.newBuilder(StatementParserMode.SEMVER_MODE).build());
         assertTrue(barSchemaContextFuture.isDone());
         assertSchemaContext(barSchemaContextFuture.get(), 2);
     }
