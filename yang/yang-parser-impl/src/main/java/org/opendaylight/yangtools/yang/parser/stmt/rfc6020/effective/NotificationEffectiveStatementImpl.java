@@ -64,7 +64,8 @@ public class NotificationEffectiveStatementImpl extends
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByUses = this.augmenting = true;
+            this.augmenting = true;
+            this.addedByUses = true;
         } else {
             this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);

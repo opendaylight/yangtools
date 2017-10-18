@@ -15,10 +15,21 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 public class LoggerVariableModifiersCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger must be declared as private static final.";
+    private static final int[] TOKENS = { TokenTypes.VARIABLE_DEF };
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.VARIABLE_DEF};
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
     }
 
     @Override

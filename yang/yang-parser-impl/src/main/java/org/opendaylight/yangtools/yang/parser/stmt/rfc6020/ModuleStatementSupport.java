@@ -152,7 +152,7 @@ public class ModuleStatementSupport extends
 
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument(), qNameModule);
-        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule); // tu
+        stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
         stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
