@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
@@ -32,10 +33,10 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     private final Document doc;
     private final String file;
 
-    private Locator locator;
+    private Locator documentLocator;
 
     StatementSourceReferenceHandler(final Document doc, final String file) {
-        this.doc = Preconditions.checkNotNull(doc);
+        this.doc = requireNonNull(doc);
         this.file = file;
     }
 
@@ -53,7 +54,7 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     @Override
     public void setDocumentLocator(final Locator locator) {
         // Save the locator, so that it can be used later for line tracking when traversing nodes.
-        this.locator = locator;
+        this.documentLocator = locator;
     }
 
     @Override
@@ -66,8 +67,8 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
             el.setAttributeNS(attributes.getURI(i), attributes.getQName(i), attributes.getValue(i));
         }
 
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(file, locator.getLineNumber(),
-            locator.getColumnNumber());
+        final StatementSourceReference ref = DeclarationInTextSource.atPosition(file, documentLocator.getLineNumber(),
+            documentLocator.getColumnNumber());
         el.setUserData(USER_DATA_KEY, ref, null);
         stack.push(el);
     }

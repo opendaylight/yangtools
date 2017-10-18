@@ -40,15 +40,15 @@ abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgum
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withAttributes(final Map<QName, String> attributes) {
-        this.attributes = attributes;
+    public DataContainerNodeAttrBuilder<I, R> withAttributes(final Map<QName, String> withAttributes) {
+        this.attributes = withAttributes;
         return this;
     }
 
     @Override
     public DataContainerNodeAttrBuilder<I, R> withValue(
-            final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
-        return (DataContainerNodeAttrBuilder<I, R>) super.withValue(value);
+            final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
+        return (DataContainerNodeAttrBuilder<I, R>) super.withValue(withValue);
     }
 
     @Override
@@ -57,7 +57,7 @@ abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgum
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<I, R> withNodeIdentifier(final I nodeIdentifier) {
-        return (DataContainerNodeAttrBuilder<I, R>) super.withNodeIdentifier(nodeIdentifier);
+    public DataContainerNodeAttrBuilder<I, R> withNodeIdentifier(final I withNodeIdentifier) {
+        return (DataContainerNodeAttrBuilder<I, R>) super.withNodeIdentifier(withNodeIdentifier);
     }
 }

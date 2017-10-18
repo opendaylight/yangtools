@@ -249,10 +249,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
     /**
      * Records a write for associated node.
      *
-     * @param value new value
+     * @param newValue new value
      */
-    void write(final NormalizedNode<?, ?> value) {
-        updateValue(LogicalOperation.WRITE, value);
+    void write(final NormalizedNode<?, ?> newValue) {
+        updateValue(LogicalOperation.WRITE, newValue);
         children.clear();
     }
 
@@ -323,10 +323,10 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * Update this node's value and operation type without disturbing any of its child modifications.
      *
      * @param type New operation type
-     * @param value New node value
+     * @param newValue New node value
      */
-    void updateValue(final LogicalOperation type, final NormalizedNode<?, ?> value) {
-        this.value = requireNonNull(value);
+    void updateValue(final LogicalOperation type, final NormalizedNode<?, ?> newValue) {
+        this.value = requireNonNull(newValue);
         updateOperationType(type);
     }
 

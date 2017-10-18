@@ -35,7 +35,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
         ListenableFuture<D> apply(@Nonnull S input) throws Exception;
     }
 
-    private final Map<PotentialSchemaSource<?>, RefcountedRegistration> sources = new HashMap<>();
+    private final Map<PotentialSchemaSource<?>, RefcountedRegistration> availableSources = new HashMap<>();
     private final SchemaSourceRegistry consumer;
     private final SchemaRepository provider;
     private final AsyncFunction<S, D> function;
@@ -81,7 +81,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     }
 
     private void registerSource(final PotentialSchemaSource<?> src) {
-        RefcountedRegistration reg = sources.get(src);
+        RefcountedRegistration reg = availableSources.get(src);
         if (reg != null) {
             reg.incRef();
             return;
@@ -91,13 +91,13 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
                 src.getCost() + PotentialSchemaSource.Costs.COMPUTATION.getValue());
 
         final SchemaSourceRegistration<D> r = consumer.registerSchemaSource(this, newSrc);
-        sources.put(src, new RefcountedRegistration(r));
+        availableSources.put(src, new RefcountedRegistration(r));
     }
 
     private void unregisterSource(final PotentialSchemaSource<?> src) {
-        final RefcountedRegistration reg = sources.get(src);
+        final RefcountedRegistration reg = availableSources.get(src);
         if (reg != null && reg.decRef()) {
-            sources.remove(src);
+            availableSources.remove(src);
         }
     }
 }

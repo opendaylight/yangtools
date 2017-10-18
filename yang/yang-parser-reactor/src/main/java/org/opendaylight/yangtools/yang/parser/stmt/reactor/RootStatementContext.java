@@ -47,9 +47,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final SourceSpecificContext sourceContext;
     private final A argument;
 
-    private YangVersion version;
+    private YangVersion rootVersion;
     private Collection<SourceIdentifier> requiredSources = ImmutableSet.of();
-    private SourceIdentifier identifier;
+    private SourceIdentifier rootIdentifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -202,16 +202,16 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public YangVersion getRootVersion() {
-        return version == null ? DEFAULT_VERSION : version;
+        return rootVersion == null ? DEFAULT_VERSION : rootVersion;
     }
 
     @Override
     public void setRootVersion(final YangVersion version) {
         checkArgument(sourceContext.getSupportedVersions().contains(version),
                 "Unsupported yang version %s in %s", version, getStatementSourceReference());
-        checkState(this.version == null, "Version of root %s has been already set to %s", argument,
-                this.version);
-        this.version = requireNonNull(version);
+        checkState(this.rootVersion == null, "Version of root %s has been already set to %s", argument,
+                this.rootVersion);
+        this.rootVersion = requireNonNull(version);
     }
 
     @Override
@@ -240,11 +240,11 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     @Override
     public void setRootIdentifier(final SourceIdentifier identifier) {
-        this.identifier = requireNonNull(identifier);
+        this.rootIdentifier = requireNonNull(identifier);
     }
 
     SourceIdentifier getRootIdentifier() {
-        return identifier;
+        return rootIdentifier;
     }
 
     @Override

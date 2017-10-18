@@ -51,7 +51,7 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, MapNode> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

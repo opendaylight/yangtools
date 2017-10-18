@@ -35,9 +35,9 @@ public abstract class LeafRefPath implements Immutable {
         }
 
         @Override
-        protected LeafRefPath createInstance(final LeafRefPath parent,
-                final QNameWithPredicate qname) {
-            return new AbsoluteLeafRefPath(parent, qname);
+        protected LeafRefPath createInstance(final LeafRefPath newParent,
+                final QNameWithPredicate newQname) {
+            return new AbsoluteLeafRefPath(newParent, newQname);
         }
     }
 
@@ -56,9 +56,9 @@ public abstract class LeafRefPath implements Immutable {
         }
 
         @Override
-        protected LeafRefPath createInstance(final LeafRefPath parent,
-                final QNameWithPredicate qname) {
-            return new RelativeLeafRefPath(parent, qname);
+        protected LeafRefPath createInstance(final LeafRefPath newParent,
+                final QNameWithPredicate newQname) {
+            return new RelativeLeafRefPath(newParent, newQname);
         }
     }
 
@@ -92,7 +92,7 @@ public abstract class LeafRefPath implements Immutable {
     private final int hash;
 
     /**
-     * Cached legacy path, filled-in when {@link #getPath()} or
+     * Cached legacy path, filled-in when {@link #getPathFromRoot()} or
      * {@link #getPathTowardsRoot()} is invoked.
      */
     private volatile ImmutableList<QNameWithPredicate> legacyPath;
@@ -157,14 +157,14 @@ public abstract class LeafRefPath implements Immutable {
     /**
      * Create a new instance.
      *
-     * @param parent
+     * @param newParent
      *            Parent LeafRefPath
-     * @param qname
+     * @param newQname
      *            next path element
      * @return A new LeafRefPath instance
      */
-    protected abstract LeafRefPath createInstance(LeafRefPath parent,
-            QNameWithPredicate qname);
+    protected abstract LeafRefPath createInstance(LeafRefPath newParent,
+            QNameWithPredicate newQname);
 
     /**
      * Create a child path based on concatenation of this path and a relative
@@ -179,12 +179,12 @@ public abstract class LeafRefPath implements Immutable {
             return this;
         }
 
-        LeafRefPath parent = this;
-        for (QNameWithPredicate qname : relative) {
-            parent = parent.createInstance(parent, qname);
+        LeafRefPath newParent = this;
+        for (QNameWithPredicate relativeQname : relative) {
+            newParent = newParent.createInstance(newParent, relativeQname);
         }
 
-        return parent;
+        return newParent;
     }
 
     /**
@@ -198,12 +198,12 @@ public abstract class LeafRefPath implements Immutable {
     public LeafRefPath createChild(final LeafRefPath relative) {
         checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
-        LeafRefPath parent = this;
-        for (QNameWithPredicate qname : relative.getPathFromRoot()) {
-            parent = parent.createInstance(parent, qname);
+        LeafRefPath newParent = this;
+        for (QNameWithPredicate relativeQname : relative.getPathFromRoot()) {
+            newParent = newParent.createInstance(newParent, relativeQname);
         }
 
-        return parent;
+        return newParent;
     }
 
     /**
@@ -316,8 +316,8 @@ public abstract class LeafRefPath implements Immutable {
 
         sb.append(isAbsolute() ? "Absolute path:" : "Relative path:");
 
-        for (QNameWithPredicate qname : getPathFromRoot()) {
-            sb.append('/').append(qname);
+        for (QNameWithPredicate qnameWithPredicate : getPathFromRoot()) {
+            sb.append('/').append(qnameWithPredicate);
         }
 
         return sb.toString();

@@ -290,7 +290,8 @@ public class TypesResolutionTest {
 
         EnumTypeDefinition enumType = (EnumTypeDefinition) testedType.getBaseType();
         List<EnumPair> values = enumType.getValues();
-        assertEquals(415, values.size()); // 0-414
+        // 0-414
+        assertEquals(415, values.size());
 
         EnumPair enum168 = values.get(168);
         assertEquals("America/Danmarkshavn", enum168.getName());

@@ -79,9 +79,9 @@ public class ImmutableMapEntryNodeBuilder
 
     @Override
     public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
-            final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
-        fillQnames(value, childrenQNamesToPaths);
-        return super.withValue(value);
+            final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
+        fillQnames(withValue, childrenQNamesToPaths);
+        return super.withValue(withValue);
     }
 
     private static boolean isAugment(final PathArgument identifier) {
