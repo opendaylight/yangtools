@@ -264,6 +264,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @param result the result value
      */
+    @SuppressWarnings("checkstyle:hiddenField")
     public RpcResultBuilder<T> withResult(final T result) {
         this.result = result;
         return this;
@@ -395,11 +396,11 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
     /**
      * Adds RpcErrors.
      *
-     * @param errors the list of RpcErrors
+     * @param rpcErrors the list of RpcErrors
      */
-    public RpcResultBuilder<T> withRpcErrors(final Collection<RpcError> errors) {
-        if (errors != null) {
-            for (RpcError error : errors) {
+    public RpcResultBuilder<T> withRpcErrors(final Collection<RpcError> rpcErrors) {
+        if (rpcErrors != null) {
+            for (RpcError error : rpcErrors) {
                 addError(error);
             }
         }
