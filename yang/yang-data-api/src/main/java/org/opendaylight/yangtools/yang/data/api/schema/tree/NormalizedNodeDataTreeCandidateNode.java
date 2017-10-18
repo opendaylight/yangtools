@@ -51,10 +51,11 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     }
 
     @Override
-    public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+    public DataTreeCandidateNode getModifiedChild(final PathArgument childIdentifier) {
         if (data instanceof NormalizedNodeContainer) {
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            final Optional<? extends NormalizedNode<?, ?>> child = ((NormalizedNodeContainer)data).getChild(identifier);
+            final Optional<? extends NormalizedNode<?, ?>> child =
+                ((NormalizedNodeContainer)data).getChild(childIdentifier);
             return child.map(input -> new NormalizedNodeDataTreeCandidateNode(input)).orElse(null);
         }
         return null;

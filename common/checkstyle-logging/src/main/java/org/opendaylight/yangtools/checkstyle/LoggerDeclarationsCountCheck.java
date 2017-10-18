@@ -17,15 +17,27 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 public class LoggerDeclarationsCountCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger might be declared only once.";
+    private static final int[] TOKENS = { TokenTypes.VARIABLE_DEF };
+
     private String prevClassName = "";
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.VARIABLE_DEF};
+        return TOKENS;
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public void visitToken(final DetailAST ast) {
         if (CheckLoggingUtil.isLoggerType(ast) && isAFieldVariable(ast)) {
             final String className = CheckLoggingUtil.getClassName(ast);
             if (this.prevClassName.equals(className)) {
@@ -36,9 +48,8 @@ public class LoggerDeclarationsCountCheck extends AbstractCheck {
     }
 
     @Override
-    public void finishTree(DetailAST rootAST) {
+    public void finishTree(final DetailAST rootAST) {
         super.finishTree(rootAST);
         this.prevClassName = "";
     }
-
 }

@@ -19,14 +19,25 @@ public class LoggerMustBeSlf4jCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger must be slf4j.";
     private static final String SLF4J = "slf4j";
+    private static final int[] TOKENS = { TokenTypes.VARIABLE_DEF, TokenTypes.IMPORT };
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.VARIABLE_DEF, TokenTypes.IMPORT};
+        return TOKENS;
     }
 
     @Override
-    public void visitToken(DetailAST ast) {
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public void visitToken(final DetailAST ast) {
         if (ast.getType() == TokenTypes.VARIABLE_DEF) {
             if (CheckLoggingUtil.isAFieldVariable(ast)) {
                 final String typeName = CheckLoggingUtil.getTypeName(ast);

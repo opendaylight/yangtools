@@ -57,7 +57,7 @@ public class SchemaSourceTransformerTest {
     }
 
     @Test
-    public void schemaSourceTransformerGetSourceTest() throws Exception {
+    public void schemaSourceTransformerGetSourceTest() {
         final Provider p = new Provider();
         final Registrator reg = new Registrator(p, SchemaSourceTransformerTest.SRC_CLASS,
                 PotentialSchemaSource.Costs.IMMEDIATE);
@@ -66,15 +66,15 @@ public class SchemaSourceTransformerTest {
         this.schema = new SchemaSourceTransformer<>(p,
                 SchemaSourceTransformerTest.SRC_CLASS, this.consumer, SchemaSourceTransformerTest.DST_CLASS,
                 this.function);
-        final SchemaSourceProvider<YinXmlSchemaSource> provider = this.schema;
-        final Future<? extends YinXmlSchemaSource> source = provider.getSource(sourceIdentifier);
+        final SchemaSourceProvider<YinXmlSchemaSource> prov = this.schema;
+        final Future<? extends YinXmlSchemaSource> source = prov.getSource(sourceIdentifier);
         Assert.assertNotNull(source);
         source.cancel(true);
         Assert.assertTrue(source.isDone());
     }
 
     @Test
-    public void schemaSourceRegAndUnregSchemaSourceTest() throws Exception {
+    public void schemaSourceRegAndUnregSchemaSourceTest() {
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("source");
         final Foo<YangSchemaSourceRepresentation> foo = new Foo<>(sourceIdentifier,
                 SchemaSourceTransformerTest.SRC_CLASS,

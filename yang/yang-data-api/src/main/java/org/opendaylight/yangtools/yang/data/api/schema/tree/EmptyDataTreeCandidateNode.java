@@ -39,7 +39,7 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
 
     @Nullable
     @Override
-    public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+    public DataTreeCandidateNode getModifiedChild(final PathArgument childIdentifier) {
         return null;
     }
 
