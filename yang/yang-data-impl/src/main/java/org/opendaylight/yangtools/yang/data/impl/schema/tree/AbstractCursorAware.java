@@ -19,17 +19,17 @@ abstract class AbstractCursorAware {
             AtomicReferenceFieldUpdater.newUpdater(AbstractCursorAware.class, AbstractCursor.class, "cursor");
     private volatile AbstractCursor<?> cursor = null;
 
-    protected <T extends AbstractCursor<?>> T openCursor(final T cursor) {
-        final boolean success = CURSOR_UPDATER.compareAndSet(this, null, cursor);
+    protected <T extends AbstractCursor<?>> T openCursor(final T cursorToOpen) {
+        final boolean success = CURSOR_UPDATER.compareAndSet(this, null, cursorToOpen);
         Preconditions.checkState(success, "Modification %s has cursor attached at path %s", this,
             this.cursor.getRootPath());
-        return cursor;
+        return cursorToOpen;
     }
 
-    final void closeCursor(final AbstractCursor<?> cursor) {
-        final boolean success = CURSOR_UPDATER.compareAndSet(this, cursor, null);
+    final void closeCursor(final AbstractCursor<?> cursorToClose) {
+        final boolean success = CURSOR_UPDATER.compareAndSet(this, cursorToClose, null);
         if (!success) {
-            LOG.warn("Attempted to close cursor {} while {} is open", cursor, this.cursor);
+            LOG.warn("Attempted to close cursor {} while {} is open", cursorToClose, this.cursor);
         }
     }
 }

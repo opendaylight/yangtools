@@ -25,13 +25,13 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withValue(final DOMSource value) {
-        return super.withValue(value);
+    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withValue(final DOMSource withValue) {
+        return super.withValue(withValue);
     }
 
     @Override
     public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withNodeIdentifier(
-            final NodeIdentifier nodeIdentifier) {
+            final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

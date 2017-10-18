@@ -31,7 +31,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     @Override
-    public ImmutableMapEntryNodeBuilder withNodeIdentifier(final NodeIdentifierWithPredicates nodeIdentifier) {
+    public ImmutableMapEntryNodeBuilder withNodeIdentifier(final NodeIdentifierWithPredicates withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 

@@ -78,8 +78,8 @@ public final class RestrictedTypes {
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
-            BinaryTypeDefinition buildType(final @Nullable LengthConstraint lengthConstraint) {
-                return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), lengthConstraint);
+            BinaryTypeDefinition buildType(final @Nullable LengthConstraint constraint) {
+                return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), constraint);
             }
 
             @Override
