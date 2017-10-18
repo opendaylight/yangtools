@@ -75,7 +75,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
         touch();
     }
 
-    abstract T buildType(LengthConstraint lengthConstraint);
+    abstract T buildType(LengthConstraint constraint);
 
     @Override
     final T buildType() {

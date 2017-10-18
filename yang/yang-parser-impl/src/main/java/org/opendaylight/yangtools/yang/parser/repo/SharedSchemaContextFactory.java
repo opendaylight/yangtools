@@ -31,8 +31,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
-import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
@@ -50,12 +48,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class SharedSchemaContextFactory implements SchemaContextFactory {
-    private static final ExceptionMapper<SchemaResolutionException> MAPPER = ReflectiveExceptionMapper
-            .create("resolve sources", SchemaResolutionException.class);
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues()
-            .build();
+    private final Cache<Collection<SourceIdentifier>, SchemaContext> revisionCache = CacheBuilder.newBuilder()
+            .weakValues().build();
     private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
     private final SharedSchemaRepository repository;
@@ -73,7 +69,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
+                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.revisionCache,
                 new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
     }
 

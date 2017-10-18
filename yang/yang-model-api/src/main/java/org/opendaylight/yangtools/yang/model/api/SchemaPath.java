@@ -44,8 +44,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new AbsoluteSchemaPath(parent, requireNonNull(qname));
+        protected SchemaPath createInstance(final SchemaPath parentPath, final QName element) {
+            return new AbsoluteSchemaPath(parentPath, requireNonNull(element));
         }
     }
 
@@ -63,8 +63,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new RelativeSchemaPath(parent, requireNonNull(qname));
+        protected SchemaPath createInstance(final SchemaPath parentPath, final QName element) {
+            return new RelativeSchemaPath(parentPath, requireNonNull(element));
         }
     }
 
@@ -119,8 +119,8 @@ public abstract class SchemaPath implements Immutable {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
             final List<QName> tmp = new ArrayList<>();
-            for (QName qname : getPathTowardsRoot()) {
-                tmp.add(qname);
+            for (QName item : getPathTowardsRoot()) {
+                tmp.add(item);
             }
             ret = ImmutableList.copyOf(Lists.reverse(tmp));
             LEGACYPATH_UPDATER.lazySet(this, ret);
@@ -178,11 +178,11 @@ public abstract class SchemaPath implements Immutable {
     /**
      * Create a new instance.
      *
-     * @param parent Parent SchemaPath
-     * @param qname next path element
+     * @param parentPath Parent SchemaPath
+     * @param element next path element
      * @return A new SchemaPath instance
      */
-    protected abstract SchemaPath createInstance(SchemaPath parent, QName qname);
+    protected abstract SchemaPath createInstance(SchemaPath parentPath, QName element);
 
     /**
      * Create a child path based on concatenation of this path and a relative path.
@@ -196,8 +196,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         SchemaPath parentPath = this;
-        for (QName qname : relative) {
-            parentPath = parentPath.createInstance(parentPath, qname);
+        for (QName item : relative) {
+            parentPath = parentPath.createInstance(parentPath, item);
         }
 
         return parentPath;
@@ -213,8 +213,8 @@ public abstract class SchemaPath implements Immutable {
         checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
         SchemaPath parentPath = this;
-        for (QName qname : relative.getPathFromRoot()) {
-            parentPath = parentPath.createInstance(parentPath, qname);
+        for (QName item : relative.getPathFromRoot()) {
+            parentPath = parentPath.createInstance(parentPath, item);
         }
 
         return parentPath;
