@@ -113,8 +113,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         return enabledSemanticVersions;
     }
 
-    StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase currentPhase) {
-        return supports.get(currentPhase);
+    StatementSupportBundle getSupportsForPhase(final ModelProcessingPhase phase) {
+        return supports.get(phase);
     }
 
     void addSource(@Nonnull final StatementStreamSource source) {
@@ -301,8 +301,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> sources) throws ReactorException {
-        for (final SourceSpecificContext source : sources) {
+    private void loadPhaseStatementsFor(final Set<SourceSpecificContext> srcs) throws ReactorException {
+        for (final SourceSpecificContext source : srcs) {
             try {
                 source.loadStatements();
             } catch (final RuntimeException ex) {

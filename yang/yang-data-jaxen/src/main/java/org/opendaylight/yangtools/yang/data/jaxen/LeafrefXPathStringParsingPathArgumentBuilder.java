@@ -144,21 +144,21 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
         checkValid(!pathComponents.isEmpty(), "Malformed path key expression: '%s'.", pathKeyExpression);
 
         boolean inNodeIdentifierPart = false;
-        NormalizedNodeContext currentNodeCtx = this.currentNodeCtx;
-        NormalizedNode<?, ?> currentNode = null;
+        NormalizedNodeContext nodeCtx = this.currentNodeCtx;
+        NormalizedNode<?, ?> node = null;
         for (String pathComponent : pathComponents) {
             final Matcher matcher = NODE_IDENTIFIER_PATTERN.matcher(pathComponent);
             if (UP_ONE_LEVEL.equals(pathComponent)) {
                 checkValid(!inNodeIdentifierPart, "Up-one-level expression cannot follow concrete path component.");
-                currentNodeCtx = currentNodeCtx.getParent();
-                currentNode = currentNodeCtx.getNode();
+                nodeCtx = nodeCtx.getParent();
+                node = nodeCtx.getNode();
                 offset += UP_ONE_LEVEL.length() + 1;
             } else if (matcher.matches()) {
                 inNodeIdentifierPart = true;
-                if (currentNode != null && currentNode instanceof DataContainerNode) {
-                    final DataContainerNode dcn = (DataContainerNode) currentNode;
+                if (node != null && node instanceof DataContainerNode) {
+                    final DataContainerNode dcn = (DataContainerNode) node;
                     final Optional<NormalizedNode<?, ?>> possibleChild = dcn.getChild(new NodeIdentifier(nextQName()));
-                    currentNode = possibleChild.isPresent() ? possibleChild.get() : null;
+                    node = possibleChild.isPresent() ? possibleChild.get() : null;
                 }
             } else {
                 throw new IllegalArgumentException(String.format(
@@ -167,8 +167,8 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
             }
         }
 
-        if (currentNode != null && currentNode instanceof LeafNode) {
-            return currentNode.getValue();
+        if (node != null && node instanceof LeafNode) {
+            return node.getValue();
         }
 
         throw new IllegalArgumentException("Could not resolve current function path value.");

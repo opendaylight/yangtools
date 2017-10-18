@@ -54,7 +54,8 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(
+            final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

@@ -48,9 +48,9 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue) {
         // TODO check value type
-        return super.withChildValue(value);
+        return super.withChildValue(childValue);
     }
 
     @Override
@@ -64,7 +64,7 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 }

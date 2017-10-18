@@ -26,7 +26,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
 
     @Override
     public DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> withNodeIdentifier(
-            final AugmentationIdentifier nodeIdentifier) {
+            final AugmentationIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 

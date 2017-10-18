@@ -39,20 +39,20 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I, V, R> withValue(final V value) {
-        this.value = requireNonNull(value);
+    public NormalizedNodeAttrBuilder<I, V, R> withValue(final V withValue) {
+        this.value = requireNonNull(withValue);
         return this;
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I, V, R> withNodeIdentifier(final I nodeIdentifier) {
-        this.nodeIdentifier = requireNonNull(nodeIdentifier);
+    public NormalizedNodeAttrBuilder<I, V, R> withNodeIdentifier(final I withNodeIdentifier) {
+        this.nodeIdentifier = requireNonNull(withNodeIdentifier);
         return this;
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<I, V, R> withAttributes(final Map<QName, String> attributes) {
-        this.attributes = requireNonNull(attributes);
+    public NormalizedNodeAttrBuilder<I, V, R> withAttributes(final Map<QName, String> withAttributes) {
+        this.attributes = requireNonNull(withAttributes);
         return this;
     }
 }
