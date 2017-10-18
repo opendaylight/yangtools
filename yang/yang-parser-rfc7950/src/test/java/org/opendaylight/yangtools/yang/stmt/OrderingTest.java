@@ -122,10 +122,10 @@ public class OrderingTest {
 
     @Test
     public void testOrderingNestedChildNodes3() throws Exception {
-        final Module baz = TestUtils.loadModuleResources(getClass(), "/ordering/foo.yang")
+        final Module justFoo = TestUtils.loadModuleResources(getClass(), "/ordering/foo.yang")
                 .getModules().iterator().next();
-        final ContainerSchemaNode x = (ContainerSchemaNode) baz
-                .getDataChildByName(QName.create(baz.getQNameModule(), "x"));
+        final ContainerSchemaNode x = (ContainerSchemaNode) justFoo
+                .getDataChildByName(QName.create(justFoo.getQNameModule(), "x"));
         final Collection<DataSchemaNode> childNodes = x.getChildNodes();
 
         final String[] expectedOrder = { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };

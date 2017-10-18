@@ -219,8 +219,7 @@ public class LeafRefContextTreeBuilderTest {
     @Test(expected = IllegalArgumentException.class)
     @Ignore
     public void incorrectLeafRefPathTest() {
-        final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory(
-            "/leafref-context-test/incorrect-modules");
-        LeafRefContext.create(context);
+        LeafRefContext.create(
+                YangParserTestUtils.parseYangResourceDirectory("/leafref-context-test/incorrect-modules"));
     }
 }

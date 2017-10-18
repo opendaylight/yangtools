@@ -98,9 +98,9 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
 
     @Override
     public DataContainerNodeBuilder<I, R> withValue(
-            final Collection<DataContainerChild<? extends PathArgument, ?>> value) {
+            final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
         // TODO Replace or putAll ?
-        for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : value) {
+        for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : withValue) {
             withChild(dataContainerChild);
         }
         return this;
@@ -121,8 +121,8 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     }
 
     @Override
-    public DataContainerNodeBuilder<I, R> withNodeIdentifier(final I nodeIdentifier) {
-        this.nodeIdentifier = nodeIdentifier;
+    public DataContainerNodeBuilder<I, R> withNodeIdentifier(final I withNodeIdentifier) {
+        this.nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

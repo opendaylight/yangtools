@@ -89,9 +89,9 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withValue(final Collection<MapEntryNode> value) {
+    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withValue(final Collection<MapEntryNode> withValue) {
         // TODO replace or putAll ?
-        for (final MapEntryNode mapEntryNode : value) {
+        for (final MapEntryNode mapEntryNode : withValue) {
             withChild(mapEntryNode);
         }
 
@@ -99,8 +99,9 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
     }
 
     @Override
-    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
-        this.nodeIdentifier = nodeIdentifier;
+    public CollectionNodeBuilder<MapEntryNode, OrderedMapNode> withNodeIdentifier(
+            final NodeIdentifier withNodeIdentifier) {
+        this.nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

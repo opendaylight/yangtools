@@ -35,8 +35,8 @@ abstract class StatementMap {
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
-            return index == 0 ? new Singleton(object) : new Regular(index, object);
+        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
+            return index == 0 ? new Singleton(obj) : new Regular(index, obj);
         }
 
         @Override
@@ -75,14 +75,14 @@ abstract class StatementMap {
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
+        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
             if (index < elements.length) {
                 checkArgument(elements[index] == null);
             } else {
                 elements = Arrays.copyOf(elements, index + 1);
             }
 
-            elements[index] = requireNonNull(object);
+            elements[index] = requireNonNull(obj);
             return this;
         }
 
@@ -169,9 +169,9 @@ abstract class StatementMap {
         }
 
         @Override
-        StatementMap put(final int index, final StatementContextBase<?, ?, ?> object) {
+        StatementMap put(final int index, final StatementContextBase<?, ?, ?> obj) {
             checkArgument(index != 0);
-            return new Regular(this.object, index, object);
+            return new Regular(this.object, index, obj);
         }
 
         @Override
@@ -203,11 +203,11 @@ abstract class StatementMap {
      * Add a statement at specified index.
      *
      * @param index Element index, must be non-negative
-     * @param object Object to store
+     * @param obj Object to store
      * @return New statement map
      * @throws IllegalArgumentException if the index is already occupied
      */
-    abstract @Nonnull StatementMap put(int index, @Nonnull StatementContextBase<?, ?, ?> object);
+    abstract @Nonnull StatementMap put(int index, @Nonnull StatementContextBase<?, ?, ?> obj);
 
     /**
      * Return a read-only view of the elements in this map. Unlike other maps, this view does not detect concurrent

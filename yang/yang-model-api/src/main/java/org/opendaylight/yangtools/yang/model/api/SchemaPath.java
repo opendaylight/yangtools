@@ -44,8 +44,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        public AbsoluteSchemaPath createChild(final QName qname) {
-            return new AbsoluteSchemaPath(this, requireNonNull(qname));
+        public AbsoluteSchemaPath createChild(final QName element) {
+            return new AbsoluteSchemaPath(this, requireNonNull(element));
         }
     }
 
@@ -63,8 +63,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        public RelativeSchemaPath createChild(final QName qname) {
-            return new RelativeSchemaPath(this, requireNonNull(qname));
+        public RelativeSchemaPath createChild(final QName element) {
+            return new RelativeSchemaPath(this, requireNonNull(element));
         }
     }
 
@@ -119,8 +119,8 @@ public abstract class SchemaPath implements Immutable {
         ImmutableList<QName> ret = legacyPath;
         if (ret == null) {
             final List<QName> tmp = new ArrayList<>();
-            for (QName qname : getPathTowardsRoot()) {
-                tmp.add(qname);
+            for (QName item : getPathTowardsRoot()) {
+                tmp.add(item);
             }
             ret = ImmutableList.copyOf(Lists.reverse(tmp));
             LEGACYPATH_UPDATER.lazySet(this, ret);
@@ -187,8 +187,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         SchemaPath parentPath = this;
-        for (QName qname : relative) {
-            parentPath = parentPath.createChild(qname);
+        for (QName item : relative) {
+            parentPath = parentPath.createChild(item);
         }
 
         return parentPath;
