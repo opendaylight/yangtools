@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  *
  * @author Robert Varga
  */
-public class YangDataConstants {
+public final class YangDataConstants {
     private static final String MODULE_NAME = "ietf-restconf";
     private static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-restconf");
     private static final Revision RFC8040_REVISION = Revision.of("2017-01-26");

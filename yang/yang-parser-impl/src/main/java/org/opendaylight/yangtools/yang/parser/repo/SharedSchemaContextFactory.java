@@ -50,8 +50,8 @@ import org.slf4j.LoggerFactory;
 final class SharedSchemaContextFactory implements SchemaContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues()
-            .build();
+    private final Cache<Collection<SourceIdentifier>, SchemaContext> revisionCache = CacheBuilder.newBuilder()
+            .weakValues().build();
     private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
     private final SharedSchemaRepository repository;
@@ -69,7 +69,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.cache,
+                statementParserMode == StatementParserMode.SEMVER_MODE ? this.semVerCache : this.revisionCache,
                 new AssembleSources(Optional.ofNullable(supportedFeatures), statementParserMode));
     }
 

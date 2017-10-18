@@ -17,10 +17,21 @@ public class LoggerFactoryClassParameterCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "LoggerFactory.getLogger Class argument is incorrect.";
     private static final String METHOD_NAME = "LoggerFactory.getLogger";
+    private static final int[] TOKENS = { TokenTypes.METHOD_CALL };
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[] { TokenTypes.METHOD_CALL };
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
     }
 
     @Override

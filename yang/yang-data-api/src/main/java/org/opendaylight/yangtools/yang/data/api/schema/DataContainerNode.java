@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * @param <K> {@link PathArgument} which identifies instance of {@link DataContainerNode}
  */
-public interface DataContainerNode<K extends PathArgument> extends //
+public interface DataContainerNode<K extends PathArgument> extends
         NormalizedNodeContainer<K, PathArgument, DataContainerChild<? extends PathArgument, ?>> {
     /**
      * Returns iteration of all child nodes.

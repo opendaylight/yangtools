@@ -56,9 +56,9 @@ public class QueuedNotificationManagerTest {
             reset(expCount);
         }
 
-        void reset(final int expCount) {
-            this.expCount = expCount;
-            latch = new CountDownLatch(expCount);
+        void reset(final int newExpCount) {
+            this.expCount = newExpCount;
+            latch = new CountDownLatch(newExpCount);
             actual.clear();
         }
 

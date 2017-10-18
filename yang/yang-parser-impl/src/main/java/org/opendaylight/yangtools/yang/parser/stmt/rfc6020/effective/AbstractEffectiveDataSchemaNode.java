@@ -33,7 +33,8 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
         // initCopyType
         final CopyHistory originalHistory = ctx.getCopyHistory();
         if (originalHistory.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByUses = this.augmenting = true;
+            this.augmenting = true;
+            this.addedByUses = true;
         } else {
             this.augmenting = originalHistory.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = originalHistory.contains(CopyType.ADDED_BY_USES);
