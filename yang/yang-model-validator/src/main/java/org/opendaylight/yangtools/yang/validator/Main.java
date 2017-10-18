@@ -48,11 +48,15 @@ import org.slf4j.LoggerFactory;
  *  -o, --output          path to output file for logs. Output file will be overwritten.
  *  -m, --module-name     validate yang by module name.
  */
-public class Main {
+public final class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final ch.qos.logback.classic.Logger LOG_ROOT =
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     private static final int MB = 1024 * 1024;
+
+    private Main() {
+        // Hidden on purpose
+    }
 
     private static Options createOptions() {
         final Options options = new Options();

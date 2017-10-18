@@ -20,9 +20,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 
-public class TestUtils {
+public final class TestUtils {
 
     private TestUtils() {
+        throw new UnsupportedOperationException();
     }
 
     static String loadTextFile(final File file) throws IOException {

@@ -44,7 +44,7 @@ public final class SubstatementValidator {
         return new Builder(currentStatement);
     }
 
-    public static class Builder {
+    public static final class Builder {
         private static final Cardinality ONE_MAX = new Cardinality(1, Integer.MAX_VALUE);
         private static final Cardinality ONE_ONE = new Cardinality(1, 1);
         private static final Cardinality ZERO_MAX = new Cardinality(0, Integer.MAX_VALUE);
@@ -53,7 +53,7 @@ public final class SubstatementValidator {
         private final ImmutableMap.Builder<StatementDefinition, Cardinality> cardinalityMap = ImmutableMap.builder();
         private final StatementDefinition currentStatement;
 
-        private Builder(final StatementDefinition currentStatement) {
+        Builder(final StatementDefinition currentStatement) {
             this.currentStatement = currentStatement;
         }
 
