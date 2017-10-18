@@ -136,7 +136,7 @@ public class ImportStatementDefinition extends
         return SUBSTATEMENT_VALIDATOR;
     }
 
-    private static class RevisionImport {
+    private static final class RevisionImport {
 
         private RevisionImport() {
             throw new UnsupportedOperationException("Utility class");
@@ -191,7 +191,7 @@ public class ImportStatementDefinition extends
         }
     }
 
-    private static class SemanticVersionImport {
+    private static final class SemanticVersionImport {
 
         private abstract static class CompatibleCriterion extends NamespaceKeyCriterion<SemVerSourceIdentifier> {
             private final String moduleName;

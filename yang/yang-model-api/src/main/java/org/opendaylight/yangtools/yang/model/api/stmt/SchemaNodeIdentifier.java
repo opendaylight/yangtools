@@ -42,8 +42,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parent, final QName qname) {
-            return new Absolute(parent, requireNonNull(qname));
+        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parentPath, final QName element) {
+            return new Absolute(parentPath, requireNonNull(element));
         }
     }
 
@@ -61,8 +61,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parent, final QName qname) {
-            return new Relative(parent, requireNonNull(qname));
+        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parentPath, final QName element) {
+            return new Relative(parentPath, requireNonNull(element));
         }
     }
 
@@ -165,11 +165,11 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * Create a new instance.
      *
-     * @param parent Parent schema node identifier
-     * @param qname next path element
+     * @param parentPath Parent schema node identifier
+     * @param element next path element
      * @return A new SchemaPath instance
      */
-    protected abstract SchemaNodeIdentifier createInstance(SchemaNodeIdentifier parent, QName qname);
+    protected abstract SchemaNodeIdentifier createInstance(SchemaNodeIdentifier parentPath, QName element);
 
     /**
      * Create a child path based on concatenation of this path and a relative path.
@@ -183,8 +183,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         SchemaNodeIdentifier parentNode = this;
-        for (QName qname : relative) {
-            parentNode = parentNode.createInstance(parentNode, qname);
+        for (QName item : relative) {
+            parentNode = parentNode.createInstance(parentNode, item);
         }
 
         return parentNode;
@@ -200,8 +200,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
 
         SchemaNodeIdentifier parentNode = this;
-        for (QName qname : relative.getPathFromRoot()) {
-            parentNode = parentNode.createInstance(parentNode, qname);
+        for (QName item : relative.getPathFromRoot()) {
+            parentNode = parentNode.createInstance(parentNode, item);
         }
 
         return parentNode;

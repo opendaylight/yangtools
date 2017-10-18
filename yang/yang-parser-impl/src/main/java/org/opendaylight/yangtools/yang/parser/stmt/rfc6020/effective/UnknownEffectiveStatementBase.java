@@ -55,7 +55,8 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByUses = this.addedByAugmentation = true;
+            this.addedByAugmentation = true;
+            this.addedByUses = true;
         } else {
             this.addedByAugmentation = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);

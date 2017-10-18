@@ -380,6 +380,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
+    @SuppressWarnings("checkstyle:hiddenField")
     public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
         // Child nodes are keyed by their container name, so we can do a direct lookup
         return Optional.ofNullable(childNodes.get(requireNonNull(name)));

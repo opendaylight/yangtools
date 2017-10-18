@@ -44,8 +44,8 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     @Override
-    StringTypeDefinition buildType(final @Nullable LengthConstraint lengthConstraints) {
-        return new RestrictedStringType(getBaseType(), getPath(), getUnknownSchemaNodes(),
-            lengthConstraints, patternConstraints);
+    StringTypeDefinition buildType(final @Nullable LengthConstraint constraint) {
+        return new RestrictedStringType(getBaseType(), getPath(), getUnknownSchemaNodes(), constraint,
+            patternConstraints);
     }
 }
