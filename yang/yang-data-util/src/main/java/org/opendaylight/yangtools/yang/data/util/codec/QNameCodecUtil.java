@@ -25,6 +25,10 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 public final class QNameCodecUtil {
     private static final Splitter COLON_SPLITTER = Splitter.on(':').trimResults();
 
+    private QNameCodecUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     public static QName decodeQName(final String str, final Function<String, QNameModule> prefixToModule) {
         final Iterator<String> it = COLON_SPLITTER.split(str).iterator();
 

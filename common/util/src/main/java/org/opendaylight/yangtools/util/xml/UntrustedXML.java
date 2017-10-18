@@ -86,6 +86,9 @@ public final class UntrustedXML {
         XIF = f;
     }
 
+    private UntrustedXML() {
+        throw new UnsupportedOperationException();
+    }
 
     /**
      * Create a new {@link DocumentBuilder} for dealing with untrusted XML data. This method is equivalent to

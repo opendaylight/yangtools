@@ -35,7 +35,10 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 
-public class TestingNormalizedNodeStructuresCreator {
+public final class TestingNormalizedNodeStructuresCreator {
+    private TestingNormalizedNodeStructuresCreator() {
+        throw new UnsupportedOperationException();
+    }
 
     @SafeVarargs
     static NormalizedNode<?, ?> cont1Node(

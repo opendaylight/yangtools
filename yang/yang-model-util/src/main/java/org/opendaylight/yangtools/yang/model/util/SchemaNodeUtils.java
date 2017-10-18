@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
-public class SchemaNodeUtils {
+public final class SchemaNodeUtils {
 
     private SchemaNodeUtils() {
         throw new UnsupportedOperationException("Utility class");
