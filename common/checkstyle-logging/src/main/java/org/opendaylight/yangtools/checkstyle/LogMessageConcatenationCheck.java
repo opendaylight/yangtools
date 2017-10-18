@@ -15,10 +15,21 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 public class LogMessageConcatenationCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Log message contains string concatenation.";
+    private static final int[] TOKENS = { TokenTypes.METHOD_CALL };
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.METHOD_CALL};
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
     }
 
     @Override
