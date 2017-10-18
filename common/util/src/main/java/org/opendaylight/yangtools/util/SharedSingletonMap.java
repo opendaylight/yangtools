@@ -120,6 +120,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     @Override
+    @SuppressWarnings("checkstyle:hiddenField")
     public final boolean containsValue(final Object value) {
         return this.value.equals(value);
     }
@@ -140,6 +141,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     }
 
     @Override
+    @SuppressWarnings("checkstyle:hiddenField")
     public final V put(final K key, final V value) {
         throw new UnsupportedOperationException();
     }

@@ -63,13 +63,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] objects) {
-            return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.orderedOffsets(keys), objects);
+        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] values) {
+            return new ImmutableOffsetMap.Ordered<>(OffsetMapCache.orderedOffsets(keys), values);
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsets, final V[] objects) {
-            return new ImmutableOffsetMap.Ordered<>(offsets, objects);
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsetMap, final V[] values) {
+            return new ImmutableOffsetMap.Ordered<>(offsetMap, values);
         }
 
         @Override
@@ -97,14 +97,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] objects) {
+        UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] values) {
             final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
-            return new ImmutableOffsetMap.Unordered<>(offsets, OffsetMapCache.adjustedArray(offsets, keys, objects));
+            return new ImmutableOffsetMap.Unordered<>(offsets, OffsetMapCache.adjustedArray(offsets, keys, values));
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsets, final V[] objects) {
-            return new ImmutableOffsetMap.Unordered<>(offsets, objects);
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsetMap, final V[] values) {
+            return new ImmutableOffsetMap.Unordered<>(offsetMap, values);
         }
 
         @Override
@@ -179,9 +179,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     abstract Object removedObject();
 
-    abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] objects);
+    abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] values);
 
-    abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsets, V[] objects);
+    abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsetMap, V[] values);
 
     abstract SharedSingletonMap<K, V> singletonMap();
 
