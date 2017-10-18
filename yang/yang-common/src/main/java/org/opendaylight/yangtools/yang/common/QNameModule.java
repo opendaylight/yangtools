@@ -128,10 +128,11 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     /**
-     * Returns a namespace in form defined by section 5.6.4. of {@link https://tools.ietf.org/html/rfc6020}, for example
+     * Returns a namespace in form defined by section 5.6.4. of
+     * <a href=https://tools.ietf.org/html/rfc6020">RFC6020</a>, for example
      * {@code http://example.acme.com/system?revision=2008-04-01}.
      *
-     * @return Namespace in form defined by section 5.6.4. of {@link https://tools.ietf.org/html/rfc6020}.
+     * @return Namespace in form defined by section 5.6.4. of RFC6020.
      * @throws URISyntaxException on incorrect namespace definition
      *
      */
