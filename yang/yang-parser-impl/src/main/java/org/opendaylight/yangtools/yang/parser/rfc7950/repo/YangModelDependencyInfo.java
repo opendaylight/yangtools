@@ -337,7 +337,7 @@ public abstract class YangModelDependencyInfo {
     /**
      * Dependency information for YANG module.
      */
-    public static class ModuleDependencyInfo extends YangModelDependencyInfo {
+    public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
         private ModuleDependencyInfo(final String name, final String latestRevision,
                 final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
             super(name, latestRevision, imports, includes);

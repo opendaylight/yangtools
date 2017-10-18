@@ -33,7 +33,7 @@ public abstract class AbstractImmutableNormalizedValueNode<K extends PathArgumen
         return value;
     }
 
-    protected V wrapValue(final V value) {
-        return value;
+    protected V wrapValue(final V valueToWrap) {
+        return valueToWrap;
     }
 }

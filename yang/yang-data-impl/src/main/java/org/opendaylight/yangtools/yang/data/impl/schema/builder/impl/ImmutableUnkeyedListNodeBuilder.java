@@ -80,9 +80,9 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withValue(
-            final Collection<UnkeyedListEntryNode> value) {
+            final Collection<UnkeyedListEntryNode> withValue) {
         // TODO replace or putAll ?
-        for (final UnkeyedListEntryNode node : value) {
+        for (final UnkeyedListEntryNode node : withValue) {
             withChild(node);
         }
 
@@ -91,8 +91,8 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     @Override
     public CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> withNodeIdentifier(
-            final NodeIdentifier nodeIdentifier) {
-        this.nodeIdentifier = nodeIdentifier;
+            final NodeIdentifier withNodeIdentifier) {
+        this.nodeIdentifier = withNodeIdentifier;
         return this;
     }
 

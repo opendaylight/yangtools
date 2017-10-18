@@ -76,7 +76,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         /**
          * Invoked whenever a processing phase has finished.
          */
-        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase phase);
+        boolean phaseFinished(StatementContextBase<?, ?, ?> context, ModelProcessingPhase finishedPhase);
     }
 
     /**
@@ -293,9 +293,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     public void removeStatementsFromEffectiveSubstatements(
-            final Collection<? extends StmtContext<?, ?, ?>> substatements) {
+            final Collection<? extends StmtContext<?, ?, ?>> statements) {
         if (!effective.isEmpty()) {
-            effective.removeAll(substatements);
+            effective.removeAll(statements);
             shrinkEffective();
         }
     }
@@ -372,20 +372,20 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * Adds an effective statement to collection of substatements.
      *
-     * @param substatements substatements
+     * @param statements substatements
      * @throws IllegalStateException
      *             if added in declared phase
      * @throws NullPointerException
      *             if statement parameter is null
      */
-    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> substatements) {
-        if (substatements.isEmpty()) {
+    public void addEffectiveSubstatements(final Collection<? extends Mutable<?, ?, ?>> statements) {
+        if (statements.isEmpty()) {
             return;
         }
 
-        substatements.forEach(Preconditions::checkNotNull);
-        beforeAddEffectiveStatement(substatements.size());
-        effective.addAll(substatements);
+        statements.forEach(Preconditions::checkNotNull);
+        beforeAddEffectiveStatement(statements.size());
+        effective.addAll(statements);
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
@@ -626,7 +626,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
             final OnNamespaceItemAdded listener) {
         ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
-            (context, completedPhase) -> {
+            (context, phaseCompleted) -> {
                 selectMatch(type, criterion, listener);
                 return true;
             });

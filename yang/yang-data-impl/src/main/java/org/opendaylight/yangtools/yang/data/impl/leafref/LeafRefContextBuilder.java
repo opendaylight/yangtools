@@ -69,16 +69,16 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return isReferencedBy;
     }
 
-    public void setReferencedBy(final boolean isReferencedBy) {
-        this.isReferencedBy = isReferencedBy;
+    public void setReferencedBy(final boolean referencedBy) {
+        this.isReferencedBy = referencedBy;
     }
 
     public boolean isReferencing() {
         return isReferencing;
     }
 
-    public void setReferencing(final boolean isReferencing) {
-        this.isReferencing = isReferencing;
+    public void setReferencing(final boolean referencing) {
+        this.isReferencing = referencing;
     }
 
     public void addReferencingChild(final LeafRefContext child, final QName childQName) {

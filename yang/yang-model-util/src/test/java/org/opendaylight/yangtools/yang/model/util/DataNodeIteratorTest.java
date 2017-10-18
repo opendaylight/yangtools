@@ -115,15 +115,15 @@ public class DataNodeIteratorTest {
 
         doReturn(groupings).when(mockedModule).getGroupings();
 
-        final DataNodeIterator dataNodeIterator = new DataNodeIterator(mockedModule);
-        assertFalse(dataNodeIterator.allContainers().contains(mockedAugmentingContainer));
-        assertTrue(dataNodeIterator.allContainers().contains(mockedContainer));
-        assertTrue(dataNodeIterator.allLists().contains(mockedList));
-        assertTrue(dataNodeIterator.allChoices().contains(mockedChoice));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase1));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase2));
-        assertTrue(dataNodeIterator.allContainers().contains(mockedContainerInNotification));
-        assertTrue(dataNodeIterator.allLists().contains(mockedListInRpcInputContainer));
-        assertTrue(dataNodeIterator.allGroupings().contains(mockedGrouping));
+        final DataNodeIterator it = new DataNodeIterator(mockedModule);
+        assertFalse(it.allContainers().contains(mockedAugmentingContainer));
+        assertTrue(it.allContainers().contains(mockedContainer));
+        assertTrue(it.allLists().contains(mockedList));
+        assertTrue(it.allChoices().contains(mockedChoice));
+        assertTrue(it.allChoices().get(0).getCases().values().contains(mockedCase1));
+        assertTrue(it.allChoices().get(0).getCases().values().contains(mockedCase2));
+        assertTrue(it.allContainers().contains(mockedContainerInNotification));
+        assertTrue(it.allLists().contains(mockedListInRpcInputContainer));
+        assertTrue(it.allGroupings().contains(mockedGrouping));
     }
 }

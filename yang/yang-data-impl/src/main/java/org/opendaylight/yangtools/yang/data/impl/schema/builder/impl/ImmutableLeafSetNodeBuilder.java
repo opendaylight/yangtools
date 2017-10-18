@@ -84,14 +84,14 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier nodeIdentifier) {
-        this.nodeIdentifier = nodeIdentifier;
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withNodeIdentifier(final NodeIdentifier withNodeIdentifier) {
+        this.nodeIdentifier = withNodeIdentifier;
         return this;
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final Collection<LeafSetEntryNode<T>> value) {
-        for (final LeafSetEntryNode<T> leafSetEntry : value) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withValue(final Collection<LeafSetEntryNode<T>> withValue) {
+        for (final LeafSetEntryNode<T> leafSetEntry : withValue) {
             withChild(leafSetEntry);
         }
         return this;
@@ -99,17 +99,18 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value, final Map<QName, String> attributes) {
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue,
+            final Map<QName, String> attributes) {
         final ImmutableLeafSetEntryNodeBuilder<T> b = ImmutableLeafSetEntryNodeBuilder.create();
-        b.withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), value));
-        b.withValue(value);
+        b.withNodeIdentifier(new NodeWithValue<>(nodeIdentifier.getNodeType(), childValue));
+        b.withValue(childValue);
         b.withAttributes(attributes);
         return withChild(b.build());
     }
 
     @Override
-    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T value) {
-        return withChildValue(value, Collections.emptyMap());
+    public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue) {
+        return withChildValue(childValue, Collections.emptyMap());
     }
 
     protected static final class ImmutableLeafSetNode<T> extends

@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
-import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -38,26 +37,6 @@ public final class YangErrorListener extends BaseErrorListener {
         exceptions.add(new YangSyntaxErrorException(source, line, charPositionInLine, msg, e));
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
-    private static String getModuleName(final Recognizer<?, ?> recognizer) {
-        if (!(recognizer instanceof Parser)) {
-            return null;
-        }
-
-        final Parser parser = (Parser) recognizer;
-        try {
-            String model = parser.getInputStream().getTokenSource().getInputStream().toString();
-            model = model.substring(0, model.indexOf('\n'));
-            model = model.substring(model.indexOf("module") + 6);
-            model = model.substring(0, model.indexOf('{'));
-            model = model.trim();
-            return model;
-        } catch (Exception e) {
-            LOG.debug("Failed to extract module name from parser {}", parser, e);
-            return null;
-        }
-    }
-
     public void validate() throws YangSyntaxErrorException {
         if (exceptions.isEmpty()) {
             return;
@@ -69,12 +48,8 @@ public final class YangErrorListener extends BaseErrorListener {
         }
 
         final StringBuilder sb = new StringBuilder();
-        SourceIdentifier source = null;
         boolean first = true;
         for (YangSyntaxErrorException e : exceptions) {
-            if (source == null) {
-                source = e.getSource().orElse(null);
-            }
             if (first) {
                 first = false;
             } else {

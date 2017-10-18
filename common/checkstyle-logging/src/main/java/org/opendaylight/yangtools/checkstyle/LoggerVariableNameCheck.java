@@ -17,10 +17,21 @@ import com.puppycrawl.tools.checkstyle.api.TokenTypes;
 public class LoggerVariableNameCheck extends AbstractCheck {
 
     private static final String LOG_MESSAGE = "Logger name should be LOG.";
+    private static final int[] TOKENS = { TokenTypes.VARIABLE_DEF };
 
     @Override
     public int[] getDefaultTokens() {
-        return new int[]{TokenTypes.VARIABLE_DEF};
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getAcceptableTokens() {
+        return TOKENS;
+    }
+
+    @Override
+    public int[] getRequiredTokens() {
+        return TOKENS;
     }
 
     @Override
