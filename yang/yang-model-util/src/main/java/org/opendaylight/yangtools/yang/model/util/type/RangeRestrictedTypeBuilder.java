@@ -37,6 +37,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         super(baseType, path);
     }
 
+    @SuppressWarnings("checkstyle:hiddenField")
     public final void setRangeConstraint(final @NonNull ConstraintMetaDefinition constraint,
             final @NonNull List<ValueRange> ranges) {
         checkState(this.ranges == null, "Range constraint already defined as %s %s", this.ranges, this.constraint);

@@ -219,7 +219,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
-            .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
+            .addSupport(treeScoped(GroupingNamespace.class))
             .addSupport(new ErrorMessageStatementImpl.Definition())
             .addSupport(new ErrorAppTagStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new LeafListStatementImpl.Definition())

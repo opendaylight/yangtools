@@ -40,10 +40,10 @@ public interface DataTreeCandidateNode {
      * Returns modified child or null if child was not modified
      * / does not exists.
      *
-     * @param identifier Identifier of child node
+     * @param childIdentifier Identifier of child node
      * @return Modified child or null if child was not modified.
      */
-    @Nullable DataTreeCandidateNode getModifiedChild(PathArgument identifier);
+    @Nullable DataTreeCandidateNode getModifiedChild(PathArgument childIdentifier);
 
     /**
      * Return the type of modification this node is undergoing.

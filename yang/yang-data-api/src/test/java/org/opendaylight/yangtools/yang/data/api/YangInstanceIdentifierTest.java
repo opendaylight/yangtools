@@ -178,7 +178,8 @@ public class YangInstanceIdentifierTest {
         assertEquals("Path size", 1, newID.getPathArguments().size());
         assertEquals("PathArg 1 node type", NODENAME1, newID.getPathArguments().get(0).getNodeType());
 
-        assertNotNull(newID.toString()); // for code coverage
+        // for code coverage
+        assertNotNull(newID.toString());
     }
 
     @Test
@@ -243,7 +244,8 @@ public class YangInstanceIdentifierTest {
         assertFalse("equals", node1.equals(new NodeIdentifierWithPredicates(NODENAME1, KEY1, "bar")));
         assertFalse("equals", node1.equals(new Object()));
 
-        assertNotNull(node1.toString()); // for code coverage
+        // for code coverage
+        assertNotNull(node1.toString());
         assertNotNull(node1.toRelativeString(node2));
 
         NodeIdentifierWithPredicates node3 = new NodeIdentifierWithPredicates(NODENAME1,
@@ -286,7 +288,8 @@ public class YangInstanceIdentifierTest {
         assertFalse("equals", node1.equals(new NodeWithValue<>(NODENAME2, "foo")));
         assertFalse("equals", node1.equals(new Object()));
 
-        assertNotNull(node1.toString()); // for code coverage
+        // for code coverage
+        assertNotNull(node1.toString());
         assertNotNull(node1.toRelativeString(node2));
 
         NodeWithValue<?> node3 = new NodeWithValue<>(NODENAME1, new byte[]{1,2});
@@ -318,7 +321,8 @@ public class YangInstanceIdentifierTest {
         assertFalse("equals", node1.equals(new NodeIdentifier(NODENAME3)));
         assertFalse("equals", node1.equals(new Object()));
 
-        assertNotNull(node1.toString()); // for code coverage
+        // for code coverage
+        assertNotNull(node1.toString());
     }
 
     @Test(expected = UnsupportedOperationException.class)
@@ -352,7 +356,8 @@ public class YangInstanceIdentifierTest {
         assertEquals("compareTo", 1, node1.compareTo(node4));
         assertEquals("compareTo", -1, node4.compareTo(node1));
 
-        assertNotNull(node1.toString()); // for code coverage
+        // for code coverage
+        assertNotNull(node1.toString());
         assertNotNull(node1.toRelativeString(node5));
     }
 
