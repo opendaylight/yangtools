@@ -19,7 +19,7 @@ import java.util.Optional;
  *
  * @see <a href="https://groups.google.com/forum/#!topic/checkstyle-devel/Rfwx81YhVQk">checkstyle-devel list thread</a>
  */
-public class FileNameUtil {
+public final class FileNameUtil {
 
     private FileNameUtil() {
     }

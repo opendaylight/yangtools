@@ -18,7 +18,11 @@ import java.util.concurrent.CountDownLatch;
  *
  * @author Thomas Pantelis
  */
-public class CommonTestUtils {
+public final class CommonTestUtils {
+    private CommonTestUtils() {
+        throw new UnsupportedOperationException();
+    }
+
     @FunctionalInterface
     public interface Invoker {
         ListenableFuture<?> invokeExecutor(ListeningExecutorService executor, CountDownLatch blockingLatch);

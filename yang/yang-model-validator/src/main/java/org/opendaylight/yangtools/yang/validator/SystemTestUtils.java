@@ -34,10 +34,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
-class SystemTestUtils {
+final class SystemTestUtils {
 
     private static final Pattern MODULE_PATTERN = Pattern.compile("module(.*?)\\{");
     private static final Pattern WHITESPACES = Pattern.compile("\\s+");
+
+    private SystemTestUtils() {
+        throw new UnsupportedOperationException();
+    }
 
     static final FileFilter YANG_FILE_FILTER = file -> {
         final String name = file.getName().toLowerCase();

@@ -113,7 +113,7 @@ import org.mockito.stubbing.Answer;
  * @author Michael Vorburger
  */
 @Beta
-public class CallsRealOrExceptionAnswer implements Answer<Object>, Serializable {
+public final class CallsRealOrExceptionAnswer implements Answer<Object>, Serializable {
     private static final long serialVersionUID = -3730024662402964588L;
     static final CallsRealOrExceptionAnswer INSTANCE = new CallsRealOrExceptionAnswer();
 

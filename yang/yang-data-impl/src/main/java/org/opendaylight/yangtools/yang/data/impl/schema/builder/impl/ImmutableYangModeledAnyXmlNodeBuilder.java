@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableD
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
-public class ImmutableYangModeledAnyXmlNodeBuilder extends
+public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> {
 
     private final ContainerSchemaNode contentSchema;

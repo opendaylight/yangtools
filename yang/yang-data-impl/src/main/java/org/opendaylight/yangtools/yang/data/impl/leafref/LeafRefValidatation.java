@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LeafRefValidatation {
+public final class LeafRefValidatation {
 
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefValidatation.class);
     private static final String FAILED = " -> FAILED";

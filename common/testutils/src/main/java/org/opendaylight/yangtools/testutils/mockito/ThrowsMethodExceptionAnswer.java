@@ -36,7 +36,7 @@ import org.mockito.stubbing.Answer;
  * @author Michael Vorburger
  */
 @Beta
-public class ThrowsMethodExceptionAnswer implements Answer<Object>, Serializable {
+public final class ThrowsMethodExceptionAnswer implements Answer<Object>, Serializable {
     private static final long serialVersionUID = -7316574192253912318L;
     static final ThrowsMethodExceptionAnswer INSTANCE = new ThrowsMethodExceptionAnswer();
 

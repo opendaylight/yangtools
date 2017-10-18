@@ -22,7 +22,10 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 
-public class TypeDefinitionAwareCodecTestHelper {
+public final class TypeDefinitionAwareCodecTestHelper {
+    private TypeDefinitionAwareCodecTestHelper() {
+        throw new UnsupportedOperationException();
+    }
 
     @SuppressWarnings("unchecked")
     public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {

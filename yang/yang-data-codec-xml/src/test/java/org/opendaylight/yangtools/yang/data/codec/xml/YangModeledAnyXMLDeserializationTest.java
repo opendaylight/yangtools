@@ -168,11 +168,11 @@ public class YangModeledAnyXMLDeserializationTest {
         assertEquals("any-xml-leaf-3-value", leafNode3Value);
     }
 
-    private static class YangModeledAnyXMLSchemaNodeImplTest implements YangModeledAnyXmlSchemaNode {
+    private static final class YangModeledAnyXMLSchemaNodeImplTest implements YangModeledAnyXmlSchemaNode {
         private final QName qname;
         private final ContainerSchemaNode contentSchema;
 
-        private YangModeledAnyXMLSchemaNodeImplTest(final QName qname, final ContainerSchemaNode contentSchema) {
+        YangModeledAnyXMLSchemaNodeImplTest(final QName qname, final ContainerSchemaNode contentSchema) {
             this.qname = qname;
             this.contentSchema = contentSchema;
         }
