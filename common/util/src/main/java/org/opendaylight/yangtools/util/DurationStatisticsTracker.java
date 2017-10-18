@@ -207,7 +207,7 @@ public abstract class DurationStatisticsTracker {
             case NANOSECONDS:
                 return "ns";
             case MICROSECONDS:
-                return "\u03bcs"; // μs
+                return "μs";
             case MILLISECONDS:
                 return "ms";
             case SECONDS:
