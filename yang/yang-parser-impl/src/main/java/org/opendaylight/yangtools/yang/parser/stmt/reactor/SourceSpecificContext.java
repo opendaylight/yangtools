@@ -42,12 +42,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModuleMap;
@@ -395,16 +397,19 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     private PrefixToModule prefixes() {
-        final Map<String, ModuleIdentifier> allPrefixes = getRoot().getAllFromNamespace(
+        final Map<String, ModuleIdentifier> allImports = getRoot().getAllFromNamespace(
             ImpPrefixToModuleIdentifier.class);
-        final Map<String, ModuleIdentifier> belongsToPrefixes = getRoot().getAllFromNamespace(
-            BelongsToPrefixToModuleIdentifier.class);
-        if (belongsToPrefixes != null) {
-            allPrefixes.putAll(belongsToPrefixes);
+        if (allImports != null) {
+            allImports.forEach((key, value) ->
+            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class, value)));
         }
 
-        allPrefixes.forEach((key, value) ->
-            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleIdentifierToModuleQName.class, value)));
+        final Map<String, StmtContext<?, ?, ?>> allBelongsTo = getRoot().getAllFromNamespace(
+            BelongsToPrefixToModuleCtx.class);
+        if (allBelongsTo != null) {
+            allBelongsTo.forEach((key, value) ->
+            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleCtxToModuleQName.class, value)));
+        }
 
         return prefixToModuleMap;
     }

@@ -7,14 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 
 /**
  * Source-specific mapping of belongsTo prefixes to module identifiers. This mapping allows source-specific context
  * to correctly populate prefixes map for actual parsing phase and eventually, resolve QName for any valid declared
  * statement.
  */
-public interface BelongsToPrefixToModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
+public interface BelongsToPrefixToModuleCtx extends ImportedNamespaceContext<String> {
 
 }

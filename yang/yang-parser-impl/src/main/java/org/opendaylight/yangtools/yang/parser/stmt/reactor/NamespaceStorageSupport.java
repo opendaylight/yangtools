@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.collect.ImmutableMap;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -82,7 +81,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     @SuppressWarnings("unchecked")
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
-        final Map<K, V> localNamespace = (Map<K,V>) namespaces.get(type);
+        final Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
 
         V potential = null;
         if (localNamespace != null) {
@@ -90,19 +89,15 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         }
 
         if (potential == null && isModuleIdentifierWithoutSpecifiedRevision(key)) {
-            potential = getRegardlessOfRevision((ModuleIdentifier)key,(Map<ModuleIdentifier,V>)localNamespace);
+            potential = getRegardlessOfRevision((ModuleIdentifier)key, (Map<ModuleIdentifier,V>)localNamespace);
         }
 
         return potential;
     }
 
     private static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object obj) {
-        if (!(obj instanceof ModuleIdentifier)) {
-            return false;
-        }
-
-        final Date rev = ((ModuleIdentifier) obj).getRevision();
-        return rev == SimpleDateFormatUtil.DEFAULT_DATE_IMP || rev == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE;
+        return obj instanceof ModuleIdentifier
+                && ((ModuleIdentifier) obj).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP;
     }
 
     private static <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(final ModuleIdentifier key,
