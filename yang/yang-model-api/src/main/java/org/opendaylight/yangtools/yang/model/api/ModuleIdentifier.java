@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -35,7 +36,7 @@ public interface ModuleIdentifier {
      *
      * @return URI format of the namespace of the module
      */
-    // FIXME: 2.0.0: should be a default method calling getQNameModule().getNamespace()
+    // FIXME: this should not be here
     URI getNamespace();
 
     /**
@@ -45,12 +46,12 @@ public interface ModuleIdentifier {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
-    // FIXME: BUG-4688: should return Revision
-    // FIXME: BUG-4688: should be a default method calling getQNameModule().getRevision().get()
+    // FIXME: BUG-4688: should return Optional<Revision>
+    // FIXME: this should not be here
     Date getRevision();
 
     /**
-     * Returns the semantic version of yang module.
+     * Returns the semantic version of YANG module.
      *
      * <p>
      * If the semantic version is not specified, default semantic version of
@@ -61,7 +62,6 @@ public interface ModuleIdentifier {
      *         (urn:opendaylight:yang:extension:semantic-version?revision
      *         =2016-02-02)semantic-version statement
      */
-    default SemVer getSemanticVersion() {
-        return Module.DEFAULT_SEMANTIC_VERSION;
-    }
+    // FIXME: this should not be here
+    Optional<SemVer> getSemanticVersion();
 }

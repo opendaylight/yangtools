@@ -36,15 +36,26 @@ final class SemVerDependencyResolver extends DependencyResolver {
         return null;
     }
 
-    private static boolean isCompatible(final SemVer moduleSemVer, final SemVer importSemVer) {
-        return moduleSemVer.getMajor() == importSemVer.getMajor() && moduleSemVer.compareTo(importSemVer) >= 0;
+    private static boolean isCompatible(final Optional<SemVer> moduleSemVer, final Optional<SemVer> importSemVer) {
+        if (!importSemVer.isPresent()) {
+            // Import does not care about the version
+            return true;
+        }
+        if (!moduleSemVer.isPresent()) {
+            // Modules which do not declare a semantic version are incompatible with imports which do
+            return false;
+        }
+
+        final SemVer modVer = moduleSemVer.get();
+        final SemVer impVer = importSemVer.get();
+        return modVer.getMajor() == impVer.getMajor() && modVer.compareTo(impVer) >= 0;
     }
 
     @Override
     protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
         final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
         final SemVerSourceIdentifier msi = SemVerSourceIdentifier.create(mi.getModuleName(), Optional.ofNullable(rev),
-            mi.getSemanticVersion());
+            mi.getSemanticVersion().orElse(null));
 
         // Quick lookup
         if (haystack.contains(msi)) {

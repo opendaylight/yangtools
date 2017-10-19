@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.base.MoreObjects;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -48,12 +48,12 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
             final RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(
                 RevisionDateEffectiveStatementImpl.class);
             this.revision = revisionDateStmt == null ? getImportedRevision(ctx) : revisionDateStmt.argument();
-            this.semVer = Module.DEFAULT_SEMANTIC_VERSION;
+            this.semVer = null;
         } else {
             final ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(
                 ImpPrefixToSemVerModuleIdentifier.class, prefix);
             revision = importedModuleIdentifier.getRevision();
-            semVer = importedModuleIdentifier.getSemanticVersion();
+            semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
         final DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(
@@ -86,8 +86,8 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
-    public SemVer getSemanticVersion() {
-        return semVer;
+    public Optional<SemVer> getSemanticVersion() {
+        return Optional.ofNullable(semVer);
     }
 
     @Override
