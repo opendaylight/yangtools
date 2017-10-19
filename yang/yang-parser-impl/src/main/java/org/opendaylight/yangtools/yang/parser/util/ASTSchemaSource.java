@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.util;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.model.api.Module.DEFAULT_SEMANTIC_VERSION;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
@@ -189,9 +188,8 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
 
     private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
         return depInfo.getFormattedRevision() == null
-                ? SemVerSourceIdentifier.create(depInfo.getName(),
-                    depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION))
+                ? SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getSemanticVersion().orElse(null))
                         : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
-                            depInfo.getSemanticVersion().orElse(DEFAULT_SEMANTIC_VERSION));
+                            depInfo.getSemanticVersion().orElse(null));
     }
 }

@@ -31,9 +31,9 @@ public class OpenconfigVersionPositionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -47,9 +47,9 @@ public class OpenconfigVersionPositionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -63,8 +63,8 @@ public class OpenconfigVersionPositionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 }
