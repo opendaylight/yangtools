@@ -34,18 +34,12 @@ public final class SimpleDateFormatUtil {
      */
     public static final Date DEFAULT_DATE_IMP;
 
-    /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for belongs-to statement.
-     */
-    public static final Date DEFAULT_BELONGS_TO_DATE;
-
     static {
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
 
         try {
             DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
             DEFAULT_DATE_IMP = simpleDateFormat.parse(DEFAULT_DATE);
-            DEFAULT_BELONGS_TO_DATE = simpleDateFormat.parse(DEFAULT_DATE);
         } catch (final ParseException e) {
             throw new ExceptionInInitializerError(e);
         }
