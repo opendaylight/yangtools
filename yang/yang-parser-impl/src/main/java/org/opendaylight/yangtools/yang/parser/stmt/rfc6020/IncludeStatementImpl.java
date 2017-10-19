@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.util.Collection;
@@ -22,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -72,7 +74,9 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
         @Override
         public void onPreLinkageDeclared(
                 final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
-            stmt.addRequiredModule(getIncludeSubmoduleIdentifier(stmt));
+            final StmtContext<Date, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+            stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
+                : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.rawStatementArgument()));
         }
 
         @Override

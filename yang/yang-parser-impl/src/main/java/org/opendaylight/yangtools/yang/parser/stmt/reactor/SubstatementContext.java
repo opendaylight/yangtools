@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -236,8 +237,8 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public void addRequiredModule(final ModuleIdentifier dependency) {
-        getRoot().addRequiredModule(dependency);
+    public void addRequiredSource(final SourceIdentifier dependency) {
+        getRoot().addRequiredSource(dependency);
     }
 
     @Override

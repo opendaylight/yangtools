@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -444,8 +445,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         currentContext.addMutableStmtToSeal(mutableStatement);
     }
 
-    Collection<ModuleIdentifier> getRequiredModules() {
-        return root.getRequiredModules();
+    Collection<SourceIdentifier> getRequiredSources() {
+        return root.getRequiredSources();
     }
 
     ModuleIdentifier getRootIdentifier() {
