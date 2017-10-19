@@ -12,6 +12,7 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -281,6 +283,31 @@ public final class SchemaContextUtil {
             }
         }
         return null;
+    }
+
+    /**
+     * Extract the identifiers of all modules and submodules which were used to create a particular SchemaContext.
+     *
+     * @param context SchemaContext to be examined
+     * @return Set of ModuleIdentifiers.
+     */
+    public static Set<ModuleIdentifier> getConstituentModuleIdentifiers(final SchemaContext context) {
+        final Set<ModuleIdentifier> ret = new HashSet<>();
+
+        for (Module module : context.getModules()) {
+            ret.add(moduleToIdentifier(module));
+
+            for (Module submodule : module.getSubmodules()) {
+                ret.add(moduleToIdentifier(submodule));
+            }
+        }
+
+        return ret;
+    }
+
+    private static ModuleIdentifier moduleToIdentifier(final Module module) {
+        return ModuleIdentifierImpl.create(module.getName(), Optional.of(module.getNamespace()),
+            Optional.of(module.getRevision()));
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {

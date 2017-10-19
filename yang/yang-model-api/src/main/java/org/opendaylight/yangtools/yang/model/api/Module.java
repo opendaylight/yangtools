@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.net.URI;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
@@ -61,11 +65,69 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
     </code>
  */
 @Immutable
-public interface Module extends DataNodeContainer, ModuleIdentifier, NotificationNodeContainer {
+public interface Module extends DataNodeContainer, NotificationNodeContainer {
     /**
      * Default semantic version of Module.
      */
     SemVer DEFAULT_SEMANTIC_VERSION = SemVer.create(0, 0, 0);
+
+    /**
+     * Returns the name of the module which is specified as argument of YANG
+     * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
+     *
+     * @return string with the name of the module
+     */
+    String getName();
+
+    /**
+     * Returns a {@link QNameModule}, which contains the namespace and
+     * the revision of the module.
+     *
+     * @return QNameModule identifier.
+     */
+    QNameModule getQNameModule();
+
+    /**
+     * Returns the namespace of the module which is specified as argument of
+     * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
+     * keyword. If you need both namespace and revision, please consider using
+     * {@link #getQNameModule()}.
+     *
+     * @return URI format of the namespace of the module
+     */
+    default URI getNamespace() {
+        return getQNameModule().getNamespace();
+    }
+
+    /**
+     * Returns the revision date for the module. If you need both namespace and
+     * revision, please consider using {@link #getQNameModule()}.
+     *
+     * @return date of the module revision which is specified as argument of
+     *         YANG {@link Module <b><font color="#339900">revison</font></b>}
+     *         keyword
+     */
+    // FIXME: BUG-4688: should return Optional<Revision>
+    @Nullable default Date getRevision() {
+        return getQNameModule().getRevision();
+    }
+
+    /**
+     * Returns the semantic version of yang module.
+     *
+     * <p>
+     * If the semantic version is not specified, default semantic version of
+     * module is returned.
+     *
+     * @return SemVer semantic version of yang module which is specified as
+     *         argument of
+     *         (urn:opendaylight:yang:extension:semantic-version?revision
+     *         =2016-02-02)semantic-version statement
+     */
+    // FIXME: Should return Optional<SemVer>
+    default SemVer getSemanticVersion() {
+        return Module.DEFAULT_SEMANTIC_VERSION;
+    }
 
     /**
      * Returns the prefix of the module.

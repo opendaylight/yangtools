@@ -12,8 +12,15 @@ import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
-
+/**
+ * Module identifier. This "identifier" is deprecated and is to be removed in 2.0.0.
+ * @author Robert Varga
+ *
+ * @deprecated Use {@link SourceIdentifier} instead.
+ */
+@Deprecated
 public interface ModuleIdentifier {
     /**
      * Returns a {@link QNameModule}, which contains the namespace and
