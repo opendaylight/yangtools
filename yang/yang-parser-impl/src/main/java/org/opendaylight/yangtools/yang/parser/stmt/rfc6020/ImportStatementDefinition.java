@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.Verify;
@@ -29,7 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -90,7 +93,7 @@ public class ImportStatementDefinition extends
          * Based on this information, required modules are searched from library
          * sources.
          */
-        stmt.addRequiredModule(RevisionImport.getImportedModuleIdentifier(stmt));
+        stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
 
         final String moduleName = stmt.getStatementArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
@@ -215,14 +218,19 @@ public class ImportStatementDefinition extends
             return recentModuleEntry;
         }
 
-        private static ModuleIdentifier getImportedModuleIdentifier(
-                final StmtContext<String, ImportStatement, ?> stmt) {
+        static ModuleIdentifier getImportedModuleIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
             Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revision == null) {
                 revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
             }
 
             return ModuleIdentifierImpl.create(stmt.getStatementArgument(), Optional.empty(), Optional.of(revision));
+        }
+
+        static SourceIdentifier getImportedSourceIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
+            final StmtContext<Date, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+            return revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
+                    : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.rawStatementArgument());
         }
     }
 
