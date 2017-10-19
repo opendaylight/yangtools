@@ -12,14 +12,15 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement>
@@ -50,9 +51,9 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
             this.revision = revisionDateStmt == null ? getImportedRevision(ctx) : revisionDateStmt.argument();
             this.semVer = null;
         } else {
-            final ModuleIdentifier importedModuleIdentifier = ctx.getFromNamespace(
-                ImpPrefixToSemVerModuleIdentifier.class, prefix);
-            revision = importedModuleIdentifier.getRevision();
+            final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
+                ImportPrefixToSemVerSourceIdentifier.class, prefix);
+            revision = QName.parseRevision(importedModuleIdentifier.getRevision());
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
