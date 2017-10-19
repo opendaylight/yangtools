@@ -133,7 +133,7 @@ public final class ModuleDependencySort {
                  * If it is an yang 1 module, check imports: If module is imported twice with different
                  * revisions then throw exception
                  */
-                if (YangVersion.VERSION_1.toString().equals(module.getYangVersion())) {
+                if (module.getYangVersion() == YangVersion.VERSION_1) {
                     final Date impRevision = imported.get(toName);
                     if (impRevision != null && !impRevision.equals(toRevision)
                         && !DEFAULT_DATE_REV.equals(impRevision) && !DEFAULT_DATE_REV.equals(toRevision)) {

@@ -91,7 +91,7 @@ public class YangParserTest {
     @Test
     public void testHeaders() throws ParseException {
         assertEquals("foo", foo.getName());
-        assertEquals(YangVersion.VERSION_1.toString(), foo.getYangVersion());
+        assertEquals(YangVersion.VERSION_1, foo.getYangVersion());
         assertEquals(FOO.getNamespace(), foo.getNamespace());
         assertEquals("foo", foo.getPrefix());
 
