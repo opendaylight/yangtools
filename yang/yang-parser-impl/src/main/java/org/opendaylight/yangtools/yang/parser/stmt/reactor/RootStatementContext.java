@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
@@ -48,7 +49,7 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final A argument;
 
     private YangVersion version;
-    private Collection<ModuleIdentifier> requiredModules = ImmutableSet.of();
+    private Collection<SourceIdentifier> requiredSources = ImmutableSet.of();
     private ModuleIdentifier identifier;
 
     /**
@@ -220,17 +221,22 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     @Override
-    public void addRequiredModule(final ModuleIdentifier dependency) {
+    public void addRequiredSource(final SourceIdentifier dependency) {
         checkState(sourceContext.getInProgressPhase() == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Add required module is allowed only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase");
-        if (requiredModules.isEmpty()) {
-            requiredModules = new HashSet<>();
+        if (requiredSources.isEmpty()) {
+            requiredSources = new HashSet<>();
         }
-        requiredModules.add(dependency);
+        requiredSources.add(dependency);
     }
 
-    Collection<ModuleIdentifier> getRequiredModules() {
-        return ImmutableSet.copyOf(requiredModules);
+    /**
+     * Return the set of required sources.
+     *
+     * @return Required sources.
+     */
+    Collection<SourceIdentifier> getRequiredSources() {
+        return ImmutableSet.copyOf(requiredSources);
     }
 
     @Override

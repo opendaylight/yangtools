@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
@@ -227,14 +228,18 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         void addMutableStmtToSeal(MutableStatement mutableStatement);
 
         /**
-         * Add required module. Based on these dependencies are collected
-         * required sources from library sources.
+         * Add required module. Based on these dependencies are collected required sources from library sources.
          *
          * @param dependency
-         *            ModuleIdentifier of module required by current root
+         *            SourceIdentifier of module required by current root
          *            context
          */
-        void addRequiredModule(ModuleIdentifier dependency);
+        /*
+         * FIXME: this method is used solely during SOURCE_PRE_LINKAGE reactor phase and does not have a corresponding
+         *        getter -- which makes it rather strange. At some point this method needs to be deprecated and its
+         *        users migrated to use proper global namespace.
+         */
+        void addRequiredSource(SourceIdentifier dependency);
 
         void addAsEffectOfStatement(StmtContext<?, ?, ?> ctx);
 
