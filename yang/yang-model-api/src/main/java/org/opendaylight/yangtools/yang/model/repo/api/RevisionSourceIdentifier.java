@@ -73,7 +73,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *            Revision of source in format YYYY-mm-dd. If not present,
      *            default value will be used.
      */
-    RevisionSourceIdentifier(final String name, final Optional<String> formattedRevision) {
+    private RevisionSourceIdentifier(final String name, final Optional<String> formattedRevision) {
         super(name, formattedRevision);
     }
 
