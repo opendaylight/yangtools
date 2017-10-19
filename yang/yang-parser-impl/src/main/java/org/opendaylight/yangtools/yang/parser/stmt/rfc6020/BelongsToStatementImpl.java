@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -71,7 +72,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public void onPreLinkageDeclared(final StmtContext.Mutable<String, BelongsToStatement,
                 EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
-            belongsToCtx.addRequiredModule(getModuleIdentifier(belongsToCtx));
+            belongsToCtx.addRequiredSource(RevisionSourceIdentifier.create(belongsToCtx.getStatementArgument()));
         }
 
         @Override

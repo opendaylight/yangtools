@@ -32,7 +32,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -439,21 +438,18 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private void collectRequiredSourcesFromLib(
             final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable,
             final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
-        final Collection<ModuleIdentifier> requiredModules = source.getRequiredModules();
-        for (final ModuleIdentifier requiredModule : requiredModules) {
-            final SourceSpecificContext libSource = getRequiredLibSource(requiredModule, libSourcesTable);
+        for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
+            final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
             if (libSource != null && requiredLibs.add(libSource)) {
                 collectRequiredSourcesFromLib(libSourcesTable, requiredLibs, libSource);
             }
         }
     }
 
-    private static SourceSpecificContext getRequiredLibSource(final ModuleIdentifier requiredModule,
+    private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
             final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable) {
-        return requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP
-                || requiredModule.getRevision() == SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE ? getLatestRevision(
-                libSourcesTable.row(requiredModule.getName())) : libSourcesTable.get(requiredModule.getName(),
-                requiredModule.getRevision());
+        return requiredSource.getRevision() == null ? getLatestRevision(libSourcesTable.row(requiredSource.getName()))
+                : libSourcesTable.get(requiredSource.getName(), QName.parseRevision(requiredSource.getRevision()));
     }
 
     private static SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
