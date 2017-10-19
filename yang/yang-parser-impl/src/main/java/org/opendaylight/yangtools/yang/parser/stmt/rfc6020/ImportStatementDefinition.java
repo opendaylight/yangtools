@@ -21,7 +21,6 @@ import java.util.NavigableMap;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -248,7 +247,7 @@ public class ImportStatementDefinition extends
                     if (importedModuleEntry == null) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
                             "Unable to find module compatible with requested import [%s(%s)].",
-                            impIdentifier.getName(), getRequestedImportVersion(stmt));
+                            impIdentifier.getName(), getRequestedImportVersionString(stmt));
                     }
 
                     final StmtContext<?, ?, ?> importedModule = importedModuleEntry.getValue();
@@ -273,18 +272,18 @@ public class ImportStatementDefinition extends
                     if (failed.contains(imported)) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
                                 "Unable to find module compatible with requested import [%s(%s)].",
-                                impIdentifier.getName(), getRequestedImportVersion(stmt));
+                                impIdentifier.getName(), getRequestedImportVersionString(stmt));
                     }
                 }
             });
         }
 
-        private static SemVer getRequestedImportVersion(final StmtContext<?, ?, ?> impStmt) {
-            SemVer requestedImportVersion = impStmt.getFromNamespace(SemanticVersionNamespace.class, impStmt);
-            if (requestedImportVersion == null) {
-                requestedImportVersion = Module.DEFAULT_SEMANTIC_VERSION;
-            }
-            return requestedImportVersion;
+        private static Optional<SemVer> getRequestedImportVersion(final StmtContext<?, ?, ?> stmt) {
+            return Optional.ofNullable(stmt.getFromNamespace(SemanticVersionNamespace.class, stmt));
+        }
+
+        private static String getRequestedImportVersionString(final StmtContext<?, ?, ?> stmt) {
+            return getRequestedImportVersion(stmt).map(SemVer::toString).orElse("<any");
         }
 
         private static Entry<SemVer, StmtContext<?, ?, ?>> findRecentCompatibleModuleEntry(final String moduleName,
@@ -295,14 +294,14 @@ public class ImportStatementDefinition extends
                 return null;
             }
 
-            final SemVer requestedImportVersion = getRequestedImportVersion(impStmt);
-            allRelevantModulesMap = allRelevantModulesMap.subMap(requestedImportVersion, true,
-                    SemVer.create(requestedImportVersion.getMajor() + 1), false);
-            if (!allRelevantModulesMap.isEmpty()) {
-                return allRelevantModulesMap.lastEntry();
+            final Optional<SemVer> optImportVer = getRequestedImportVersion(impStmt);
+            if (optImportVer.isPresent()) {
+                final SemVer importVer = optImportVer.get();
+                allRelevantModulesMap = allRelevantModulesMap.subMap(importVer, true,
+                    SemVer.create(importVer.getMajor() + 1), false);
             }
 
-            return null;
+            return allRelevantModulesMap.lastEntry();
         }
 
         private static ModuleIdentifier getImportedModuleIdentifier(

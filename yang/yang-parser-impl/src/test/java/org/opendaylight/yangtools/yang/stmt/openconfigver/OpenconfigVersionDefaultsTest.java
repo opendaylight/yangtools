@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -32,8 +33,8 @@ public class OpenconfigVersionDefaultsTest {
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
         Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.0"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.0.0"), bar.getSemanticVersion());
+        assertEquals(Optional.empty(), foo.getSemanticVersion());
+        assertEquals(Optional.empty(), bar.getSemanticVersion());
     }
 
     @Test
@@ -45,8 +46,8 @@ public class OpenconfigVersionDefaultsTest {
         Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
         Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.0"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.99.99"), bar.getSemanticVersion());
+        assertEquals(Optional.empty(), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.99.99"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -57,7 +58,7 @@ public class OpenconfigVersionDefaultsTest {
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
             assertTrue(e.getCause().getMessage()
-                    .startsWith("Unable to find module compatible with requested import [bar(0.0.0)]."));
+                    .startsWith("Unable to find module compatible with requested import [bar(0.0.1)]."));
         }
     }
 }
