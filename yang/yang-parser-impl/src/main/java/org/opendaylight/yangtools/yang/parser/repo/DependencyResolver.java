@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -171,15 +172,13 @@ abstract class DependencyResolver {
         }
 
         @Override
-        public SemVer getSemanticVersion() {
-            return null;
+        public Optional<SemVer> getSemanticVersion() {
+            return Optional.empty();
         }
 
         @Override
         public String toString() {
-            return MoreObjects.toStringHelper(this)
-                    .add("parent", parent)
-                    .toString();
+            return MoreObjects.toStringHelper(this).add("parent", parent).toString();
         }
     }
 }

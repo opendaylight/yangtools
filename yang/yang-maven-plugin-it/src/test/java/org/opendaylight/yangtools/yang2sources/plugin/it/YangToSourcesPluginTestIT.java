@@ -65,7 +65,7 @@ public class YangToSourcesPluginTestIT {
             assertVerificationException(e,
                     "SchemaResolutionException{unsatisfiedImports={RevisionSourceIdentifier"
                     + " [name=private@2013-02-27]=[ModuleImportImpl"
-                    + " [name=unknownDep, revision=2013-02-27, semanticVersion=0.0.0]]}");
+                    + " [name=unknownDep, revision=2013-02-27, semanticVersion=null]]}");
             return;
         }
     }

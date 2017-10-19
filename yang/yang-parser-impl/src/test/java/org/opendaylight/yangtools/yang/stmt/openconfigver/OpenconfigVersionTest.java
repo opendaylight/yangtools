@@ -39,9 +39,9 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -55,9 +55,9 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -70,8 +70,8 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
     }
 
     @Test
@@ -84,10 +84,10 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -100,10 +100,10 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("0.10.4"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.10.4"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -138,10 +138,10 @@ public class OpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("2016.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("2016.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("2016.4.6"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("2016.4.6"), bar.getSemanticVersion().get());
 
         QName root = QName.create("foo", "2016-01-01", "foo-root");
         QName container20160404 = QName.create("foo", "2016-01-01", "con20160404");

@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -620,7 +621,7 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
-                public SemVer getSemanticVersion() {
+                public Optional<SemVer> getSemanticVersion() {
                     return module.getSemanticVersion();
                 }
 
