@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -51,8 +50,5 @@ public class Bug6961Test {
         assertEquals(allModuleIdentifiersResolved, allModuleIdentifiers);
         assertEquals(allModuleIdentifiers, testSet);
         assertTrue(allModuleIdentifiers.contains(foo));
-        final QNameModule fooQNameModule = foo.getQNameModule();
-        final QNameModule fooQNameModuleCreated = QNameModule.create(new URI("foo"), date.orElse(null));
-        assertEquals(fooQNameModule, fooQNameModuleCreated);
     }
 }

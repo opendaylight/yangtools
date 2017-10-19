@@ -48,11 +48,6 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
     }
 
     @Override
-    public QNameModule getQNameModule() {
-        return qnameModule;
-    }
-
-    @Override
     public Date getRevision() {
         return qnameModule.getRevision();
     }
