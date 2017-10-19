@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -45,7 +46,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToSemVerModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
@@ -253,14 +254,14 @@ public class ImportStatementDefinition extends
                     final StmtContext<?, ?, ?> importedModule = importedModuleEntry.getValue();
                     final ModuleIdentifier importedModuleIdentifier = importedModule.getFromNamespace(
                         ModuleCtxToModuleIdentifier.class, importedModule);
-                    final ModuleIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
+                    final SemVerSourceIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
                         importedModuleIdentifier, importedModuleEntry.getKey());
 
                     linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                         importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
-                    stmt.addToNs(ImpPrefixToSemVerModuleIdentifier.class, impPrefix, semVerModuleIdentifier);
+                    stmt.addToNs(ImportPrefixToSemVerSourceIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                         NamespaceStatement.class);
@@ -310,11 +311,18 @@ public class ImportStatementDefinition extends
                     Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
         }
 
-        private static ModuleIdentifier createSemVerModuleIdentifier(final ModuleIdentifier importedModuleIdentifier,
-                final SemVer semVer) {
-            return ModuleIdentifierImpl.create(importedModuleIdentifier.getName(),
-                Optional.ofNullable(importedModuleIdentifier.getNamespace()),
-                Optional.of(importedModuleIdentifier.getRevision()), semVer);
+        private static SemVerSourceIdentifier createSemVerModuleIdentifier(
+                final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
+            final String formattedRevision;
+            if (importedModuleIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
+                formattedRevision = null;
+            } else {
+                formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(
+                    importedModuleIdentifier.getRevision());
+            }
+
+
+            return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(), formattedRevision, semVer);
         }
     }
 }
