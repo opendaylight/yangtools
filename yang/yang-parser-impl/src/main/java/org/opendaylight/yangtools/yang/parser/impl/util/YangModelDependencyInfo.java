@@ -18,11 +18,11 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -241,8 +241,7 @@ public abstract class YangModelDependencyInfo {
                 final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
                 final Date revisionDate = revisionDateStr == null ? null : QName.parseRevision(revisionDateStr);
-                final Optional<SemVer> importSemVer = Optional.ofNullable(findSemanticVersion(subStatementContext,
-                            sourceName));
+                final SemVer importSemVer = findSemanticVersion(subStatementContext, sourceName);
                 result.add(new ModuleImportImpl(importedModuleName, revisionDate, importSemVer));
             }
         }
@@ -349,7 +348,7 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "Module [name=" + getName() + ", revision=" + getRevision()
-            + ", semanticVersion=" + getSemanticVersion().orElse(Module.DEFAULT_SEMANTIC_VERSION)
+            + ", semanticVersion=" + getSemanticVersion().orElse(null)
             + ", dependencies=" + getDependencies()
             + "]";
         }
@@ -392,28 +391,28 @@ public abstract class YangModelDependencyInfo {
         private final String name;
 
         ModuleImportImpl(final String moduleName, final Date revision) {
-            this(moduleName, revision, Optional.empty());
+            this(moduleName, revision, null);
         }
 
-        ModuleImportImpl(final String moduleName, final Date revision, final Optional<SemVer> semVer) {
+        ModuleImportImpl(final String moduleName, @Nullable final Date revision, @Nullable final SemVer semVer) {
             this.name = requireNonNull(moduleName, "Module name must not be null.");
             this.revision = revision;
-            this.semVer = semVer.orElse(Module.DEFAULT_SEMANTIC_VERSION);
+            this.semVer = semVer;
         }
 
         @Override
         public String getModuleName() {
-            return this.name;
+            return name;
         }
 
         @Override
         public Date getRevision() {
-            return this.revision;
+            return revision;
         }
 
         @Override
-        public SemVer getSemanticVersion() {
-            return this.semVer;
+        public Optional<SemVer> getSemanticVersion() {
+            return Optional.ofNullable(semVer);
         }
 
         @Override

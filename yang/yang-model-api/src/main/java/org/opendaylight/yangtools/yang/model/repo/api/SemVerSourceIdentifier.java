@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
  * YANG Schema source identifier with specified semantic version.
@@ -55,7 +54,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      */
     SemVerSourceIdentifier(final String name, final Optional<String> formattedRevision, final SemVer semVer) {
         super(name, formattedRevision);
-        this.semVer = semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer;
+        this.semVer = semVer;
     }
 
     /**
@@ -71,15 +70,12 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     }
 
     /**
-     * Returns semantic version of source or
-     * {@link Module#DEFAULT_SEMANTIC_VERSION} if semantic version was not
-     * supplied.
+     * Returns semantic version of source if it was specified.
      *
-     * @return revision of source or {@link Module#DEFAULT_SEMANTIC_VERSION} if
-     *         revision was not supplied.
+     * @return revision of source.
      */
-    public SemVer getSemanticVersion() {
-        return semVer;
+    public Optional<SemVer> getSemanticVersion() {
+        return Optional.ofNullable(semVer);
     }
 
     /**

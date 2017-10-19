@@ -45,14 +45,14 @@ public class OpenconfigVersionComplexTest {
             URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         // check module versions
-        assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("1.50.2"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("1.50.2"), foo.getSemanticVersion().get());
 
         final Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("1.2.6"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("1.2.6"), bar.getSemanticVersion().get());
 
         final Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
-        assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("2.26.465"), foobar.getSemanticVersion().get());
 
         // check imported components
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo,
@@ -91,14 +91,14 @@ public class OpenconfigVersionComplexTest {
             "http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         // check module versions
-        assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("2.32.2"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("2.32.2"), foo.getSemanticVersion().get());
 
         final Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("4.9.8"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("4.9.8"), bar.getSemanticVersion().get());
 
         final Module foobar = StmtTestUtils.findImportedModule(context, bar, "foobar");
-        assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("7.13.99"), foobar.getSemanticVersion().get());
 
         // check used augmentations
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
