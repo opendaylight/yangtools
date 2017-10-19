@@ -12,6 +12,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
  * This interface contains the methods for getting the data from the YANG
@@ -76,14 +77,11 @@ public interface Module extends DataNodeContainer, ModuleIdentifier, Notificatio
     String getPrefix();
 
     /**
-     * Returns the YANG version. Default value is 1.
+     * Returns the YANG version.
      *
-     * @return string with the module YANG version which is specified as
-     *         argument of YANG {@link Module <b> <font
-     *         color="#8b4513">yang-version</font></b>} keyword
+     * @return YANG version of this module.
      */
-    // FIXME: version 2.0.0: return YangVersion
-    String getYangVersion();
+    YangVersion getYangVersion();
 
     /**
      * Returns the module description.

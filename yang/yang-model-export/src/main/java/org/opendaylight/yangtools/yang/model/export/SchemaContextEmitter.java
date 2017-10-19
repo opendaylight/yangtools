@@ -199,17 +199,16 @@ abstract class SchemaContextEmitter {
              * augment) we can get declared form i.e. ModuleStatement and then
              * use DeclaredSchemaContextEmitter
              */
-            new DeclaredSchemaContextEmitter(yangSchemaWriter, extensions,
-                    YangVersion.parse(module.getYangVersion()).orElse(null))
-                            .emitModule(((EffectiveStatement<?, ?>) module).getDeclared());
+            new DeclaredSchemaContextEmitter(yangSchemaWriter, extensions,module.getYangVersion())
+            .emitModule(((EffectiveStatement<?, ?>) module).getDeclared());
         } else {
             /*
              * if we don't have access to declared form of supplied module or we
              * want to emit also instantiated statements (e.g. statements added
              * by uses or augment), we use EffectiveSchemaContextEmitter.
              */
-            new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions,
-                    YangVersion.parse(module.getYangVersion()).orElse(null), emitInstantiated).emitModule(module);
+            new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions,module.getYangVersion(), emitInstantiated)
+            .emitModule(module);
         }
     }
 
@@ -1116,7 +1115,7 @@ abstract class SchemaContextEmitter {
                 } else if (child instanceof ConfigStatement) {
                     emitConfigNode((ConfigStatement) child);
                 } else if (child instanceof UnknownStatement) {
-                    emitUnknownStatementNode((UnknownStatement<?>) child);
+                    emitUnknownStatementNode(child);
                 }
             }
             super.writer.endNode();
@@ -1259,8 +1258,8 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitYangVersionNode(final String input) {
-            super.writer.startYangVersionNode(input);
+        private void emitYangVersionNode(final YangVersion input) {
+            super.writer.startYangVersionNode(input.toString());
             super.writer.endNode();
         }
 
