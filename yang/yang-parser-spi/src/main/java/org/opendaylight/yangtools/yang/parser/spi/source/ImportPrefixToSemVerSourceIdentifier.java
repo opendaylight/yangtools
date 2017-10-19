@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 
 /**
- * Source-specific mapping of prefixes to module identifier with specified semantic version.
+ * Source-specific mapping of prefixes to source identifier with specified semantic version.
  */
 @Beta
-public interface ImpPrefixToSemVerModuleIdentifier extends IdentifierNamespace<String, ModuleIdentifier> {
+public interface ImportPrefixToSemVerSourceIdentifier
+    extends IdentifierNamespace<String, SemVerSourceIdentifier> {
 
 }
