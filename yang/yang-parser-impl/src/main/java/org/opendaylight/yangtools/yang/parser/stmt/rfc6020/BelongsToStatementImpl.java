@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
+
 import java.util.Collection;
-import java.util.Optional;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -29,10 +27,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prereq
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.BelongsToEffectiveStatementImpl;
 
@@ -82,11 +79,8 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
             final SourceIdentifier belongsToSourceIdentifier = getSourceIdentifier(belongsToCtx);
-            final ModuleIdentifier belongsToModuleIdentifier = ModuleIdentifierImpl.create(
-                belongsToCtx.getStatementArgument(), Optional.empty(),
-                Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
             final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
-                ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(),
+                ModuleNamespaceForBelongsTo.class, belongsToCtx.getStatementArgument(),
                 ModelProcessingPhase.SOURCE_LINKAGE);
 
             belongsToAction.apply(new InferenceAction() {
@@ -95,9 +89,9 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
                     StmtContext<?, ?, ?> belongsToModuleCtx = belongsToPrereq.resolve(ctx);
 
                     belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToSourceIdentifier, belongsToModuleCtx);
-                    belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class,
-                        StmtContextUtils.findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class)
-                        .getStatementArgument(), belongsToModuleIdentifier);
+                    belongsToCtx.addToNs(BelongsToPrefixToModuleCtx.class,
+                        findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class).getStatementArgument(),
+                        belongsToModuleCtx);
                 }
 
                 @Override
