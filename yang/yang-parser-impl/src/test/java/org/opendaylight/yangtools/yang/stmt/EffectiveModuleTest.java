@@ -84,7 +84,7 @@ public class EffectiveModuleTest {
         assertNotNull(rootModule);
 
         assertEquals("root-pref", rootModule.getPrefix());
-        assertEquals(YangVersion.VERSION_1.toString(), rootModule.getYangVersion());
+        assertEquals(YangVersion.VERSION_1, rootModule.getYangVersion());
         assertEquals("cisco", rootModule.getOrganization());
         assertEquals("cisco email", rootModule.getContact());
 
