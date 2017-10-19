@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 
 /**
- * namespace key class for storing belongs-to statements in Yang model storage.
+ * Namespace key class for storing belongs-to statements in YANG model storage.
  */
-public interface BelongsToModuleContext extends ImportedNamespaceContext<ModuleIdentifier> {
+public interface BelongsToModuleContext extends ImportedNamespaceContext<SourceIdentifier> {
 
 }

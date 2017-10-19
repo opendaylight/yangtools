@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -72,7 +73,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
         @Override
         public void onPreLinkageDeclared(final StmtContext.Mutable<String, BelongsToStatement,
                 EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
-            belongsToCtx.addRequiredSource(RevisionSourceIdentifier.create(belongsToCtx.getStatementArgument()));
+            belongsToCtx.addRequiredSource(getSourceIdentifier(belongsToCtx));
         }
 
         @Override
@@ -80,7 +81,10 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
                 EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
             ModelActionBuilder belongsToAction = belongsToCtx.newInferenceAction(ModelProcessingPhase.SOURCE_LINKAGE);
 
-            final ModuleIdentifier belongsToModuleIdentifier = getModuleIdentifier(belongsToCtx);
+            final SourceIdentifier belongsToSourceIdentifier = getSourceIdentifier(belongsToCtx);
+            final ModuleIdentifier belongsToModuleIdentifier = ModuleIdentifierImpl.create(
+                belongsToCtx.getStatementArgument(), Optional.empty(),
+                Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
             final Prerequisite<StmtContext<?, ?, ?>> belongsToPrereq = belongsToAction.requiresCtx(belongsToCtx,
                 ModuleNamespaceForBelongsTo.class, belongsToModuleIdentifier.getName(),
                 ModelProcessingPhase.SOURCE_LINKAGE);
@@ -90,7 +94,7 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
                 public void apply(final InferenceContext ctx) {
                     StmtContext<?, ?, ?> belongsToModuleCtx = belongsToPrereq.resolve(ctx);
 
-                    belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToModuleIdentifier, belongsToModuleCtx);
+                    belongsToCtx.addToNs(BelongsToModuleContext.class, belongsToSourceIdentifier, belongsToModuleCtx);
                     belongsToCtx.addToNs(BelongsToPrefixToModuleIdentifier.class,
                         StmtContextUtils.findFirstDeclaredSubstatement(belongsToCtx, PrefixStatement.class)
                         .getStatementArgument(), belongsToModuleIdentifier);
@@ -106,10 +110,9 @@ public class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
             });
         }
 
-        private static ModuleIdentifier getModuleIdentifier(final Mutable<String, BelongsToStatement,
+        private static SourceIdentifier getSourceIdentifier(final StmtContext<String, BelongsToStatement,
                 EffectiveStatement<String, BelongsToStatement>> belongsToCtx) {
-            return ModuleIdentifierImpl.create(belongsToCtx.getStatementArgument(), Optional.empty(),
-                Optional.of(SimpleDateFormatUtil.DEFAULT_BELONGS_TO_DATE));
+            return RevisionSourceIdentifier.create(belongsToCtx.getStatementArgument());
         }
 
         @Override
