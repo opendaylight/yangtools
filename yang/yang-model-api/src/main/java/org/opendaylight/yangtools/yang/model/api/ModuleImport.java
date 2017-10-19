@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 
 /**
  * Interface describing YANG 'import' statement.
  *
  * <p>
- * The import statement makes definitions from one module available inside
- * another module or submodule.
+ * The import statement makes definitions from one module available inside another module or submodule.
  */
 public interface ModuleImport extends DocumentedNode {
     /**
@@ -37,9 +37,7 @@ public interface ModuleImport extends DocumentedNode {
      *
      * @return Semantic version of module to import
      */
-    default SemVer getSemanticVersion() {
-        return Module.DEFAULT_SEMANTIC_VERSION;
-    }
+    Optional<SemVer> getSemanticVersion();
 
     /**
      * Returns the prefix associated with the imported module.

@@ -38,9 +38,9 @@ public class YinOpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -53,16 +53,17 @@ public class YinOpenconfigVersionTest {
         Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.1.2"), bar.getSemanticVersion().get());
     }
 
     @Test
     public void basicImportErrTest1() throws URISyntaxException, SAXException, IOException {
         try {
-            StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic-import-invalid", StatementParserMode.SEMVER_MODE);
+            StmtTestUtils.parseYinSources("/openconfig-version/yin-input/basic-import-invalid",
+                StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
             assertTrue(e.getCause().getMessage()
