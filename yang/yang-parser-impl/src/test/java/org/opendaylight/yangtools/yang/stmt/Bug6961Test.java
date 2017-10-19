@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 
 public class Bug6961Test {
@@ -38,12 +39,13 @@ public class Bug6961Test {
         final Set<ModuleIdentifier> testSet = ImmutableSet.of(foo, sub1Foo, sub2Foo, bar, sub1Bar, baz);
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6961/");
         assertNotNull(context);
-        final Set<ModuleIdentifier> allModuleIdentifiers = context.getAllModuleIdentifiers();
+        final Set<ModuleIdentifier> allModuleIdentifiers = SchemaContextUtil.getConstituentModuleIdentifiers(context);
         assertNotNull(allModuleIdentifiers);
         assertEquals(6, allModuleIdentifiers.size());
         final SchemaContext schemaContext = SimpleSchemaContext.forModules(context.getModules());
         assertNotNull(schemaContext);
-        final Set<ModuleIdentifier> allModuleIdentifiersResolved = schemaContext.getAllModuleIdentifiers();
+        final Set<ModuleIdentifier> allModuleIdentifiersResolved = SchemaContextUtil.getConstituentModuleIdentifiers(
+            schemaContext);
         assertNotNull(allModuleIdentifiersResolved);
         assertEquals(6, allModuleIdentifiersResolved.size());
         assertEquals(allModuleIdentifiersResolved, allModuleIdentifiers);

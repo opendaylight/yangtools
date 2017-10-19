@@ -115,9 +115,4 @@ public interface SchemaContext extends ContainerSchemaNode {
         }
         return null;
     }
-
-    /**
-     * Get all module and submodule identifiers.
-     */
-    Set<ModuleIdentifier> getAllModuleIdentifiers();
 }

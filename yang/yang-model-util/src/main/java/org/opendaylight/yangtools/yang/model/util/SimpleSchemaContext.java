@@ -15,12 +15,9 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
  * Simple subclass of {@link AbstractSchemaContext} which performs some amount of indexing to speed up common
@@ -31,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 public class SimpleSchemaContext extends AbstractSchemaContext {
     private final SetMultimap<URI, Module> namespaceToModules;
     private final SetMultimap<String, Module> nameToModules;
-    private final Set<ModuleIdentifier> moduleIdentifiers;
     private final Set<Module> modules;
 
     protected SimpleSchemaContext(final Set<Module> modules) {
@@ -53,18 +49,13 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
             AbstractSchemaContext::createModuleSet);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
-        final Set<ModuleIdentifier> modIdBuilder = new HashSet<>();
         for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
-            modIdBuilder.add(ModuleIdentifierImpl.create(m.getName(), Optional.of(m.getNamespace()),
-                Optional.of(m.getRevision())));
-            resolveSubmoduleIdentifiers(m.getSubmodules(), modIdBuilder);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
-        moduleIdentifiers = ImmutableSet.copyOf(modIdBuilder);
     }
 
     /**
@@ -75,22 +66,9 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
         return new SimpleSchemaContext(modules);
     }
 
-    private static void resolveSubmoduleIdentifiers(final Set<Module> submodules,
-            final Set<ModuleIdentifier> modIdBuilder) {
-        for (Module submodule : submodules) {
-            modIdBuilder.add(ModuleIdentifierImpl.create(submodule.getName(),
-                Optional.of(submodule.getNamespace()), Optional.of(submodule.getRevision())));
-        }
-    }
-
     @Override
     public final Set<Module> getModules() {
         return modules;
-    }
-
-    @Override
-    public final Set<ModuleIdentifier> getAllModuleIdentifiers() {
-        return moduleIdentifiers;
     }
 
     @Override
