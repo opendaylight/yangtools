@@ -5,13 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
 import java.util.Date;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -23,14 +21,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 @Deprecated
 public interface ModuleIdentifier {
     /**
-     * Returns a {@link QNameModule}, which contains the namespace and
-     * the revision of the module.
-     *
-     * @return QNameModule identifier.
-     */
-    QNameModule getQNameModule();
-
-    /**
      * Returns the name of the module which is specified as argument of YANG
      * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
      *
@@ -41,8 +31,7 @@ public interface ModuleIdentifier {
     /**
      * Returns the namespace of the module which is specified as argument of
      * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
-     * keyword. If you need both namespace and revision, please consider using
-     * {@link #getQNameModule()}.
+     * keyword.
      *
      * @return URI format of the namespace of the module
      */
@@ -50,8 +39,7 @@ public interface ModuleIdentifier {
     URI getNamespace();
 
     /**
-     * Returns the revision date for the module. If you need both namespace and
-     * revision, please consider using {@link #getQNameModule()}.
+     * Returns the revision date for the module.
      *
      * @return date of the module revision which is specified as argument of
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
