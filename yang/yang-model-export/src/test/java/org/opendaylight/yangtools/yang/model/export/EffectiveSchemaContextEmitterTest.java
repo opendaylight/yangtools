@@ -30,7 +30,6 @@ import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -87,8 +86,8 @@ public class EffectiveSchemaContextEmitterTest {
                 prefixToNs);
         final YangModuleWriter yangSchemaWriter = SchemaToStatementWriterAdaptor.from(statementWriter);
         final Map<QName, StatementDefinition> extensions = ExtensionStatement.mapFrom(ctx.getExtensions());
-        new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions,
-                YangVersion.parse(module.getYangVersion()).orElse(null), emitInstantiated).emitModule(module);
+        new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions, module.getYangVersion(), emitInstantiated)
+        .emitModule(module);
     }
 
     private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {

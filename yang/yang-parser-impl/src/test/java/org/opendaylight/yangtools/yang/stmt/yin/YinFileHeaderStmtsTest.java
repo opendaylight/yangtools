@@ -35,7 +35,7 @@ public class YinFileHeaderStmtsTest {
     public void testYinFileHeader() throws URISyntaxException {
         Module testModule = TestUtils.findModule(modules, "config").get();
 
-        assertEquals(YangVersion.VERSION_1.toString(), testModule.getYangVersion());
+        assertEquals(YangVersion.VERSION_1, testModule.getYangVersion());
         assertEquals(new URI("urn:opendaylight:params:xml:ns:yang:controller:config"), testModule.getNamespace());
         assertEquals("config", testModule.getPrefix());
     }
