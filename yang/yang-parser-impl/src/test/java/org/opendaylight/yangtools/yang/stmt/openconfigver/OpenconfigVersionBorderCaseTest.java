@@ -33,10 +33,10 @@ public class OpenconfigVersionBorderCaseTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("5.5.5"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("5.5.5"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -49,10 +49,10 @@ public class OpenconfigVersionBorderCaseTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("5.6.5"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("5.6.5"), bar.getSemanticVersion().get());
     }
 
     @Test
@@ -65,10 +65,10 @@ public class OpenconfigVersionBorderCaseTest {
         Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
                 .iterator().next();
 
-        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion());
-        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion());
+        assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
+        assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
         Module bar = StmtTestUtils.findImportedModule(context, foo, "bar");
-        assertEquals(SemVer.valueOf("5.5.6"), bar.getSemanticVersion());
+        assertEquals(SemVer.valueOf("5.5.6"), bar.getSemanticVersion().get());
     }
 
     @Test

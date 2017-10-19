@@ -16,14 +16,16 @@ import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
  * ModuleIdentifier that can be used for indexing/searching by name.
  * Name is only non-null attribute.
  * Equality check on namespace and revision is only triggered if they are non-null
+ *
+ * @deprecated This class will be removed with {@link ModuleIdentifier}
  */
+@Deprecated
 @Beta
 public final class ModuleIdentifierImpl implements ModuleIdentifier {
     private final QNameModule qnameModule;
@@ -34,12 +36,12 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
             final SemVer semVer) {
         this.name = checkNotNull(name);
         this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
-        this.semVer = (semVer == null ? Module.DEFAULT_SEMANTIC_VERSION : semVer);
+        this.semVer = semVer;
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
             final Optional<Date> revision) {
-        return create(name, namespace, revision, Module.DEFAULT_SEMANTIC_VERSION);
+        return create(name, namespace, revision, null);
     }
 
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
@@ -53,8 +55,8 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
     }
 
     @Override
-    public SemVer getSemanticVersion() {
-        return semVer;
+    public Optional<SemVer> getSemanticVersion() {
+        return Optional.ofNullable(semVer);
     }
 
     @Override

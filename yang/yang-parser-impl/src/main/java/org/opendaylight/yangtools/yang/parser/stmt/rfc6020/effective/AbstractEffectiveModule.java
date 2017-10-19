@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
@@ -107,7 +108,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         final OpenconfigVersionEffectiveStatementImpl semanticVersionStmt =
                 firstEffective(OpenconfigVersionEffectiveStatementImpl.class);
-        this.semanticVersion = semanticVersionStmt == null ? DEFAULT_SEMANTIC_VERSION : semanticVersionStmt.argument();
+        this.semanticVersion = semanticVersionStmt == null ? null : semanticVersionStmt.argument();
 
         final OrganizationEffectiveStatementImpl organizationStmt =
                 firstEffective(OrganizationEffectiveStatementImpl.class);
@@ -394,8 +395,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public SemVer getSemanticVersion() {
-        return semanticVersion;
+    public Optional<SemVer> getSemanticVersion() {
+        return Optional.ofNullable(semanticVersion);
     }
 
     @Override

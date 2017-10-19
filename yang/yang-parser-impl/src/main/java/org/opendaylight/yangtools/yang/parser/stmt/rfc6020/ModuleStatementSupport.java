@@ -17,7 +17,6 @@ import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -178,18 +177,23 @@ public class ModuleStatementSupport extends
         }
     }
 
+    private static int compareNullableSemVer(final SemVer ver1, final SemVer ver2) {
+        if (ver1 == null) {
+            return ver2 == null ? 0 : -1;
+        }
+
+        return ver2 == null ? 1 : ver1.compareTo(ver2);
+    }
+
     private static void addToSemVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
         final String moduleName = stmt.getStatementArgument();
         NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
                 SemanticVersionModuleNamespace.class, moduleName);
         if (modulesMap == null) {
-            modulesMap = new TreeMap<>();
+            modulesMap = new TreeMap<>(ModuleStatementSupport::compareNullableSemVer);
         }
-        SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
-        if (moduleSemVer == null) {
-            moduleSemVer = Module.DEFAULT_SEMANTIC_VERSION;
-        }
+        final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         modulesMap.put(moduleSemVer, stmt);
         stmt.addToNs(SemanticVersionModuleNamespace.class, moduleName, modulesMap);
     }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -67,11 +68,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 @Immutable
 public interface Module extends DataNodeContainer, NotificationNodeContainer {
     /**
-     * Default semantic version of Module.
-     */
-    SemVer DEFAULT_SEMANTIC_VERSION = SemVer.create(0, 0, 0);
-
-    /**
      * Returns the name of the module which is specified as argument of YANG
      * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
      *
@@ -124,10 +120,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         (urn:opendaylight:yang:extension:semantic-version?revision
      *         =2016-02-02)semantic-version statement
      */
-    // FIXME: Should return Optional<SemVer>
-    default SemVer getSemanticVersion() {
-        return Module.DEFAULT_SEMANTIC_VERSION;
-    }
+    Optional<SemVer> getSemanticVersion();
 
     /**
      * Returns the prefix of the module.
