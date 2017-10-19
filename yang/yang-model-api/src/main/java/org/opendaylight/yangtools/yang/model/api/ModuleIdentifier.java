@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.net.URI;
 import java.util.Date;
-import java.util.Optional;
-import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -30,17 +27,6 @@ public interface ModuleIdentifier {
     String getName();
 
     /**
-     * Returns the namespace of the module which is specified as argument of
-     * YANG {@link Module <b><font color="#00FF00">namespace</font></b>}
-     * keyword. If you need both namespace and revision, please consider using
-     * {@link #getQNameModule()}.
-     *
-     * @return URI format of the namespace of the module
-     */
-    // FIXME: this should not be here
-    URI getNamespace();
-
-    /**
      * Returns the revision date for the module. If you need both namespace and
      * revision, please consider using {@link #getQNameModule()}.
      *
@@ -52,18 +38,4 @@ public interface ModuleIdentifier {
     // FIXME: this should not be here
     Date getRevision();
 
-    /**
-     * Returns the semantic version of YANG module.
-     *
-     * <p>
-     * If the semantic version is not specified, default semantic version of
-     * module is returned.
-     *
-     * @return SemVer semantic version of yang module which is specified as
-     *         argument of
-     *         (urn:opendaylight:yang:extension:semantic-version?revision
-     *         =2016-02-02)semantic-version statement
-     */
-    // FIXME: this should not be here
-    Optional<SemVer> getSemanticVersion();
 }
