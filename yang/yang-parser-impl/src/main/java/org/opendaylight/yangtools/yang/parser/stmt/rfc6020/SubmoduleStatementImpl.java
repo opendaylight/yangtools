@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespaceKey;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
@@ -100,7 +101,8 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         @Override
         public void onLinkageDeclared(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            final ModuleIdentifier submoduleIdentifier = getSubmoduleIdentifier(stmt);
+            final IdentifierNamespaceKey<ModuleIdentifier> submoduleIdentifier = IdentifierNamespaceKey.exact(
+                getSubmoduleIdentifier(stmt));
 
             final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>
                 possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);

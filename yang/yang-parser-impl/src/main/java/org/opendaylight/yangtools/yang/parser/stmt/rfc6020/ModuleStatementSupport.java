@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespaceKey;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -156,7 +157,7 @@ public class ModuleStatementSupport extends
         final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
                 Optional.empty(), revisionDate);
 
-        stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
+        stmt.addContext(ModuleNamespace.class, IdentifierNamespaceKey.exact(moduleIdentifier), stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
         stmt.addContext(NamespaceToModule.class, qNameModule, stmt);
 

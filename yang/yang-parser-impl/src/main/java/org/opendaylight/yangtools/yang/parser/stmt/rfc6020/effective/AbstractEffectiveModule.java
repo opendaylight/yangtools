@@ -48,6 +48,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespaceKey;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -139,7 +140,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 @SuppressWarnings("unchecked")
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
                         (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
-                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                        .getFromNamespace(SubmoduleNamespace.class, IdentifierNamespaceKey.exact(submoduleIdentifier));
                 final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
                 submodulesInit.add(submodule);
@@ -161,7 +162,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 submoduleContextsInit = new HashSet<>();
             for (final ModuleIdentifier submoduleIdentifier : includedSubmodulesMap.values()) {
                 final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
-                        ctx.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+                        ctx.getFromNamespace(SubmoduleNamespace.class,
+                            IdentifierNamespaceKey.exact(submoduleIdentifier));
                 submoduleContextsInit.add(submoduleCtx);
             }
 

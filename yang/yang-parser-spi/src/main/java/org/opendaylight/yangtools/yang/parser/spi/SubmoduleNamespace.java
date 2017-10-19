@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespaceKey;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 
@@ -16,7 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  * Submodule equivalent of ModuleNamespace.
  */
 // FIXME: describe scoping of this namespace
-public interface SubmoduleNamespace
-    extends StatementNamespace<ModuleIdentifier, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
+public interface SubmoduleNamespace extends StatementNamespace<IdentifierNamespaceKey<ModuleIdentifier>,
+    SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
 
 }
