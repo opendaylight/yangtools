@@ -34,11 +34,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
@@ -169,8 +168,7 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule); // tu
         stmt.addToNs(ModuleCtxToModuleIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
-        stmt.addToNs(ModuleIdentifierToModuleQName.class, moduleIdentifier, qNameModule);
-        stmt.addToNs(ImpPrefixToModuleIdentifier.class, modulePrefix, moduleIdentifier);
+        stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
         if (stmt.isEnabledSemanticVersioning()) {
             addToSemVerModuleNamespace(stmt);
