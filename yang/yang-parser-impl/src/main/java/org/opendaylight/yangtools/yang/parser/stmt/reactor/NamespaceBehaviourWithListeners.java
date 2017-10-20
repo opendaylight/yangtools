@@ -26,11 +26,11 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
             this.key = key;
         }
 
-        public NamespaceStorageNode getCtxNode() {
+        NamespaceStorageNode getCtxNode() {
             return ctxNode;
         }
 
-        public K getKey() {
+        K getKey() {
             return key;
         }
 
@@ -49,9 +49,9 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         this.delegate = delegate;
     }
 
-    protected abstract void addListener(K key, ValueAddedListener<K> listener);
+    abstract void addListener(K key, ValueAddedListener<K> listener);
 
-    protected abstract boolean isRequestedValue(ValueAddedListener<K> listener, NamespaceStorageNode storage, V value);
+    abstract boolean isRequestedValue(ValueAddedListener<K> listener, NamespaceStorageNode storage, V value);
 
     @Override
     public abstract void addTo(NamespaceStorageNode storage, K key, V value);
@@ -75,10 +75,6 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         for (VirtualNamespaceContext<?, V, ?, K> derived : derivedNamespaces) {
             derived.addedToSourceNamespace(storage, key, value);
         }
-    }
-
-    final void addValueListener(final ValueAddedListener<K> listener) {
-        addListener(listener.key, listener);
     }
 
     final void addDerivedNamespace(final VirtualNamespaceContext<?, V, ?, K> namespace) {
