@@ -17,13 +17,13 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
@@ -55,6 +55,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -590,34 +591,49 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
             final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
-        // First try to find a match in current contents of the namespace
-        final Map<K, V> candidates = getAllFromNamespace(type);
-        if (candidates != null) {
-            Optional<Entry<K, V>> optMatch = candidates.entrySet().stream()
-                    .filter(entry -> criterion.match(entry.getKey()))
-                    .reduce((first, second) -> {
-                        final K selected = criterion.select(first.getKey(), second.getKey());
-                        if (selected == first.getKey()) {
-                            return first;
-                        }
-                        Verify.verify(selected == second.getKey(),
-                                "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
-                                first.getKey(), second.getKey());
-                        return second;
-                    });
-            if (optMatch.isPresent()) {
-                final Entry<K, V> match = optMatch.get();
-                LOG.trace("Listener on {} criterion {} satisfied immediately by {}", type, criterion, match.getKey());
-                listener.namespaceItemAdded(this, type, match.getKey(), match.getValue());
-                return;
-            }
-        }
 
+        /*
+         * Flexible searches require target context to be fully populated, such that the entire contents can be
+         * searched and the correct item retrieved. Therefore we rely on NamespaceBehaviourWithListeners.addListener()
+         * on firing at the end of the target phase.
+         *
+         * These listeners, unlike exact key listeners, are removed only after the phase finishes.
+         */
         final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
+        behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
+            private Entry<K, V> matchedEntry = null;
 
-        // FIXME: no match, hook in a listener
+            @Override
+            void onValueAdded(final K key, final V value) {
+                if (criterion.match(key)) {
+                    if (matchedEntry != null) {
+                        final K selected = criterion.select(matchedEntry.getKey(), key);
+                        if (selected != matchedEntry.getKey()) {
+                            Verify.verify(selected == key,
+                                    "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
+                                    matchedEntry.getKey(), key);
+                            updateMatch(key, value);
+                        }
+                    } else {
+                        updateMatch(key, value);
+                    }
+                }
+            }
 
-        throw new UnsupportedOperationException();
+            private void updateMatch(final K key, final V value) {
+                matchedEntry = new SimpleImmutableEntry<>(key, value);
+                LOG.trace("Listener on {} criterion {} candidate {}", type, criterion, matchedEntry);
+            }
+
+            // FIXME: call this from somewhere ...
+            void onPhaseCompleted() {
+                if (matchedEntry != null) {
+                    LOG.trace("Listener on {} criterion {} satisfied by {}", type, criterion, matchedEntry);
+                    listener.namespaceItemAdded(StatementContextBase.this, type, matchedEntry.getKey(),
+                        matchedEntry.getValue());
+                }
+            }
+        });
     }
 
     private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
@@ -648,7 +664,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end.
+     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end. If the base has already completed
+     * the listener is notified immediately.
+     *
+     * @param phase requested completion phase
+     * @param listener listener to invoke
+     * @throws NullPointerException if any of the arguments is null
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
         Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null at: %s",
