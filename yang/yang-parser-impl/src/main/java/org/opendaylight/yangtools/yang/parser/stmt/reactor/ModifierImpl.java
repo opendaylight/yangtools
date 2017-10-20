@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
@@ -302,7 +303,7 @@ final class ModifierImpl implements ModelActionBuilder {
         private final ModelProcessingPhase phase;
 
         AddedToNamespace(final ModelProcessingPhase phase) {
-            this.phase = phase;
+            this.phase = requireNonNull(phase);
         }
 
         @Override
