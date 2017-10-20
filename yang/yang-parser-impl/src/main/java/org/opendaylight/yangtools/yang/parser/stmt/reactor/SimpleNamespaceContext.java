@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
@@ -17,25 +19,36 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
     // FIXME: Change this to Multimap, once issue with modules is resolved.
-    private final List<ValueAddedListener<K>> listeners = new ArrayList<>();
+    private final List<KeyedValueAddedListener<K>> listeners = new ArrayList<>();
+
+    private final Collection<PredicateValueAddedListener<K, V>> predicateListeners = new ArrayList<>();
 
     SimpleNamespaceContext(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate);
     }
 
     @Override
-    void addListener(final K key, final ValueAddedListener<K> listener) {
+    void addListener(final KeyedValueAddedListener<K> listener) {
         listeners.add(listener);
     }
 
-    private Iterator<ValueAddedListener<K>> getMutableListeners(final K key) {
-        return listeners.iterator();
+    @Override
+    void addListener(final PredicateValueAddedListener<K, V> listener) {
+        predicateListeners.add(listener);
+
+        final Map<K, V> allItems = getAllFrom(listener.getCtxNode());
+        if (allItems != null) {
+            listener.onValuesAdded(allItems);
+        }
     }
 
     @Override
     public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
-        notifyListeners(storage, getMutableListeners(key), value);
+        notifyListeners(storage, listeners.iterator(), value);
+
+        final Map<K, V> asMap = ImmutableMap.of(key, value);
+        predicateListeners.forEach(listener -> listener.onValuesAdded(asMap));
         notifyDerivedNamespaces(storage, key, value);
     }
 }
