@@ -25,13 +25,12 @@ final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D
     }
 
     @Override
-    protected boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
-            final V value) {
+    boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage, final V value) {
         return value == getFrom(listener.getCtxNode(), listener.getKey());
     }
 
     @Override
-    protected void addListener(final K key, final ValueAddedListener<K> listener) {
+    void addListener(final K key, final ValueAddedListener<K> listener) {
         listeners.put(derivedDelegate.getSignificantKey(key), listener);
     }
 

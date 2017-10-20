@@ -24,14 +24,14 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
     }
 
     @Override
-    protected boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
+    boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
             final V value) {
         NamespaceStorageNode listenerCtx = listener.getCtxNode();
         return value == getFrom(listenerCtx, listener.getKey());
     }
 
     @Override
-    protected void addListener(final K key, final ValueAddedListener<K> listener) {
+    void addListener(final K key, final ValueAddedListener<K> listener) {
         listeners.add(listener);
     }
 

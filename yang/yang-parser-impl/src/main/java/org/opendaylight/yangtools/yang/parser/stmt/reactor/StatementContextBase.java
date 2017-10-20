@@ -581,7 +581,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             "Namespace %s does not support listeners", type);
 
         final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-        casted.addValueListener(new ValueAddedListener<K>(this, key) {
+        casted.addListener(key, new ValueAddedListener<K>(this, key) {
             @Override
             void onValueAdded(final Object key, final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
