@@ -37,7 +37,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.IncludeEffectiveStatementImpl;
 
 public class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
@@ -95,8 +95,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
 
                     stmt.addToNs(IncludedModuleContext.class, includeSubmoduleIdentifier,
                             includedSubModuleContext);
-                    stmt.addToNs(IncludedSubmoduleNameToIdentifier.class,
-                            stmt.getStatementArgument(), includeSubmoduleIdentifier);
+                    stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.getStatementArgument(),
+                        includedSubModuleContext);
                 }
 
                 @Override

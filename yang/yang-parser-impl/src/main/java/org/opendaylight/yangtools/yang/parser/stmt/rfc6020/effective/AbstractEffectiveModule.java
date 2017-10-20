@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
@@ -49,11 +48,10 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
@@ -119,8 +117,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
         // init submodules and substatements of submodules
         final List<EffectiveStatement<?, ?>> substatementsOfSubmodules;
-        final Map<String, ModuleIdentifier> includedSubmodulesMap = ctx
-                .getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToIdentifier.class);
+        final Map<String, StmtContext<?, ?, ?>> includedSubmodulesMap = ctx
+                .getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
 
         if (includedSubmodulesMap == null || includedSubmodulesMap.isEmpty()) {
             this.submodules = ImmutableSet.of();
@@ -132,14 +130,10 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
              * for modules. In case of submodules it does not make sense because
              * of possible circular chains of includes between submodules.
              */
-            final Collection<ModuleIdentifier> includedSubmodules = includedSubmodulesMap.values();
+            final Collection<StmtContext<?, ?, ?>> includedSubmodules = includedSubmodulesMap.values();
             final Set<Module> submodulesInit = new HashSet<>();
             final List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
-            for (final ModuleIdentifier submoduleIdentifier : includedSubmodules) {
-                @SuppressWarnings("unchecked")
-                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
-                        (Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>) ctx
-                        .getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
+            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodules) {
                 final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
                         .buildEffective();
                 submodulesInit.add(submodule);
@@ -159,10 +153,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
              */
             final Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
                 submoduleContextsInit = new HashSet<>();
-            for (final ModuleIdentifier submoduleIdentifier : includedSubmodulesMap.values()) {
-                final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> submoduleCtx =
-                        ctx.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
-                submoduleContextsInit.add(submoduleCtx);
+            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
+                submoduleContextsInit.add(
+                    (StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>)submoduleCtx);
             }
 
             this.submoduleContextsToBuild = ImmutableSet.copyOf(submoduleContextsInit);
