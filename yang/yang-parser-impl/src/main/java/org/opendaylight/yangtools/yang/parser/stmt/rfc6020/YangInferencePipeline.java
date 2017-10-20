@@ -40,15 +40,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespac
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
@@ -133,12 +132,11 @@ public final class YangInferencePipeline {
             .addSupport(global(ModuleCtxToModuleIdentifier.class))
             .addSupport(global(ModuleQNameToModuleName.class))
             .addSupport(global(PrefixToModule.class))
-            .addSupport(global(ModuleIdentifierToModuleQName.class))
             .addSupport(QNameCacheNamespace.getInstance())
             .addSupport(sourceLocal(ImportedModuleContext.class))
             .addSupport(sourceLocal(IncludedModuleContext.class))
             .addSupport(sourceLocal(IncludedSubmoduleNameToModuleCtx.class))
-            .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
+            .addSupport(sourceLocal(ImportPrefixToModuleCtx.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleCtx.class))
             .addSupport(sourceLocal(URIStringToImpPrefix.class))
             .addSupport(sourceLocal(BelongsToModuleContext.class))

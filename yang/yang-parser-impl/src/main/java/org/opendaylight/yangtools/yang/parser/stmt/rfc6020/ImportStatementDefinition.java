@@ -47,8 +47,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
@@ -178,7 +178,7 @@ public class ImportStatementDefinition extends
                     linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                         importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                    stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
+                    stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                         NamespaceStatement.class);
@@ -268,7 +268,7 @@ public class ImportStatementDefinition extends
                     linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                         importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                    stmt.addToNs(ImpPrefixToModuleIdentifier.class, impPrefix, importedModuleIdentifier);
+                    stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
                     stmt.addToNs(ImportPrefixToSemVerSourceIdentifier.class, impPrefix, semVerModuleIdentifier);
 
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
