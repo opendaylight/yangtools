@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 
-public interface ImportedModuleContext extends ImportedNamespaceContext<ModuleIdentifier> {
+/**
+ * Mapping of import prefix string to module context.
+ */
+public interface ImportedModuleContext extends ImportedNamespaceContext<String> {
 
 }

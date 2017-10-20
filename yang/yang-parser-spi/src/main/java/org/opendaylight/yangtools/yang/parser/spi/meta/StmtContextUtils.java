@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -41,9 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -541,14 +539,19 @@ public final class StmtContextUtils {
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
-        final ModuleIdentifier modId = ctx.getRoot().getFromNamespace(ImpPrefixToModuleIdentifier.class, prefix);
-        final QNameModule qnameModule = ctx.getFromNamespace(ModuleIdentifierToModuleQName.class, modId);
+        final StmtContext<?, ?, ?> importedModule = ctx.getRoot().getFromNamespace(ImportedModuleContext.class,
+            prefix);
+        final QNameModule qnameModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class, importedModule);
+        if (qnameModule != null) {
+            return qnameModule;
+        }
 
-        if (qnameModule == null && producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
+        if (producesDeclared(ctx.getRoot(), SubmoduleStatement.class)) {
             final String moduleName = ctx.getRoot().getFromNamespace(BelongsToPrefixToModuleName.class, prefix);
             return ctx.getFromNamespace(ModuleNameToModuleQName.class, moduleName);
         }
-        return qnameModule;
+
+        return null;
     }
 
     public static SourceIdentifier createSourceIdentifier(final StmtContext<?, ?, ?> root) {
