@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -22,6 +23,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -40,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,7 +54,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -567,8 +571,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
-    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
-            final OnNamespaceItemAdded listener) throws SourceException {
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
+            final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
             LOG.trace("Listener on {} key {} satisfied immediately", type, key);
@@ -576,17 +580,53 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
-            "Namespace %s does not support listeners", type);
-
-        final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-        casted.addListener(key, new ValueAddedListener<K>(this, key) {
+        getBehaviour(type).addListener(new KeyedValueAddedListener<K>(this, key) {
             @Override
             void onValueAdded(final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
             }
         });
+    }
+
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
+            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
+        // First try to find a match in current contents of the namespace
+        final Map<K, V> candidates = getAllFromNamespace(type);
+        if (candidates != null) {
+            Optional<Entry<K, V>> optMatch = candidates.entrySet().stream()
+                    .filter(entry -> criterion.match(entry.getKey()))
+                    .reduce((first, second) -> {
+                        final K selected = criterion.select(first.getKey(), second.getKey());
+                        if (selected == first.getKey()) {
+                            return first;
+                        }
+                        Verify.verify(selected == second.getKey(),
+                                "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
+                                first.getKey(), second.getKey());
+                        return second;
+                    });
+            if (optMatch.isPresent()) {
+                final Entry<K, V> match = optMatch.get();
+                LOG.trace("Listener on {} criterion {} satisfied immediately by {}", type, criterion, match.getKey());
+                listener.namespaceItemAdded(this, type, match.getKey(), match.getValue());
+                return;
+            }
+        }
+
+        final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
+
+        // FIXME: no match, hook in a listener
+
+        throw new UnsupportedOperationException();
+    }
+
+    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
+            final Class<N> type) {
+        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
+            "Namespace %s does not support listeners", type);
+
+        return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
     }
 
     /**
