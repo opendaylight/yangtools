@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 
 final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
         extends NamespaceBehaviourWithListeners<K, V, N> {
@@ -24,8 +25,15 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
     }
 
     @Override
-    void addListener(final K key, final ValueAddedListener<K> listener) {
+    void addListener(final KeyedValueAddedListener<K> listener) {
         listeners.add(listener);
+    }
+
+    @Override
+    void addListener(final NamespaceKeyCriterion<K> criterion, final ValueAddedListener<K> listener) {
+        // FIXME: implement this
+
+        throw new UnsupportedOperationException("Not implemented");
     }
 
     private Iterator<ValueAddedListener<K>> getMutableListeners(final K key) {

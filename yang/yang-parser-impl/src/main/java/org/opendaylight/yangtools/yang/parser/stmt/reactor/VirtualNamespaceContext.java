@@ -11,11 +11,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 
 final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D>
         extends NamespaceBehaviourWithListeners<K, V, N> {
 
-    private final Multimap<D, ValueAddedListener<K>> listeners = HashMultimap.create();
+    private final Multimap<D, KeyedValueAddedListener<K>> listeners = HashMultimap.create();
     private final DerivedNamespaceBehaviour<K, V, D, N, ?> derivedDelegate;
 
     VirtualNamespaceContext(final DerivedNamespaceBehaviour<K, V, D, N, ?> delegate) {
@@ -24,8 +25,13 @@ final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D
     }
 
     @Override
-    void addListener(final K key, final ValueAddedListener<K> listener) {
-        listeners.put(derivedDelegate.getSignificantKey(key), listener);
+    void addListener(final KeyedValueAddedListener<K> listener) {
+        listeners.put(derivedDelegate.getSignificantKey(listener.getKey()), listener);
+    }
+
+    @Override
+    void addListener(final NamespaceKeyCriterion<K> criterion, final ValueAddedListener<K> listener) {
+        throw new UnsupportedOperationException("Virtual namespaces support only exact lookups");
     }
 
     void addedToSourceNamespace(final NamespaceStorageNode storage, final D key, final V value) {

@@ -156,6 +156,10 @@ public interface ModelActionBuilder {
     @Nonnull <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
         StmtContext<?, ?, ?> context, Class<N> namespace, K key, ModelProcessingPhase phase);
 
+    @Nonnull <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
+            StmtContext<?, ?, ?> context, Class<N> namespace, NamespaceKeyCriterion<K> criterion,
+            ModelProcessingPhase phase);
+
     default @Nonnull <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
         return mutatesCtx(stmt, EFFECTIVE_MODEL);
     }
