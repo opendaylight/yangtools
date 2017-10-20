@@ -11,7 +11,6 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
-import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D>
         extends NamespaceBehaviourWithListeners<K, V, N> {
@@ -25,17 +24,11 @@ final class VirtualNamespaceContext<K, V, N extends IdentifierNamespace<K, V>, D
     }
 
     @Override
-    protected boolean isRequestedValue(final ValueAddedListener<K> listener, final NamespaceStorageNode storage,
-            final V value) {
-        return value == getFrom(listener.getCtxNode(), listener.getKey());
-    }
-
-    @Override
-    protected void addListener(final K key, final ValueAddedListener<K> listener) {
+    void addListener(final K key, final ValueAddedListener<K> listener) {
         listeners.put(derivedDelegate.getSignificantKey(key), listener);
     }
 
-    void addedToSourceNamespace(final NamespaceBehaviour.NamespaceStorageNode storage, final D key, final V value) {
+    void addedToSourceNamespace(final NamespaceStorageNode storage, final D key, final V value) {
         notifyListeners(storage, listeners.get(key).iterator(), value);
     }
 
