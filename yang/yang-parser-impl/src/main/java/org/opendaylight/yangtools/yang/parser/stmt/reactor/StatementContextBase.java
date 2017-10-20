@@ -608,7 +608,12 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     /**
-     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end.
+     * Adds {@link OnPhaseFinished} listener for a {@link ModelProcessingPhase} end. If the base has already completed
+     * the listener is notified immediately.
+     *
+     * @param phase requested completion phase
+     * @param listener listener to invoke
+     * @throws NullPointerException if any of the arguments is null
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
         Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null at: %s",
