@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
@@ -19,23 +22,43 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
 
     abstract static class ValueAddedListener<K> {
         private final NamespaceStorageNode ctxNode;
-        private final K key;
 
-        ValueAddedListener(final NamespaceStorageNode contextNode, final K key) {
-            this.ctxNode = contextNode;
-            this.key = key;
+        ValueAddedListener(final NamespaceStorageNode contextNode) {
+            this.ctxNode = requireNonNull(contextNode);
         }
 
-        NamespaceStorageNode getCtxNode() {
+        final NamespaceStorageNode getCtxNode() {
             return ctxNode;
+        }
+
+    }
+
+    abstract static class KeyedValueAddedListener<K> extends ValueAddedListener<K> {
+        private final K key;
+
+        KeyedValueAddedListener(final NamespaceStorageNode contextNode, final K key) {
+            super(contextNode);
+            this.key = requireNonNull(key);
+        }
+
+        final K getKey() {
+            return key;
         }
 
         final <V> boolean isRequestedValue(final NamespaceBehaviour<K, ? , ?> behavior,
                 final NamespaceStorageNode storage, final V value) {
-            return value == behavior.getFrom(ctxNode, key);
+            return value == behavior.getFrom(getCtxNode(), key);
         }
 
         abstract void onValueAdded(Object value);
+    }
+
+    abstract static class PredicateValueAddedListener<K, V> extends ValueAddedListener<K> {
+        PredicateValueAddedListener(final NamespaceStorageNode contextNode) {
+            super(contextNode);
+        }
+
+        abstract boolean onValueAdded(@Nonnull K key, @Nonnull V value);
     }
 
     protected final NamespaceBehaviour<K, V, N> delegate;
@@ -46,22 +69,24 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         this.delegate = delegate;
     }
 
-    abstract void addListener(K key, ValueAddedListener<K> listener);
+    abstract void addListener(KeyedValueAddedListener<K> listener);
+
+    abstract void addListener(PredicateValueAddedListener<K, V> listener);
 
     @Override
     public abstract void addTo(NamespaceStorageNode storage, K key, V value);
 
     protected void notifyListeners(final NamespaceStorageNode storage,
-            final Iterator<ValueAddedListener<K>> keyListeners, final V value) {
-        List<ValueAddedListener<K>> toNotify = new ArrayList<>();
+            final Iterator<? extends KeyedValueAddedListener<K>> keyListeners, final V value) {
+        List<KeyedValueAddedListener<K>> toNotify = new ArrayList<>();
         while (keyListeners.hasNext()) {
-            final ValueAddedListener<K> listener = keyListeners.next();
+            final KeyedValueAddedListener<K> listener = keyListeners.next();
             if (listener.isRequestedValue(this, storage, value)) {
                 keyListeners.remove();
                 toNotify.add(listener);
             }
         }
-        for (ValueAddedListener<K> listener : toNotify) {
+        for (KeyedValueAddedListener<K> listener : toNotify) {
             listener.onValueAdded(value);
         }
     }

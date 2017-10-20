@@ -46,8 +46,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
@@ -314,6 +314,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private static boolean tryToProgress(final Collection<ModifierImpl> currentPhaseModifiers) {
         boolean hasProgressed = false;
 
+        // Try making forward progress ...
         final Iterator<ModifierImpl> modifier = currentPhaseModifiers.iterator();
         while (modifier.hasNext()) {
             if (modifier.next().tryApply()) {
