@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -22,6 +23,8 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -40,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,7 +54,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -567,8 +572,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
-    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
-            final OnNamespaceItemAdded listener) throws SourceException {
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
+            final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
             LOG.trace("Listener on {} key {} satisfied immediately", type, key);
@@ -576,17 +581,105 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
-            "Namespace %s does not support listeners", type);
-
-        final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-        casted.addListener(key, new ValueAddedListener<K>(this, key) {
+        getBehaviour(type).addListener(new KeyedValueAddedListener<K>(this, key) {
             @Override
             void onValueAdded(final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
             }
         });
+    }
+
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
+            final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
+            final OnNamespaceItemAdded listener) {
+        final Map<K, V> potential = getAllFromNamespace(type);
+        Entry<K, V> existing = null;
+        if (potential != null) {
+            for (Entry<K, V> entry : potential.entrySet()) {
+                if (criterion.match(entry.getKey())) {
+                    existing = entry;
+                    break;
+                }
+            }
+        }
+
+        if (existing != null) {
+            LOG.debug("Listener on {} criterion {} found a pre-existing match: {}", type, criterion, existing);
+            waitForPhase(existing.getValue(), type, phase, criterion, listener);
+            return;
+        }
+
+        /*
+         * Flexible searches require target context to be fully populated, such that the entire contents can be
+         * searched and the correct item retrieved. Therefore we rely on NamespaceBehaviourWithListeners.addListener()
+         * on firing at the end of the target phase.
+         *
+         * These listeners, unlike exact key listeners, are removed only after the phase finishes.
+         */
+        final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
+        behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
+            @Override
+            boolean onValueAdded(final K key, final V value) {
+                if (criterion.match(key)) {
+                    LOG.debug("Listener on {} criterion {} matched added key {}", type, criterion, key);
+                    waitForPhase(value, type, phase, criterion, listener);
+                    return true;
+                }
+
+                return false;
+            }
+        });
+    }
+
+    final <K, V, N extends IdentifierNamespace<K, V>> void selectMatch(final Class<N> type,
+            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
+        LOG.debug("Listener on {} criterion {} finding best match", type, criterion);
+
+        final Map<K, V> potential = getAllFromNamespace(type);
+        Entry<K, V> matched = null;
+        for (Entry<K, V> entry : potential.entrySet()) {
+            LOG.debug("Considering entry {}", entry);
+            final K key = entry.getKey();
+            if (criterion.match(key)) {
+                LOG.debug("Matched entry {}", entry);
+                if (matched != null) {
+                    final K selected = criterion.select(matched.getKey(), key);
+                    LOG.debug("Criteria selected {} from {} and {}", selected, matched.getKey(), key);
+                    if (selected.equals(matched.getKey())) {
+                        continue;
+                    }
+
+                    Verify.verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]",
+                            selected, matched.getKey(), key);
+                }
+
+                LOG.debug("Selected candidate {}", entry);
+                matched = entry;
+            }
+        }
+
+        Preconditions.checkState(matched != null, "Selection processed failed");
+        LOG.debug("Selected {}", matched);
+        listener.namespaceItemAdded(StatementContextBase.this, type, matched.getKey(), matched.getValue());
+    }
+
+    final <K, V, N extends IdentifierNamespace<K, V>> void waitForPhase(final Object value, final Class<N> type,
+            final ModelProcessingPhase phase, final NamespaceKeyCriterion<K> criterion,
+            final OnNamespaceItemAdded listener) {
+        ((StatementContextBase<?, ? ,?>) value).addPhaseCompletedListener(phase,
+            (context, completedPhase) -> {
+                selectMatch(type, criterion, listener);
+                return true;
+            });
+    }
+
+    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
+            final Class<N> type) {
+        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
+            "Namespace %s does not support listeners", type);
+
+        return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
     }
 
     /**
