@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -89,7 +90,6 @@ final class ModifierImpl implements ModelActionBuilder {
         actionApplied = true;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
             requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
                     final ModelProcessingPhase phase)  {
@@ -97,7 +97,18 @@ final class ModifierImpl implements ModelActionBuilder {
 
         AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
         addReq(addedToNs);
-        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, addedToNs);
+        contextImpl(context).onNamespaceItemAddedAction(namespace, key, addedToNs);
+        return addedToNs;
+    }
+
+    private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
+            requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
+                    final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase)  {
+        checkNotRegistered();
+
+        AddedToNamespace<C> addedToNs = new AddedToNamespace<>(phase);
+        addReq(addedToNs);
+        contextImpl(context).onNamespaceItemAddedAction(namespace, criterion, addedToNs);
         return addedToNs;
     }
 
@@ -163,6 +174,14 @@ final class ModifierImpl implements ModelActionBuilder {
             final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
             final ModelProcessingPhase phase) {
         return requiresCtxImpl(context, namespace, key, phase);
+    }
+
+    @Nonnull
+    @Override
+    public <K, N extends StatementNamespace<K, ?, ?>> Prerequisite<StmtContext<?, ?, ?>> requiresCtx(
+            final StmtContext<?, ?, ?> context, final Class<N> namespace, final NamespaceKeyCriterion<K> criterion,
+            final ModelProcessingPhase phase) {
+        return requiresCtxImpl(context, namespace, criterion, phase);
     }
 
     @Nonnull

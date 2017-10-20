@@ -10,18 +10,21 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -40,6 +43,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,7 +54,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.ValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.PredicateValueAddedListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -567,8 +572,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // definition().onNamespaceElementAdded(this, type, key, value);
     }
 
-    <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
-            final OnNamespaceItemAdded listener) throws SourceException {
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type, final K key,
+            final OnNamespaceItemAdded listener) {
         final Object potential = getFromNamespace(type, key);
         if (potential != null) {
             LOG.trace("Listener on {} key {} satisfied immediately", type, key);
@@ -576,17 +581,68 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
-            "Namespace %s does not support listeners", type);
-
-        final NamespaceBehaviourWithListeners<K, V, N> casted = (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
-        casted.addListener(key, new ValueAddedListener<K>(this, key) {
+        getBehaviour(type).addListener(new KeyedValueAddedListener<K>(this, key) {
             @Override
             void onValueAdded(final Object value) {
                 listener.namespaceItemAdded(StatementContextBase.this, type, key, value);
             }
         });
+    }
+
+    final <K, V, N extends IdentifierNamespace<K, V>> void onNamespaceItemAddedAction(final Class<N> type,
+            final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
+
+        /*
+         * Flexible searches require target context to be fully populated, such that the entire contents can be
+         * searched and the correct item retrieved. Therefore we rely on NamespaceBehaviourWithListeners.addListener()
+         * on firing at the end of the target phase.
+         *
+         * These listeners, unlike exact key listeners, are removed only after the phase finishes.
+         */
+        final NamespaceBehaviourWithListeners<K, V, N> behaviour = getBehaviour(type);
+        behaviour.addListener(new PredicateValueAddedListener<K, V>(this) {
+            private Entry<K, V> matchedEntry = null;
+
+            @Override
+            void onValueAdded(final K key, final V value) {
+                if (criterion.match(key)) {
+                    if (matchedEntry != null) {
+                        final K selected = criterion.select(matchedEntry.getKey(), key);
+                        if (selected != matchedEntry.getKey()) {
+                            Verify.verify(selected == key,
+                                    "Criterion %s selected invalid key %s from candidates [%s %s]", selected,
+                                    matchedEntry.getKey(), key);
+                            updateMatch(key, value);
+                        }
+                    } else {
+                        updateMatch(key, value);
+                    }
+                }
+            }
+
+            private void updateMatch(final K key, final V value) {
+                matchedEntry = new SimpleImmutableEntry<>(key, value);
+                LOG.trace("Listener on {} criterion {} candidate {}", type, criterion, matchedEntry);
+            }
+
+            // FIXME: call this from somewhere ...
+            void onPhaseCompleted() {
+                if (matchedEntry != null) {
+                    LOG.trace("Listener on {} criterion {} satisfied by {}", type, criterion, matchedEntry);
+                    listener.namespaceItemAdded(StatementContextBase.this, type, matchedEntry.getKey(),
+                        matchedEntry.getValue());
+                }
+            }
+        });
+    }
+
+    private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
+            final Class<N> type) {
+        final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
+        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
+            "Namespace %s does not support listeners", type);
+
+        return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
     }
 
     /**
