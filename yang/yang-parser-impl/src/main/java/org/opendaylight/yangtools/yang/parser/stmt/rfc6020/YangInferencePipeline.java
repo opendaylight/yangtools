@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleIdentifierToModuleQName;
@@ -137,7 +137,7 @@ public final class YangInferencePipeline {
             .addSupport(QNameCacheNamespace.getInstance())
             .addSupport(sourceLocal(ImportedModuleContext.class))
             .addSupport(sourceLocal(IncludedModuleContext.class))
-            .addSupport(sourceLocal(IncludedSubmoduleNameToIdentifier.class))
+            .addSupport(sourceLocal(IncludedSubmoduleNameToModuleCtx.class))
             .addSupport(sourceLocal(ImpPrefixToModuleIdentifier.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleCtx.class))
             .addSupport(sourceLocal(URIStringToImpPrefix.class))
