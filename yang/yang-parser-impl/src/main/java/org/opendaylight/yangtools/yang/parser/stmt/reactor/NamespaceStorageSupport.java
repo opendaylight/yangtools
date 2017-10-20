@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -18,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceNotAvailableException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -52,9 +54,14 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     }
 
     @Nonnull
-    public final <K,V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
+    public final <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
             final KT key) throws NamespaceNotAvailableException {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
+    }
+
+    public final <K, V, N extends IdentifierNamespace<K, V>> Optional<Entry<K, V>> getFromNamespace(
+            final Class<N> type, final NamespaceKeyCriterion<K> criterion) {
+        return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, criterion);
     }
 
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(final Class<N> type) {

@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.Verify;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -151,6 +154,41 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @return value from model namespace storage according to key param class
      */
     public abstract V getFrom(NamespaceStorageNode storage, K key);
+
+    /**
+     * Returns the key/value mapping best matching specified criterion.
+     *
+     * @param storage namespace storage
+     * @param criterion selection criterion
+     * @return Selected mapping, if available.
+     */
+    public final Optional<Entry<K, V>> getFrom(final NamespaceStorageNode storage,
+            final NamespaceKeyCriterion<K> criterion) {
+        final Map<K, V> mappings = getAllFrom(storage);
+        if (mappings == null) {
+            return Optional.empty();
+        }
+
+        Entry<K, V> match = null;
+        for (Entry<K, V> entry : mappings.entrySet()) {
+            final K key = entry.getKey();
+            if (criterion.match(key)) {
+                if (match != null) {
+                    final K selected = criterion.select(match.getKey(), key);
+                    if (selected.equals(match.getKey())) {
+                        continue;
+                    }
+
+                    Verify.verify(selected == key, "Criterion %s selected invalid key %s from candidates [%s %s]",
+                            selected, match.getKey(), key);
+                }
+
+                match = entry;
+            }
+        }
+
+        return Optional.ofNullable(match);
+    }
 
     /**
      * Returns all values of a keys of param class from model namespace storage.
