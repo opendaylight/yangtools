@@ -7,16 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.SOURCE_PRE_LINKAGE;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.Optional;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
@@ -42,6 +42,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -142,46 +143,63 @@ public class ImportStatementDefinition extends
 
     private static class RevisionImport {
 
+        private static final class LastRevisionCriterion extends NamespaceKeyCriterion<ModuleIdentifier> {
+            private final String moduleName;
+
+            LastRevisionCriterion(final String moduleName) {
+                this.moduleName = requireNonNull(moduleName);
+            }
+
+            @Override
+            public boolean match(final ModuleIdentifier key) {
+                return moduleName.equals(key.getName());
+            }
+
+            @Override
+            public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
+                final Date firstRev = Verify.verifyNotNull(first.getRevision());
+                final Date secondRev = Verify.verifyNotNull(second.getRevision());
+                return firstRev.compareTo(secondRev) >= 0 ? first : second;
+            }
+
+            @Override
+            public String toString() {
+                return MoreObjects.toStringHelper(this).add("moduleName", moduleName).toString();
+            }
+        }
+
         private RevisionImport() {
             throw new UnsupportedOperationException("Utility class");
         }
 
         private static void onLinkageDeclared(
                 final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
-            final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
             final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-            final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                    impIdentifier, SOURCE_LINKAGE);
-            final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction
-                    .mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+            final Prerequisite<StmtContext<?, ?, ?>> imported;
+            final String moduleName = stmt.getStatementArgument();
+            final Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+            if (revision == null) {
+                imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
+                    new LastRevisionCriterion(moduleName), SOURCE_LINKAGE);
+            } else {
+                imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
+                    ModuleIdentifierImpl.create(moduleName, Optional.empty(), Optional.of(revision)), SOURCE_LINKAGE);
+            }
+
+            final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
+                SOURCE_LINKAGE);
 
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    StmtContext<?, ?, ?> importedModule = null;
-                    ModuleIdentifier importedModuleIdentifier = null;
-                    if (impIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
-                        final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
-                                EffectiveStatement<String, ModuleStatement>>> recentModuleEntry = findRecentModule(
-                                    impIdentifier, stmt.getAllFromNamespace(ModuleNamespace.class));
-                        if (recentModuleEntry != null) {
-                            importedModuleIdentifier = recentModuleEntry.getKey();
-                            importedModule = recentModuleEntry.getValue();
-                        }
-                    }
+                    final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
-                    if (importedModule == null || importedModuleIdentifier == null) {
-                        importedModule = imported.resolve(ctx);
-                        importedModuleIdentifier = impIdentifier;
-                    }
-
-                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
-                        importedModule);
+                    linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
+                        stmt.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule), importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
-                    stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
-
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                         NamespaceStatement.class);
+                    stmt.addToNs(ImportPrefixToModuleCtx.class, impPrefix, importedModule);
                     stmt.addToNs(URIStringToImpPrefix.class, modNs.toString(), impPrefix);
                 }
 
@@ -189,42 +207,10 @@ public class ImportStatementDefinition extends
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     if (failed.contains(imported)) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
-                                "Imported module [%s] was not found.", impIdentifier);
+                                "Imported module [%s] was not found.", moduleName);
                     }
                 }
             });
-        }
-
-        private static Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
-                EffectiveStatement<String, ModuleStatement>>> findRecentModule(final ModuleIdentifier impIdentifier,
-                final Map<ModuleIdentifier, StmtContext<?, ModuleStatement,
-                        EffectiveStatement<String, ModuleStatement>>> allModules) {
-
-            ModuleIdentifier recentModuleIdentifier = impIdentifier;
-            Entry<ModuleIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>>
-                recentModuleEntry = null;
-
-            for (final Entry<ModuleIdentifier, StmtContext<?, ModuleStatement,
-                    EffectiveStatement<String, ModuleStatement>>> moduleEntry : allModules.entrySet()) {
-                final ModuleIdentifier id = moduleEntry.getKey();
-
-                if (id.getName().equals(impIdentifier.getName())
-                        && id.getRevision().compareTo(recentModuleIdentifier.getRevision()) > 0) {
-                    recentModuleIdentifier = id;
-                    recentModuleEntry = moduleEntry;
-                }
-            }
-
-            return recentModuleEntry;
-        }
-
-        static ModuleIdentifier getImportedModuleIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
-            Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
-            if (revision == null) {
-                revision = SimpleDateFormatUtil.DEFAULT_DATE_IMP;
-            }
-
-            return ModuleIdentifierImpl.create(stmt.getStatementArgument(), Optional.empty(), Optional.of(revision));
         }
 
         static SourceIdentifier getImportedSourceIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
