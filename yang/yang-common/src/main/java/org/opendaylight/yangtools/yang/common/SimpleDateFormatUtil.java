@@ -29,17 +29,11 @@ public final class SimpleDateFormatUtil {
      */
     public static final Date DEFAULT_DATE_REV;
 
-    /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for import statement.
-     */
-    public static final Date DEFAULT_DATE_IMP;
-
     static {
         final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
 
         try {
             DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
-            DEFAULT_DATE_IMP = simpleDateFormat.parse(DEFAULT_DATE);
         } catch (final ParseException e) {
             throw new ExceptionInInitializerError(e);
         }

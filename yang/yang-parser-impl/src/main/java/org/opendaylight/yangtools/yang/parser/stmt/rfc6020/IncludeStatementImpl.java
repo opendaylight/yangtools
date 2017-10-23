@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -31,6 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceKeyCriterion;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -85,10 +85,15 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                 RevisionDateStatement.class);
 
             final ModelActionBuilder includeAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-            final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite = includeAction.requiresCtx(stmt,
-                    SubmoduleNamespace.class,ModuleIdentifierImpl.create(submoduleName, Optional.empty(),
-                        Optional.of(revision == null ? SimpleDateFormatUtil.DEFAULT_DATE_IMP
-                                : revision.getStatementArgument())), SOURCE_LINKAGE);
+            final Prerequisite<StmtContext<?, ?, ?>> requiresCtxPrerequisite;
+            if (revision == null) {
+                requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
+                    NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
+            } else {
+                requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
+                    ModuleIdentifierImpl.create(submoduleName, Optional.empty(),
+                        Optional.of(revision.getStatementArgument())), SOURCE_LINKAGE);
+            }
 
             includeAction.apply(new InferenceAction() {
                 @Override
