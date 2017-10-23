@@ -24,9 +24,8 @@ public class Bug5712Test {
         SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug5712");
         assertNotNull(schemaContext);
 
-        Module badModule = schemaContext.findModuleByName("bad", null);
+        Module badModule = schemaContext.findModules("bad").iterator().next();
         assertNotNull(badModule);
-
         checkThing2TypeDef(badModule);
     }
 

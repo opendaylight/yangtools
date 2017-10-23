@@ -52,7 +52,7 @@ public class EffectiveBuildTest {
 
         assertNotNull(result);
 
-        Module simpleModule = result.findModuleByName("simple-module", null);
+        Module simpleModule = result.findModules("simple-module").iterator().next();
         assertNotNull(simpleModule);
 
         QName q1 = QName.create(SIMPLE_MODULE_QNAME, "root-container");

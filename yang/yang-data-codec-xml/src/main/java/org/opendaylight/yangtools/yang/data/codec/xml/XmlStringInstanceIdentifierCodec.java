@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -44,13 +45,14 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     @Override
     protected Module moduleForPrefix(@Nonnull final String prefix) {
         final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
-        return context.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
+        final Iterator<Module> modules = context.findModules(URI.create(prefixedNS)).iterator();
+        return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(@Nonnull final URI namespace) {
-        final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
-        return module == null ? null : module.getName();
+        final Iterator<Module> modules = context.findModules(namespace).iterator();
+        return modules.hasNext() ? modules.next().getName() : null;
     }
 
     @Nonnull

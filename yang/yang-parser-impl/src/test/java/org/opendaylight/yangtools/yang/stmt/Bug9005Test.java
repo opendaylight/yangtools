@@ -23,7 +23,7 @@ public class Bug9005Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug9005");
         assertNotNull(context);
 
-        final Module foo = context.findModuleByName("foo", QName.parseRevision("2017-07-07"));
+        final Module foo = context.findModule("foo", QName.parseRevision("2017-07-07")).get();
 
         final Set<ModuleImport> imports = foo.getImports();
         assertEquals(1, imports.size());

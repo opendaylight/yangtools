@@ -138,55 +138,41 @@ public class AugmentProcessTest {
         final SchemaContext root = reactor.buildEffective();
         assertNotNull(root);
 
-        final Module augmentedModule = root.findModuleByName("augmented", null);
+        final Module augmentedModule = root.findModules("augmented").iterator().next();
         assertNotNull(augmentedModule);
 
-        final ContainerSchemaNode augParent1Node = (ContainerSchemaNode) root
-                .getDataChildByName(augParent1);
-        final ContainerSchemaNode augParent2Node = (ContainerSchemaNode) augParent1Node
-                .getDataChildByName(augParent2);
-        final ContainerSchemaNode targetContNode = (ContainerSchemaNode) augParent2Node
-                .getDataChildByName(contTarget);
+        final ContainerSchemaNode augParent1Node = (ContainerSchemaNode) root.getDataChildByName(augParent1);
+        final ContainerSchemaNode augParent2Node = (ContainerSchemaNode) augParent1Node.getDataChildByName(augParent2);
+        final ContainerSchemaNode targetContNode = (ContainerSchemaNode) augParent2Node.getDataChildByName(contTarget);
         assertNotNull(targetContNode);
 
         assertNotNull(targetContNode.getChildNodes());
         assertEquals(3, targetContNode.getChildNodes().size());
 
-        final ContainerSchemaNode contAdded1Node = (ContainerSchemaNode) targetContNode
-                .getDataChildByName(contAdded1);
+        final ContainerSchemaNode contAdded1Node = (ContainerSchemaNode) targetContNode.getDataChildByName(contAdded1);
         assertNotNull(contAdded1Node);
-        final ListSchemaNode list1Node = (ListSchemaNode) contAdded1Node
-                .getDataChildByName(list1);
+        final ListSchemaNode list1Node = (ListSchemaNode) contAdded1Node.getDataChildByName(list1);
         assertNotNull(list1Node);
 
-        final ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode
-                .getDataChildByName(contAdded2);
+        final ContainerSchemaNode contAdded2Node = (ContainerSchemaNode) targetContNode.getDataChildByName(contAdded2);
         assertNotNull(contAdded2Node);
-        final AnyXmlSchemaNode axmlNode = (AnyXmlSchemaNode) contAdded2Node
-                .getDataChildByName(axml);
+        final AnyXmlSchemaNode axmlNode = (AnyXmlSchemaNode) contAdded2Node.getDataChildByName(axml);
         assertNotNull(axmlNode);
 
-        final ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode
-                .getDataChildByName(contGrp);
+        final ContainerSchemaNode contGrpNode = (ContainerSchemaNode) targetContNode.getDataChildByName(contGrp);
         assertNotNull(contGrpNode);
-        final AnyXmlSchemaNode axmlGrpNode = (AnyXmlSchemaNode) contGrpNode
-                .getDataChildByName(axmlGrp);
+        final AnyXmlSchemaNode axmlGrpNode = (AnyXmlSchemaNode) contGrpNode.getDataChildByName(axmlGrp);
         assertNotNull(axmlGrpNode);
 
-        final ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root
-                .getDataChildByName(augCont1);
-        final ContainerSchemaNode augCont2Node = (ContainerSchemaNode) augCont1Node
-                .getDataChildByName(augCont2);
+        final ContainerSchemaNode augCont1Node = (ContainerSchemaNode) root.getDataChildByName(augCont1);
+        final ContainerSchemaNode augCont2Node = (ContainerSchemaNode) augCont1Node.getDataChildByName(augCont2);
         assertNotNull(augCont2Node);
 
-        final ContainerSchemaNode grpCont2Node = (ContainerSchemaNode) augCont2Node
-                .getDataChildByName(grpCont2);
-        final ContainerSchemaNode grpCont22Node = (ContainerSchemaNode) grpCont2Node
-                .getDataChildByName(grpCont22);
+        final ContainerSchemaNode grpCont2Node = (ContainerSchemaNode) augCont2Node.getDataChildByName(grpCont2);
+        final ContainerSchemaNode grpCont22Node = (ContainerSchemaNode) grpCont2Node.getDataChildByName(grpCont22);
         assertNotNull(grpCont22Node);
 
-        final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node
-                .getDataChildByName(grpAdd);
+        final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node.getDataChildByName(grpAdd);
         assertNotNull(grpAddNode);
     }
 

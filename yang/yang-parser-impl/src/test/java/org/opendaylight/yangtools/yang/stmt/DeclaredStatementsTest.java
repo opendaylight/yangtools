@@ -82,7 +82,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(anyxmlStmtModule);
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("anyxml-declared-test", null);
+        final Module testModule = schemaContext.findModules("anyxml-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final AnyXmlSchemaNode anyxmlSchemaNode = (AnyXmlSchemaNode) testModule.getDataChildByName(
@@ -152,7 +152,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(choiceStmtModule);
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("choice-declared-test", null);
+        final Module testModule = schemaContext.findModules("choice-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
@@ -219,7 +219,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(augmentStmtModule);
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("augment-declared-test", null);
+        final Module testModule = schemaContext.findModules("augment-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final Set<AugmentationSchema> augmentationSchemas = testModule.getAugmentations();
@@ -249,7 +249,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(parentModule, childModule);
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("parent-module-declared-test", null);
+        final Module testModule = schemaContext.findModules("parent-module-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
@@ -305,7 +305,7 @@ public class DeclaredStatementsTest {
 
         final Date revision = QName.parseRevision("2016-09-28");
 
-        final Module testModule = schemaContext.findModuleByName("root-module-declared-test", revision);
+        final Module testModule = schemaContext.findModule("root-module-declared-test", revision).get();
         assertNotNull(testModule);
 
         final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
@@ -376,7 +376,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(containerStmtModule);
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("container-declared-test", null);
+        final Module testModule = schemaContext.findModules("container-declared-test").iterator().next();
         assertNotNull(testModule);
 
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(

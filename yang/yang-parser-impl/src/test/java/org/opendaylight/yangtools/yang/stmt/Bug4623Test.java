@@ -8,13 +8,17 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
+import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.DEFAULT_DATE_REV;
+
 import com.google.common.collect.Range;
 import java.io.File;
+import java.net.URI;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -33,8 +37,8 @@ public class Bug4623Test {
         // when
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
-                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-length-pattern-unknown"));
+        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+            QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-length-pattern-unknown"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -47,7 +51,8 @@ public class Bug4623Test {
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
+        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
+            "urn:simple.extension.typedefs");
 
         final LengthConstraint lengthConstraint = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
@@ -74,8 +79,8 @@ public class Bug4623Test {
         // when
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
-                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-length-unknown-pattern"));
+        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+                QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-length-unknown-pattern"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -88,7 +93,8 @@ public class Bug4623Test {
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
+        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
+            "urn:simple.extension.typedefs");
 
         final LengthConstraint lengthConstraints = ((StringTypeDefinition) type).getLengthConstraint().get();
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
@@ -115,8 +121,8 @@ public class Bug4623Test {
         // when
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
-        final LeafSchemaNode leaf = (LeafSchemaNode) schemaContext.findModuleByName("types", null).getDataChildByName(
-                QName.create("urn:custom.types.demo", "1970-01-01", "leaf-unknown-length-pattern"));
+        final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
+                QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-unknown-length-pattern"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -129,7 +135,8 @@ public class Bug4623Test {
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
         Assert.assertEquals(unknownSchemaNode.getNodeParameter(), "unknown");
-        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(), "urn:simple.extension.typedefs");
+        Assert.assertEquals(unknownSchemaNode.getNodeType().getModule().getNamespace().toString(),
+            "urn:simple.extension.typedefs");
 
         final LengthConstraint lengthConstraints =
                 ((StringTypeDefinition) type).getLengthConstraint().get();
@@ -146,5 +153,9 @@ public class Bug4623Test {
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
         Assert.assertEquals(patternConstraint.getRegularExpression(), "^[0-9a-fA-F]$");
+    }
+
+    private static Module typesModule(final SchemaContext context) {
+        return context.findModules("types").iterator().next();
     }
 }

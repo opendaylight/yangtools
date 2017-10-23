@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -32,11 +31,7 @@ public class IdentityrefStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/identityref-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2017-01-11");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-
+        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2017-01-11")).get();
         final Set<IdentitySchemaNode> identities = foo.getIdentities();
         assertEquals(3, identities.size());
 

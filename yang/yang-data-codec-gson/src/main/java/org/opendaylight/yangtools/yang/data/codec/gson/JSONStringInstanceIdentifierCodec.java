@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
+import java.util.Iterator;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
@@ -36,13 +37,14 @@ final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstan
 
     @Override
     protected Module moduleForPrefix(@Nonnull final String prefix) {
-        return context.findModuleByName(prefix, null);
+        final Iterator<Module> modules = context.findModules(prefix).iterator();
+        return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
     protected String prefixForNamespace(@Nonnull final URI namespace) {
-        final Module module = context.findModuleByNamespaceAndRevision(namespace, null);
-        return module == null ? null : module.getName();
+        final Iterator<Module> modules = context.findModules(namespace).iterator();
+        return modules.hasNext() ? modules.next().getName() : null;
     }
 
     @Nonnull

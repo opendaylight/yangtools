@@ -33,10 +33,9 @@ public class YinOpenconfigVersionTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(URI.create("bar")).iterator().next();
-        Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(URI.create("foo")).iterator().next();
+        Module bar = context.findModules(URI.create("bar")).iterator().next();
+        Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -49,9 +48,8 @@ public class YinOpenconfigVersionTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(URI.create("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(URI.create("foo")).iterator().next();
+        Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());

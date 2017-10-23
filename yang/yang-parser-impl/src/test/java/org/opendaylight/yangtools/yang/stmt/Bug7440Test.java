@@ -31,11 +31,8 @@ public class Bug7440Test {
         assertNotNull(schemaContext);
 
         final Date revision = QName.parseRevision("2016-12-23");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-        final Module bar = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(bar);
+        final Module foo = schemaContext.findModule("foo", revision).get();
+        final Module bar = schemaContext.findModule("bar", revision).get();
 
         final Set<Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());

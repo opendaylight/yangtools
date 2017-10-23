@@ -78,9 +78,7 @@ public class YangParserWithContextTest {
 
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test1", QName.parseRevision("2013-06-18"));
-        assertNotNull(module);
-
+        final Module module = context.findModule("test1", QName.parseRevision("2013-06-18")).get();
         final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
                 "id"));
 
@@ -114,11 +112,8 @@ public class YangParserWithContextTest {
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module testModule = context.findModuleByName("test2", QName.parseRevision("2013-06-18"));
-        assertNotNull(testModule);
-
-        final Module contextModule = context.findModuleByNamespace(URI.create("urn:opendaylight.baz")).iterator()
-                .next();
+        final Module testModule = context.findModule("test2", QName.parseRevision("2013-06-18")).get();
+        final Module contextModule = context.findModules(URI.create("urn:opendaylight.baz")).iterator().next();
         assertNotNull(contextModule);
         final Set<GroupingDefinition> groupings = contextModule.getGroupings();
         assertEquals(1, groupings.size());
@@ -224,8 +219,7 @@ public class YangParserWithContextTest {
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test2", QName.parseRevision("2013-06-18"));
-        assertNotNull(module);
+        final Module module = context.findModule("test2", QName.parseRevision("2013-06-18")).get();
         final ContainerSchemaNode peer = (ContainerSchemaNode) module.getDataChildByName(QName.create(
                 module.getQNameModule(), "peer"));
         final ContainerSchemaNode destination = (ContainerSchemaNode) peer.getDataChildByName(QName.create(
@@ -302,9 +296,7 @@ public class YangParserWithContextTest {
         reactor.addSources(types, test3);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test3", QName.parseRevision("2013-06-18"));
-        assertNotNull(module);
-
+        final Module module = context.findModule("test3", QName.parseRevision("2013-06-18")).get();
         final Set<IdentitySchemaNode> identities = module.getIdentities();
         assertEquals(1, identities.size());
 
@@ -334,9 +326,7 @@ public class YangParserWithContextTest {
 
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test3", QName.parseRevision("2013-06-18"));
-        assertNotNull(module);
-
+        final Module module = context.findModule("test3", QName.parseRevision("2013-06-18")).get();
         final ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName(QName.create(
                 module.getQNameModule(), "network"));
         final List<UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
@@ -398,9 +388,7 @@ public class YangParserWithContextTest {
         reactor.addSources(bar, deviationTest);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module testModule = context.findModuleByName("deviation-test", QName.parseRevision("2013-02-27"));
-        assertNotNull(testModule);
-
+        final Module testModule = context.findModule("deviation-test", QName.parseRevision("2013-02-27")).get();
         final Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();

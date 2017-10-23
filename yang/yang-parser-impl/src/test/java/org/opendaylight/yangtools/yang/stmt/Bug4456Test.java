@@ -26,7 +26,7 @@ public class Bug4456Test {
         SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug4456");
         assertNotNull(schema);
 
-        Set<Module> modules = schema.findModuleByNamespace(new URI("foo"));
+        Set<Module> modules = schema.findModules(URI.create("foo"));
         assertEquals(1, modules.size());
         Module moduleFoo = modules.iterator().next();
 

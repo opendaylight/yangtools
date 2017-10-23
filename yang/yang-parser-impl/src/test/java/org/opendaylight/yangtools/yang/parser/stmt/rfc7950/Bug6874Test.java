@@ -47,7 +47,7 @@ public class Bug6874Test {
         assertNotNull(schemaContext);
 
         // Test for valid include statement
-        final Module testModule = schemaContext.findModuleByName("root-module", null);
+        final Module testModule = schemaContext.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         // Test for valid import statement

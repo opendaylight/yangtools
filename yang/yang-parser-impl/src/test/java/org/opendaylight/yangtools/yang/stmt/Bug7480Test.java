@@ -31,20 +31,18 @@ public class Bug7480Test {
         final Set<Module> modules = context.getModules();
         assertEquals(8, modules.size());
 
-        assertNotNull(context.findModuleByNamespaceAndRevision(new URI("foo-imp"), QName.parseRevision("2017-01-23")));
-        assertEquals(1, context.findModuleByNamespace(new URI("foo-imp-2")).size());
-        assertEquals(1, context.findModuleByNamespace(new URI("foo-imp-imp")).size());
-        assertEquals(1, context.findModuleByNamespace(new URI("bar")).size());
-        assertEquals(1, context.findModuleByNamespace(new URI("baz")).size());
-        assertNotNull(context.findModuleByNamespaceAndRevision(new URI("baz-imp"), QName.parseRevision("2002-01-01")));
-        final Set<Module> foo = context.findModuleByNamespace(new URI("foo"));
+        assertNotNull(context.findModule(new URI("foo-imp"), QName.parseRevision("2017-01-23")));
+        assertEquals(1, context.findModules(new URI("foo-imp-2")).size());
+        assertEquals(1, context.findModules(new URI("foo-imp-imp")).size());
+        assertEquals(1, context.findModules(new URI("bar")).size());
+        assertEquals(1, context.findModules(new URI("baz")).size());
+        assertTrue(context.findModule(new URI("baz-imp"), QName.parseRevision("2002-01-01")).isPresent());
+        final Set<Module> foo = context.findModules(new URI("foo"));
         assertEquals(1, foo.size());
         final Set<Module> subFoos = foo.iterator().next().getSubmodules();
         assertEquals(1, subFoos.size());
 
-        final Module parentMod = context.findModuleByNamespaceAndRevision(new URI("parent-mod-ns"),
-            QName.parseRevision("2017-09-07"));
-        assertNotNull(parentMod);
+        final Module parentMod = context.findModule(new URI("parent-mod-ns"), QName.parseRevision("2017-09-07")).get();
         assertEquals(1, parentMod.getSubmodules().size());
     }
 

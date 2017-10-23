@@ -42,7 +42,7 @@ public class ExtensionStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("bar", null);
+        final Module testModule = result.findModules("bar").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(1, testModule.getExtensionSchemaNodes().size());
@@ -62,7 +62,7 @@ public class ExtensionStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule1 = result.findModuleByName("ext-typedef", null);
+        final Module testModule1 = result.findModules("ext-typedef").iterator().next();
         assertNotNull(testModule1);
 
         assertEquals(1, testModule1.getExtensionSchemaNodes().size());
@@ -70,7 +70,7 @@ public class ExtensionStmtTest {
         final List<ExtensionDefinition> extensions = testModule1.getExtensionSchemaNodes();
         final ExtensionDefinition extensionDefinition = extensions.get(0);
 
-        final Module testModule2 = result.findModuleByName("ext-use", null);
+        final Module testModule2 = result.findModules("ext-use").iterator().next();
         assertNotNull(testModule2);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) testModule2.getDataChildByName(QName.create(testModule2.getQNameModule(), "value"));

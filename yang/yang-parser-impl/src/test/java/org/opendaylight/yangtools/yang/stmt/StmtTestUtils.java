@@ -208,16 +208,19 @@ public class StmtTestUtils {
         return parseYinSources(statementParserMode, sources);
     }
 
-    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode, final StatementStreamSource... sources)
+    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode,
+            final StatementStreamSource... sources)
             throws ReactorException {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(statementParserMode);
+        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
+                .newBuild(statementParserMode);
         reactor.addSources(sources);
 
         return reactor.buildEffective();
     }
 
-    public static Module findImportedModule(final SchemaContext context, final Module rootModule, final String importedModuleName) {
+    public static Module findImportedModule(final SchemaContext context, final Module rootModule,
+            final String importedModuleName) {
         ModuleImport requestedModuleImport = null;
         final Set<ModuleImport> rootImports = rootModule.getImports();
         for (final ModuleImport moduleImport : rootImports) {
@@ -227,12 +230,12 @@ public class StmtTestUtils {
             }
         }
 
-        final Module importedModule = context.findModuleByName(requestedModuleImport.getModuleName(),
-                requestedModuleImport.getRevision());
-        return importedModule;
+        return context.findModule(requestedModuleImport.getModuleName(), requestedModuleImport.getRevision())
+                .orElse(null);
     }
 
-    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath, final String yangLibsDirectoryPath)
+    public static SchemaContext parseYangSources(final String yangFilesDirectoryPath,
+            final String yangLibsDirectoryPath)
             throws URISyntaxException, ReactorException, IOException, YangSyntaxErrorException {
         return parseYangSources(yangFilesDirectoryPath, yangLibsDirectoryPath, null);
     }

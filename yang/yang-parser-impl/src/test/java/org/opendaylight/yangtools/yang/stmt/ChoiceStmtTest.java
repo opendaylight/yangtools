@@ -39,7 +39,7 @@ public class ChoiceStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("foo", null);
+        final Module testModule = result.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
         final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(

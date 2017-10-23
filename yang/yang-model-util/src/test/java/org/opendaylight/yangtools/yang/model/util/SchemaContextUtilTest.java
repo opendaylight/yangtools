@@ -8,12 +8,16 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -30,6 +34,7 @@ public class SchemaContextUtilTest {
     @Test
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
+        doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
 
         QName qname = QName.create("TestQName");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);

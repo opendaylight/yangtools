@@ -12,8 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Verify;
-import java.util.Date;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
@@ -40,9 +38,7 @@ public abstract class NamespaceKeyCriterion<K> {
 
         @Override
         public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
-            final Date firstRev = Verify.verifyNotNull(first.getRevision());
-            final Date secondRev = Verify.verifyNotNull(second.getRevision());
-            return firstRev.compareTo(secondRev) >= 0 ? first : second;
+            return ModuleIdentifier.compareRevisions(first.getRevision(), second.getRevision()) >= 0 ? first : second;
         }
 
         @Override

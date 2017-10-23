@@ -545,14 +545,13 @@ public class SchemaContextProxyTest {
         //asserting collections
         if (expected != null) {
             for (final Module module : expected) {
-                assertEquals(module, filteringSchemaContextProxy.findModuleByName(module.getName(),
-                            module.getRevision()));
+                assertEquals(module, filteringSchemaContextProxy.findModule(module.getName(), module.getRevision())
+                    .get());
 
-                Set<Module> mod = filteringSchemaContextProxy.findModuleByNamespace(module.getNamespace());
+                Set<Module> mod = filteringSchemaContextProxy.findModules(module.getNamespace());
                 assertTrue(mod.contains(module));
-
-                assertEquals(module, filteringSchemaContextProxy.findModuleByNamespaceAndRevision(module.getNamespace(),
-                            module.getRevision()));
+                assertEquals(module, filteringSchemaContextProxy.findModule(module.getNamespace(),
+                    module.getRevision()).get());
             }
         }
     }

@@ -89,7 +89,7 @@ public class IdentityStmtTest {
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("legal-chained-identity-test", null);
+        Module testModule = result.findModules("legal-chained-identity-test").iterator().next();
         assertNotNull(testModule);
 
         Set<IdentitySchemaNode> identities = testModule.getIdentities();
@@ -121,7 +121,7 @@ public class IdentityStmtTest {
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Module testModule = result.findModuleByName("duplicate-identity-test", null);
+        Module testModule = result.findModules("duplicate-identity-test").iterator().next();
         Set<IdentitySchemaNode> identities = testModule.getIdentities();
         assertEquals(1, identities.size());
     }

@@ -51,7 +51,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(2, module.getChildNodes().size());
 
@@ -92,7 +92,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(3, module.getChildNodes().size());
 
@@ -138,7 +138,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
-        final Module module = testSchemaContextFuture.get().findModuleByName("foobar", null);
+        final Module module = testSchemaContextFuture.get().findModules("foobar").iterator().next();
         assertNotNull(module);
         assertEquals(1, module.getChildNodes().size());
 

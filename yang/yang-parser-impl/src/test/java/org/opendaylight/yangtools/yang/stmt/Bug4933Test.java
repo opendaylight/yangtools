@@ -27,8 +27,7 @@ public class Bug4933Test {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4933/correct");
         assertNotNull(context);
 
-        final Module foo = context.findModuleByName("foo", null);
-
+        final Module foo = context.findModules("foo").iterator().next();
         Set<Deviation> deviations = foo.getDeviations();
         assertEquals(4, deviations.size());
     }

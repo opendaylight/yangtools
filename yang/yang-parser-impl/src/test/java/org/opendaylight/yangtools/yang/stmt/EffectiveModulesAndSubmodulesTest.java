@@ -174,12 +174,10 @@ public class EffectiveModulesAndSubmodulesTest {
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported)
             throws URISyntaxException {
-        final Module foundRoot = result.findModuleByName("root-module",
-                SimpleDateFormatUtil.DEFAULT_DATE_REV);
-        final Set<Module> foundRoots = result.findModuleByNamespace(new URI(
-                "root-module"));
-        final Module foundRoot3 = result.findModuleByNamespaceAndRevision(new URI(
-                "root-module"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        final Module foundRoot = result.findModule("root-module", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Set<Module> foundRoots = result.findModules(new URI("root-module"));
+        final Module foundRoot3 = result.findModule(new URI("root-module"), SimpleDateFormatUtil.DEFAULT_DATE_REV)
+                .get();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -193,13 +191,10 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final Module foundImported = result.findModuleByName("imported-module",
-                SimpleDateFormatUtil.DEFAULT_DATE_REV);
-        final Set<Module> foundImporteds = result.findModuleByNamespace(new URI(
-                "imported-module"));
-        final Module foundImported3 = result.findModuleByNamespaceAndRevision(
-                new URI("imported-module"),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        final Module foundImported = result.findModule("imported-module", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Set<Module> foundImporteds = result.findModules(new URI("imported-module"));
+        final Module foundImported3 = result.findModule(new URI("imported-module"),
+            SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);
