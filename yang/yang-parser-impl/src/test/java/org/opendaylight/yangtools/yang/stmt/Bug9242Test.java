@@ -29,9 +29,8 @@ public class Bug9242Test {
 
         final Date revision = QName.parseRevision("2017-10-13");
 
-        final Module rootModule = schemaContext.findModuleByName("root-module", revision);
-        final Module impModule = schemaContext.findModuleByName("imp-module", revision);
-        assertNotNull(impModule);
+        final Module rootModule = schemaContext.findModule("root-module", revision).get();
+        final Module impModule = schemaContext.findModule("imp-module", revision).get();
 
         TypeDefinition<?> deviatedMyLeafType = null;
         TypeDefinition<?> deviatedMyLeaf2Type = null;

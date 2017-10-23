@@ -15,7 +15,6 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.util.Date;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,11 +42,7 @@ public class Bug6887Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2017-01-26");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-
+        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2017-01-26")).get();
         final LeafSchemaNode myEnumerationLeaf = (LeafSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-enumeration-leaf"));
         assertNotNull(myEnumerationLeaf);
@@ -173,11 +168,7 @@ public class Bug6887Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2017-02-02");
-
-        final Module bar = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(bar);
-
+        final Module bar = schemaContext.findModule("bar", QName.parseRevision("2017-02-02")).get();
         final LeafSchemaNode myBitsLeaf = (LeafSchemaNode) bar.getDataChildByName(
                 QName.create(bar.getQNameModule(), "my-bits-leaf"));
         assertNotNull(myBitsLeaf);

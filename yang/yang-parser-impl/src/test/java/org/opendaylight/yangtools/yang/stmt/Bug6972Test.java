@@ -34,13 +34,9 @@ public class Bug6972Test {
         assertEquals(3, schemaContext.getModules().size());
 
         final Date revision = QName.parseRevision("2016-10-20");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-        final Module bar = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(bar);
-        final Module baz = schemaContext.findModuleByName("baz", revision);
-        assertNotNull(baz);
+        final Module foo = schemaContext.findModule("foo", revision).get();
+        final Module bar = schemaContext.findModule("bar", revision).get();
+        final Module baz = schemaContext.findModule("baz", revision).get();
 
         final QName barExportCont = QName.create("bar-ns", "bar-export", revision);
         final QName barFooCont = QName.create("bar-ns", "bar-foo", revision);

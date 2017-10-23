@@ -119,7 +119,7 @@ public class YangModeledAnyXMLDeserializationTest {
     public void testRealSchemaContextFromFoo() throws Exception {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
                 "/anyxml-support/xml/foo.xml");
-        final Module foo = schemaContext.findModuleByName("foo", null);
+        final Module foo = schemaContext.findModules("foo").iterator().next();
         final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-anyxml-data"));
 

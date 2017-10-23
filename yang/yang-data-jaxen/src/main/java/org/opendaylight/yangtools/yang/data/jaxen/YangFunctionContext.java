@@ -308,16 +308,15 @@ final class YangFunctionContext implements FunctionContext {
 
     private static IdentitySchemaNode getIdentitySchemaNodeFromQName(final QName identityQName,
             final SchemaContext schemaContext) {
-        final Module module = schemaContext.findModuleByNamespaceAndRevision(identityQName.getNamespace(),
-                identityQName.getRevision());
-        return findIdentitySchemaNodeInModule(module, identityQName);
+        final Optional<Module> module = schemaContext.findModule(identityQName.getModule());
+        Preconditions.checkArgument(module.isPresent(), "Module for %s not found", identityQName);
+        return findIdentitySchemaNodeInModule(module.get(), identityQName);
     }
 
     private static IdentitySchemaNode getIdentitySchemaNodeFromString(final String identity,
             final SchemaContext schemaContext, final TypedSchemaNode correspondingSchemaNode) {
         final List<String> identityPrefixAndName = COLON_SPLITTER.splitToList(identity);
-        final Module module = schemaContext.findModuleByNamespaceAndRevision(
-                correspondingSchemaNode.getQName().getNamespace(), correspondingSchemaNode.getQName().getRevision());
+        final Module module = schemaContext.findModule(correspondingSchemaNode.getQName().getModule()).get();
         if (identityPrefixAndName.size() == 2) {
             // prefix of local module
             if (identityPrefixAndName.get(0).equals(module.getPrefix())) {
@@ -328,8 +327,8 @@ final class YangFunctionContext implements FunctionContext {
             // prefix of imported module
             for (final ModuleImport moduleImport : module.getImports()) {
                 if (identityPrefixAndName.get(0).equals(moduleImport.getPrefix())) {
-                    final Module importedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
-                        moduleImport.getRevision());
+                    final Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
+                        moduleImport.getRevision()).get();
                     return findIdentitySchemaNodeInModule(importedModule, QName.create(
                         importedModule.getQNameModule(), identityPrefixAndName.get(1)));
                 }

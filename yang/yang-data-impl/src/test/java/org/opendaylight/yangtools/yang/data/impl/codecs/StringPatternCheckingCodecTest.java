@@ -44,11 +44,9 @@ public class StringPatternCheckingCodecTest {
         assertNotNull(schemaContext);
 
         final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
+                SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
-        final Module testModule = schemaContext.findModuleByName("string-pattern-checking-codec-test", null);
-        assertNotNull(testModule);
-
+        final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModuleQName, "test-container"));
         assertNotNull(testContainer);

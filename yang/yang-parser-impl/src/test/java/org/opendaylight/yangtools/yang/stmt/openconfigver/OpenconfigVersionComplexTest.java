@@ -40,9 +40,9 @@ public class OpenconfigVersionComplexTest {
     private static void verifySchemaContextTest1(final SchemaContext context) {
         assertNotNull(context);
 
-        final Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
-        final Module semVer = context.findModuleByNamespace(
-            URI.create("http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        final Module foo = context.findModules(URI.create("foo")).iterator().next();
+        final Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext"))
+                .iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("1.3.95"), semVer.getSemanticVersion().get());
@@ -86,9 +86,9 @@ public class OpenconfigVersionComplexTest {
     private static void verifySchemaContextTest2(final SchemaContext context) {
         assertNotNull(context);
 
-        final Module foo = context.findModuleByNamespace(URI.create("foo")).iterator().next();
-        final Module semVer = context.findModuleByNamespace(URI.create(
-            "http://openconfig.net/yang/openconfig-ext")).iterator().next();
+        final Module foo = context.findModules(URI.create("foo")).iterator().next();
+        final Module semVer = context.findModules(URI.create("http://openconfig.net/yang/openconfig-ext"))
+                .iterator().next();
 
         // check module versions
         assertEquals(SemVer.valueOf("2.5.50"), semVer.getSemanticVersion().get());

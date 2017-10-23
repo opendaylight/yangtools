@@ -146,14 +146,12 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
     }
 
     public LeafRefPath getAbsoluteLeafRefTargetPath() {
-
         if (isReferencing && absoluteLeafRefTargetPath == null) {
             if (leafRefTargetPath.isAbsolute()) {
                 absoluteLeafRefTargetPath = leafRefTargetPath;
             } else {
-                absoluteLeafRefTargetPath = LeafRefUtils
-                        .createAbsoluteLeafRefPath(leafRefTargetPath,
-                                currentNodePath, getLeafRefContextModule());
+                absoluteLeafRefTargetPath = LeafRefUtils.createAbsoluteLeafRefPath(leafRefTargetPath,
+                    currentNodePath, getLeafRefContextModule());
             }
         }
 
@@ -163,8 +161,7 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
     public Module getLeafRefContextModule() {
         final Iterator<QName> it = currentNodePath.getPathFromRoot().iterator();
         final QNameModule qnameModule = it.hasNext() ? it.next().getModule() : currentNodeQName.getModule();
-
-        return schemaContext.findModuleByNamespaceAndRevision(qnameModule.getNamespace(), qnameModule.getRevision());
+        return schemaContext.findModule(qnameModule).orElse(null);
     }
 
     public void addReferencedByLeafRefCtx(final QName qname, final LeafRefContext leafRef) {

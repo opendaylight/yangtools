@@ -20,6 +20,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -139,9 +140,9 @@ public class MoreRevisionsTest {
     private static void checkContentFullTest(final SchemaContext context) {
         URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
-        Date rev20100924 = QName.parseRevision("2010-09-24");
-        Date rev20130516 = QName.parseRevision("2013-05-16");
-        Date rev20130715 = QName.parseRevision("2013-07-15");
+        final Date rev20100924 = QName.parseRevision("2010-09-24");
+        final Date rev20130516 = QName.parseRevision("2013-05-16");
+        final Date rev20130715 = QName.parseRevision("2013-07-15");
 
         final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
         final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
@@ -151,14 +152,9 @@ public class MoreRevisionsTest {
         final QName dateTimeTypeDef_20130516 = QName.create(yangTypes_20130516, "date-and-time");
         final QName dateTimeTypeDef_20130715 = QName.create(yangTypes_20130715, "date-and-time");
 
-        Module yangTypesModule_20100924 = context.findModuleByName("ietf-yang-types", rev20100924);
-        Module yangTypesModule_20130516 = context.findModuleByName("ietf-yang-types", rev20130516);
-        Module yangTypesModule_20130715 = context.findModuleByName("ietf-yang-types", rev20130715);
-
-        assertNotNull(yangTypesModule_20100924);
-        assertNotNull(yangTypesModule_20130516);
-        assertNotNull(yangTypesModule_20130715);
-
+        Module yangTypesModule_20100924 = context.findModule("ietf-yang-types", rev20100924).get();
+        Module yangTypesModule_20130516 = context.findModule("ietf-yang-types", rev20130516).get();
+        Module yangTypesModule_20130715 = context.findModule("ietf-yang-types", rev20130715).get();
         assertTrue(findTypeDef(yangTypesModule_20100924, dateTimeTypeDef_20100924));
         assertTrue(findTypeDef(yangTypesModule_20130516, dateTimeTypeDef_20130516));
         assertTrue(findTypeDef(yangTypesModule_20130715, dateTimeTypeDef_20130715));
@@ -171,9 +167,7 @@ public class MoreRevisionsTest {
             final QName dateTimeTypeDef_20100924) {
         Date rev20121115 = QName.parseRevision("2012-11-15");
 
-        Module interfacesModule_20121115 = context.findModuleByName("ietf-interfaces", rev20121115);
-        assertNotNull(interfacesModule_20121115);
-
+        Module interfacesModule_20121115 = context.findModule("ietf-interfaces", rev20121115).get();
         Set<ModuleImport> imports = interfacesModule_20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
@@ -185,9 +179,7 @@ public class MoreRevisionsTest {
             final Date rev20130715, final QName dateTimeTypeDef_20130715) {
         Date rev20101004 = QName.parseRevision("2010-10-04");
 
-        Module monitoringModule_20101004 = context.findModuleByName("ietf-netconf-monitoring", rev20101004);
-        assertNotNull(monitoringModule_20101004);
-
+        Module monitoringModule_20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
         Set<ModuleImport> imports = monitoringModule_20101004.getImports();
         assertEquals(2, imports.size());
         for (ModuleImport monitoringImport : imports) {
@@ -211,9 +203,9 @@ public class MoreRevisionsTest {
     private static void checkContentSimpleTest(final SchemaContext context) {
         URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
-        Date rev20100924 = QName.parseRevision("2010-09-24");
-        Date rev20130516 = QName.parseRevision("2013-05-16");
-        Date rev20130715 = QName.parseRevision("2013-07-15");
+        final Date rev20100924 = QName.parseRevision("2010-09-24");
+        final Date rev20130516 = QName.parseRevision("2013-05-16");
+        final Date rev20130715 = QName.parseRevision("2013-07-15");
 
         final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
         final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
@@ -223,14 +215,9 @@ public class MoreRevisionsTest {
         final QName dateTimeTypeDef_20130516 = QName.create(yangTypes_20130516, "date-and-time");
         final QName dateTimeTypeDef_20130715 = QName.create(yangTypes_20130715, "date-and-time");
 
-        Module yangTypesModule_20100924 = context.findModuleByName("ietf-yang-types", rev20100924);
-        Module yangTypesModule_20130516 = context.findModuleByName("ietf-yang-types", rev20130516);
-        Module yangTypesModule_20130715 = context.findModuleByName("ietf-yang-types", rev20130715);
-
-        assertNotNull(yangTypesModule_20100924);
-        assertNotNull(yangTypesModule_20130516);
-        assertNotNull(yangTypesModule_20130715);
-
+        Module yangTypesModule_20100924 = context.findModule("ietf-yang-types", rev20100924).get();
+        Module yangTypesModule_20130516 = context.findModule("ietf-yang-types", rev20130516).get();
+        Module yangTypesModule_20130715 = context.findModule("ietf-yang-types", rev20130715).get();
         assertTrue(findTypeDef(yangTypesModule_20100924, dateTimeTypeDef_20100924));
         assertTrue(findTypeDef(yangTypesModule_20130516, dateTimeTypeDef_20130516));
         assertTrue(findTypeDef(yangTypesModule_20130715, dateTimeTypeDef_20130715));
@@ -246,11 +233,8 @@ public class MoreRevisionsTest {
         final QNameModule interfacesNS_20121115 = QNameModule.create(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS_20121115, "last-change");
 
-        Module interfacesModule_20121115 = context.findModuleByName("ietf-interfaces", rev20121115);
-        assertNotNull(interfacesModule_20121115);
-
-        DataSchemaNode leafLastChange = interfacesModule_20121115
-                .getDataChildByName(lastChange);
+        Module interfacesModule_20121115 = context.findModule("ietf-interfaces", rev20121115).get();
+        DataSchemaNode leafLastChange = interfacesModule_20121115.getDataChildByName(lastChange);
         assertNotNull(leafLastChange);
 
         assertTrue(leafLastChange instanceof LeafSchemaNode);
@@ -267,13 +251,11 @@ public class MoreRevisionsTest {
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
             final Date rev20130715, final QName dateTimeTypeDef_20130715) {
         URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
-        Date rev19700101 = QName.parseRevision("1970-01-01");
-        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS, rev19700101);
+        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS, SimpleDateFormatUtil.DEFAULT_DATE_REV);
         QName lockedTime = QName.create(monitoring_19700101, "locked-time");
 
-        Module monitoringModule_19700101 = context.findModuleByName("ietf-netconf-monitoring", rev19700101);
-        assertNotNull(monitoringModule_19700101);
-
+        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring",
+            SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
         DataSchemaNode leafLockedTime = monitoringModule_19700101.getDataChildByName(lockedTime);
         assertNotNull(leafLockedTime);
 

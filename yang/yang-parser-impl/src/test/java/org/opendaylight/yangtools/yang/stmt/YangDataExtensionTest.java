@@ -16,15 +16,12 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -57,18 +54,10 @@ public class YangDataExtensionTest {
     private static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
             "/yang-data-extension-test/ietf-restconf.yang");
 
-    private static Date revision;
-    private static QNameModule fooModule;
-    private static QName myYangDataA;
-    private static QName myYangDataB;
-
-    @BeforeClass
-    public static void setup() throws ParseException {
-        revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-06-01");
-        fooModule = QNameModule.create(URI.create("foo"), revision);
-        myYangDataA = QName.create(fooModule, "my-yang-data-a");
-        myYangDataB = QName.create(fooModule, "my-yang-data-b");
-    }
+    private static final Date REVISION = QName.parseRevision("2017-06-01");
+    private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(URI.create("foo"), REVISION);
+    private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
+    private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");
 
     @Test
     public void testYangData() throws Exception {
@@ -78,9 +67,7 @@ public class YangDataExtensionTest {
         final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
         assertEquals(1, extensions.size());
 
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-
+        final Module foo = schemaContext.findModule(FOO_QNAMEMODULE).get();
         final List<UnknownSchemaNode> unknownSchemaNodes = foo.getUnknownSchemaNodes();
         assertEquals(2, unknownSchemaNodes.size());
 
@@ -89,9 +76,9 @@ public class YangDataExtensionTest {
         for (final UnknownSchemaNode unknownSchemaNode : unknownSchemaNodes) {
             assertTrue(unknownSchemaNode instanceof YangDataSchemaNode);
             final YangDataSchemaNode yangDataSchemaNode = (YangDataSchemaNode) unknownSchemaNode;
-            if (myYangDataA.equals(yangDataSchemaNode.getQName())) {
+            if (MY_YANG_DATA_A.equals(yangDataSchemaNode.getQName())) {
                 myYangDataANode = yangDataSchemaNode;
-            } else if (myYangDataB.equals(yangDataSchemaNode.getQName())) {
+            } else if (MY_YANG_DATA_B.equals(yangDataSchemaNode.getQName())) {
                 myYangDataBNode = yangDataSchemaNode;
             }
         }
@@ -108,9 +95,7 @@ public class YangDataExtensionTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(BAZ_MODULE, IETF_RESTCONF_MODULE);
         assertNotNull(schemaContext);
 
-        final Module baz = schemaContext.findModuleByName("baz", revision);
-        assertNotNull(baz);
-
+        final Module baz = schemaContext.findModule("baz", REVISION).get();
         final List<UnknownSchemaNode> unknownSchemaNodes = baz.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
@@ -141,9 +126,7 @@ public class YangDataExtensionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module foobar = schemaContext.findModuleByName("foobar", revision);
-        assertNotNull(foobar);
-
+        final Module foobar = schemaContext.findModule("foobar", REVISION).get();
         final List<UnknownSchemaNode> unknownSchemaNodes = foobar.getUnknownSchemaNodes();
         assertEquals(1, unknownSchemaNodes.size());
 
@@ -169,8 +152,7 @@ public class YangDataExtensionTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(BAR_MODULE, IETF_RESTCONF_MODULE);
         assertNotNull(schemaContext);
 
-        final Module bar = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(bar);
+        final Module bar = schemaContext.findModule("bar", REVISION).get();
         final ContainerSchemaNode cont = (ContainerSchemaNode) bar.getDataChildByName(
                 QName.create(bar.getQNameModule(), "cont"));
         assertNotNull(cont);

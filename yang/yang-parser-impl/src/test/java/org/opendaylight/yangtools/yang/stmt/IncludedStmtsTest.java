@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.Iterator;
 import java.util.Set;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -37,15 +38,18 @@ public class IncludedStmtsTest {
     private static final StatementStreamSource CHILD_MODULE = sourceForResource(
             "/included-statements-test/child-module.yang");
 
-    @Test
-    public void includedTypedefsTest() throws ReactorException {
+    private SchemaContext result;
+
+    @Before
+    public void setup() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
+        result = reactor.buildEffective();
+    }
 
-        final SchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
-
-        final Module testModule = result.findModuleByName("root-module", null);
+    @Test
+    public void includedTypedefsTest() {
+        final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         final Set<TypeDefinition<?>> typedefs = testModule.getTypeDefinitions();
@@ -61,14 +65,8 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedFeaturesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, CHILD_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
-
-        final Module testModule = result.findModuleByName("root-module", null);
+    public void includedFeaturesTest() {
+        final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         final Set<FeatureDefinition> features = testModule.getFeatures();
@@ -82,14 +80,8 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void includedContainersAndListsTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, CHILD_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
-
-        final Module testModule = result.findModuleByName("root-module", null);
+    public void includedContainersAndListsTest() {
+        final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         ContainerSchemaNode cont = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "parent-container"));
@@ -105,14 +97,8 @@ public class IncludedStmtsTest {
     }
 
     @Test
-    public void submoduleNamespaceTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, CHILD_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
-        assertNotNull(result);
-
-        final Module testModule = result.findModuleByName("root-module", null);
+    public void submoduleNamespaceTest() {
+        final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
         final Module subModule = testModule.getSubmodules().iterator().next();

@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -156,8 +155,7 @@ class LeafRefContextTreeBuilder {
         while (baseLeafRefType.getBaseType() != null) {
             baseLeafRefType = baseLeafRefType.getBaseType();
         }
-        final QNameModule module = baseLeafRefType.getQName().getModule();
-        return schemaContext.findModuleByNamespaceAndRevision(module.getNamespace(), module.getRevision());
+        return schemaContext.findModule(baseLeafRefType.getQName().getModule()).orElse(null);
     }
 
     private LeafRefContext buildLeafRefContextReferencedByTree(

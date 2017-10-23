@@ -63,11 +63,7 @@ public class EffectiveIdentityTest {
 
         assertNotNull(result);
 
-        Module module = result.findModuleByName("identity-test",
-                SimpleDateFormatUtil.DEFAULT_DATE_REV);
-
-        assertNotNull(module);
-
+        Module module = result.findModule("identity-test", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
         Set<IdentitySchemaNode> identities = module.getIdentities();
 
         assertNotNull(identities);

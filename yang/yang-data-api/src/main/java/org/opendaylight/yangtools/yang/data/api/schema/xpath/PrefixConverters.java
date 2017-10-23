@@ -15,6 +15,7 @@ import com.google.common.base.Converter;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableBiMap.Builder;
 import com.google.common.collect.Maps;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -49,10 +50,10 @@ public final class PrefixConverters {
         b.put(module.getPrefix(), module.getQNameModule());
 
         for (ModuleImport i : module.getImports()) {
-            final Module mod = ctx.findModuleByName(i.getModuleName(), i.getRevision());
-            checkArgument(mod != null, "Unsatisfied import of %s by module %s", i, module);
+            final Optional<Module> mod = ctx.findModule(i.getModuleName(), i.getRevision());
+            checkArgument(mod.isPresent(), "Unsatisfied import of %s by module %s", i, module);
 
-            b.put(i.getPrefix(), mod.getQNameModule());
+            b.put(i.getPrefix(), mod.get().getQNameModule());
         }
 
         return Maps.asConverter(b.build());

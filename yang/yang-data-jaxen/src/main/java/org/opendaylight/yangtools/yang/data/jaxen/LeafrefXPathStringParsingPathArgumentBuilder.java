@@ -207,16 +207,15 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     }
 
     private QName createQName(final String prefix, final String localName) {
-        final Module module = schemaContext.findModuleByNamespaceAndRevision(schemaNode.getQName().getNamespace(),
-                schemaNode.getQName().getRevision());
+        final Module module = schemaContext.findModule(schemaNode.getQName().getModule()).get();
         if (prefix.isEmpty() || module.getPrefix().equals(prefix)) {
             return QName.create(module.getQNameModule(), localName);
         }
 
         for (final ModuleImport moduleImport : module.getImports()) {
             if (prefix.equals(moduleImport.getPrefix())) {
-                final Module importedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
-                        moduleImport.getRevision());
+                final Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
+                        moduleImport.getRevision()).get();
                 return QName.create(importedModule.getQNameModule(),localName);
             }
         }

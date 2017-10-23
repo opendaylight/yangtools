@@ -69,7 +69,7 @@ public class EffectiveModuleTest {
 
         assertNotNull(result);
 
-        Module rootModule = result.findModuleByName("root", null);
+        Module rootModule = result.findModules("root").iterator().next();
         assertNotNull(rootModule);
 
         assertEquals("root-pref", rootModule.getPrefix());

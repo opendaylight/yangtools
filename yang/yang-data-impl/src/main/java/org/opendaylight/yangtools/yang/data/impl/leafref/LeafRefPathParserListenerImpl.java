@@ -165,10 +165,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
 
     private URI getNamespaceForImportPrefix(final String prefix) {
         final ModuleImport moduleImport = getModuleImport(prefix);
-        final Module findedModule = schemaContext.findModuleByName(moduleImport.getModuleName(),
-            moduleImport.getRevision());
-
-        return findedModule.getNamespace();
+        return schemaContext.findModule(moduleImport.getModuleName(), moduleImport.getRevision()).get().getNamespace();
     }
 
     private Optional<QNameModule> getQNameModuleForImportPrefix(final String prefix) {
@@ -179,9 +176,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
 
         final String moduleName = moduleImport.getModuleName();
         final Date revision = moduleImport.getRevision();
-        final Module foundModule = schemaContext.findModuleByName(moduleName, revision);
-
-        return Optional.of(foundModule.getQNameModule());
+        return schemaContext.findModule(moduleName, revision).map(Module::getQNameModule);
     }
 
     private ModuleImport getModuleImport(final String prefix) {

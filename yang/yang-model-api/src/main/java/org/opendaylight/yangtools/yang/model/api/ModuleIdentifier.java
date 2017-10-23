@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Date;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
@@ -34,7 +35,12 @@ public interface ModuleIdentifier {
      *         keyword
      */
     // FIXME: BUG-4688: should return Optional<Revision>
-    // FIXME: this should not be here
-    Date getRevision();
+    Optional<Date> getRevision();
 
+    static int compareRevisions(final Optional<Date> first, final Optional<Date> second) {
+        if (!first.isPresent()) {
+            return second.isPresent() ? -1 : 0;
+        }
+        return second.isPresent() ? first.get().compareTo(second.get()) : 1;
+    }
 }

@@ -44,9 +44,8 @@ public class ControllerStmtParserTest {
 
     private static void salDomBrokerImplModuleTest(final SchemaContext context)
             throws ParseException {
-        final Module module = context.findModuleByName("opendaylight-sal-dom-broker-impl",
-            QName.parseRevision("2013-10-28"));
-        assertNotNull(module);
+        final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
+            QName.parseRevision("2013-10-28")).get();
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
         boolean checked = false;
@@ -61,16 +60,12 @@ public class ControllerStmtParserTest {
                     final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
                     final DataSchemaNode leaf = containerNode
                             .getDataChildByName(QName.create(module.getQNameModule(), "type"));
-                    final List<UnknownSchemaNode> unknownSchemaNodes = leaf
-                            .getUnknownSchemaNodes();
+                    final List<UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
                     assertEquals(1, unknownSchemaNodes.size());
 
-                    final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes
-                            .get(0);
-                    assertEquals("dom-async-data-broker", unknownSchemaNode
-                            .getQName().getLocalName());
-                    assertEquals(unknownSchemaNode.getQName(),
-                            unknownSchemaNode.getPath().getLastComponent());
+                    final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
+                    assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
+                    assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
 
                     checked = true;
                 }
@@ -81,12 +76,9 @@ public class ControllerStmtParserTest {
 
     private static void configModuleTest(final SchemaContext context) throws ParseException,
             URISyntaxException {
-        final Module configModule = context.findModuleByName("config", QName.parseRevision("2013-04-05"));
-        assertNotNull(configModule);
-
-        final Module module = context.findModuleByName(
-                "opendaylight-sal-dom-broker-impl", QName.parseRevision("2013-10-28"));
-        assertNotNull(module);
+        final Module configModule = context.findModule("config", QName.parseRevision("2013-04-05")).get();
+        final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
+            QName.parseRevision("2013-10-28")).get();
 
         final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
             "modules"));
@@ -105,8 +97,7 @@ public class ControllerStmtParserTest {
         assertTrue(dataChildChoice instanceof ChoiceSchemaNode);
 
         final ChoiceSchemaNode confChoice = (ChoiceSchemaNode) dataChildChoice;
-        final ChoiceCaseNode caseNodeByName = confChoice
-                .getCaseNodeByName("dom-broker-impl");
+        final ChoiceCaseNode caseNodeByName = confChoice.getCaseNodeByName("dom-broker-impl");
 
         assertNotNull(caseNodeByName);
         final DataSchemaNode dataNode2 = caseNodeByName
@@ -115,20 +106,16 @@ public class ControllerStmtParserTest {
 
         final ContainerSchemaNode containerNode = (ContainerSchemaNode) dataNode2;
         final DataSchemaNode leaf = containerNode.getDataChildByName(QName.create(module.getQNameModule(), "type"));
-        final List<UnknownSchemaNode> unknownSchemaNodes = leaf
-                .getUnknownSchemaNodes();
+        final List<UnknownSchemaNode> unknownSchemaNodes = leaf.getUnknownSchemaNodes();
 
         assertEquals(1, unknownSchemaNodes.size());
 
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.get(0);
 
-        assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath()
-                .getLastComponent());
-        assertEquals("dom-async-data-broker", unknownSchemaNode.getQName()
-                .getLocalName());
+        assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
+        assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
 
-        final ChoiceCaseNode domInmemoryDataBroker = confChoice
-                .getCaseNodeByName("dom-inmemory-data-broker");
+        final ChoiceCaseNode domInmemoryDataBroker = confChoice.getCaseNodeByName("dom-inmemory-data-broker");
 
         assertNotNull(domInmemoryDataBroker);
         final DataSchemaNode schemaService = domInmemoryDataBroker

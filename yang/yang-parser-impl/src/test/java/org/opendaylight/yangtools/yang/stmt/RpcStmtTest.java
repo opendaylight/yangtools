@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -45,9 +44,7 @@ public class RpcStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("baz", null);
-        assertNotNull(testModule);
-
+        final Module testModule = result.findModules("baz").iterator().next();
         assertEquals(1, testModule.getRpcs().size());
 
         final RpcDefinition rpc = testModule.getRpcs().iterator().next();
@@ -71,9 +68,7 @@ public class RpcStmtTest {
         anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
-        final Module fooModule = result.findModuleByName("foo", QName.parseRevision("2016-09-23"));
-        assertNotNull(fooModule);
-
+        final Module fooModule = result.findModule("foo", QName.parseRevision("2016-09-23")).get();
         final Set<RpcDefinition> rpcs = fooModule.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -111,11 +106,7 @@ public class RpcStmtTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2016-11-25");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(barModule);
-
+        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2016-11-25")).get();
         final Set<RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 

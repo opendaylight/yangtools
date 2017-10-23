@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -33,10 +32,7 @@ public class Bug6871Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6871/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2016-12-14");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
+        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2016-12-14")).get();
 
         final Set<NotificationDefinition> notifications = foo.getNotifications();
         assertEquals(1, notifications.size());

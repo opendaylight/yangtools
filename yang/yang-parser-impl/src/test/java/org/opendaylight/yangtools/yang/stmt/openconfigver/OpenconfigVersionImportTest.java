@@ -29,8 +29,7 @@ public class OpenconfigVersionImportTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("1.0.0"), semVer.getSemanticVersion().get());
     }

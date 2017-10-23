@@ -42,7 +42,7 @@ public class MustAndWhenStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("must-test", null);
+        final Module testModule = result.findModules("must-test").iterator().next();
         assertNotNull(testModule);
 
         final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
@@ -76,7 +76,7 @@ public class MustAndWhenStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("when-test", null);
+        final Module testModule = result.findModules("when-test").iterator().next();
         assertNotNull(testModule);
 
         final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(

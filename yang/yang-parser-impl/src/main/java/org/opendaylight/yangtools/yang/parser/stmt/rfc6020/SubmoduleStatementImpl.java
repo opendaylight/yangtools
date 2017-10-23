@@ -128,7 +128,7 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             final Optional<Date> revisionDate = maybeDate != null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
             final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                    Optional.empty(), revisionDate);
+                    revisionDate);
             return submoduleIdentifier;
         }
 

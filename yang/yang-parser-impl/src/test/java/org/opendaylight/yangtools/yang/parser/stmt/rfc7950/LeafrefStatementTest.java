@@ -13,11 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.util.Date;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -33,11 +31,7 @@ public class LeafrefStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/leafref-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2016-12-20");
-
-        final Module foo = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(foo);
-
+        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2016-12-20")).get();
         final Set<TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 

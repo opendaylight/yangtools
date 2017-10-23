@@ -12,8 +12,10 @@ import java.net.URI;
 import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 
 /**
  * The interface represents static view of compiled yang files,
@@ -65,23 +67,34 @@ public interface SchemaContext extends ContainerSchemaNode {
     Set<ExtensionDefinition> getExtensions();
 
     /**
-     * Returns module instance (from the context) with concrete name and
-     * revision date.
+     * Returns module instance (from the context) with concrete name and revision date.
      *
      * @param name
      *            string with the module name
      * @param revision
-     *            date of the module revision
-     * @return module instance which has name and revision (if specified) the
-     *         same as are the values specified in parameters <code>name</code>
-     *         and <code>revision</code>. In other cases the <code>null</code>
-     *         value is returned.
-     *
+     *            date of the module revision, may be null
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>name</code> and <code>revision</code>.
      */
-    Module findModuleByName(String name, Date revision);
+    Optional<Module> findModule(String name, @Nullable Date revision);
 
-    default Optional<Module> findAnyModuleByName(final String name) {
-        return Optional.ofNullable(findModuleByName(name, null));
+    default Optional<Module> findModule(final URI namespace, @Nullable final Date revision) {
+        return findModule(QNameModule.create(namespace, revision));
+    }
+
+    default Optional<Module> findModule(final QNameModule qnameModule) {
+        return getModules().stream().filter(m -> qnameModule.equals(m.getQNameModule())).findAny();
+    }
+
+    /**
+     * Returns module instances (from the context) with a concrete name.
+     *
+     * @param name
+     *            string with the module name
+     * @return set of module instances with specified name.
+     */
+    default Set<Module> findModules(final String name) {
+        return Sets.filter(getModules(), m -> name.equals(m.getName()));
     }
 
     /**
@@ -92,27 +105,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has namespace equal to the
      *         <code>namespace</code> or <code>null</code> in other cases
      */
-    default Set<Module> findModuleByNamespace(final URI namespace) {
+    default Set<Module> findModules(final URI namespace) {
         return Sets.filter(getModules(), m -> namespace.equals(m.getNamespace()));
-    }
-
-    /**
-     * Returns module instance based on given namespace and revision. If
-     * revision is not specified, returns module with newest revision.
-     *
-     * @param namespace Module namespace, may be null
-     * @param revision Module revision, may be null
-     * @return Matching module or null if a match is not found
-     */
-    default Module findModuleByNamespaceAndRevision(final URI namespace, final Date revision) {
-        if (namespace == null) {
-            return null;
-        }
-        for (Module module : findModuleByNamespace(namespace)) {
-            if (revision == null || revision.equals(module.getRevision())) {
-                return module;
-            }
-        }
-        return null;
     }
 }

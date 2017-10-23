@@ -421,7 +421,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         Preconditions.checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
-        final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable = TreeBasedTable.create();
+        final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
+            String::compareTo, ModuleIdentifier::compareRevisions);
         for (final SourceSpecificContext libSource : libSources) {
             final ModuleIdentifier libSourceIdentifier = Preconditions.checkNotNull(libSource.getRootIdentifier());
             libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
@@ -436,7 +437,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void collectRequiredSourcesFromLib(
-            final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable,
+            final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable,
             final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
         for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
             final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
@@ -447,12 +448,14 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
-            final TreeBasedTable<String, Date, SourceSpecificContext> libSourcesTable) {
+            final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable) {
         return requiredSource.getRevision() == null ? getLatestRevision(libSourcesTable.row(requiredSource.getName()))
-                : libSourcesTable.get(requiredSource.getName(), QName.parseRevision(requiredSource.getRevision()));
+                : libSourcesTable.get(requiredSource.getName(),
+                    Optional.of(QName.parseRevision(requiredSource.getRevision())));
     }
 
-    private static SourceSpecificContext getLatestRevision(final SortedMap<Date, SourceSpecificContext> sourceMap) {
+    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Date>,
+            SourceSpecificContext> sourceMap) {
         return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
     }
 
