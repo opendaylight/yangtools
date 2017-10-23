@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPha
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.net.URI;
@@ -142,31 +141,6 @@ public class ImportStatementDefinition extends
 
     private static class RevisionImport {
 
-        private static final class LastRevisionCriterion extends NamespaceKeyCriterion<ModuleIdentifier> {
-            private final String moduleName;
-
-            LastRevisionCriterion(final String moduleName) {
-                this.moduleName = requireNonNull(moduleName);
-            }
-
-            @Override
-            public boolean match(final ModuleIdentifier key) {
-                return moduleName.equals(key.getName());
-            }
-
-            @Override
-            public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
-                final Date firstRev = Verify.verifyNotNull(first.getRevision());
-                final Date secondRev = Verify.verifyNotNull(second.getRevision());
-                return firstRev.compareTo(secondRev) >= 0 ? first : second;
-            }
-
-            @Override
-            public String toString() {
-                return MoreObjects.toStringHelper(this).add("moduleName", moduleName).toString();
-            }
-        }
-
         private RevisionImport() {
             throw new UnsupportedOperationException("Utility class");
         }
@@ -179,7 +153,7 @@ public class ImportStatementDefinition extends
             final Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revision == null) {
                 imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                    new LastRevisionCriterion(moduleName), SOURCE_LINKAGE);
+                    NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
             } else {
                 imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
                     ModuleIdentifierImpl.create(moduleName, Optional.empty(), Optional.of(revision)), SOURCE_LINKAGE);
@@ -234,10 +208,6 @@ public class ImportStatementDefinition extends
             }
 
             @Override
-            public String toString() {
-                return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-            }
-
             protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
                 return toStringHelper.add("moduleName", moduleName);
             }
@@ -357,15 +327,8 @@ public class ImportStatementDefinition extends
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(
                 final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
-            final String formattedRevision;
-            if (importedModuleIdentifier.getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP) {
-                formattedRevision = null;
-            } else {
-                formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(
+            final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(
                     importedModuleIdentifier.getRevision());
-            }
-
-
             return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(), formattedRevision, semVer);
         }
     }

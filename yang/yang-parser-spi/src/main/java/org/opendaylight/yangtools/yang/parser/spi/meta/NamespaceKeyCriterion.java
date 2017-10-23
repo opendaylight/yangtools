@@ -7,8 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.base.Verify;
+import java.util.Date;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
  * Namespace key matching criterion.
@@ -19,6 +26,41 @@ import javax.annotation.Nonnull;
  */
 @Beta
 public abstract class NamespaceKeyCriterion<K> {
+    private static final class LatestRevisionModule extends NamespaceKeyCriterion<ModuleIdentifier> {
+        private final String moduleName;
+
+        LatestRevisionModule(final String moduleName) {
+            this.moduleName = requireNonNull(moduleName);
+        }
+
+        @Override
+        public boolean match(final ModuleIdentifier key) {
+            return moduleName.equals(key.getName());
+        }
+
+        @Override
+        public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
+            final Date firstRev = Verify.verifyNotNull(first.getRevision());
+            final Date secondRev = Verify.verifyNotNull(second.getRevision());
+            return firstRev.compareTo(secondRev) >= 0 ? first : second;
+        }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+            return toStringHelper.add("moduleName", moduleName);
+        }
+    }
+
+    /**
+     * Return a criterion which selects the latest known revision of a particular module.
+     *
+     * @param moduleName Module name
+     * @return A criterion object.
+     */
+    public static NamespaceKeyCriterion<ModuleIdentifier> latestRevisionModule(final String moduleName) {
+        return new LatestRevisionModule(moduleName);
+    }
+
     /**
      * Match a key against this criterion.
      *
@@ -37,7 +79,13 @@ public abstract class NamespaceKeyCriterion<K> {
     public abstract K select(@Nonnull K first, @Nonnull K second);
 
     @Override
-    public abstract String toString();
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper;
+    }
 
     @Override
     public final int hashCode() {
