@@ -32,7 +32,7 @@ public class OpenconfigVersionMultipleImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage()
+            assertTrue(e.getCause().getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(1.0.0)]."));
         }
     }
@@ -44,7 +44,7 @@ public class OpenconfigVersionMultipleImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage()
+            assertTrue(e.getCause().getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(2.5.5)]."));
         }
     }

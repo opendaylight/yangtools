@@ -112,7 +112,7 @@ public class OpenconfigVersionTest {
             StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage()
+            assertTrue(e.getCause().getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
     }
@@ -123,7 +123,7 @@ public class OpenconfigVersionTest {
             StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2", StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage()
+            assertTrue(e.getCause().getCause().getMessage()
                     .startsWith("Unable to find module compatible with requested import [bar(0.1.2)]."));
         }
     }

@@ -14,12 +14,11 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Map.Entry;
-import java.util.NavigableMap;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -221,35 +220,110 @@ public class ImportStatementDefinition extends
     }
 
     private static class SemanticVersionImport {
+
+        private abstract static class CompatibleCriterion extends NamespaceKeyCriterion<SemVerSourceIdentifier> {
+            private final String moduleName;
+
+            CompatibleCriterion(final String moduleName) {
+                this.moduleName = requireNonNull(moduleName);
+            }
+
+            @Override
+            public boolean match(final SemVerSourceIdentifier key) {
+                return moduleName.equals(key.getName());
+            }
+
+            @Override
+            public String toString() {
+                return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+            }
+
+            protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+                return toStringHelper.add("moduleName", moduleName);
+            }
+        }
+
+        private static final class NoVerCompatibleCriterion extends CompatibleCriterion {
+            NoVerCompatibleCriterion(final String moduleName) {
+                super(moduleName);
+            }
+
+            @Override
+            public SemVerSourceIdentifier select(final SemVerSourceIdentifier first,
+                    final SemVerSourceIdentifier second) {
+                // TODO Auto-generated method stub
+                return null;
+            }
+        }
+
+        private static final class SemVerCompatibleCriterion extends CompatibleCriterion {
+            private final SemVer semVer;
+
+            SemVerCompatibleCriterion(final String moduleName, final SemVer semVer) {
+                super(moduleName);
+                this.semVer = requireNonNull(semVer);
+            }
+
+            @Override
+            public boolean match(final SemVerSourceIdentifier key) {
+                if (!super.match(key)) {
+                    return false;
+                }
+                final Optional<SemVer> optKeyVer = key.getSemanticVersion();
+                if (!optKeyVer.isPresent()) {
+                    return false;
+                }
+
+                final SemVer keyVer = optKeyVer.get();
+                if (semVer.getMajor() != keyVer.getMajor()) {
+                    return false;
+                }
+                if (semVer.getMinor() > keyVer.getMinor()) {
+                    return false;
+                }
+                return semVer.getMinor() < keyVer.getMinor() || semVer.getPatch() <= keyVer.getPatch();
+            }
+
+            @Override
+            public SemVerSourceIdentifier select(final SemVerSourceIdentifier first,
+                    final SemVerSourceIdentifier second) {
+                return first.getSemanticVersion().get().compareTo(second.getSemanticVersion().get()) >= 0 ? first
+                        : second;
+            }
+
+            @Override
+            protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+                return super.addToStringAttributes(toStringHelper).add("version", semVer);
+            }
+        }
+
+
         private SemanticVersionImport() {
             throw new UnsupportedOperationException("Utility class");
         }
 
         private static void onLinkageDeclared(
                 final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
-            final ModuleIdentifier impIdentifier = getImportedModuleIdentifier(stmt);
             final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-            final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                    impIdentifier, SOURCE_LINKAGE);
-            final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction
-                    .mutatesCtx(stmt.getRoot(), SOURCE_LINKAGE);
+            final String moduleName = stmt.getStatementArgument();
+            final SemVer semanticVersion = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
+            final CompatibleCriterion criterion = semanticVersion == null ? new NoVerCompatibleCriterion(moduleName)
+                    : new SemVerCompatibleCriterion(moduleName, semanticVersion);
+
+            final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
+                SemanticVersionModuleNamespace.class, criterion, SOURCE_LINKAGE);
+            final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
+                SOURCE_LINKAGE);
 
             importAction.apply(new InferenceAction() {
                 @Override
                 public void apply(final InferenceContext ctx) {
-                    final Entry<SemVer, StmtContext<?, ?, ?>> importedModuleEntry = findRecentCompatibleModuleEntry(
-                            impIdentifier.getName(), stmt);
-                    if (importedModuleEntry == null) {
-                        throw new InferenceException(stmt.getStatementSourceReference(),
-                            "Unable to find module compatible with requested import [%s(%s)].",
-                            impIdentifier.getName(), getRequestedImportVersionString(stmt));
-                    }
-
-                    final StmtContext<?, ?, ?> importedModule = importedModuleEntry.getValue();
+                    final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
+                    final SemVer importedVersion = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
                     final ModuleIdentifier importedModuleIdentifier = importedModule.getFromNamespace(
                         ModuleCtxToModuleIdentifier.class, importedModule);
                     final SemVerSourceIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
-                        importedModuleIdentifier, importedModuleEntry.getKey());
+                        importedModuleIdentifier, importedVersion);
 
                     linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class, importedModuleIdentifier,
                         importedModule);
@@ -266,8 +340,8 @@ public class ImportStatementDefinition extends
                 public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                     if (failed.contains(imported)) {
                         throw new InferenceException(stmt.getStatementSourceReference(),
-                                "Unable to find module compatible with requested import [%s(%s)].",
-                                impIdentifier.getName(), getRequestedImportVersionString(stmt));
+                                "Unable to find module compatible with requested import [%s(%s)].", moduleName,
+                                getRequestedImportVersionString(stmt));
                     }
                 }
             });
@@ -278,31 +352,7 @@ public class ImportStatementDefinition extends
         }
 
         private static String getRequestedImportVersionString(final StmtContext<?, ?, ?> stmt) {
-            return getRequestedImportVersion(stmt).map(SemVer::toString).orElse("<any");
-        }
-
-        private static Entry<SemVer, StmtContext<?, ?, ?>> findRecentCompatibleModuleEntry(final String moduleName,
-                final StmtContext<String, ImportStatement, EffectiveStatement<String, ImportStatement>> impStmt) {
-            NavigableMap<SemVer, StmtContext<?, ?, ?>> allRelevantModulesMap = impStmt.getFromNamespace(
-                    SemanticVersionModuleNamespace.class, moduleName);
-            if (allRelevantModulesMap == null) {
-                return null;
-            }
-
-            final Optional<SemVer> optImportVer = getRequestedImportVersion(impStmt);
-            if (optImportVer.isPresent()) {
-                final SemVer importVer = optImportVer.get();
-                allRelevantModulesMap = allRelevantModulesMap.subMap(importVer, true,
-                    SemVer.create(importVer.getMajor() + 1), false);
-            }
-
-            return allRelevantModulesMap.lastEntry();
-        }
-
-        private static ModuleIdentifier getImportedModuleIdentifier(
-                final StmtContext<String, ImportStatement, ?> impStmt) {
-            return ModuleIdentifierImpl.create(impStmt.getStatementArgument(), Optional.empty(),
-                    Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_IMP));
+            return getRequestedImportVersion(stmt).map(SemVer::toString).orElse("<any>");
         }
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(

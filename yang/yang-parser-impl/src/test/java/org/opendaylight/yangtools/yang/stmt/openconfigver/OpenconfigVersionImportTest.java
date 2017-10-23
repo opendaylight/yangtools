@@ -42,8 +42,8 @@ public class OpenconfigVersionImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of openconfig-version module");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import " + "[openconfig-extensions(1.0.0)]."));
+            assertTrue(e.getCause().getCause().getMessage().startsWith(
+                    "Unable to find module compatible with requested import [openconfig-extensions(1.0.0)]."));
         }
     }
 
@@ -54,8 +54,8 @@ public class OpenconfigVersionImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of openconfig-version module");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import " + "[openconfig-extensions(0.9.9)]."));
+            assertTrue(e.getCause().getCause().getMessage().startsWith(
+                    "Unable to find module compatible with requested import [openconfig-extensions(0.9.9)]."));
         }
     }
 
@@ -66,8 +66,8 @@ public class OpenconfigVersionImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of openconfig-version module");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import " + "[openconfig-extensions(2.0.0)]."));
+            assertTrue(e.getCause().getCause().getMessage().startsWith(
+                    "Unable to find module compatible with requested import [openconfig-extensions(2.0.0)]."));
         }
     }
 
@@ -78,8 +78,8 @@ public class OpenconfigVersionImportTest {
                     StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid import of openconfig-version module");
         } catch (ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
-                    "Unable to find module compatible with requested import " + "[openconfig-extensions(2.0.5)]."));
+            assertTrue(e.getCause().getCause().getMessage().startsWith(
+                    "Unable to find module compatible with requested import [openconfig-extensions(2.0.5)]."));
         }
     }
 }
