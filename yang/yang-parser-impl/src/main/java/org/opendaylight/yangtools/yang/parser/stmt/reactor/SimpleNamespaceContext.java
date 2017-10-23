@@ -16,11 +16,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
         extends NamespaceBehaviourWithListeners<K, V, N> {
-
     // FIXME: Change this to Multimap, once issue with modules is resolved.
-    private final List<KeyedValueAddedListener<K>> listeners = new ArrayList<>();
+    private List<KeyedValueAddedListener<K>> listeners;
 
-    private final Collection<PredicateValueAddedListener<K, V>> predicateListeners = new ArrayList<>();
+    private Collection<PredicateValueAddedListener<K, V>> predicateListeners;
 
     SimpleNamespaceContext(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate);
@@ -28,23 +27,40 @@ final class SimpleNamespaceContext<K, V, N extends IdentifierNamespace<K, V>>
 
     @Override
     void addListener(final KeyedValueAddedListener<K> listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
         listeners.add(listener);
     }
 
     @Override
     void addListener(final PredicateValueAddedListener<K, V> listener) {
+        if (predicateListeners == null) {
+            predicateListeners = new ArrayList<>();
+        }
         predicateListeners.add(listener);
     }
 
     @Override
     public void addTo(final NamespaceStorageNode storage, final K key, final V value) {
         delegate.addTo(storage, key, value);
-        notifyListeners(storage, listeners.iterator(), value);
 
-        final Iterator<PredicateValueAddedListener<K, V>> it = predicateListeners.iterator();
-        while (it.hasNext()) {
-            if (it.next().onValueAdded(key, value)) {
-                it.remove();
+        if (listeners != null) {
+            notifyListeners(storage, listeners.iterator(), value);
+            if (listeners.isEmpty()) {
+                listeners = null;
+            }
+        }
+
+        if (predicateListeners != null) {
+            final Iterator<PredicateValueAddedListener<K, V>> it = predicateListeners.iterator();
+            while (it.hasNext()) {
+                if (it.next().onValueAdded(key, value)) {
+                    it.remove();
+                }
+            }
+            if (predicateListeners.isEmpty()) {
+                predicateListeners = null;
             }
         }
 
