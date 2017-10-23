@@ -30,7 +30,6 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
         final NamespaceStorageNode getCtxNode() {
             return ctxNode;
         }
-
     }
 
     abstract static class KeyedValueAddedListener<K> extends ValueAddedListener<K> {
@@ -62,7 +61,8 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     }
 
     protected final NamespaceBehaviour<K, V, N> delegate;
-    private final List<VirtualNamespaceContext<?, V, ?, K>> derivedNamespaces = new ArrayList<>();
+
+    private List<VirtualNamespaceContext<?, V, ?, K>> derivedNamespaces;
 
     protected NamespaceBehaviourWithListeners(final NamespaceBehaviour<K, V, N> delegate) {
         super(delegate.getIdentifier());
@@ -92,12 +92,17 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     }
 
     protected void notifyDerivedNamespaces(final NamespaceStorageNode storage, final K key, final V value) {
-        for (VirtualNamespaceContext<?, V, ?, K> derived : derivedNamespaces) {
-            derived.addedToSourceNamespace(storage, key, value);
+        if (derivedNamespaces != null) {
+            for (VirtualNamespaceContext<?, V, ?, K> derived : derivedNamespaces) {
+                derived.addedToSourceNamespace(storage, key, value);
+            }
         }
     }
 
     final void addDerivedNamespace(final VirtualNamespaceContext<?, V, ?, K> namespace) {
+        if (derivedNamespaces == null) {
+            derivedNamespaces = new ArrayList<>();
+        }
         derivedNamespaces.add(namespace);
     }
 
