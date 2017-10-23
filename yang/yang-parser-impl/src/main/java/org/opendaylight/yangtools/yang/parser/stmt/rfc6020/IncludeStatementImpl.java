@@ -91,8 +91,8 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                     NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
             } else {
                 requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
-                    ModuleIdentifierImpl.create(submoduleName, Optional.empty(),
-                        Optional.of(revision.getStatementArgument())), SOURCE_LINKAGE);
+                    ModuleIdentifierImpl.create(submoduleName, Optional.of(revision.getStatementArgument())),
+                    SOURCE_LINKAGE);
             }
 
             includeAction.apply(new InferenceAction() {

@@ -156,7 +156,7 @@ public class ImportStatementDefinition extends
                     NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
             } else {
                 imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                    ModuleIdentifierImpl.create(moduleName, Optional.empty(), Optional.of(revision)), SOURCE_LINKAGE);
+                    ModuleIdentifierImpl.create(moduleName, Optional.of(revision)), SOURCE_LINKAGE);
             }
 
             final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
@@ -327,8 +327,9 @@ public class ImportStatementDefinition extends
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(
                 final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
-            final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(
-                    importedModuleIdentifier.getRevision());
+            final String formattedRevision = importedModuleIdentifier.getRevision().map(
+                date -> SimpleDateFormatUtil.getRevisionFormat().format(date))
+                    .orElse(null);
             return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(), formattedRevision, semVer);
         }
     }

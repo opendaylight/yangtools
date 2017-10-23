@@ -124,8 +124,7 @@ public class ModuleStatementSupport extends
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                Optional.empty(), revisionDate));
+        stmt.setRootIdentifier(ModuleIdentifierImpl.create(stmt.getStatementArgument(), revisionDate));
     }
 
     @Override
@@ -152,7 +151,7 @@ public class ModuleStatementSupport extends
         }
 
         final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                Optional.empty(), revisionDate);
+                revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
         stmt.addContext(ModuleNamespaceForBelongsTo.class, moduleIdentifier.getName(), stmt);
