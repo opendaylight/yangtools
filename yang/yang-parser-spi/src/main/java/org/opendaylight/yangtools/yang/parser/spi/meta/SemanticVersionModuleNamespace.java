@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
-import java.util.NavigableMap;
-import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 
 /**
  * Namespace class for storing Maps of all modules with the same name. This namespace is
@@ -18,6 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 @Beta
 public interface SemanticVersionModuleNamespace
-    extends IdentifierNamespace<String, NavigableMap<SemVer, StmtContext<?, ?, ?>>> {
+    extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
 
 }
