@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Peter Kajsa <pkajsa@cisco.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Mon, 23 Oct 2017 08:18:14 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/64518
+Project: yangtools
+Branch: refs/heads/stable/carbon
