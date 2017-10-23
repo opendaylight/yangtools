@@ -47,7 +47,7 @@ public class IfFeatureResolutionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(9, testModule.getChildNodes().size());
@@ -153,7 +153,7 @@ public class IfFeatureResolutionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(11, testModule.getChildNodes().size());
@@ -281,7 +281,7 @@ public class IfFeatureResolutionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("foo", null);
+        final Module testModule = schemaContext.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
         assertEquals(6, testModule.getChildNodes().size());

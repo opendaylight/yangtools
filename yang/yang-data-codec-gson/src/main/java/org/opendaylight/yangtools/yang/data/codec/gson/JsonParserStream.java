@@ -27,6 +27,7 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
@@ -304,8 +305,8 @@ public final class JsonParserStream implements Closeable, Flushable {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final Module m = schema.findModuleByName(moduleNamePart, null);
-            namespace = m == null ? null : m.getNamespace();
+            final Iterator<Module> m = schema.findModules(moduleNamePart).iterator();
+            namespace = m.hasNext() ? m.next().getNamespace() : null;
         } else {
             nodeNamePart = childName;
         }
@@ -334,7 +335,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         for (final URI potentialUri : potentialUris) {
             builder.append('\n');
             //FIXME how to get information about revision from JSON input? currently first available is used.
-            builder.append(schema.findModuleByNamespace(potentialUri).iterator().next().getName());
+            builder.append(schema.findModules(potentialUri).iterator().next().getName());
         }
         return builder.toString();
     }

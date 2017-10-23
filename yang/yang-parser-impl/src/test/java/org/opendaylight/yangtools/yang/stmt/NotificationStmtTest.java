@@ -38,7 +38,7 @@ public class NotificationStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("baz", null);
+        final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
 
         final Set<NotificationDefinition> notifications = testModule.getNotifications();

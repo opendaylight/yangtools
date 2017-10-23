@@ -30,8 +30,8 @@ public class OpenconfigVersionDefaultsTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module bar = context.findModules(new URI("bar")).iterator().next();
 
         assertEquals(Optional.empty(), foo.getSemanticVersion());
         assertEquals(Optional.empty(), bar.getSemanticVersion());
@@ -43,8 +43,8 @@ public class OpenconfigVersionDefaultsTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module bar = context.findModules(new URI("bar")).iterator().next();
 
         assertEquals(Optional.empty(), foo.getSemanticVersion());
         assertEquals(SemVer.valueOf("0.99.99"), bar.getSemanticVersion().get());

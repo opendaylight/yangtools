@@ -34,10 +34,9 @@ public class OpenconfigVersionTest {
             StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module bar = context.findModules(new URI("bar")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -50,10 +49,9 @@ public class OpenconfigVersionTest {
             StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module bar = context.findModuleByNamespace(new URI("bar")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module bar = context.findModules(new URI("bar")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -66,9 +64,8 @@ public class OpenconfigVersionTest {
             StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -80,9 +77,8 @@ public class OpenconfigVersionTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -96,9 +92,8 @@ public class OpenconfigVersionTest {
                 StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("0.1.1"), foo.getSemanticVersion().get());
@@ -109,7 +104,8 @@ public class OpenconfigVersionTest {
     @Test
     public void basicImportErrTest1() throws Exception {
         try {
-            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1", StatementParserMode.SEMVER_MODE);
+            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-1",
+                StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
             assertTrue(e.getCause().getCause().getMessage()
@@ -134,9 +130,8 @@ public class OpenconfigVersionTest {
             StatementParserMode.SEMVER_MODE);
         assertNotNull(context);
 
-        Module foo = context.findModuleByNamespace(new URI("foo")).iterator().next();
-        Module semVer = context.findModuleByNamespace(new URI("http://openconfig.net/yang/openconfig-ext"))
-                .iterator().next();
+        Module foo = context.findModules(new URI("foo")).iterator().next();
+        Module semVer = context.findModules(new URI("http://openconfig.net/yang/openconfig-ext")).iterator().next();
 
         assertEquals(SemVer.valueOf("0.0.1"), semVer.getSemanticVersion().get());
         assertEquals(SemVer.valueOf("2016.1.1"), foo.getSemanticVersion().get());

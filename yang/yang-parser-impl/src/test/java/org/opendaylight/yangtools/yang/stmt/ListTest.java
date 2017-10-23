@@ -39,10 +39,11 @@ public class ListTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("list-test", null);
+        final Module testModule = result.findModules("list-test").iterator().next();
         assertNotNull(testModule);
 
-        final ListSchemaNode list = (ListSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "simple-list"));
+        final ListSchemaNode list = (ListSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "simple-list"));
         assertNotNull(list);
 
         assertTrue(list.isUserOrdered());
@@ -58,7 +59,8 @@ public class ListTest {
 
         assertEquals(5, list.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "key1"));
+        LeafSchemaNode leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
+            "key1"));
         assertNotNull(leaf);
         assertTrue(leaf.getConstraints().isMandatory());
         assertEquals("int32", leaf.getType().getQName().getLocalName());
@@ -79,7 +81,8 @@ public class ListTest {
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
         assertEquals("default-value", leaf.getDefault());
 
-        final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "list-of-leaves"));
+        final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "list-of-leaves"));
         assertNotNull(leafList);
         assertTrue(leafList.getConstraints().isMandatory());
         assertTrue(leafList.isUserOrdered());

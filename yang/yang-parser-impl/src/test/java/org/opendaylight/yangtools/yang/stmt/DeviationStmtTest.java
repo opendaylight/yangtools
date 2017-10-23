@@ -15,7 +15,6 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
@@ -46,11 +45,7 @@ public class DeviationStmtTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Date revision = QName.parseRevision("2016-06-23");
-
-        Module testModule = schemaContext.findModuleByName("foo", revision);
-        assertNotNull(testModule);
-
+        Module testModule = schemaContext.findModule("foo", QName.parseRevision("2016-06-23")).get();
         Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(4, deviations.size());
 
@@ -87,8 +82,7 @@ public class DeviationStmtTest {
             }
         }
 
-        revision = QName.parseRevision("2016-09-22");
-        testModule = schemaContext.findModuleByName("bar", revision);
+        testModule = schemaContext.findModule("bar", QName.parseRevision("2016-09-22")).get();
         assertNotNull(testModule);
 
         deviations = testModule.getDeviations();

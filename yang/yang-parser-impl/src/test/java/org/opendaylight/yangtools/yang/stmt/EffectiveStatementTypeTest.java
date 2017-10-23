@@ -64,7 +64,7 @@ public class EffectiveStatementTypeTest {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSource(IMPORTED_MODULE);
         effectiveSchemaContext = reactor.buildEffective();
-        types = effectiveSchemaContext.findModuleByName("types", null);
+        types = effectiveSchemaContext.findModules("types").iterator().next();
         assertNotNull(types);
     }
 

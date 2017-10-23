@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -44,9 +45,9 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             }
 
             final String prefixedNS = ctx.getNamespaceURI(prefix);
-            final Module module = schemaContext.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
-            checkArgument(module != null, "Could not find module for namespace %s", prefixedNS);
-            return module.getQNameModule();
+            final Iterator<Module> modules = schemaContext.findModules(URI.create(prefixedNS)).iterator();
+            checkArgument(modules.hasNext(), "Could not find module for namespace %s", prefixedNS);
+            return modules.next().getQNameModule();
         });
     }
 

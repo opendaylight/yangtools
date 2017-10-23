@@ -13,7 +13,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -29,11 +28,7 @@ public class Bug9244Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9244/");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2017-10-13");
-
-        final Module barModule = schemaContext.findModuleByName("bar", revision);
-        assertNotNull(barModule);
-
+        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-10-13")).get();
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-cont"));
         assertNotNull(barCont);

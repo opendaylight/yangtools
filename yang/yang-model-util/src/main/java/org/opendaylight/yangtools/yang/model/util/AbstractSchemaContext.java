@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
@@ -99,19 +101,20 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return extensions;
     }
 
+
     @Override
-    public Module findModuleByName(final String name, final Date revision) {
+    public Optional<Module> findModule(final String name, final Date revision) {
         for (final Module module : getNameToModules().get(name)) {
-            if (revision == null || revision.equals(module.getRevision())) {
-                return module;
+            if (Objects.equals(revision, module.getRevision())) {
+                return Optional.of(module);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public Set<Module> findModuleByNamespace(final URI namespace) {
+    public Set<Module> findModules(final URI namespace) {
         final Set<Module> ret = getNamespaceToModules().get(namespace);
         return ret == null ? Collections.emptySet() : ret;
     }

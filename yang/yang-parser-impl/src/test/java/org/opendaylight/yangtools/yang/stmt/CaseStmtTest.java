@@ -46,8 +46,8 @@ public class CaseStmtTest {
         String date_s = "2015-09-09 00:00:00.0";
         SimpleDateFormat dt = SimpleDateFormatUtil.getRevisionFormat();
         Date date = dt.parse(date_s);
-        rootFoo = schema.findModuleByName("foo", date);
-        rootBar = schema.findModuleByName("bar", date);
+        rootFoo = schema.findModule("foo", date).get();
+        rootBar = schema.findModule("bar", date).get();
         assertNotNull(rootFoo);
         assertNotNull(rootBar);
         qnameFoo = QNameModule.create(URI.create("foo"), date);

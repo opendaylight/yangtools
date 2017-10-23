@@ -41,8 +41,7 @@ public class Bug6491Test {
             throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);
-        final Module module = context.findModuleByName("bar", moduleRevision);
-        assertNotNull(module);
+        final Module module = context.findModule("bar", moduleRevision).get();
         final Set<ModuleImport> imports = module.getImports();
         assertNotNull(imports);
         assertEquals(1, imports.size());

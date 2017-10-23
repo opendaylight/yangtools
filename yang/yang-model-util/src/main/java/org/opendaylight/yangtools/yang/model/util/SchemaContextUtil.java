@@ -22,7 +22,6 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -222,20 +221,20 @@ public final class SchemaContextUtil {
         final QName qname = schemaNode.getPath().getLastComponent();
         Preconditions.checkState(qname != null, "Schema Path contains invalid state of path parts. "
                 + "The Schema Path MUST contain at least ONE QName  which defines namespace and Local name of path.");
-        return context.findModuleByNamespaceAndRevision(qname.getNamespace(), qname.getRevision());
+        return context.findModule(qname.getModule()).orElse(null);
     }
 
     public static SchemaNode findNodeInSchemaContext(final SchemaContext context, final Iterable<QName> path) {
         final QName current = path.iterator().next();
 
         LOG.trace("Looking up module {} in context {}", current, path);
-        final Module module = context.findModuleByNamespaceAndRevision(current.getNamespace(), current.getRevision());
-        if (module == null) {
+        final Optional<Module> module = context.findModule(current.getModule());
+        if (!module.isPresent()) {
             LOG.debug("Module {} not found", current);
             return null;
         }
 
-        return findNodeInModule(module, path);
+        return findNodeInModule(module.get(), path);
     }
 
     /**
@@ -597,7 +596,7 @@ public final class SchemaContextUtil {
         final Set<ModuleImport> imports = module.getImports();
         for (final ModuleImport mi : imports) {
             if (prefix.equals(mi.getPrefix())) {
-                return context.findModuleByName(mi.getModuleName(), mi.getRevision());
+                return context.findModule(mi.getModuleName(), mi.getRevision()).orElse(null);
             }
         }
         return null;
@@ -724,10 +723,11 @@ public final class SchemaContextUtil {
             return null;
         }
 
-        final Module parentModule = schemaContext.findModuleByNamespaceAndRevision(qname.getNamespace(),
-                qname.getRevision());
+        final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
+        Preconditions.checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
+
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
-            parentModule, strippedPathStatement);
+            parentModule.get(), strippedPathStatement);
         final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
@@ -747,9 +747,7 @@ public final class SchemaContextUtil {
                 nodeType = nodeType.getBaseType();
             }
 
-            final QNameModule typeDefModuleQname = nodeType.getQName().getModule();
-            return schemaContext.findModuleByNamespaceAndRevision(typeDefModuleQname.getNamespace(),
-                    typeDefModuleQname.getRevision());
+            return schemaContext.findModule(nodeType.getQName().getModule()).orElse(null);
         }
 
         return SchemaContextUtil.findParentModule(schemaContext, schemaNode);

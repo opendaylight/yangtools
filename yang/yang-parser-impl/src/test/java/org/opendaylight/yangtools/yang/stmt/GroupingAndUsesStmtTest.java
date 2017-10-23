@@ -53,7 +53,7 @@ public class GroupingAndUsesStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("baz", null);
+        final Module testModule = result.findModules("baz").iterator().next();
         assertNotNull(testModule);
 
         final Set<GroupingDefinition> groupings = testModule.getGroupings();
@@ -95,7 +95,7 @@ public class GroupingAndUsesStmtTest {
         final SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final Module testModule = result.findModuleByName("foo", null);
+        final Module testModule = result.findModules("foo").iterator().next();
         assertNotNull(testModule);
 
         final Set<UsesNode> usesNodes = testModule.getUses();

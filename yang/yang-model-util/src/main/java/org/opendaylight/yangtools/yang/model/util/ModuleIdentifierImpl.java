@@ -34,14 +34,18 @@ public final class ModuleIdentifierImpl implements ModuleIdentifier {
         this.qnameModule = QNameModule.create(namespace.orElse(null), revision.orElse(null));
     }
 
+    public static ModuleIdentifier create(final String name, final Optional<Date> revision) {
+        return new ModuleIdentifierImpl(name, Optional.empty(), revision);
+    }
+
     public static ModuleIdentifier create(final String name, final Optional<URI> namespace,
             final Optional<Date> revision) {
         return new ModuleIdentifierImpl(name, namespace, revision);
     }
 
     @Override
-    public Date getRevision() {
-        return qnameModule.getRevision();
+    public Optional<Date> getRevision() {
+        return Optional.ofNullable(qnameModule.getRevision());
     }
 
     @Override

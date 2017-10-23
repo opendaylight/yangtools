@@ -76,7 +76,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
     public void testSerializationOfBaz() throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/anyxml-support/serialization/baz.xml");
-        final Module bazModule = schemaContext.findModuleByName("baz", null);
+        final Module bazModule = schemaContext.findModules("baz").iterator().next();
         final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
                 QName.create(bazModule.getQNameModule(), "baz"));
         assertNotNull(bazCont);

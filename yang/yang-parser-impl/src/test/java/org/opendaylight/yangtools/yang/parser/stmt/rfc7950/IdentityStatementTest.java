@@ -29,9 +29,7 @@ public class IdentityStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/identity-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module foo = schemaContext.findModuleByName("foo", QName.parseRevision("2016-12-21"));
-        assertNotNull(foo);
-
+        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2016-12-21")).get();
         final Set<IdentitySchemaNode> identities = foo.getIdentities();
         for (final IdentitySchemaNode identity : identities) {
             if ("derived-id".equals(identity.getQName().getLocalName())) {
