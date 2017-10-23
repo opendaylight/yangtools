@@ -11,9 +11,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 
 import java.net.URI;
 import java.util.Date;
-import java.util.NavigableMap;
 import java.util.Optional;
-import java.util.TreeMap;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
@@ -23,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
@@ -171,29 +170,17 @@ public class ModuleStatementSupport extends
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
         if (stmt.isEnabledSemanticVersioning()) {
-            addToSemVerModuleNamespace(stmt);
+            addToSemVerModuleNamespace(stmt, moduleIdentifier);
         }
-    }
-
-    private static int compareNullableSemVer(final SemVer ver1, final SemVer ver2) {
-        if (ver1 == null) {
-            return ver2 == null ? 0 : -1;
-        }
-
-        return ver2 == null ? 1 : ver1.compareTo(ver2);
     }
 
     private static void addToSemVerModuleNamespace(
-            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt) {
+            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt,
+            final ModuleIdentifier moduleIdentifier) {
         final String moduleName = stmt.getStatementArgument();
-        NavigableMap<SemVer, StmtContext<?, ?, ?>> modulesMap = stmt.getFromNamespace(
-                SemanticVersionModuleNamespace.class, moduleName);
-        if (modulesMap == null) {
-            modulesMap = new TreeMap<>(ModuleStatementSupport::compareNullableSemVer);
-        }
         final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
-        modulesMap.put(moduleSemVer, stmt);
-        stmt.addToNs(SemanticVersionModuleNamespace.class, moduleName, modulesMap);
+        final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(moduleName, moduleSemVer);
+        stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);
     }
 
     @Override
