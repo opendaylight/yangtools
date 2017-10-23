@@ -12,10 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -89,40 +86,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(final Class<N> type, final K key) {
         final Map<K, V> localNamespace = (Map<K, V>) namespaces.get(type);
-
-        V potential = null;
-        if (localNamespace != null) {
-            potential = localNamespace.get(key);
-        }
-
-        if (potential == null && isModuleIdentifierWithoutSpecifiedRevision(key)) {
-            potential = getRegardlessOfRevision((ModuleIdentifier)key, (Map<ModuleIdentifier,V>)localNamespace);
-        }
-
-        return potential;
-    }
-
-    private static boolean isModuleIdentifierWithoutSpecifiedRevision(final Object obj) {
-        return obj instanceof ModuleIdentifier
-                && ((ModuleIdentifier) obj).getRevision() == SimpleDateFormatUtil.DEFAULT_DATE_IMP;
-    }
-
-    private static <K, V, N extends IdentifierNamespace<K, V>> V getRegardlessOfRevision(final ModuleIdentifier key,
-            final Map<ModuleIdentifier, V> localNamespace) {
-
-        if (localNamespace == null) {
-            return null;
-        }
-
-        final Set<Entry<ModuleIdentifier, V>> entrySet = localNamespace.entrySet();
-        for (final Entry<ModuleIdentifier, V> entry : entrySet) {
-            final ModuleIdentifier moduleIdentifierInMap = entry.getKey();
-            if (moduleIdentifierInMap.getName().equals(key.getName())) {
-                return entry.getValue();
-            }
-        }
-
-        return null;
+        return localNamespace == null ? null : localNamespace.get(key);
     }
 
     @Override
