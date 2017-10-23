@@ -16,6 +16,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 public class IncorrectDataStructureException extends DataValidationFailedException {
     private static final long serialVersionUID = 1L;
 
+    public IncorrectDataStructureException(final String messagePattern, final YangInstanceIdentifier path,
+            final Throwable cause) {
+        super(messagePattern, path, cause);
+    }
+
+    public IncorrectDataStructureException(final String messagePattern, final YangInstanceIdentifier path) {
+        super(messagePattern, path);
+    }
+
     public IncorrectDataStructureException(final YangInstanceIdentifier path, final String message,
             final Throwable cause) {
         super(path, message, cause);
