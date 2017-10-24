@@ -8,9 +8,7 @@
 
 package org.opendaylight.yangtools.yang.common;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public final class SimpleDateFormatUtil {
 
@@ -18,26 +16,6 @@ public final class SimpleDateFormatUtil {
      * revision format according to Yang spec.
      */
     private static final String REVISION_SIMPLE_DATE = "yyyy-MM-dd";
-
-    /**
-     * default Yang date that is used when date is not present.
-     */
-    private static final String DEFAULT_DATE = "1970-01-01";
-
-    /**
-     * {@link SimpleDateFormatUtil#DEFAULT_DATE} for revision statement.
-     */
-    public static final Date DEFAULT_DATE_REV;
-
-    static {
-        final SimpleDateFormat simpleDateFormat = new SimpleDateFormat(REVISION_SIMPLE_DATE);
-
-        try {
-            DEFAULT_DATE_REV = simpleDateFormat.parse(DEFAULT_DATE);
-        } catch (final ParseException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
 
     private SimpleDateFormatUtil() {
         throw new UnsupportedOperationException("Utility class should not be instantiated");

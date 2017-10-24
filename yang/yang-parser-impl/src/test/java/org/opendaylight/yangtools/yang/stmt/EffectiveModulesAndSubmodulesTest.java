@@ -20,7 +20,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -113,10 +112,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertNotNull(sub1);
         assertNotNull(sub2);
 
-        assertEquals(QNameModule.create(new URI("root-module"),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV), sub1.getQNameModule());
-        assertEquals(QNameModule.create(new URI("root-module"),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV), sub2.getQNameModule());
+        assertEquals(QNameModule.create(new URI("root-module"), null), sub1.getQNameModule());
+        assertEquals(QNameModule.create(new URI("root-module"), null), sub2.getQNameModule());
 
         final Collection<DataSchemaNode> sub1ChildNodes = sub1.getChildNodes();
         final Collection<DataSchemaNode> sub2ChildNodes = sub2.getChildNodes();
@@ -148,9 +145,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertNotNull(sub1Submodule);
 
-        assertEquals(QNameModule.create(new URI("root-module"),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV),
-                sub1Submodule.getQNameModule());
+        assertEquals(QNameModule.create(new URI("root-module"), null), sub1Submodule.getQNameModule());
 
         final Collection<DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
         assertNotNull(sub1SubmoduleChildNodes);
@@ -174,10 +169,9 @@ public class EffectiveModulesAndSubmodulesTest {
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported)
             throws URISyntaxException {
-        final Module foundRoot = result.findModule("root-module", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Module foundRoot = result.findModule("root-module", null).get();
         final Set<Module> foundRoots = result.findModules(new URI("root-module"));
-        final Module foundRoot3 = result.findModule(new URI("root-module"), SimpleDateFormatUtil.DEFAULT_DATE_REV)
-                .get();
+        final Module foundRoot3 = result.findModule(new URI("root-module"), null).get();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -191,10 +185,9 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final Module foundImported = result.findModule("imported-module", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Module foundImported = result.findModule("imported-module", null).get();
         final Set<Module> foundImporteds = result.findModules(new URI("imported-module"));
-        final Module foundImported3 = result.findModule(new URI("imported-module"),
-            SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Module foundImported3 = result.findModule(new URI("imported-module"), null).get();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);

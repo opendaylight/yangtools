@@ -4,7 +4,7 @@ submodule submodule-1 {
         prefix root;
     }
     
-    include submodule-to-submodule-1 { revision-date 1970-01-01; }
+    include submodule-to-submodule-1;
     
     container container-in-submodule-1 {
     }

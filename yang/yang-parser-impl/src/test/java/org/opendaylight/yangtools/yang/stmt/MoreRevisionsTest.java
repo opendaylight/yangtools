@@ -20,7 +20,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -251,11 +250,10 @@ public class MoreRevisionsTest {
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
             final Date rev20130715, final QName dateTimeTypeDef_20130715) {
         URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
-        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS, SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS, null);
         QName lockedTime = QName.create(monitoring_19700101, "locked-time");
 
-        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring",
-            SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring", null).get();
         DataSchemaNode leafLockedTime = monitoringModule_19700101.getDataChildByName(lockedTime);
         assertNotNull(leafLockedTime);
 

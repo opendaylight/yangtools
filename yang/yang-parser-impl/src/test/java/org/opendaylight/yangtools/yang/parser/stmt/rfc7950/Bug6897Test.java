@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6897Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void notificationsInDataContainersTest() throws Exception {
@@ -54,8 +53,8 @@ public class Bug6897Test {
 
     private static void assertContainsNotifications(final SchemaContext schemaContext, final String dataContainerName,
             final String... notificationNames) {
-        final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(QName.create(FOO_NS, FOO_REV,
-                dataContainerName));
+        final DataSchemaNode dataChildByName = schemaContext.getDataChildByName(
+            QName.create(FOO_NS, dataContainerName));
         assertTrue(dataChildByName instanceof NotificationNodeContainer);
         assertContainsNotifications((NotificationNodeContainer) dataChildByName, notificationNames);
     }
@@ -69,7 +68,7 @@ public class Bug6897Test {
         notifications.forEach(n -> notificationQNames.add(n.getQName()));
 
         for (final String notificationName : notificationNames) {
-            assertTrue(notificationQNames.contains(QName.create(FOO_NS, FOO_REV, notificationName)));
+            assertTrue(notificationQNames.contains(QName.create(FOO_NS, notificationName)));
         }
     }
 
@@ -90,8 +89,7 @@ public class Bug6897Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                "Notification (foo?revision=1970-01-01)grp-notification is defined within an rpc, action, or another "
-                        + "notification"));
+                "Notification (foo)grp-notification is defined within an rpc, action, or another notification"));
         }
     }
 

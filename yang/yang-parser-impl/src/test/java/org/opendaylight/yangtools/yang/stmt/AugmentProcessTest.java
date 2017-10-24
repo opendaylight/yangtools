@@ -19,7 +19,6 @@ import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -40,10 +39,8 @@ public class AugmentProcessTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
-    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(
-            URI.create("root"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
-    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule
-            .create(URI.create("aug"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
+    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"), null);
+    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"), null);
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
             "aug-parent1");

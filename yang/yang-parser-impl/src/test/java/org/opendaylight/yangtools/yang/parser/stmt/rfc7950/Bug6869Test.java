@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6869Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void identityNoFeaureTest() throws Exception {
@@ -75,7 +74,7 @@ public class Bug6869Test {
     private static Set<QName> createFeaturesSet(final String... featureNames) {
         final Set<QName> supportedFeatures = new HashSet<>();
         for (final String featureName : featureNames) {
-            supportedFeatures.add(QName.create(FOO_NS, FOO_REV, featureName));
+            supportedFeatures.add(QName.create(FOO_NS, featureName));
         }
 
         return ImmutableSet.copyOf(supportedFeatures);
@@ -83,7 +82,7 @@ public class Bug6869Test {
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
-            localName -> QName.create(FOO_NS, FOO_REV, localName));
+            localName -> QName.create(FOO_NS, localName));
         return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
     }
 

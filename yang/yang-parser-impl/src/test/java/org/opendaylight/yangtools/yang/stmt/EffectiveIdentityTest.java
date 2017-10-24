@@ -18,7 +18,6 @@ import com.google.common.collect.Iterables;
 import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -56,14 +55,13 @@ public class EffectiveIdentityTest {
     public void identityTest() throws SourceException, ReactorException,
             URISyntaxException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(IDENTITY_TEST);
         SchemaContext result = reactor.buildEffective();
 
         assertNotNull(result);
 
-        Module module = result.findModule("identity-test", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        Module module = result.findModule("identity-test", null).get();
         Set<IdentitySchemaNode> identities = module.getIdentities();
 
         assertNotNull(identities);

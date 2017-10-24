@@ -33,7 +33,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
     @Test
     public void testSharedSchemaRepositoryWithSomeFeaturesSupported() throws Exception {
-        final Set<QName> supportedFeatures = ImmutableSet.of(QName.create("foobar-namespace", "1970-01-01", "test-feature-1"));
+        final Set<QName> supportedFeatures = ImmutableSet.of(QName.create("foobar-namespace", "test-feature-1"));
 
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");

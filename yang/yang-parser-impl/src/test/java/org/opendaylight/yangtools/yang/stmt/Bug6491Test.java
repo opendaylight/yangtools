@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.DEFAULT_DATE_REV;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import java.text.ParseException;
@@ -31,10 +30,10 @@ public class Bug6491Test {
 
     @Test
     public void tetststs() throws Exception {
-        testRevision("withoutRevision", DEFAULT_DATE_REV, DEFAULT_DATE_REV);
+        testRevision("withoutRevision", null, null);
         testRevision("withRevision", date, date);
-        testRevision("importedModuleRevisionOnly", DEFAULT_DATE_REV, date);
-        testRevision("moduleRevisionOnly", date, DEFAULT_DATE_REV);
+        testRevision("importedModuleRevisionOnly", null, date);
+        testRevision("moduleRevisionOnly", date, null);
     }
 
     private static void testRevision(final String path, final Date moduleRevision, final Date importedRevision)

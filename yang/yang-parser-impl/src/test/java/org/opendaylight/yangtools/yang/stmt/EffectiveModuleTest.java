@@ -19,7 +19,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -50,8 +49,7 @@ public class EffectiveModuleTest {
     private static final StatementStreamSource SUBMODULE = sourceForResource(
             "/semantic-statement-parser/effective-module/submod.yang");
 
-    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"),
-            SimpleDateFormatUtil.DEFAULT_DATE_REV);
+    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"), null);
 
     private static final QName cont = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName feature1 = QName.create(ROOT_MODULE_QNAME, "feature1");

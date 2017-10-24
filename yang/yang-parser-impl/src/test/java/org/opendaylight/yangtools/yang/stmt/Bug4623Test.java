@@ -8,8 +8,6 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.DEFAULT_DATE_REV;
-
 import com.google.common.collect.Range;
 import java.io.File;
 import java.net.URI;
@@ -38,7 +36,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-            QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-length-pattern-unknown"));
+            QName.create(URI.create("urn:custom.types.demo"), null, "leaf-length-pattern-unknown"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -80,7 +78,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-length-unknown-pattern"));
+                QName.create(URI.create("urn:custom.types.demo"), null, "leaf-length-unknown-pattern"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -122,7 +120,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), DEFAULT_DATE_REV, "leaf-unknown-length-pattern"));
+                QName.create(URI.create("urn:custom.types.demo"), null, "leaf-unknown-length-pattern"));
 
         // then
         Assert.assertNotNull(leaf);

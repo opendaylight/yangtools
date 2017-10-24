@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6868Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
     private static final String IMP_NS = "imp";
     private static final String IMP_REV = "2017-01-09";
     private static final Set<String> ALL_CONTAINERS = ImmutableSet.of("my-container-1", "my-container-2",
@@ -76,7 +75,7 @@ public class Bug6868Test {
         final Set<QName> supportedFeatures = new HashSet<>();
         for (final String featureName : featureNames) {
             if (featureName.indexOf(':') == -1) {
-                supportedFeatures.add(QName.create(FOO_NS, FOO_REV, featureName));
+                supportedFeatures.add(QName.create(FOO_NS, featureName));
             } else {
                 supportedFeatures
                         .add(QName.create(IMP_NS, IMP_REV, featureName.substring(featureName.indexOf(':') + 1)));
@@ -88,7 +87,7 @@ public class Bug6868Test {
 
     private static SchemaNode findNode(final SchemaContext context, final String localName) {
         return SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, QName.create(FOO_NS, FOO_REV, localName)));
+                SchemaPath.create(true, QName.create(FOO_NS, localName)));
     }
 
     @Test

@@ -15,7 +15,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Date;
-import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -500,16 +499,7 @@ public final class StmtContextUtils {
 
         qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
             "Cannot resolve QNameModule for '%s'", value);
-
-        final QNameModule resultQNameModule;
-        if (qnameModule.getRevision() == null) {
-            resultQNameModule = QNameModule.create(qnameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV)
-                .intern();
-        } else {
-            resultQNameModule = qnameModule;
-        }
-
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(resultQNameModule, localName));
+        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName));
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
@@ -531,11 +521,7 @@ public final class StmtContextUtils {
         }
 
         checkArgument(qnameModule != null, "Failed to look up root QNameModule for %s", ctx);
-        if (qnameModule.getRevision() != null) {
-            return qnameModule;
-        }
-
-        return QNameModule.create(qnameModule.getNamespace(), SimpleDateFormatUtil.DEFAULT_DATE_REV).intern();
+        return qnameModule;
     }
 
     public static QNameModule getModuleQNameByPrefix(final StmtContext<?, ?, ?> ctx, final String prefix) {
@@ -558,15 +544,19 @@ public final class StmtContextUtils {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
+            if (qNameModule.getFormattedRevision() == null) {
+                return RevisionSourceIdentifier.create((String) root.getStatementArgument());
+            }
+
             return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
                 qNameModule.getFormattedRevision());
         }
 
         // creates SourceIdentifier for a submodule
-        final Date revision = Optional.ofNullable(getLatestRevision(root.declaredSubstatements()))
-                .orElse(SimpleDateFormatUtil.DEFAULT_DATE_REV);
-        final String formattedRevision = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-        return RevisionSourceIdentifier.create((String) root.getStatementArgument(), formattedRevision);
+        final Date revision = getLatestRevision(root.declaredSubstatements());
+        return revision == null ? RevisionSourceIdentifier.create((String) root.getStatementArgument())
+                : RevisionSourceIdentifier.create((String) root.getStatementArgument(),
+                    SimpleDateFormatUtil.getRevisionFormat().format(revision));
     }
 
     public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
