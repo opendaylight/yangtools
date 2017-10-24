@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.io.File;
 import java.net.URI;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -48,11 +46,9 @@ public class Bug4295Test {
     private QNameModule foo;
 
     @Before
-    public void init() throws Exception {
-        final File resourceFile = new File(Bug4295Test.class.getResource("/bug-4295/foo.yang")
-                .toURI());
-        context = YangParserTestUtils.parseYangFiles(resourceFile);
-        foo = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01"));
+    public void init() {
+        context = YangParserTestUtils.parseYangResource("/bug-4295/foo.yang");
+        foo = QNameModule.create(URI.create("foo"), null);
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
         outerList = QName.create(foo, "outer-list");

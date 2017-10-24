@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug5410Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void testJavaRegexFromXSD() {
@@ -226,7 +225,7 @@ public class Bug5410Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, FOO_REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     @SuppressWarnings("checkstyle:regexpSinglelineJava")

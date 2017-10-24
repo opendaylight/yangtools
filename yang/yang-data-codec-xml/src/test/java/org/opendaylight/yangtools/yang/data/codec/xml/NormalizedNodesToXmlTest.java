@@ -87,7 +87,7 @@ public class NormalizedNodesToXmlTest {
 
     @Before
     public void setup() {
-        bazModule = QNameModule.create(URI.create("baz-namespace"), QName.parseRevision("1970-01-01"));
+        bazModule = QNameModule.create(URI.create("baz-namespace"), null);
 
         outerContainer = QName.create(bazModule, "outer-container");
 

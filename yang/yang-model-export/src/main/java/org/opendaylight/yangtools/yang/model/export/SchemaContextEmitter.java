@@ -1350,15 +1350,15 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitRevision(final Date date) {
-            super.writer.startRevisionNode(date);
+            if (date != null) {
+                super.writer.startRevisionNode(date);
 
-            //
-            // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: descriptionNode
-            // //FIXME: BUG-2444: Optional
-            // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: referenceNode
-            // //FIXME: BUG-2444: Optional
-            super.writer.endNode();
-
+                // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: descriptionNode
+                // //FIXME: BUG-2444: Optional
+                // FIXME: BUG-2444: FIXME: BUG-2444: BUG-2417: referenceNode
+                // //FIXME: BUG-2444: Optional
+                super.writer.endNode();
+            }
         }
 
         private void emitRevisionDateNode(@Nullable final Date date) {

@@ -6,7 +6,6 @@ module include {
     import deviation-target { prefix dev-tgt; revision-date 2017-01-20; reference "import ref"; description "import desc"; }
 
     include submodule {
-        revision-date 1970-01-01;
         reference "include ref";
         description "include desc";
     }

@@ -24,19 +24,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug8291Test {
     private static final String NS = "foo";
-    private static final String REV = "1970-01-01";
-    private static final QName ROOT = QName.create(NS, REV, "root");
-    private static final QName OUTER_LIST = QName.create(NS, REV, "outer-list");
-    private static final QName OUTER_LIST_ID = QName.create(NS, REV, "id");
-    private static final QName INNER_LIST = QName.create(NS, REV, "inner-list");
+    private static final QName ROOT = QName.create(NS, "root");
+    private static final QName OUTER_LIST = QName.create(NS, "outer-list");
+    private static final QName OUTER_LIST_ID = QName.create(NS, "id");
+    private static final QName INNER_LIST = QName.create(NS, "inner-list");
     private SchemaContext schemaContext;
 
     @Before
-    public void init() throws ReactorException {
+    public void init() {
         this.schemaContext = TestModel.createTestContext("/bug8291/foo.yang");
         assertNotNull("Schema context must not be null.", this.schemaContext);
     }

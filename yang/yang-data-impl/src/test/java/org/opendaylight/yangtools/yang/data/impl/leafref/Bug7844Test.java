@@ -18,7 +18,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -26,10 +25,9 @@ public class Bug7844Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
     private static final String BAZ_NS = "baz";
-    private static final String REV = "1970-01-01";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug7844");
         assertNotNull(context);
 
@@ -39,8 +37,7 @@ public class Bug7844Test {
         final Map<QName, LeafRefContext> referencingChilds = leafRefContext.getReferencingChilds();
         assertEquals(7, referencingChilds.size());
 
-        final QNameModule bazQNameModule = QNameModule.create(new URI(BAZ_NS),
-                SimpleDateFormatUtil.getRevisionFormat().parse(REV));
+        final QNameModule bazQNameModule = QNameModule.create(URI.create(BAZ_NS), null);
         final LeafRefPath expectedPathToBazTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(bazQNameModule, "root", ImmutableList.of()),
                 new QNameWithPredicateImpl(bazQNameModule, "target", ImmutableList.of()));
@@ -52,8 +49,7 @@ public class Bug7844Test {
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar")), expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar-2")), expectedPathToBazTarget);
 
-        final QNameModule barQNameModule = QNameModule.create(new URI(BAR_NS),
-                SimpleDateFormatUtil.getRevisionFormat().parse(REV));
+        final QNameModule barQNameModule = QNameModule.create(URI.create(BAR_NS), null);
         final LeafRefPath expectedPathToBarTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(barQNameModule, "bar-target", ImmutableList.of()));
         assertLeafRef(referencingChilds.get(foo("direct-leafref")), expectedPathToBarTarget);
@@ -89,14 +85,14 @@ public class Bug7844Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     private static QName bar(final String localName) {
-        return QName.create(BAR_NS, REV, localName);
+        return QName.create(BAR_NS, localName);
     }
 
     private static QName baz(final String localName) {
-        return QName.create(BAZ_NS, REV, localName);
+        return QName.create(BAZ_NS, localName);
     }
 }

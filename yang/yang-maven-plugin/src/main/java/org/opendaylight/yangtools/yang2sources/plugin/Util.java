@@ -18,12 +18,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -37,7 +35,6 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -268,14 +265,8 @@ final class Util {
 
     static SourceIdentifier moduleToIdentifier(final Module module) {
         final QNameModule mod = module.getQNameModule();
-        final Date rev = mod.getRevision();
-        final Optional<String> optRev;
-        if (SimpleDateFormatUtil.DEFAULT_DATE_REV.equals(rev)) {
-            optRev = Optional.empty();
-        } else {
-            optRev = Optional.of(mod.getFormattedRevision());
-        }
-
-        return RevisionSourceIdentifier.create(module.getName(), optRev);
+        final String rev = mod.getFormattedRevision();
+        return rev != null ? RevisionSourceIdentifier.create(module.getName(), rev)
+                : RevisionSourceIdentifier.create(module.getName());
     }
 }

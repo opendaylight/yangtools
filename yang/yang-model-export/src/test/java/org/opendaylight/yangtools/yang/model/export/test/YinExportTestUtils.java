@@ -19,6 +19,9 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
+import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
@@ -27,6 +30,12 @@ public class YinExportTestUtils {
 
     private YinExportTestUtils() {
         throw new UnsupportedOperationException("Utility class");
+    }
+
+    public static Document loadDocument(final String prefix, final Module module) throws IOException, SAXException {
+        final String fileName = module.getRevision() == null ? module.getName()
+                : module.getName() + '@' + SimpleDateFormatUtil.getRevisionFormat().format(module.getRevision());
+        return loadDocument(prefix + '/' + fileName + YangConstants.RFC6020_YIN_FILE_EXTENSION);
     }
 
     public static Document loadDocument(final String xmlPath) throws IOException, SAXException {

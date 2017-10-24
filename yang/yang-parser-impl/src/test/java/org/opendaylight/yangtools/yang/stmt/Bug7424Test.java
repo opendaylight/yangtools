@@ -21,8 +21,7 @@ public class Bug7424Test {
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
+                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
         }
     }
 
@@ -33,8 +32,7 @@ public class Bug7424Test {
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
+                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
         }
     }
 
@@ -45,8 +43,7 @@ public class Bug7424Test {
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
+                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
         }
     }
 
@@ -57,8 +54,7 @@ public class Bug7424Test {
             fail("Test should fail due to invalid yang model.");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                        "Error in module 'foo': cannot add '(foo?revision=1970-01-01)name'. "
-                        + "Node name collision: '(foo?revision=1970-01-01)name' already declared"));
+                "Error in module 'foo': cannot add '(foo)name'. Node name collision: '(foo)name' already declared"));
         }
     }
 }

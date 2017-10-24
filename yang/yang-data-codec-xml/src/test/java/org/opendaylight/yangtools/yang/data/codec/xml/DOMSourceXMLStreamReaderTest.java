@@ -48,8 +48,7 @@ public class DOMSourceXMLStreamReaderTest {
     public void test() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/dom-reader-test");
         final ContainerSchemaNode outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil
-                .findNodeInSchemaContext(schemaContext, ImmutableList.of(QName.create("foo-ns", "1970-01-01",
-                        "top-cont")));
+                .findNodeInSchemaContext(schemaContext, ImmutableList.of(QName.create("foo-ns", "top-cont")));
         assertNotNull(outerContainerSchema);
 
         // deserialization

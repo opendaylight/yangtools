@@ -23,14 +23,14 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug7879Test {
     private static final String NS = "my-model-ns";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
         final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7879");
         assertNotNull(context);
 
-        assertTrue(findNode(context, ImmutableList.of(qN("my-alarm"), qN("my-content"), qN("my-event-container"))) instanceof ContainerSchemaNode);
+        assertTrue(findNode(context, ImmutableList.of(qN("my-alarm"), qN("my-content"), qN("my-event-container")))
+            instanceof ContainerSchemaNode);
         final SchemaNode myEventValueLeaf = findNode(context,
                 ImmutableList.of(qN("my-alarm"), qN("my-content"), qN("my-event-value")));
         assertTrue(myEventValueLeaf instanceof LeafSchemaNode);
@@ -42,6 +42,6 @@ public class Bug7879Test {
     }
 
     private static QName qN(final String localName) {
-        return QName.create(NS, REV, localName);
+        return QName.create(NS, localName);
     }
 }

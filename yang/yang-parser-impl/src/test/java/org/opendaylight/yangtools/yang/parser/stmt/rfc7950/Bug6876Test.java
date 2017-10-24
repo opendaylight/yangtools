@@ -25,7 +25,6 @@ public class Bug6876Test {
     private static final String BAR_NS = "bar";
     private static final String BAR_REV = "2017-01-11";
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void yang11Test() throws Exception {
@@ -53,7 +52,7 @@ public class Bug6876Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, FOO_REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     private static QName bar(final String localName) {

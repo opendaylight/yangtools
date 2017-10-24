@@ -26,7 +26,7 @@ public class Bug4410Test {
             Throwable rootCause = Throwables.getRootCause(e);
             assertTrue(rootCause instanceof InferenceException);
             final String message = rootCause.getMessage();
-            assertTrue(message.startsWith("Type [(foo?revision=1970-01-01)"));
+            assertTrue(message.startsWith("Type [(foo)"));
             assertTrue(message.contains("was not found"));
         }
     }

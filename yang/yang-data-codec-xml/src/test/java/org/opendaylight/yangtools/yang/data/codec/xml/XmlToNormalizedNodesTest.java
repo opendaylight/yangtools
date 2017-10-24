@@ -85,11 +85,11 @@ public class XmlToNormalizedNodesTest {
     private static QName myLeafInList3;
 
     @BeforeClass
-    public static void setup() throws Exception {
-        fooModule = QNameModule.create(new URI("foo-namespace"), QName.parseRevision("1970-01-01"));
+    public static void setup() {
+        fooModule = QNameModule.create(URI.create("foo-namespace"), null);
         parentContainer = QName.create(fooModule, "parent-container");
 
-        bazModule = QNameModule.create(new URI("baz-namespace"), QName.parseRevision("1970-01-01"));
+        bazModule = QNameModule.create(URI.create("baz-namespace"), null);
         outerContainer = QName.create(bazModule, "outer-container");
 
         myContainer1 = QName.create(bazModule, "my-container-1");

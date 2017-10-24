@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6880Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void valid10Test() throws Exception {
@@ -34,7 +33,7 @@ public class Bug6880Test {
         assertNotNull(schemaContext);
 
         final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext,
-                SchemaPath.create(true, QName.create(FOO_NS, FOO_REV, "my-leaf-list")));
+                SchemaPath.create(true, QName.create(FOO_NS, "my-leaf-list")));
         assertTrue(findDataSchemaNode instanceof LeafListSchemaNode);
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) findDataSchemaNode;
 

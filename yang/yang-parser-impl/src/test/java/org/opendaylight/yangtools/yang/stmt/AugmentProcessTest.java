@@ -19,7 +19,6 @@ import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -40,10 +38,8 @@ public class AugmentProcessTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
-    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(
-            URI.create("root"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
-    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule
-            .create(URI.create("aug"), SimpleDateFormatUtil.DEFAULT_DATE_REV);
+    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"), null);
+    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"), null);
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
             "aug-parent1");
@@ -90,7 +86,7 @@ public class AugmentProcessTest {
             "/stmt-test/augments/multiple-augment-incorrect2.yang");
 
     @Test
-    public void multipleAugmentsAndMultipleModulesTest() throws SourceException, ReactorException {
+    public void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
@@ -101,7 +97,7 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void multipleAugmentTest() throws SourceException, ReactorException {
+    public void multipleAugmentTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT);
@@ -111,7 +107,7 @@ public class AugmentProcessTest {
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathTest() throws SourceException, ReactorException {
+    public void multipleAugmentIncorrectPathTest() throws  ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
@@ -121,7 +117,7 @@ public class AugmentProcessTest {
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathAndGrpTest() throws SourceException, ReactorException {
+    public void multipleAugmentIncorrectPathAndGrpTest() throws  ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
@@ -130,7 +126,7 @@ public class AugmentProcessTest {
     }
 
     @Test
-    public void readAndParseYangFileTest() throws SourceException, ReactorException {
+    public void readAndParseYangFileTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
                 .newBuild();
         addSources(reactor, AUGMENTED, ROOT);

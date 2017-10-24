@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class SchemaUtilsTest {
     private static final String NS = "my-namespace";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -73,6 +72,6 @@ public class SchemaUtilsTest {
     }
 
     private static QName qN(final String localName) {
-        return QName.create(NS, REV, localName);
+        return QName.create(NS, localName);
     }
 }

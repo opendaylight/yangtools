@@ -2,7 +2,7 @@ module foo {
     namespace foo;
     prefix foo-mod;
 
-    import bar { prefix bar-imp; revision-date 1970-01-01; }
+    import bar { prefix bar-imp; }
 
     leaf my-leaf {
         type foo-leafref;

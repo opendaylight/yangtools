@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6884Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void testYang11() throws Exception {
@@ -49,6 +48,6 @@ public class Bug6884Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, FOO_REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 }

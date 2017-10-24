@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 public class Bug7037Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -79,10 +78,10 @@ public class Bug7037Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     private static QName bar(final String localName) {
-        return QName.create(BAR_NS, REV, localName);
+        return QName.create(BAR_NS, localName);
     }
 }

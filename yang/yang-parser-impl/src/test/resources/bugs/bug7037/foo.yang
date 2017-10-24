@@ -2,7 +2,7 @@ module foo {
     namespace foo;
     prefix foo;
 
-    import bar { prefix bar; revision-date 1970-01-01; }
+    import bar { prefix bar; }
 
     extension foo-ext {
         argument arg;

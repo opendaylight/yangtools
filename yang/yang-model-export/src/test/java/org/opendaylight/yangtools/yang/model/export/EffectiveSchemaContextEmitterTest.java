@@ -29,7 +29,6 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -59,9 +58,7 @@ public class EffectiveSchemaContextEmitterTest {
                 assertNotNull(output);
                 assertNotEquals(0, output.length());
 
-                final Document doc = YinExportTestUtils
-                        .loadDocument(String.format("/bugs/bug2444/yin-effective-emitter/%s@%s.yin", module.getName(),
-                                SimpleDateFormatUtil.getRevisionFormat().format(module.getRevision())));
+                final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin-effective-emitter", module);
                 assertXMLEquals(doc, output);
             } finally {
                 byteArrayOutputStream.close();

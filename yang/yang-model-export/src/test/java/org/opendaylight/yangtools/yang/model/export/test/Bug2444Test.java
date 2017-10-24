@@ -21,7 +21,6 @@ import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
@@ -45,9 +44,8 @@ public class Bug2444Test {
                 assertNotNull(output);
                 assertNotEquals(0, output.length());
 
-                final Document doc = YinExportTestUtils.loadDocument(String.format("/bugs/bug2444/yin/%s@%s.yin",
-                        module.getName(), SimpleDateFormatUtil.getRevisionFormat().format(module.getRevision())));
-                assertXMLEquals(doc, output);
+                final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin", module);
+                assertXMLEquals(module.getName(), doc, output);
             } finally {
                 byteArrayOutputStream.close();
                 bufferedOutputStream.close();
@@ -64,7 +62,7 @@ public class Bug2444Test {
         return builder.build();
     }
 
-    private static void assertXMLEquals(final Document expectedXMLDoc, final String output)
+    private static void assertXMLEquals(final String fileName, final Document expectedXMLDoc, final String output)
             throws SAXException, IOException {
         final String expected = YinExportTestUtils.toString(expectedXMLDoc.getDocumentElement());
 
@@ -74,6 +72,6 @@ public class Bug2444Test {
 
         final Diff diff = new Diff(expected, output);
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        XMLAssert.assertXMLEqual(diff, true);
+        XMLAssert.assertXMLEqual(fileName, diff, true);
     }
 }

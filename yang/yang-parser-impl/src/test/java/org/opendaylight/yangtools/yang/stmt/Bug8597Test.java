@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -25,7 +24,7 @@ public class Bug8597Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8597");
         assertNotNull(context);
 
-        final Module foo = context.findModule("foo", SimpleDateFormatUtil.DEFAULT_DATE_REV).get();
+        final Module foo = context.findModule("foo", null).get();
         final Set<ModuleImport> imports = foo.getImports();
 
         for (final ModuleImport moduleImport : imports) {

@@ -57,18 +57,13 @@ import org.xml.sax.SAXException;
 
 public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
-    private final QNameModule bazModuleQName;
-    private final QName myAnyXMLDataBaz;
-    private final QName bazQName;
-    private final QName myContainer2QName;
+    private final QNameModule bazModuleQName = QNameModule.create(URI.create("baz"), null);
+    private final QName myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
+    private final QName bazQName = QName.create(bazModuleQName, "baz");
+    private final QName myContainer2QName = QName.create(bazModuleQName, "my-container-2");
     private final SchemaContext schemaContext;
 
-    public YangModeledAnyXMLSerializationTest() throws Exception {
-        bazModuleQName = QNameModule.create(new URI("baz"), QName.parseRevision("1970-01-01"));
-        bazQName = QName.create(bazModuleQName, "baz");
-        myContainer2QName = QName.create(bazModuleQName, "my-container-2");
-        myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
-
+    public YangModeledAnyXMLSerializationTest() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/serialization");
     }
 

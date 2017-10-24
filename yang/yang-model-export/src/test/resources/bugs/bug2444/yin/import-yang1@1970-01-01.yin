@@ -5,7 +5,6 @@
     <yang-version value="1" />
     <import module="action">
         <prefix value="ac" />
-        <revision-date date="1970-01-01" />
     </import>
     <revision date="1970-01-01" />
 </module>

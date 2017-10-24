@@ -53,7 +53,7 @@ public class Bug4501Test {
 
         final UnkeyedListNode hop = (UnkeyedListNode) transformedInput;
         final Optional<DataContainerChild<? extends PathArgument, ?>> lrsBits = hop.getChild(0).getChild(
-                NodeIdentifier.create(QName.create("foo", "1970-01-01", "lrs-bits")));
+                NodeIdentifier.create(QName.create("foo", "lrs-bits")));
 
         final ImmutableSet<String> expectedValue = ImmutableSet.of("lookup", "rloc-probe", "strict");
         assertEquals(expectedValue, lrsBits.get().getValue());
@@ -70,8 +70,7 @@ public class Bug4501Test {
             jsonParser.parse(new JsonReader(new StringReader(inputJson)));
             fail("IllegalArgumentException should be thrown.");
         } catch (IllegalArgumentException e) {
-            assertEquals(e.getMessage(),
-                    "Node '(foo?revision=1970-01-01)lrs-bits' has already set its value to '[lookup]'");
+            assertEquals(e.getMessage(), "Node '(foo)lrs-bits' has already set its value to '[lookup]'");
         }
     }
 }

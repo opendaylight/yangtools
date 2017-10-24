@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 public class Bug8126Test {
     private static final String FOO_NS = "foo";
     private static final String BAR_NS = "bar";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -31,10 +30,12 @@ public class Bug8126Test {
         assertNotNull(context);
         assertTrue(findNode(context, ImmutableList.of(foo("root"), bar("my-container"), bar("my-choice"), bar("one"),
                 bar("one"), bar("mandatory-leaf"))) instanceof LeafSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2"))) instanceof LeafSchemaNode);
+        assertTrue(findNode(context, ImmutableList.of(foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")))
+            instanceof LeafSchemaNode);
 
         assertNull(findNode(context, ImmutableList.of(foo("root"), bar("mandatory-list"))));
-        assertNull(findNode(context, ImmutableList.of(foo("root"), bar("mandatory-container"), bar("mandatory-choice"))));
+        assertNull(findNode(context, ImmutableList.of(foo("root"), bar("mandatory-container"),
+            bar("mandatory-choice"))));
         assertNull(findNode(context,
                 ImmutableList.of(foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3"))));
     }
@@ -44,10 +45,10 @@ public class Bug8126Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     private static QName bar(final String localName) {
-        return QName.create(BAR_NS, REV, localName);
+        return QName.create(BAR_NS, localName);
     }
 }

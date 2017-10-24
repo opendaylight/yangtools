@@ -18,6 +18,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,7 +40,8 @@ public final class YinExportUtils {
      * @return well-formed file name of YIN file as defined in RFC6020.
      */
     public static String wellFormedYinName(final String name, final Date revision) {
-        return wellFormedYinName(name, SimpleDateFormatUtil.getRevisionFormat().format(revision));
+        return revision == null ? wellFormedYinName(name, (String) null) :
+            wellFormedYinName(name, SimpleDateFormatUtil.getRevisionFormat().format(revision));
     }
 
     /**
@@ -53,7 +55,10 @@ public final class YinExportUtils {
      * @return well-formed file name of YIN file as defined in RFC6020.
      */
     public static String wellFormedYinName(final String name, final String revision) {
-        return String.format("%s@%s.yin", Preconditions.checkNotNull(name), Preconditions.checkNotNull(revision));
+        if (revision == null) {
+            return name + YangConstants.RFC6020_YIN_FILE_EXTENSION;
+        }
+        return Preconditions.checkNotNull(name) + '@' + revision +  YangConstants.RFC6020_YIN_FILE_EXTENSION;
     }
 
     /**

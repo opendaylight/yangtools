@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -34,7 +33,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug7246Test {
     private static final String NS = "my-namespace";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -56,15 +54,15 @@ public class Bug7246Test {
     }
 
     private static QName qN(final String localName) {
-        return QName.create(NS, REV, localName);
+        return QName.create(NS, localName);
     }
 
     private static String normalizedNodeToJsonStreamTransformation(final SchemaContext schemaContext,
             final SchemaPath path, final Writer writer, final NormalizedNode<?, ?> inputStructure)
-            throws IOException, URISyntaxException {
+            throws IOException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactory.getShared(schemaContext), path, new URI(NS),
+                JSONCodecFactory.getShared(schemaContext), path, URI.create(NS),
                 JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);

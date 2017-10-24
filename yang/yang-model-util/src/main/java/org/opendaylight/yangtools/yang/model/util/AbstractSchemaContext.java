@@ -40,11 +40,11 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
     protected static final Comparator<Module> REVISION_COMPARATOR = (o1, o2) -> {
-        if (o2.getRevision() == null) {
-            return -1;
+        if (o1.getRevision() == null) {
+            return o2.getRevision() == null ? 0 : 1;
         }
 
-        return o2.getRevision().compareTo(o1.getRevision());
+        return o2.getRevision() == null ? -1 : o2.getRevision().compareTo(o1.getRevision());
     };
 
     protected static final TreeSet<Module> createModuleSet() {

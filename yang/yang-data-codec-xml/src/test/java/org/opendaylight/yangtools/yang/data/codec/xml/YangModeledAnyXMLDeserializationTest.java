@@ -59,13 +59,13 @@ public class YangModeledAnyXMLDeserializationTest {
     private SchemaContext schemaContext;
 
     @Before
-    public void setUp() throws Exception {
-        barModuleQName = QNameModule.create(new URI("bar"), QName.parseRevision("1970-01-01"));
+    public void setUp() {
+        barModuleQName = QNameModule.create(URI.create("bar"), null);
         myContainer1 = QName.create(barModuleQName, "my-container-1");
         myLeaf1 = QName.create(barModuleQName, "my-leaf-1");
         myAnyXMLDataBar = QName.create(barModuleQName, "my-anyxml-data");
 
-        fooModuleQName = QNameModule.create(new URI("foo"), QName.parseRevision("1970-01-01"));
+        fooModuleQName = QNameModule.create(URI.create("foo"), null);
         myContainer2 = QName.create(fooModuleQName, "my-container-2");
         innerContainer = QName.create(fooModuleQName, "inner-container");
         myLeaf3 = QName.create(fooModuleQName, "my-leaf-3");
