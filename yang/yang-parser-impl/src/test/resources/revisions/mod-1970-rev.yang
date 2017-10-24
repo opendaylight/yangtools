@@ -1,5 +1,0 @@
-submodule mod-1970-rev {
-    belongs-to "mod-1970-root" {
-        prefix mod-1970-root;
-    }
-}

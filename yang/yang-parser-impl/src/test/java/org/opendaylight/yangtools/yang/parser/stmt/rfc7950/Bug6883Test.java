@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
 public class Bug6883Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void test() throws Exception {
@@ -53,7 +52,7 @@ public class Bug6883Test {
 
     private static AnyDataSchemaNode assertAnyData(final SchemaContext context, final Iterable<String> localNamesPath) {
         final Iterable<QName> qNames = Iterables.transform(localNamesPath,
-            localName -> QName.create(FOO_NS, FOO_REV, localName));
+            localName -> QName.create(FOO_NS, localName));
         final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context,
                 SchemaPath.create(qNames, true));
         assertTrue(findDataSchemaNode instanceof AnyDataSchemaNode);

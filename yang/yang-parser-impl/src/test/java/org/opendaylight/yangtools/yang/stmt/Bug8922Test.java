@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug8922Test {
     private static final String NS = "foo";
-    private static final String REV = "1970-01-01";
 
     @Test
     public void testAllFeaturesSupported() throws Exception {
@@ -48,6 +47,6 @@ public class Bug8922Test {
     }
 
     private static QName qN(final String localName) {
-        return QName.create(NS, REV, localName);
+        return QName.create(NS, localName);
     }
 }

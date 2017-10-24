@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
@@ -34,13 +33,11 @@ public class IncludeRevisionsTest {
     private static final StatementStreamSource SUBMOD_ONLY_REV = sourceForResource("/revisions/submod-only-rev.yang");
     private static final StatementStreamSource MOD_ONLY_ROOT = sourceForResource("/revisions/mod-only-root.yang");
     private static final StatementStreamSource MOD_ONLY_REV = sourceForResource("/revisions/mod-only-rev.yang");
-    private static final StatementStreamSource MOD_ONLY_1970_ROOT = sourceForResource("/revisions/mod-1970-root.yang");
-    private static final StatementStreamSource MOD_ONLY_1970_REV = sourceForResource("/revisions/mod-1970-rev.yang");
     private static final StatementStreamSource NOWHERE_ROOT = sourceForResource("/revisions/nowhere-root.yang");
     private static final StatementStreamSource NOWHERE_REV = sourceForResource("/revisions/nowhere-rev.yang");
 
     @Test
-    public void revsEqualTest() throws SourceException, ReactorException {
+    public void revsEqualTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, EQUAL_REV, EQUAL_ROOT);
@@ -50,7 +47,7 @@ public class IncludeRevisionsTest {
     }
 
     @Test
-    public void revsUnequalTest() throws SourceException, ReactorException {
+    public void revsUnequalTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, UNEQUAL_REV, UNEQUAL_ROOT);
@@ -65,7 +62,7 @@ public class IncludeRevisionsTest {
     }
 
     @Test
-    public void revIncludeOnly() throws SourceException, ReactorException {
+    public void revIncludeOnly() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT);
@@ -75,7 +72,7 @@ public class IncludeRevisionsTest {
     }
 
     @Test
-    public void revInModuleOnly() throws SourceException, ReactorException {
+    public void revInModuleOnly() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, MOD_ONLY_REV, MOD_ONLY_ROOT);
@@ -90,17 +87,7 @@ public class IncludeRevisionsTest {
     }
 
     @Test
-    public void rev1970InModuleOnlyTest() throws SourceException, ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, MOD_ONLY_1970_REV, MOD_ONLY_1970_ROOT);
-
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
-    }
-
-    @Test
-    public void revNowhereTest() throws SourceException, ReactorException {
+    public void revNowhereTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         addSources(reactor, NOWHERE_REV, NOWHERE_ROOT);

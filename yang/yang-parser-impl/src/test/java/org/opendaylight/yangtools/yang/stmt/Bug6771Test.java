@@ -21,11 +21,10 @@ import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug6771Test {
     private static final String NS = "http://www.example.com/typedef-bug";
-    private static final String REV = "1970-01-01";
-    private static final QName ROOT = QName.create(NS, REV, "root");
-    private static final QName CONT_B = QName.create(NS, REV, "container-b");
-    private static final QName LEAF_CONT_B = QName.create(NS, REV, "leaf-container-b");
-    private static final QName INNER_CONTAINER = QName.create(NS, REV, "inner-container");
+    private static final QName ROOT = QName.create(NS, "root");
+    private static final QName CONT_B = QName.create(NS, "container-b");
+    private static final QName LEAF_CONT_B = QName.create(NS, "leaf-container-b");
+    private static final QName INNER_CONTAINER = QName.create(NS, "inner-container");
 
     @Test
     public void augmentTest() throws Exception {
@@ -43,13 +42,13 @@ public class Bug6771Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6771/choice-case");
         assertNotNull(context);
 
-        final QName myChoice = QName.create(NS, REV, "my-choice");
-        final QName caseOne = QName.create(NS, REV, "one");
-        final QName caseTwo = QName.create(NS, REV, "two");
-        final QName caseThree = QName.create(NS, REV, "three");
-        final QName containerOne = QName.create(NS, REV, "container-one");
-        final QName containerTwo = QName.create(NS, REV, "container-two");
-        final QName containerThree = QName.create(NS, REV, "container-three");
+        final QName myChoice = QName.create(NS, "my-choice");
+        final QName caseOne = QName.create(NS, "one");
+        final QName caseTwo = QName.create(NS, "two");
+        final QName caseThree = QName.create(NS, "three");
+        final QName containerOne = QName.create(NS, "container-one");
+        final QName containerTwo = QName.create(NS, "container-two");
+        final QName containerThree = QName.create(NS, "container-three");
 
         verifyLeafType(SchemaContextUtil.findDataSchemaNode(context,
                 SchemaPath.create(true, ROOT, myChoice, caseOne, containerOne, LEAF_CONT_B)));

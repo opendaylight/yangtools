@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import java.util.Date;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -61,7 +60,6 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
-    private static final Optional<Date> DEFAULT_REVISION = Optional.of(SimpleDateFormatUtil.DEFAULT_DATE_REV);
 
     protected SubmoduleStatementImpl(final StmtContext<String, SubmoduleStatement, ?> context) {
         super(context);
@@ -125,10 +123,9 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         private static ModuleIdentifier getSubmoduleIdentifier(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
             final Date maybeDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
-            final Optional<Date> revisionDate = maybeDate != null ? Optional.of(maybeDate) : DEFAULT_REVISION;
 
             final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                    revisionDate);
+                    Optional.ofNullable(maybeDate));
             return submoduleIdentifier;
         }
 

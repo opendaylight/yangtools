@@ -35,7 +35,6 @@ public class MultipleRevImportBug6875Test {
     private static final String BAR_REV_2 = "1999-01-01";
     private static final String BAR_REV_3 = "1970-01-01";
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void testYang11() throws Exception {
@@ -132,7 +131,7 @@ public class MultipleRevImportBug6875Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, FOO_REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 
     private static QName bar1(final String localName) {

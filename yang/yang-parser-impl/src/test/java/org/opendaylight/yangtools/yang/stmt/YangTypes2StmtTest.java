@@ -16,7 +16,6 @@ import java.net.URI;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -36,8 +35,7 @@ public class YangTypes2StmtTest {
     private static final StatementStreamSource TYPEFILE4 = sourceForResource(
             "/semantic-statement-parser/identityreftest.yang");
 
-    private static final QNameModule types2Module = QNameModule.create(URI.create("types2"),
-            SimpleDateFormatUtil.DEFAULT_DATE_REV);
+    private static final QNameModule types2Module = QNameModule.create(URI.create("types2"), null);
 
     private static final QName lfDecimal = QName.create(types2Module, "lf-decimal");
     private static final QName lfMyString = QName.create(types2Module, "lf-my-string");

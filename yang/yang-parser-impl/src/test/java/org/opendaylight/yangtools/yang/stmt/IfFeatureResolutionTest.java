@@ -35,10 +35,10 @@ public class IfFeatureResolutionTest {
     @Test
     public void testSomeFeaturesSupported() throws ReactorException {
         final Set<QName> supportedFeatures = ImmutableSet.of(
-                QName.create("foo-namespace", "1970-01-01", "test-feature-1"),
-                QName.create("foo-namespace", "1970-01-01", "test-feature-2"),
-                QName.create("foo-namespace", "1970-01-01", "test-feature-3"),
-                QName.create("bar-namespace", "1970-01-01", "imp-feature"));
+                QName.create("foo-namespace", "test-feature-1"),
+                QName.create("foo-namespace", "test-feature-2"),
+                QName.create("foo-namespace", "test-feature-3"),
+                QName.create("bar-namespace", "imp-feature"));
 
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
@@ -47,9 +47,7 @@ public class IfFeatureResolutionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModules("foo").iterator().next();
-        assertNotNull(testModule);
-
+        final Module testModule = schemaContext.findModule("foo", null).get();
         assertEquals(9, testModule.getChildNodes().size());
 
         final ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(

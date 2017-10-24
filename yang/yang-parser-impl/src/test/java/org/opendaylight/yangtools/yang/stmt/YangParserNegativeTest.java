@@ -76,7 +76,7 @@ public class YangParserNegativeTest {
             final Throwable rootCause = Throwables.getRootCause(e);
             assertTrue(rootCause instanceof InferenceException);
             assertTrue(rootCause.getMessage().startsWith(
-                "Augment target 'Absolute{path=[(urn:simple.container.demo?revision=1970-01-01)unknown]}' not found"));
+                "Augment target 'Absolute{path=[(urn:simple.container.demo)unknown]}' not found"));
         }
     }
 
@@ -87,7 +87,7 @@ public class YangParserNegativeTest {
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
             assertTrue(e.getCause().getMessage().contains("Error in module 'test4' in the refine of uses " +
-                    "'Relative{path=[(urn:simple.container.demo?revision=1970-01-01)node]}': can not perform refine of 'PRESENCE' for" +
+                    "'Relative{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for" +
                     " the target 'LEAF_LIST'."));
         }
     }
@@ -121,8 +121,7 @@ public class YangParserNegativeTest {
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container': cannot add '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared";
+                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -134,8 +133,7 @@ public class YangParserNegativeTest {
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-list': cannot add '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared";
+                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -147,8 +145,7 @@ public class YangParserNegativeTest {
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo'. Node name collision: '(urn:simple.container" +
-                    ".demo?revision=1970-01-01)foo' already declared";
+                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -160,7 +157,7 @@ public class YangParserNegativeTest {
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                "Duplicate name for typedef (urn:simple.container.demo?revision=1970-01-01)int-ext [at"));
+                "Duplicate name for typedef (urn:simple.container.demo)int-ext [at"));
         }
     }
 
@@ -198,8 +195,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/invalid-list-key-def.yang");
             fail("InferenceException should be thrown");
         } catch (final ReactorException e) {
-            final String expected = "Key 'rib-id' misses node 'rib-id' in list "
-                    + "'(invalid:list:key:def?revision=1970-01-01)application-map'";
+            final String expected = "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'";
             assertTrue(e.getCause().getMessage().startsWith(expected));
         }
     }

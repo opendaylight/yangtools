@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug6183Test {
     private static final String FOO_NS = "foo";
-    private static final String FOO_REV = "1970-01-01";
 
     @Test
     public void testYang10() throws Exception {
@@ -85,10 +84,12 @@ public class Bug6183Test {
 
         assertEquals(2, secondImplCaseContainer.getChildNodes().size());
         assertTrue(getLeafSchemaNode(secondImplCaseContainer, "leaf-inside-second-container").isAugmenting());
-        assertFalse(getLeafSchemaNode(secondImplCaseContainer, "declared-leaf-in-second-case-container").isAugmenting());
+        assertFalse(getLeafSchemaNode(secondImplCaseContainer, "declared-leaf-in-second-case-container")
+            .isAugmenting());
     }
 
-    private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent, final String containerName) {
+    private static ContainerSchemaNode getContainerSchemaNode(final DataNodeContainer parent,
+            final String containerName) {
         final DataSchemaNode dataChildByName = parent.getDataChildByName(foo(containerName));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         return (ContainerSchemaNode) dataChildByName;
@@ -101,6 +102,6 @@ public class Bug6183Test {
     }
 
     private static QName foo(final String localName) {
-        return QName.create(FOO_NS, FOO_REV, localName);
+        return QName.create(FOO_NS, localName);
     }
 }

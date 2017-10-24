@@ -17,11 +17,9 @@ import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwa
 import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.codec.StringCodec;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -37,14 +35,13 @@ public class StringPatternCheckingCodecTest {
     private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodecTest.class);
 
     @Test
-    public void testStringPatternCheckingCodec() throws ReactorException, ParseException, URISyntaxException,
+    public void testStringPatternCheckingCodec() throws ReactorException, URISyntaxException,
             FileNotFoundException {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
             "/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
-        final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"),
-                SimpleDateFormatUtil.DEFAULT_DATE_REV);
+        final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"), null);
 
         final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(

@@ -32,8 +32,8 @@ public class Bug5396Test {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5396");
         assertNotNull(context);
 
-        QName root = QName.create("foo", "1970-01-01", "root");
-        QName myLeaf2 = QName.create("foo", "1970-01-01", "my-leaf2");
+        QName root = QName.create("foo", "root");
+        QName myLeaf2 = QName.create("foo", "my-leaf2");
 
         SchemaPath schemaPath = SchemaPath.create(true, root, myLeaf2);
         SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(context, schemaPath);

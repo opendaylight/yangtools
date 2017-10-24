@@ -32,8 +32,7 @@ public class Bug6901Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo?revision=1970-01-01)enum-leaf' has default value 'two' marked with an if-feature "
-                            + "statement."));
+                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
         }
     }
 
@@ -44,8 +43,7 @@ public class Bug6901Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo?revision=1970-01-01)enum-leaf' has default value 'two' marked with an if-feature "
-                            + "statement."));
+                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
         }
     }
 
@@ -56,8 +54,7 @@ public class Bug6901Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo?revision=1970-01-01)enum-leaf' has default value 'two' marked with an if-feature "
-                            + "statement."));
+                    "Leaf '(foo)enum-leaf' has default value 'two' marked with an if-feature statement."));
         }
     }
 
@@ -68,8 +65,7 @@ public class Bug6901Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Typedef '(foo?revision=1970-01-01)bits-typedef-2' has default value 'two' marked with an "
-                            + "if-feature statement."));
+                    "Typedef '(foo)bits-typedef-2' has default value 'two' marked with an if-feature statement."));
         }
     }
 
@@ -80,8 +76,7 @@ public class Bug6901Test {
             fail("Test should fail due to invalid Yang 1.1");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage().startsWith(
-                    "Leaf '(foo?revision=1970-01-01)union-leaf' has default value 'two' marked with an if-feature "
-                            + "statement."));
+                    "Leaf '(foo)union-leaf' has default value 'two' marked with an if-feature statement."));
         }
     }
 

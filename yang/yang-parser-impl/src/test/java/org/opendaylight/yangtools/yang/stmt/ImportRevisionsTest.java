@@ -37,8 +37,6 @@ public class ImportRevisionsTest {
             "/import-revision-date-test/root-without-revision-date.yang");
     private static final StatementStreamSource IMPORTED_WITH_DATE = sourceForResource(
             "/import-revision-date-test/imported-module-with-revision-date.yang");
-    private static final StatementStreamSource ROOT_WITH_1970_DATE = sourceForResource(
-            "/import-revision-date-test/root-with-1970-revision-date.yang");
     private static final StatementStreamSource ROOT_WITH_NO_DATE = sourceForResource(
             "/import-revision-date-test/root-with-no-revision-date.yang");
     private static final StatementStreamSource IMPORTED_WITH_NO_DATE = sourceForResource(
@@ -76,15 +74,6 @@ public class ImportRevisionsTest {
     public void revisionDatesInImportedOnlyTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources( ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE);
-
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
-    }
-
-    @Test
-    public void revision1970InRootOnlyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITH_1970_DATE, IMPORTED_WITHOUT_DATE);
 
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
