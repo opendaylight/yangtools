@@ -14,19 +14,21 @@ import javax.annotation.Nonnull;
  * Interface describing YANG 'identity' statement.
  *
  * <p>
- * The 'identity' statement is used to define a new globally unique, abstract,
- * and untyped identity. Its only purpose is to denote its name, semantics, and
- * existence. The built-in datatype "identityref" can be used to reference
+ * The 'identity' statement is used to define a new globally unique, abstract, and untyped identity. Its only purpose
+ * is to denote its name, semantics, and existence. The built-in datatype "identityref" can be used to reference
  * identities within a data model.
  */
 public interface IdentitySchemaNode extends SchemaNode {
     /**
-     * The YANG 1.0 (RFC6020) implementation of IdentitySchemaNode always returns an ImmutableSet containing just one
-     * base identity or an empty ImmutableSet as it does not support multiple base identities.
-     * Starting with YANG 1.1 (RFC7950), the identity can be derived from multiple base identities.
+     * Return base identities of this identity. The semantics of differ between RFC6020 and RFC7950 here. YANG 1.0
+     * uses single inheritance, where there can be 0..1 base identities. YANG 1.1 uses multiple inheritance, where
+     * there can be 0..N base identities.
      *
-     * @return set of existing identities from which the new identity is derived or
-     *         an empty ImmutableSet if the identity is defined from scratch.
+     * <p>
+     * Callers should be prepared to handle multiple base identities.
+     *
+     * @return set of existing identities from which the new identity is derived or an empty Set if the identity is
+     *         a root identity.
      */
     @Nonnull Set<IdentitySchemaNode> getBaseIdentities();
 
@@ -36,5 +38,4 @@ public interface IdentitySchemaNode extends SchemaNode {
      * @return collection of identities derived from this identity
      */
     Set<IdentitySchemaNode> getDerivedIdentities();
-
 }
