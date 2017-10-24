@@ -223,8 +223,13 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         throw message.isPresent() ? new NumberFormatException(message.get()) : new NumberFormatException();
     }
 
+    @Beta
+    public int fractionDigits() {
+        return scaleOffset + 1;
+    }
+
     public final BigDecimal decimalValue() {
-        return BigDecimal.valueOf(value, scaleOffset + 1);
+        return BigDecimal.valueOf(value, fractionDigits());
     }
 
     @Override
@@ -339,7 +344,7 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         final long fracPart = fracPart();
         if (fracPart != 0) {
             // We may need to zero-pad the fraction part
-            sb.append(Strings.padStart(Long.toString(fracPart), scaleOffset + 1, '0'));
+            sb.append(Strings.padStart(Long.toString(fracPart), fractionDigits(), '0'));
         } else {
             sb.append('0');
         }
@@ -354,7 +359,9 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
 
     @Override
     public final int hashCode() {
-        // We need to normalize the results in order to be consistent with equals()
+        // We need to normalize the results in order to be have consistency across equals()/hashCode()/compareTo().
+        // While that is strictly not necessary (see BigDecimal.hashCode()), it prevents from surprising results when
+        // an object is transported from one collection type to another.
         return Long.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
     }
 
