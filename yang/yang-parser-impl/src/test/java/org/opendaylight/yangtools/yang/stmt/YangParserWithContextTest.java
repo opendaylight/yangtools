@@ -15,17 +15,13 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Iterables;
 import java.net.URI;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -53,7 +49,7 @@ public class YangParserWithContextTest {
     private static final URI T1_NS = URI.create("urn:simple.demo.test1");
     private static final URI T2_NS = URI.create("urn:simple.demo.test2");
     private static final URI T3_NS = URI.create("urn:simple.demo.test3");
-    private static Date rev;
+    private static final Date REV = QName.parseRevision("2013-06-18");
 
     private static final StatementStreamSource BAR = sourceForResource("/model/bar.yang");
     private static final StatementStreamSource BAZ = sourceForResource("/model/baz.yang");
@@ -69,12 +65,6 @@ public class YangParserWithContextTest {
             sourceForResource("/ietf/network-topology@2013-07-12.yang"),
             sourceForResource("/ietf/network-topology@2013-10-21.yang") };
 
-    @BeforeClass
-    public static void init() throws ParseException {
-        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
-        rev = simpleDateFormat.parse("2013-06-18");
-    }
-
     @Test
     public void testTypeFromContext() throws Exception {
 
@@ -88,8 +78,7 @@ public class YangParserWithContextTest {
 
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test1",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
+        final Module module = context.findModuleByName("test1", QName.parseRevision("2013-06-18"));
         assertNotNull(module);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
@@ -99,13 +88,13 @@ public class YangParserWithContextTest {
         final UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
-        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"), qname.getRevision());
+        assertEquals(QName.parseRevision("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
-        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2010-09-24"), qname.getRevision());
+        assertEquals(QName.parseRevision("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
@@ -125,8 +114,7 @@ public class YangParserWithContextTest {
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module testModule = context.findModuleByName("test2",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
+        final Module testModule = context.findModuleByName("test2", QName.parseRevision("2013-06-18"));
         assertNotNull(testModule);
 
         final Module contextModule = context.findModuleByNamespace(URI.create("urn:opendaylight.baz")).iterator()
@@ -236,8 +224,7 @@ public class YangParserWithContextTest {
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test2",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
+        final Module module = context.findModuleByName("test2", QName.parseRevision("2013-06-18"));
         assertNotNull(module);
         final ContainerSchemaNode peer = (ContainerSchemaNode) module.getDataChildByName(QName.create(
                 module.getQNameModule(), "peer"));
@@ -249,8 +236,8 @@ public class YangParserWithContextTest {
 
         // test grouping path
         final List<QName> path = new ArrayList<>();
-        final QName qname = QName.create(URI.create("urn:opendaylight.baz"),
-            SimpleDateFormatUtil.getRevisionFormat().parse("2013-02-27"), "target");
+        final QName qname = QName.create(URI.create("urn:opendaylight.baz"), QName.parseRevision("2013-02-27"),
+            "target");
         path.add(qname);
         final SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, usesNode.getGroupingPath());
@@ -315,8 +302,7 @@ public class YangParserWithContextTest {
         reactor.addSources(types, test3);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test3",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
+        final Module module = context.findModuleByName("test3", QName.parseRevision("2013-06-18"));
         assertNotNull(module);
 
         final Set<IdentitySchemaNode> identities = module.getIdentities();
@@ -325,13 +311,13 @@ public class YangParserWithContextTest {
         final IdentitySchemaNode identity = identities.iterator().next();
         final QName idQName = identity.getQName();
         assertEquals(URI.create("urn:simple.demo.test3"), idQName.getNamespace());
-        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"), idQName.getRevision());
+        assertEquals(QName.parseRevision("2013-06-18"), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
         final IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
-        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2012-04-16"), idBaseQName.getRevision());
+        assertEquals(QName.parseRevision("2012-04-16"), idBaseQName.getRevision());
         assertEquals("service-type", idBaseQName.getLocalName());
     }
 
@@ -348,8 +334,7 @@ public class YangParserWithContextTest {
 
         final SchemaContext context = reactor.buildEffective();
 
-        final Module module = context.findModuleByName("test3",
-                SimpleDateFormatUtil.getRevisionFormat().parse("2013-06-18"));
+        final Module module = context.findModuleByName("test3", QName.parseRevision("2013-06-18"));
         assertNotNull(module);
 
         final ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName(QName.create(
@@ -360,7 +345,7 @@ public class YangParserWithContextTest {
         final UnknownSchemaNode un = unknownNodes.get(0);
         final QName unType = un.getNodeType();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
-        assertEquals(SimpleDateFormatUtil.getRevisionFormat().parse("2012-04-16"), unType.getRevision());
+        assertEquals(QName.parseRevision("2012-04-16"), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
         assertNotNull(un.getExtensionDefinition());
@@ -382,19 +367,19 @@ public class YangParserWithContextTest {
 
         // test augmentation process
         final ContainerSchemaNode augmentHolder = (ContainerSchemaNode) ifEntry.getDataChildByName(QName.create(T3_NS,
-                rev, "augment-holder"));
+                REV, "augment-holder"));
         assertNotNull(augmentHolder);
-        final DataSchemaNode ds0 = augmentHolder.getDataChildByName(QName.create(T2_NS, rev, "ds0ChannelNumber"));
+        final DataSchemaNode ds0 = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "ds0ChannelNumber"));
         assertNotNull(ds0);
-        final DataSchemaNode interfaceId = augmentHolder.getDataChildByName(QName.create(T2_NS, rev, "interface-id"));
+        final DataSchemaNode interfaceId = augmentHolder.getDataChildByName(QName.create(T2_NS, REV, "interface-id"));
         assertNotNull(interfaceId);
-        final DataSchemaNode higherLayerIf = augmentHolder.getDataChildByName(QName.create(T2_NS, rev,
+        final DataSchemaNode higherLayerIf = augmentHolder.getDataChildByName(QName.create(T2_NS, REV,
                 "higher-layer-if"));
         assertNotNull(higherLayerIf);
         final ContainerSchemaNode schemas = (ContainerSchemaNode) augmentHolder.getDataChildByName(QName.create(T2_NS,
-                rev, "schemas"));
+                REV, "schemas"));
         assertNotNull(schemas);
-        assertNotNull(schemas.getDataChildByName(QName.create(T1_NS, rev, "id")));
+        assertNotNull(schemas.getDataChildByName(QName.create(T1_NS, REV, "id")));
 
         // test augment target after augmentation: check if it is same instance
         final ListSchemaNode ifEntryAfterAugment = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
@@ -413,8 +398,7 @@ public class YangParserWithContextTest {
         reactor.addSources(bar, deviationTest);
         final SchemaContext context = reactor.buildEffective();
 
-        final Module testModule = context.findModuleByName("deviation-test", SimpleDateFormatUtil.getRevisionFormat()
-                .parse("2013-02-27"));
+        final Module testModule = context.findModuleByName("deviation-test", QName.parseRevision("2013-02-27"));
         assertNotNull(testModule);
 
         final Set<Deviation> deviations = testModule.getDeviations();
@@ -424,7 +408,7 @@ public class YangParserWithContextTest {
         assertEquals("system/user ref", dev.getReference());
 
         final URI expectedNS = URI.create("urn:opendaylight.bar");
-        final Date expectedRev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-03");
+        final Date expectedRev = QName.parseRevision("2013-07-03");
         final List<QName> path = new ArrayList<>();
         path.add(QName.create(expectedNS, expectedRev, "interfaces"));
         path.add(QName.create(expectedNS, expectedRev, "ifEntry"));

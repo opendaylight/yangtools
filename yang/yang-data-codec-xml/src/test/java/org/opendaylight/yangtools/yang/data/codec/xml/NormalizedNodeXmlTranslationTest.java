@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -52,7 +51,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -101,15 +99,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
-    private static final Date REVISION;
-
-    static {
-        try {
-            REVISION = SimpleDateFormatUtil.getRevisionFormat().parse("2014-03-13");
-        } catch (final ParseException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-    }
+    private static final Date REVISION = QName.parseRevision("2014-03-13");
 
     static final XMLOutputFactory XML_FACTORY;
 

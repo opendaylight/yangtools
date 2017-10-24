@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -79,11 +78,10 @@ public class EffectiveSchemaContextTest {
 
         assertNull(schemaContext.getDataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 
-        assertNull(schemaContext.findModuleByName("foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-08-21")));
-        assertNull(schemaContext.findModuleByNamespaceAndRevision(
-                null, SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-21")));
-        assertNull(schemaContext.findModuleByNamespaceAndRevision(
-                URI.create("foo-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse("2016-08-21")));
+        assertNull(schemaContext.findModuleByName("foo", QName.parseRevision("2016-08-21")));
+        assertNull(schemaContext.findModuleByNamespaceAndRevision(null, QName.parseRevision("2016-09-21")));
+        assertNull(schemaContext.findModuleByNamespaceAndRevision(URI.create("foo-namespace"),
+            QName.parseRevision("2016-08-21")));
 
         assertFalse(schemaContext.isAugmenting());
         assertFalse(schemaContext.isAddedByUses());
@@ -100,8 +98,7 @@ public class EffectiveSchemaContextTest {
         assertNotNull(schemaContext.getAvailableAugmentations());
         assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
-        Module fooModule = schemaContext.findModuleByName(
-                "foo", SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-21"));
+        Module fooModule = schemaContext.findModuleByName("foo", QName.parseRevision("2016-09-21"));
         assertNotNull(fooModule);
 
         assertEquals(3, schemaContext.getModules().size());

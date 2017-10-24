@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
@@ -28,7 +28,7 @@ public class Bug6961Test {
 
     @Test
     public void testBug6961SchemaContext() throws Exception {
-        final Optional<Date> date = Optional.of(SimpleDateFormatUtil.getRevisionFormat().parse("2016-01-01"));
+        final Optional<Date> date = Optional.of(QName.parseRevision("2016-01-01"));
         final ModuleIdentifier foo = ModuleIdentifierImpl.create("foo", Optional.of(new URI("foo")), date);
         final ModuleIdentifier sub1Foo = ModuleIdentifierImpl.create("sub1-foo", Optional.of(new URI("foo")), date);
         final ModuleIdentifier sub2Foo = ModuleIdentifierImpl.create("sub2-foo", Optional.of(new URI("foo")), date);

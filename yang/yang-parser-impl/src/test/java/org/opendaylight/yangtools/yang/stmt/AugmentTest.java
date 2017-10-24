@@ -23,7 +23,6 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -347,7 +346,7 @@ public class AugmentTest {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2013-10-11");
+        final Date revision = QName.parseRevision("2013-10-11");
 
         final Module bar = TestUtils.findModule(context, "bar").get();
         final Set<RpcDefinition> rpcs = bar.getRpcs();

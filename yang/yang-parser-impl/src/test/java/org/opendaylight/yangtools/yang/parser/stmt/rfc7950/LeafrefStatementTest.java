@@ -33,7 +33,7 @@ public class LeafrefStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/leafref-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-12-20");
+        final Date revision = QName.parseRevision("2016-12-20");
 
         final Module foo = schemaContext.findModuleByName("foo", revision);
         assertNotNull(foo);

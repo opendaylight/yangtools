@@ -17,7 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.util.Date;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
@@ -34,7 +34,7 @@ public class Bug6856Test {
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-02-28");
+        final Date revision = QName.parseRevision("2017-02-28");
 
         final Module fooModule = schemaContext.findModuleByName("foo", revision);
         YinExportUtils.writeModuleToOutputStream(schemaContext, fooModule, bufferedOutputStream);
@@ -56,7 +56,7 @@ public class Bug6856Test {
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-02-28");
+        final Date revision = QName.parseRevision("2017-02-28");
 
         final Module barModule = schemaContext.findModuleByName("bar", revision);
         YinExportUtils.writeModuleToOutputStream(schemaContext, barModule, bufferedOutputStream);

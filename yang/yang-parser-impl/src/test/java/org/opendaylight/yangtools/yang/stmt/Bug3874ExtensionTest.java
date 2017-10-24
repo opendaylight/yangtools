@@ -16,7 +16,6 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -34,7 +33,7 @@ public class Bug3874ExtensionTest {
     public void test() throws Exception {
             SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
 
-            Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("1970-01-01");
+            Date revision = QName.parseRevision("1970-01-01");
             QNameModule foo = QNameModule.create(new URI("foo"), revision);
             QName myContainer2QName = QName.create(foo, "my-container-2");
             QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");

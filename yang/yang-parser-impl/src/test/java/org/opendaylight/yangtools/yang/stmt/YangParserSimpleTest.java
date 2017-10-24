@@ -14,7 +14,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -55,11 +53,13 @@ public class YangParserSimpleTest {
 
     @Test
     public void testParseAnyXml() {
-        final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
+        final AnyXmlSchemaNode data = (AnyXmlSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
         assertEquals("AnyXmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, " +
-                "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]", data.toString());
+                "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]",
+                data.toString());
 
         // test SchemaNode args
         assertEquals(QName.create(SN, "data"), data.getQName());
@@ -103,7 +103,7 @@ public class YangParserSimpleTest {
     }
 
     @Test
-    public void testParseContainer() throws ParseException {
+    public void testParseContainer() {
         final ContainerSchemaNode nodes = (ContainerSchemaNode) testModule
                 .getDataChildByName(QName.create(testModule.getQNameModule(), "nodes"));
         // test SchemaNode args
@@ -188,9 +188,8 @@ public class YangParserSimpleTest {
 
     private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
-    private static SchemaPath createPath(final String... names) throws ParseException {
-        final Date rev = SimpleDateFormatUtil.getRevisionFormat().parse("2013-07-30");
-
+    private static SchemaPath createPath(final String... names) {
+        final Date rev = QName.parseRevision("2013-07-30");
         final List<QName> path = new ArrayList<>();
         for (final String name : names) {
             path.add(QName.create(NS, rev, name));

@@ -14,17 +14,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -137,17 +133,6 @@ public final class TestUtils {
             path.add(QName.create(module, name));
         }
         return SchemaPath.create(path, absolute);
-    }
-
-    public static Date createDate(final String date) {
-        Date result;
-        final DateFormat simpleDateFormat = SimpleDateFormatUtil.getRevisionFormat();
-        try {
-            result = simpleDateFormat.parse(date);
-        } catch (ParseException e) {
-            result = null;
-        }
-        return result;
     }
 
     /**

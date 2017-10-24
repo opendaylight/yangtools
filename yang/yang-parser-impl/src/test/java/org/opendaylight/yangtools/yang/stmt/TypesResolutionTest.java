@@ -282,7 +282,7 @@ public class TypesResolutionTest {
 
         QName testedTypeQName = testedType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:iana-timezones"), testedTypeQName.getNamespace());
-        assertEquals(TestUtils.createDate("2012-07-09"), testedTypeQName.getRevision());
+        assertEquals(QName.parseRevision("2012-07-09"), testedTypeQName.getRevision());
         assertEquals("iana-timezone", testedTypeQName.getLocalName());
 
         EnumTypeDefinition enumType = (EnumTypeDefinition) testedType.getBaseType();
@@ -314,7 +314,7 @@ public class TypesResolutionTest {
 
         QName testedTypeQName = testedType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeQName.getNamespace());
-        assertEquals(TestUtils.createDate("2010-09-24"), testedTypeQName.getRevision());
+        assertEquals(QName.parseRevision("2010-09-24"), testedTypeQName.getRevision());
         assertEquals("object-identifier-128", testedTypeQName.getLocalName());
 
         StringTypeDefinition testedTypeBase = testedType.getBaseType();
@@ -327,7 +327,7 @@ public class TypesResolutionTest {
 
         QName testedTypeBaseQName = testedTypeBase.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeBaseQName.getNamespace());
-        assertEquals(TestUtils.createDate("2010-09-24"), testedTypeBaseQName.getRevision());
+        assertEquals(QName.parseRevision("2010-09-24"), testedTypeBaseQName.getRevision());
         assertEquals("object-identifier", testedTypeBaseQName.getLocalName());
     }
 
@@ -339,7 +339,7 @@ public class TypesResolutionTest {
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
         QName identity = baseType.getIdentity().getQName();
         assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());
-        assertEquals(TestUtils.createDate("2012-04-16"), identity.getRevision());
+        assertEquals(QName.parseRevision("2012-04-16"), identity.getRevision());
         assertEquals("service-type", identity.getLocalName());
 
         LeafSchemaNode type = (LeafSchemaNode) tested.getDataChildByName(QName.create(tested.getQNameModule(), "type"));

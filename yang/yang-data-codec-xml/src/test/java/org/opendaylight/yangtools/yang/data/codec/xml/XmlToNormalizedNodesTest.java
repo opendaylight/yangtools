@@ -29,7 +29,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -87,12 +86,10 @@ public class XmlToNormalizedNodesTest {
 
     @BeforeClass
     public static void setup() throws Exception {
-        fooModule = QNameModule.create(new URI("foo-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
-                "1970-01-01"));
+        fooModule = QNameModule.create(new URI("foo-namespace"), QName.parseRevision("1970-01-01"));
         parentContainer = QName.create(fooModule, "parent-container");
 
-        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
-                    "1970-01-01"));
+        bazModule = QNameModule.create(new URI("baz-namespace"), QName.parseRevision("1970-01-01"));
         outerContainer = QName.create(bazModule, "outer-container");
 
         myContainer1 = QName.create(bazModule, "my-container-1");

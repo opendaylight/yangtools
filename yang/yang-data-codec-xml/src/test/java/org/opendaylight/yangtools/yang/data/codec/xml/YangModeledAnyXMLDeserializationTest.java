@@ -23,7 +23,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -61,14 +60,12 @@ public class YangModeledAnyXMLDeserializationTest {
 
     @Before
     public void setUp() throws Exception {
-        barModuleQName = QNameModule.create(new URI("bar"), SimpleDateFormatUtil.getRevisionFormat()
-                .parse("1970-01-01"));
+        barModuleQName = QNameModule.create(new URI("bar"), QName.parseRevision("1970-01-01"));
         myContainer1 = QName.create(barModuleQName, "my-container-1");
         myLeaf1 = QName.create(barModuleQName, "my-leaf-1");
         myAnyXMLDataBar = QName.create(barModuleQName, "my-anyxml-data");
 
-        fooModuleQName = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat()
-                .parse("1970-01-01"));
+        fooModuleQName = QNameModule.create(new URI("foo"), QName.parseRevision("1970-01-01"));
         myContainer2 = QName.create(fooModuleQName, "my-container-2");
         innerContainer = QName.create(fooModuleQName, "inner-container");
         myLeaf3 = QName.create(fooModuleQName, "my-leaf-3");

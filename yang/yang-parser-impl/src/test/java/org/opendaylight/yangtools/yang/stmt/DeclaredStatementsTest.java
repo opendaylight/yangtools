@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -304,7 +303,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-28");
+        final Date revision = QName.parseRevision("2016-09-28");
 
         final Module testModule = schemaContext.findModuleByName("root-module-declared-test", revision);
         assertNotNull(testModule);

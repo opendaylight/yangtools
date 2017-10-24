@@ -19,7 +19,6 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.util.ConstraintDefinitions;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -45,8 +44,7 @@ public class ConstraintDefinitionsTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModuleByName("foo",
-            SimpleDateFormatUtil.getRevisionFormat().parse("2016-09-20"));
+        final Module testModule = schemaContext.findModuleByName("foo", QName.parseRevision("2016-09-20"));
         assertNotNull(testModule);
 
         final LeafSchemaNode mandatoryLeaf1 = (LeafSchemaNode) testModule.getDataChildByName(

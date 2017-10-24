@@ -109,7 +109,7 @@ public class YangParserTest {
 
         assertEquals("opendaylight", foo.getOrganization());
         assertEquals("http://www.opendaylight.org/", foo.getContact());
-        final Date expectedRevision = TestUtils.createDate("2013-02-27");
+        final Date expectedRevision = QName.parseRevision("2013-02-27");
         assertEquals(expectedRevision, foo.getRevision());
         assertNull(foo.getReference());
     }

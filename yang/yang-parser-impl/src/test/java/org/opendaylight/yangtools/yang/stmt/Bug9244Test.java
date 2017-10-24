@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -30,7 +29,7 @@ public class Bug9244Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9244/");
         assertNotNull(schemaContext);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-10-13");
+        final Date revision = QName.parseRevision("2017-10-13");
 
         final Module barModule = schemaContext.findModuleByName("bar", revision);
         assertNotNull(barModule);

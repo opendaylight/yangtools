@@ -22,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -43,8 +42,7 @@ public class Bug5396Test {
 
     @Before
     public void setUp() throws Exception {
-        fooModuleQName = QNameModule.create(new URI("foo"), SimpleDateFormatUtil.getRevisionFormat().parse(
-                    "2016-03-22"));
+        fooModuleQName = QNameModule.create(new URI("foo"), QName.parseRevision("2016-03-22"));
         schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
     }
 

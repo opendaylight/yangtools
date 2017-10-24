@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -42,7 +40,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -104,9 +101,8 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
     private DOMSource anyxmlDomSource;
 
     @Before
-    public void setup() throws URISyntaxException, ParseException {
-        foobarModule = QNameModule.create(new URI("foobar-namespace"), SimpleDateFormatUtil.getRevisionFormat().parse(
-                    "2016-09-19"));
+    public void setup() {
+        foobarModule = QNameModule.create(URI.create("foobar-namespace"), QName.parseRevision("2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
 

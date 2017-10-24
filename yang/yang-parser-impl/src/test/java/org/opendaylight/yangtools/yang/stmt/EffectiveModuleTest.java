@@ -13,11 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -61,16 +59,7 @@ public class EffectiveModuleTest {
     private static final SchemaPath contSchemaPath = SchemaPath.create(true, cont);
     private static final SchemaPath feature1SchemaPath = SchemaPath.create(true, feature1);
 
-    private static Date revision;
-
-    @BeforeClass
-    public static void init() {
-        try {
-            revision = SimpleDateFormatUtil.getRevisionFormat().parse("2000-01-01");
-        } catch (ParseException e) {
-            throw new IllegalArgumentException(e);
-        }
-    }
+    private static final Date REVISION = QName.parseRevision("2000-01-01");
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
@@ -100,7 +89,7 @@ public class EffectiveModuleTest {
         final ModuleImport importStmt = imports.iterator().next();
         assertNotNull(importStmt);
         assertEquals("imported", importStmt.getModuleName());
-        assertEquals(revision, importStmt.getRevision());
+        assertEquals(REVISION, importStmt.getRevision());
         assertEquals("imp-pref", importStmt.getPrefix());
 
         final Set<Module> submodules = rootModule.getSubmodules();
@@ -119,7 +108,7 @@ public class EffectiveModuleTest {
         assertEquals(1, deviations.size());
         final Deviation deviationStmt = deviations.iterator().next();
         assertNotNull(deviationStmt);
-        final QNameModule importedModuleQName = QNameModule.create(URI.create("imported"), revision);
+        final QNameModule importedModuleQName = QNameModule.create(URI.create("imported"), REVISION);
         final QName importedContQName = QName.create(importedModuleQName, "cont");
         final SchemaPath importedContSchemaPath = SchemaPath.create(true, importedContQName);
         assertEquals(importedContSchemaPath, deviationStmt.getTargetPath());

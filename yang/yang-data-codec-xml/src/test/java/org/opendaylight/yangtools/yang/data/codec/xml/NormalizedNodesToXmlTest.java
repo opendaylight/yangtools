@@ -14,8 +14,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,7 +38,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -89,9 +86,8 @@ public class NormalizedNodesToXmlTest {
     private QName myLeafInList3;
 
     @Before
-    public void setup() throws URISyntaxException, ParseException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat()
-                .parse("1970-01-01"));
+    public void setup() {
+        bazModule = QNameModule.create(URI.create("baz-namespace"), QName.parseRevision("1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 

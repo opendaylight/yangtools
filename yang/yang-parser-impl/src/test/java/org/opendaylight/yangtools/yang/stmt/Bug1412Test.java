@@ -16,7 +16,6 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -39,7 +38,7 @@ public class Bug1412Test {
         assertEquals(1, unknownNodes.size());
         final UnknownSchemaNode action = unknownNodes.get(0);
 
-        final Date revision = SimpleDateFormatUtil.getRevisionFormat().parse("2014-07-25");
+        final Date revision = QName.parseRevision("2014-07-25");
         final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), revision);
         QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
         assertEquals(expectedNodeType, action.getNodeType());

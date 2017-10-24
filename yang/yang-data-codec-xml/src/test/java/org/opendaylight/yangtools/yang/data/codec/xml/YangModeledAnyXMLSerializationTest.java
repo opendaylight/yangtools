@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -65,8 +64,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
     private final SchemaContext schemaContext;
 
     public YangModeledAnyXMLSerializationTest() throws Exception {
-        bazModuleQName = QNameModule.create(new URI("baz"), SimpleDateFormatUtil.getRevisionFormat()
-                .parse("1970-01-01"));
+        bazModuleQName = QNameModule.create(new URI("baz"), QName.parseRevision("1970-01-01"));
         bazQName = QName.create(bazModuleQName, "baz");
         myContainer2QName = QName.create(bazModuleQName, "my-container-2");
         myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
