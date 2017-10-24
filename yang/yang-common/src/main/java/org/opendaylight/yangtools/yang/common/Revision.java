@@ -16,10 +16,22 @@ import java.io.ObjectOutput;
 import java.io.Serializable;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Dedicated object identifying a YANG module revision.
+ *
+ * <p>
+ * <h3>API design note</h3>
+ * This class defines the contents of a revision statement, but modules do not require to have a revision (e.g. they
+ * have not started to keep track of revisions).
+ *
+ * <p>APIs which involve this class should always transfer instances via {@code Optional<Revision>}, which is
+ * the primary bridge data type. #compareOptional() is provided defining total ordering on such Optionals.
+ *
+ * <p>Implementations can use nullable fields with explicit conversions to/from {@link Optional}
  *
  * @author Robert Varga
  */
@@ -128,6 +140,37 @@ public abstract class Revision implements Comparable<Revision>, Serializable {
     public static Revision forString(@Nonnull final String str) throws ParseException {
         final Date date = SimpleDateFormatUtil.getRevisionFormat().parse(str);
         return new ForDate(date, str);
+    }
+
+    /**
+     * Compare two {@link Optional}s wrapping Revisions. Arguments and return value are consistent with
+     * {@link java.util.Comparator#compare(Object, Object)} interface contract. Missing revisions compare as lower
+     * than any other revision.
+     *
+     * @param first First optional revision
+     * @param second Second optional revision
+     * @return Positive, zero, or negative integer.
+     */
+    public static int compareOptional(final Optional<Revision> first, final Optional<Revision> second) {
+        if (first.isPresent()) {
+            return second.isPresent() ? first.get().compareTo(second.get()) : 1;
+        }
+        return second.isPresent() ? -1 : 0;
+    }
+
+    /**
+     * Compare two explicitly nullable Revisions. Unlike {@link #compareTo(Revision)}, this handles both arguments
+     * being null such that total ordering is defined.
+     *
+     * @param first First revision
+     * @param second Second revision
+     * @return Positive, zero, or negative integer.
+     */
+    public static int compareNullable(@Nullable final Revision first, @Nullable final Revision second) {
+        if (first != null) {
+            return second != null ? first.compareTo(second) : 1;
+        }
+        return second != null ? -1 : 0;
     }
 
     @Override
