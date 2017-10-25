@@ -25,10 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -36,7 +33,6 @@ import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -178,28 +174,24 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         File file = null;
-        TreeMap<Date, File> map = new TreeMap<>();
+        TreeMap<Optional<Revision>, File> map = new TreeMap<>(Revision::compare);
         for (File sorted : files) {
             String fileName = sorted.getName();
             Matcher match = Revision.STRING_FORMAT_PATTERN.matcher(fileName);
             if (match.find()) {
                 String revStr = match.group();
-                /*
-                 * FIXME: Consider using string for comparison.
-                 * String is comparable, pattern check tested format
-                 * so comparing as ASCII string should be sufficient
-                 */
-                DateFormat df = SimpleDateFormatUtil.getRevisionFormat();
+                Revision rev;
                 try {
-                    Date date = df.parse(revStr);
-                    map.put(date, sorted);
-                } catch (final ParseException e) {
-                    LOG.info("Unable to parse date from yang file name {}", fileName);
-                    map.put(new Date(0L), sorted);
+                    rev = Revision.valueOf(revStr);
+                } catch (final IllegalArgumentException e) {
+                    LOG.info("Unable to parse date from yang file name {}, falling back to not-present", fileName, e);
+                    rev = null;
                 }
 
+                map.put(Optional.ofNullable(rev), sorted);
+
             } else {
-                map.put(new Date(0L), sorted);
+                map.put(Optional.empty(), sorted);
             }
         }
         file = map.lastEntry().getValue();
