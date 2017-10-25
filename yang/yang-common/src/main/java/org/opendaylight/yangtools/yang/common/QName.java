@@ -340,28 +340,14 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (getNamespace() != null) {
             sb.append(QNAME_LEFT_PARENTHESIS).append(getNamespace());
 
-            if (getFormattedRevision() != null) {
-                sb.append(QNAME_REVISION_DELIMITER).append(getFormattedRevision());
+            final Optional<Revision> rev = getRevision();
+            if (rev.isPresent()) {
+                sb.append(QNAME_REVISION_DELIMITER).append(rev.get());
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
         sb.append(localName);
         return sb.toString();
-    }
-
-    /**
-     * Return string representation of revision in format <code>YYYY-mm-dd</code>
-     *
-     * <p>
-     * YANG Specification defines format for <code>revision</code> as
-     * YYYY-mm-dd. This format for revision is reused accross multiple places
-     * such as capabilities URI, YANG modules, etc.
-     *
-     * @return String representation of revision or null, if revision is not
-     *         set.
-     */
-    public String getFormattedRevision() {
-        return module.getFormattedRevision();
     }
 
     /**

@@ -77,10 +77,6 @@ public final class QNameModule implements Immutable, Serializable {
         return new QNameModule(namespace, revision);
     }
 
-    public String getFormattedRevision() {
-        return revision == null ? null : revision.toString();
-    }
-
     /**
      * Returns the namespace of the module which is specified as argument of
      * YANG Module <b><font color="#00FF00">namespace</font></b> keyword.
