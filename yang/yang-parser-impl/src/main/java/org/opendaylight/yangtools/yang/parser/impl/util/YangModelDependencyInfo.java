@@ -60,9 +60,8 @@ public abstract class YangModelDependencyInfo {
             .getLocalName();
 
     private final String name;
-    private final String formattedRevision;
     private final Revision revision;
-    private final Optional<SemVer> semVer;
+    private final SemVer semVer;
     private final ImmutableSet<ModuleImport> submoduleIncludes;
     private final ImmutableSet<ModuleImport> moduleImports;
     private final ImmutableSet<ModuleImport> dependencies;
@@ -78,13 +77,12 @@ public abstract class YangModelDependencyInfo {
             final ImmutableSet<ModuleImport> includes,
             final Optional<SemVer> semVer) {
         this.name = name;
-        this.formattedRevision = formattedRevision;
         this.revision = formattedRevision == null ? null : Revision.valueOf(formattedRevision);
         this.moduleImports = imports;
         this.submoduleIncludes = includes;
         this.dependencies = ImmutableSet.<ModuleImport>builder()
                 .addAll(moduleImports).addAll(submoduleIncludes).build();
-        this.semVer = semVer;
+        this.semVer = semVer.orElse(null);
     }
 
     /**
@@ -112,16 +110,16 @@ public abstract class YangModelDependencyInfo {
      * @return formatted revision string
      */
     public String getFormattedRevision() {
-        return formattedRevision;
+        return revision != null ? revision.toString() : null;
     }
 
     /**
      * Returns revision.
      *
-     * @return revision
+     * @return revision, potentially null
      */
-    Revision getRevision() {
-        return revision;
+    public Optional<Revision> getRevision() {
+        return Optional.ofNullable(revision);
     }
 
     /**
@@ -130,15 +128,15 @@ public abstract class YangModelDependencyInfo {
      * @return semantic version
      */
     public Optional<SemVer> getSemanticVersion() {
-        return semVer;
+        return Optional.ofNullable(semVer);
     }
 
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(formattedRevision);
         result = prime * result + Objects.hashCode(name);
+        result = prime * result + Objects.hashCode(revision);
         result = prime * result + Objects.hashCode(semVer);
         return result;
     }
@@ -155,21 +153,8 @@ public abstract class YangModelDependencyInfo {
             return false;
         }
         final YangModelDependencyInfo other = (YangModelDependencyInfo) obj;
-        if (formattedRevision == null) {
-            if (other.formattedRevision != null) {
-                return false;
-            }
-        } else if (!formattedRevision.equals(other.formattedRevision)) {
-            return false;
-        }
-        if (name == null) {
-            if (other.name != null) {
-                return false;
-            }
-        } else if (!name.equals(other.name)) {
-            return false;
-        }
-        return Objects.equals(semVer, other.semVer);
+        return Objects.equals(name, other.name) && Objects.equals(revision, other.revision)
+                && Objects.equals(semVer, other.semVer);
     }
 
     /**
