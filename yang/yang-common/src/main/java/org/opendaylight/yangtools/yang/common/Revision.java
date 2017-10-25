@@ -41,14 +41,18 @@ public final class Revision implements Comparable<Revision>, Serializable {
     private static final long serialVersionUID = 1L;
 
     @RegEx
-    private static final String STRING_FORMAT_STR = "\\d\\d\\d\\d\\-\\d\\d-\\d\\d";
-    private static final Pattern STRING_FORMAT = Pattern.compile(STRING_FORMAT_STR);
+    private static final String STRING_FORMAT_PATTERN_STR = "\\d\\d\\d\\d\\-\\d\\d-\\d\\d";
+
+    /**
+     * String format pattern, which can be used to match parts of a string into components.
+     */
+    public static final Pattern STRING_FORMAT_PATTERN = Pattern.compile(STRING_FORMAT_PATTERN_STR);
 
     private final String str;
 
     private Revision(final String str) {
         // Since all strings conform to this format, compareTo() can be delegated to String.compareTo()
-        Preconditions.checkArgument(STRING_FORMAT.matcher(str).matches(),
+        Preconditions.checkArgument(STRING_FORMAT_PATTERN.matcher(str).matches(),
             "String '%s' does match revision format YYYY-MM-DD", str);
         this.str = str;
     }

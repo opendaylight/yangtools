@@ -35,6 +35,7 @@ import java.util.Optional;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
@@ -60,7 +61,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                     YangTextSchemaSource.class, new YangTextSchemaStorageAdapter());
 
     private static final Pattern CACHED_FILE_PATTERN =
-            Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + SourceIdentifier.REVISION_PATTERN + "))?");
+            Pattern.compile("(?<moduleName>[^@]+)" + "(@(?<revision>" + Revision.STRING_FORMAT_PATTERN + "))?");
 
     private final Class<T> representation;
     private final File storageDirectory;
@@ -180,7 +181,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         TreeMap<Date, File> map = new TreeMap<>();
         for (File sorted : files) {
             String fileName = sorted.getName();
-            Matcher match = SourceIdentifier.REVISION_PATTERN.matcher(fileName);
+            Matcher match = Revision.STRING_FORMAT_PATTERN.matcher(fileName);
             if (match.find()) {
                 String revStr = match.group();
                 /*

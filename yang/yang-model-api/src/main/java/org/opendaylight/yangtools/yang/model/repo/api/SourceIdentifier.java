@@ -13,11 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Optional;
-import java.util.regex.Pattern;
-import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
@@ -38,18 +35,6 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * based on revision when a SourceIdentifier does not have a revision.
      */
     public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
-
-    @RegEx
-    private static final String REVISION_PATTERN_STR = "\\d\\d\\d\\d-\\d\\d-\\d\\d";
-
-    /**
-     * Simplified compiled revision pattern in format YYYY-mm-dd, which checks
-     * only distribution of number elements.
-     *
-     * <p>
-     * For checking if supplied string is real date, use {@link SimpleDateFormatUtil} instead.
-     */
-    public static final Pattern REVISION_PATTERN = Pattern.compile(REVISION_PATTERN_STR);
 
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
 
