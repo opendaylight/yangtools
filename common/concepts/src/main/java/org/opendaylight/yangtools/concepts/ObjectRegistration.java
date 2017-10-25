@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.concepts;
 import javax.annotation.Nonnull;
 
 /**
- * Class representing a registration of an object. Such a registration is
- * a proper resource and should be cleaned up when no longer required, so
- * references to the object can be removed. This mechanism lies above the
- * usual Java reference mechanism, as the entity where the object is
- * registered may reside outside of the Java Virtual Machine.
+ * Class representing a registration of an object. Such a registration is a proper resource and should be cleaned up
+ * when no longer required, so references to the object can be removed. This mechanism lies above the usual Java
+ * reference mechanism, as the entity where the object is registered may reside outside of the Java Virtual Machine.
  */
 public interface ObjectRegistration<T> extends Registration {
     /**
@@ -24,13 +22,6 @@ public interface ObjectRegistration<T> extends Registration {
      */
     @Nonnull T getInstance();
 
-    /**
-     * Unregisters the object. This operation is required not to invoke
-     * blocking operations. Implementations which require interaction
-     * with outside world must provide guarantees that any work is done
-     * behind the scenes and the unregistration process looks as if it
-     * has already succeeded once this method returns.
-     */
     @Override
-    void close() throws Exception;
+    void close();
 }
