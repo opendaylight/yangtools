@@ -47,6 +47,7 @@ public interface DataNodeContainer {
      * @return child node of this DataNodeContainer if child with given name is
      *         present, null otherwise
      */
+    // FIXME: this should return an Optional
     DataSchemaNode getDataChildByName(QName name);
 
     /**

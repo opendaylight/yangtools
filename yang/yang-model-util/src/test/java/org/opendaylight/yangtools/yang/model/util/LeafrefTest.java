@@ -15,6 +15,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -42,12 +43,12 @@ public class LeafrefTest {
 
         assertNotNull("Object 'leafref' shouldn't be null.", leafref);
         assertNull("Base type of 'leafref' should be null.", leafref.getBaseType());
-        assertNull("Units of 'leafref' should be empty.", leafref.getUnits());
-        assertNull("Leafref does not have a default value", leafref.getDefaultValue());
+        assertEquals("Units of 'leafref' should be empty.", Optional.empty(), leafref.getUnits());
+        assertEquals("Leafref does not have a default value", Optional.empty(), leafref.getDefaultValue());
         assertEquals(QName.create("test", "List1"), leafref.getQName());
         assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());
-        assertNull(leafref.getDescription());
-        assertNull(leafref.getReference());
+        assertEquals(Optional.empty(), leafref.getDescription());
+        assertEquals(Optional.empty(), leafref.getReference());
         assertEquals("Status of 'leafref' is current.", Status.CURRENT, leafref.getStatus());
         assertTrue("Object 'leafref' shouldn't have any unknown schema nodes.",
                 leafref.getUnknownSchemaNodes().isEmpty());

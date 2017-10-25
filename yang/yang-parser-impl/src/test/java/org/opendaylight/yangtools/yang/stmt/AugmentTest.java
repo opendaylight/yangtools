@@ -135,11 +135,11 @@ public class AugmentTest {
         AugmentationSchema augment2 = null;
         AugmentationSchema augment3 = null;
         for (final AugmentationSchema as : augmentations) {
-            if (as.getWhenCondition() == null) {
+            if (!as.getWhenCondition().isPresent()) {
                 augment3 = as;
-            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
+            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().get().toString())) {
                 augment1 = as;
-            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().toString())) {
+            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().get().toString())) {
                 augment2 = as;
             }
         }

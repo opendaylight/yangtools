@@ -11,9 +11,8 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 /**
- * Enum describing YANG deviation 'deviate' statement. It defines how the
- * device's implementation of the target node deviates from its original
- * definition.
+ * Enum describing YANG deviation 'deviate' statement. It defines how the device's implementation of the target node
+ * deviates from its original definition.
  */
 public enum DeviateKind {
 

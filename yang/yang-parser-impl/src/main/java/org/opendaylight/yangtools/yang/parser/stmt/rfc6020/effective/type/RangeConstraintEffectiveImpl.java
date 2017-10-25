@@ -27,39 +27,39 @@ public class RangeConstraintEffectiveImpl implements RangeConstraint {
 
     public RangeConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
             final Optional<String> reference) {
-        this(min, max, description.orElse(null), reference.orElse(null), "range-out-of-specified-bounds",
+        this(min, max, description, reference, "range-out-of-specified-bounds",
                 "The argument is out of bounds <" + min + ", " + max + ">");
     }
 
-    public RangeConstraintEffectiveImpl(final Number min, final Number max, final String description,
-            final String reference, final String errorAppTag, final String errorMessage) {
+    public RangeConstraintEffectiveImpl(final Number min, final Number max, final Optional<String> description,
+            final Optional<String> reference, final String errorAppTag, final String errorMessage) {
         this.min = requireNonNull(min, "min must not be null");
         this.max = requireNonNull(max, "max must not be null");
-        this.description = description;
-        this.reference = reference;
+        this.description = description.orElse(null);
+        this.reference = reference.orElse(null);
         this.errorAppTag = errorAppTag != null ? errorAppTag : "range-out-of-specified-bounds";
         this.errorMessage = errorMessage != null ? errorMessage : "The argument is out of bounds <" + min + ", " + max
                 + ">";
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getErrorAppTag() {
-        return errorAppTag;
+    public Optional<String> getErrorAppTag() {
+        return Optional.ofNullable(errorAppTag);
     }
 
     @Override
-    public String getErrorMessage() {
-        return errorMessage;
+    public Optional<String> getErrorMessage() {
+        return Optional.ofNullable(errorMessage);
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

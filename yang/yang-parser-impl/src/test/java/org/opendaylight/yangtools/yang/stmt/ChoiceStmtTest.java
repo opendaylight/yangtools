@@ -10,8 +10,10 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -51,16 +53,16 @@ public class ChoiceStmtTest {
         assertNotNull(choice);
         assertEquals(5, choice.getCases().size());
 
-        ChoiceCaseNode caseNode = choice.getCaseNodeByName("input");
-        assertNotNull(caseNode);
+        Optional<ChoiceCaseNode> caseNode = choice.getCaseNodeByName("input");
+        assertTrue(caseNode.isPresent());
         caseNode = choice.getCaseNodeByName("output");
-        assertNotNull(caseNode);
+        assertTrue(caseNode.isPresent());
         caseNode = choice.getCaseNodeByName("interval");
-        assertNotNull(caseNode);
+        assertTrue(caseNode.isPresent());
         caseNode = choice.getCaseNodeByName("daily");
-        assertNotNull(caseNode);
+        assertTrue(caseNode.isPresent());
         caseNode = choice.getCaseNodeByName("manual");
-        assertNotNull(caseNode);
+        assertTrue(caseNode.isPresent());
         assertEquals("interval", choice.getDefaultCase());
     }
 }

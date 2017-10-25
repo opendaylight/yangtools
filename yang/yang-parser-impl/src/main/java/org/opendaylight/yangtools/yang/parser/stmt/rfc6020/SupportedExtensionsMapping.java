@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -77,8 +78,8 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
 
     @Override
     @Nullable
-    public QName getArgumentName() {
-        return argument;
+    public Optional<QName> getArgumentName() {
+        return Optional.ofNullable(argument);
     }
 
     @Override

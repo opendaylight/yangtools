@@ -53,7 +53,7 @@ public class DeviationStmtTest {
             final List<DeviateDefinition> deviates = deviation.getDeviates();
             final String targetLocalName = deviation.getTargetPath().getLastComponent().getLocalName();
             if ("test-leaf".equals(targetLocalName)) {
-                assertEquals("test-leaf is not supported", deviation.getDescription());
+                assertEquals("test-leaf is not supported", deviation.getDescription().get());
                 assertEquals(1, deviates.size());
                 assertEquals(DeviateKind.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
             } else if ("test-leaf-2".equals(targetLocalName)) {
@@ -114,7 +114,7 @@ public class DeviationStmtTest {
             }
 
             if ("bar-leaf-1".equals(targetLocalName)) {
-                if ("desc".equals(deviation.getDescription())) {
+                if ("desc".equals(deviation.getDescription().get())) {
                     deviation4 = deviation;
                 } else {
                     deviation5 = deviation;
@@ -122,7 +122,7 @@ public class DeviationStmtTest {
             }
 
             if ("bar-leaf-2".equals(targetLocalName)) {
-                if ("ref".equals(deviation.getReference())) {
+                if ("ref".equals(deviation.getReference().get())) {
                     deviation6 = deviation;
                 } else {
                     deviation7 = deviation;

@@ -64,7 +64,7 @@ public class YinFileListStmtTest {
         final Iterator<DataSchemaNode> childrenIterator = children.iterator();
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
-        assertEquals("Unique module instance name", leaf.getDescription());
+        assertEquals("Unique module instance name", leaf.getDescription().get());
         assertEquals(BaseTypes.stringType(), leaf.getType());
         assertTrue(leaf.getConstraints().isMandatory());
 

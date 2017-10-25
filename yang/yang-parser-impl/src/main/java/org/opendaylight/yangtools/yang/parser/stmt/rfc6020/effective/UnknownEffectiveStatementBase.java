@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -94,8 +95,8 @@ public abstract class UnknownEffectiveStatementBase<A> extends AbstractEffective
     }
 
     @Override
-    public ExtensionDefinition getExtensionDefinition() {
-        return extension;
+    public Optional<ExtensionDefinition> getExtensionDefinition() {
+        return Optional.ofNullable(extension);
     }
 
     @Nonnull

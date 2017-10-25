@@ -79,9 +79,9 @@ public class ExtensionStmtTest {
         assertEquals(1, leaf.getUnknownSchemaNodes().size());
         final List<UnknownSchemaNode> unknownNodes = leaf.getUnknownSchemaNodes();
         final UnknownSchemaNode extensionUse = unknownNodes.get(0);
-        assertEquals(extensionDefinition.getQName().getLocalName(), extensionUse.getExtensionDefinition().getQName()
-                .getLocalName());
-        assertEquals(extensionDefinition.getArgument(), extensionUse.getExtensionDefinition().getArgument());
+        assertEquals(extensionDefinition.getQName().getLocalName(), extensionUse.getExtensionDefinition()
+            .get().getQName().getLocalName());
+        assertEquals(extensionDefinition.getArgument(), extensionUse.getExtensionDefinition().get().getArgument());
 
         assertEquals("key:value", extensionUse.getNodeParameter());
     }

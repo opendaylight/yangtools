@@ -79,13 +79,13 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     }
 
     @Override
-    public String getDefault() {
-        return defaultStr;
+    public Optional<String> getDefault() {
+        return Optional.ofNullable(defaultStr);
     }
 
     @Override
-    public String getUnits() {
-        return unitsStr;
+    public Optional<String> getUnits() {
+        return Optional.ofNullable(unitsStr);
     }
 
     @Override

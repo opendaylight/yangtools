@@ -72,7 +72,7 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
     }
 
     @Override
-    public ContainerSchemaNode getSchemaOfAnyData() {
-        return schema;
+    public Optional<ContainerSchemaNode> getSchemaOfAnyData() {
+        return Optional.ofNullable(schema);
     }
 }

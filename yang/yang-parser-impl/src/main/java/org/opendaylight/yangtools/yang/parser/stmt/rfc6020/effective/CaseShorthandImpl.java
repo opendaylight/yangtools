@@ -86,12 +86,12 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     }
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return caseShorthandNode.getDescription();
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return caseShorthandNode.getReference();
     }
 

@@ -177,6 +177,16 @@ abstract class DependencyResolver {
         }
 
         @Override
+        public Optional<String> getDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getReference() {
+            return Optional.empty();
+        }
+
+        @Override
         public String toString() {
             return MoreObjects.toStringHelper(this).add("parent", parent).toString();
         }

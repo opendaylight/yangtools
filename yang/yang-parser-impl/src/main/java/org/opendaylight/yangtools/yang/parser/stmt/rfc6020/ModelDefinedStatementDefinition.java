@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,8 +44,8 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
 
     @Nullable
     @Override
-    public QName getArgumentName() {
-        return argumentName;
+    public Optional<QName> getArgumentName() {
+        return Optional.ofNullable(argumentName);
     }
 
     @Nonnull

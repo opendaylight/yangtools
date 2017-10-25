@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
@@ -68,8 +67,8 @@ public class TypesResolutionTest {
         assertEquals(14, typedefs.size());
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
-        assertTrue(type.getDescription().contains("This value represents the version of the IP protocol."));
-        assertTrue(type.getReference().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
+        assertTrue(type.getDescription().get().contains("This value represents the version of the IP protocol."));
+        assertTrue(type.getReference().get().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
 
         EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
         List<EnumPair> values = enumType.getValues();
@@ -78,17 +77,17 @@ public class TypesResolutionTest {
         EnumPair value0 = values.get(0);
         assertEquals("unknown", value0.getName());
         assertEquals(0, value0.getValue());
-        assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription());
+        assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription().get());
 
         EnumPair value1 = values.get(1);
         assertEquals("ipv4", value1.getName());
         assertEquals(1, value1.getValue());
-        assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription());
+        assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription().get());
 
         EnumPair value2 = values.get(2);
         assertEquals("ipv6", value2.getName());
         assertEquals(2, value2.getValue());
-        assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription());
+        assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription().get());
     }
 
     @Test
@@ -104,22 +103,22 @@ public class TypesResolutionTest {
         EnumPair value0 = values.get(0);
         assertEquals("unknown", value0.getName());
         assertEquals(0, value0.getValue());
-        assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription());
+        assertEquals("An unknown or unspecified version of the Internet protocol.", value0.getDescription().get());
 
         EnumPair value1 = values.get(1);
         assertEquals("ipv4", value1.getName());
         assertEquals(19, value1.getValue());
-        assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription());
+        assertEquals("The IPv4 protocol as defined in RFC 791.", value1.getDescription().get());
 
         EnumPair value2 = values.get(2);
         assertEquals("ipv6", value2.getName());
         assertEquals(7, value2.getValue());
-        assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription());
+        assertEquals("The IPv6 protocol as defined in RFC 2460.", value2.getDescription().get());
 
         EnumPair value3 = values.get(3);
         assertEquals("default", value3.getName());
         assertEquals(20, value3.getValue());
-        assertEquals("default ip", value3.getDescription());
+        assertEquals("default ip", value3.getDescription().get());
     }
 
     @Test
@@ -278,8 +277,8 @@ public class TypesResolutionTest {
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
         String expectedDesc = "A timezone location as defined by the IANA timezone";
-        assertTrue(testedType.getDescription().contains(expectedDesc));
-        assertNull(testedType.getReference());
+        assertTrue(testedType.getDescription().get().contains(expectedDesc));
+        assertFalse(testedType.getReference().isPresent());
         assertEquals(Status.CURRENT, testedType.getStatus());
 
         QName testedTypeQName = testedType.getQName();

@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * Contains methods for getting data (concrete XPath) and metadata (is XPath
- * absolute) from XPath instance.
+ * Contains methods for getting data (concrete XPath) and metadata (is XPath absolute) from XPath instance.
  */
+// FIXME: this needs to be corrected to have a proper XPath model, so users do not have to muck around with resolution
 public interface RevisionAwareXPath {
-
     /**
      * Returns <code>true</code> if the XPapth starts in root of Yang model,
      * otherwise returns <code>false</code>.

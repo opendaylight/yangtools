@@ -11,17 +11,15 @@ import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
- * Contains method which returns various data constraints for some YANG element
- * (e.g. min or max number of elements). Not all constraints are allowed for all
- * YANG element therefore if the constraint doesn't have sense for some element
+ * Contains method which returns various data constraints for some YANG element (e.g. min or max number of elements).
+ * Not all constraints are allowed for all YANG element therefore if the constraint doesn't have sense for some element
  * then the method returns <code>null</code> value.
  */
 public interface ConstraintDefinition {
 
     /**
-     * Specifies the condition when the data node which contains
-     * <code>when</code> YANG substatement has to be present. If XPath
-     * expression is evaluated as true then the data node has to be present.
+     * Specifies the condition when the data node which contains <code>when</code> YANG substatement has to be present.
+     * If XPath expression is evaluated as true then the data node has to be present.
      *
      * @return XPath expression.
      */
@@ -55,8 +53,7 @@ public interface ConstraintDefinition {
     boolean isMandatory();
 
     /**
-     * Returns the minimum required number of data elements for node where this
-     * constraint is specified.
+     * Returns the minimum required number of data elements for node where this constraint is specified.
      *
      * <p>
      * The returning value equals to value of the argument of the
@@ -68,8 +65,7 @@ public interface ConstraintDefinition {
     @Nullable Integer getMinElements();
 
     /**
-     * Returns the maximum admissible number of data elements for node where
-     * this constraint is specified.
+     * Returns the maximum admissible number of data elements for node where this constraint is specified.
      *
      * <p>
      * The returning value equals to value of the argument of the

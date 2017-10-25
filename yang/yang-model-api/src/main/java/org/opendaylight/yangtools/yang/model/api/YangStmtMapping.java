@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -205,8 +205,8 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    @Nullable public QName getArgumentName() {
-        return argument;
+    public Optional<QName> getArgumentName() {
+        return Optional.ofNullable(argument);
     }
 
     @Override

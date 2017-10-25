@@ -611,6 +611,16 @@ public class SchemaContextProxyTest {
                 public String toString() {
                     return String.format("Module: %s, revision:%s", module.getName(), module.getRevision());
                 }
+
+                @Override
+                public Optional<String> getDescription() {
+                    return Optional.empty();
+                }
+
+                @Override
+                public Optional<String> getReference() {
+                    return Optional.empty();
+                }
             });
         }
         doReturn(mockedImports).when(importer).getImports();

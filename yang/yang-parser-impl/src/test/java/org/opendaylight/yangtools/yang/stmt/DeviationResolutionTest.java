@@ -125,9 +125,8 @@ public class DeviationResolutionTest {
 
         assertTrue(myLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
         assertNotNull(myLeaf.getUnits());
-        assertEquals("bytes", myLeaf.getUnits());
-        assertNotNull(myLeaf.getDefault());
-        assertEquals("10", myLeaf.getDefault());
+        assertEquals("bytes", myLeaf.getUnits().get());
+        assertEquals("10", myLeaf.getDefault().get());
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list-test"));

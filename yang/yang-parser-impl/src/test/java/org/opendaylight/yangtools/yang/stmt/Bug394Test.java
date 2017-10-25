@@ -41,8 +41,8 @@ public class Bug394Test {
         final List<ExtensionDefinition> extensions = bug394_ext.getExtensionSchemaNodes();
         assertEquals(3, extensions.size());
 
-        assertTrue(extensions.contains(nodes.get(0).getExtensionDefinition()));
-        assertTrue(extensions.contains(nodes.get(1).getExtensionDefinition()));
+        assertTrue(extensions.contains(nodes.get(0).getExtensionDefinition().get()));
+        assertTrue(extensions.contains(nodes.get(1).getExtensionDefinition().get()));
     }
 
 }

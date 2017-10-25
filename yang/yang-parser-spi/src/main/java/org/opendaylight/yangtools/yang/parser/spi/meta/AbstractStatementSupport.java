@@ -46,7 +46,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     }
 
     @Override
-    public final QName getArgumentName() {
+    public final Optional<QName> getArgumentName() {
         return type.getArgumentName();
     }
 

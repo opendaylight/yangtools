@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -36,10 +37,10 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
             "Derived type can be built only from a base, derived, or restricted type, not %s", baseType);
 
         // http://tools.ietf.org/html/rfc6020#section-7.3.4
-        defaultValue = baseType.getDefaultValue();
+        defaultValue = baseType.getDefaultValue().orElse(null);
 
         // In similar vein, it makes sense to propagate units
-        units = baseType.getUnits();
+        units = baseType.getUnits().orElse(null);
     }
 
     public void setDefaultValue(@Nonnull final Object defaultValue) {
@@ -60,7 +61,8 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
 
     public final void setUnits(final String units) {
         Preconditions.checkNotNull(units);
-        if (getBaseType().getUnits() != null && !units.equals(getBaseType().getUnits())) {
+        final Optional<String> baseUnits = getBaseType().getUnits();
+        if (baseUnits.isPresent() && !units.equals(baseUnits.get())) {
             LOG.warn("Type {} uverrides 'units' of type {} to \"{}\"", getPath(), getBaseType(), units);
         }
 

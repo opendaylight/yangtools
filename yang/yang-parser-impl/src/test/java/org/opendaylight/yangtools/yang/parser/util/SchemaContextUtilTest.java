@@ -153,7 +153,8 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         testNode = ((ChoiceSchemaNode) myModule
-                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one")
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice")))
+                .getCaseNodeByName("one").get()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice-leaf-one"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -254,7 +255,8 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         testNode = ((ChoiceSchemaNode) myModule
-                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one")
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice")))
+                .getCaseNodeByName("one").get()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "no-choice-leaf"));
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -701,9 +703,10 @@ public class SchemaContextUtilTest {
         assertEquals(testNode, foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName(QName.create(
-                myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one").getDataChildByName(
-                QName.create(myModule.getQNameModule(), "my-container-in-case"));
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice")))
+                .getCaseNodeByName("one").get()
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -824,9 +827,10 @@ public class SchemaContextUtilTest {
         assertNull(foundNode);
 
         // find grouping in case
-        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule.getDataChildByName(QName.create(
-                myModule.getQNameModule(), "my-choice"))).getCaseNodeByName("one").getDataChildByName(
-                QName.create(myModule.getQNameModule(), "my-container-in-case"));
+        dataContainer = (DataNodeContainer) ((ChoiceSchemaNode) myModule
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice")))
+                .getCaseNodeByName("one").get()
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container-in-case"));
         testNode = getGroupingByName(dataContainer, "my-grouping-in-case2");
 
         path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-choice"),
@@ -876,8 +880,8 @@ public class SchemaContextUtilTest {
         final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
-        final SchemaNode testNode = choice.getCaseNodeByName("case-two").getDataChildByName(
-                QName.create(myModule.getQNameModule(), "two"));
+        final SchemaNode testNode = choice.getCaseNodeByName("case-two").get()
+                .getDataChildByName(QName.create(myModule.getQNameModule(), "two"));
 
         final SchemaPath path = SchemaPath.create(true, QName.create(myModule.getQNameModule(), "my-name"),
                 QName.create(myModule.getQNameModule(), "input"), QName.create(myModule.getQNameModule(), "my-choice"),

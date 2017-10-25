@@ -32,13 +32,13 @@ public class Bug8597Test {
             switch (moduleImport.getModuleName()) {
                 case "bar":
                     assertEquals(Optional.of(Revision.valueOf("1970-01-01")), moduleImport.getRevision());
-                    assertEquals("bar-ref", moduleImport.getReference());
-                    assertEquals("bar-desc", moduleImport.getDescription());
+                    assertEquals("bar-ref", moduleImport.getReference().get());
+                    assertEquals("bar-desc", moduleImport.getDescription().get());
                     break;
                 case "baz":
                     assertEquals(Optional.of(Revision.valueOf("2010-10-10")), moduleImport.getRevision());
-                    assertEquals("baz-ref", moduleImport.getReference());
-                    assertEquals("baz-desc", moduleImport.getDescription());
+                    assertEquals("baz-ref", moduleImport.getReference().get());
+                    assertEquals("baz-desc", moduleImport.getDescription().get());
                     break;
                 default:
                     fail("Module 'foo' should only contains import of module 'bar' and 'baz'");

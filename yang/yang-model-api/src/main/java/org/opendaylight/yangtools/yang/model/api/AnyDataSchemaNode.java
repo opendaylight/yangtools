@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nullable;
+import java.util.Optional;
 
 /**
  * The "anydata" statement defines an interior node in the schema tree.
@@ -29,7 +29,7 @@ public interface AnyDataSchemaNode extends DataSchemaNode {
     /**
      * Schema of XML data.
      *
-     * @return schema of contained XML data or null if it is not provided
+     * @return schema of contained XML data, or empty.
      */
-    @Nullable ContainerSchemaNode getSchemaOfAnyData();
+    Optional<ContainerSchemaNode> getSchemaOfAnyData();
 }

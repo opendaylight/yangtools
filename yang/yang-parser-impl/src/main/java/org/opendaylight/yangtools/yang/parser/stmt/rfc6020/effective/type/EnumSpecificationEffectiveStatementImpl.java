@@ -51,8 +51,10 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                 }
 
                 final EnumPair p = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
-                        .setDescription(enumSubStmt.getDescription()).setReference(enumSubStmt.getReference())
-                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes())
+                        .setDescription(enumSubStmt.getDescription().orElse(null))
+                        .setReference(enumSubStmt.getReference().orElse(null))
+                        .setStatus(enumSubStmt.getStatus())
+                        .setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes())
                         .build();
 
                 if (highestValue == null || highestValue < p.getValue()) {

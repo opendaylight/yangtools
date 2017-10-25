@@ -52,8 +52,10 @@ public class Bug6874Test {
 
         // Test for valid import statement
         ModuleImport importStmt = testModule.getImports().iterator().next();
-        assertEquals("Yang 1.1: Allow description and reference in include and import.", importStmt.getDescription());
-        assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", importStmt.getReference());
+        assertEquals("Yang 1.1: Allow description and reference in include and import.",
+            importStmt.getDescription().get());
+        assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6",
+            importStmt.getReference().get());
     }
 
     @Test

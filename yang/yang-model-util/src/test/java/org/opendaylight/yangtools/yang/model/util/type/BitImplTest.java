@@ -68,8 +68,8 @@ public class BitImplTest {
         // test of getter methods
         assertEquals("Incorrect value for qname.", qnameA2, biA.getQName());
         assertEquals("Incorrect value for schema path.", schemaPathA, biA.getPath());
-        assertEquals("Incorrect value for description.", "description", biA.getDescription());
-        assertEquals("Incorrect value for reference.", "reference", biA.getReference());
+        assertEquals("Incorrect value for description.", "description", biA.getDescription().get());
+        assertEquals("Incorrect value for reference.", "reference", biA.getReference().get());
         assertEquals("Incorrect value for status.", Status.CURRENT, biA.getStatus());
         assertEquals("Incorrect value for unknown nodes.", emptyList(), biA.getUnknownSchemaNodes());
 

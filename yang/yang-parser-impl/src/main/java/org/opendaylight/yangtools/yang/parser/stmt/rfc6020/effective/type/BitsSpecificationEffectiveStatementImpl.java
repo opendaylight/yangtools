@@ -50,8 +50,10 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                 }
 
                 final Bit b = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setDescription(bitSubStmt.getDescription()).setReference(bitSubStmt.getReference())
-                        .setStatus(bitSubStmt.getStatus()).setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
+                        .setDescription(bitSubStmt.getDescription().orElse(null))
+                        .setReference(bitSubStmt.getReference().orElse(null))
+                        .setStatus(bitSubStmt.getStatus())
+                        .setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
                         .build();
 
                 SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
