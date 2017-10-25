@@ -12,7 +12,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -59,8 +59,8 @@ public class AugmentToExtensionTest {
 
         boolean augmentationIsInContainer = false;
         for (final UsesNode usesNode : uses) {
-            final Set<AugmentationSchema> augmentations = usesNode.getAugmentations();
-            for (final AugmentationSchema augmentationSchema : augmentations) {
+            final Set<AugmentationSchemaNode> augmentations = usesNode.getAugmentations();
+            for (final AugmentationSchemaNode augmentationSchema : augmentations) {
                 augmentationIsInContainer = true;
             }
         }

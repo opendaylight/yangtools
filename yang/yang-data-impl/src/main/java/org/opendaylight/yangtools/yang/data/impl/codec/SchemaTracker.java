@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -224,7 +224,7 @@ public final class SchemaTracker {
         return schema;
     }
 
-    public AugmentationSchema startAugmentationNode(final AugmentationIdentifier identifier) {
+    public AugmentationSchemaNode startAugmentationNode(final AugmentationIdentifier identifier) {
         LOG.debug("Enter augmentation {}", identifier);
         Object parent = getParent();
 
@@ -234,13 +234,13 @@ public final class SchemaTracker {
             parent = findCaseByChild((ChoiceSchemaNode) parent, name);
         }
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
-        final AugmentationSchema schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
+        final AugmentationSchemaNode schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
             identifier.getPossibleChildNames());
         final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode child : schema.getChildNodes()) {
             realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
         }
-        final AugmentationSchema resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);
+        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
     }

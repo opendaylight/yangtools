@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBu
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -199,8 +199,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      */
     private static InstanceIdToNodes<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
-        AugmentationSchema augmentation = null;
-        for (final AugmentationSchema aug : parentAug.getAvailableAugmentations()) {
+        AugmentationSchemaNode augmentation = null;
+        for (final AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             final DataSchemaNode potential = aug.getDataChildByName(child.getQName());
             if (potential != null) {
                 augmentation = aug;

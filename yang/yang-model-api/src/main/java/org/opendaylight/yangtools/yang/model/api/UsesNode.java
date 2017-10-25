@@ -30,7 +30,7 @@ public interface UsesNode extends DocumentedNode.WithStatus {
      *
      * @return Set of augment statements defined under this uses node
      */
-    @Nonnull Set<AugmentationSchema> getAugmentations();
+    @Nonnull Set<AugmentationSchemaNode> getAugmentations();
 
     /**
      * Returns <code>true</code> if the data node was added by augmentation,

@@ -37,7 +37,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ExtensionDefinition#getArgument()}
  *
  * <dt>augment
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AugmentationSchema}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode}
  *
  * <dt>base
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition#getIdentity()}

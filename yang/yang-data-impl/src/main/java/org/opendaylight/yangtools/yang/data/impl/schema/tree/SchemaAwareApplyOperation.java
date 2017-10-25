@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -64,7 +64,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
             final DataTreeConfiguration treeConfig) {
-        for (final AugmentationSchema potential : augSchemas.getAvailableAugmentations()) {
+        for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
                     return new AugmentationModificationStrategy(potential, resolvedTree, treeConfig);

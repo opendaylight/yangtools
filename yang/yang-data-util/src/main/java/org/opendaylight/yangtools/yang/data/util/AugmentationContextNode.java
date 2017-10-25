@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 final class AugmentationContextNode extends
         DataContainerContextNode<AugmentationIdentifier> {
 
-    AugmentationContextNode(final AugmentationSchema augmentation, final DataNodeContainer schema) {
+    AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
         super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema), null);
     }
 

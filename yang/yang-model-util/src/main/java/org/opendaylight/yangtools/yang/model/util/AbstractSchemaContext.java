@@ -22,7 +22,7 @@ import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -220,7 +220,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
+    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return Collections.emptySet();
     }
 }

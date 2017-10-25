@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -116,7 +116,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return foundChoice;
     }
 
-    public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchema augmentation) {
+    public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode augmentation) {
         ImmutableSet.Builder<QName> potentialChildren = ImmutableSet.builder();
         for (DataSchemaNode child : augmentation.getChildNodes()) {
             potentialChildren.add(child.getQName());
@@ -124,7 +124,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    static DataNodeContainer augmentationProxy(final AugmentationSchema augmentation,
+    static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
             final DataNodeContainer schema) {
         Set<DataSchemaNode> children = new HashSet<>();
         for (DataSchemaNode augNode : augmentation.getChildNodes()) {
@@ -144,8 +144,8 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      */
     @Nullable static DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
-        AugmentationSchema augmentation = null;
-        for (AugmentationSchema aug : parentAug.getAvailableAugmentations()) {
+        AugmentationSchemaNode augmentation = null;
+        for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             DataSchemaNode potential = aug.getDataChildByName(child.getQName());
             if (potential != null) {
                 augmentation = aug;

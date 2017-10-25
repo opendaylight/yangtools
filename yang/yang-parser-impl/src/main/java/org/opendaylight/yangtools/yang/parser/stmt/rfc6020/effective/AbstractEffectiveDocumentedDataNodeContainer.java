@@ -15,7 +15,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -56,7 +56,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
                     /**
                      * Add case short hand when augmenting choice with short hand
                      **/
-                    if (this instanceof AugmentationSchema
+                    if (this instanceof AugmentationSchemaNode
                             && !(stmt instanceof ChoiceCaseNode || stmt instanceof ChoiceSchemaNode)
                             && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
                             && Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {

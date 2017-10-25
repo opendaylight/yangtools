@@ -56,7 +56,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -189,7 +189,7 @@ public final class Builders {
     }
 
     public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> augmentationBuilder(
-            final AugmentationSchema schema) {
+            final AugmentationSchemaNode schema) {
         return ImmutableAugmentationNodeSchemaAwareBuilder.create(schema);
     }
 

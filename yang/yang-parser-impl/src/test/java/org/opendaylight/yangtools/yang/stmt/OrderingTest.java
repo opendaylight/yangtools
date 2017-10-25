@@ -18,7 +18,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -62,8 +62,8 @@ public class OrderingTest {
 
     @Test
     public void testOrderingChildNodes() throws Exception {
-        AugmentationSchema augment1 = null;
-        for (final AugmentationSchema as : foo.getAugmentations()) {
+        AugmentationSchemaNode augment1 = null;
+        for (final AugmentationSchemaNode as : foo.getAugmentations()) {
             if (as.getChildNodes().size() == 5) {
                 augment1 = as;
                 break;

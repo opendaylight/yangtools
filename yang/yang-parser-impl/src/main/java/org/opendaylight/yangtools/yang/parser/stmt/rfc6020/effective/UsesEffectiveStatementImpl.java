@@ -20,7 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -39,7 +39,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;
-    private final Set<AugmentationSchema> augmentations;
+    private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
 
@@ -57,15 +57,15 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
 
         // initSubstatementCollections
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final Map<SchemaPath, SchemaNode> refinesInit = new HashMap<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+            if (effectiveStatement instanceof AugmentationSchemaNode) {
+                final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
             if (effectiveStatement instanceof RefineEffectiveStatementImpl) {
@@ -90,7 +90,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
 
     @Nonnull
     @Override
-    public Set<AugmentationSchema> getAugmentations() {
+    public Set<AugmentationSchemaNode> getAugmentations() {
         return augmentations;
     }
 

@@ -16,7 +16,7 @@ import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -32,7 +32,7 @@ public class NotificationEffectiveStatementImpl extends
     private final QName qname;
     private final SchemaPath path;
     private final ConstraintDefinition constraints;
-    private final Set<AugmentationSchema> augmentations;
+    private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
@@ -47,14 +47,14 @@ public class NotificationEffectiveStatementImpl extends
 
         // initSubstatementCollections
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 final UnknownSchemaNode unknownNode = (UnknownSchemaNode) effectiveStatement;
                 unknownNodesInit.add(unknownNode);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+            if (effectiveStatement instanceof AugmentationSchemaNode) {
+                final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
         }
@@ -89,7 +89,7 @@ public class NotificationEffectiveStatementImpl extends
     }
 
     @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
+    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
     }
 
