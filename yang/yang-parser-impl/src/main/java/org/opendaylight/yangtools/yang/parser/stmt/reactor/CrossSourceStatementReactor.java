@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -54,44 +55,6 @@ public final class CrossSourceStatementReactor {
     }
 
     /**
-     * Start a new reactor build using the default statement parser mode and enabling only the specified features
-     * and all deviations.
-     *
-     * @param supportedFeatures The set of supported features in the final SchemaContext
-     * @return A new {@link BuildAction}.
-     *
-     * @deprecated Use {@link #newBuild()} and then call setSupportedFeatures() on the created BuildAction instead.
-     */
-    @Deprecated
-    public BuildAction newBuild(final Set<QName> supportedFeatures) {
-        final BuildAction buildAction = newBuild();
-        if (supportedFeatures != null) {
-            buildAction.setSupportedFeatures(supportedFeatures);
-        }
-
-        return buildAction;
-    }
-
-    /**
-     * Start a new reactor build using the default statement parser mode and enabling only the specified features
-     * and all deviations.
-     *
-     * @param supportedFeatures The set of supported features in the final SchemaContext, if present.
-     * @return A new {@link BuildAction}.
-     *
-     * @deprecated Use {@link #newBuild()} and then call setSupportedFeatures() on the created BuildAction instead.
-     */
-    @Deprecated
-    public BuildAction newBuild(final Optional<Set<QName>> supportedFeatures) {
-        final BuildAction buildAction = newBuild();
-        if (supportedFeatures.isPresent()) {
-            buildAction.setSupportedFeatures(supportedFeatures.get());
-        }
-
-        return buildAction;
-    }
-
-    /**
      * Start a new reactor build using the specified statement parser mode and enabling all features and deviations.
      *
      * @param statementParserMode Parser mode to use
@@ -100,53 +63,6 @@ public final class CrossSourceStatementReactor {
      */
     public BuildAction newBuild(final StatementParserMode statementParserMode) {
         return new BuildAction(statementParserMode);
-    }
-
-    /**
-     * Start a new reactor build using the specified statement parser mode and enabling only the specified features
-     * and all deviations.
-     *
-     * @param statementParserMode Parser mode to use
-     * @param supportedFeatures The set of supported features in the final SchemaContext
-     * @return A new {@link BuildAction}.
-     * @throws NullPointerException if statementParserMode is null
-     *
-     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures() on the created
-     *             BuildAction instead.
-     */
-    @Deprecated
-    public BuildAction newBuild(final StatementParserMode statementParserMode,
-            final Set<QName> supportedFeatures) {
-        final BuildAction buildAction = new BuildAction(statementParserMode);
-        if (supportedFeatures != null) {
-            buildAction.setSupportedFeatures(supportedFeatures);
-        }
-
-        return buildAction;
-    }
-
-    /**
-     * Start a new reactor build using the specified statement parser mode and enabling only the specified features
-     * and all deviations.
-     *
-     * @param statementParserMode Parser mode to use
-     * @param supportedFeatures The set of supported features in the final SchemaContext, or absent if all features
-     *                          encountered should be supported.
-     * @return A new {@link BuildAction}.
-     * @throws NullPointerException if statementParserMode is null
-     *
-     * @deprecated Use {@link #newBuild(StatementParserMode)} and then call setSupportedFeatures() on the created
-     *             BuildAction instead.
-     */
-    @Deprecated
-    public BuildAction newBuild(final StatementParserMode statementParserMode,
-            final Optional<Set<QName>> supportedFeatures) {
-        final BuildAction buildAction = new BuildAction(statementParserMode);
-        if (supportedFeatures.isPresent()) {
-            buildAction.setSupportedFeatures(supportedFeatures.get());
-        }
-
-        return buildAction;
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
@@ -177,8 +93,8 @@ public final class CrossSourceStatementReactor {
         private boolean modulesDeviatedByModulesSet = false;
 
         BuildAction(@Nonnull final StatementParserMode statementParserMode) {
-            this.context = new BuildGlobalContext(supportedTerminology,supportedValidation,
-                    Preconditions.checkNotNull(statementParserMode));
+            this.context = new BuildGlobalContext(supportedTerminology, supportedValidation,
+                requireNonNull(statementParserMode));
         }
 
         /**
@@ -236,8 +152,8 @@ public final class CrossSourceStatementReactor {
          *            If the set is empty, no features encountered will be supported.
          */
         public void setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
-            Preconditions.checkState(!supportedFeaturesSet, "Supported features should be set only once.");
-            context.setSupportedFeatures(Preconditions.checkNotNull(supportedFeatures));
+            checkState(!supportedFeaturesSet, "Supported features should be set only once.");
+            context.setSupportedFeatures(requireNonNull(supportedFeatures));
             supportedFeaturesSet = true;
         }
 
@@ -251,9 +167,8 @@ public final class CrossSourceStatementReactor {
          */
         public void setModulesWithSupportedDeviations(
                 @Nonnull final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
-            Preconditions.checkState(!modulesDeviatedByModulesSet,
-                    "Modules with supported deviations should be set only once.");
-            context.setModulesDeviatedByModules(Preconditions.checkNotNull(modulesDeviatedByModules));
+            checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
+            context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
             modulesDeviatedByModulesSet = true;
         }
 
