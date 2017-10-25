@@ -141,31 +141,31 @@ public class MoreRevisionsTest {
         final Revision rev20130516 = Revision.valueOf("2013-05-16");
         final Revision rev20130715 = Revision.valueOf("2013-07-15");
 
-        final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
-        final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
-        final QNameModule yangTypes_20130715 = QNameModule.create(yangTypesNS, rev20130715);
+        final QNameModule yangTypes20100924 = QNameModule.create(yangTypesNS, rev20100924);
+        final QNameModule yangTypes20130516 = QNameModule.create(yangTypesNS, rev20130516);
+        final QNameModule yangTypes20130715 = QNameModule.create(yangTypesNS, rev20130715);
 
-        final QName dateTimeTypeDef_20100924 = QName.create(yangTypes_20100924, "date-and-time");
-        final QName dateTimeTypeDef_20130516 = QName.create(yangTypes_20130516, "date-and-time");
-        final QName dateTimeTypeDef_20130715 = QName.create(yangTypes_20130715, "date-and-time");
+        final QName dateTimeTypeDef20100924 = QName.create(yangTypes20100924, "date-and-time");
+        final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
+        final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule_20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule_20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule_20130715 = context.findModule("ietf-yang-types", rev20130715).get();
-        assertTrue(findTypeDef(yangTypesModule_20100924, dateTimeTypeDef_20100924));
-        assertTrue(findTypeDef(yangTypesModule_20130516, dateTimeTypeDef_20130516));
-        assertTrue(findTypeDef(yangTypesModule_20130715, dateTimeTypeDef_20130715));
+        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
+        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
+        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
+        assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
+        assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
 
-        checkNetconfMonitoringModuleFullTest(context, rev20130715, dateTimeTypeDef_20130715);
-        checkInterfacesModuleFullTest(context, rev20100924, dateTimeTypeDef_20100924);
+        checkNetconfMonitoringModuleFullTest(context, rev20130715, dateTimeTypeDef20130715);
+        checkInterfacesModuleFullTest(context, rev20100924, dateTimeTypeDef20100924);
     }
 
     private static void checkInterfacesModuleFullTest(final SchemaContext context, final Revision rev20100924,
-            final QName dateTimeTypeDef_20100924) {
+            final QName dateTimeTypeDef20100924) {
         Revision rev20121115 = Revision.valueOf("2012-11-15");
 
-        Module interfacesModule_20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        Set<ModuleImport> imports = interfacesModule_20121115.getImports();
+        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
+        Set<ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
@@ -173,11 +173,11 @@ public class MoreRevisionsTest {
     }
 
     private static void checkNetconfMonitoringModuleFullTest(final SchemaContext context,
-            final Revision rev20130715, final QName dateTimeTypeDef_20130715) {
+            final Revision rev20130715, final QName dateTimeTypeDef20130715) {
         Revision rev20101004 = Revision.valueOf("2010-10-04");
 
-        Module monitoringModule_20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
-        Set<ModuleImport> imports = monitoringModule_20101004.getImports();
+        Module monitoringModule20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
+        Set<ModuleImport> imports = monitoringModule20101004.getImports();
         assertEquals(2, imports.size());
         for (ModuleImport monitoringImport : imports) {
             if (monitoringImport.getModuleName().equals("ietf-yang-types")) {
@@ -204,41 +204,41 @@ public class MoreRevisionsTest {
         final Revision rev20130516 = Revision.valueOf("2013-05-16");
         final Revision rev20130715 = Revision.valueOf("2013-07-15");
 
-        final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
-        final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
-        final QNameModule yangTypes_20130715 = QNameModule.create(yangTypesNS, rev20130715);
+        final QNameModule yangTypes20100924 = QNameModule.create(yangTypesNS, rev20100924);
+        final QNameModule yangTypes20130516 = QNameModule.create(yangTypesNS, rev20130516);
+        final QNameModule yangTypes20130715 = QNameModule.create(yangTypesNS, rev20130715);
 
-        final QName dateTimeTypeDef_20100924 = QName.create(yangTypes_20100924, "date-and-time");
-        final QName dateTimeTypeDef_20130516 = QName.create(yangTypes_20130516, "date-and-time");
-        final QName dateTimeTypeDef_20130715 = QName.create(yangTypes_20130715, "date-and-time");
+        final QName dateTimeTypeDef20100924 = QName.create(yangTypes20100924, "date-and-time");
+        final QName dateTimeTypeDef20130516 = QName.create(yangTypes20130516, "date-and-time");
+        final QName dateTimeTypeDef20130715 = QName.create(yangTypes20130715, "date-and-time");
 
-        Module yangTypesModule_20100924 = context.findModule("ietf-yang-types", rev20100924).get();
-        Module yangTypesModule_20130516 = context.findModule("ietf-yang-types", rev20130516).get();
-        Module yangTypesModule_20130715 = context.findModule("ietf-yang-types", rev20130715).get();
-        assertTrue(findTypeDef(yangTypesModule_20100924, dateTimeTypeDef_20100924));
-        assertTrue(findTypeDef(yangTypesModule_20130516, dateTimeTypeDef_20130516));
-        assertTrue(findTypeDef(yangTypesModule_20130715, dateTimeTypeDef_20130715));
+        Module yangTypesModule20100924 = context.findModule("ietf-yang-types", rev20100924).get();
+        Module yangTypesModule20130516 = context.findModule("ietf-yang-types", rev20130516).get();
+        Module yangTypesModule20130715 = context.findModule("ietf-yang-types", rev20130715).get();
+        assertTrue(findTypeDef(yangTypesModule20100924, dateTimeTypeDef20100924));
+        assertTrue(findTypeDef(yangTypesModule20130516, dateTimeTypeDef20130516));
+        assertTrue(findTypeDef(yangTypesModule20130715, dateTimeTypeDef20130715));
 
-        checkNetconfMonitoringModuleSimpleTest(context, rev20130715, dateTimeTypeDef_20130715);
-        checkInterfacesModuleSimpleTest(context, rev20100924, dateTimeTypeDef_20100924);
+        checkNetconfMonitoringModuleSimpleTest(context, rev20130715, dateTimeTypeDef20130715);
+        checkInterfacesModuleSimpleTest(context, rev20100924, dateTimeTypeDef20100924);
     }
 
     private static void checkInterfacesModuleSimpleTest(final SchemaContext context,
-            final Revision rev20100924, final QName dateTimeTypeDef_20100924) {
+            final Revision rev20100924, final QName dateTimeTypeDef20100924) {
         URI interfacesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-interfaces");
         Revision rev20121115 = Revision.valueOf("2012-11-15");
-        final QNameModule interfacesNS_20121115 = QNameModule.create(interfacesNS, rev20121115);
-        QName lastChange = QName.create(interfacesNS_20121115, "last-change");
+        final QNameModule interfacesNS20121115 = QNameModule.create(interfacesNS, rev20121115);
+        QName lastChange = QName.create(interfacesNS20121115, "last-change");
 
-        Module interfacesModule_20121115 = context.findModule("ietf-interfaces", rev20121115).get();
-        DataSchemaNode leafLastChange = interfacesModule_20121115.getDataChildByName(lastChange);
+        Module interfacesModule20121115 = context.findModule("ietf-interfaces", rev20121115).get();
+        DataSchemaNode leafLastChange = interfacesModule20121115.getDataChildByName(lastChange);
         assertNotNull(leafLastChange);
 
         assertTrue(leafLastChange instanceof LeafSchemaNode);
         QName lastChangeTypeQName = ((LeafSchemaNode) leafLastChange).getType().getQName();
-        assertEquals(dateTimeTypeDef_20100924, lastChangeTypeQName);
+        assertEquals(dateTimeTypeDef20100924, lastChangeTypeQName);
 
-        Set<ModuleImport> imports = interfacesModule_20121115.getImports();
+        Set<ModuleImport> imports = interfacesModule20121115.getImports();
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
@@ -246,20 +246,20 @@ public class MoreRevisionsTest {
     }
 
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
-            final Revision rev20130715, final QName dateTimeTypeDef_20130715) {
+            final Revision rev20130715, final QName dateTimeTypeDef20130715) {
         URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
-        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS);
-        QName lockedTime = QName.create(monitoring_19700101, "locked-time");
+        final QNameModule monitoring19700101 = QNameModule.create(monitoringNS);
+        QName lockedTime = QName.create(monitoring19700101, "locked-time");
 
-        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring").get();
-        DataSchemaNode leafLockedTime = monitoringModule_19700101.getDataChildByName(lockedTime);
+        Module monitoringModule19700101 = context.findModule("ietf-netconf-monitoring").get();
+        DataSchemaNode leafLockedTime = monitoringModule19700101.getDataChildByName(lockedTime);
         assertNotNull(leafLockedTime);
 
         assertTrue(leafLockedTime instanceof LeafSchemaNode);
         QName lockedTimeTypeQName = ((LeafSchemaNode) leafLockedTime).getType().getQName();
-        assertEquals(dateTimeTypeDef_20130715, lockedTimeTypeQName);
+        assertEquals(dateTimeTypeDef20130715, lockedTimeTypeQName);
 
-        Set<ModuleImport> imports = monitoringModule_19700101.getImports();
+        Set<ModuleImport> imports = monitoringModule19700101.getImports();
         assertEquals(1, imports.size());
         ModuleImport monitoringImport = imports.iterator().next();
         assertEquals("ietf-yang-types", monitoringImport.getModuleName());

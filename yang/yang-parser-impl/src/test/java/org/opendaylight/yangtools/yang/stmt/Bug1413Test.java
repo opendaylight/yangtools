@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * Test ANTLR4 grammar capability to parse unknown node in extension argument
  * declaration.
  *
+ * <p>
  * Note: Everything under unknown node is unknown node.
  */
 public class Bug1413Test {

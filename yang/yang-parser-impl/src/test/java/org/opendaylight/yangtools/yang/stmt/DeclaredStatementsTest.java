@@ -184,7 +184,8 @@ public class DeclaredStatementsTest {
         final Collection<? extends IfFeatureStatement> caseStatementIfFeatures = caseStatement.getIfFeatures();
         assertNotNull(caseStatementIfFeatures);
         assertEquals(1, caseStatementIfFeatures.size());
-        final Collection<? extends DataDefinitionStatement> caseStatementDataDefinitions = caseStatement.getDataDefinitions();
+        final Collection<? extends DataDefinitionStatement> caseStatementDataDefinitions =
+                caseStatement.getDataDefinitions();
         assertNotNull(caseStatementDataDefinitions);
         assertEquals(1, caseStatementDataDefinitions.size());
         final StatusStatement caseStatementStatus = caseStatement.getStatus();
@@ -265,7 +266,7 @@ public class DeclaredStatementsTest {
         assertNotNull(moduleStatementNamspace);
         assertNotNull(moduleStatementNamspace.getUri());
 
-        final PrefixStatement moduleStatementPrefix= moduleStatement.getPrefix();
+        final PrefixStatement moduleStatementPrefix = moduleStatement.getPrefix();
         assertNotNull(moduleStatementPrefix);
         assertNotNull(moduleStatementPrefix.getValue());
 
@@ -381,7 +382,8 @@ public class DeclaredStatementsTest {
         final ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(containerSchemaNode);
-        final ContainerStatement containerStatement = ((ContainerEffectiveStatementImpl) containerSchemaNode).getDeclared();
+        final ContainerStatement containerStatement =
+                ((ContainerEffectiveStatementImpl) containerSchemaNode).getDeclared();
 
         final QName name = containerStatement.getName();
         assertNotNull(name);
@@ -389,7 +391,8 @@ public class DeclaredStatementsTest {
         final WhenStatement containerStatementWhen = containerStatement.getWhenStatement();
         assertNotNull(containerStatementWhen);
 
-        final Collection<? extends IfFeatureStatement> containerStatementIfFeatures = containerStatement.getIfFeatures();
+        final Collection<? extends IfFeatureStatement> containerStatementIfFeatures =
+                containerStatement.getIfFeatures();
         assertNotNull(containerStatementIfFeatures);
         assertEquals(1, containerStatementIfFeatures.size());
 

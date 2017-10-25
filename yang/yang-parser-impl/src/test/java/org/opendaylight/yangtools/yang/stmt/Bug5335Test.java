@@ -46,6 +46,7 @@ public class Bug5335Test {
     }
 
     @After
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void cleanUp() {
         System.setOut(System.out);
     }
@@ -60,8 +61,8 @@ public class Bug5335Test {
         assertNull(mandatoryLeaf);
 
         final String testLog = output.toString();
-        assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertTrue(testLog.contains(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
@@ -74,8 +75,8 @@ public class Bug5335Test {
         assertNull(mandatoryLeaf);
 
         final String testLog = output.toString();
-        assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertTrue(testLog.contains(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test
@@ -89,8 +90,8 @@ public class Bug5335Test {
         assertNull(mandatoryLeaf);
 
         final String testLog = output.toString();
-        assertTrue(testLog
-                .contains("An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
+        assertTrue(testLog.contains(
+            "An augment cannot add node 'mandatory-leaf' because it is mandatory and in module different than target"));
     }
 
     @Test

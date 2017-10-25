@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -29,16 +28,15 @@ public class Bug7879Test {
         final SchemaContext context = TestUtils.parseYangSources("/bugs/bug7879");
         assertNotNull(context);
 
-        assertTrue(findNode(context, ImmutableList.of(qN("my-alarm"), qN("my-content"), qN("my-event-container")))
+        assertTrue(findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-container"))
             instanceof ContainerSchemaNode);
-        final SchemaNode myEventValueLeaf = findNode(context,
-                ImmutableList.of(qN("my-alarm"), qN("my-content"), qN("my-event-value")));
+        final SchemaNode myEventValueLeaf = findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-value"));
         assertTrue(myEventValueLeaf instanceof LeafSchemaNode);
         assertEquals("new description", myEventValueLeaf.getDescription());
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qNames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
+    private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
+        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));
     }
 
     private static QName qN(final String localName) {

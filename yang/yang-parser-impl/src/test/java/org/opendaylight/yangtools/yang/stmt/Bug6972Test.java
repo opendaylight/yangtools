@@ -40,14 +40,14 @@ public class Bug6972Test {
 
         final QName barExportCont = QName.create("bar-ns", "bar-export", revision);
         final QName barFooCont = QName.create("bar-ns", "bar-foo", revision);
-        final QName barFooLeaf= QName.create("bar-ns", "foo", revision);
+        final QName barFooLeaf = QName.create("bar-ns", "foo", revision);
 
         final UnitsEffectiveStatementImpl unitsBar1 = getEffectiveUnits(bar, barExportCont, barFooLeaf);
         final UnitsEffectiveStatementImpl unitsBar2 = getEffectiveUnits(bar, barFooCont, barFooLeaf);
 
         final QName bazExportCont = QName.create("baz-ns", "baz-export", revision);
         final QName bazFooCont = QName.create("baz-ns", "baz-foo", revision);
-        final QName bazFooLeaf= QName.create("baz-ns", "foo", revision);
+        final QName bazFooLeaf = QName.create("baz-ns", "foo", revision);
 
         final UnitsEffectiveStatementImpl unitsBaz1 = getEffectiveUnits(baz, bazExportCont, bazFooLeaf);
         final UnitsEffectiveStatementImpl unitsBaz2 = getEffectiveUnits(baz, bazFooCont, bazFooLeaf);

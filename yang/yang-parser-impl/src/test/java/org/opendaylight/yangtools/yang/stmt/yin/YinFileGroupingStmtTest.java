@@ -49,12 +49,12 @@ public class YinFileGroupingStmtTest {
         final Iterator<GroupingDefinition> groupingsIterator = groupings.iterator();
         final GroupingDefinition grouping = groupingsIterator.next();
         assertEquals("service-ref", grouping.getQName().getLocalName());
-        assertEquals("Type of references to a particular service instance. This type\n" +
-                "can be used when defining module configuration to refer to a\n" +
-                "particular service instance. Containers using this grouping\n" +
-                "should not define anything else. The run-time implementation\n" +
-                "is expected to inject a reference to the service as the value\n" +
-                "of the container.", grouping.getDescription());
+        assertEquals("Type of references to a particular service instance. This type\n"
+                + "can be used when defining module configuration to refer to a\n"
+                + "particular service instance. Containers using this grouping\n"
+                + "should not define anything else. The run-time implementation\n"
+                + "is expected to inject a reference to the service as the value\n"
+                + "of the container.", grouping.getDescription());
 
         final Collection<DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(2, children.size());

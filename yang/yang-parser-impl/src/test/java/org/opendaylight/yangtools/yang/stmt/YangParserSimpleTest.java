@@ -57,8 +57,8 @@ public class YangParserSimpleTest {
             QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
-        assertEquals("AnyXmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, " +
-                "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]",
+        assertEquals("AnyXmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, "
+                + "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]",
                 data.toString());
 
         // test SchemaNode args
@@ -164,11 +164,13 @@ public class YangParserSimpleTest {
         // child nodes
         // total size = 8: defined 6, inserted by uses 2
         assertEquals(8, nodes.getChildNodes().size());
-        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(testModule.getQNameModule(), "added"));
+        final LeafListSchemaNode added = (LeafListSchemaNode)nodes.getDataChildByName(QName.create(
+            testModule.getQNameModule(), "added"));
         assertEquals(createPath("nodes", "added"), added.getPath());
         assertEquals(createPath("mytype"), added.getType().getPath());
 
-        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(testModule.getQNameModule(), "links"));
+        final ListSchemaNode links = (ListSchemaNode) nodes.getDataChildByName(QName.create(
+            testModule.getQNameModule(), "links"));
         assertFalse(links.isUserOrdered());
 
         final Set<GroupingDefinition> groupings = nodes.getGroupings();

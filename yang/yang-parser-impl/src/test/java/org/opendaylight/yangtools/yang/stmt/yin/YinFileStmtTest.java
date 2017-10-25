@@ -56,8 +56,7 @@ public class YinFileStmtTest {
     @Test
     public void readAndParseYinFileTestModel() throws SourceException, ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        addSources(reactor, YIN_FILE, EXT_FILE, EXT_USE_FILE);
+        reactor.addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
@@ -66,7 +65,7 @@ public class YinFileStmtTest {
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void readAndParseInvalidYinFileTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_YIN_FILE);
+        reactor.addSources(INVALID_YIN_FILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
     }
@@ -74,7 +73,7 @@ public class YinFileStmtTest {
     // parsing yin file with duplicate key name in a list statement
     public void readAndParseInvalidYinFileTest2() {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, INVALID_YIN_FILE_2);
+        reactor.addSources(INVALID_YIN_FILE_2);
 
         try {
             reactor.buildEffective();
@@ -91,12 +90,4 @@ public class YinFileStmtTest {
     public void testModulesSize() {
         assertEquals(context.getModules().size(), 9);
     }
-
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,  final
-    StatementStreamSource... sources) {
-        for (StatementStreamSource source : sources) {
-            reactor.addSource(source);
-        }
-    }
-
 }

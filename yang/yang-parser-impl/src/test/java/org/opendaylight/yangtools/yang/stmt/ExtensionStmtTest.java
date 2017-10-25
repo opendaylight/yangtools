@@ -73,7 +73,8 @@ public class ExtensionStmtTest {
         final Module testModule2 = result.findModules("ext-use").iterator().next();
         assertNotNull(testModule2);
 
-        final LeafSchemaNode leaf = (LeafSchemaNode) testModule2.getDataChildByName(QName.create(testModule2.getQNameModule(), "value"));
+        final LeafSchemaNode leaf = (LeafSchemaNode) testModule2.getDataChildByName(
+            QName.create(testModule2.getQNameModule(), "value"));
         assertNotNull(leaf);
 
         assertEquals(1, leaf.getUnknownSchemaNodes().size());

@@ -64,15 +64,20 @@ public class GroupingAndUsesStmtTest {
         assertEquals("target", grouping.getQName().getLocalName());
         assertEquals(5, grouping.getChildNodes().size());
 
-        final AnyXmlSchemaNode anyXmlNode = (AnyXmlSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
+        final AnyXmlSchemaNode anyXmlNode = (AnyXmlSchemaNode) grouping.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXmlNode);
-        final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "how"));
+        final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) grouping.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "how"));
         assertNotNull(choiceNode);
-        final LeafSchemaNode leafNode = (LeafSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "address"));
+        final LeafSchemaNode leafNode = (LeafSchemaNode) grouping.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "address"));
         assertNotNull(leafNode);
-        final ContainerSchemaNode containerNode = (ContainerSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "port"));
+        final ContainerSchemaNode containerNode = (ContainerSchemaNode) grouping.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "port"));
         assertNotNull(containerNode);
-        final ListSchemaNode listNode = (ListSchemaNode) grouping.getDataChildByName(QName.create(testModule.getQNameModule(), "addresses"));
+        final ListSchemaNode listNode = (ListSchemaNode) grouping.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "addresses"));
         assertNotNull(listNode);
 
         assertEquals(1, grouping.getGroupings().size());
@@ -105,9 +110,11 @@ public class GroupingAndUsesStmtTest {
         assertEquals("target", usesNode.getGroupingPath().getLastComponent().getLocalName());
         assertEquals(1, usesNode.getAugmentations().size());
 
-        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "peer"));
+        ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "peer"));
         assertNotNull(container);
-        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(), "destination"));
+        container = (ContainerSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(),
+            "destination"));
         assertEquals(1, container.getUses().size());
 
         usesNode = container.getUses().iterator().next();

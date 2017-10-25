@@ -52,11 +52,11 @@ public class EffectiveModuleTest {
 
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"));
 
-    private static final QName cont = QName.create(ROOT_MODULE_QNAME, "cont");
-    private static final QName feature1 = QName.create(ROOT_MODULE_QNAME, "feature1");
+    private static final QName CONT = QName.create(ROOT_MODULE_QNAME, "cont");
+    private static final QName FEATURE1 = QName.create(ROOT_MODULE_QNAME, "feature1");
 
-    private static final SchemaPath contSchemaPath = SchemaPath.create(true, cont);
-    private static final SchemaPath feature1SchemaPath = SchemaPath.create(true, feature1);
+    private static final SchemaPath CONT_SCHEMA_PATH = SchemaPath.create(true, CONT);
+    private static final SchemaPath FEATURE1_SCHEMA_PATH = SchemaPath.create(true, FEATURE1);
 
     private static final Revision REVISION = Revision.valueOf("2000-01-01");
 
@@ -76,12 +76,12 @@ public class EffectiveModuleTest {
         assertEquals("cisco", rootModule.getOrganization());
         assertEquals("cisco email", rootModule.getContact());
 
-        final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(cont);
+        final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(CONT);
         assertNotNull(contSchemaNode);
 
         final Set<AugmentationSchema> augmentations = rootModule.getAugmentations();
         assertEquals(1, augmentations.size());
-        assertEquals(contSchemaPath, augmentations.iterator().next().getTargetPath());
+        assertEquals(CONT_SCHEMA_PATH, augmentations.iterator().next().getTargetPath());
 
         final Set<ModuleImport> imports = rootModule.getImports();
         assertEquals(1, imports.size());
@@ -122,8 +122,8 @@ public class EffectiveModuleTest {
         assertEquals(1, features.size());
         final FeatureDefinition featureStmt = features.iterator().next();
         assertNotNull(featureStmt);
-        assertEquals(feature1, featureStmt.getQName());
-        assertEquals(feature1SchemaPath, featureStmt.getPath());
+        assertEquals(FEATURE1, featureStmt.getQName());
+        assertEquals(FEATURE1_SCHEMA_PATH, featureStmt.getPath());
         assertEquals("feature1 description", featureStmt.getDescription());
         assertEquals("feature1 reference", featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());

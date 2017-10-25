@@ -67,20 +67,20 @@ public class Bug5396Test {
         StringTypeDefinition stringType2 = (StringTypeDefinition) type2;
         StringTypeDefinition stringType3 = (StringTypeDefinition) type3;
 
-        List<PatternConstraint> patternConstraints0 = stringType0.getPatternConstraints();
-        List<PatternConstraint> patternConstraints1 = stringType1.getPatternConstraints();
-        List<PatternConstraint> patternConstraints2 = stringType2.getPatternConstraints();
-        List<PatternConstraint> patternConstraints3 = stringType3.getPatternConstraints();
+        final List<PatternConstraint> patternConstraints0 = stringType0.getPatternConstraints();
+        final List<PatternConstraint> patternConstraints1 = stringType1.getPatternConstraints();
+        final List<PatternConstraint> patternConstraints2 = stringType2.getPatternConstraints();
+        final List<PatternConstraint> patternConstraints3 = stringType3.getPatternConstraints();
 
         assertEquals(1, patternConstraints0.size());
         assertEquals(1, patternConstraints1.size());
         assertEquals(1, patternConstraints2.size());
         assertEquals(1, patternConstraints3.size());
 
-        PatternConstraint patternConstraint0 = patternConstraints0.get(0);
-        PatternConstraint patternConstraint1 = patternConstraints1.get(0);
-        PatternConstraint patternConstraint2 = patternConstraints2.get(0);
-        PatternConstraint patternConstraint3 = patternConstraints3.get(0);
+        final PatternConstraint patternConstraint0 = patternConstraints0.get(0);
+        final PatternConstraint patternConstraint1 = patternConstraints1.get(0);
+        final PatternConstraint patternConstraint2 = patternConstraints2.get(0);
+        final PatternConstraint patternConstraint3 = patternConstraints3.get(0);
 
         assertEquals("^dp[0-9]+o[0-9]+(d[0-9]+)?$", patternConstraint0.getRegularExpression());
         assertEquals("^dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?$", patternConstraint1.getRegularExpression());

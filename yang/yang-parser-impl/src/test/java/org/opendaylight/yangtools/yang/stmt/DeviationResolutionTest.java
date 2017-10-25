@@ -261,8 +261,8 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation " +
-                    "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."));
+            assertTrue(cause.getMessage().startsWith("(bar?revision=2017-01-20)my-cont is not a valid deviation "
+                    + "target for substatement (urn:ietf:params:xml:ns:yang:yin:1)max-elements."));
         }
     }
 
@@ -276,8 +276,8 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause().getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation target 'Absolute{path=[(bar?revision=2017-01-20)" +
-                    "invalid, (bar?revision=2017-01-20)path]}' not found"));
+            assertTrue(cause.getMessage().startsWith("Deviation target 'Absolute{path=[(bar?revision=2017-01-20)"
+                    + "invalid, (bar?revision=2017-01-20)path]}' not found"));
         }
     }
 
@@ -291,9 +291,9 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in" +
-                    " target and can appear only once."));
+            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                    + ":yin:1)config to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
+                    + " target and can appear only once."));
         }
     }
 
@@ -307,9 +307,9 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in" +
-                    " target and can appear only once."));
+            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                    + ":yin:1)default to target node (bar?revision=2017-01-20)my-leaf because it is already defined in"
+                    + " target and can appear only once."));
         }
     }
 
@@ -323,9 +323,9 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang" +
-                    ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already " +
-                    "defined in target and can appear only once."));
+            assertTrue(cause.getMessage().startsWith("Deviation cannot add substatement (urn:ietf:params:xml:ns:yang"
+                    + ":yin:1)default to target node (bar?revision=2017-02-01)my-used-leaf because it is already "
+                    + "defined in target and can appear only once."));
         }
     }
 
@@ -339,13 +339,14 @@ public class DeviationResolutionTest {
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InferenceException);
-            assertTrue(cause.getMessage().startsWith("Deviation cannot replace substatement " +
-                    "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf " +
-                    "because it does not exist in target node."));
+            assertTrue(cause.getMessage().startsWith("Deviation cannot replace substatement "
+                    + "(urn:ietf:params:xml:ns:yang:yin:1)units in target node (bar?revision=2017-01-20)my-leaf "
+                    + "because it does not exist in target node."));
         }
     }
 
     @Test
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void shouldLogInvalidDeviateReplaceAttempt() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -358,13 +359,14 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-replace/bar-invalid-2.yang"));
 
         testLog = output.toString();
-        assertTrue(testLog.contains("Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default" +
-                " in target leaf-list (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple " +
-                "default statements."));
         System.setOut(stdout);
+        assertTrue(testLog.contains("Deviation cannot replace substatement (urn:ietf:params:xml:ns:yang:yin:1)default"
+                + " in target leaf-list (bar?revision=2017-01-20)my-leaf-list because a leaf-list can have multiple "
+                + "default statements."));
     }
 
     @Test
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     public void shouldLogInvalidDeviateDeleteAttempt() throws Exception {
         final PrintStream stdout = System.out;
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
@@ -377,10 +379,10 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-delete/bar-invalid.yang"));
 
         testLog = output.toString();
-        assertTrue(testLog.contains("Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units " +
-                "with argument 'seconds' in target node (bar?revision=2017-01-20)my-leaf because it does not exist " +
-                "in the target node."));
         System.setOut(stdout);
+        assertTrue(testLog.contains("Deviation cannot delete substatement (urn:ietf:params:xml:ns:yang:yin:1)units "
+                + "with argument 'seconds' in target node (bar?revision=2017-01-20)my-leaf because it does not exist "
+                + "in the target node."));
     }
 
     @Test

@@ -405,24 +405,26 @@ public class GroupingTest {
         for (final GroupingDefinition gd : groupings) {
             final String name = gd.getQName().getLocalName();
             switch (name) {
-            case "grouping-U":
-                gu = gd;
-                break;
-            case "grouping-V":
-                gv = gd;
-                break;
-            case "grouping-X":
-                gx = gd;
-                break;
-            case "grouping-Y":
-                gy = gd;
-                break;
-            case "grouping-Z":
-                gz = gd;
-                break;
-            case "grouping-ZZ":
-                gzz = gd;
-                break;
+                case "grouping-U":
+                    gu = gd;
+                    break;
+                case "grouping-V":
+                    gv = gd;
+                    break;
+                case "grouping-X":
+                    gx = gd;
+                    break;
+                case "grouping-Y":
+                    gy = gd;
+                    break;
+                case "grouping-Z":
+                    gz = gd;
+                    break;
+                case "grouping-ZZ":
+                    gzz = gd;
+                    break;
+                default:
+                    break;
             }
         }
         assertNotNull(gu);
@@ -434,7 +436,6 @@ public class GroupingTest {
 
         final QNameModule expectedModule = QNameModule.create(URI.create("urn:grouping:cascade-uses"),
             Revision.valueOf("2013-07-18"));
-        SchemaPath expectedPath;
 
         // grouping-U
         Collection<DataSchemaNode> childNodes = gu.getChildNodes();
@@ -472,7 +473,7 @@ public class GroupingTest {
         // grouping-V/container-grouping-V
         assertNotNull(containerGroupingV);
         assertFalse(containerGroupingV.isAddedByUses());
-        expectedPath = TestUtils.createPath(true, expectedModule, "grouping-V", "container-grouping-V");
+        SchemaPath expectedPath = TestUtils.createPath(true, expectedModule, "grouping-V", "container-grouping-V");
         assertEquals(expectedPath, containerGroupingV.getPath());
         childNodes = containerGroupingV.getChildNodes();
         assertEquals(2, childNodes.size());

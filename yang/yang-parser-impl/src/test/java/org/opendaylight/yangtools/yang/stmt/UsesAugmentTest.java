@@ -54,7 +54,7 @@ public class UsesAugmentTest {
         context = TestUtils.loadModules(getClass().getResource("/grouping-test").toURI());
     }
 
-    /**
+    /*
      * Structure of testing model:
      *
      * notification pcreq

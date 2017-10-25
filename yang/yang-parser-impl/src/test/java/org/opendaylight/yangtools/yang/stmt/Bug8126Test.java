@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -28,20 +27,18 @@ public class Bug8126Test {
     public void test() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8126");
         assertNotNull(context);
-        assertTrue(findNode(context, ImmutableList.of(foo("root"), bar("my-container"), bar("my-choice"), bar("one"),
-                bar("one"), bar("mandatory-leaf"))) instanceof LeafSchemaNode);
-        assertTrue(findNode(context, ImmutableList.of(foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2")))
+        assertTrue(findNode(context, foo("root"), bar("my-container"), bar("my-choice"), bar("one"), bar("one"),
+            bar("mandatory-leaf")) instanceof LeafSchemaNode);
+        assertTrue(findNode(context, foo("root"), bar("my-list"), bar("two"), bar("mandatory-leaf-2"))
             instanceof LeafSchemaNode);
 
-        assertNull(findNode(context, ImmutableList.of(foo("root"), bar("mandatory-list"))));
-        assertNull(findNode(context, ImmutableList.of(foo("root"), bar("mandatory-container"),
-            bar("mandatory-choice"))));
-        assertNull(findNode(context,
-                ImmutableList.of(foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3"))));
+        assertNull(findNode(context, foo("root"), bar("mandatory-list")));
+        assertNull(findNode(context, foo("root"), bar("mandatory-container"), bar("mandatory-choice")));
+        assertNull(findNode(context, foo("root"), bar("mandatory-container-2"), bar("one"), bar("mandatory-leaf-3")));
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final Iterable<QName> qNames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(qNames, true));
+    private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
+        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));
     }
 
     private static QName foo(final String localName) {

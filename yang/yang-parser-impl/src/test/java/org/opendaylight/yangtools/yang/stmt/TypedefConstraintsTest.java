@@ -49,7 +49,8 @@ public class TypedefConstraintsTest {
         assertNotNull(rangeConstraints);
         assertEquals(1, rangeConstraints.size());
 
-        final DataSchemaNode dataNode = context.getDataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08", "id-decimal64"));
+        final DataSchemaNode dataNode = context.getDataChildByName(QName.create("urn:opendaylight.foo", "2013-10-08",
+            "id-decimal64"));
         assertNotNull(dataNode);
         assertTrue(dataNode instanceof LeafSchemaNode);
 

@@ -42,19 +42,19 @@ public class YinFileRpcStmtTest {
 
         RpcDefinition rpc = rpcs.iterator().next();
         assertEquals("get-schema", rpc.getQName().getLocalName());
-        assertEquals("This operation is used to retrieve a schema from the\n" +
-                "NETCONF server.\n" +
-                "\n" +
-                "Positive Response:\n" +
-                "The NETCONF server returns the requested schema.\n" +
-                "\n" +
-                "Negative Response:\n" +
-                "If requested schema does not exist, the <error-tag> is\n" +
-                "'invalid-value'.\n" +
-                "\n" +
-                "If more than one schema matches the requested parameters, the\n" +
-                "<error-tag> is 'operation-failed', and <error-app-tag> is\n" +
-                "'data-not-unique'.", rpc.getDescription());
+        assertEquals("This operation is used to retrieve a schema from the\n"
+                + "NETCONF server.\n"
+                + "\n"
+                + "Positive Response:\n"
+                + "The NETCONF server returns the requested schema.\n"
+                + "\n"
+                + "Negative Response:\n"
+                + "If requested schema does not exist, the <error-tag> is\n"
+                + "'invalid-value'.\n"
+                + "\n"
+                + "If more than one schema matches the requested parameters, the\n"
+                + "<error-tag> is 'operation-failed', and <error-app-tag> is\n"
+                + "'data-not-unique'.", rpc.getDescription());
 
         ContainerSchemaNode input = rpc.getInput();
         assertNotNull(input);

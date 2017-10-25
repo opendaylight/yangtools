@@ -15,7 +15,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.net.URISyntaxException;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -40,8 +38,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
     private static final StatementStreamSource REFINE_TEST = sourceForResource("/stmt-test/uses/refine-test.yang");
 
     @Test
-    public void refineTest() throws SourceException, ReactorException,
-            URISyntaxException {
+    public void refineTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         reactor.addSources(REFINE_TEST);
@@ -56,34 +53,30 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         Module module = modules.iterator().next();
 
-        QNameModule qnameModule = module.getQNameModule();
-        QName rootContainer = QName.create(qnameModule, "root-container");
-        QName grp1 = QName.create(qnameModule, "grp-1");
+        final QNameModule qnameModule = module.getQNameModule();
+        final QName rootContainer = QName.create(qnameModule, "root-container");
+        final QName grp1 = QName.create(qnameModule, "grp-1");
 
-        QName containerFromGrouping = QName.create(qnameModule, "container-from-grouping");
-        QName listInContainer = QName.create(qnameModule, "list-in-container");
-        QName choiceFromGrp = QName.create(qnameModule, "choice-from-grp");
+        final QName containerFromGrouping = QName.create(qnameModule, "container-from-grouping");
+        final QName listInContainer = QName.create(qnameModule, "list-in-container");
+        final QName choiceFromGrp = QName.create(qnameModule, "choice-from-grp");
 
-        QName containerFromGrouping2 = QName.create(qnameModule, "container-from-grouping2");
-        QName presenceContainer = QName.create(qnameModule, "presence-container");
+        final QName containerFromGrouping2 = QName.create(qnameModule, "container-from-grouping2");
+        final QName presenceContainer = QName.create(qnameModule, "presence-container");
 
-        SchemaPath listInContainerPath = SchemaPath.create(true, rootContainer,
-                containerFromGrouping, listInContainer);
-        SchemaPath choiceFromGrpPath = SchemaPath.create(true, rootContainer,
-                containerFromGrouping, choiceFromGrp);
-        SchemaPath presenceContainerPath = SchemaPath.create(true,
-                rootContainer, containerFromGrouping2, presenceContainer);
+        SchemaPath listInContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping, listInContainer);
+        SchemaPath choiceFromGrpPath = SchemaPath.create(true, rootContainer, containerFromGrouping, choiceFromGrp);
+        SchemaPath presenceContainerPath = SchemaPath.create(true, rootContainer, containerFromGrouping2,
+            presenceContainer);
 
         checkRefinedList(result, listInContainerPath);
         checkRefinedChoice(result, choiceFromGrpPath);
         checkRefinedContainer(result, presenceContainerPath);
 
-        SchemaPath originalListInContainerPath = SchemaPath.create(true, grp1,
-                containerFromGrouping, listInContainer);
-        SchemaPath originalChoiceFromGrpPath = SchemaPath.create(true, grp1,
-                containerFromGrouping, choiceFromGrp);
-        SchemaPath originalPresenceContainerPath = SchemaPath.create(true,
-                grp1, containerFromGrouping2, presenceContainer);
+        SchemaPath originalListInContainerPath = SchemaPath.create(true, grp1, containerFromGrouping, listInContainer);
+        SchemaPath originalChoiceFromGrpPath = SchemaPath.create(true, grp1, containerFromGrouping, choiceFromGrp);
+        SchemaPath originalPresenceContainerPath = SchemaPath.create(true, grp1, containerFromGrouping2,
+            presenceContainer);
 
         checkOriginalList(result, originalListInContainerPath);
         checkOriginalChoice(result, originalChoiceFromGrpPath);
@@ -110,8 +103,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
 
-        ConstraintDefinition choiceConstraints = choiceSchemaNode
-                .getConstraints();
+        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
         assertFalse(choiceConstraints.isMandatory());
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
@@ -151,8 +143,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
 
-        ConstraintDefinition choiceConstraints = choiceSchemaNode
-                .getConstraints();
+        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
         assertTrue(choiceConstraints.isMandatory());
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }

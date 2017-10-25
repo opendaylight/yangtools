@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 
 public class YangParserNegativeTest {
 
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
     private String testLog;
@@ -86,9 +87,9 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile4.yang");
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().contains("Error in module 'test4' in the refine of uses " +
-                    "'Relative{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for" +
-                    " the target 'LEAF_LIST'."));
+            assertTrue(e.getCause().getMessage().contains("Error in module 'test4' in the refine of uses "
+                    + "'Relative{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
+                    + " the target 'LEAF_LIST'."));
         }
     }
 
@@ -120,8 +121,8 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container.yang");
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
-            final String expected = "Error in module 'container': cannot add '(urn:simple.container" +
-                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
+            final String expected = "Error in module 'container': cannot add '(urn:simple.container.demo)foo'. "
+                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -132,8 +133,8 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-list.yang");
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
-            final String expected = "Error in module 'container-list': cannot add '(urn:simple.container" +
-                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
+            final String expected = "Error in module 'container-list': cannot add '(urn:simple.container.demo)foo'. "
+                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -144,8 +145,8 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/container-leaf.yang");
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
-            final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container" +
-                    ".demo)foo'. Node name collision: '(urn:simple.container.demo)foo' already declared";
+            final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container.demo)foo'. "
+                    + "Node name collision: '(urn:simple.container.demo)foo' already declared";
             assertTrue(e.getCause().getMessage().contains(expected));
         }
     }
@@ -167,7 +168,8 @@ public class YangParserNegativeTest {
             "/negative-scenario/duplicity/augment0.yang",
                 "/negative-scenario/duplicity/augment1.yang");
         testLog = output.toString();
-        assertTrue(testLog.contains("An augment cannot add node named 'id' because this name is already used in target"));
+        assertTrue(testLog.contains(
+            "An augment cannot add node named 'id' because this name is already used in target"));
     }
 
     @Test
@@ -176,7 +178,8 @@ public class YangParserNegativeTest {
             "/negative-scenario/duplicity/augment0.yang",
                 "/negative-scenario/duplicity/augment2.yang");
         testLog = output.toString();
-        assertTrue(testLog.contains("An augment cannot add node named 'delta' because this name is already used in target"));
+        assertTrue(testLog.contains(
+            "An augment cannot add node named 'delta' because this name is already used in target"));
     }
 
     @Test

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 import java.io.File;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug2291Test {
 

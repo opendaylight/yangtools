@@ -73,20 +73,20 @@ public class EffectiveIdentityTest {
         IdentitySchemaNode child12 = null;
         for (IdentitySchemaNode identitySchemaNode : identities) {
             switch (identitySchemaNode.getQName().getLocalName()) {
-            case "root-identity":
-                root = identitySchemaNode;
-                break;
-            case "child-identity-1":
-                child1 = identitySchemaNode;
-                break;
-            case "child-identity-2":
-                child2 = identitySchemaNode;
-                break;
-            case "child-identity-1-2":
-                child12 = identitySchemaNode;
-                break;
-            default:
-                break;
+                case "root-identity":
+                    root = identitySchemaNode;
+                    break;
+                case "child-identity-1":
+                    child1 = identitySchemaNode;
+                    break;
+                case "child-identity-2":
+                    child2 = identitySchemaNode;
+                    break;
+                case "child-identity-1-2":
+                    child12 = identitySchemaNode;
+                    break;
+                default:
+                    break;
             }
         }
 

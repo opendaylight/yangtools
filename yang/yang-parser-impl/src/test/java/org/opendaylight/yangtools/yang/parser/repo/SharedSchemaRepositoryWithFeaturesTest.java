@@ -38,8 +38,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource
-                ("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
@@ -79,8 +79,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource
-                ("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
@@ -125,8 +125,8 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
-        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource
-                ("/if-feature-resolution-test/shared-schema-repository/foobar.yang");
+        final SettableSchemaProvider<ASTSchemaSource> foobar = getImmediateYangSourceProviderFromResource(
+            "/if-feature-resolution-test/shared-schema-repository/foobar.yang");
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 

@@ -73,7 +73,7 @@ public class ImportRevisionsTest {
     @Test
     public void revisionDatesInImportedOnlyTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources( ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE);
+        reactor.addSources(ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE);
 
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);

@@ -332,9 +332,9 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "Module [name=" + getName() + ", revision=" + getRevision()
-            + ", semanticVersion=" + getSemanticVersion().orElse(null)
-            + ", dependencies=" + getDependencies()
-            + "]";
+                + ", semanticVersion=" + getSemanticVersion().orElse(null)
+                + ", dependencies=" + getDependencies()
+                + "]";
         }
     }
 

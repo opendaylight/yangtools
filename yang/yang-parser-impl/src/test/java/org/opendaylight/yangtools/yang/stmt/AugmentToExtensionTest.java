@@ -29,23 +29,16 @@ public class AugmentToExtensionTest {
 
     /*
      * FIXME: Figure way to determine use case of tail-f:input without hacks
-     *
      */
     @Test
     public void testCorrectPathIntoUnsupportedTarget() throws Exception {
 
-        try {
         context = TestUtils.loadModules(getClass().getResource(
                 "/augment-to-extension-test/correct-path-into-unsupported-target").toURI());
-        } catch (final Exception e) {
-            StmtTestUtils.log(e, "    ");
-            throw e;
-        }
 
         final Module devicesModule = TestUtils.findModule(context, "augment-module").get();
-
-        final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(QName
-                .create(devicesModule.getQNameModule(), "my-container"));
+        final ContainerSchemaNode devicesContainer = (ContainerSchemaNode) devicesModule.getDataChildByName(
+            QName.create(devicesModule.getQNameModule(), "my-container"));
         final Set<UsesNode> uses = devicesContainer.getUses();
 
         for (final UsesNode usesNode : uses) {

@@ -84,13 +84,16 @@ public class IncludedStmtsTest {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        ContainerSchemaNode cont = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(testModule.getQNameModule(), "parent-container"));
+        ContainerSchemaNode cont = (ContainerSchemaNode) testModule.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "parent-container"));
         assertNotNull(cont);
-        cont = (ContainerSchemaNode) cont.getDataChildByName(QName.create(testModule.getQNameModule(), "child-container"));
+        cont = (ContainerSchemaNode) cont.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "child-container"));
         assertNotNull(cont);
         assertEquals(2, cont.getChildNodes().size());
 
-        LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(QName.create(testModule.getQNameModule(), "autumn-leaf"));
+        LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "autumn-leaf"));
         assertNotNull(leaf);
         leaf = (LeafSchemaNode) cont.getDataChildByName(QName.create(testModule.getQNameModule(), "winter-snow"));
         assertNotNull(leaf);

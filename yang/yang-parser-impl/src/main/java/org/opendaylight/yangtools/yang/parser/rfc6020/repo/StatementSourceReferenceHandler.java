@@ -87,7 +87,7 @@ final class StatementSourceReferenceHandler extends DefaultHandler {
     }
 
     @Override
-    public void characters(final char ch[], final int start, final int length) throws SAXException {
+    public void characters(final char[] ch, final int start, final int length) throws SAXException {
         sb.append(ch, start, length);
     }
 

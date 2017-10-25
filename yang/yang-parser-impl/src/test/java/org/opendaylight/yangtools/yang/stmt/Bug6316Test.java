@@ -44,23 +44,23 @@ public class Bug6316Test {
         for (final EnumPair enumPair : values) {
             final String name = enumPair.getName();
             switch (name) {
-            case "zero":
-                assertEquals(0, enumPair.getValue());
-                break;
-            case "twenty":
-                assertEquals(20, enumPair.getValue());
-                break;
-            case "twenty-one":
-                assertEquals(21, enumPair.getValue());
-                break;
-            case "two":
-                assertEquals(2, enumPair.getValue());
-                break;
-            case "twenty-two":
-                assertEquals(22, enumPair.getValue());
-                break;
-            default:
-                fail("Unexpected enum name.");
+                case "zero":
+                    assertEquals(0, enumPair.getValue());
+                    break;
+                case "twenty":
+                    assertEquals(20, enumPair.getValue());
+                    break;
+                case "twenty-one":
+                    assertEquals(21, enumPair.getValue());
+                    break;
+                case "two":
+                    assertEquals(2, enumPair.getValue());
+                    break;
+                case "twenty-two":
+                    assertEquals(22, enumPair.getValue());
+                    break;
+                default:
+                    fail("Unexpected enum name.");
             }
         }
     }
@@ -76,23 +76,23 @@ public class Bug6316Test {
         for (final Bit bit : positions) {
             final String name = bit.getName();
             switch (name) {
-            case "zero":
-                assertEquals(0, bit.getPosition());
-                break;
-            case "twenty":
-                assertEquals(20, bit.getPosition());
-                break;
-            case "twenty-one":
-                assertEquals(21, bit.getPosition());
-                break;
-            case "two":
-                assertEquals(2, bit.getPosition());
-                break;
-            case "twenty-two":
-                assertEquals(22, bit.getPosition());
-                break;
-            default:
-                fail("Unexpected bit name.");
+                case "zero":
+                    assertEquals(0, bit.getPosition());
+                    break;
+                case "twenty":
+                    assertEquals(20, bit.getPosition());
+                    break;
+                case "twenty-one":
+                    assertEquals(21, bit.getPosition());
+                    break;
+                case "two":
+                    assertEquals(2, bit.getPosition());
+                    break;
+                case "twenty-two":
+                    assertEquals(22, bit.getPosition());
+                    break;
+                default:
+                    fail("Unexpected bit name.");
             }
         }
     }

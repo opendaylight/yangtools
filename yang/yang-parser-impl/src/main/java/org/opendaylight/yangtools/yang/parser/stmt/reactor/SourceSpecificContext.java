@@ -401,14 +401,14 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             ImportPrefixToModuleCtx.class);
         if (allImports != null) {
             allImports.forEach((key, value) ->
-            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleCtxToModuleQName.class, value)));
+                prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleCtxToModuleQName.class, value)));
         }
 
         final Map<String, StmtContext<?, ?, ?>> allBelongsTo = getRoot().getAllFromNamespace(
             BelongsToPrefixToModuleCtx.class);
         if (allBelongsTo != null) {
             allBelongsTo.forEach((key, value) ->
-            prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleCtxToModuleQName.class, value)));
+                prefixToModuleMap.put(key, getRoot().getFromNamespace(ModuleCtxToModuleQName.class, value)));
         }
 
         return prefixToModuleMap;

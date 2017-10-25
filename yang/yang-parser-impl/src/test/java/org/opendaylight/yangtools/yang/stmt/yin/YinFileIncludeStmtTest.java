@@ -28,8 +28,8 @@ public class YinFileIncludeStmtTest {
 
     @Before
     public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
-        context = TestUtils.loadYinModules(getClass().getResource
-                ("/semantic-statement-parser/yin/include-belongs-to-test").toURI());
+        context = TestUtils.loadYinModules(getClass().getResource(
+            "/semantic-statement-parser/yin/include-belongs-to-test").toURI());
         assertEquals(1, context.getModules().size());
     }
 

@@ -155,17 +155,20 @@ public class YangParserTest {
         assertEquals(0, ifEntry.getGroupings().size());
         assertEquals(0, ifEntry.getUses().size());
 
-        final LeafSchemaNode ifIndex = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(), "ifIndex"));
+        final LeafSchemaNode ifIndex = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(),
+            "ifIndex"));
         assertEquals(ifEntry.getKeyDefinition().get(0), ifIndex.getQName());
         assertTrue(ifIndex.getType() instanceof UnsignedIntegerTypeDefinition);
         assertEquals("minutes", ifIndex.getUnits());
-        final LeafSchemaNode ifMtu = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(), "ifMtu"));
+        final LeafSchemaNode ifMtu = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(),
+            "ifMtu"));
         assertEquals(BaseTypes.int32Type(), ifMtu.getType());
     }
 
     @Test
     public void testTypedefRangesResolving() throws ParseException {
-        final LeafSchemaNode int32Leaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "int32-leaf"));
+        final LeafSchemaNode int32Leaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "int32-leaf"));
 
         final IntegerTypeDefinition leafType = (IntegerTypeDefinition) int32Leaf.getType();
         assertEquals(QName.create(FOO, "int32-ext2"), leafType.getQName());
@@ -210,7 +213,8 @@ public class YangParserTest {
 
     @Test
     public void testTypedefPatternsResolving() {
-        final LeafSchemaNode stringleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "string-leaf"));
+        final LeafSchemaNode stringleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "string-leaf"));
 
         assertTrue(stringleaf.getType() instanceof StringTypeDefinition);
         final StringTypeDefinition type = (StringTypeDefinition) stringleaf.getType();
@@ -370,7 +374,8 @@ public class YangParserTest {
 
     @Test
     public void testTypedefDecimal1() {
-        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "decimal-leaf"));
+        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "decimal-leaf"));
 
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition type = (DecimalTypeDefinition) testleaf.getType();
@@ -392,7 +397,8 @@ public class YangParserTest {
 
     @Test
     public void testTypedefDecimal2() {
-        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "decimal-leaf2"));
+        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "decimal-leaf2"));
 
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition type = (DecimalTypeDefinition) testleaf.getType();
@@ -408,7 +414,8 @@ public class YangParserTest {
 
     @Test
     public void testTypedefUnion() {
-        final LeafSchemaNode unionleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "union-leaf"));
+        final LeafSchemaNode unionleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "union-leaf"));
 
         assertTrue(unionleaf.getType() instanceof UnionTypeDefinition);
         final UnionTypeDefinition type = (UnionTypeDefinition) unionleaf.getType();
@@ -442,7 +449,8 @@ public class YangParserTest {
 
     @Test
     public void testNestedUnionResolving() {
-        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "custom-union-leaf"));
+        final LeafSchemaNode testleaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
+            "custom-union-leaf"));
 
         assertTrue(testleaf.getType() instanceof UnionTypeDefinition);
         final UnionTypeDefinition type = (UnionTypeDefinition) testleaf.getType();
@@ -504,8 +512,10 @@ public class YangParserTest {
 
     @Test
     public void testChoice() {
-        final ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(), "transfer"));
-        final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(QName.create(foo.getQNameModule(), "how"));
+        final ContainerSchemaNode transfer = (ContainerSchemaNode) foo.getDataChildByName(
+            QName.create(foo.getQNameModule(), "transfer"));
+        final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(
+            QName.create(foo.getQNameModule(), "how"));
         final Set<ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
         ChoiceCaseNode input = null;
@@ -540,7 +550,8 @@ public class YangParserTest {
 
     @Test
     public void testUnknownNode() {
-        final ContainerSchemaNode network = (ContainerSchemaNode) baz.getDataChildByName(QName.create(baz.getQNameModule(), "network"));
+        final ContainerSchemaNode network = (ContainerSchemaNode) baz.getDataChildByName(
+            QName.create(baz.getQNameModule(), "network"));
         final List<UnknownSchemaNode> unknownNodes = network.getUnknownSchemaNodes();
         assertEquals(1, unknownNodes.size());
         final UnknownSchemaNode unknownNode = unknownNodes.get(0);
@@ -585,9 +596,11 @@ public class YangParserTest {
         assertEquals(0, notification.getGroupings().size());
         assertEquals(0, notification.getUses().size());
 
-        final LeafSchemaNode eventClass = (LeafSchemaNode) notification.getDataChildByName(QName.create(baz.getQNameModule(), "event-class"));
+        final LeafSchemaNode eventClass = (LeafSchemaNode) notification.getDataChildByName(
+            QName.create(baz.getQNameModule(), "event-class"));
         assertTrue(eventClass.getType() instanceof StringTypeDefinition);
-        final LeafSchemaNode severity = (LeafSchemaNode) notification.getDataChildByName(QName.create(baz.getQNameModule(), "severity"));
+        final LeafSchemaNode severity = (LeafSchemaNode) notification.getDataChildByName(
+            QName.create(baz.getQNameModule(), "severity"));
         assertTrue(severity.getType() instanceof StringTypeDefinition);
     }
 
@@ -655,22 +668,22 @@ public class YangParserTest {
 
     private static void checkOrder(final Collection<Module> modules) {
         final Iterator<Module> it = modules.iterator();
-        Module m = it.next();
-        assertEquals("m2", m.getName());
-        m = it.next();
-        assertEquals("m4", m.getName());
-        m = it.next();
-        assertEquals("m6", m.getName());
-        m = it.next();
-        assertEquals("m8", m.getName());
-        m = it.next();
-        assertEquals("m7", m.getName());
-        m = it.next();
-        assertEquals("m5", m.getName());
-        m = it.next();
-        assertEquals("m3", m.getName());
-        m = it.next();
-        assertEquals("m1", m.getName());
+        Module module = it.next();
+        assertEquals("m2", module.getName());
+        module = it.next();
+        assertEquals("m4", module.getName());
+        module = it.next();
+        assertEquals("m6", module.getName());
+        module = it.next();
+        assertEquals("m8", module.getName());
+        module = it.next();
+        assertEquals("m7", module.getName());
+        module = it.next();
+        assertEquals("m5", module.getName());
+        module = it.next();
+        assertEquals("m3", module.getName());
+        module = it.next();
+        assertEquals("m1", module.getName());
     }
 
     private static void assertSetEquals(final Set<Module> s1, final Set<Module> s2) {
@@ -716,7 +729,7 @@ public class YangParserTest {
     }
 
     @Test
-    public void unknownStatementsInStatementsTest() throws ReactorException {
+    public void unknownStatementsInStatementsTest() {
 
         final StatementStreamSource yangFile1 = sourceForResource(
                 "/yang-grammar-test/stmtsep-in-statements.yang");
@@ -730,7 +743,7 @@ public class YangParserTest {
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
             final SchemaContext result = reactor.buildEffective();
-        } catch (final Exception e) {
+        } catch (final ReactorException e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
             assertTrue(e.getCause() instanceof SourceException);
             assertTrue(e.getCause().getMessage().startsWith("aaa is not a YANG statement or use of extension"));

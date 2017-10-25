@@ -46,16 +46,16 @@ public class OrderingTest {
     @Test
     public void testOrderingTypedef() throws Exception {
         final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
-        final String[] expectedOrder = new String[] { "int32-ext1", "int32-ext2",
-                "string-ext1", "string-ext2", "string-ext3", "string-ext4",
-                "invalid-string-pattern", "multiple-pattern-string",
-                "my-decimal-type", "my-union", "my-union-ext", "nested-union2" };
+        final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
+            "string-ext4", "invalid-string-pattern", "multiple-pattern-string", "my-decimal-type", "my-union",
+            "my-union-ext", "nested-union2"
+        };
         final String[] actualOrder = new String[typedefs.size()];
 
-        int i = 0;
+        int offset = 0;
         for (final TypeDefinition<?> type : typedefs) {
-            actualOrder[i] = type.getQName().getLocalName();
-            i++;
+            actualOrder[offset] = type.getQName().getLocalName();
+            offset++;
         }
         assertArrayEquals(expectedOrder, actualOrder);
     }
@@ -71,14 +71,13 @@ public class OrderingTest {
         }
         assertNotNull(augment1);
 
-        final String[] expectedOrder = new String[] { "ds0ChannelNumber",
-                "interface-id", "my-type", "schemas", "odl" };
+        final String[] expectedOrder = { "ds0ChannelNumber", "interface-id", "my-type", "schemas", "odl" };
         final String[] actualOrder = new String[expectedOrder.length];
 
-        int i = 0;
+        int offset = 0;
         for (final DataSchemaNode augmentChild : augment1.getChildNodes()) {
-            actualOrder[i] = augmentChild.getQName().getLocalName();
-            i++;
+            actualOrder[offset] = augmentChild.getQName().getLocalName();
+            offset++;
         }
 
         assertArrayEquals(expectedOrder, actualOrder);
@@ -87,21 +86,18 @@ public class OrderingTest {
     @Test
     public void testOrderingNestedChildNodes1() throws Exception {
         final Collection<DataSchemaNode> childNodes = foo.getChildNodes();
-        final String[] expectedOrder = new String[] { "int32-leaf", "string-leaf",
-                "invalid-pattern-string-leaf",
-                "invalid-direct-string-pattern-def-leaf",
-                "multiple-pattern-string-leaf",
-                "multiple-pattern-direct-string-def-leaf", "length-leaf",
-                "decimal-leaf", "decimal-leaf2", "ext", "union-leaf",
-                "custom-union-leaf", "transfer", "datas", "mycont", "data",
-                "how", "address", "port", "addresses", "peer", "id", "foo-id",
-                "sub-ext", "sub-transfer", "sub-datas" };
+        final String[] expectedOrder = { "int32-leaf", "string-leaf", "invalid-pattern-string-leaf",
+            "invalid-direct-string-pattern-def-leaf", "multiple-pattern-string-leaf",
+            "multiple-pattern-direct-string-def-leaf", "length-leaf", "decimal-leaf", "decimal-leaf2", "ext",
+            "union-leaf", "custom-union-leaf", "transfer", "datas", "mycont", "data", "how", "address", "port",
+            "addresses", "peer", "id", "foo-id", "sub-ext", "sub-transfer", "sub-datas"
+        };
         final String[] actualOrder = new String[childNodes.size()];
 
-        int i = 0;
+        int offset = 0;
         for (final DataSchemaNode child : childNodes) {
-            actualOrder[i] = child.getQName().getLocalName();
-            i++;
+            actualOrder[offset] = child.getQName().getLocalName();
+            offset++;
         }
         assertArrayEquals(expectedOrder, actualOrder);
     }
@@ -113,14 +109,13 @@ public class OrderingTest {
         final GroupingDefinition target = groupings.iterator().next();
 
         final Collection<DataSchemaNode> childNodes = target.getChildNodes();
-        final String[] expectedOrder = new String[] { "data", "how", "address",
-                "port", "addresses" };
+        final String[] expectedOrder = { "data", "how", "address", "port", "addresses" };
         final String[] actualOrder = new String[childNodes.size()];
 
-        int i = 0;
+        int offset = 0;
         for (final DataSchemaNode child : childNodes) {
-            actualOrder[i] = child.getQName().getLocalName();
-            i++;
+            actualOrder[offset] = child.getQName().getLocalName();
+            offset++;
         }
         assertArrayEquals(expectedOrder, actualOrder);
     }
@@ -133,14 +128,13 @@ public class OrderingTest {
                 .getDataChildByName(QName.create(baz.getQNameModule(), "x"));
         final Collection<DataSchemaNode> childNodes = x.getChildNodes();
 
-        final String[] expectedOrder = new String[] { "x15", "x10", "x5", "x1", "a5",
-                "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
+        final String[] expectedOrder = { "x15", "x10", "x5", "x1", "a5", "a1", "x2", "b5", "b1", "x3", "ax15", "ax5" };
         final String[] actualOrder = new String[childNodes.size()];
 
-        int i = 0;
+        int offset = 0;
         for (final DataSchemaNode child : childNodes) {
-            actualOrder[i] = child.getQName().getLocalName();
-            i++;
+            actualOrder[offset] = child.getQName().getLocalName();
+            offset++;
         }
         assertArrayEquals(expectedOrder, actualOrder);
     }

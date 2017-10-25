@@ -58,9 +58,9 @@ public class Bug7037Test {
 
         final Iterator<UnknownSchemaNode> iterator = barExtUnknownNodes.iterator();
         UnknownSchemaNode barExtCont2 = null;
-        while(iterator.hasNext()) {
+        while (iterator.hasNext()) {
             final UnknownSchemaNode next = iterator.next();
-            if(bar("container").equals(next.getNodeType())) {
+            if (bar("container").equals(next.getNodeType())) {
                 barExtCont2 = next;
                 break;
             }

@@ -8,7 +8,6 @@
 
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -108,38 +107,29 @@ public class AugmentArgumentParsingTest {
         }
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     @Ignore
-    public void invalidAugEmptyTest() throws SourceException {
+    public void invalidAugEmptyTest() throws ReactorException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(INVALID_EMPTY);
 
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to empty path");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-        }
+        reactor.build();
+        fail("reactor.process should fail due to empty path");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     @Ignore
-    public void invalidAugXPathTest() throws SourceException {
+    public void invalidAugXPathTest() throws ReactorException {
 
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(INVALID_XPATH);
-
-        try {
-            reactor.build();
-            fail("reactor.process should fail due to invalid XPath");
-        } catch (Exception e) {
-            assertEquals(IllegalArgumentException.class, e.getClass());
-        }
+        reactor.build();
+        fail("reactor.process should fail due to invalid XPath");
     }
 
-    private static void assertSourceExceptionCause(final Throwable e, final String start) {
-        final Throwable cause = e.getCause();
+    private static void assertSourceExceptionCause(final Throwable exception, final String start) {
+        final Throwable cause = exception.getCause();
         assertTrue(cause instanceof SourceException);
         assertTrue(cause.getMessage().startsWith(start));
     }

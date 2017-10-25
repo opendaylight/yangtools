@@ -48,9 +48,9 @@ public class YinFileAugmentStmtTest {
         final AugmentationSchema augment = augmentIterator.next();
         assertNotNull(augment);
         assertTrue(augment.getTargetPath().toString().contains(
-                "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, " +
-                        "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)module, " +
-                        "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
+                "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)modules, "
+                        + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)module, "
+                        + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
         final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(QName.create(

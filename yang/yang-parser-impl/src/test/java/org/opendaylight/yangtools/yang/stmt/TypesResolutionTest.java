@@ -384,7 +384,7 @@ public class TypesResolutionTest {
         try {
             final SchemaContext result = reactor.buildEffective();
             fail("effective build should fail due to union in list; this is not allowed");
-        } catch (Exception e) {
+        } catch (ReactorException e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
             assertTrue(e.getCause() instanceof SourceException);
             assertTrue(e.getCause().getMessage().startsWith("union is not a YANG statement or use of extension"));

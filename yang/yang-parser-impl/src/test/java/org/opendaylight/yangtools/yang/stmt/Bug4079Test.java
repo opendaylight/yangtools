@@ -118,7 +118,8 @@ public class Bug4079Test {
 
     @Test(expected = PatternSyntaxException.class)
     public void testInvalidPattern2() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\p{IsSpecials}|\\\\\\\\p{IsBasicLatin})*+");
+        String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
+            "(\\p{IsSpecials}|\\\\\\\\p{IsBasicLatin})*+");
         assertEquals("^(\\p{InSpecials}|\\\\\\\\p{IsBasicLatin})*+$", fixedUnicodeScriptPattern);
         // should throw exception
         Pattern.compile(fixedUnicodeScriptPattern);
@@ -126,7 +127,8 @@ public class Bug4079Test {
 
     @Test(expected = PatternSyntaxException.class)
     public void testInvalidPattern3() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
-        String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+");
+        String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
+            "(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+");
         assertEquals("^(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+$", fixedUnicodeScriptPattern);
         // should throw exception
         Pattern.compile(fixedUnicodeScriptPattern);

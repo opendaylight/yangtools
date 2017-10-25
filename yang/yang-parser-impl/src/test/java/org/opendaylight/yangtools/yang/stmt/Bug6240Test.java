@@ -51,7 +51,8 @@ public class Bug6240Test {
         final ContainerSchemaNode subBarCon = (ContainerSchemaNode) dataChildByName;
 
         assertTrue(subBarCon.getDataChildByName(QName.create(NS, REV, "foo-grp-con")) instanceof ContainerSchemaNode);
-        assertTrue(subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con")) instanceof ContainerSchemaNode);
+        assertTrue(subBarCon.getDataChildByName(QName.create(NS, REV, "sub-foo-grp-con"))
+            instanceof ContainerSchemaNode);
     }
 
     @Test

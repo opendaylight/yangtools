@@ -42,8 +42,8 @@ public class Bug8922Test {
         assertTrue(context.getAvailableAugmentations().isEmpty());
     }
 
-    private static SchemaNode findNode(final SchemaContext context, final QName... qNames) {
-        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qNames));
+    private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
+        return SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, qnames));
     }
 
     private static QName qN(final String localName) {

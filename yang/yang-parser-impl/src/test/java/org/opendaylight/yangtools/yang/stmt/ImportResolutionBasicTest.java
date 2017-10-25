@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
@@ -46,7 +45,7 @@ public class ImportResolutionBasicTest {
 
 
     @Test
-    public void inImportOrderTest() throws SourceException, ReactorException {
+    public void inImportOrderTest() throws ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED);
         EffectiveModelContext result = reactor.build();
@@ -54,7 +53,7 @@ public class ImportResolutionBasicTest {
     }
 
     @Test
-    public void inInverseOfImportOrderTest() throws SourceException, ReactorException {
+    public void inInverseOfImportOrderTest() throws ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         EffectiveModelContext result = reactor.build();
@@ -62,7 +61,7 @@ public class ImportResolutionBasicTest {
     }
 
     @Test
-    public void missingImportedSourceTest() throws SourceException {
+    public void missingImportedSourceTest() {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
         try {
@@ -76,7 +75,7 @@ public class ImportResolutionBasicTest {
     }
 
     @Test
-    public void circularImportsTest() throws SourceException {
+    public void circularImportsTest() {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(CYCLE_YIN, CYCLE_YANG);
         try {
@@ -89,7 +88,7 @@ public class ImportResolutionBasicTest {
     }
 
     @Test
-    public void selfImportTest() throws SourceException {
+    public void selfImportTest() {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(IMPORT_SELF, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         try {
@@ -102,7 +101,7 @@ public class ImportResolutionBasicTest {
     }
 
     @Test
-    public void bug2649Test() throws SourceException, ReactorException{
+    public void bug2649Test() throws ReactorException {
         BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(FOO, IMPORT);
 

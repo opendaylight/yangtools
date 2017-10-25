@@ -23,7 +23,7 @@ public class Bug7146Test {
         try {
             StmtTestUtils.parseYangSources(sourceForResource("/bugs/bug7146/foo.yang"));
             fail("RuntimeException should have been thrown because of an unknown character in yang module.");
-        } catch (RuntimeException ex) {
+        } catch (IllegalArgumentException ex) {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof YangSyntaxErrorException);
             assertTrue(cause.getMessage().contains("extraneous input '#'"));

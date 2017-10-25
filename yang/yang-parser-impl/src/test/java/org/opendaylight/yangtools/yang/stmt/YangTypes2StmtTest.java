@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -35,67 +34,67 @@ public class YangTypes2StmtTest {
     private static final StatementStreamSource TYPEFILE4 = sourceForResource(
             "/semantic-statement-parser/identityreftest.yang");
 
-    private static final QNameModule types2Module = QNameModule.create(URI.create("types2"));
+    private static final QNameModule TYPES2_MODULE = QNameModule.create(URI.create("types2"));
 
-    private static final QName lfDecimal = QName.create(types2Module, "lf-decimal");
-    private static final QName lfMyString = QName.create(types2Module, "lf-my-string");
-    private static final QName lfInt8 = QName.create(types2Module, "lf-int8");
-    private static final QName lfInt16 = QName.create(types2Module, "lf-int16");
-    private static final QName lfInt32 = QName.create(types2Module, "lf-int32");
-    private static final QName lfInt64 = QName.create(types2Module, "lf-int64");
-    private static final QName lfUInt8 = QName.create(types2Module, "lf-uint8");
-    private static final QName lfUInt16 = QName.create(types2Module, "lf-uint16");
-    private static final QName lfUInt32 = QName.create(types2Module, "lf-uint32");
-    private static final QName lfUInt64 = QName.create(types2Module, "lf-uint64");
-    private static final QName lfBool = QName.create(types2Module, "lf-bool");
+    private static final QName LF_DECIMAL = QName.create(TYPES2_MODULE, "lf-decimal");
+    private static final QName LF_MY_STRING = QName.create(TYPES2_MODULE, "lf-my-string");
+    private static final QName LF_INT8 = QName.create(TYPES2_MODULE, "lf-int8");
+    private static final QName LF_INT16 = QName.create(TYPES2_MODULE, "lf-int16");
+    private static final QName LF_INT32 = QName.create(TYPES2_MODULE, "lf-int32");
+    private static final QName LF_INT64 = QName.create(TYPES2_MODULE, "lf-int64");
+    private static final QName LF_UINT8 = QName.create(TYPES2_MODULE, "lf-uint8");
+    private static final QName LF_UINT16 = QName.create(TYPES2_MODULE, "lf-uint16");
+    private static final QName LF_UINT32 = QName.create(TYPES2_MODULE, "lf-uint32");
+    private static final QName LF_UINT64 = QName.create(TYPES2_MODULE, "lf-uint64");
+    private static final QName LF_BOOL = QName.create(TYPES2_MODULE, "lf-bool");
 
     @Test
-    public void readAndParseYangFileTest() throws SourceException, ReactorException {
+    public void readAndParseYangFileTest() throws ReactorException {
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
         reactor.addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(lfDecimal);
+        final LeafSchemaNode lfDecimalNode = (LeafSchemaNode) result.getDataChildByName(LF_DECIMAL);
         assertNotNull(lfDecimalNode);
 
         assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
         assertEquals(2, lfDecimalNodeType.getFractionDigits().intValue());
 
-        final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(lfInt8);
+        final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_INT8);
         assertNotNull(lfInt8Node);
         assertEquals(BaseTypes.int8Type().getClass(), lfInt8Node.getType().getClass());
 
-        final LeafSchemaNode lfInt16Node = (LeafSchemaNode) result.getDataChildByName(lfInt16);
+        final LeafSchemaNode lfInt16Node = (LeafSchemaNode) result.getDataChildByName(LF_INT16);
         assertNotNull(lfInt16Node);
         assertEquals(BaseTypes.int16Type().getClass(), lfInt16Node.getType().getClass());
 
-        final LeafSchemaNode lfInt32Node = (LeafSchemaNode) result.getDataChildByName(lfInt32);
+        final LeafSchemaNode lfInt32Node = (LeafSchemaNode) result.getDataChildByName(LF_INT32);
         assertNotNull(lfInt32Node);
         assertEquals(BaseTypes.int32Type().getClass(), lfInt32Node.getType().getClass());
 
-        final LeafSchemaNode lfInt64Node = (LeafSchemaNode) result.getDataChildByName(lfInt64);
+        final LeafSchemaNode lfInt64Node = (LeafSchemaNode) result.getDataChildByName(LF_INT64);
         assertNotNull(lfInt64Node);
         assertEquals(BaseTypes.int64Type().getClass(), lfInt64Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt8Node = (LeafSchemaNode) result.getDataChildByName(lfUInt8);
+        final LeafSchemaNode lfUInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT8);
         assertNotNull(lfUInt8Node);
         assertEquals(BaseTypes.uint8Type().getClass(), lfUInt8Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt16Node = (LeafSchemaNode) result.getDataChildByName(lfUInt16);
+        final LeafSchemaNode lfUInt16Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT16);
         assertNotNull(lfUInt16Node);
         assertEquals(BaseTypes.uint16Type().getClass(), lfUInt16Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt32Node = (LeafSchemaNode) result.getDataChildByName(lfUInt32);
+        final LeafSchemaNode lfUInt32Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT32);
         assertNotNull(lfUInt32Node);
         assertEquals(BaseTypes.uint32Type().getClass(), lfUInt32Node.getType().getClass());
 
-        final LeafSchemaNode lfUInt64Node = (LeafSchemaNode) result.getDataChildByName(lfUInt64);
+        final LeafSchemaNode lfUInt64Node = (LeafSchemaNode) result.getDataChildByName(LF_UINT64);
         assertNotNull(lfUInt64Node);
         assertEquals(BaseTypes.uint64Type().getClass(), lfUInt64Node.getType().getClass());
 
-        final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.getDataChildByName(lfBool);
+        final LeafSchemaNode lfBoolNode = (LeafSchemaNode) result.getDataChildByName(LF_BOOL);
         assertNotNull(lfBoolNode);
         assertEquals(BaseTypes.booleanType().getClass(), lfBoolNode.getType().getClass());
     }

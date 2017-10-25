@@ -49,8 +49,8 @@ public class YinFileUsesStmtTest {
         final Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
         final AugmentationSchema augment = augmentIterator.next();
 
-        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "main-impl"));
+        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "main-impl"));
         assertNotNull(caseNode);
 
         final ContainerSchemaNode container = (ContainerSchemaNode) caseNode.getDataChildByName(QName.create(
@@ -60,11 +60,8 @@ public class YinFileUsesStmtTest {
         assertEquals(1, container.getUses().size());
         final UsesNode usesNode = container.getUses().iterator().next();
         assertNotNull(usesNode);
-        assertTrue(usesNode
-                .getGroupingPath()
-                .toString()
-                .contains(
-                        "[(urn:opendaylight:params:xml:ns:yang:controller:" + "config?revision=2013-04-05)service-ref]"));
+        assertTrue(usesNode.getGroupingPath().toString()
+                .contains("[(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)service-ref]"));
         assertEquals(1, usesNode.getRefines().size());
     }
 }

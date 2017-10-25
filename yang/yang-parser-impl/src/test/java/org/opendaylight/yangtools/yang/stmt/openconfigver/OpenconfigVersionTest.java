@@ -116,7 +116,8 @@ public class OpenconfigVersionTest {
     @Test
     public void basicImportErrTest2() throws Exception {
         try {
-            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2", StatementParserMode.SEMVER_MODE);
+            StmtTestUtils.parseYangSources("/openconfig-version/basic-import-invalid-2",
+                StatementParserMode.SEMVER_MODE);
             fail("Test should fail due to invalid openconfig version");
         } catch (ReactorException e) {
             assertTrue(e.getCause().getCause().getMessage()

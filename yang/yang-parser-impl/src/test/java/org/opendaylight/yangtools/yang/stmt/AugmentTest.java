@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -54,7 +53,6 @@ public class AugmentTest {
     public void testAugmentParsing() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
             .toURI());
-        SchemaPath expectedSchemaPath;
         final List<QName> qnames = new ArrayList<>();
         qnames.add(Q0);
         qnames.add(Q1);
@@ -67,7 +65,7 @@ public class AugmentTest {
         final AugmentationSchema augment = augmentations.iterator().next();
         assertNotNull(augment);
 
-        expectedSchemaPath = SchemaPath.create(qnames, true);
+        SchemaPath expectedSchemaPath = SchemaPath.create(qnames, true);
         assertEquals(expectedSchemaPath, augment.getTargetPath());
 
         final Collection<DataSchemaNode> augmentChildren = augment.getChildNodes();
@@ -173,7 +171,6 @@ public class AugmentTest {
         final ListSchemaNode ifEntry = (ListSchemaNode) interfaces.getDataChildByName(QName.create(
                 module2.getQNameModule(), "ifEntry"));
 
-        SchemaPath expectedPath;
         final List<QName> qnames = new ArrayList<>();
         qnames.add(Q0);
         qnames.add(Q1);
@@ -185,8 +182,7 @@ public class AugmentTest {
                 "augment-holder"));
         TestUtils.checkIsAugmenting(augmentHolder, true);
         assertEquals(Q2, augmentHolder.getQName());
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, augmentHolder.getPath());
+        assertEquals(SchemaPath.create(qnames, true), augmentHolder.getPath());
 
         // foo.yang
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
@@ -207,29 +203,25 @@ public class AugmentTest {
         QName qname = QName.create(FOO, "ds0ChannelNumber");
         assertEquals(qname, ds0ChannelNumber.getQName());
         qnames.add(qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, ds0ChannelNumber.getPath());
+        assertEquals(SchemaPath.create(qnames, true), ds0ChannelNumber.getPath());
 
         // leaf interface-id
         qname = QName.create(FOO, "interface-id");
         assertEquals(qname, interfaceId.getQName());
         qnames.set(3, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, interfaceId.getPath());
+        assertEquals(SchemaPath.create(qnames, true), interfaceId.getPath());
 
         // container schemas
         qname = QName.create(FOO, "schemas");
         assertEquals(qname, schemas.getQName());
         qnames.set(3, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, schemas.getPath());
+        assertEquals(SchemaPath.create(qnames, true), schemas.getPath());
 
         // choice odl
         qname = QName.create(FOO, "odl");
         assertEquals(qname, odl.getQName());
         qnames.set(3, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, odl.getPath());
+        assertEquals(SchemaPath.create(qnames, true), odl.getPath());
     }
 
     @Test
@@ -274,7 +266,6 @@ public class AugmentTest {
         assertNotNull(node2);
         assertNotNull(node3);
 
-        SchemaPath expectedPath;
         final List<QName> qnames = new ArrayList<>();
         qnames.add(Q0);
         qnames.add(Q1);
@@ -285,8 +276,7 @@ public class AugmentTest {
         QName qname = QName.create(FOO, "id");
         assertEquals(qname, id.getQName());
         qnames.add(qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, id.getPath());
+        assertEquals(SchemaPath.create(qnames, true), id.getPath());
         final Collection<DataSchemaNode> idChildren = id.getChildNodes();
         assertEquals(1, idChildren.size());
 
@@ -294,8 +284,7 @@ public class AugmentTest {
         qname = QName.create(FOO, "node1");
         assertEquals(qname, node1.getQName());
         qnames.set(4, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, node1.getPath());
+        assertEquals(SchemaPath.create(qnames, true), node1.getPath());
         final Collection<DataSchemaNode> node1Children = node1.getChildNodes();
         assertTrue(node1Children.isEmpty());
 
@@ -303,8 +292,7 @@ public class AugmentTest {
         qname = QName.create(FOO, "node2");
         assertEquals(qname, node2.getQName());
         qnames.set(4, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, node2.getPath());
+        assertEquals(SchemaPath.create(qnames, true), node2.getPath());
         final Collection<DataSchemaNode> node2Children = node2.getChildNodes();
         assertTrue(node2Children.isEmpty());
 
@@ -312,8 +300,7 @@ public class AugmentTest {
         qname = QName.create(FOO, "node3");
         assertEquals(qname, node3.getQName());
         qnames.set(4, qname);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, node3.getPath());
+        assertEquals(SchemaPath.create(qnames, true), node3.getPath());
         final Collection<DataSchemaNode> node3Children = node3.getChildNodes();
         assertEquals(1, node3Children.size());
 
@@ -329,16 +316,14 @@ public class AugmentTest {
         qnames.add(QName.create(FOO, "id"));
         final LeafSchemaNode caseIdChild = (LeafSchemaNode) idChildren.iterator().next();
         assertNotNull(caseIdChild);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, caseIdChild.getPath());
+        assertEquals(SchemaPath.create(qnames, true), caseIdChild.getPath());
 
         // case node3 child
         qnames.set(4, QName.create(FOO, "node3"));
         qnames.set(5, QName.create(FOO, "node3"));
         final ContainerSchemaNode caseNode3Child = (ContainerSchemaNode) node3Children.iterator().next();
         assertNotNull(caseNode3Child);
-        expectedPath = SchemaPath.create(qnames, true);
-        assertEquals(expectedPath, caseNode3Child.getPath());
+        assertEquals(SchemaPath.create(qnames, true), caseNode3Child.getPath());
     }
 
     @Test
@@ -393,7 +378,6 @@ public class AugmentTest {
         assertTrue(create.isAugmenting());
         assertTrue(destroy.isAugmenting());
 
-        SchemaPath expectedPath;
         final QName[] qnames = new QName[4];
         qnames[0] = submitQName;
         qnames[1] = inputQName;
@@ -402,24 +386,21 @@ public class AugmentTest {
         // case attach
         qnames[3] = QName.create(NS_FOO, revision, "attach");
         assertEquals(qnames[3], attach.getQName());
-        expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
-        assertEquals(expectedPath, attach.getPath());
+        assertEquals(SchemaPath.create(true, qnames), attach.getPath());
         final Collection<DataSchemaNode> attachChildren = attach.getChildNodes();
         assertEquals(1, attachChildren.size());
 
         // case create
         qnames[3] = QName.create(NS_FOO, revision, "create");
         assertEquals(qnames[3], create.getQName());
-        expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
-        assertEquals(expectedPath, create.getPath());
+        assertEquals(SchemaPath.create(true, qnames), create.getPath());
         final Collection<DataSchemaNode> createChildren = create.getChildNodes();
         assertEquals(1, createChildren.size());
 
         // case attach
         qnames[3] = QName.create(NS_FOO, revision, "destroy");
         assertEquals(qnames[3], destroy.getQName());
-        expectedPath = SchemaPath.create(Arrays.asList(qnames), true);
-        assertEquals(expectedPath, destroy.getPath());
+        assertEquals(SchemaPath.create(true, qnames), destroy.getPath());
         final Collection<DataSchemaNode> destroyChildren = destroy.getChildNodes();
         assertEquals(1, destroyChildren.size());
     }

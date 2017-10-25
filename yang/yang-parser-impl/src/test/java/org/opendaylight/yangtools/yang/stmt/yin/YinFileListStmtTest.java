@@ -51,8 +51,8 @@ public class YinFileListStmtTest {
                 testModule.getQNameModule(), "modules"));
         assertNotNull(container);
 
-        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "module"));
+        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(
+            QName.create(testModule.getQNameModule(), "module"));
         assertNotNull(list);
         final List<QName> keys = list.getKeyDefinition();
         assertEquals(1, keys.size());

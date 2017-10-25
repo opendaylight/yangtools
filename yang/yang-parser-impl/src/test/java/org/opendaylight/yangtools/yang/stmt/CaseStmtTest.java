@@ -30,9 +30,13 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEf
 
 public class CaseStmtTest {
     private SchemaContext schema;
-    private Module rootFoo, rootBar;
-    private QNameModule qnameFoo, qnameBar;
-    private DataSchemaNode tempChild, tempSecondChild, tempThirdChild;
+    private Module rootFoo;
+    private Module rootBar;
+    private QNameModule qnameFoo;
+    private QNameModule qnameBar;
+    private DataSchemaNode tempChild;
+    private DataSchemaNode tempSecondChild;
+    private DataSchemaNode tempThirdChild;
     private ChoiceCaseNode tempChoice;
 
     @Rule
@@ -527,13 +531,13 @@ public class CaseStmtTest {
     }
 
     @Test
-    public void InferenceExceptionChoiceTest() throws Exception {
+    public void testInferenceExceptionChoice() throws Exception {
         expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/choice");
     }
 
     @Test
-    public void InferenceExceptionCaseTest() throws Exception {
+    public void testInferenceExceptionCase() throws Exception {
         expectedEx.expect(ReactorException.class);
         schema = StmtTestUtils.parseYangSources("/case-test/case-test-exceptions/case");
     }

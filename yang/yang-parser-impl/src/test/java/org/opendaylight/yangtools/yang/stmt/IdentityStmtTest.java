@@ -97,20 +97,20 @@ public class IdentityStmtTest {
 
         Iterator<IdentitySchemaNode> identitiesIterator = identities.iterator();
         IdentitySchemaNode identity = identitiesIterator.next();
-        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"), is
-                ("third-identity"), is("fourth-identity")));
+        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
+            is("third-identity"), is("fourth-identity")));
 
         identity = identitiesIterator.next();
-        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"), is
-                ("third-identity"), is("fourth-identity")));
+        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
+            is("third-identity"), is("fourth-identity")));
 
         identity = identitiesIterator.next();
-        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"), is
-                ("third-identity"), is("fourth-identity")));
+        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
+            is("third-identity"), is("fourth-identity")));
 
         identity = identitiesIterator.next();
-        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"), is
-                ("third-identity"), is("fourth-identity")));
+        assertThat(identity.getQName().getLocalName(), anyOf(is("first-identity"), is("second-identity"),
+            is("third-identity"), is("fourth-identity")));
     }
 
     @Test

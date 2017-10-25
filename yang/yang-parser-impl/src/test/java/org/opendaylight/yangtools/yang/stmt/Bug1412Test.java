@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 /**
  * Test ANTLR4 grammar capability to parse description statement in unknown node.
  *
+ * <p>
  * Note: Everything under unknown node is unknown node.
  */
 public class Bug1412Test {

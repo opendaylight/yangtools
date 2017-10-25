@@ -46,28 +46,28 @@ public class Bug4456Test {
                     .getLocalName();
 
             switch (extensionDefinition.getQName().getLocalName()) {
-            case "a":
-                assertEquals("b", unknownNodeExtensionDefName);
-                assertEquals("c", subUnknownNodeExtensionDefName);
-                break;
-            case "b":
-                assertEquals("c", unknownNodeExtensionDefName);
-                assertEquals("a", subUnknownNodeExtensionDefName);
-                break;
-            case "c":
-                assertEquals("a", unknownNodeExtensionDefName);
-                assertEquals("b", subUnknownNodeExtensionDefName);
-                break;
-            case "r":
-                assertEquals("r", unknownNodeExtensionDefName);
-                assertEquals("r2", subUnknownNodeExtensionDefName);
-                break;
-            case "r2":
-                assertEquals("r2", unknownNodeExtensionDefName);
-                assertEquals("r", subUnknownNodeExtensionDefName);
-                break;
-            default:
-                fail("Unexpected extension definition");
+                case "a":
+                    assertEquals("b", unknownNodeExtensionDefName);
+                    assertEquals("c", subUnknownNodeExtensionDefName);
+                    break;
+                case "b":
+                    assertEquals("c", unknownNodeExtensionDefName);
+                    assertEquals("a", subUnknownNodeExtensionDefName);
+                    break;
+                case "c":
+                    assertEquals("a", unknownNodeExtensionDefName);
+                    assertEquals("b", subUnknownNodeExtensionDefName);
+                    break;
+                case "r":
+                    assertEquals("r", unknownNodeExtensionDefName);
+                    assertEquals("r2", subUnknownNodeExtensionDefName);
+                    break;
+                case "r2":
+                    assertEquals("r2", unknownNodeExtensionDefName);
+                    assertEquals("r", subUnknownNodeExtensionDefName);
+                    break;
+                default:
+                    fail("Unexpected extension definition");
             }
         }
     }

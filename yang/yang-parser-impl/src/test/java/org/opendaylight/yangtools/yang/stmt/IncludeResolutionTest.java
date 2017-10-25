@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 
 public class IncludeResolutionTest {
 
-    private static final Logger log = Logger.getLogger(IncludeResolutionTest.class.getName());
+    private static final Logger LOG = Logger.getLogger(IncludeResolutionTest.class.getName());
 
     private static final StatementStreamSource ROOT = sourceForResource(
             "/semantic-statement-parser/include-arg-parsing/root-module.yang");
@@ -61,7 +61,7 @@ public class IncludeResolutionTest {
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
             assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
-            log.info(e.getMessage());
+            LOG.info(e.getMessage());
         }
 
     }
@@ -76,7 +76,7 @@ public class IncludeResolutionTest {
         } catch (ReactorException e) {
             assertTrue(e instanceof SomeModifiersUnresolvedException);
             assertEquals(ModelProcessingPhase.SOURCE_LINKAGE, e.getPhase());
-            log.info(e.getMessage());
+            LOG.info(e.getMessage());
         }
 
     }
@@ -89,7 +89,7 @@ public class IncludeResolutionTest {
             reactor.build();
             fail("reactor.process should fail due to missing belongsTo source");
         } catch (ReactorException e) {
-            log.info(e.getMessage());
+            LOG.info(e.getMessage());
         }
 
     }

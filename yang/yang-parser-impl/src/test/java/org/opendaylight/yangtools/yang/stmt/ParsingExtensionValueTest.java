@@ -10,7 +10,11 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.net.URISyntaxException;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
@@ -22,10 +26,10 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public class ParsingExtensionValueTest {
 
     @Test
-    public void extensionTest() throws Exception {
+    public void extensionTest() throws IOException, YangSyntaxErrorException, URISyntaxException {
         try {
             TestUtils.loadModules(getClass().getResource("/extensions").toURI());
-        } catch (Exception e) {
+        } catch (ReactorException e) {
             assertEquals(SomeModifiersUnresolvedException.class, e.getClass());
             assertTrue(e.getCause() instanceof SourceException);
             assertTrue(e.getCause().getMessage().startsWith("ext:id is not a YANG statement or use of extension"));

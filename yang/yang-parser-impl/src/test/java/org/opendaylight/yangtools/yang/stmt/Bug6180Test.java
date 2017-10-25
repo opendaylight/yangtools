@@ -36,10 +36,10 @@ public class Bug6180Test {
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         final Module module = schemaContext.getModules().iterator().next();
-        assertEquals("    1. this text contains \"string enclosed in double quotes\" and"+
-                " special characters: \\,\n,\t          2. this text contains \"string enclosed in double quotes\" and"+
-                " special characters: \\,\n,\n,                     3. this text contains \"string enclosed in double quotes\" and"+
-                " special characters: \\,\n,\t      ", module.getDescription());
+        assertEquals("    1. this text contains \"string enclosed in double quotes\" and"
+                + " special characters: \\,\n,\t          2. this text contains \"string enclosed in double quotes\""
+                + " and special characters: \\,\n,\n,                     3. this text contains \"string enclosed in"
+                + " double quotes\" and special characters: \\,\n,\t      ", module.getDescription());
     }
 
     @Test

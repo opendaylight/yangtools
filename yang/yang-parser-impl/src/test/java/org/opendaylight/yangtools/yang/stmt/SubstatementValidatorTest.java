@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class SubstatementValidatorTest {
-
+    @SuppressWarnings("checkstyle:regexpSinglelineJava")
     private final PrintStream stdout = System.out;
     private final ByteArrayOutputStream output = new ByteArrayOutputStream();
 

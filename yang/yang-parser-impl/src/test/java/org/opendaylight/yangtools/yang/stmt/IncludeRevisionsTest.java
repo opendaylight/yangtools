@@ -40,7 +40,7 @@ public class IncludeRevisionsTest {
     public void revsEqualTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, EQUAL_REV, EQUAL_ROOT);
+        reactor.addSources(EQUAL_REV, EQUAL_ROOT);
 
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -50,7 +50,7 @@ public class IncludeRevisionsTest {
     public void revsUnequalTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, UNEQUAL_REV, UNEQUAL_ROOT);
+        reactor.addSources(UNEQUAL_REV, UNEQUAL_ROOT);
 
         try {
             reactor.build();
@@ -65,7 +65,7 @@ public class IncludeRevisionsTest {
     public void revIncludeOnly() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT);
+        reactor.addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT);
 
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -75,7 +75,7 @@ public class IncludeRevisionsTest {
     public void revInModuleOnly() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, MOD_ONLY_REV, MOD_ONLY_ROOT);
+        reactor.addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
 
         try {
             reactor.build();
@@ -90,15 +90,9 @@ public class IncludeRevisionsTest {
     public void revNowhereTest() throws ReactorException {
 
         CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        addSources(reactor, NOWHERE_REV, NOWHERE_ROOT);
+        reactor.addSources(NOWHERE_REV, NOWHERE_ROOT);
 
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
-    }
-
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor, final StatementStreamSource... sources) {
-        for (StatementStreamSource source : sources) {
-            reactor.addSource(source);
-        }
     }
 }
