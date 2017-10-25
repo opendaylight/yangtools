@@ -17,6 +17,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -127,15 +128,15 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             return;
         }
 
-        final QName argName = def.getArgumentName();
+        final Optional<QName> argName = def.getArgumentName();
         final String argValue;
         final boolean allAttrs;
         final boolean allElements;
-        if (argName != null) {
+        if (argName.isPresent()) {
             allAttrs = def.isArgumentYinElement();
             allElements = !allAttrs;
 
-            argValue = getArgValue(element, argName, allAttrs);
+            argValue = getArgValue(element, argName.get(), allAttrs);
             SourceException.throwIfNull(argValue, ref, "Statement {} is missing mandatory argument %s",
                 def.getStatementName(), argName);
         } else {
@@ -174,8 +175,9 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         writer.endStatement(ref);
     }
 
-    private static boolean isArgument(final QName argName, final Node node) {
-        return argName != null && argName.getLocalName().equals(node.getLocalName()) && node.getPrefix() == null;
+    private static boolean isArgument(final Optional<QName> argName, final Node node) {
+        return argName.isPresent() && argName.get().getLocalName().equals(node.getLocalName())
+                && node.getPrefix() == null;
     }
 
     private void walkTree(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {

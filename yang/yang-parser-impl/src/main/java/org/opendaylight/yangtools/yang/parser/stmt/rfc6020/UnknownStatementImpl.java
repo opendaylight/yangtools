@@ -60,7 +60,7 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         public Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(
                 final StatementDefinition yangStmtDef) {
             final QName baseQName = getStatementName();
-            final QName argumentName = yangStmtDef.getArgumentName();
+            final QName argumentName = yangStmtDef.getArgumentName().orElse(null);
             return Optional.of(new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(
                     QName.create(baseQName, yangStmtDef.getStatementName().getLocalName()),
                     argumentName != null ? QName.create(baseQName, argumentName.getLocalName()) : null,

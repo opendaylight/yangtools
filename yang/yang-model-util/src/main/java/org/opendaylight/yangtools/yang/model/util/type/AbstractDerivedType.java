@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -49,18 +50,18 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     }
 
     @Override
-    public final Object getDefaultValue() {
-        return defaultValue != null ? defaultValue : baseType.getDefaultValue();
+    public final Optional<Object> getDefaultValue() {
+        return defaultValue != null ? Optional.of(defaultValue) : baseType.getDefaultValue();
     }
 
     @Override
-    public final String getDescription() {
-        return description;
+    public final Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public final String getReference() {
-        return reference;
+    public final Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Nonnull
@@ -70,8 +71,8 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     }
 
     @Override
-    public final String getUnits() {
-        return units != null ? units : baseType.getUnits();
+    public final Optional<String> getUnits() {
+        return units != null ? Optional.of(units) : baseType.getUnits();
     }
 
     @Override

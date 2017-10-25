@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
@@ -37,13 +38,13 @@ public class BitsTypeTest {
 
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
 
-        assertNull("Description is not null", bitsType.getDescription());
+        assertFalse("Description is present", bitsType.getDescription().isPresent());
         assertEquals("QName", qname, bitsType.getQName());
-        assertNull("Should be null", bitsType.getUnits());
+        assertFalse("Units should not be present", bitsType.getUnits().isPresent());
         assertNotEquals("Description should not be null", null, bitsType.toString());
-        assertNull("Reference is not null", bitsType.getReference());
+        assertFalse("Reference is not null", bitsType.getReference().isPresent());
         assertNull("BaseType should be null", bitsType.getBaseType());
-        assertNull("Default value should be null", bitsType.getDefaultValue());
+        assertFalse("Default value should be null", bitsType.getDefaultValue().isPresent());
         assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
         assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
         assertEquals("Should be empty list", Collections.EMPTY_LIST, bitsType.getUnknownSchemaNodes());

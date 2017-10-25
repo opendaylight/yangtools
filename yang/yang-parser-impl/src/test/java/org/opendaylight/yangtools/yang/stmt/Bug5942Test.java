@@ -46,6 +46,7 @@ public class Bug5942Test {
         assertEquals(1, unknownSchemaNodes.size());
         final UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
         assertEquals("argument", unknownSchemaNode.getNodeParameter());
-        assertEquals(QName.create("foo", "2016-06-02", "e"), unknownSchemaNode.getExtensionDefinition().getQName());
+        assertEquals(QName.create("foo", "2016-06-02", "e"), unknownSchemaNode.getExtensionDefinition().get()
+            .getQName());
     }
 }

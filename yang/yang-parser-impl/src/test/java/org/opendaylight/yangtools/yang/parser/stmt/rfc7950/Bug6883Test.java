@@ -34,7 +34,7 @@ public class Bug6883Test {
 
         final AnyDataSchemaNode topAnyData = assertAnyData(schemaContext, ImmutableList.of("top"));
         assertEquals(Status.DEPRECATED, topAnyData.getStatus());
-        assertEquals("top anydata", topAnyData.getDescription());
+        assertEquals("top anydata", topAnyData.getDescription().get());
 
         assertAnyData(schemaContext, ImmutableList.of("root", "root-anydata"));
         assertAnyData(schemaContext, ImmutableList.of("root", "aug-anydata"));

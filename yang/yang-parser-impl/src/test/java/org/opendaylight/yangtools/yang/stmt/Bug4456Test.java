@@ -37,12 +37,13 @@ public class Bug4456Test {
             List<UnknownSchemaNode> unknownSchemaNodes = extensionDefinition.getUnknownSchemaNodes();
             assertEquals(1, unknownSchemaNodes.size());
             UnknownSchemaNode unknownSchemaNode = unknownSchemaNodes.iterator().next();
-            String unknownNodeExtensionDefName = unknownSchemaNode.getExtensionDefinition().getQName().getLocalName();
+            String unknownNodeExtensionDefName = unknownSchemaNode.getExtensionDefinition().get().getQName()
+                    .getLocalName();
 
             List<UnknownSchemaNode> subUnknownSchemaNodes = unknownSchemaNode.getUnknownSchemaNodes();
             assertEquals(1, subUnknownSchemaNodes.size());
             UnknownSchemaNode subUnknownSchemaNode = subUnknownSchemaNodes.iterator().next();
-            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.getExtensionDefinition().getQName()
+            String subUnknownNodeExtensionDefName = subUnknownSchemaNode.getExtensionDefinition().get().getQName()
                     .getLocalName();
 
             switch (extensionDefinition.getQName().getLocalName()) {

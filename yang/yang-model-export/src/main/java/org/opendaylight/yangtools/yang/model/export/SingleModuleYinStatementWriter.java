@@ -23,8 +23,8 @@ import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
@@ -129,11 +129,11 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     private void writeArgument0(final String strRep) {
         try {
             if (isArgumentYinElement(currentStatement)) {
-                writeStartXmlElement(currentStatement.getArgumentName());
+                writeStartXmlElement(currentStatement.getArgumentName().orElse(null));
                 writeXmlText(strRep);
                 writeXmlEndElement();
             } else {
-                writeXmlArgument(currentStatement.getArgumentName(), strRep);
+                writeXmlArgument(currentStatement.getArgumentName().orElse(null), strRep);
             }
         } catch (final XMLStreamException e) {
             // FIXME: throw proper exception

@@ -200,7 +200,7 @@ public class AugmentProcessTest {
         final ChoiceSchemaNode lockType = (ChoiceSchemaNode) locks.getDataChildByName(QName
                 .create(ns, rev, "lock-type"));
 
-        final ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case");
+        final ChoiceCaseNode leafAugCase = lockType.getCaseNodeByName("leaf-aug-case").get();
         assertTrue(leafAugCase.isAugmenting());
         final DataSchemaNode leafAug = leafAugCase.getDataChildByName(QName.create(nsAug, rev, "leaf-aug-case"));
         assertFalse(leafAug.isAugmenting());

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,13 +52,13 @@ final class BitImpl implements Bit, Immutable {
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Nonnull

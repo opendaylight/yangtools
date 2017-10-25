@@ -52,23 +52,23 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getErrorAppTag() {
-        return errorAppTag;
+    public Optional<String> getErrorAppTag() {
+        return Optional.ofNullable(errorAppTag);
     }
 
     @Override
-    public String getErrorMessage() {
-        return errorMessage;
+    public Optional<String> getErrorMessage() {
+        return Optional.ofNullable(errorMessage);
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

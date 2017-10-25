@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
+
 /**
  * YANG statement <code>typedef</code> contains also substatements
  * <ul>
@@ -31,26 +33,25 @@ public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode 
      *
      * @return value of <code>&lt;T&gt;</code> type which represents the base
      *         type of instance of the <code>TypeDefinition</code> type or null,
-     *         if this is yang built-in type
+     *         if this is YANG built-in type
      */
+    // FIXME: should return Optional
     T getBaseType();
 
     /**
-     * Returns the unit which represents the value of the argument of the
-     * <code>units</code> substatement of the YANG <code>typedef</code>
-     * statement.
+     * Returns the unit which represents the value of the argument of the <code>units</code> substatement of the YANG
+     * <code>typedef</code> statement.
      *
      * @return string with units in which is type measured
      */
-    String getUnits();
+    Optional<String> getUnits();
 
     /**
-     * Returns the default value which represents the value of the argument of
-     * the <code>default</code> substatement of the YANG <code>typedef</code>
-     * statement.
+     * Returns the default value which represents the value of the argument of the <code>default</code> substatement
+     * of the YANG <code>typedef</code> statement.
      *
      * @return instance of <code>Object</code> type which contains default value
      *         for <code>typedef</code>
      */
-    Object getDefaultValue();
+    Optional<Object> getDefaultValue();
 }

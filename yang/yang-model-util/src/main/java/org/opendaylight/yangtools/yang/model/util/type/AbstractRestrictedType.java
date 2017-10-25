@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -30,22 +31,22 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
     }
 
     @Override
-    public final String getUnits() {
+    public final Optional<String> getUnits() {
         return baseType.getUnits();
     }
 
     @Override
-    public final Object getDefaultValue() {
+    public final Optional<Object> getDefaultValue() {
         return baseType.getDefaultValue();
     }
 
     @Override
-    public final String getDescription() {
+    public final Optional<String> getDescription() {
         return baseType.getDescription();
     }
 
     @Override
-    public final String getReference() {
+    public final Optional<String> getReference() {
         return baseType.getReference();
     }
 

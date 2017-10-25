@@ -89,7 +89,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     public boolean hasArgument() {
-        return support.getArgumentName() != null;
+        return support.getArgumentName().isPresent();
     }
 
     public boolean isArgumentYinElement() {
@@ -100,7 +100,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return support.getStatementName();
     }
 
-    public QName getArgumentName() {
+    public Optional<QName> getArgumentName() {
         return support.getArgumentName();
     }
 

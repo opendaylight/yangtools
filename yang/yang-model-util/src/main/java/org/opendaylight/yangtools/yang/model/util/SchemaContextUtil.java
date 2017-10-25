@@ -416,7 +416,7 @@ public final class SchemaContextUtil {
         }
 
         if (foundNode == null && parent instanceof ChoiceSchemaNode) {
-            foundNode = ((ChoiceSchemaNode) parent).getCaseNodeByName(current);
+            foundNode = ((ChoiceSchemaNode) parent).getCaseNodeByName(current).orElse(null);
 
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);

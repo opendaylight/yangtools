@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.export;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -19,13 +20,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 final class ExtensionStatement implements StatementDefinition {
 
-    private QName argumentName;
-    private QName statementName;
-    private boolean yinElement;
+    private final QName argumentName;
+    private final QName statementName;
+    private final boolean yinElement;
 
     private ExtensionStatement(final ExtensionDefinition def) {
         statementName = def.getQName();
-        argumentName = def.getArgument() != null ? QName.create(statementName, def.getArgument()) : null;
+
+        final Optional<String> arg = def.getArgument();
+        argumentName = arg.isPresent() ? QName.create(statementName, arg.get()) : null;
         yinElement = def.isYinElement();
     }
 
@@ -43,8 +46,8 @@ final class ExtensionStatement implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
-        return argumentName;
+    public Optional<QName> getArgumentName() {
+        return Optional.ofNullable(argumentName);
     }
 
     @Nonnull

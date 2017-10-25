@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -36,10 +36,9 @@ public interface StatementDefinition extends Immutable {
      * Returns name of statement argument or null, if statement does not have
      * argument.
      *
-     * @return argument name or null, if statement does not take argument.
+     * @return argument name or empty, if statement does not take argument.
      */
-    @Nullable
-    QName getArgumentName();
+    Optional<QName> getArgumentName();
 
     /**
      * Returns class which represents declared version of statement associated

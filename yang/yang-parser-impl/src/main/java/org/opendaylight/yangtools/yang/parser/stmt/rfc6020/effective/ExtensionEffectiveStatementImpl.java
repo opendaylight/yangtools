@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -152,8 +153,8 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     }
 
     @Override
-    public String getArgument() {
-        return argument;
+    public Optional<String> getArgument() {
+        return Optional.ofNullable(argument);
     }
 
     @Override

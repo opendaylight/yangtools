@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
@@ -104,27 +105,27 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     }
 
     @Override
-    public ChoiceCaseNode getCaseNodeByName(final QName name) {
-        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL!");
+    public Optional<ChoiceCaseNode> getCaseNodeByName(final QName name) {
+        requireNonNull(name, "Choice Case QName cannot be NULL!");
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && name.equals(caseNode.getQName())) {
-                return caseNode;
+                return Optional.of(caseNode);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override
-    public ChoiceCaseNode getCaseNodeByName(final String name) {
-        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
+    public Optional<ChoiceCaseNode> getCaseNodeByName(final String name) {
+        requireNonNull(name, "Choice Case string Name cannot be NULL!");
 
         for (final ChoiceCaseNode caseNode : cases) {
             if (caseNode != null && caseNode.getQName() != null && name.equals(caseNode.getQName().getLocalName())) {
-                return caseNode;
+                return Optional.of(caseNode);
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

@@ -50,7 +50,8 @@ public final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveState
                 }
 
                 final Bit b = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setDescription(bitSubStmt.getDescription()).setReference(bitSubStmt.getReference())
+                        .setDescription(bitSubStmt.getDescription().orElse(null))
+                        .setReference(bitSubStmt.getReference().orElse(null))
                         .setStatus(bitSubStmt.getStatus()).setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
                         .build();
 

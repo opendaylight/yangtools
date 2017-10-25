@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
@@ -45,23 +46,23 @@ public class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<R
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getErrorAppTag() {
-        return errorAppTag;
+    public Optional<String> getErrorAppTag() {
+        return Optional.ofNullable(errorAppTag);
     }
 
     @Override
-    public String getErrorMessage() {
-        return errorMessage;
+    public Optional<String> getErrorMessage() {
+        return Optional.ofNullable(errorMessage);
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

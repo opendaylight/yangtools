@@ -37,5 +37,6 @@ public interface IdentitySchemaNode extends SchemaNode {
      *
      * @return collection of identities derived from this identity
      */
+    // FIXME: this should probably be a SchemaContext utility
     Set<IdentitySchemaNode> getDerivedIdentities();
 }

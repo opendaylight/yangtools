@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.binaryType;
 
@@ -26,11 +25,11 @@ public class BinaryTypeTest {
         final BinaryTypeDefinition binType1 = binaryType();
 
         assertFalse(binType.getLengthConstraint().isPresent());
-        assertNull(binType.getDefaultValue());
+        assertFalse(binType.getDefaultValue().isPresent());
         assertEquals("CURRENT", Status.CURRENT, binType.getStatus());
         assertEquals("Base type is null", null, binType.getBaseType());
         assertEquals("getQName gives BINARY_QNAME", BaseTypes.BINARY_QNAME, binType.getQName());
-        assertNull("Units should be null", binType.getUnits());
+        assertFalse("Units should be empty", binType.getUnits().isPresent());
         assertEquals("getPath gives List of BINARY_QNAME",
                 Collections.singletonList(BaseTypes.BINARY_QNAME), binType.getPath().getPathFromRoot());
 

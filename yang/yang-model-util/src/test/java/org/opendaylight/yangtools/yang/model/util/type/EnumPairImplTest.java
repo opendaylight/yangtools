@@ -37,8 +37,8 @@ public class EnumPairImplTest {
 
         assertNotNull(enumPair);
         assertEquals(unknownSchemaNodes, enumPair.getUnknownSchemaNodes());
-        assertEquals("enum description", enumPair.getDescription());
-        assertEquals("enum reference", enumPair.getReference());
+        assertEquals("enum description", enumPair.getDescription().get());
+        assertEquals("enum reference", enumPair.getReference().get());
         assertEquals(Status.DEPRECATED, enumPair.getStatus());
 
         final EnumPair enumPair2 = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)

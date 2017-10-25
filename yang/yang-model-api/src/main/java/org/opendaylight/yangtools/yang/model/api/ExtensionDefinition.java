@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
+
 /**
  * Contains the methods for getting the data which are part of the YANG
  * <code>extensoion</code> statement.
@@ -20,11 +22,9 @@ public interface ExtensionDefinition extends SchemaNode {
      * href="https://tools.ietf.org/html/rfc6020#section-7.17.2">[RFC-6020] The
      * argument Statement</a>
      *
-     * @return the <code>String</code> that is the name of argument to the
-     *         Keyword. If no argument statement is present the method will
-     *         return <code>null</code>
+     * @return the <code>String</code> that is the name of argument to the keyword.
      */
-    String getArgument();
+    Optional<String> getArgument();
 
     /**
      * This statement indicates if the argument is mapped to an XML element in

@@ -87,8 +87,8 @@ public final class AugmentEffectiveStatementImpl
     }
 
     @Override
-    public RevisionAwareXPath getWhenCondition() {
-        return whenCondition;
+    public Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.ofNullable(whenCondition);
     }
 
     @Nonnull

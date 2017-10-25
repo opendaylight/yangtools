@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.booleanType;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -27,13 +28,13 @@ public class BooleanTypeTest {
         assertEquals("getPath gives List of BOOLEAN_QNAME",
                 Collections.singletonList(BaseTypes.BOOLEAN_QNAME), boolType.getPath().getPathFromRoot());
         assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
-        assertNull(boolType.getDescription());
+        assertEquals(Optional.empty(), boolType.getDescription());
 
         final String strPath = boolType.getPath().toString();
         assertTrue("Should contain string of getPath", stringBoolType.contains(strPath));
-        assertNull("Should be null", boolType.getUnits());
-        assertEquals("Base type is null", null, boolType.getBaseType());
-        assertNull("Default value is null", boolType.getDefaultValue());
+        assertEquals("Should be empty", Optional.empty(), boolType.getUnits());
+        assertNull("Base type is null", boolType.getBaseType());
+        assertEquals("Default value is null", Optional.empty(), boolType.getDefaultValue());
         assertEquals("Status CURRENT", Status.CURRENT, boolType.getStatus());
         assertEquals("Should contain empty list", Collections.EMPTY_LIST, boolType.getUnknownSchemaNodes());
     }

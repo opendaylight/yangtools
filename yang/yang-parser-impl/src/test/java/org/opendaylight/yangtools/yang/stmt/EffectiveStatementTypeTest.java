@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -106,23 +107,23 @@ public class EffectiveStatementTypeTest {
         assertEquals("bits", bitsEff.getQName().getLocalName());
         assertEquals("bits", bitsEff.getPath().getLastComponent().getLocalName());
         assertNotNull(bitsEff.getUnknownSchemaNodes());
-        assertNull(bitsEff.getDescription());
-        assertNull(bitsEff.getReference());
+        assertFalse(bitsEff.getDescription().isPresent());
+        assertFalse(bitsEff.getReference().isPresent());
         assertEquals("CURRENT", bitsEff.getStatus().toString());
-        assertNull(bitsEff.getUnits());
+        assertFalse(bitsEff.getUnits().isPresent());
         assertNotNull(bitsEff.toString());
         assertNotNull(bitsEff.hashCode());
         assertFalse(bitsEff.equals(null));
         assertFalse(bitsEff.equals("test"));
         assertTrue(bitsEff.equals(bitsEff));
         assertEquals(3, bitsEff.getBits().size());
-        assertNull(bitsEff.getDefaultValue());
+        assertFalse(bitsEff.getDefaultValue().isPresent());
 
         assertNotNull(bitEff.getPath());
         assertNotNull(bitEff.getUnknownSchemaNodes());
-        assertEquals("test bit", bitEff.getDescription());
-        assertEquals("test bit ref", bitEff.getReference());
-        assertEquals("CURRENT", bitEff.getStatus().toString());
+        assertEquals("test bit", bitEff.getDescription().get());
+        assertEquals("test bit ref", bitEff.getReference().get());
+        assertEquals(Status.CURRENT, bitEff.getStatus());
         assertNotNull(bitEff.hashCode());
         assertFalse(bitEff.equals(null));
         assertFalse(bitEff.equals("test"));
@@ -188,15 +189,15 @@ public class EffectiveStatementTypeTest {
         final EmptyTypeDefinition emptyEff = (EmptyTypeDefinition) ((TypeEffectiveStatement<?>) ((LeafEffectiveStatementImpl) currentLeaf)
                 .effectiveSubstatements().iterator().next()).getTypeDefinition();
 
-        assertNull(emptyEff.getUnits());
-        assertNull(emptyEff.getDefaultValue());
+        assertFalse(emptyEff.getUnits().isPresent());
+        assertFalse(emptyEff.getDefaultValue().isPresent());
         assertNull(emptyEff.getBaseType());
         assertEquals("empty", emptyEff.getQName().getLocalName());
         assertNull(emptyEff.getPath().getParent().getParent());
         assertNotNull(emptyEff.getUnknownSchemaNodes());
-        assertNull(emptyEff.getDescription());
-        assertNull(emptyEff.getReference());
-        assertEquals("CURRENT", emptyEff.getStatus().toString());
+        assertFalse(emptyEff.getDescription().isPresent());
+        assertFalse(emptyEff.getReference().isPresent());
+        assertEquals(Status.CURRENT, emptyEff.getStatus());
         assertNotNull(emptyEff.toString());
     }
 
@@ -370,10 +371,10 @@ public class EffectiveStatementTypeTest {
         assertEquals("CURRENT", unionEff.getStatus().toString());
         assertNotNull(unionEff.getUnknownSchemaNodes());
         assertNull(unionEff.getBaseType());
-        assertNull(unionEff.getUnits());
-        assertNull(unionEff.getDefaultValue());
-        assertNull(unionEff.getDescription());
-        assertNull(unionEff.getReference());
+        assertFalse(unionEff.getUnits().isPresent());
+        assertFalse(unionEff.getDefaultValue().isPresent());
+        assertFalse(unionEff.getDescription().isPresent());
+        assertFalse(unionEff.getReference().isPresent());
         assertNotNull(unionEff.toString());
         assertNotNull(unionEff.hashCode());
         assertFalse(unionEff.equals(null));
