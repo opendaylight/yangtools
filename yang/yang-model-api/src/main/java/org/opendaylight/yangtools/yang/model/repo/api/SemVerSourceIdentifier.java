@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * YANG Schema source identifier with specified semantic version.
@@ -46,14 +47,13 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      *
      * @param name
      *            Name of schema
-     * @param formattedRevision
-     *            Optional of source revision in format YYYY-mm-dd. If not
-     *            present, default value will be used.
+     * @param revision
+     *            Revision of source, possibly not present
      * @param semVer
      *            semantic version of source
      */
-    SemVerSourceIdentifier(final String name, final Optional<String> formattedRevision, final SemVer semVer) {
-        super(name, formattedRevision);
+    SemVerSourceIdentifier(final String name, final Optional<Revision> revision, final SemVer semVer) {
+        super(name, revision);
         this.semVer = semVer;
     }
 
@@ -100,9 +100,9 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      * @param semVer
      *            semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName, final String revision,
+    public static SemVerSourceIdentifier create(final String moduleName, final Revision revision,
             final SemVer semVer) {
-        return new SemVerSourceIdentifier(moduleName, Optional.of(revision), semVer);
+        return new SemVerSourceIdentifier(moduleName, Optional.ofNullable(revision), semVer);
     }
 
     /**
@@ -116,8 +116,8 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      * @param semVer
      *            semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName,
-            final Optional<String> revision, final SemVer semVer) {
+    public static SemVerSourceIdentifier create(final String moduleName, final Optional<Revision> revision,
+            final SemVer semVer) {
         return new SemVerSourceIdentifier(moduleName, revision, semVer);
     }
 

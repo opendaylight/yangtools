@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -394,13 +395,13 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + "["
-                + "name=" + name
-                + ", namespace=" + getNamespace()
-                + ", revision=" + getQNameModule().getFormattedRevision()
-                + ", prefix=" + prefix
-                + ", yangVersion=" + yangVersion
-                + "]";
+        return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("name", name)
+                .add("namespace", getNamespace())
+                .add("revision", getRevision().orElse(null))
+                .add("prefix", prefix)
+                .add("yangVersion", yangVersion)
+                .toString();
     }
 
     @Override

@@ -75,15 +75,12 @@ public class MoreRevisionsTest {
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
         final Module moduleByName = result.getModules().iterator().next();
-        final QNameModule qNameModule = moduleByName.getQNameModule();
-        final String formattedRevision = qNameModule.getFormattedRevision();
-        assertEquals(formattedRevision, "2015-06-07");
+        assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().get().toString());
     }
 
     @Test
     public void twoRevisionsTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
 
         reactor.addSources(TED_20130712, TED_20131021, IETF_TYPES);
 

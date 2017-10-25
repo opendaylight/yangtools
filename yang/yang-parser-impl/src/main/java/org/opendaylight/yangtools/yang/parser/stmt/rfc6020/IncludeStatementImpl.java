@@ -75,7 +75,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
             final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
                 RevisionDateStatement.class);
             stmt.addRequiredSource(revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
-                : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.rawStatementArgument()));
+                : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.getStatementArgument()));
         }
 
         @Override
@@ -102,7 +102,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                     final StmtContext<?, ?, ?> includedSubModuleContext = requiresCtxPrerequisite.resolve(ctx);
 
                     stmt.addToNs(IncludedModuleContext.class, revision != null
-                            ? RevisionSourceIdentifier.create(submoduleName, revision.rawStatementArgument())
+                            ? RevisionSourceIdentifier.create(submoduleName, revision.getStatementArgument())
                                     : RevisionSourceIdentifier.create(submoduleName), includedSubModuleContext);
                     stmt.addToNs(IncludedSubmoduleNameToModuleCtx.class, stmt.getStatementArgument(),
                         includedSubModuleContext);
