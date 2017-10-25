@@ -78,7 +78,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
             YangSyntaxErrorException {
         final StatementContext context;
         try (InputStream stream = source.openStream()) {
-            context = parseYangSource(stream);
+            context = parseYangSource(source.getIdentifier(), stream);
         }
 
         final String sourceName = source.getSymbolicName().orElse(null);
@@ -145,15 +145,15 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         return context;
     }
 
-    private static StatementContext parseYangSource(final InputStream stream) throws IOException,
-            YangSyntaxErrorException {
+    private static StatementContext parseYangSource(final SourceIdentifier source, final InputStream stream)
+            throws IOException, YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(CharStreams.fromStream(stream));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final YangStatementParser parser = new YangStatementParser(tokens);
         //disconnect from console error output
         parser.removeErrorListeners();
 
-        final YangErrorListener errorListener = new YangErrorListener();
+        final YangErrorListener errorListener = new YangErrorListener(source);
         parser.addErrorListener(errorListener);
 
         final StatementContext result = parser.statement();

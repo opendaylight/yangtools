@@ -49,45 +49,6 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     }
 
     /**
-     * Create a new instance of AST representation for a abstract syntax tree,
-     * performing minimal semantic analysis to acquire dependency information.
-     *
-     * @param name YANG source name. Used only for error reporting.
-     * @param tree ANTLR abstract syntax tree
-     * @return A new representation instance.
-     * @throws YangSyntaxErrorException if we fail to extract dependency information.
-     */
-    public static ASTSchemaSource create(@Nonnull final String name, @Nonnull final ParserRuleContext tree)
-            throws YangSyntaxErrorException {
-        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(name, tree);
-        final SourceIdentifier id = getSourceId(depInfo);
-        final SemVerSourceIdentifier semVerId = getSemVerSourceId(depInfo);
-        return new ASTSchemaSource(id, semVerId, tree, depInfo, null);
-    }
-
-    /**
-     * Create a new instance of AST representation for a abstract syntax tree,
-     * performing minimal semantic analysis to acquire dependency information.
-     *
-     * @param identifier
-     *            SourceIdentifier of yang schema source.
-     * @param tree
-     *            ANTLR abstract syntax tree
-     * @param text
-     *            YANG text source
-     * @return A new representation instance.
-     * @throws YangSyntaxErrorException
-     *             if we fail to extract dependency information.
-     *
-     * @deprecated Use {@link #create(SourceIdentifier, ParserRuleContext)} instead.
-     */
-    @Deprecated
-    public static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
-            @Nonnull final ParserRuleContext tree, final String text) throws YangSyntaxErrorException {
-        return create(identifier, tree);
-    }
-
-    /**
      * Create a new instance of AST representation for a abstract syntax tree, performing minimal semantic analysis
      * to acquire dependency information.
      *
@@ -126,7 +87,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
             @Nullable final String symbolicName, @Nonnull final ParserRuleContext tree)
                     throws YangSyntaxErrorException {
-        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier.getName(), tree);
+        final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier, tree);
         final SourceIdentifier id = getSourceId(depInfo);
 
         final SemVerSourceIdentifier semVerId;
