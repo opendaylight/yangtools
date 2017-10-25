@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -26,6 +25,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -42,8 +42,8 @@ import org.opendaylight.yangtools.yang.model.util.FilteringSchemaContextProxy.Mo
 public class SchemaContextProxyTest {
 
     private static final URI NAMESPACE = URI.create("urn:opendaylight:params:xml:ns:yang:controller:config");
-    private static final Date REVISION = QName.parseRevision("2015-01-01");
-    private static final Date REVISION2 = QName.parseRevision("2015-01-15");
+    private static final Revision REVISION = Revision.valueOf("2015-01-01");
+    private static final Revision REVISION2 = Revision.valueOf("2015-01-15");
 
     private static final String CONFIG_NAME = "config";
     private static final String ROOT_NAME = "root";
@@ -134,10 +134,10 @@ public class SchemaContextProxyTest {
      */
     @Test
     public void testBasicNullRevision() throws Exception {
-        final Module moduleConfig = mockModule(CONFIG_NAME, QName.parseRevision("2013-04-05"));
-        final Module module2 = mockModule(MODULE2_NAME, QName.parseRevision("2014-06-17"));
+        final Module moduleConfig = mockModule(CONFIG_NAME, Revision.valueOf("2013-04-05"));
+        final Module module2 = mockModule(MODULE2_NAME, Revision.valueOf("2014-06-17"));
         final Module module20 = mockModule(MODULE2_NAME, null);
-        final Module module3 = mockModule(MODULE3_NAME, QName.parseRevision("2014-06-12"));
+        final Module module3 = mockModule(MODULE3_NAME, Revision.valueOf("2014-06-12"));
         final Module module30 = mockModule(MODULE3_NAME, null);
 
         mockModuleImport(module20, moduleConfig);
@@ -283,7 +283,7 @@ public class SchemaContextProxyTest {
         Module moduleConfig = mockModule(CONFIG_NAME);
         Module module2 = mockModule(MODULE2_NAME);
         Module module3 = mockModule(MODULE3_NAME);
-        Module module4 = mockModule(MODULE3_NAME, QName.parseRevision("2015-10-10"));
+        Module module4 = mockModule(MODULE3_NAME, Revision.valueOf("2015-10-10"));
 
         mockModuleImport(module2, moduleConfig);
         mockModuleImport(module3, module2, moduleConfig);
@@ -593,7 +593,7 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
-                public Optional<Date> getRevision() {
+                public Optional<Revision> getRevision() {
                     return module.getRevision();
                 }
 
@@ -617,7 +617,7 @@ public class SchemaContextProxyTest {
     }
 
     //mock module with revision
-    private static Module mockModule(final String name, final Date rev) {
+    private static Module mockModule(final String name, final Revision rev) {
 
         final Module mod = mockModule(name);
 

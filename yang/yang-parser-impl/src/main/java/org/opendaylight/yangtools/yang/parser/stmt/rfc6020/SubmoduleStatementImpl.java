@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import java.util.Date;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -122,11 +122,8 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
 
         private static ModuleIdentifier getSubmoduleIdentifier(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            final Date maybeDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
-
-            final ModuleIdentifier submoduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
-                    Optional.ofNullable(maybeDate));
-            return submoduleIdentifier;
+            final Optional<Revision> maybeDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
+            return ModuleIdentifierImpl.create(stmt.getStatementArgument(), maybeDate);
         }
 
         @Override

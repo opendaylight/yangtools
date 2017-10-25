@@ -17,15 +17,13 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Map;
 import java.util.Set;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
@@ -49,7 +47,7 @@ public class Bug8307Test {
     private static final URI BAR_NS = URI.create("bar-ns");
     private static final URI BAZ_NS = URI.create("baz-ns");
 
-    private static Date revision;
+    private static Revision revision;
     private static QNameModule foo;
     private static QName myFooContA;
     private static QName myFooContB;
@@ -61,8 +59,8 @@ public class Bug8307Test {
     private static QName myBazCont;
 
     @BeforeClass
-    public static void setup() throws ParseException {
-        revision = SimpleDateFormatUtil.getRevisionFormat().parse("2017-05-16");
+    public static void setup() {
+        revision = Revision.valueOf("2017-05-16");
         foo = QNameModule.create(FOO_NS, revision);
         myFooContA = QName.create(foo, "my-foo-cont-a");
         myFooContB = QName.create(foo, "my-foo-cont-b");

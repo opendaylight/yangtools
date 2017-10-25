@@ -16,12 +16,12 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -54,7 +54,7 @@ public class YangDataExtensionTest {
     private static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
             "/yang-data-extension-test/ietf-restconf.yang");
 
-    private static final Date REVISION = QName.parseRevision("2017-06-01");
+    private static final Revision REVISION = Revision.valueOf("2017-06-01");
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(URI.create("foo"), REVISION);
     private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
     private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");

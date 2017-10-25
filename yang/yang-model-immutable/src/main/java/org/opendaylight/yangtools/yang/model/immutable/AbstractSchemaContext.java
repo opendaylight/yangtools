@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.immutable;
 
-import java.util.Date;
 import java.util.Optional;
 import org.immutables.value.Value;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 abstract class AbstractSchemaContext extends CommonContainerSchemaNode implements SchemaContext {
 
     @Override
-    public Optional<Module> findModule(final String name, final Date revision) {
+    public Optional<Module> findModule(final String name, final Optional<Revision> revision) {
         throw new UnsupportedOperationException("Not implemented");
     }
 }

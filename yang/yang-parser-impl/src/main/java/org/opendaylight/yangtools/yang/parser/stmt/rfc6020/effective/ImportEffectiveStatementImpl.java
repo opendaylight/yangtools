@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import com.google.common.base.MoreObjects;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
@@ -27,7 +26,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         implements ModuleImport {
 
     private final String moduleName;
-    private final Date revision;
+    private final Revision revision;
     private final SemVer semVer;
     private final String prefix;
     private final String description;
@@ -53,7 +52,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         } else {
             final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
                 ImportPrefixToSemVerSourceIdentifier.class, prefix);
-            revision = QName.parseRevision(importedModuleIdentifier.getRevision());
+            revision = Revision.valueOf(importedModuleIdentifier.getRevision());
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
@@ -65,7 +64,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         this.reference = referenceStmt != null ? referenceStmt.argument() : null;
     }
 
-    private Date getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {
+    private Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {
         /*
          * When 'revision-date' of an import is not specified in yang source, we
          * need to find revision of imported module.
@@ -82,7 +81,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
-    public Optional<Date> getRevision() {
+    public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }
 

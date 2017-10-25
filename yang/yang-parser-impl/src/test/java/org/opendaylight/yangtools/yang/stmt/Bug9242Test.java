@@ -11,9 +11,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 
-import java.util.Date;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -27,8 +27,7 @@ public class Bug9242Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9242/");
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2017-10-13");
-
+        final Revision revision = Revision.valueOf("2017-10-13");
         final Module rootModule = schemaContext.findModule("root-module", revision).get();
         final Module impModule = schemaContext.findModule("imp-module", revision).get();
 

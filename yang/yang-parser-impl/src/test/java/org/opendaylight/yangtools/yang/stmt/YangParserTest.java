@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
@@ -70,11 +71,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline
 
 public class YangParserTest {
     private static final QNameModule FOO = QNameModule.create(
-        URI.create("urn:opendaylight.foo"), QName.parseRevision("2013-02-27"));
+        URI.create("urn:opendaylight.foo"), Revision.valueOf("2013-02-27"));
     private static final QNameModule BAR = QNameModule.create(
-        URI.create("urn:opendaylight.bar"), QName.parseRevision("2013-07-03"));
+        URI.create("urn:opendaylight.bar"), Revision.valueOf("2013-07-03"));
     private static final QNameModule BAZ = QNameModule.create(
-        URI.create("urn:opendaylight.baz"), QName.parseRevision("2013-02-27"));
+        URI.create("urn:opendaylight.baz"), Revision.valueOf("2013-02-27"));
 
     private SchemaContext context;
     private Module foo;
@@ -109,7 +110,7 @@ public class YangParserTest {
 
         assertEquals("opendaylight", foo.getOrganization());
         assertEquals("http://www.opendaylight.org/", foo.getContact());
-        assertEquals(Optional.of(QName.parseRevision("2013-02-27")), foo.getRevision());
+        assertEquals(Optional.of(Revision.valueOf("2013-02-27")), foo.getRevision());
         assertNull(foo.getReference());
     }
 

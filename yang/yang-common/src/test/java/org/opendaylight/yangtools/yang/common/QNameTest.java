@@ -14,7 +14,6 @@ import static org.junit.Assert.fail;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.Optional;
 import org.junit.Test;
 
@@ -72,7 +71,7 @@ public class QNameTest {
 
         // compare with 1 null revision
         qa = QName.create(URI.create(A), A);
-        qb = QName.create(URI.create(A), QName.parseRevision(REVISION), A);
+        qb = QName.create(URI.create(A), Revision.valueOf(REVISION), A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
 
@@ -90,14 +89,14 @@ public class QNameTest {
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
-        assertNotNull(QName.formattedRevision(Optional.of(new Date())));
+        assertNotNull(QName.formattedRevision(Optional.of(Revision.valueOf("2000-01-01"))));
         assertNotNull(qname.hashCode());
         assertEquals(qname, qname.intern());
     }
 
     @Test
     public void testQNameModule() throws URISyntaxException {
-        final QNameModule qnameModule = QNameModule.create(NS, new Date());
+        final QNameModule qnameModule = QNameModule.create(NS, Revision.valueOf("2000-01-01"));
         assertNotNull(qnameModule.toString());
         assertNotNull(qnameModule.getRevisionNamespace());
     }

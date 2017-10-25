@@ -18,14 +18,13 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Map;
 import org.jaxen.Function;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -62,11 +61,10 @@ public class DerefXPathFunctionTest {
     private static QName ordinaryLeafB;
 
     @BeforeClass
-    public static void setup() throws ParseException {
+    public static void setup() {
         jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
 
-        fooModule = QNameModule.create(URI.create("foo-ns"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2017-04-03"));
+        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.valueOf("2017-04-03"));
         myContainer = QName.create(fooModule, "my-container");
         myInnerContainer = QName.create(fooModule, "my-inner-container");
         myList = QName.create(fooModule, "my-list");

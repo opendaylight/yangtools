@@ -17,7 +17,6 @@ import com.google.common.collect.RangeSet;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,6 +28,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
@@ -1349,7 +1349,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitRevision(final Date date) {
+        private void emitRevision(final Revision date) {
             if (date != null) {
                 super.writer.startRevisionNode(date);
 
@@ -1361,7 +1361,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitRevisionDateNode(final Date date) {
+        private void emitRevisionDateNode(final Revision date) {
             super.writer.startRevisionDateNode(date);
             super.writer.endNode();
         }

@@ -13,23 +13,21 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -40,9 +38,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
-    protected static final Comparator<Module> REVISION_COMPARATOR = (first, second) -> {
-        return ModuleIdentifier.compareRevisions(first.getRevision(), second.getRevision());
-    };
+    protected static final Comparator<Module> REVISION_COMPARATOR =
+        (first, second) -> Revision.compare(first.getRevision(), second.getRevision());
 
     protected static final TreeSet<Module> createModuleSet() {
         return new TreeSet<>(REVISION_COMPARATOR);
@@ -100,9 +97,9 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
 
     @Override
-    public Optional<Module> findModule(final String name, final Date revision) {
+    public Optional<Module> findModule(final String name, final Optional<Revision> revision) {
         for (final Module module : getNameToModules().get(name)) {
-            if (Objects.equals(revision, module.getRevision().orElse(null))) {
+            if (revision.equals(module.getRevision())) {
                 return Optional.of(module);
             }
         }

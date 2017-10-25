@@ -23,6 +23,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -42,9 +43,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 public class UsesAugmentTest {
 
     private static final QNameModule UG = QNameModule.create(
-        URI.create("urn:opendaylight:params:xml:ns:yang:uses-grouping"), QName.parseRevision("2013-07-30"));
+        URI.create("urn:opendaylight:params:xml:ns:yang:uses-grouping"), Revision.valueOf("2013-07-30"));
     private static final QNameModule GD = QNameModule.create(
-        URI.create("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), QName.parseRevision("2013-09-04"));
+        URI.create("urn:opendaylight:params:xml:ns:yang:grouping-definitions"), Revision.valueOf("2013-09-04"));
 
     private SchemaContext context;
 
