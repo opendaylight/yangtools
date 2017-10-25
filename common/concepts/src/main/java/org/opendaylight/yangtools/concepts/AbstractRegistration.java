@@ -7,33 +7,31 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
- * Utility registration handle. It is a convenience for register-style method
- * which can return an AutoCloseable realized by a subclass of this class.
- * Invoking the close() method triggers unregistration of the state the method
- * installed.
+ * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
+ * by a subclass of this class. Invoking the close() method triggers unregistration of the state the method installed.
  */
-public abstract class AbstractRegistration implements AutoCloseable {
+public abstract class AbstractRegistration implements Registration {
     private static final AtomicIntegerFieldUpdater<AbstractRegistration> CLOSED_UPDATER =
             AtomicIntegerFieldUpdater.newUpdater(AbstractRegistration.class, "closed");
     private volatile int closed = 0;
 
     /**
-     * Remove the state referenced by this registration. This method is
-     * guaranteed to be called at most once. The referenced state must be
-     * retained until this method is invoked.
+     * Remove the state referenced by this registration. This method is guaranteed to be called at most once.
+     * Referenced state must be retained until this method is invoked.
      */
     protected abstract void removeRegistration();
 
     /**
-     * Query the state of this registration. Returns true if it was
-     * closed.
+     * Query the state of this registration. Returns true if it was closed.
      *
      * @return true if the registration was closed, false otherwise.
      */
-    protected final boolean isClosed() {
+    public final boolean isClosed() {
         return closed != 0;
     }
 
@@ -42,5 +40,24 @@ public abstract class AbstractRegistration implements AutoCloseable {
         if (CLOSED_UPDATER.compareAndSet(this, 0, 1)) {
             removeRegistration();
         }
+    }
+
+    @Override
+    public final int hashCode() {
+        return super.hashCode();
+    }
+
+    @Override
+    public final boolean equals(final Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this).omitNullValues()).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("closed", closed);
     }
 }
