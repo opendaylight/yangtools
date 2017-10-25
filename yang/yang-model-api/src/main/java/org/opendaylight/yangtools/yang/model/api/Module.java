@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -16,6 +15,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 
 /**
@@ -102,8 +102,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
-    // FIXME: BUG-4688: should return Optional<Revision>
-    default Optional<Date> getRevision() {
+    default Optional<Revision> getRevision() {
         return getQNameModule().getRevision();
     }
 

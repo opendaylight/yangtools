@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.collect.Sets;
 import java.net.URI;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * The interface represents static view of compiled yang files,
@@ -76,7 +76,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>name</code> and <code>revision</code>.
      */
-    Optional<Module> findModule(String name, @Nullable Date revision);
+    Optional<Module> findModule(String name, @Nullable Revision revision);
 
     /**
      * Returns module instance (from the context) with concrete name and revision date.
@@ -100,7 +100,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>name</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final String name, final Optional<Date> revision) {
+    default Optional<Module> findModule(final String name, final Optional<Revision> revision) {
         return findModule(name, revision.orElse(null));
     }
 
@@ -108,7 +108,7 @@ public interface SchemaContext extends ContainerSchemaNode {
         return findModule(QNameModule.create(namespace));
     }
 
-    default Optional<Module> findModule(final URI namespace, @Nullable final Date revision) {
+    default Optional<Module> findModule(final URI namespace, @Nullable final Revision revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 

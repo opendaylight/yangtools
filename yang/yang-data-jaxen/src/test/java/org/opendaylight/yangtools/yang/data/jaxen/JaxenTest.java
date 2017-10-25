@@ -37,7 +37,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
@@ -220,8 +220,7 @@ public class JaxenTest {
     }
 
     private void initQNames() throws URISyntaxException, ParseException {
-        this.moduleQName = QNameModule.create(new URI("urn:opendaylight.test2"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2015-08-08"));
+        this.moduleQName = QNameModule.create(new URI("urn:opendaylight.test2"), Revision.valueOf("2015-08-08"));
         this.rootQName = QName.create(moduleQName, "root");
         this.listAQName = QName.create(moduleQName, "list-a");
         this.listBQName = QName.create(moduleQName, "list-b");

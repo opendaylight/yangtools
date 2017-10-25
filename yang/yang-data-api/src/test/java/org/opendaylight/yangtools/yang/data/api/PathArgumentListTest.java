@@ -14,14 +14,12 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.UnmodifiableIterator;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class PathArgumentListTest {
@@ -95,9 +93,9 @@ public class PathArgumentListTest {
     }
 
     @Test
-    public void testPathArgument() throws URISyntaxException, ParseException {
-        final QNameModule qNameModule = QNameModule.create(new URI("urn:opendaylight.test2"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2015-08-08"));
+    public void testPathArgument() {
+        final QNameModule qNameModule = QNameModule.create(URI.create("urn:opendaylight.test2"),
+            Revision.valueOf("2015-08-08"));
         final QName qNameRoot = QName.create(qNameModule, "root");
         final QName qNameList = QName.create(qNameModule, "list");
         final QName qNameLeaf = QName.create(qNameModule, "leaf-a");

@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -114,8 +114,7 @@ public class ModuleStatementSupport extends
 
         stmt.addContext(PreLinkageModuleNamespace.class, moduleName, stmt);
 
-        final Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
-            stmt.declaredSubstatements()));
+        final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
@@ -131,8 +130,7 @@ public class ModuleStatementSupport extends
         SourceException.throwIf(!moduleNs.isPresent(), stmt.getStatementSourceReference(),
             "Namespace of the module [%s] is missing", stmt.getStatementArgument());
 
-        final Optional<Date> revisionDate = Optional.ofNullable(StmtContextUtils.getLatestRevision(
-            stmt.declaredSubstatements()));
+        final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
         final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);

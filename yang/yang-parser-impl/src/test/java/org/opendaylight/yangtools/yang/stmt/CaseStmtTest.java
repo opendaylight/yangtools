@@ -13,15 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -43,15 +41,13 @@ public class CaseStmtTest {
     @Before
     public void setup() throws Exception {
         schema = StmtTestUtils.parseYangSources("/case-test");
-        String date_s = "2015-09-09 00:00:00.0";
-        SimpleDateFormat dt = SimpleDateFormatUtil.getRevisionFormat();
-        Date date = dt.parse(date_s);
-        rootFoo = schema.findModule("foo", date).get();
-        rootBar = schema.findModule("bar", date).get();
+        Revision rev = Revision.valueOf("2015-09-09");
+        rootFoo = schema.findModule("foo", rev).get();
+        rootBar = schema.findModule("bar", rev).get();
         assertNotNull(rootFoo);
         assertNotNull(rootBar);
-        qnameFoo = QNameModule.create(URI.create("foo"), date);
-        qnameBar = QNameModule.create(URI.create("bar"), date);
+        qnameFoo = QNameModule.create(URI.create("foo"), rev);
+        qnameBar = QNameModule.create(URI.create("bar"), rev);
         assertNotNull(qnameFoo);
         assertNotNull(qnameBar);
     }

@@ -13,12 +13,11 @@ import com.google.common.collect.Iterables;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -228,9 +227,9 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startRevisionNode(final Date date) {
+    public void startRevisionNode(final Revision date) {
         writer.startStatement(YangStmtMapping.REVISION);
-        writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
+        writer.writeArgument(date.toString());
     }
 
     @Override
@@ -306,9 +305,9 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startRevisionDateNode(final Date date) {
+    public void startRevisionDateNode(final Revision date) {
         writer.startStatement(YangStmtMapping.REVISION_DATE);
-        writer.writeArgument(SimpleDateFormatUtil.getRevisionFormat().format(date));
+        writer.writeArgument(date.toString());
     }
 
     @Override

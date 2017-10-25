@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
@@ -17,8 +16,6 @@ import com.google.common.collect.Interners;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
@@ -151,7 +148,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, @Nullable final Date revision, final String localName) {
+    public static QName create(final URI namespace, @Nullable final Revision revision, final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
@@ -166,7 +163,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, final Optional<Date> revision, final String localName) {
+    public static QName create(final URI namespace, final Optional<Revision> revision, final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
@@ -181,7 +178,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final String namespace, final String localName, final Date revision) {
+    public static QName create(final String namespace, final String localName, final Revision revision) {
         final URI namespaceUri = parseNamespace(namespace);
         return create(QNameModule.create(namespaceUri, revision), localName);
     }
@@ -206,7 +203,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final String namespace, final String revision, final String localName) {
         final URI namespaceUri = parseNamespace(namespace);
-        final Date revisionDate = parseRevision(revision);
+        final Revision revisionDate = Revision.valueOf(revision);
         return create(namespaceUri, revisionDate, localName);
     }
 
@@ -278,7 +275,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *
      * @return revision of the YANG module if the module has defined revision.
      */
-    public Optional<Date> getRevision() {
+    public Optional<Revision> getRevision() {
         return module.getRevision();
     }
 
@@ -376,19 +373,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return create(getNamespace(), localName);
     }
 
-    @SuppressWarnings("checkstyle:illegalCatch")
-    public static Date parseRevision(final String formatedDate) {
-        try {
-            return getRevisionFormat().parse(formatedDate);
-        } catch (ParseException | RuntimeException e) {
-            throw new IllegalArgumentException(
-                    String.format("Revision '%s'is not in a supported format", formatedDate), e);
-        }
-    }
-
     /**
-     * Formats {@link Date} representing revision to format
-     * <code>YYYY-mm-dd</code>
+     * Formats {@link Revision} representing revision to format <code>YYYY-mm-dd</code>
      *
      * <p>
      * YANG Specification defines format for <code>revision</code> as
@@ -396,11 +382,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * such as capabilities URI, YANG modules, etc.
      *
      * @param revision
-     *            Date object to formatl
+     *            Date object to format
      * @return String representation or null if the input was null.
      */
-    public static String formattedRevision(final Optional<Date> revision) {
-        return revision.map(rev -> getRevisionFormat().format(rev)).orElse(null);
+    public static String formattedRevision(final Optional<Revision> revision) {
+        return revision.map(Revision::toString).orElse(null);
     }
 
     /**
@@ -434,14 +420,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return result;
         }
 
-        final Date myRev = getRevision().orElse(null);
-        final Date otherRev = other.getRevision().orElse(null);
-
-        // compare nullable revision parameter
-        if (myRev != null) {
-            return otherRev == null ? 1 : myRev.compareTo(otherRev);
-        }
-
-        return otherRev == null ? 0 : -1;
+        return Revision.compare(getRevision(), other.getRevision());
     }
 }

@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -43,7 +44,7 @@ public class DeviationResolutionTest {
                 "/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
 
-        final Module importedModule = schemaContext.findModule("imported", QName.parseRevision("2017-01-20")).get();
+        final Module importedModule = schemaContext.findModule("imported", Revision.valueOf("2017-01-20")).get();
         final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-a"));
         assertNotNull(myContA);
@@ -71,7 +72,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-add/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
@@ -115,7 +116,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-replace/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
         assertNotNull(barModule);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
@@ -178,7 +179,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-delete/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);

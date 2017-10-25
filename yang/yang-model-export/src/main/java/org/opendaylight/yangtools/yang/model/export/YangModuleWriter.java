@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.export;
 
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -79,7 +79,7 @@ interface YangModuleWriter {
 
     void startTypedefNode(QName qName);
 
-    void startRevisionNode(Date date);
+    void startRevisionNode(Revision date);
 
     void startDefaultNode(String string);
 
@@ -105,7 +105,7 @@ interface YangModuleWriter {
 
     void startReferenceNode(String input);
 
-    void startRevisionDateNode(Date date);
+    void startRevisionDateNode(Revision date);
 
     void startImportNode(String moduleName);
 

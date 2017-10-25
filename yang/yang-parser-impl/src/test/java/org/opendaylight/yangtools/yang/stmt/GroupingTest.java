@@ -24,6 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -431,8 +432,8 @@ public class GroupingTest {
         assertNotNull(gz);
         assertNotNull(gzz);
 
-        final QNameModule expectedModule = QNameModule.create(
-            URI.create("urn:grouping:cascade-uses"), QName.parseRevision("2013-07-18"));
+        final QNameModule expectedModule = QNameModule.create(URI.create("urn:grouping:cascade-uses"),
+            Revision.valueOf("2013-07-18"));
         SchemaPath expectedPath;
 
         // grouping-U

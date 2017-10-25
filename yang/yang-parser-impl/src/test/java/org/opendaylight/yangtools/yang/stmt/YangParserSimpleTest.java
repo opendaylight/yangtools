@@ -15,13 +15,13 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -37,8 +37,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
-    private static final QNameModule SN =
-            QNameModule.create(URI.create("urn:opendaylight:simple-nodes"), QName.parseRevision("2013-07-30"));
+    private static final QNameModule SN = QNameModule.create(URI.create("urn:opendaylight:simple-nodes"),
+        Revision.valueOf("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
     private static final SchemaPath SN_NODES_PATH = SchemaPath.create(true, SN_NODES);
 
@@ -189,7 +189,7 @@ public class YangParserSimpleTest {
     private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
     private static SchemaPath createPath(final String... names) {
-        final Date rev = QName.parseRevision("2013-07-30");
+        final Revision rev = Revision.valueOf("2013-07-30");
         final List<QName> path = new ArrayList<>();
         for (final String name : names) {
             path.add(QName.create(NS, rev, name));
