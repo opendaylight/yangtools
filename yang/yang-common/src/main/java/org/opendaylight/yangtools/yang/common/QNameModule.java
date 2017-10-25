@@ -15,26 +15,23 @@ import com.google.common.collect.Interners;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 public final class QNameModule implements Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
 
     private final URI namespace;
 
     //Nullable
-    private final Date revision;
-
-    //Nullable
-    private transient volatile String formattedRevision;
+    private final Revision revision;
 
     private transient int hash;
 
-    private QNameModule(final URI namespace, final Date revision) {
+    private QNameModule(final URI namespace, final Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -55,7 +52,7 @@ public final class QNameModule implements Immutable, Serializable {
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace, final Optional<Date> revision) {
+    public static QNameModule create(final URI namespace, final Optional<Revision> revision) {
         return new QNameModule(namespace, revision.orElse(null));
     }
 
@@ -76,22 +73,12 @@ public final class QNameModule implements Immutable, Serializable {
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace, final Date revision) {
+    public static QNameModule create(final URI namespace, @Nullable final Revision revision) {
         return new QNameModule(namespace, revision);
     }
 
     public String getFormattedRevision() {
-        if (revision == null) {
-            return null;
-        }
-
-        String ret = formattedRevision;
-        if (ret == null) {
-            ret = SimpleDateFormatUtil.getRevisionFormat().format(revision);
-            formattedRevision = ret;
-        }
-
-        return ret;
+        return revision == null ? null : revision.toString();
     }
 
     /**
@@ -110,8 +97,7 @@ public final class QNameModule implements Immutable, Serializable {
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
-    // FIXME: BUG-4688: should return Optional<Revision>
-    public Optional<Date> getRevision() {
+    public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }
 
@@ -144,7 +130,7 @@ public final class QNameModule implements Immutable, Serializable {
      *
      */
     URI getRevisionNamespace() throws URISyntaxException {
-        final String query = revision == null ? "" : "revision=" + getFormattedRevision();
+        final String query = revision == null ? "" : "revision=" + revision.toString();
         return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(), namespace.getPort(),
             namespace.getPath(), query, namespace.getFragment());
     }
@@ -152,6 +138,6 @@ public final class QNameModule implements Immutable, Serializable {
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace())
-            .add("rev", getFormattedRevision()).toString();
+            .add("rev", revision).toString();
     }
 }

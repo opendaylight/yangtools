@@ -24,7 +24,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,6 +50,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -99,7 +99,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
-    private static final Date REVISION = QName.parseRevision("2014-03-13");
+    private static final Revision REVISION = Revision.valueOf("2014-03-13");
 
     static final XMLOutputFactory XML_FACTORY;
 

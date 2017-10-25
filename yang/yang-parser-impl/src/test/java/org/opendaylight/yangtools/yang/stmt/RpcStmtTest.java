@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -68,7 +69,7 @@ public class RpcStmtTest {
         anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
-        final Module fooModule = result.findModule("foo", QName.parseRevision("2016-09-23")).get();
+        final Module fooModule = result.findModule("foo", Revision.valueOf("2016-09-23")).get();
         final Set<RpcDefinition> rpcs = fooModule.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -106,7 +107,7 @@ public class RpcStmtTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2016-11-25")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2016-11-25")).get();
         final Set<RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 

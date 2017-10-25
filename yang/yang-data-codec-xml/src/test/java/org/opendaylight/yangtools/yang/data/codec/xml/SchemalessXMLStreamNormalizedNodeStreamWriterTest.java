@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -102,7 +103,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() {
-        foobarModule = QNameModule.create(URI.create("foobar-namespace"), QName.parseRevision("2016-09-19"));
+        foobarModule = QNameModule.create(URI.create("foobar-namespace"), Revision.valueOf("2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
 

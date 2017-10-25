@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -28,7 +29,7 @@ public class Bug9244Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9244/");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-10-13")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-10-13")).get();
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-cont"));
         assertNotNull(barCont);

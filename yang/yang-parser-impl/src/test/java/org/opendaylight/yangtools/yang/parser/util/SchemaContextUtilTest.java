@@ -16,7 +16,6 @@ import static org.mockito.Mockito.doReturn;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
@@ -25,6 +24,7 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -81,11 +81,11 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException, ReactorException {
+            ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"),Revision.valueOf("2014-10-07")).get();
 
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
@@ -199,11 +199,11 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTest2() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException, ReactorException {
+            ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
@@ -297,11 +297,11 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTest3() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException, ReactorException {
+            ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
         SchemaNode testNode = myModule.getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
 
@@ -363,14 +363,14 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findParentModuleTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
-            ParseException, ReactorException {
+            ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
-        final DataSchemaNode node = myModule
-                .getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
+        final DataSchemaNode node = myModule.getDataChildByName(QName.create(myModule.getQNameModule(),
+            "my-container"));
 
         final Module foundModule = SchemaContextUtil.findParentModule(context, node);
 
@@ -423,9 +423,9 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ReactorException {
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module module = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module module = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
         final Module importedModule = context.findModule(new URI("uri:imported-module"),
-            QName.parseRevision("2014-10-07")).get();
+            Revision.valueOf("2014-10-07")).get();
 
         final SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(QName.create(
                 importedModule.getQNameModule(), "my-imported-container"))).getDataChildByName(QName.create(
@@ -448,7 +448,7 @@ public class SchemaContextUtilTest {
         // final RevisionAwareXPath nonCondXPath) {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module module = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module module = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
         final GroupingDefinition grouping = getGroupingByName(module, "my-grouping");
         final SchemaNode testNode = grouping.getDataChildByName(QName.create(module.getQNameModule(),
@@ -531,10 +531,10 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException, ReactorException {
+            YangSyntaxErrorException, ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
         // find grouping in container
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
@@ -730,11 +730,11 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextGroupingsTest2() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException, ReactorException {
+            YangSyntaxErrorException, ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
 
         // find grouping in container
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
@@ -869,11 +869,11 @@ public class SchemaContextUtilTest {
 
     @Test
     public void findNodeInSchemaContextTheSameNameOfSiblingsTest() throws URISyntaxException, IOException,
-            YangSyntaxErrorException, ParseException, ReactorException {
+            YangSyntaxErrorException, ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), QName.parseRevision("2014-10-07")).get();
+        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.valueOf("2014-10-07")).get();
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
         final SchemaNode testNode = choice.getCaseNodeByName("case-two").getDataChildByName(

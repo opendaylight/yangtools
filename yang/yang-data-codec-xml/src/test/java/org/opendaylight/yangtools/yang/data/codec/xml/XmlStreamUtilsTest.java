@@ -19,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.AbstractMap;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -34,6 +33,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -108,7 +108,7 @@ public class XmlStreamUtilsTest {
         final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
         writer.writeStartElement("element");
-        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), new Date());
+        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.valueOf("2000-01-01"));
         XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
         writer.writeEndElement();
 

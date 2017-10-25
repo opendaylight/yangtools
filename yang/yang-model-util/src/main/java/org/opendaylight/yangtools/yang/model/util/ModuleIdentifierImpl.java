@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.util;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Date;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
@@ -24,20 +24,20 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 @Deprecated
 @Beta
 public final class ModuleIdentifierImpl implements ModuleIdentifier {
-    private final Date revision;
+    private final Revision revision;
     private final String name;
 
-    private ModuleIdentifierImpl(final String name, final Optional<Date> revision) {
+    private ModuleIdentifierImpl(final String name, final Optional<Revision> revision) {
         this.name = checkNotNull(name);
         this.revision = revision.orElse(null);
     }
 
-    public static ModuleIdentifier create(final String name, final Optional<Date> revision) {
+    public static ModuleIdentifier create(final String name, final Optional<Revision> revision) {
         return new ModuleIdentifierImpl(name, revision);
     }
 
     @Override
-    public Optional<Date> getRevision() {
+    public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }
 

@@ -12,12 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.collect.Lists;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.IdentifierContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.Node_identifierContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefPathParser.Path_argContext;
@@ -175,7 +175,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         }
 
         final String moduleName = moduleImport.getModuleName();
-        final Optional<Date> revision = moduleImport.getRevision();
+        final Optional<Revision> revision = moduleImport.getRevision();
         return schemaContext.findModule(moduleName, revision).map(Module::getQNameModule);
     }
 

@@ -18,7 +18,7 @@ import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -45,7 +45,7 @@ public class DeviationStmtTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModule("foo", QName.parseRevision("2016-06-23")).get();
+        Module testModule = schemaContext.findModule("foo", Revision.valueOf("2016-06-23")).get();
         Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(4, deviations.size());
 
@@ -82,7 +82,7 @@ public class DeviationStmtTest {
             }
         }
 
-        testModule = schemaContext.findModule("bar", QName.parseRevision("2016-09-22")).get();
+        testModule = schemaContext.findModule("bar", Revision.valueOf("2016-09-22")).get();
         assertNotNull(testModule);
 
         deviations = testModule.getDeviations();

@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
-import java.util.Date;
 import java.util.Optional;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -21,7 +20,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.w3c.dom.Document;
@@ -35,9 +34,8 @@ public class YinExportTestUtils {
     }
 
     public static Document loadDocument(final String prefix, final Module module) throws IOException, SAXException {
-        final Optional<Date> rev = module.getRevision();
-        final String fileName = !rev.isPresent() ? module.getName()
-                : module.getName() + '@' + SimpleDateFormatUtil.getRevisionFormat().format(rev.get());
+        final Optional<Revision> rev = module.getRevision();
+        final String fileName = !rev.isPresent() ? module.getName() : module.getName() + '@' + rev.get().toString();
         return loadDocument(prefix + '/' + fileName + YangConstants.RFC6020_YIN_FILE_EXTENSION);
     }
 

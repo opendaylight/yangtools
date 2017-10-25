@@ -16,11 +16,11 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -303,8 +303,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
         assertNotNull(schemaContext);
 
-        final Date revision = QName.parseRevision("2016-09-28");
-
+        final Revision revision = Revision.valueOf("2016-09-28");
         final Module testModule = schemaContext.findModule("root-module-declared-test", revision).get();
         assertNotNull(testModule);
 

@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -32,7 +32,7 @@ public class Bug6871Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6871/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module foo = schemaContext.findModule("foo", QName.parseRevision("2016-12-14")).get();
+        final Module foo = schemaContext.findModule("foo", Revision.valueOf("2016-12-14")).get();
 
         final Set<NotificationDefinition> notifications = foo.getNotifications();
         assertEquals(1, notifications.size());

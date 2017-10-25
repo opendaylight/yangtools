@@ -16,7 +16,7 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
@@ -33,7 +33,7 @@ public class Bug6856Test {
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Module fooModule = schemaContext.findModule("foo", QName.parseRevision("2017-02-28")).get();
+        final Module fooModule = schemaContext.findModule("foo", Revision.valueOf("2017-02-28")).get();
         YinExportUtils.writeModuleToOutputStream(schemaContext, fooModule, bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
@@ -53,7 +53,7 @@ public class Bug6856Test {
         final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
-        final Module barModule = schemaContext.findModule("bar", QName.parseRevision("2017-02-28")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-02-28")).get();
         YinExportUtils.writeModuleToOutputStream(schemaContext, barModule, bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();

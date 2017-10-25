@@ -13,13 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -58,7 +58,7 @@ public class EffectiveModuleTest {
     private static final SchemaPath contSchemaPath = SchemaPath.create(true, cont);
     private static final SchemaPath feature1SchemaPath = SchemaPath.create(true, feature1);
 
-    private static final Date REVISION = QName.parseRevision("2000-01-01");
+    private static final Revision REVISION = Revision.valueOf("2000-01-01");
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
