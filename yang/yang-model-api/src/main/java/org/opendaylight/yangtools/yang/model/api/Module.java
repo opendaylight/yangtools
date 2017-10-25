@@ -11,7 +11,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -65,7 +64,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
     </code>
  */
 @Immutable
-public interface Module extends DataNodeContainer, NotificationNodeContainer {
+public interface Module extends DataNodeContainer, DocumentedNode, NotificationNodeContainer, NamespaceRevisionAware {
     /**
      * Returns the name of the module which is specified as argument of YANG
      * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
@@ -90,6 +89,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *
      * @return URI format of the namespace of the module
      */
+    @Override
     default URI getNamespace() {
         return getQNameModule().getNamespace();
     }
@@ -102,6 +102,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         YANG {@link Module <b><font color="#339900">revison</font></b>}
      *         keyword
      */
+    @Override
     default Optional<Revision> getRevision() {
         return getQNameModule().getRevision();
     }
@@ -143,6 +144,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         of YANG {@link Module <b><font
      *         color="#b8860b">description</font></b>} keyword
      */
+    @Override
     String getDescription();
 
     /**
@@ -152,6 +154,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         of YANG {@link Module <b><font
      *         color="#008b8b">reference</font></b>} keyword
      */
+    @Override
     String getReference();
 
     /**
@@ -254,12 +257,4 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         lexicographically ordered
      */
     List<ExtensionDefinition> getExtensionSchemaNodes();
-
-    /**
-     * Returns unknown nodes defined in module.
-     *
-     * @return unknown nodes in lexicographical order
-     */
-    @Nonnull
-    List<UnknownSchemaNode> getUnknownSchemaNodes();
 }
