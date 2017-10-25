@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.antlr.v4.runtime.BaseErrorListener;
@@ -14,21 +16,26 @@ import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class YangErrorListener extends BaseErrorListener {
     private static final Logger LOG = LoggerFactory.getLogger(YangErrorListener.class);
+
     private final List<YangSyntaxErrorException> exceptions = new ArrayList<>();
+    private final SourceIdentifier source;
+
+    public YangErrorListener(final SourceIdentifier source) {
+        this.source = requireNonNull(source);
+    }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public void syntaxError(final Recognizer<?, ?> recognizer, final Object offendingSymbol, final int line,
             final int charPositionInLine, final String msg, final RecognitionException e) {
-        LOG.debug("Syntax error at {}:{}: {}", line, charPositionInLine, msg, e);
-
-        final String module = getModuleName(recognizer);
-        exceptions.add(new YangSyntaxErrorException(module, line, charPositionInLine, msg, e));
+        LOG.debug("Syntax error in {} at {}:{}: {}", source, line, charPositionInLine, msg, e);
+        exceptions.add(new YangSyntaxErrorException(source, line, charPositionInLine, msg, e));
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -62,11 +69,11 @@ public final class YangErrorListener extends BaseErrorListener {
         }
 
         final StringBuilder sb = new StringBuilder();
-        String module = null;
+        SourceIdentifier source = null;
         boolean first = true;
         for (YangSyntaxErrorException e : exceptions) {
-            if (module == null) {
-                module = e.getModule();
+            if (source == null) {
+                source = e.getSource().orElse(null);
             }
             if (first) {
                 first = false;
@@ -77,6 +84,6 @@ public final class YangErrorListener extends BaseErrorListener {
             sb.append(e.getFormattedMessage());
         }
 
-        throw new YangSyntaxErrorException(module, 0, 0, sb.toString());
+        throw new YangSyntaxErrorException(source, 0, 0, sb.toString());
     }
 }
