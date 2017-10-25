@@ -42,6 +42,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
@@ -254,9 +255,9 @@ public class SharedSchemaRepositoryTest {
 
         assertThat(Lists.transform(listener.registeredSources, PotentialSchemaSource::getSourceIdentifier),
                 both(hasItem(RevisionSourceIdentifier.create("test", Optional.empty())))
-                        .and(hasItem(RevisionSourceIdentifier.create("test", Optional.of("2012-12-12"))))
-                        .and(hasItem(RevisionSourceIdentifier.create("test", Optional.of("2013-12-12"))))
-                        .and(hasItem(RevisionSourceIdentifier.create("module", Optional.of("2010-12-12"))))
+                        .and(hasItem(RevisionSourceIdentifier.create("test", Revision.valueOf("2012-12-12"))))
+                        .and(hasItem(RevisionSourceIdentifier.create("test", Revision.valueOf("2013-12-12"))))
+                        .and(hasItem(RevisionSourceIdentifier.create("module", Revision.valueOf("2010-12-12"))))
         );
     }
 
@@ -270,7 +271,7 @@ public class SharedSchemaRepositoryTest {
                 sharedSchemaRepository, YangTextSchemaSource.class, storageDir);
         sharedSchemaRepository.registerSchemaSourceListener(cache);
 
-        final SourceIdentifier runningId = RevisionSourceIdentifier.create("running", Optional.of("2012-12-12"));
+        final SourceIdentifier runningId = RevisionSourceIdentifier.create("running", Revision.valueOf("2012-12-12"));
 
         sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(
             new YangTextSchemaSource(runningId) {

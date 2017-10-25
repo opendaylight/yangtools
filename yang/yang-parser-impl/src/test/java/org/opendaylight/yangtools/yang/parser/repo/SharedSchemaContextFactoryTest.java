@@ -16,6 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
@@ -40,8 +41,8 @@ public class SharedSchemaContextFactoryTest {
 
         final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = RevisionSourceIdentifier.create("ietf-inet-types", "2010-09-24");
-        s2 = RevisionSourceIdentifier.create("iana-timezones", "2012-07-09");
+        s1 = RevisionSourceIdentifier.create("ietf-inet-types", Revision.valueOf("2010-09-24"));
+        s2 = RevisionSourceIdentifier.create("iana-timezones", Revision.valueOf("2012-07-09"));
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);

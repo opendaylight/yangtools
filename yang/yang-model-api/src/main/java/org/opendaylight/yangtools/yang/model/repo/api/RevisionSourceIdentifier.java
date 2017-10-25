@@ -12,6 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * YANG Schema revision source identifier.
@@ -57,11 +59,11 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *
      * @param name
      *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd
+     * @param revision
+     *            Revision of source, may be null
      */
-    RevisionSourceIdentifier(final String name, final String formattedRevision) {
-        super(requireNonNull(name), requireNonNull(formattedRevision));
+    RevisionSourceIdentifier(final String name, @Nullable final Revision revision) {
+        super(requireNonNull(name), revision);
     }
 
     /**
@@ -70,11 +72,10 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      * @param name
      *            Name of schema
      * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd. If not present,
-     *            default value will be used.
+     *            Revision of source, potentially not present
      */
-    private RevisionSourceIdentifier(final String name, final Optional<String> formattedRevision) {
-        super(name, formattedRevision);
+    private RevisionSourceIdentifier(final String name, final Optional<Revision> revision) {
+        super(name, revision);
     }
 
     /**
@@ -86,8 +87,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      *            Revision of source in format YYYY-mm-dd. If not present,
      *            default value will be used.
      */
-    public static RevisionSourceIdentifier create(final String moduleName,
-            final Optional<String> revision) {
+    public static RevisionSourceIdentifier create(final String moduleName, final Optional<Revision> revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
     }
 
@@ -97,9 +97,9 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      * @param moduleName
      *            Name of schema
      * @param revision
-     *            Revision of source in format YYYY-mm-dd
+     *            Revision of source, may be null
      */
-    public static RevisionSourceIdentifier create(final String moduleName, final String revision) {
+    public static RevisionSourceIdentifier create(final String moduleName, @Nullable final Revision revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
     }
 
@@ -140,9 +140,9 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
         final StringBuilder sb = new StringBuilder("RevisionSourceIdentifier [name=");
         sb.append(getName());
 
-        final String rev = getRevision();
-        if (rev != null) {
-            sb.append('@').append(rev);
+        final Optional<Revision> rev = getRevision();
+        if (rev.isPresent()) {
+            sb.append('@').append(rev.get());
         }
         return sb.append(']').toString();
     }

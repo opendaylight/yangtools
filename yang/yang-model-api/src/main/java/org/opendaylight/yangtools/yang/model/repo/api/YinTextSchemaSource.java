@@ -20,9 +20,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Delegator;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 import org.slf4j.Logger;
@@ -55,7 +55,8 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         }
 
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.ofNullable(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), parsed.getValue() == null ? null
+                : Revision.valueOf(parsed.getValue()));
     }
 
     @Override

@@ -189,7 +189,7 @@ public class ImportStatementDefinition extends
             final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
                 RevisionDateStatement.class);
             return revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
-                    : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.rawStatementArgument());
+                    : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.getStatementArgument());
         }
     }
 
@@ -327,9 +327,8 @@ public class ImportStatementDefinition extends
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(
                 final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
-            final String formattedRevision = importedModuleIdentifier.getRevision().map(Revision::toString)
-                    .orElse(null);
-            return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(), formattedRevision, semVer);
+            return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(),
+                importedModuleIdentifier.getRevision(), semVer);
         }
     }
 }

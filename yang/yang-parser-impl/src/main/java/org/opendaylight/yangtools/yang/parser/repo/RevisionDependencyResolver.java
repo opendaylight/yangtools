@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.parser.repo;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -34,8 +32,7 @@ final class RevisionDependencyResolver extends DependencyResolver {
 
     @Override
     protected boolean isKnown(final Collection<SourceIdentifier> haystack, final ModuleImport mi) {
-        final String rev = mi.getRevision() != null ? QName.formattedRevision(mi.getRevision()) : null;
-        final SourceIdentifier msi = RevisionSourceIdentifier.create(mi.getModuleName(), Optional.ofNullable(rev));
+        final SourceIdentifier msi = RevisionSourceIdentifier.create(mi.getModuleName(), mi.getRevision());
 
         // Quick lookup
         if (haystack.contains(msi)) {
@@ -43,7 +40,7 @@ final class RevisionDependencyResolver extends DependencyResolver {
         }
 
         // Slow revision-less walk
-        return rev == null && findWildcard(haystack, mi.getModuleName()) != null;
+        return mi.getRevision().isPresent() && findWildcard(haystack, mi.getModuleName()) != null;
     }
 
     public static RevisionDependencyResolver create(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {

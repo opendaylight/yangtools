@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -145,9 +144,10 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     static File sourceIdToFile(final SourceIdentifier identifier, final File storageDirectory) {
-        final String rev = identifier.getRevision();
+        final Optional<Revision> rev = identifier.getRevision();
         final File file;
-        if (Strings.isNullOrEmpty(rev)) {
+        if (!rev.isPresent()) {
+            // FIXME: this does not look right
             file = findFileWithNewestRev(identifier, storageDirectory);
         } else {
             file = new File(storageDirectory, identifier.toYangFilename());
@@ -289,7 +289,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(RevisionSourceIdentifier.create(moduleName, Optional.ofNullable(revision)));
+                return Optional.of(RevisionSourceIdentifier.create(moduleName, revision == null ? Optional.empty()
+                        : Optional.of(Revision.valueOf(revision))));
             }
             return Optional.empty();
         }

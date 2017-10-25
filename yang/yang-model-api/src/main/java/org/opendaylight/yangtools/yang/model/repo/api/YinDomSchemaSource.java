@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODUL
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -24,6 +23,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +85,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
-            Optional.of(dateAttr.getValue()));
+            Revision.valueOf(dateAttr.getValue()));
         final SourceIdentifier id;
         if (!parsedId.equals(identifier)) {
             LOG.debug("Changed identifier from {} to {}", identifier, parsedId);

@@ -544,19 +544,12 @@ public final class StmtContextUtils {
         final QNameModule qNameModule = root.getFromNamespace(ModuleCtxToModuleQName.class, root);
         if (qNameModule != null) {
             // creates SourceIdentifier for a module
-            if (qNameModule.getFormattedRevision() == null) {
-                return RevisionSourceIdentifier.create((String) root.getStatementArgument());
-            }
-
-            return RevisionSourceIdentifier.create((String) root.getStatementArgument(),
-                qNameModule.getFormattedRevision());
+            return RevisionSourceIdentifier.create((String) root.getStatementArgument(), qNameModule.getRevision());
         }
 
         // creates SourceIdentifier for a submodule
         final Optional<Revision> revision = getLatestRevision(root.declaredSubstatements());
-        return revision.isPresent()
-                ? RevisionSourceIdentifier.create((String) root.getStatementArgument(), revision.get().toString())
-                        : RevisionSourceIdentifier.create((String) root.getStatementArgument());
+        return RevisionSourceIdentifier.create((String) root.getStatementArgument(), revision);
     }
 
     public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {

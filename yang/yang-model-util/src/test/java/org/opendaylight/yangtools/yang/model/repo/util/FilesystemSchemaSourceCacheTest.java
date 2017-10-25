@@ -38,6 +38,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -145,7 +146,7 @@ public class FilesystemSchemaSourceCacheTest {
 
     @Test
     public void sourceIdToFileEmptyRevWithEmptyDir() {
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
         final FilesystemSchemaSourceCache<YangTextSchemaSource> cache = new FilesystemSchemaSourceCache<>(this.registry,
                 YangTextSchemaSource.class, sourceIdToFile);
@@ -162,7 +163,7 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
 
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier,
                 this.storageDir);
         Assert.assertNotNull(sourceIdToFile);
@@ -180,7 +181,7 @@ public class FilesystemSchemaSourceCacheTest {
         cache.offer(source);
         cache.offer(source2);
 
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test");
         final File sourceIdToFile = FilesystemSchemaSourceCache.sourceIdToFile(sourceIdentifier, this.storageDir);
         Assert.assertNotNull(sourceIdToFile);
         final List<File> storedFiles = Arrays.asList(this.storageDir.listFiles());
@@ -195,7 +196,8 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", "2013-12-12");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test",
+            Revision.valueOf("2013-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         final YangTextSchemaSource checkedGet = checked.get();
@@ -211,7 +213,8 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1", "2012-12-12");
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1",
+            Revision.valueOf("2012-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         checked.get();
@@ -225,8 +228,9 @@ public class FilesystemSchemaSourceCacheTest {
 
         private final String content;
 
-        protected TestingYangSource(final String name, final String revision, final String content) {
-            super(RevisionSourceIdentifier.create(name, Optional.ofNullable(revision)));
+        TestingYangSource(final String name, final String revision, final String content) {
+            super(RevisionSourceIdentifier.create(name, revision == null ? Optional.empty() :
+                    Optional.of(Revision.valueOf(revision))));
             this.content = content;
         }
 
