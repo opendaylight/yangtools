@@ -9,25 +9,19 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Node which can have documentation assigned.
  */
 public interface DocumentedNode {
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * ModuleImport which do not allow a description statement.
-     * YANG import statement has been changed in YANG 1.1 (RFC7950) and can now contain a description statement.
+     * Returns the node's description.
      *
-     * @return string that represents the argument of description statement
+     * @return string with the description which is specified as argument of YANG description statement.
      */
-    // FIXME: version 2.0.0: make this method non-default
-    @Nullable default String getDescription() {
-        return null;
-    }
+    Optional<String> getDescription();
 
     /**
      * All implementations should override this method.
@@ -37,10 +31,7 @@ public interface DocumentedNode {
      *
      * @return string that represents the argument of reference statement
      */
-    // FIXME: version 2.0.0: make this method non-default
-    @Nullable default String getReference() {
-        return null;
-    }
+    Optional<String> getReference();
 
     /**
      * Returns unknown schema nodes which belongs to this instance.

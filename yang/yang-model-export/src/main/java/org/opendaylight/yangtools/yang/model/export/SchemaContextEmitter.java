@@ -1169,10 +1169,10 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitMetaNodes(final Module input) {
-            emitOrganizationNode(input.getOrganization());
-            emitContact(input.getContact());
-            emitDescriptionNode(input.getDescription());
-            emitReferenceNode(input.getReference());
+            input.getOrganization().ifPresent(this::emitOrganizationNode);
+            input.getContact().ifPresent(this::emitContact);
+            input.getDescription().ifPresent(this::emitDescriptionNode);
+            input.getReference().ifPresent(this::emitReferenceNode);
         }
 
         private void emitLinkageNodes(final Module input) {
@@ -1266,8 +1266,8 @@ abstract class SchemaContextEmitter {
 
         private void emitImport(final ModuleImport importNode) {
             super.writer.startImportNode(importNode.getModuleName());
-            emitDescriptionNode(importNode.getDescription());
-            emitReferenceNode(importNode.getReference());
+            importNode.getDescription().ifPresent(this::emitDescriptionNode);
+            importNode.getReference().ifPresent(this::emitReferenceNode);
             emitPrefixNode(importNode.getPrefix());
 
             importNode.getRevision().ifPresent(this::emitRevisionDateNode);
@@ -1322,31 +1322,23 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitContact(final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startContactNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startContactNode(input);
+            super.writer.endNode();
         }
 
-        private void emitDescriptionNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startDescriptionNode(input);
-                super.writer.endNode();
-            }
+        private void emitDescriptionNode(final String input) {
+            super.writer.startDescriptionNode(input);
+            super.writer.endNode();
         }
 
-        private void emitReferenceNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startReferenceNode(input);
-                super.writer.endNode();
-            }
+        private void emitReferenceNode(final String input) {
+            super.writer.startReferenceNode(input);
+            super.writer.endNode();
         }
 
-        private void emitUnitsNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startUnitsNode(input);
-                super.writer.endNode();
-            }
+        private void emitUnitsNode(final String input) {
+            super.writer.startUnitsNode(input);
+            super.writer.endNode();
         }
 
         private void emitRevision(final Revision date) {
@@ -1368,10 +1360,10 @@ abstract class SchemaContextEmitter {
 
         private void emitExtension(final ExtensionDefinition extension) {
             super.writer.startExtensionNode(extension.getQName());
-            emitArgument(extension.getArgument(), extension.isYinElement());
+            emitArgument(extension.getArgument().orElse(null), extension.isYinElement());
             emitStatusNode(extension.getStatus());
-            emitDescriptionNode(extension.getDescription());
-            emitReferenceNode(extension.getReference());
+            extension.getDescription().ifPresent(this::emitDescriptionNode);
+            extension.getReference().ifPresent(this::emitReferenceNode);
             emitUnknownStatementNodes(extension.getUnknownSchemaNodes());
             super.writer.endNode();
 
@@ -1396,8 +1388,8 @@ abstract class SchemaContextEmitter {
             super.writer.startIdentityNode(identity.getQName());
             emitBaseIdentities(identity.getBaseIdentities());
             emitStatusNode(identity.getStatus());
-            emitDescriptionNode(identity.getDescription());
-            emitReferenceNode(identity.getReference());
+            identity.getDescription().ifPresent(this::emitDescriptionNode);
+            identity.getReference().ifPresent(this::emitReferenceNode);
             super.writer.endNode();
         }
 
@@ -1418,10 +1410,9 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: FIXME: BUG-2444: Expose ifFeature
             // *(ifFeatureNode )
             emitStatusNode(definition.getStatus());
-            emitDescriptionNode(definition.getDescription());
-            emitReferenceNode(definition.getReference());
+            definition.getDescription().ifPresent(this::emitDescriptionNode);
+            definition.getReference().ifPresent(this::emitReferenceNode);
             super.writer.endNode();
-
         }
 
         @SuppressWarnings("unused")
@@ -1438,11 +1429,11 @@ abstract class SchemaContextEmitter {
             // Differentiate between derived type and existing type
             // name.
             emitTypeNodeDerived(typedef);
-            emitUnitsNode(typedef.getUnits());
+            typedef.getUnits().ifPresent(this::emitUnitsNode);
             emitDefaultNode(typedef.getDefaultValue());
             emitStatusNode(typedef.getStatus());
-            emitDescriptionNode(typedef.getDescription());
-            emitReferenceNode(typedef.getReference());
+            typedef.getDescription().ifPresent(this::emitDescriptionNode);
+            typedef.getReference().ifPresent(this::emitReferenceNode);
             emitUnknownStatementNodes(typedef.getUnknownSchemaNodes());
             super.writer.endNode();
 
@@ -1512,16 +1503,14 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitRangeNodeOptional(final List<RangeConstraint> list) {
-            // FIXME: BUG-2444: Wrong decomposition in API, should be
-            // LenghtConstraint
-            // which contains ranges.
+            // FIXME: BUG-2444: Wrong decomposition in API, should be LengthConstraint which contains ranges.
             if (!list.isEmpty()) {
                 super.writer.startRangeNode(toRangeString(list));
                 final RangeConstraint first = list.iterator().next();
-                emitErrorMessageNode(first.getErrorMessage());
-                emitErrorAppTagNode(first.getErrorAppTag());
-                emitDescriptionNode(first.getDescription());
-                emitReferenceNode(first.getReference());
+                first.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+                first.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
+                first.getDescription().ifPresent(this::emitDescriptionNode);
+                first.getReference().ifPresent(this::emitReferenceNode);
                 super.writer.endNode();
             }
 
@@ -1548,10 +1537,10 @@ abstract class SchemaContextEmitter {
 
         private void emitLength(final LengthConstraint constraint) {
             super.writer.startLengthNode(toLengthString(constraint.getAllowedRanges()));
-            emitErrorMessageNode(constraint.getErrorMessage());
-            emitErrorAppTagNode(constraint.getErrorAppTag());
-            emitDescriptionNode(constraint.getDescription());
-            emitReferenceNode(constraint.getReference());
+            constraint.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+            constraint.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
+            constraint.getDescription().ifPresent(this::emitDescriptionNode);
+            constraint.getReference().ifPresent(this::emitReferenceNode);
             super.writer.endNode();
         }
 
@@ -1603,11 +1592,9 @@ abstract class SchemaContextEmitter {
 
         private void emitPatternNode(final PatternConstraint pattern) {
             super.writer.startPatternNode(pattern.getRawRegularExpression());
-            // FIXME: BUG-2444: Optional
-            emitErrorMessageNode(pattern.getErrorMessage());
-            // FIXME: BUG-2444: Optional
-            emitErrorAppTagNode(pattern.getErrorAppTag());
-            emitDescriptionNode(pattern.getDescription());
+            pattern.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+            pattern.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
+            pattern.getDescription().ifPresent(this::emitDescriptionNode);
             emitModifier(pattern.getModifier());
             super.writer.endNode();
         }
@@ -1642,8 +1629,8 @@ abstract class SchemaContextEmitter {
             super.writer.startEnumNode(enumValue.getName());
             emitValueNode(enumValue.getValue());
             emitStatusNode(enumValue.getStatus());
-            emitDescriptionNode(enumValue.getDescription());
-            emitReferenceNode(enumValue.getReference());
+            enumValue.getDescription().ifPresent(this::emitDescriptionNode);
+            enumValue.getReference().ifPresent(this::emitReferenceNode);
             super.writer.endNode();
         }
 
@@ -1690,8 +1677,8 @@ abstract class SchemaContextEmitter {
             super.writer.startBitNode(bit.getName());
             emitPositionNode(bit.getPosition());
             emitStatusNode(bit.getStatus());
-            emitDescriptionNode(bit.getDescription());
-            emitReferenceNode(bit.getReference());
+            bit.getDescription().ifPresent(this::emitDescriptionNode);
+            bit.getReference().ifPresent(this::emitReferenceNode);
             super.writer.endNode();
         }
 
@@ -1736,27 +1723,23 @@ abstract class SchemaContextEmitter {
         private void emitMust(@Nullable final MustDefinition mustCondition) {
             if (mustCondition != null && mustCondition.getXpath() != null) {
                 super.writer.startMustNode(mustCondition.getXpath());
-                emitErrorMessageNode(mustCondition.getErrorMessage());
-                emitErrorAppTagNode(mustCondition.getErrorAppTag());
-                emitDescriptionNode(mustCondition.getDescription());
-                emitReferenceNode(mustCondition.getReference());
+                mustCondition.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+                mustCondition.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
+                mustCondition.getDescription().ifPresent(this::emitDescriptionNode);
+                mustCondition.getReference().ifPresent(this::emitReferenceNode);
                 super.writer.endNode();
             }
 
         }
 
         private void emitErrorMessageNode(@Nullable final String input) {
-            if (input != null && !input.isEmpty()) {
-                super.writer.startErrorMessageNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startErrorMessageNode(input);
+            super.writer.endNode();
         }
 
         private void emitErrorAppTagNode(final String input) {
-            if (input != null && !input.isEmpty()) {
-                super.writer.startErrorAppTagNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startErrorAppTagNode(input);
+            super.writer.endNode();
         }
 
         private void emitMinElementsNode(final Integer min) {
@@ -1782,8 +1765,8 @@ abstract class SchemaContextEmitter {
 
         private void emitDocumentedNode(final DocumentedNode.WithStatus input) {
             emitStatusNode(input.getStatus());
-            emitDescriptionNode(input.getDescription());
-            emitReferenceNode(input.getReference());
+            input.getDescription().ifPresent(this::emitDescriptionNode);
+            input.getReference().ifPresent(this::emitReferenceNode);
         }
 
         private void emitGrouping(final GroupingDefinition grouping) {
@@ -1825,7 +1808,7 @@ abstract class SchemaContextEmitter {
             emitWhen(child.getConstraints().getWhenCondition());
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getUnits());
+            child.getUnits().ifPresent(this::emitUnitsNode);
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitDefaultNode(child.getDefault());
             emitConfigNode(child.isConfiguration());
@@ -1842,8 +1825,7 @@ abstract class SchemaContextEmitter {
             emitWhen(child.getConstraints().getWhenCondition());
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getType().getUnits());
-            // FIXME: BUG-2444: unitsNode /Optional
+            child.getType().getUnits().ifPresent(this::emitUnitsNode);
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitConfigNode(child.isConfiguration());
             emitDefaultNodes(child.getDefaults());
@@ -2005,10 +1987,10 @@ abstract class SchemaContextEmitter {
 
         private void emitDocumentedNodeRefine(final DocumentedNode original, final DocumentedNode value) {
             if (Objects.deepEquals(original.getDescription(), value.getDescription())) {
-                emitDescriptionNode(value.getDescription());
+                value.getDescription().ifPresent(this::emitDescriptionNode);
             }
             if (Objects.deepEquals(original.getReference(), value.getReference())) {
-                emitReferenceNode(value.getReference());
+                value.getReference().ifPresent(this::emitReferenceNode);
             }
         }
 
@@ -2130,8 +2112,8 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: *(ifFeatureNode )
 
             emitStatusNode(augmentation.getStatus());
-            emitDescriptionNode(augmentation.getDescription());
-            emitReferenceNode(augmentation.getReference());
+            augmentation.getDescription().ifPresent(this::emitDescriptionNode);
+            augmentation.getReference().ifPresent(this::emitReferenceNode);
             for (final UsesNode uses : augmentation.getUses()) {
                 emitUsesNode(uses);
             }
@@ -2194,8 +2176,8 @@ abstract class SchemaContextEmitter {
         private void emitOperationBody(final OperationDefinition rpc) {
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitStatusNode(rpc.getStatus());
-            emitDescriptionNode(rpc.getDescription());
-            emitReferenceNode(rpc.getReference());
+            rpc.getDescription().ifPresent(this::emitDescriptionNode);
+            rpc.getReference().ifPresent(this::emitReferenceNode);
 
             for (final TypeDefinition<?> typedef : rpc.getTypeDefinitions()) {
                 emitTypedefNode(typedef);

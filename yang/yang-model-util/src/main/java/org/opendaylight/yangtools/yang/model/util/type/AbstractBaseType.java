@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -31,23 +32,23 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
     }
 
     @Override
-    public final String getUnits() {
-        return null;
+    public final Optional<String> getUnits() {
+        return Optional.empty();
     }
 
     @Override
-    public final Object getDefaultValue() {
-        return null;
+    public final Optional<Object> getDefaultValue() {
+        return Optional.empty();
     }
 
     @Override
-    public final String getDescription() {
-        return null;
+    public final Optional<String> getDescription() {
+        return Optional.empty();
     }
 
     @Override
-    public final String getReference() {
-        return null;
+    public final Optional<String> getReference() {
+        return Optional.empty();
     }
 
     @Nonnull

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -28,29 +29,30 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget {
      * Returns the concrete case according to specified Q name.
      *
      * @param name
-     *            QName of seeked Choice Case Node
+     *            QName of sought Choice Case Node
      * @return child case node of this Choice if child with given name is
      *         present, <code>null</code> otherwise
      */
-    ChoiceCaseNode getCaseNodeByName(QName name);
+    Optional<ChoiceCaseNode> getCaseNodeByName(QName name);
 
     /**
      * Returns the concrete case according to specified name.
      *
      * @param name
-     *            name of seeked child as String
+     *            name of sought child as String
      * @return child case node (or local name of case node) of this Choice if
      *         child with given name is present, <code>null</code> otherwise
      */
-    ChoiceCaseNode getCaseNodeByName(String name);
+    // FIXME: this should probably be removed
+    Optional<ChoiceCaseNode> getCaseNodeByName(String name);
 
     /**
      * Returns name of case which is in the choice specified as default.
      *
-     * @return string with the name of case which is specified in the argument
-     *         of the YANG <code>default</code> substatement of
-     *         <code>choice</code> statement.
+     * @return string with the name of case which is specified in the argument of the YANG <code>default</code>
+     *         substatement of<code>choice</code> statement.
      */
+    // FIXME: this should be optional of something else than string
     String getDefaultCase();
 
 }

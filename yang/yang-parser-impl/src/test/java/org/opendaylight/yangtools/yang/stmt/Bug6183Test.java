@@ -50,14 +50,10 @@ public class Bug6183Test {
 
         assertEquals(4, myChoice.getCases().size());
 
-        final ChoiceCaseNode implCase = myChoice.getCaseNodeByName(foo("implicit-case-container"));
-        assertNotNull(implCase);
-        final ChoiceCaseNode declCaseOne = myChoice.getCaseNodeByName(foo("declared-case-one"));
-        assertNotNull(declCaseOne);
-        final ChoiceCaseNode secondImplCase = myChoice.getCaseNodeByName(foo("second-implicit-case-container"));
-        assertNotNull(secondImplCase);
-        final ChoiceCaseNode declCaseTwo = myChoice.getCaseNodeByName(foo("declared-case-two"));
-        assertNotNull(declCaseTwo);
+        final ChoiceCaseNode implCase = myChoice.getCaseNodeByName(foo("implicit-case-container")).get();
+        final ChoiceCaseNode declCaseOne = myChoice.getCaseNodeByName(foo("declared-case-one")).get();
+        final ChoiceCaseNode secondImplCase = myChoice.getCaseNodeByName(foo("second-implicit-case-container")).get();
+        final ChoiceCaseNode declCaseTwo = myChoice.getCaseNodeByName(foo("declared-case-two")).get();
 
         assertEquals(1, declCaseOne.getChildNodes().size());
         assertFalse(getLeafSchemaNode(declCaseOne, "leaf-in-declare-case-one").isAugmenting());

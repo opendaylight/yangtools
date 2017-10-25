@@ -292,7 +292,7 @@ public class GroupingTest {
         assertFalse(how_u.isAugmenting());
         final Set<ChoiceCaseNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
-        final ChoiceCaseNode interval = how_u.getCaseNodeByName("interval");
+        final ChoiceCaseNode interval = how_u.getCaseNodeByName("interval").get();
         assertFalse(interval.isAugmenting());
         final LeafSchemaNode name = (LeafSchemaNode) interval.getDataChildByName(QName.create(foo.getQNameModule(),
                 "name"));

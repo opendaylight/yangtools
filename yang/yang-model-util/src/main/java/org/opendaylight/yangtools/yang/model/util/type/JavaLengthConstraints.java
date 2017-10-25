@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 final class JavaLengthConstraints {
@@ -22,23 +23,23 @@ final class JavaLengthConstraints {
 
     static final LengthConstraint INTEGER_SIZE_CONSTRAINTS = new LengthConstraint() {
         @Override
-        public String getReference() {
-            return null;
+        public Optional<String> getReference() {
+            return Optional.empty();
         }
 
         @Override
-        public String getErrorMessage() {
-            return null;
+        public Optional<String> getErrorMessage() {
+            return Optional.empty();
         }
 
         @Override
-        public String getErrorAppTag() {
-            return null;
+        public Optional<String> getErrorAppTag() {
+            return Optional.empty();
         }
 
         @Override
-        public String getDescription() {
-            return null;
+        public Optional<String> getDescription() {
+            return Optional.empty();
         }
 
         @Override

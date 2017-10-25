@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -50,5 +51,5 @@ public interface UnknownSchemaNode extends SchemaNode {
      *
      * @return extension definition if exists, null otherwise
      */
-    ExtensionDefinition getExtensionDefinition();
+    Optional<ExtensionDefinition> getExtensionDefinition();
 }

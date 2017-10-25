@@ -474,7 +474,7 @@ public final class SchemaUtils {
                 child = tryFindAction((ActionNodeContainer) node, qname).orElse(null);
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            child = ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
+            child = ((ChoiceSchemaNode) node).getCaseNodeByName(qname).orElse(null);
         } else if (node instanceof RpcDefinition) {
             switch (qname.getLocalName()) {
                 case "input":

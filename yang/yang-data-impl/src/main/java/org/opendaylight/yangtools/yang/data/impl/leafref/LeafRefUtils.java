@@ -68,8 +68,7 @@ public final class LeafRefUtils {
         DataNodeContainer currenDataNodeContainer = module;
         while (nodePathIterator.hasNext()) {
             final QName qname = nodePathIterator.next();
-            final DataSchemaNode child = currenDataNodeContainer
-                    .getDataChildByName(qname);
+            final DataSchemaNode child = currenDataNodeContainer.getDataChildByName(qname);
 
             if (child instanceof DataNodeContainer) {
                 if (!(child instanceof ChoiceCaseNode)) {
@@ -80,16 +79,16 @@ public final class LeafRefUtils {
                 currenDataNodeContainer = (DataNodeContainer) child;
             } else if (child instanceof ChoiceSchemaNode) {
                 if (nodePathIterator.hasNext()) {
-                    currenDataNodeContainer = ((ChoiceSchemaNode) child)
-                            .getCaseNodeByName(nodePathIterator.next());
+                    currenDataNodeContainer = ((ChoiceSchemaNode) child).getCaseNodeByName(
+                        nodePathIterator.next()).orElse(null);
                 } else {
                     break;
                 }
             } else if (child instanceof LeafSchemaNode
                     || child instanceof LeafListSchemaNode) {
 
-                final QNameWithPredicate newQName = new QNameWithPredicateBuilder(
-                        qname.getModule(), qname.getLocalName()).build();
+                final QNameWithPredicate newQName = new QNameWithPredicateBuilder(qname.getModule(),
+                    qname.getLocalName()).build();
                 xpath.add(newQName);
                 break;
 
@@ -98,9 +97,7 @@ public final class LeafRefUtils {
                         + " found in node container " + currenDataNodeContainer
                         + " in module " + module.getName());
             } else {
-                throw new IllegalStateException(
-                        "Illegal schema node type in the path: "
-                                + child.getClass());
+                throw new IllegalStateException("Illegal schema node type in the path: " + child.getClass());
             }
         }
 

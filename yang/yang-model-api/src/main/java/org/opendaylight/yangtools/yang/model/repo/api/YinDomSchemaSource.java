@@ -70,7 +70,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;
 
-        final Attr nameAttr = element.getAttributeNode(MODULE.getArgumentName().getLocalName());
+        final Attr nameAttr = element.getAttributeNode(MODULE.getArgumentName().get().getLocalName());
         checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
 
         final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
@@ -81,7 +81,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         }
 
         final Element revisionStmt = (Element) revisions.item(0);
-        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION.getArgumentName().getLocalName());
+        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION.getArgumentName().get().getLocalName());
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.base.Strings;
+import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
@@ -20,11 +20,11 @@ class CompiledPatternContext {
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
         pattern = Pattern.compile("^" + yangConstraint.getRegularExpression() + "$");
-        final String yangMessage = yangConstraint.getErrorMessage();
-        if (Strings.isNullOrEmpty(yangMessage)) {
-            errorMessage = "Value %s does not match regular expression <" + pattern.pattern() + ">";
+        final Optional<String> yangMessage = yangConstraint.getErrorMessage();
+        if (yangMessage.isPresent()) {
+            errorMessage = yangMessage.get();
         } else {
-            errorMessage = yangMessage;
+            errorMessage = "Value %s does not match regular expression <" + pattern.pattern() + ">";
         }
     }
 

@@ -100,7 +100,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return support.getStatementName();
     }
 
-    public QName getArgumentName() {
+    public Optional<QName> getArgumentName() {
         return support.getArgumentName();
     }
 

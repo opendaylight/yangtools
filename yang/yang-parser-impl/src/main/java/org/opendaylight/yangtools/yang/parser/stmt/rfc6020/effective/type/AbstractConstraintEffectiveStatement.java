@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -73,8 +74,8 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     }
 
     @Override
-    public final String getDescription() {
-        return description;
+    public final Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     public final ModifierKind getModifier() {
@@ -82,18 +83,18 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     }
 
     @Override
-    public final String getReference() {
-        return reference;
+    public final Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override
-    public final String getErrorAppTag() {
-        return errorAppTag;
+    public final Optional<String> getErrorAppTag() {
+        return Optional.ofNullable(errorAppTag);
     }
 
     @Override
-    public final String getErrorMessage() {
-        return errorMessage;
+    public final Optional<String> getErrorMessage() {
+        return Optional.ofNullable(errorMessage);
     }
 
     abstract A createConstraints(A argument);

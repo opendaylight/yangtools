@@ -7,28 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import java.util.Optional;
+
 /**
  * Contains methods which retrieve values for description, error message, error
  * app tag and reference (to other document).
  *
  */
-public interface ConstraintMetaDefinition {
-
-    /**
-     * Returns the value of the argument of YANG <code>description</code>
-     * keyword.
-     *
-     * @return string with the description
-     */
-    String getDescription();
-
+public interface ConstraintMetaDefinition extends DocumentedNode {
     /**
      * Returns the value of the argument of YANG <code>error-app-tag</code>
      * keyword.
      *
      * @return string with the application tag
      */
-    String getErrorAppTag();
+    Optional<String> getErrorAppTag();
 
     /**
      * Returns the value of the argument of YANG <code>error-message</code>
@@ -36,12 +29,5 @@ public interface ConstraintMetaDefinition {
      *
      * @return string with the error message
      */
-    String getErrorMessage();
-
-    /**
-     * Returns the value of the argument of YANG <code>reference</code> keyword.
-     *
-     * @return string with reference to some other document
-     */
-    String getReference();
+    Optional<String> getErrorMessage();
 }
