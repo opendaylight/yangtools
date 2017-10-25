@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.concepts;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import javax.annotation.Nonnull;
 
 /**
- * Utility registration handle. It is a convenience for register-style method
- * which can return an AutoCloseable realized by a subclass of this class.
- * Invoking the close() method triggers unregistration of the state the method
- * installed.
+ * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
+ * by a subclass of this class. Invoking the close() method triggers unregistration of the state the method installed.
  */
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
     private final T instance;
@@ -30,8 +29,8 @@ public abstract class AbstractObjectRegistration<T> extends AbstractRegistration
     }
 
     @Override
-    public String toString() {
-        return "AbstractObjectRegistration{instance=" + instance + '}';
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return super.addToStringAttributes(toStringHelper).add("instance", instance);
     }
 }
 
