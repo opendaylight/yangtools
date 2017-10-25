@@ -30,7 +30,7 @@ public interface ModuleImport extends DocumentedNode {
      *
      * @return Revision of module to import
      */
-    Date getRevision();
+    Optional<Date> getRevision();
 
     /**
      * Returns the semantic version to import.

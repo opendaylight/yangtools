@@ -11,6 +11,8 @@ import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Date;
+import java.util.Optional;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -33,8 +35,9 @@ public class YinExportTestUtils {
     }
 
     public static Document loadDocument(final String prefix, final Module module) throws IOException, SAXException {
-        final String fileName = module.getRevision() == null ? module.getName()
-                : module.getName() + '@' + SimpleDateFormatUtil.getRevisionFormat().format(module.getRevision());
+        final Optional<Date> rev = module.getRevision();
+        final String fileName = !rev.isPresent() ? module.getName()
+                : module.getName() + '@' + SimpleDateFormatUtil.getRevisionFormat().format(rev.get());
         return loadDocument(prefix + '/' + fileName + YangConstants.RFC6020_YIN_FILE_EXTENSION);
     }
 

@@ -35,7 +35,7 @@ public class YangTypes2StmtTest {
     private static final StatementStreamSource TYPEFILE4 = sourceForResource(
             "/semantic-statement-parser/identityreftest.yang");
 
-    private static final QNameModule types2Module = QNameModule.create(URI.create("types2"), null);
+    private static final QNameModule types2Module = QNameModule.create(URI.create("types2"));
 
     private static final QName lfDecimal = QName.create(types2Module, "lf-decimal");
     private static final QName lfMyString = QName.create(types2Module, "lf-my-string");

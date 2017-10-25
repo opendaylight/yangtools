@@ -59,7 +59,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     private void putNoRev(final QName qname, final StatementSupport<?, ?, ?> support) {
         final QName norev;
         if (qname.getRevision() != null) {
-            norev = QName.create(qname.getNamespace(), null, qname.getLocalName()).intern();
+            norev = QName.create(qname.getNamespace(), qname.getLocalName()).intern();
         } else {
             norev = qname;
         }
@@ -76,7 +76,7 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     @Override
     public StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace,
             @Nonnull final String localName) {
-        return noRevQNameToSupport.get(QName.create(namespace, null, localName));
+        return noRevQNameToSupport.get(QName.create(namespace, localName));
     }
 
 }

@@ -392,7 +392,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             return null;
         }
 
-        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.create(value, null)));
+        prefixToNamespaceMap.forEach((key, value) -> preLinkagePrefixes.put(key, QNameModule.create(value)));
         return preLinkagePrefixes;
     }
 

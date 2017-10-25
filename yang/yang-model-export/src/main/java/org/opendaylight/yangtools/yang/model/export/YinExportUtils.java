@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
@@ -39,9 +40,9 @@ public final class YinExportUtils {
      *            Revision of module or submodule
      * @return well-formed file name of YIN file as defined in RFC6020.
      */
-    public static String wellFormedYinName(final String name, final Date revision) {
-        return revision == null ? wellFormedYinName(name, (String) null) :
-            wellFormedYinName(name, SimpleDateFormatUtil.getRevisionFormat().format(revision));
+    public static String wellFormedYinName(final String name, final Optional<Date> revision) {
+        return !revision.isPresent() ? wellFormedYinName(name, (String) null) :
+            wellFormedYinName(name, SimpleDateFormatUtil.getRevisionFormat().format(revision.get()));
     }
 
     /**

@@ -86,10 +86,10 @@ public class XmlToNormalizedNodesTest {
 
     @BeforeClass
     public static void setup() {
-        fooModule = QNameModule.create(URI.create("foo-namespace"), null);
+        fooModule = QNameModule.create(URI.create("foo-namespace"));
         parentContainer = QName.create(fooModule, "parent-container");
 
-        bazModule = QNameModule.create(URI.create("baz-namespace"), null);
+        bazModule = QNameModule.create(URI.create("baz-namespace"));
         outerContainer = QName.create(bazModule, "outer-container");
 
         myContainer1 = QName.create(bazModule, "my-container-1");

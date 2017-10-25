@@ -406,8 +406,8 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
-        public Date getRevision() {
-            return revision;
+        public Optional<Date> getRevision() {
+            return Optional.ofNullable(revision);
         }
 
         @Override
@@ -466,7 +466,7 @@ public abstract class YangModelDependencyInfo {
         @Override
         public String toString() {
             return "ModuleImportImpl [name=" + name + ", revision="
-                    + QName.formattedRevision(revision) + ", semanticVersion=" + semVer + "]";
+                    + QName.formattedRevision(Optional.ofNullable(revision)) + ", semanticVersion=" + semVer + "]";
         }
     }
 }

@@ -20,9 +20,11 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -87,8 +89,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @param localName
      *            YANG schema identifier
      */
-    public QName(final URI namespace, final String localName) {
-        this(QNameModule.create(namespace, null), localName);
+    private QName(final URI namespace, final String localName) {
+        this(QNameModule.create(namespace), localName);
     }
 
     private static String checkLocalName(final String localName) {
@@ -149,7 +151,22 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, final Date revision, final String localName) {
+    public static QName create(final URI namespace, @Nullable final Date revision, final String localName) {
+        return create(QNameModule.create(namespace, revision), localName);
+    }
+
+    /**
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName or null if namespace is undefined.
+     * @param revision
+     *            Revision of namespace.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
+    public static QName create(final URI namespace, final Optional<Date> revision, final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
@@ -207,7 +224,24 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *             If <code>namespace</code> is not valid URI.
      */
     public static QName create(final String namespace, final String localName) {
-        return create(parseNamespace(namespace), null, localName);
+        return create(parseNamespace(namespace), localName);
+    }
+
+    /**
+     * Creates new QName.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE null.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @return A new QName
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI.
+     */
+    public static QName create(final URI namespace, final String localName) {
+        return new QName(namespace, localName);
     }
 
     /**
@@ -240,13 +274,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
-     * Returns revision of the YANG module if the module has defined revision,
-     * otherwise returns <code>null</code>.
+     * Returns revision of the YANG module if the module has defined revision.
      *
-     * @return revision of the YANG module if the module has defined revision,
-     *         otherwise returns <code>null</code>
+     * @return revision of the YANG module if the module has defined revision.
      */
-    public Date getRevision() {
+    public Optional<Date> getRevision() {
         return module.getRevision();
     }
 
@@ -341,7 +373,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return copy of this QName with revision and prefix unset.
      */
     public QName withoutRevision() {
-        return create(getNamespace(), null, localName);
+        return create(getNamespace(), localName);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -364,14 +396,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * such as capabilities URI, YANG modules, etc.
      *
      * @param revision
-     *            Date object to format or null
+     *            Date object to formatl
      * @return String representation or null if the input was null.
      */
-    public static String formattedRevision(final Date revision) {
-        if (revision == null) {
-            return null;
-        }
-        return getRevisionFormat().format(revision);
+    public static String formattedRevision(final Optional<Date> revision) {
+        return revision.map(rev -> getRevisionFormat().format(rev)).orElse(null);
     }
 
     /**
@@ -400,38 +429,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (result != 0) {
             return result;
         }
-
-        // compare nullable namespace parameter
-        if (getNamespace() == null) {
-            if (other.getNamespace() != null) {
-                return -1;
-            }
-        } else {
-            if (other.getNamespace() == null) {
-                return 1;
-            }
-            result = getNamespace().compareTo(other.getNamespace());
-            if (result != 0) {
-                return result;
-            }
+        result = getNamespace().compareTo(other.getNamespace());
+        if (result != 0) {
+            return result;
         }
+
+        final Date myRev = getRevision().orElse(null);
+        final Date otherRev = other.getRevision().orElse(null);
 
         // compare nullable revision parameter
-        if (getRevision() == null) {
-            if (other.getRevision() != null) {
-                return -1;
-            }
-        } else {
-            if (other.getRevision() == null) {
-                return 1;
-            }
-            result = getRevision().compareTo(other.getRevision());
-            if (result != 0) {
-                return result;
-            }
+        if (myRev != null) {
+            return otherRev == null ? 1 : myRev.compareTo(otherRev);
         }
 
-        return result;
+        return otherRev == null ? 0 : -1;
     }
-
 }

@@ -37,7 +37,7 @@ public final class YangConstants {
     /**
      * Base QNameModule for all YANG statements.
      */
-    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE, null).intern();
+    public static final QNameModule RFC6020_YANG_MODULE = QNameModule.create(RFC6020_YANG_NAMESPACE).intern();
 
     /**
      * YIN File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.2.
@@ -62,7 +62,7 @@ public final class YangConstants {
     /**
      * Base QNameModule for all YIN statements.
      */
-    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE, null).intern();
+    public static final QNameModule RFC6020_YIN_MODULE = QNameModule.create(RFC6020_YIN_NAMESPACE).intern();
 
     /**
      * YANG Library NETCONF Capability, as defined in https://tools.ietf.org/html/rfc7950#section-16.

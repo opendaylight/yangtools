@@ -36,7 +36,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-            QName.create(URI.create("urn:custom.types.demo"), null, "leaf-length-pattern-unknown"));
+            QName.create(URI.create("urn:custom.types.demo"), "leaf-length-pattern-unknown"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -78,7 +78,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), null, "leaf-length-unknown-pattern"));
+                QName.create(URI.create("urn:custom.types.demo"), "leaf-length-unknown-pattern"));
 
         // then
         Assert.assertNotNull(leaf);
@@ -120,7 +120,7 @@ public class Bug4623Test {
         final SchemaContext schemaContext = TestUtils.parseYangSources(extdef, stringWithExt);
 
         final LeafSchemaNode leaf = (LeafSchemaNode) typesModule(schemaContext).getDataChildByName(
-                QName.create(URI.create("urn:custom.types.demo"), null, "leaf-unknown-length-pattern"));
+                QName.create(URI.create("urn:custom.types.demo"), "leaf-unknown-length-pattern"));
 
         // then
         Assert.assertNotNull(leaf);

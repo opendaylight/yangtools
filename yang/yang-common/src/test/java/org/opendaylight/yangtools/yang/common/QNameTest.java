@@ -13,7 +13,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Date;
+import java.util.Optional;
 import org.junit.Test;
 
 public class QNameTest {
@@ -33,7 +35,7 @@ public class QNameTest {
         }
         // no revision
         {
-            QName qname = new QName(NS, LOCALNAME);
+            QName qname = QName.create(NS, LOCALNAME);
             assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS
                     + LOCALNAME, qname.toString());
             QName copied = QName.create(qname.toString());
@@ -69,13 +71,13 @@ public class QNameTest {
         assertTrue(qb.compareTo(qa) > 0);
 
         // compare with 1 null revision
-        qa = QName.create(URI.create(A), null, A);
+        qa = QName.create(URI.create(A), A);
         qb = QName.create(URI.create(A), QName.parseRevision(REVISION), A);
         assertTrue(qa.compareTo(qb) < 0);
         assertTrue(qb.compareTo(qa) > 0);
 
         // compare with both null revision
-        qb = QName.create(URI.create(A), null, A);
+        qb = QName.create(URI.create(A), A);
         assertTrue(qa.compareTo(qb) == 0);
         assertTrue(qb.compareTo(qa) == 0);
     }
@@ -88,13 +90,13 @@ public class QNameTest {
         assertEquals(qname1, qname.withoutRevision());
         assertEquals(qname1, qname2);
         assertTrue(qname.isEqualWithoutRevision(qname1));
-        assertNotNull(QName.formattedRevision(new Date()));
+        assertNotNull(QName.formattedRevision(Optional.of(new Date())));
         assertNotNull(qname.hashCode());
         assertEquals(qname, qname.intern());
     }
 
     @Test
-    public void testQNameModule() {
+    public void testQNameModule() throws URISyntaxException {
         final QNameModule qnameModule = QNameModule.create(NS, new Date());
         assertNotNull(qnameModule.toString());
         assertNotNull(qnameModule.getRevisionNamespace());
@@ -102,7 +104,7 @@ public class QNameTest {
 
     private static void assertLocalNameFails(final String localName) {
         try {
-            new QName(NS, localName);
+            QName.create(NS, localName);
             fail("Local name should fail:" + localName);
         } catch (IllegalArgumentException e) {
             // Expected

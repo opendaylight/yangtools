@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 public final class ParserStreamUtils {
 
@@ -46,8 +47,8 @@ public final class ParserStreamUtils {
                     final QName childQName = childNode.getQName();
 
                     if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
-                        if (potentialChildNode == null
-                                || childQName.getRevision().after(potentialChildNode.getQName().getRevision())) {
+                        if (potentialChildNode == null || ModuleIdentifier.compareRevisions(childQName.getRevision(),
+                            potentialChildNode.getQName().getRevision()) > 0) {
                             potentialChildNode = childNode;
                         }
                     }

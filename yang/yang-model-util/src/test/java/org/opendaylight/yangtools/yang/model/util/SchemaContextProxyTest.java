@@ -283,9 +283,7 @@ public class SchemaContextProxyTest {
         Module moduleConfig = mockModule(CONFIG_NAME);
         Module module2 = mockModule(MODULE2_NAME);
         Module module3 = mockModule(MODULE3_NAME);
-
-        Date dat = QName.parseRevision("2015-10-10");
-        Module module4 = mockModule(MODULE3_NAME, dat);
+        Module module4 = mockModule(MODULE3_NAME, QName.parseRevision("2015-10-10"));
 
         mockModuleImport(module2, moduleConfig);
         mockModuleImport(module3, module2, moduleConfig);
@@ -551,7 +549,7 @@ public class SchemaContextProxyTest {
                 Set<Module> mod = filteringSchemaContextProxy.findModules(module.getNamespace());
                 assertTrue(mod.contains(module));
                 assertEquals(module, filteringSchemaContextProxy.findModule(module.getNamespace(),
-                    module.getRevision()).get());
+                    module.getRevision().orElse(null)).get());
             }
         }
     }
@@ -595,7 +593,7 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
-                public Date getRevision() {
+                public Optional<Date> getRevision() {
                     return module.getRevision();
                 }
 
@@ -624,7 +622,7 @@ public class SchemaContextProxyTest {
         final Module mod = mockModule(name);
 
         doReturn(QNameModule.create(mod.getNamespace(), rev)).when(mod).getQNameModule();
-        doReturn(rev).when(mod).getRevision();
+        doReturn(Optional.ofNullable(rev)).when(mod).getRevision();
         doReturn(mod.getQNameModule().toString()).when(mod).toString();
 
         return mod;
@@ -635,7 +633,7 @@ public class SchemaContextProxyTest {
 
         Module mockedModule = mock(Module.class);
         doReturn(name).when(mockedModule).getName();
-        doReturn(REVISION).when(mockedModule).getRevision();
+        doReturn(Optional.of(REVISION)).when(mockedModule).getRevision();
         final URI newNamespace = URI.create(NAMESPACE.toString() + ":" + name);
         doReturn(newNamespace).when(mockedModule).getNamespace();
         doReturn(QNameModule.create(newNamespace, REVISION)).when(mockedModule).getQNameModule();

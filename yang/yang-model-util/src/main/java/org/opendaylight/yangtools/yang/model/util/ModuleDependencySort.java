@@ -97,10 +97,10 @@ public final class ModuleDependencySort {
 
         // Create edges in graph
         for (final Module module : mmbs) {
-            final Map<String, Date> imported = new HashMap<>();
+            final Map<String, Optional<Date>> imported = new HashMap<>();
             final String fromName = module.getName();
             final URI ns = module.getNamespace();
-            final Date fromRevision = module.getRevision();
+            final Optional<Date> fromRevision = module.getRevision();
 
             // check for existence of module with same namespace
             final Module prev = allNS.putIfAbsent(ns, module);
@@ -115,9 +115,9 @@ public final class ModuleDependencySort {
             // no need to check if other Type of object, check is performed in process modules
             for (final ModuleImport imprt : module.getImports()) {
                 final String toName = imprt.getModuleName();
-                final Date toRevision = imprt.getRevision();
+                final Optional<Date> toRevision = imprt.getRevision();
 
-                final ModuleNodeImpl from = moduleGraph.get(fromName, Optional.ofNullable(fromRevision));
+                final ModuleNodeImpl from = moduleGraph.get(fromName, fromRevision);
                 final ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toName,
                     toRevision);
 
@@ -126,8 +126,9 @@ public final class ModuleDependencySort {
                  * revisions then throw exception
                  */
                 if (module.getYangVersion() == YangVersion.VERSION_1) {
-                    final Date impRevision = imported.get(toName);
-                    if (impRevision != null && !impRevision.equals(toRevision) && toRevision != null) {
+                    final Optional<Date> impRevision = imported.get(toName);
+                    if (impRevision != null && impRevision.isPresent() && !impRevision.equals(toRevision)
+                            && toRevision.isPresent()) {
                         throw new IllegalArgumentException(String.format(
                             "Module:%s imported twice with different revisions:%s, %s", toName,
                             formatRevDate(impRevision), formatRevDate(toRevision)));
@@ -145,10 +146,10 @@ public final class ModuleDependencySort {
      * Get imported module by its name and revision from moduleGraph.
      */
     private static ModuleNodeImpl getModuleByNameAndRevision(
-            final Table<String, Optional<Date>, ModuleNodeImpl> moduleGraph,
-            final String fromName, final Date fromRevision, final String toName, final Date toRevision) {
+            final Table<String, Optional<Date>, ModuleNodeImpl> moduleGraph, final String fromName,
+            final Optional<Date> fromRevision, final String toName, final Optional<Date> toRevision) {
 
-        final ModuleNodeImpl exact = moduleGraph.get(toName, Optional.ofNullable(toRevision));
+        final ModuleNodeImpl exact = moduleGraph.get(toName, toRevision);
         if (exact != null) {
             return exact;
         }
@@ -185,20 +186,19 @@ public final class ModuleDependencySort {
         for (final Module momb : modules) {
 
             final String name = momb.getName();
-            final Optional<Date> rev = Optional.ofNullable(momb.getRevision());
-
+            final Optional<Date> rev = momb.getRevision();
             final Map<Optional<Date>, ModuleNodeImpl> revs = moduleGraph.row(name);
             if (revs.containsKey(rev)) {
                 throw new IllegalArgumentException(String.format("Module:%s with revision:%s declared twice", name,
-                    formatRevDate(rev.orElse(null))));
+                    formatRevDate(rev)));
             }
 
             revs.put(rev, new ModuleNodeImpl(name, rev.orElse(null), momb));
         }
     }
 
-    private static String formatRevDate(final Date rev) {
-        return rev == null ? "default" : SimpleDateFormatUtil.getRevisionFormat().format(rev);
+    private static String formatRevDate(final Optional<Date> rev) {
+        return rev.map(revision -> SimpleDateFormatUtil.getRevisionFormat().format(revision)).orElse("default");
     }
 
     private static final class ModuleNodeImpl extends NodeImpl {
@@ -216,8 +216,8 @@ public final class ModuleDependencySort {
             return name;
         }
 
-        Date getRevision() {
-            return revision;
+        Optional<Date> getRevision() {
+            return Optional.ofNullable(revision);
         }
 
         @Override
@@ -260,7 +260,7 @@ public final class ModuleDependencySort {
 
         @Override
         public String toString() {
-            return "Module [name=" + name + ", revision=" + formatRevDate(revision) + "]";
+            return "Module [name=" + name + ", revision=" + formatRevDate(getRevision()) + "]";
         }
 
         public Module getReference() {

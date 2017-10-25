@@ -40,7 +40,8 @@ public class SchemaContextUtilTest {
 
         doReturn("test").when(mockModule).getPrefix();
         doReturn(NAMESPACE).when(mockModule).getNamespace();
-        doReturn(QNameModule.create(NAMESPACE, null)).when(mockModule).getQNameModule();
+        doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();
+        doReturn(Optional.empty()).when(mockModule).getRevision();
 
         QName qname = QName.create("namespace", "localname");
         SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
