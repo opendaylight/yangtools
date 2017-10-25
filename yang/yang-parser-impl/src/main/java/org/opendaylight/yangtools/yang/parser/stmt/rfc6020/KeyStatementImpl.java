@@ -69,7 +69,7 @@ public class KeyStatementImpl extends AbstractDeclaredStatement<Collection<Schem
             boolean replaced = false;
             for (final SchemaNodeIdentifier arg : ctx.getStatementArgument()) {
                 final QName qname = arg.getLastComponent();
-                if (!targetModule.equals(qname)) {
+                if (!targetModule.equals(qname.getModule())) {
                     final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class,
                             QName.create(targetModule, qname.getLocalName()));
                     builder.add(SchemaNodeIdentifier.create(false, newQname));
