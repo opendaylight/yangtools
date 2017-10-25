@@ -20,7 +20,7 @@ public class YangConstantsTest {
         final URI uriYin = YangConstants.RFC6020_YIN_NAMESPACE;
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:1"), uriYang);
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:yin:1"), uriYin);
-        assertEquals(QNameModule.create(uriYang, null).intern(), YangConstants.RFC6020_YANG_MODULE);
-        assertEquals(QNameModule.create(uriYin, null).intern(), YangConstants.RFC6020_YIN_MODULE);
+        assertEquals(QNameModule.create(uriYang).intern(), YangConstants.RFC6020_YANG_MODULE);
+        assertEquals(QNameModule.create(uriYin).intern(), YangConstants.RFC6020_YIN_MODULE);
     }
 }

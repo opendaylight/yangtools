@@ -133,7 +133,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
         final int firstColon = keywordText.indexOf(':');
         if (firstColon == -1) {
             final StatementDefinition statementDefinition = stmtDef.get(
-                new QName(YangConstants.RFC6020_YIN_NAMESPACE, keywordText));
+                QName.create(YangConstants.RFC6020_YIN_NAMESPACE, keywordText));
             return statementDefinition != null ? statementDefinition.getStatementName() : null;
         }
 

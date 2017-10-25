@@ -37,7 +37,7 @@ public class Bug7844Test {
         final Map<QName, LeafRefContext> referencingChilds = leafRefContext.getReferencingChilds();
         assertEquals(7, referencingChilds.size());
 
-        final QNameModule bazQNameModule = QNameModule.create(URI.create(BAZ_NS), null);
+        final QNameModule bazQNameModule = QNameModule.create(URI.create(BAZ_NS));
         final LeafRefPath expectedPathToBazTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(bazQNameModule, "root", ImmutableList.of()),
                 new QNameWithPredicateImpl(bazQNameModule, "target", ImmutableList.of()));
@@ -49,7 +49,7 @@ public class Bug7844Test {
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar")), expectedPathToBazTarget);
         assertLeafRef(referencingChilds.get(bar("my-leafref-in-bar-2")), expectedPathToBazTarget);
 
-        final QNameModule barQNameModule = QNameModule.create(URI.create(BAR_NS), null);
+        final QNameModule barQNameModule = QNameModule.create(URI.create(BAR_NS));
         final LeafRefPath expectedPathToBarTarget = LeafRefPath.create(true,
                 new QNameWithPredicateImpl(barQNameModule, "bar-target", ImmutableList.of()));
         assertLeafRef(referencingChilds.get(foo("direct-leafref")), expectedPathToBarTarget);

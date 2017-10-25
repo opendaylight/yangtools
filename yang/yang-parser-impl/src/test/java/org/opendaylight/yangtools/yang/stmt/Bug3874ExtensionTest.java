@@ -30,32 +30,32 @@ public class Bug3874ExtensionTest {
 
     @Test
     public void test() throws Exception {
-            SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
+        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
 
-            QNameModule foo = QNameModule.create(new URI("foo"), null);
-            QName myContainer2QName = QName.create(foo, "my-container-2");
-            QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
+        QNameModule foo = QNameModule.create(URI.create("foo"));
+        QName myContainer2QName = QName.create(foo, "my-container-2");
+        QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
-            DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
-            assertTrue(dataChildByName instanceof YangModeledAnyXmlEffectiveStatementImpl);
-            YangModeledAnyXmlEffectiveStatementImpl yangModeledAnyXml =
-                    (YangModeledAnyXmlEffectiveStatementImpl) dataChildByName;
+        DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
+        assertTrue(dataChildByName instanceof YangModeledAnyXmlEffectiveStatementImpl);
+        YangModeledAnyXmlEffectiveStatementImpl yangModeledAnyXml =
+                (YangModeledAnyXmlEffectiveStatementImpl) dataChildByName;
 
-            SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
-                SchemaPath.create(true, myContainer2QName));
-            assertTrue(myContainer2 instanceof ContainerSchemaNode);
-            assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
+        SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
+            SchemaPath.create(true, myContainer2QName));
+        assertTrue(myContainer2 instanceof ContainerSchemaNode);
+        assertEquals(myContainer2, yangModeledAnyXml.getSchemaOfAnyXmlData());
 
-            List<UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
-            assertEquals(1, unknownSchemaNodes.size());
+        List<UnknownSchemaNode> unknownSchemaNodes = yangModeledAnyXml.getUnknownSchemaNodes();
+        assertEquals(1, unknownSchemaNodes.size());
 
-            UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
-            assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
-            AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
-                    (AnyxmlSchemaLocationEffectiveStatementImpl) next;
-            assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
-                anyxmlSchemaLocationUnknownNode.getNodeType());
-            assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
-                anyxmlSchemaLocationUnknownNode.getQName());
+        UnknownSchemaNode next = unknownSchemaNodes.iterator().next();
+        assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
+        AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
+                (AnyxmlSchemaLocationEffectiveStatementImpl) next;
+        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+            anyxmlSchemaLocationUnknownNode.getNodeType());
+        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+            anyxmlSchemaLocationUnknownNode.getQName());
     }
 }

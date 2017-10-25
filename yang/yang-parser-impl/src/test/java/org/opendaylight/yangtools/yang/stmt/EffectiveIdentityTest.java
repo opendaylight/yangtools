@@ -61,7 +61,7 @@ public class EffectiveIdentityTest {
 
         assertNotNull(result);
 
-        Module module = result.findModule("identity-test", null).get();
+        Module module = result.findModule("identity-test").get();
         Set<IdentitySchemaNode> identities = module.getIdentities();
 
         assertNotNull(identities);

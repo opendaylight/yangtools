@@ -47,7 +47,7 @@ public class IfFeatureResolutionTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModule("foo", null).get();
+        final Module testModule = schemaContext.findModule("foo").get();
         assertEquals(9, testModule.getChildNodes().size());
 
         final ContainerSchemaNode testContainerA = (ContainerSchemaNode) testModule.getDataChildByName(

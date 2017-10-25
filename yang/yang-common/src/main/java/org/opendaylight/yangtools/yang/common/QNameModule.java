@@ -17,13 +17,11 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class QNameModule implements Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
-    private static final Logger LOG = LoggerFactory.getLogger(QNameModule.class);
     private static final long serialVersionUID = 2L;
 
     private final URI namespace;
@@ -48,6 +46,27 @@ public final class QNameModule implements Immutable, Serializable {
      */
     public QNameModule intern() {
         return INTERNER.intern(this);
+    }
+
+    /**
+     * Create a new QName module instance with specified namespace/revision.
+     *
+     * @param namespace Module namespace
+     * @param revision Module revision
+     * @return A new, potentially shared, QNameModule instance
+     */
+    public static QNameModule create(final URI namespace, final Optional<Date> revision) {
+        return new QNameModule(namespace, revision.orElse(null));
+    }
+
+    /**
+     * Create a new QName module instance with specified namespace and norevision.
+     *
+     * @param namespace Module namespace
+     * @return A new, potentially shared, QNameModule instance
+     */
+    public static QNameModule create(final URI namespace) {
+        return new QNameModule(namespace, null);
     }
 
     /**
@@ -92,8 +111,8 @@ public final class QNameModule implements Immutable, Serializable {
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
     // FIXME: BUG-4688: should return Optional<Revision>
-    public Date getRevision() {
-        return revision;
+    public Optional<Date> getRevision() {
+        return Optional.ofNullable(revision);
     }
 
     @Override
@@ -117,29 +136,17 @@ public final class QNameModule implements Immutable, Serializable {
     }
 
     /**
-     * Returns a namespace in form defined by section 5.6.4. of {@link https
-     * ://tools.ietf.org/html/rfc6020}, if namespace is not correctly defined,
-     * the method will return <code>null</code> <br>
-     * example "http://example.acme.com/system?revision=2008-04-01"
+     * Returns a namespace in form defined by section 5.6.4. of {@link https://tools.ietf.org/html/rfc6020}, for example
+     * {@code http://example.acme.com/system?revision=2008-04-01}.
      *
-     * @return namespace in form defined by section 5.6.4. of {@link https
-     *         ://tools.ietf.org/html/rfc6020}, if namespace is not correctly
-     *         defined, the method will return <code>null</code>
+     * @return Namespace in form defined by section 5.6.4. of {@link https://tools.ietf.org/html/rfc6020}.
+     * @throws URISyntaxException on incorrect namespace definition
      *
      */
-    URI getRevisionNamespace() {
-        if (namespace == null) {
-            return null;
-        }
-
+    URI getRevisionNamespace() throws URISyntaxException {
         final String query = revision == null ? "" : "revision=" + getFormattedRevision();
-        try {
-            return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(),
-                    namespace.getPort(), namespace.getPath(), query, namespace.getFragment());
-        } catch (final URISyntaxException e) {
-            LOG.error("Failed to construct URI for {}", this, e);
-            return null;
-        }
+        return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(), namespace.getPort(),
+            namespace.getPath(), query, namespace.getFragment());
     }
 
     @Override

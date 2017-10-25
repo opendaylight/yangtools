@@ -239,7 +239,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                 continue;
             }
 
-            final QName qName = new QName(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
+            final QName qName = QName.create(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
             attributes.put(qName, in.getAttributeValue(attrIndex));
         }
 

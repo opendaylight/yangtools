@@ -60,12 +60,12 @@ public class YangModeledAnyXMLDeserializationTest {
 
     @Before
     public void setUp() {
-        barModuleQName = QNameModule.create(URI.create("bar"), null);
+        barModuleQName = QNameModule.create(URI.create("bar"));
         myContainer1 = QName.create(barModuleQName, "my-container-1");
         myLeaf1 = QName.create(barModuleQName, "my-leaf-1");
         myAnyXMLDataBar = QName.create(barModuleQName, "my-anyxml-data");
 
-        fooModuleQName = QNameModule.create(URI.create("foo"), null);
+        fooModuleQName = QNameModule.create(URI.create("foo"));
         myContainer2 = QName.create(fooModuleQName, "my-container-2");
         innerContainer = QName.create(fooModuleQName, "inner-container");
         myLeaf3 = QName.create(fooModuleQName, "my-leaf-3");

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,7 +31,7 @@ public class Bug9005Test {
         final ModuleImport imp1 = imports.iterator().next();
         assertEquals("bar-2", imp1.getModuleName());
         assertEquals("bar", imp1.getPrefix());
-        assertEquals(QName.parseRevision("2000-01-02"), imp1.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2000-01-02")), imp1.getRevision());
 
         final Set<Module> submodules = foo.getSubmodules();
         assertEquals(1, submodules.size());
@@ -41,6 +42,6 @@ public class Bug9005Test {
         final ModuleImport subImp1 = subImports.iterator().next();
         assertEquals("bar-1", subImp1.getModuleName());
         assertEquals("bar", subImp1.getPrefix());
-        assertEquals(QName.parseRevision("2000-01-01"), subImp1.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2000-01-01")), subImp1.getRevision());
     }
 }

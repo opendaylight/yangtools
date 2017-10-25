@@ -175,7 +175,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         }
 
         final String moduleName = moduleImport.getModuleName();
-        final Date revision = moduleImport.getRevision();
+        final Optional<Date> revision = moduleImport.getRevision();
         return schemaContext.findModule(moduleName, revision).map(Module::getQNameModule);
     }
 

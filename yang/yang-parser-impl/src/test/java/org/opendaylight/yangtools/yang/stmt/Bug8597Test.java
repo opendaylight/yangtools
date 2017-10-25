@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,18 +25,18 @@ public class Bug8597Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug8597");
         assertNotNull(context);
 
-        final Module foo = context.findModule("foo", null).get();
+        final Module foo = context.findModule("foo").get();
         final Set<ModuleImport> imports = foo.getImports();
 
         for (final ModuleImport moduleImport : imports) {
             switch (moduleImport.getModuleName()) {
                 case "bar":
-                    assertEquals(QName.parseRevision("1970-01-01"), moduleImport.getRevision());
+                    assertEquals(Optional.of(QName.parseRevision("1970-01-01")), moduleImport.getRevision());
                     assertEquals("bar-ref", moduleImport.getReference());
                     assertEquals("bar-desc", moduleImport.getDescription());
                     break;
                 case "baz":
-                    assertEquals(QName.parseRevision("2010-10-10"), moduleImport.getRevision());
+                    assertEquals(Optional.of(QName.parseRevision("2010-10-10")), moduleImport.getRevision());
                     assertEquals("baz-ref", moduleImport.getReference());
                     assertEquals("baz-desc", moduleImport.getDescription());
                     break;

@@ -38,8 +38,8 @@ public class AugmentProcessTest {
     private static final StatementStreamSource AUGMENTED = sourceForResource("/stmt-test/augments/augmented.yang");
     private static final StatementStreamSource ROOT = sourceForResource("/stmt-test/augments/aug-root.yang");
 
-    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"), null);
-    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"), null);
+    private static final QNameModule ROOT_QNAME_MODULE = QNameModule.create(URI.create("root"));
+    private static final QNameModule AUGMENTED_QNAME_MODULE = QNameModule.create(URI.create("aug"));
 
     private final QName augParent1 = QName.create(AUGMENTED_QNAME_MODULE,
             "aug-parent1");

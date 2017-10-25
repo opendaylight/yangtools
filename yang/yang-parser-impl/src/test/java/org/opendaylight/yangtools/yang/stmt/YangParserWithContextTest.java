@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -86,13 +87,13 @@ public class YangParserWithContextTest {
         final UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
-        assertEquals(QName.parseRevision("2013-06-18"), qname.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2013-06-18")), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
-        assertEquals(QName.parseRevision("2010-09-24"), qname.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2010-09-24")), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
         final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
@@ -303,13 +304,13 @@ public class YangParserWithContextTest {
         final IdentitySchemaNode identity = identities.iterator().next();
         final QName idQName = identity.getQName();
         assertEquals(URI.create("urn:simple.demo.test3"), idQName.getNamespace());
-        assertEquals(QName.parseRevision("2013-06-18"), idQName.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2013-06-18")), idQName.getRevision());
         assertEquals("pt", idQName.getLocalName());
 
         final IdentitySchemaNode baseIdentity = Iterables.getOnlyElement(identity.getBaseIdentities());
         final QName idBaseQName = baseIdentity.getQName();
         assertEquals(URI.create("urn:custom.types.demo"), idBaseQName.getNamespace());
-        assertEquals(QName.parseRevision("2012-04-16"), idBaseQName.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2012-04-16")), idBaseQName.getRevision());
         assertEquals("service-type", idBaseQName.getLocalName());
     }
 
@@ -335,7 +336,7 @@ public class YangParserWithContextTest {
         final UnknownSchemaNode un = unknownNodes.get(0);
         final QName unType = un.getNodeType();
         assertEquals(URI.create("urn:custom.types.demo"), unType.getNamespace());
-        assertEquals(QName.parseRevision("2012-04-16"), unType.getRevision());
+        assertEquals(Optional.of(QName.parseRevision("2012-04-16")), unType.getRevision());
         assertEquals("mountpoint", unType.getLocalName());
         assertEquals("point", un.getNodeParameter());
         assertNotNull(un.getExtensionDefinition());

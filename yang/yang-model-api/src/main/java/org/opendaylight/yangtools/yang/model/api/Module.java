@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -104,7 +103,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         keyword
      */
     // FIXME: BUG-4688: should return Optional<Revision>
-    @Nullable default Date getRevision() {
+    default Optional<Date> getRevision() {
         return getQNameModule().getRevision();
     }
 

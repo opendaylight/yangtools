@@ -283,7 +283,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public Date getRevision() {
+    public Optional<Date> getRevision() {
         return getQNameModule().getRevision();
     }
 

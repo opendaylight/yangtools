@@ -305,7 +305,7 @@ public final class SchemaContextUtil {
     }
 
     private static ModuleIdentifier moduleToIdentifier(final Module module) {
-        return ModuleIdentifierImpl.create(module.getName(), Optional.of(module.getRevision()));
+        return ModuleIdentifierImpl.create(module.getName(), module.getRevision());
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {

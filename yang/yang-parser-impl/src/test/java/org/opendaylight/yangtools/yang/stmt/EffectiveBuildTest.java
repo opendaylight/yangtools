@@ -38,7 +38,7 @@ public class EffectiveBuildTest {
 
     private static final StatementStreamSource SIMPLE_MODULE = sourceForResource(
             "/stmt-test/effective-build/simple-module.yang");
-    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(URI.create("simple.yang"), null);
+    private static final QNameModule SIMPLE_MODULE_QNAME = QNameModule.create(URI.create("simple.yang"));
     private static final StatementStreamSource YANG_EXT = sourceForResource(
             "/stmt-test/extensions/yang-ext.yang");
 

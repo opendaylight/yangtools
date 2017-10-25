@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -59,7 +60,8 @@ public final class SchemaUtils {
         if (dataSchemaNode != null && qname != null) {
             for (final DataSchemaNode dsn : dataSchemaNode) {
                 if (qname.isEqualWithoutRevision(dsn.getQName())) {
-                    if (schema == null || schema.getQName().getRevision().compareTo(dsn.getQName().getRevision()) < 0) {
+                    if (schema == null || ModuleIdentifier.compareRevisions(schema.getQName().getRevision(),
+                        dsn.getQName().getRevision()) < 0) {
                         schema = dsn;
                     }
                 } else if (dsn instanceof ChoiceSchemaNode) {

@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -39,12 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
-    protected static final Comparator<Module> REVISION_COMPARATOR = (o1, o2) -> {
-        if (o1.getRevision() == null) {
-            return o2.getRevision() == null ? 0 : 1;
-        }
-
-        return o2.getRevision() == null ? -1 : o2.getRevision().compareTo(o1.getRevision());
+    protected static final Comparator<Module> REVISION_COMPARATOR = (first, second) -> {
+        return ModuleIdentifier.compareRevisions(first.getRevision(), second.getRevision());
     };
 
     protected static final TreeSet<Module> createModuleSet() {
@@ -105,7 +102,7 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public Optional<Module> findModule(final String name, final Date revision) {
         for (final Module module : getNameToModules().get(name)) {
-            if (Objects.equals(revision, module.getRevision())) {
+            if (Objects.equals(revision, module.getRevision().orElse(null))) {
                 return Optional.of(module);
             }
         }

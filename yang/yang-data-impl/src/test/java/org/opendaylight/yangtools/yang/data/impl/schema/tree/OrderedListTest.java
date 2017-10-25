@@ -57,7 +57,7 @@ public class OrderedListTest {
     @Before
     public void setup() {
         context = YangParserTestUtils.parseYangResource("/ordered-list-modification-test.yang");
-        testModule = QNameModule.create(URI.create("ordered-list-modification-test"), null);
+        testModule = QNameModule.create(URI.create("ordered-list-modification-test"));
         parentContainer = QName.create(testModule, "parent-container");
         childContainer = QName.create(testModule, "child-container");
         parentOrderedList = QName.create(testModule, "parent-ordered-list");

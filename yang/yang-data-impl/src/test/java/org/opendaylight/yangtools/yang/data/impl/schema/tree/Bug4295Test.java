@@ -48,7 +48,7 @@ public class Bug4295Test {
     @Before
     public void init() {
         context = YangParserTestUtils.parseYangResource("/bug-4295/foo.yang");
-        foo = QNameModule.create(URI.create("foo"), null);
+        foo = QNameModule.create(URI.create("foo"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
         outerList = QName.create(foo, "outer-list");

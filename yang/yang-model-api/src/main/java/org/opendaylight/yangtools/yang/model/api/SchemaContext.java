@@ -30,7 +30,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     /**
      * QName of NETCONF top-level data node.
      */
-    QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), null, "data").intern();
+    QName NAME = QName.create(URI.create("urn:ietf:params:xml:ns:netconf:base:1.0"), "data").intern();
 
     /**
      * Returns data schema node instances which represents direct subnodes (like
@@ -77,6 +77,36 @@ public interface SchemaContext extends ContainerSchemaNode {
      *         <code>name</code> and <code>revision</code>.
      */
     Optional<Module> findModule(String name, @Nullable Date revision);
+
+    /**
+     * Returns module instance (from the context) with concrete name and revision date.
+     *
+     * @param name
+     *            string with the module name
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>name</code> and <code>revision</code>.
+     */
+    default Optional<Module> findModule(final String name) {
+        return findModule(name, Optional.empty());
+    }
+
+    /**
+     * Returns module instance (from the context) with concrete name and revision date.
+     *
+     * @param name
+     *            string with the module name
+     * @param revision
+     *            date of the module revision, may be null
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>name</code> and <code>revision</code>.
+     */
+    default Optional<Module> findModule(final String name, final Optional<Date> revision) {
+        return findModule(name, revision.orElse(null));
+    }
+
+    default Optional<Module> findModule(final URI namespace) {
+        return findModule(QNameModule.create(namespace));
+    }
 
     default Optional<Module> findModule(final URI namespace, @Nullable final Date revision) {
         return findModule(QNameModule.create(namespace, revision));

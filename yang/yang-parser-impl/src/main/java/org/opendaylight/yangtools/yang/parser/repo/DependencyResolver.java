@@ -162,8 +162,8 @@ abstract class DependencyResolver {
         }
 
         @Override
-        public Date getRevision() {
-            return null;
+        public Optional<Date> getRevision() {
+            return Optional.empty();
         }
 
         @Override

@@ -183,8 +183,7 @@ public class NormalizedDataBuilderTest {
     }
 
     private static QName getQName(final String localName) {
-        String namespace = "namespace";
-        return new QName(URI.create(namespace), localName);
+        return QName.create(URI.create("namespace"), localName);
     }
 
     private static NodeIdentifier getNodeIdentifier(final String localName) {

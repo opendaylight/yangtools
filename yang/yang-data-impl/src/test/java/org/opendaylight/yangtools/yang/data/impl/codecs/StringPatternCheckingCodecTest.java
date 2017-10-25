@@ -41,7 +41,7 @@ public class StringPatternCheckingCodecTest {
             "/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);
 
-        final QNameModule testModuleQName = QNameModule.create(new URI("string-pattern-checking-codec-test"), null);
+        final QNameModule testModuleQName = QNameModule.create(URI.create("string-pattern-checking-codec-test"));
 
         final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(

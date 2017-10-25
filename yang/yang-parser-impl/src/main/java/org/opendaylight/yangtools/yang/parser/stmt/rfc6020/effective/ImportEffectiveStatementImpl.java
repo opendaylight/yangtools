@@ -73,7 +73,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         final QNameModule importedModule = StmtContextUtils.getModuleQNameByPrefix(ctx, this.prefix);
         SourceException.throwIfNull(importedModule, ctx.getStatementSourceReference(),
                 "Unable to find import of module %s with prefix %s.", this.moduleName, this.prefix);
-        return importedModule.getRevision();
+        return importedModule.getRevision().orElse(null);
     }
 
     @Override
@@ -82,8 +82,8 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
-    public Date getRevision() {
-        return revision;
+    public Optional<Date> getRevision() {
+        return Optional.ofNullable(revision);
     }
 
     @Override

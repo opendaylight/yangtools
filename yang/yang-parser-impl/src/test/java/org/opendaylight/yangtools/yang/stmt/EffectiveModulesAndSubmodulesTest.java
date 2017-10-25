@@ -40,6 +40,8 @@ public class EffectiveModulesAndSubmodulesTest {
     private static final StatementStreamSource SUBMODULE_TO_SUBMODULE_1 = sourceForResource(
             "/stmt-test/submodules/submodule-to-submodule-1.yang");
 
+    private static final QNameModule ROOT = QNameModule.create(URI.create("root-module"));
+
     @Test
     public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
         final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
@@ -109,8 +111,8 @@ public class EffectiveModulesAndSubmodulesTest {
         assertNotNull(sub1);
         assertNotNull(sub2);
 
-        assertEquals(QNameModule.create(URI.create("root-module"), null), sub1.getQNameModule());
-        assertEquals(QNameModule.create(URI.create("root-module"), null), sub2.getQNameModule());
+        assertEquals(ROOT, sub1.getQNameModule());
+        assertEquals(ROOT, sub2.getQNameModule());
 
         final Collection<DataSchemaNode> sub1ChildNodes = sub1.getChildNodes();
         final Collection<DataSchemaNode> sub2ChildNodes = sub2.getChildNodes();
@@ -142,7 +144,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
         assertNotNull(sub1Submodule);
 
-        assertEquals(QNameModule.create(URI.create("root-module"), null), sub1Submodule.getQNameModule());
+        assertEquals(ROOT, sub1Submodule.getQNameModule());
 
         final Collection<DataSchemaNode> sub1SubmoduleChildNodes = sub1Submodule.getChildNodes();
         assertNotNull(sub1SubmoduleChildNodes);
@@ -165,7 +167,7 @@ public class EffectiveModulesAndSubmodulesTest {
     }
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
-        final Module foundRoot = result.findModule("root-module", null).get();
+        final Module foundRoot = result.findModule("root-module").get();
         final Set<Module> foundRoots = result.findModules(URI.create("root-module"));
         final Module foundRoot3 = result.findModule(URI.create("root-module"), null).get();
 
@@ -181,7 +183,7 @@ public class EffectiveModulesAndSubmodulesTest {
         assertEquals(root, foundRoot2);
         assertEquals(root, foundRoot3);
 
-        final Module foundImported = result.findModule("imported-module", null).get();
+        final Module foundImported = result.findModule("imported-module").get();
         final Set<Module> foundImporteds = result.findModules(URI.create("imported-module"));
         final Module foundImported3 = result.findModule(URI.create("imported-module"), null).get();
 

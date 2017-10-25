@@ -1189,8 +1189,7 @@ abstract class SchemaContextEmitter {
              * FIXME: BUG-2444: emit revisions properly, when parsed model will
              * provide enough information
              */
-            emitRevision(input.getRevision());
-
+            input.getRevision().ifPresent(this::emitRevision);
         }
 
         private void emitBodyNodes(final Module input) {
@@ -1270,7 +1269,8 @@ abstract class SchemaContextEmitter {
             emitDescriptionNode(importNode.getDescription());
             emitReferenceNode(importNode.getReference());
             emitPrefixNode(importNode.getPrefix());
-            emitRevisionDateNode(importNode.getRevision());
+
+            importNode.getRevision().ifPresent(this::emitRevisionDateNode);
             super.writer.endNode();
         }
 
@@ -1361,11 +1361,9 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitRevisionDateNode(@Nullable final Date date) {
-            if (date != null) {
-                super.writer.startRevisionDateNode(date);
-                super.writer.endNode();
-            }
+        private void emitRevisionDateNode(final Date date) {
+            super.writer.startRevisionDateNode(date);
+            super.writer.endNode();
         }
 
         private void emitExtension(final ExtensionDefinition extension) {

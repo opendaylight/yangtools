@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRev
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,14 +31,14 @@ public class Bug6491Test {
 
     @Test
     public void tetststs() throws Exception {
-        testRevision("withoutRevision", null, null);
-        testRevision("withRevision", date, date);
-        testRevision("importedModuleRevisionOnly", null, date);
-        testRevision("moduleRevisionOnly", date, null);
+        testRevision("withoutRevision", null, Optional.empty());
+        testRevision("withRevision", date, Optional.of(date));
+        testRevision("importedModuleRevisionOnly", null, Optional.of(date));
+        testRevision("moduleRevisionOnly", date, Optional.empty());
     }
 
-    private static void testRevision(final String path, final Date moduleRevision, final Date importedRevision)
-            throws Exception {
+    private static void testRevision(final String path, final Date moduleRevision,
+            final Optional<Date> importedRevision) throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);
         final Module module = context.findModule("bar", moduleRevision).get();

@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -49,7 +50,7 @@ public class EffectiveModuleTest {
     private static final StatementStreamSource SUBMODULE = sourceForResource(
             "/semantic-statement-parser/effective-module/submod.yang");
 
-    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"), null);
+    private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"));
 
     private static final QName cont = QName.create(ROOT_MODULE_QNAME, "cont");
     private static final QName feature1 = QName.create(ROOT_MODULE_QNAME, "feature1");
@@ -87,7 +88,7 @@ public class EffectiveModuleTest {
         final ModuleImport importStmt = imports.iterator().next();
         assertNotNull(importStmt);
         assertEquals("imported", importStmt.getModuleName());
-        assertEquals(REVISION, importStmt.getRevision());
+        assertEquals(Optional.of(REVISION), importStmt.getRevision());
         assertEquals("imp-pref", importStmt.getPrefix());
 
         final Set<Module> submodules = rootModule.getSubmodules();

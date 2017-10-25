@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.net.URI;
 import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -171,7 +172,7 @@ public class MoreRevisionsTest {
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
-        assertEquals(rev20100924, interfacesImport.getRevision());
+        assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
     private static void checkNetconfMonitoringModuleFullTest(final SchemaContext context,
@@ -183,7 +184,7 @@ public class MoreRevisionsTest {
         assertEquals(2, imports.size());
         for (ModuleImport monitoringImport : imports) {
             if (monitoringImport.getModuleName().equals("ietf-yang-types")) {
-                assertEquals(rev20130715, monitoringImport.getRevision());
+                assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
             }
         }
     }
@@ -244,16 +245,16 @@ public class MoreRevisionsTest {
         assertEquals(1, imports.size());
         ModuleImport interfacesImport = imports.iterator().next();
         assertEquals("ietf-yang-types", interfacesImport.getModuleName());
-        assertEquals(rev20100924, interfacesImport.getRevision());
+        assertEquals(Optional.of(rev20100924), interfacesImport.getRevision());
     }
 
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
             final Date rev20130715, final QName dateTimeTypeDef_20130715) {
         URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
-        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS, null);
+        final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS);
         QName lockedTime = QName.create(monitoring_19700101, "locked-time");
 
-        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring", null).get();
+        Module monitoringModule_19700101 = context.findModule("ietf-netconf-monitoring").get();
         DataSchemaNode leafLockedTime = monitoringModule_19700101.getDataChildByName(lockedTime);
         assertNotNull(leafLockedTime);
 
@@ -265,7 +266,7 @@ public class MoreRevisionsTest {
         assertEquals(1, imports.size());
         ModuleImport monitoringImport = imports.iterator().next();
         assertEquals("ietf-yang-types", monitoringImport.getModuleName());
-        assertEquals(rev20130715, monitoringImport.getRevision());
+        assertEquals(Optional.of(rev20130715), monitoringImport.getRevision());
     }
 
     private static boolean findTypeDef(final Module module, final QName typedef) {

@@ -50,7 +50,7 @@ public final class AugmentEffectiveStatementImpl
 
         final QNameModule rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();
-        this.revision = rootModuleQName.getRevision();
+        this.revision = rootModuleQName.getRevision().orElse(null);
 
         this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 

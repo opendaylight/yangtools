@@ -56,6 +56,7 @@ public class SchemaContextUtilTest {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
         doReturn(URI.create("dummy")).when(mockModule).getNamespace();
+        doReturn(Optional.empty()).when(mockModule).getRevision();
 
         final QName qName = QName.create("dummy", "TestQName");
         final SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qName), true);

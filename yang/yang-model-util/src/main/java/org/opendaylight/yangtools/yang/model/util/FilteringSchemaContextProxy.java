@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
@@ -88,7 +89,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
          */
         this.filteredModules = filteredModulesBuilder.build();
 
-        for (final Module module :filteredModules) {
+        for (final Module module : filteredModules) {
             nameMap.put(module.getName(), module);
             nsMap.put(module.getNamespace(), module);
         }
@@ -125,17 +126,17 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {
+                Optional<Date> revisionDate = moduleImport.getRevision();
+                if (!revisionDate.isPresent()) {
+                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).last().getRevision();
+                }
 
-                Date revisionDate = moduleImport.getRevision() == null
-                    ? nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision()
-                    : moduleImport.getRevision();
-
-                ModuleId key = new ModuleId(moduleImport.getModuleName(),revisionDate);
+                ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
                 Module importedModule = allModules.get(key);
 
                 Preconditions.checkArgument(importedModule != null,
                         "Invalid schema, cannot find imported module: %s from module: %s, %s, modules:%s", key,
-                        module.getQNameModule(), module.getName());
+                        module.getQNameModule(), module.getName(), allModules);
                 relatedModules.add(importedModule);
 
                 //calling imports recursive
@@ -180,7 +181,8 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
                 if (moduleImport.getModuleName().equals(rootModule.getName())) {
 
-                    if (moduleImport.getRevision() != null && !moduleImport.getRevision().equals(rootModule.getRev())) {
+                    if (moduleImport.getRevision().isPresent()
+                            && !moduleImport.getRevision().equals(rootModule.getRev())) {
                         return false;
                     }
 
@@ -206,19 +208,20 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         private final String name;
         private final Date rev;
 
-        public ModuleId(final String name, final Date rev) {
+        public ModuleId(final String name, final Optional<Date> rev) {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
                     "No module dependency name given. Nothing to do.");
             this.name = name;
-            this.rev = Preconditions.checkNotNull(rev, "No revision date given. Nothing to do.");
+            Preconditions.checkArgument(rev.isPresent(), "No revision date given. Nothing to do.");
+            this.rev = rev.get();
         }
 
         public String getName() {
             return name;
         }
 
-        public Date getRev() {
-            return rev;
+        public Optional<Date> getRev() {
+            return Optional.ofNullable(rev);
         }
 
         public static final Function<Module, ModuleId> MODULE_TO_MODULE_ID = input -> new ModuleId(input.getName(),
