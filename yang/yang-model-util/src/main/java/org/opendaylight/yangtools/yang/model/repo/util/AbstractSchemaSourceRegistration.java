@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.opendaylight.yangtools.concepts.AbstractObjectRegistration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -25,7 +26,12 @@ public abstract class AbstractSchemaSourceRegistration<T extends SchemaSourceRep
         this.provider = requireNonNull(provider);
     }
 
-    protected final SchemaSourceProvider<?> getProvider() {
+    public final SchemaSourceProvider<?> getProvider() {
         return provider;
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return super.addToStringAttributes(toStringHelper).add("provider", provider);
     }
 }

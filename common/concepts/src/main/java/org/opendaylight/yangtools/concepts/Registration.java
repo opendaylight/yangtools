@@ -8,17 +8,15 @@
 package org.opendaylight.yangtools.concepts;
 
 /**
- * Class representing a registration. Such a registration is a proper
- * resource and should be cleaned up when no longer required.
+ * Class representing a registration. Such a registration is a proper resource and should be cleaned up when no longer
+ * required.
  */
 public interface Registration extends AutoCloseable {
     /**
-     * Unregisters the object. This operation is required not to invoke
-     * blocking operations. Implementations which require interaction
-     * with outside world must provide guarantees that any work is done
-     * behind the scenes and the unregistration process looks as if it
-     * has already succeeded once this method returns.
+     * Unregisters the object. This operation is required not to invoke blocking operations. Implementations which
+     * require interaction with outside world must provide guarantees that any work is done behind the scenes and
+     * the unregistration process looks as if it has already succeeded once this method returns.
      */
     @Override
-    void close() throws Exception;
+    void close();
 }
