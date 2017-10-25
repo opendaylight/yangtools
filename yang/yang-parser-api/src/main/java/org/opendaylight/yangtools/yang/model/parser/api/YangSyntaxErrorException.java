@@ -7,44 +7,49 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
+import java.util.Optional;
+import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 public class YangSyntaxErrorException extends Exception {
-    private static final long serialVersionUID = 1L;
-    private final String module;
+    private static final long serialVersionUID = 2L;
+
+    private final SourceIdentifier source;
     private final int line;
     private final int charPositionInLine;
 
-    public YangSyntaxErrorException(final String module, final int line, final int charPositionInLine,
-            final String message) {
-        this(module, line, charPositionInLine, message, null);
+    public YangSyntaxErrorException(@Nullable final SourceIdentifier source, final int line,
+            final int charPositionInLine, final String message) {
+        this(source, line, charPositionInLine, message, null);
     }
 
-    public YangSyntaxErrorException(final String module, final int line, final int charPositionInLine,
-            final String message, final Throwable cause) {
-        super(Preconditions.checkNotNull(message), cause);
-        this.module = module;
+    public YangSyntaxErrorException(@Nullable final SourceIdentifier source, final int line,
+            final int charPositionInLine, final String message, @Nullable final Throwable cause) {
+        super(requireNonNull(message), cause);
+        this.source = source;
         this.line = line;
         this.charPositionInLine = charPositionInLine;
     }
 
-    public String getModule() {
-        return module;
+    public final Optional<SourceIdentifier> getSource() {
+        return Optional.ofNullable(source);
     }
 
-    public int getLine() {
+    public final int getLine() {
         return line;
     }
 
-    public int getCharPositionInLine() {
+    public final int getCharPositionInLine() {
         return charPositionInLine;
     }
 
     public String getFormattedMessage() {
         final StringBuilder sb = new StringBuilder(getMessage());
-        if (module != null) {
-            sb.append(" in module ");
-            sb.append(module);
+        if (source != null) {
+            sb.append(" in source ");
+            sb.append(source);
         }
         if (line != 0) {
             sb.append(" on line ");
