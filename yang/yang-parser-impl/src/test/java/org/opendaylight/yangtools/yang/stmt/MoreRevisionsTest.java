@@ -15,12 +15,12 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.net.URI;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -140,9 +140,9 @@ public class MoreRevisionsTest {
     private static void checkContentFullTest(final SchemaContext context) {
         URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
-        final Date rev20100924 = QName.parseRevision("2010-09-24");
-        final Date rev20130516 = QName.parseRevision("2013-05-16");
-        final Date rev20130715 = QName.parseRevision("2013-07-15");
+        final Revision rev20100924 = Revision.valueOf("2010-09-24");
+        final Revision rev20130516 = Revision.valueOf("2013-05-16");
+        final Revision rev20130715 = Revision.valueOf("2013-07-15");
 
         final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
         final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
@@ -163,9 +163,9 @@ public class MoreRevisionsTest {
         checkInterfacesModuleFullTest(context, rev20100924, dateTimeTypeDef_20100924);
     }
 
-    private static void checkInterfacesModuleFullTest(final SchemaContext context, final Date rev20100924,
+    private static void checkInterfacesModuleFullTest(final SchemaContext context, final Revision rev20100924,
             final QName dateTimeTypeDef_20100924) {
-        Date rev20121115 = QName.parseRevision("2012-11-15");
+        Revision rev20121115 = Revision.valueOf("2012-11-15");
 
         Module interfacesModule_20121115 = context.findModule("ietf-interfaces", rev20121115).get();
         Set<ModuleImport> imports = interfacesModule_20121115.getImports();
@@ -176,8 +176,8 @@ public class MoreRevisionsTest {
     }
 
     private static void checkNetconfMonitoringModuleFullTest(final SchemaContext context,
-            final Date rev20130715, final QName dateTimeTypeDef_20130715) {
-        Date rev20101004 = QName.parseRevision("2010-10-04");
+            final Revision rev20130715, final QName dateTimeTypeDef_20130715) {
+        Revision rev20101004 = Revision.valueOf("2010-10-04");
 
         Module monitoringModule_20101004 = context.findModule("ietf-netconf-monitoring", rev20101004).get();
         Set<ModuleImport> imports = monitoringModule_20101004.getImports();
@@ -203,9 +203,9 @@ public class MoreRevisionsTest {
     private static void checkContentSimpleTest(final SchemaContext context) {
         URI yangTypesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types");
 
-        final Date rev20100924 = QName.parseRevision("2010-09-24");
-        final Date rev20130516 = QName.parseRevision("2013-05-16");
-        final Date rev20130715 = QName.parseRevision("2013-07-15");
+        final Revision rev20100924 = Revision.valueOf("2010-09-24");
+        final Revision rev20130516 = Revision.valueOf("2013-05-16");
+        final Revision rev20130715 = Revision.valueOf("2013-07-15");
 
         final QNameModule yangTypes_20100924 = QNameModule.create(yangTypesNS, rev20100924);
         final QNameModule yangTypes_20130516 = QNameModule.create(yangTypesNS, rev20130516);
@@ -227,9 +227,9 @@ public class MoreRevisionsTest {
     }
 
     private static void checkInterfacesModuleSimpleTest(final SchemaContext context,
-            final Date rev20100924, final QName dateTimeTypeDef_20100924) {
+            final Revision rev20100924, final QName dateTimeTypeDef_20100924) {
         URI interfacesNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-interfaces");
-        Date rev20121115 = QName.parseRevision("2012-11-15");
+        Revision rev20121115 = Revision.valueOf("2012-11-15");
         final QNameModule interfacesNS_20121115 = QNameModule.create(interfacesNS, rev20121115);
         QName lastChange = QName.create(interfacesNS_20121115, "last-change");
 
@@ -249,7 +249,7 @@ public class MoreRevisionsTest {
     }
 
     private static void checkNetconfMonitoringModuleSimpleTest(final SchemaContext context,
-            final Date rev20130715, final QName dateTimeTypeDef_20130715) {
+            final Revision rev20130715, final QName dateTimeTypeDef_20130715) {
         URI monitoringNS = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-monitoring");
         final QNameModule monitoring_19700101 = QNameModule.create(monitoringNS);
         QName lockedTime = QName.create(monitoring_19700101, "locked-time");

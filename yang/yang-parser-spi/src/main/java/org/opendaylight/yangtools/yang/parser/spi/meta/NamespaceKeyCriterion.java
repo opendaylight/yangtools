@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 
 /**
@@ -38,7 +39,7 @@ public abstract class NamespaceKeyCriterion<K> {
 
         @Override
         public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
-            return ModuleIdentifier.compareRevisions(first.getRevision(), second.getRevision()) >= 0 ? first : second;
+            return Revision.compare(first.getRevision(), second.getRevision()) >= 0 ? first : second;
         }
 
         @Override

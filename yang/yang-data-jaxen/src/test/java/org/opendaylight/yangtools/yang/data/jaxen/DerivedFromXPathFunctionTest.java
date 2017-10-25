@@ -21,7 +21,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.net.URI;
-import java.text.ParseException;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
@@ -29,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -54,11 +53,10 @@ public class DerivedFromXPathFunctionTest {
     private static QName idC2Identity;
 
     @BeforeClass
-    public static void setup() throws ParseException {
+    public static void setup() {
         jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
 
-        barModule = QNameModule.create(URI.create("bar-ns"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2017-04-03"));
+        barModule = QNameModule.create(URI.create("bar-ns"), Revision.valueOf("2017-04-03"));
         myContainer = QName.create(barModule, "my-container");
         myList = QName.create(barModule, "my-list");
         keyLeaf = QName.create(barModule, "key-leaf");

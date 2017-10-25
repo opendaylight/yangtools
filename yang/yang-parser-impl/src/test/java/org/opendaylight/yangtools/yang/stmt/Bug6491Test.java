@@ -9,24 +9,23 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import java.text.ParseException;
-import java.util.Date;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug6491Test {
-    private Date date;
+    private Revision date;
 
     @Before
     public void setup() throws ParseException {
-        date = getRevisionFormat().parse("2016-01-01");
+        date = Revision.valueOf("2016-01-01");
     }
 
     @Test
@@ -37,8 +36,8 @@ public class Bug6491Test {
         testRevision("moduleRevisionOnly", date, Optional.empty());
     }
 
-    private static void testRevision(final String path, final Date moduleRevision,
-            final Optional<Date> importedRevision) throws Exception {
+    private static void testRevision(final String path, final Revision moduleRevision,
+            final Optional<Revision> importedRevision) throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug6491/".concat(path));
         assertNotNull(context);
         final Module module = context.findModule("bar", moduleRevision).get();

@@ -23,7 +23,6 @@ import com.google.common.collect.TreeMultimap;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -31,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -126,7 +126,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
         for (Module module : baseModules) {
             for (ModuleImport moduleImport : module.getImports()) {
-                Optional<Date> revisionDate = moduleImport.getRevision();
+                Optional<Revision> revisionDate = moduleImport.getRevision();
                 if (!revisionDate.isPresent()) {
                     revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).last().getRevision();
                 }
@@ -206,9 +206,9 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
     public static final class ModuleId {
         private final String name;
-        private final Date rev;
+        private final Revision rev;
 
-        public ModuleId(final String name, final Optional<Date> rev) {
+        public ModuleId(final String name, final Optional<Revision> rev) {
             Preconditions.checkArgument(!Strings.isNullOrEmpty(name),
                     "No module dependency name given. Nothing to do.");
             this.name = name;
@@ -220,7 +220,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             return name;
         }
 
-        public Optional<Date> getRev() {
+        public Optional<Revision> getRev() {
             return Optional.ofNullable(rev);
         }
 

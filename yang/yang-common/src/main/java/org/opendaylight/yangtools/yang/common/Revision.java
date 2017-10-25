@@ -48,8 +48,8 @@ public final class Revision implements Comparable<Revision>, Serializable {
 
     private Revision(final String str) {
         // Since all strings conform to this format, compareTo() can be delegated to String.compareTo()
-        Preconditions.checkArgument(STRING_FORMAT.matcher(str).matches(), "String '%s' does match revision format",
-            str);
+        Preconditions.checkArgument(STRING_FORMAT.matcher(str).matches(),
+            "String '%s' does match revision format YYYY-MM-DD", str);
         this.str = str;
     }
 

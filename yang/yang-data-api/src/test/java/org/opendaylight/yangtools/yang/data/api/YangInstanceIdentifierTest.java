@@ -42,13 +42,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  */
 public class YangInstanceIdentifierTest {
 
-    private static final QName NODENAME1 = QName.create("test", "2014-5-28", "node1");
-    private static final QName NODENAME2 = QName.create("test", "2014-5-28", "node2");
-    private static final QName NODENAME3 = QName.create("test", "2014-5-28", "node3");
-    private static final QName NODENAME4 = QName.create("test", "2014-5-28", "node4");
-    private static final QName KEY1 = QName.create("test", "2014-5-28", "key1");
-    private static final QName KEY2 = QName.create("test", "2014-5-28", "key2");
-    private static final QName KEY3 = QName.create("test", "2014-5-28", "key3");
+    private static final QName NODENAME1 = QName.create("test", "2014-05-28", "node1");
+    private static final QName NODENAME2 = QName.create("test", "2014-05-28", "node2");
+    private static final QName NODENAME3 = QName.create("test", "2014-05-28", "node3");
+    private static final QName NODENAME4 = QName.create("test", "2014-05-28", "node4");
+    private static final QName KEY1 = QName.create("test", "2014-05-28", "key1");
+    private static final QName KEY2 = QName.create("test", "2014-05-28", "key2");
+    private static final QName KEY3 = QName.create("test", "2014-05-28", "key3");
 
     @Test
     public void testGetLastPathArgument() {

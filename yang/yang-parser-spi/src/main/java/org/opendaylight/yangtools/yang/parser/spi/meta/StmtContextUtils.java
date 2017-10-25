@@ -14,12 +14,12 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Date;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -553,25 +553,25 @@ public final class StmtContextUtils {
         }
 
         // creates SourceIdentifier for a submodule
-        final Date revision = getLatestRevision(root.declaredSubstatements());
-        return revision == null ? RevisionSourceIdentifier.create((String) root.getStatementArgument())
-                : RevisionSourceIdentifier.create((String) root.getStatementArgument(),
-                    SimpleDateFormatUtil.getRevisionFormat().format(revision));
+        final Optional<Revision> revision = getLatestRevision(root.declaredSubstatements());
+        return revision.isPresent()
+                ? RevisionSourceIdentifier.create((String) root.getStatementArgument(), revision.get().toString())
+                        : RevisionSourceIdentifier.create((String) root.getStatementArgument());
     }
 
-    public static Date getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
-        Date revision = null;
+    public static Optional<Revision> getLatestRevision(final Iterable<? extends StmtContext<?, ?, ?>> subStmts) {
+        Revision revision = null;
         for (final StmtContext<?, ?, ?> subStmt : subStmts) {
             if (subStmt.getPublicDefinition().getDeclaredRepresentationClass().isAssignableFrom(
                     RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
-                    revision = (Date) subStmt.getStatementArgument();
+                    revision = (Revision) subStmt.getStatementArgument();
                 } else if (subStmt.getStatementArgument() != null
-                        && ((Date) subStmt.getStatementArgument()).compareTo(revision) > 0) {
-                    revision = (Date) subStmt.getStatementArgument();
+                        && ((Revision) subStmt.getStatementArgument()).compareTo(revision) > 0) {
+                    revision = (Revision) subStmt.getStatementArgument();
                 }
             }
         }
-        return revision;
+        return Optional.ofNullable(revision);
     }
 }

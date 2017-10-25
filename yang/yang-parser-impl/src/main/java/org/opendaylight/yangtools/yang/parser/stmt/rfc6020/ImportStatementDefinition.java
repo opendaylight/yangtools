@@ -17,10 +17,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -150,7 +149,7 @@ public class ImportStatementDefinition extends
             final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
             final Prerequisite<StmtContext<?, ?, ?>> imported;
             final String moduleName = stmt.getStatementArgument();
-            final Date revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
+            final Revision revision = firstAttributeOf(stmt.declaredSubstatements(), RevisionDateStatement.class);
             if (revision == null) {
                 imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
                     NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
@@ -187,7 +186,8 @@ public class ImportStatementDefinition extends
         }
 
         static SourceIdentifier getImportedSourceIdentifier(final StmtContext<String, ImportStatement, ?> stmt) {
-            final StmtContext<Date, ?, ?> revision = findFirstDeclaredSubstatement(stmt, RevisionDateStatement.class);
+            final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
+                RevisionDateStatement.class);
             return revision == null ? RevisionSourceIdentifier.create(stmt.getStatementArgument())
                     : RevisionSourceIdentifier.create(stmt.getStatementArgument(), revision.rawStatementArgument());
         }
@@ -327,8 +327,7 @@ public class ImportStatementDefinition extends
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(
                 final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
-            final String formattedRevision = importedModuleIdentifier.getRevision().map(
-                date -> SimpleDateFormatUtil.getRevisionFormat().format(date))
+            final String formattedRevision = importedModuleIdentifier.getRevision().map(Revision::toString)
                     .orElse(null);
             return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(), formattedRevision, semVer);
         }

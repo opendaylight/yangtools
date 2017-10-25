@@ -17,7 +17,6 @@ import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -32,6 +31,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -421,8 +421,8 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         Preconditions.checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
-        final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
-            String::compareTo, ModuleIdentifier::compareRevisions);
+        final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
+            String::compareTo, Revision::compare);
         for (final SourceSpecificContext libSource : libSources) {
             final ModuleIdentifier libSourceIdentifier = Preconditions.checkNotNull(libSource.getRootIdentifier());
             libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
@@ -437,7 +437,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void collectRequiredSourcesFromLib(
-            final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable,
+            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable,
             final Set<SourceSpecificContext> requiredLibs, final SourceSpecificContext source) {
         for (final SourceIdentifier requiredSource : source.getRequiredSources()) {
             final SourceSpecificContext libSource = getRequiredLibSource(requiredSource, libSourcesTable);
@@ -448,13 +448,13 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
-            final TreeBasedTable<String, Optional<Date>, SourceSpecificContext> libSourcesTable) {
+            final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
         return requiredSource.getRevision() == null ? getLatestRevision(libSourcesTable.row(requiredSource.getName()))
                 : libSourcesTable.get(requiredSource.getName(),
-                    Optional.of(QName.parseRevision(requiredSource.getRevision())));
+                    Optional.of(Revision.valueOf(requiredSource.getRevision())));
     }
 
-    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Date>,
+    private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Revision>,
             SourceSpecificContext> sourceMap) {
         return sourceMap != null && !sourceMap.isEmpty() ? sourceMap.get(sourceMap.lastKey()) : null;
     }

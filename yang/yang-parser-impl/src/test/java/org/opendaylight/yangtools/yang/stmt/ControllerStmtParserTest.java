@@ -12,13 +12,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -42,10 +41,9 @@ public class ControllerStmtParserTest {
         configModuleTest(context);
     }
 
-    private static void salDomBrokerImplModuleTest(final SchemaContext context)
-            throws ParseException {
+    private static void salDomBrokerImplModuleTest(final SchemaContext context) {
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
-            QName.parseRevision("2013-10-28")).get();
+            Revision.valueOf("2013-10-28")).get();
 
         final Set<AugmentationSchema> augmentations = module.getAugmentations();
         boolean checked = false;
@@ -74,11 +72,10 @@ public class ControllerStmtParserTest {
         assertTrue(checked);
     }
 
-    private static void configModuleTest(final SchemaContext context) throws ParseException,
-            URISyntaxException {
-        final Module configModule = context.findModule("config", QName.parseRevision("2013-04-05")).get();
+    private static void configModuleTest(final SchemaContext context) {
+        final Module configModule = context.findModule("config", Revision.valueOf("2013-04-05")).get();
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
-            QName.parseRevision("2013-10-28")).get();
+            Revision.valueOf("2013-10-28")).get();
 
         final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
             "modules"));
@@ -138,9 +135,8 @@ public class ControllerStmtParserTest {
         assertEquals(1, typeUnknownSchemaNodes.size());
 
         final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.get(0);
-        final QNameModule qNameModule = QNameModule
-                .create(new URI("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"),
-                    QName.parseRevision("2013-10-28"));
+        final QNameModule qNameModule = QNameModule.create(
+            URI.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.valueOf("2013-10-28"));
         final QName qName = QName.create(qNameModule, "schema-service");
 
         assertEquals(qName, typeUnknownSchemaNode.getQName());

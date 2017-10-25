@@ -6,7 +6,7 @@ module test {
 
     organization "Cisco Systems, Inc.";
 
-    revision "2014-3-13" {
+    revision "2014-03-13" {
         description
             "Initial revision";
     }

@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -63,7 +64,7 @@ public class Bug5446Test extends XMLTestCase {
     private final SchemaContext schemaContext;
 
     public Bug5446Test() throws Exception {
-        fooModuleQName = QNameModule.create(new URI("foo"), QName.parseRevision("2015-11-05"));
+        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.valueOf("2015-11-05"));
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 

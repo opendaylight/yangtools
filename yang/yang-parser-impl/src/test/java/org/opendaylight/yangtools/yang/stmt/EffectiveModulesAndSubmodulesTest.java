@@ -169,7 +169,7 @@ public class EffectiveModulesAndSubmodulesTest {
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
         final Module foundRoot = result.findModule("root-module").get();
         final Set<Module> foundRoots = result.findModules(URI.create("root-module"));
-        final Module foundRoot3 = result.findModule(URI.create("root-module"), null).get();
+        final Module foundRoot3 = result.findModule(URI.create("root-module")).get();
 
         assertNotNull(foundRoot);
         assertNotNull(foundRoots);
@@ -185,7 +185,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
         final Module foundImported = result.findModule("imported-module").get();
         final Set<Module> foundImporteds = result.findModules(URI.create("imported-module"));
-        final Module foundImported3 = result.findModule(URI.create("imported-module"), null).get();
+        final Module foundImported3 = result.findModule(URI.create("imported-module")).get();
 
         assertNotNull(foundImported);
         assertNotNull(foundImporteds);

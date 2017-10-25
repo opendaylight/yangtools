@@ -28,7 +28,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -55,8 +55,7 @@ public class EnumValueXPathFunctionTest {
     public static void setup() throws ParseException {
         jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
 
-        fooModule = QNameModule.create(URI.create("foo-ns"),
-                SimpleDateFormatUtil.getRevisionFormat().parse("2017-04-03"));
+        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.valueOf("2017-04-03"));
         myContainer = QName.create(fooModule, "my-container");
         alarm = QName.create(fooModule, "alarm");
         severity = QName.create(fooModule, "severity");

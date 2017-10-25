@@ -18,17 +18,14 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -57,10 +54,8 @@ public class NormalizedNodeWriterTest {
     private QName myLeafList;
 
     @Before
-    public void setUp() throws URISyntaxException, ParseException, UnsupportedEncodingException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), SimpleDateFormatUtil.getRevisionFormat()
-                .parse("1970-01-01"));
-
+    public void setUp() {
+        bazModule = QNameModule.create(URI.create("baz-namespace"), Revision.valueOf("1970-01-01"));
         myKeyedList = QName.create(bazModule, "my-keyed-list");
         myKeyLeaf = QName.create(bazModule, "my-key-leaf");
         myLeafList = QName.create(bazModule, "my-leaf-list");
