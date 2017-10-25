@@ -54,12 +54,12 @@ public final class EffectiveAugmentationSchema implements AugmentationSchema {
     }
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return delegate.getDescription();
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return delegate.getReference();
     }
 

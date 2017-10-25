@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,12 +32,12 @@ public final class RpcAsContainer implements ContainerSchemaNode {
     private final RpcDefinition delegate;
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return delegate.getDescription();
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return delegate.getReference();
     }
 

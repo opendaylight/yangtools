@@ -11,10 +11,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -102,13 +102,13 @@ public final class ContainerSchemaNodes {
 
         @Nullable
         @Override
-        public String getDescription() {
+        public Optional<String> getDescription() {
             return schemaNode.getDescription();
         }
 
         @Nullable
         @Override
-        public String getReference() {
+        public Optional<String> getReference() {
             return schemaNode.getReference();
         }
 
@@ -165,7 +165,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             switch (name.getLocalName()) {
                 case "input":
                     return rpcDefinition.getInput();
@@ -219,7 +219,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return mapNodes.get(name);
         }
 

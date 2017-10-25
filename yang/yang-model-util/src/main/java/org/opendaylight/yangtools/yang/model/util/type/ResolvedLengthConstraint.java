@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.RangeSet;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
@@ -24,7 +25,7 @@ final class ResolvedLengthConstraint implements LengthConstraint {
     }
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return meta.getDescription();
     }
 
@@ -39,7 +40,7 @@ final class ResolvedLengthConstraint implements LengthConstraint {
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return meta.getReference();
     }
 

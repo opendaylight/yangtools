@@ -96,13 +96,13 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override
@@ -129,9 +129,9 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("moduleName", getModuleName())
-                .add("revision", getRevision()).add("semantic version", getSemanticVersion())
-                .add("prefix", getPrefix()).add("description", getDescription())
-                .add("reference", getReference()).toString();
+        return MoreObjects.toStringHelper(this).omitNullValues().add("moduleName", getModuleName())
+                .add("revision", revision).add("semantic version", semVer)
+                .add("prefix", prefix).add("description", description)
+                .add("reference", reference).toString();
     }
 }

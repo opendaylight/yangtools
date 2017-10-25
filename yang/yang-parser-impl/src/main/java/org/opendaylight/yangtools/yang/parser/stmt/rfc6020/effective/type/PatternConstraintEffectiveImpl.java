@@ -27,15 +27,16 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
 
     public PatternConstraintEffectiveImpl(final String regex, final String rawRegex,
             final Optional<String> description, final Optional<String> reference) {
-        this(regex, rawRegex, description.orElse(null), reference.orElse(null), null, null, null);
+        this(regex, rawRegex, description, reference, null, null, null);
     }
 
-    public PatternConstraintEffectiveImpl(final String regex, final String rawRegex, final String description,
-            final String reference, final String errorAppTag, final String errorMessage, final ModifierKind modifier) {
+    public PatternConstraintEffectiveImpl(final String regex, final String rawRegex, final Optional<String> description,
+            final Optional<String> reference, final String errorAppTag, final String errorMessage,
+            final ModifierKind modifier) {
         this.regEx = requireNonNull(regex, "regex must not be null");
         this.rawRegEx = requireNonNull(rawRegex, "raw regex must not be null");
-        this.description = description;
-        this.reference = reference;
+        this.description = description.orElse(null);
+        this.reference = reference.orElse(null);
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
         this.errorMessage = errorMessage != null ? errorMessage : String.format(
                 "Supplied value does not match the regular expression %s.", regex);
@@ -53,8 +54,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
@@ -73,8 +74,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

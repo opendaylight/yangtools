@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -64,8 +63,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                 final Number rMin = min instanceof UnresolvedNumber
                     ?  ((UnresolvedNumber)min).resolveRange(baseRangeConstraints) : min;
 
-                builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, Optional.ofNullable(c.getDescription()),
-                    Optional.ofNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
+                builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, c.getDescription(), c.getReference(),
+                    c.getErrorAppTag(), c.getErrorMessage()));
             } else {
                 builder.add(c);
             }
@@ -105,8 +104,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                     throw new IllegalArgumentException(String.format("Constraint %s does not fit into range of %s",
                         c, clazz.getSimpleName()), e);
                 }
-                builder.add(BaseConstraints.newRangeConstraint(min, max, Optional.ofNullable(c.getDescription()),
-                    Optional.ofNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
+                builder.add(BaseConstraints.newRangeConstraint(min, max, c.getDescription(), c.getReference(),
+                    c.getErrorAppTag(), c.getErrorMessage()));
             } else {
                 builder.add(c);
             }

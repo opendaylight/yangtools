@@ -11,7 +11,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -65,7 +64,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
     </code>
  */
 @Immutable
-public interface Module extends DataNodeContainer, NotificationNodeContainer {
+public interface Module extends DataNodeContainer, DocumentedNode, NotificationNodeContainer {
     /**
      * Returns the name of the module which is specified as argument of YANG
      * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
@@ -137,31 +136,13 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
     YangVersion getYangVersion();
 
     /**
-     * Returns the module description.
-     *
-     * @return string with the module description which is specified as argument
-     *         of YANG {@link Module <b><font
-     *         color="#b8860b">description</font></b>} keyword
-     */
-    String getDescription();
-
-    /**
-     * Returns the module reference.
-     *
-     * @return string with the module reference which is specified as argument
-     *         of YANG {@link Module <b><font
-     *         color="#008b8b">reference</font></b>} keyword
-     */
-    String getReference();
-
-    /**
      * Returns the module organization.
      *
      * @return string with the name of the organization specified in the module
      *         as the argument of YANG {@link Module <b><font
      *         color="#606060">organization</font></b>} keyword
      */
-    String getOrganization();
+    Optional<String> getOrganization();
 
     /**
      * Returns the module contact.
@@ -175,7 +156,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         argument of YANG {@link Module <b><font
      *         color="#FF9900">contact</font></b>} keyword
      */
-    String getContact();
+    Optional<String> getContact();
 
     /**
      * Returns imports which represents YANG modules which are imported to this
@@ -254,12 +235,4 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         lexicographically ordered
      */
     List<ExtensionDefinition> getExtensionSchemaNodes();
-
-    /**
-     * Returns unknown nodes defined in module.
-     *
-     * @return unknown nodes in lexicographical order
-     */
-    @Nonnull
-    List<UnknownSchemaNode> getUnknownSchemaNodes();
 }

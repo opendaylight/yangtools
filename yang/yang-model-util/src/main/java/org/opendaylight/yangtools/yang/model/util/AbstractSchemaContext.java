@@ -146,13 +146,13 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public String getDescription() {
-        return null;
+    public Optional<String> getDescription() {
+        return Optional.empty();
     }
 
     @Override
-    public String getReference() {
-        return null;
+    public Optional<String> getReference() {
+        return Optional.empty();
     }
 
     @Nonnull
