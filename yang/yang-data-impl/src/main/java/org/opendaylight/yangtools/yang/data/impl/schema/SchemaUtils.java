@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -133,15 +133,16 @@ public final class SchemaUtils {
                 childPartialQName, schema));
     }
 
-    public static AugmentationSchema findSchemaForAugment(final AugmentationTarget schema, final Set<QName> qnames) {
-        final Optional<AugmentationSchema> schemaForAugment = findAugment(schema, qnames);
+    public static AugmentationSchemaNode findSchemaForAugment(final AugmentationTarget schema,
+            final Set<QName> qnames) {
+        final Optional<AugmentationSchemaNode> schemaForAugment = findAugment(schema, qnames);
         Preconditions.checkState(schemaForAugment.isPresent(),
             "Unknown augmentation node detected, identified by: %s, in: %s", qnames, schema);
         return schemaForAugment.get();
     }
 
-    public static AugmentationSchema findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qnames) {
-        Optional<AugmentationSchema> schemaForAugment = Optional.empty();
+    public static AugmentationSchemaNode findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qnames) {
+        Optional<AugmentationSchemaNode> schemaForAugment = Optional.empty();
 
         for (final ChoiceCaseNode choiceCaseNode : schema.getCases()) {
             schemaForAugment = findAugment(choiceCaseNode, qnames);
@@ -155,8 +156,9 @@ public final class SchemaUtils {
         return schemaForAugment.get();
     }
 
-    private static Optional<AugmentationSchema> findAugment(final AugmentationTarget schema, final Set<QName> qnames) {
-        for (final AugmentationSchema augment : schema.getAvailableAugmentations()) {
+    private static Optional<AugmentationSchemaNode> findAugment(final AugmentationTarget schema,
+            final Set<QName> qnames) {
+        for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
             final Set<QName> qNamesFromAugment = ImmutableSet.copyOf(Collections2.transform(augment.getChildNodes(),
                 DataSchemaNode::getQName));
 
@@ -205,8 +207,8 @@ public final class SchemaUtils {
             return false;
         }
 
-        for (final AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
-            if (augmentationSchema.getDataChildByName(childSchema.getQName()) != null) {
+        for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+            if (augmentation.getDataChildByName(childSchema.getQName()) != null) {
                 return true;
             }
         }
@@ -220,13 +222,13 @@ public final class SchemaUtils {
      * @param schema schema
      * @return Map with all child nodes, to their most top augmentation
      */
-    public static Map<QName, AugmentationSchema> mapChildElementsFromAugments(final AugmentationTarget schema) {
+    public static Map<QName, AugmentationSchemaNode> mapChildElementsFromAugments(final AugmentationTarget schema) {
 
-        final Map<QName, AugmentationSchema> childNodesToAugmentation = new LinkedHashMap<>();
+        final Map<QName, AugmentationSchemaNode> childNodesToAugmentation = new LinkedHashMap<>();
 
         // Find QNames of augmented child nodes
-        final Map<QName, AugmentationSchema> augments = new HashMap<>();
-        for (final AugmentationSchema augmentationSchema : schema.getAvailableAugmentations()) {
+        final Map<QName, AugmentationSchemaNode> augments = new HashMap<>();
+        for (final AugmentationSchemaNode augmentationSchema : schema.getAvailableAugmentations()) {
             for (final DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
                 augments.put(dataSchemaNode.getQName(), augmentationSchema);
             }
@@ -242,10 +244,10 @@ public final class SchemaUtils {
                     continue;
                 }
 
-                final AugmentationSchema mostTopAugmentation = augments.get(child.getQName());
+                final AugmentationSchemaNode mostTopAugmentation = augments.get(child.getQName());
 
                 // recursively add all child nodes in case of augment, case and choice
-                if (child instanceof AugmentationSchema || child instanceof ChoiceCaseNode) {
+                if (child instanceof AugmentationSchemaNode || child instanceof ChoiceCaseNode) {
                     for (final QName qname : getChildNodesRecursive((DataNodeContainer) child)) {
                         childNodesToAugmentation.put(qname, mostTopAugmentation);
                     }
@@ -291,7 +293,7 @@ public final class SchemaUtils {
                 for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases()) {
                     allChildNodes.addAll(getChildNodesRecursive(choiceCaseNode));
                 }
-            } else if (childSchema instanceof AugmentationSchema || childSchema instanceof ChoiceCaseNode) {
+            } else if (childSchema instanceof AugmentationSchemaNode || childSchema instanceof ChoiceCaseNode) {
                 allChildNodes.addAll(getChildNodesRecursive((DataNodeContainer) childSchema));
             } else {
                 allChildNodes.add(childSchema.getQName());
@@ -313,7 +315,7 @@ public final class SchemaUtils {
      * @return set of nodes
      */
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema,
-            final AugmentationSchema augmentSchema) {
+            final AugmentationSchemaNode augmentSchema) {
         if (!targetSchema.getAvailableAugmentations().contains(augmentSchema)) {
             return Collections.emptySet();
         }
@@ -335,7 +337,7 @@ public final class SchemaUtils {
     }
 
     public static Set<DataSchemaNode> getRealSchemasForAugment(final DataNodeContainer targetSchema,
-            final AugmentationSchema augmentSchema) {
+            final AugmentationSchemaNode augmentSchema) {
         final Set<DataSchemaNode> realChildNodes = new HashSet<>();
         for (final DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
             final DataSchemaNode realChild = targetSchema.getDataChildByName(dataSchemaNode.getQName());
@@ -360,7 +362,7 @@ public final class SchemaUtils {
 
     public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode,
             final AugmentationIdentifier childToProcess) {
-        for (final AugmentationSchema augmentationSchema : caseNode.getAvailableAugmentations()) {
+        for (final AugmentationSchemaNode augmentationSchema : caseNode.getAvailableAugmentations()) {
 
             final Set<QName> currentAugmentChildNodes = new HashSet<>();
             for (final DataSchemaNode dataSchemaNode : augmentationSchema.getChildNodes()) {
@@ -383,19 +385,22 @@ public final class SchemaUtils {
      * @param child child node
      * @return augmentation schema
      */
-    public static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent, final DataSchemaNode child) {
-        if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
-            for (final AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-                final DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
-                if (childInAugmentation != null) {
-                    return augmentation;
-                }
+    public static AugmentationSchemaNode findCorrespondingAugment(final DataSchemaNode parent,
+            final DataSchemaNode child) {
+        if (!(parent instanceof AugmentationTarget) || parent instanceof ChoiceSchemaNode) {
+            return null;
+        }
+
+        for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
+            final DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
+            if (childInAugmentation != null) {
+                return augmentation;
             }
         }
         return null;
     }
 
-    public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchema schema) {
+    public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchemaNode schema) {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
         return new AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }

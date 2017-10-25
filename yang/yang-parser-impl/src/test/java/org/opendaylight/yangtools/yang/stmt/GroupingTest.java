@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -377,9 +377,9 @@ public class GroupingTest {
         assertFalse(node_u.equals(node_g));
 
         final UsesNode un = uses.iterator().next();
-        final Set<AugmentationSchema> usesAugments = un.getAugmentations();
+        final Set<AugmentationSchemaNode> usesAugments = un.getAugmentations();
         assertEquals(1, usesAugments.size());
-        final AugmentationSchema augment = usesAugments.iterator().next();
+        final AugmentationSchemaNode augment = usesAugments.iterator().next();
         assertEquals("inner augment", augment.getDescription());
         final Collection<DataSchemaNode> children = augment.getChildNodes();
         assertEquals(1, children.size());

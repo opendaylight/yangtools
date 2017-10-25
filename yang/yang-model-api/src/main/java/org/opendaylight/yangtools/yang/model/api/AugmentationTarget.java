@@ -20,5 +20,5 @@ public interface AugmentationTarget {
      *
      * @return set of augmentations targeting this element.
      */
-    Set<AugmentationSchema> getAvailableAugmentations();
+    Set<AugmentationSchemaNode> getAvailableAugmentations();
 }

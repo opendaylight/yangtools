@@ -18,7 +18,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NamespaceRevisionAware;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 public final class AugmentEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentationSchema, NamespaceRevisionAware {
+        implements AugmentationSchemaNode, NamespaceRevisionAware {
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Revision revision;
@@ -40,7 +40,7 @@ public final class AugmentEffectiveStatementImpl
     private final Set<NotificationDefinition> notifications;
     private final List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
-    private final AugmentationSchema copyOf;
+    private final AugmentationSchemaNode copyOf;
 
     public AugmentEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement,
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
@@ -52,7 +52,7 @@ public final class AugmentEffectiveStatementImpl
         this.namespace = rootModuleQName.getNamespace();
         this.revision = rootModuleQName.getRevision().orElse(null);
 
-        this.copyOf = (AugmentationSchema) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
         this.whenCondition = whenStmt == null ? null : whenStmt.argument();
@@ -77,7 +77,7 @@ public final class AugmentEffectiveStatementImpl
     }
 
     @Override
-    public Optional<AugmentationSchema> getOriginalDefinition() {
+    public Optional<AugmentationSchemaNode> getOriginalDefinition() {
         return Optional.ofNullable(this.copyOf);
     }
 

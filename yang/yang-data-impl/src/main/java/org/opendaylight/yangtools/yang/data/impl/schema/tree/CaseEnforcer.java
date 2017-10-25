@@ -24,17 +24,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class CaseEnforcer implements Immutable {
     private final Map<NodeIdentifier, DataSchemaNode> children;
-    private final Map<AugmentationIdentifier, AugmentationSchema> augmentations;
+    private final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations;
     private final MandatoryLeafEnforcer enforcer;
 
     private CaseEnforcer(final Map<NodeIdentifier, DataSchemaNode> children,
-                         final Map<AugmentationIdentifier, AugmentationSchema> augmentations,
+                         final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations,
                          final MandatoryLeafEnforcer enforcer) {
         this.children = Preconditions.checkNotNull(children);
         this.augmentations = Preconditions.checkNotNull(augmentations);
@@ -44,14 +44,14 @@ final class CaseEnforcer implements Immutable {
     static CaseEnforcer forTree(final ChoiceCaseNode schema, final DataTreeConfiguration treeConfig) {
         final TreeType type = treeConfig.getTreeType();
         final Builder<NodeIdentifier, DataSchemaNode> childrenBuilder = ImmutableMap.builder();
-        final Builder<AugmentationIdentifier, AugmentationSchema> augmentationsBuilder = ImmutableMap.builder();
+        final Builder<AugmentationIdentifier, AugmentationSchemaNode> augmentationsBuilder = ImmutableMap.builder();
         if (SchemaAwareApplyOperation.belongsToTree(type, schema)) {
             for (final DataSchemaNode child : schema.getChildNodes()) {
                 if (SchemaAwareApplyOperation.belongsToTree(type, child)) {
                     childrenBuilder.put(NodeIdentifier.create(child.getQName()), child);
                 }
             }
-            for (final AugmentationSchema augment : schema.getAvailableAugmentations()) {
+            for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
                 if (augment.getChildNodes().stream()
                         .anyMatch(child -> SchemaAwareApplyOperation.belongsToTree(type, child))) {
                     augmentationsBuilder.put(SchemaUtils.getNodeIdentifierForAugmentation(augment), augment);
@@ -60,7 +60,7 @@ final class CaseEnforcer implements Immutable {
         }
 
         final Map<NodeIdentifier, DataSchemaNode> children = childrenBuilder.build();
-        final Map<AugmentationIdentifier, AugmentationSchema> augmentations = augmentationsBuilder.build();
+        final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations = augmentationsBuilder.build();
         return children.isEmpty() ? null
                 : new CaseEnforcer(children, augmentations, MandatoryLeafEnforcer.forContainer(schema, treeConfig));
     }
@@ -73,7 +73,7 @@ final class CaseEnforcer implements Immutable {
         return children.keySet();
     }
 
-    Set<Entry<AugmentationIdentifier, AugmentationSchema>> getAugmentationEntries() {
+    Set<Entry<AugmentationIdentifier, AugmentationSchemaNode>> getAugmentationEntries() {
         return augmentations.entrySet();
     }
 

@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -45,9 +45,9 @@ public class ControllerStmtParserTest {
         final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
             Revision.valueOf("2013-10-28")).get();
 
-        final Set<AugmentationSchema> augmentations = module.getAugmentations();
+        final Set<AugmentationSchemaNode> augmentations = module.getAugmentations();
         boolean checked = false;
-        for (final AugmentationSchema augmentationSchema : augmentations) {
+        for (final AugmentationSchemaNode augmentationSchema : augmentations) {
             final DataSchemaNode dataNode = augmentationSchema
                     .getDataChildByName(QName.create(module.getQNameModule(), "dom-broker-impl"));
             if (dataNode instanceof ChoiceCaseNode) {

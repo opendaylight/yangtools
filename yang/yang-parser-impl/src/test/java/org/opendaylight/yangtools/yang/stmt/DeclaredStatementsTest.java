@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -223,11 +223,11 @@ public class DeclaredStatementsTest {
         final Module testModule = schemaContext.findModules("augment-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final Set<AugmentationSchema> augmentationSchemas = testModule.getAugmentations();
+        final Set<AugmentationSchemaNode> augmentationSchemas = testModule.getAugmentations();
         assertNotNull(augmentationSchemas);
         assertEquals(1, augmentationSchemas.size());
 
-        final AugmentationSchema augmentationSchema = augmentationSchemas.iterator().next();
+        final AugmentationSchemaNode augmentationSchema = augmentationSchemas.iterator().next();
         final AugmentStatement augmentStatement = ((AugmentEffectiveStatementImpl) augmentationSchema).getDeclared();
 
         final SchemaNodeIdentifier targetNode = augmentStatement.getTargetNode();

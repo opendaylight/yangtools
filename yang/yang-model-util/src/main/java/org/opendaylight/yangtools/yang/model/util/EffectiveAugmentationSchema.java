@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -30,12 +30,12 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
  *
  */
-public final class EffectiveAugmentationSchema implements AugmentationSchema {
-    private final AugmentationSchema delegate;
+public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
+    private final AugmentationSchemaNode delegate;
     private final Set<DataSchemaNode> realChildSchemas;
     private final Map<QName, DataSchemaNode> mappedChildSchemas;
 
-    public EffectiveAugmentationSchema(final AugmentationSchema augmentSchema,
+    public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Set<DataSchemaNode> realChildSchemas) {
         this.delegate = Preconditions.checkNotNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
@@ -104,7 +104,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchema {
     }
 
     @Override
-    public Optional<AugmentationSchema> getOriginalDefinition() {
+    public Optional<AugmentationSchemaNode> getOriginalDefinition() {
         return delegate.getOriginalDefinition();
     }
 }

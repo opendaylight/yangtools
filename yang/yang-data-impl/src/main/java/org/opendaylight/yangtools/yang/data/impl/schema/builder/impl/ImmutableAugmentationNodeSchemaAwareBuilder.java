@@ -13,13 +13,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmentationNodeBuilder {
 
     private final DataNodeContainerValidator validator;
 
-    protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchema schema) {
+    protected ImmutableAugmentationNodeSchemaAwareBuilder(final AugmentationSchemaNode schema) {
         this.validator = new DataNodeContainerValidator(schema);
         super.withNodeIdentifier(SchemaUtils.getNodeIdentifierForAugmentation(schema));
     }
@@ -37,7 +37,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
     }
 
     public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
-            final AugmentationSchema schema) {
+            final AugmentationSchemaNode schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }
 }

@@ -212,7 +212,7 @@ public interface Module extends DataNodeContainer, NotificationNodeContainer {
      *         color="#dc143c">augment</font></b>} keyword and are
      *         lexicographically ordered
      */
-    Set<AugmentationSchema> getAugmentations();
+    Set<AugmentationSchemaNode> getAugmentations();
 
     /**
      * Returns <code>RpcDefinition</code> instances which contain data from

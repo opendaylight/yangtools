@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -64,7 +64,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         super(identifier);
     }
 
-    private static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchema augmentation) {
+    private static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode augmentation) {
         final ImmutableSet.Builder<QName> potentialChildren = ImmutableSet.builder();
         for (final DataSchemaNode child : augmentation.getChildNodes()) {
             potentialChildren.add(child.getQName());
@@ -72,7 +72,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    private static DataNodeContainer augmentationProxy(final AugmentationSchema augmentation,
+    private static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
             final DataNodeContainer schema) {
         final Set<DataSchemaNode> children = new HashSet<>();
         for (final DataSchemaNode augNode : augmentation.getChildNodes()) {
@@ -266,7 +266,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     }
 
     static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
-        AugmentationNormalization(final AugmentationSchema augmentation, final DataNodeContainer schema) {
+        AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
             super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema));
         }
 

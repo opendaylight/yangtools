@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -45,7 +45,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     /**
      * nodes which were added to schema via augmentation and are present in data input.
      */
-    private final Multimap<AugmentationSchema, AbstractNodeDataWithSchema> augmentationsToChild =
+    private final Multimap<AugmentationSchemaNode, AbstractNodeDataWithSchema> augmentationsToChild =
         ArrayListMultimap.create();
 
     /**
@@ -87,7 +87,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             "Expected node of type ChoiceCaseNode but was %s", caseCandidate.getClass().getSimpleName());
         final ChoiceCaseNode caseNode = (ChoiceCaseNode) caseCandidate;
 
-        AugmentationSchema augSchema = null;
+        AugmentationSchemaNode augSchema = null;
         if (choiceCandidate.isAugmenting()) {
             augSchema = findCorrespondingAugment(getSchema(), choiceCandidate);
         }
@@ -124,7 +124,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             return null;
         }
 
-        AugmentationSchema augSchema = null;
+        AugmentationSchemaNode augSchema = null;
         if (schema.isAugmenting()) {
             augSchema = findCorrespondingAugment(getSchema(), schema);
         }
@@ -176,7 +176,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
-        AugmentationSchema augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
+        AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
         } else {
@@ -197,7 +197,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         for (AbstractNodeDataWithSchema child : children) {
             child.write(writer);
         }
-        for (Entry<AugmentationSchema, Collection<AbstractNodeDataWithSchema>> augmentationToChild
+        for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema>> augmentationToChild
                 : augmentationsToChild.asMap().entrySet()) {
             final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
@@ -221,10 +221,10 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
      * @param child child node
      * @return augmentation schema
      */
-    private static AugmentationSchema findCorrespondingAugment(final DataSchemaNode parent,
+    private static AugmentationSchemaNode findCorrespondingAugment(final DataSchemaNode parent,
             final DataSchemaNode child) {
         if (parent instanceof AugmentationTarget && !(parent instanceof ChoiceSchemaNode)) {
-            for (AugmentationSchema augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
+            for (AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
                 DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
                 if (childInAugmentation != null) {
                     return augmentation;
@@ -235,7 +235,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(
-            final AugmentationSchema schema) {
+            final AugmentationSchemaNode schema) {
         final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
         return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
     }

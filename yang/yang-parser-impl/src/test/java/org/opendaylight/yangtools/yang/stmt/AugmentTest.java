@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -60,9 +60,9 @@ public class AugmentTest {
 
         // foo.yang
         final Module module1 = TestUtils.findModule(context, "foo").get();
-        Set<AugmentationSchema> augmentations = module1.getAugmentations();
+        Set<AugmentationSchemaNode> augmentations = module1.getAugmentations();
         assertEquals(1, augmentations.size());
-        final AugmentationSchema augment = augmentations.iterator().next();
+        final AugmentationSchemaNode augment = augmentations.iterator().next();
         assertNotNull(augment);
 
         SchemaPath expectedSchemaPath = SchemaPath.create(qnames, true);
@@ -129,10 +129,10 @@ public class AugmentTest {
         final Module module3 = TestUtils.findModule(context, "baz").get();
         augmentations = module3.getAugmentations();
         assertEquals(3, augmentations.size());
-        AugmentationSchema augment1 = null;
-        AugmentationSchema augment2 = null;
-        AugmentationSchema augment3 = null;
-        for (final AugmentationSchema as : augmentations) {
+        AugmentationSchemaNode augment1 = null;
+        AugmentationSchemaNode augment2 = null;
+        AugmentationSchemaNode augment3 = null;
+        for (final AugmentationSchemaNode as : augmentations) {
             if (as.getWhenCondition() == null) {
                 augment3 = as;
             } else if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
@@ -420,7 +420,7 @@ public class AugmentTest {
                 "nodes"));
         final ContainerSchemaNode node = (ContainerSchemaNode) nodes.getDataChildByName(QName.create(
                 test.getQNameModule(), "node"));
-        final Set<AugmentationSchema> augments = node.getAvailableAugmentations();
+        final Set<AugmentationSchemaNode> augments = node.getAvailableAugmentations();
         assertEquals(1, augments.size());
         assertEquals(1, node.getChildNodes().size());
         final LeafSchemaNode id = (LeafSchemaNode) node.getDataChildByName(QName.create(test.getQNameModule(), "id"));

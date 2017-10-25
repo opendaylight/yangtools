@@ -19,7 +19,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -145,7 +145,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<AugmentationSchema> getAvailableAugmentations() {
+        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
             return ImmutableSet.of();
         }
 
@@ -199,7 +199,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<AugmentationSchema> getAvailableAugmentations() {
+        public Set<AugmentationSchemaNode> getAvailableAugmentations() {
             return notification.getAvailableAugmentations();
         }
 

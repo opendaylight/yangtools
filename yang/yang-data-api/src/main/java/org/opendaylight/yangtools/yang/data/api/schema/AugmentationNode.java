@@ -11,15 +11,14 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 
 /**
  * Data instance of <code>augment</code> associated with parent node.
  *
  * <p>
- * Augmentation is addition of subtree defined by other external YANG Model and
- * is schema for subtree is described by instance of  {@link AugmentationSchema}
- * associated with parent node of this node.
+ * Augmentation is addition of subtree defined by other external YANG Model and is schema for subtree is described
+ * by an instance of {@link AugmentationSchemaNode} associated with parent node of this node.
  *
  * <p>
  * Augmentation node MUST NOT be direct child of other augmentation node.

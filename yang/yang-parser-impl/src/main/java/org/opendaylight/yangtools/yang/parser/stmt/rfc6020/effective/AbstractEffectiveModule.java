@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -65,7 +65,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final Set<ModuleImport> imports;
     private final Set<FeatureDefinition> features;
     private final Set<NotificationDefinition> notifications;
-    private final Set<AugmentationSchema> augmentations;
+    private final Set<AugmentationSchemaNode> augmentations;
     private final Set<RpcDefinition> rpcs;
     private final Set<Deviation> deviations;
     private final List<ExtensionDefinition> extensionNodes;
@@ -176,7 +176,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         effectiveSubstatements.addAll(substatementsOfSubmodules);
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
-        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final Set<ModuleImport> importsInit = new HashSet<>();
         final Set<NotificationDefinition> notificationsInit = new HashSet<>();
         final Set<RpcDefinition> rpcsInit = new HashSet<>();
@@ -195,8 +195,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownNodesInit.add((UnknownSchemaNode) effectiveStatement);
             }
-            if (effectiveStatement instanceof AugmentationSchema) {
-                augmentationsInit.add((AugmentationSchema) effectiveStatement);
+            if (effectiveStatement instanceof AugmentationSchemaNode) {
+                augmentationsInit.add((AugmentationSchemaNode) effectiveStatement);
             }
             if (effectiveStatement instanceof ModuleImport) {
                 importsInit.add((ModuleImport) effectiveStatement);
@@ -331,7 +331,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public Set<AugmentationSchema> getAugmentations() {
+    public Set<AugmentationSchemaNode> getAugmentations() {
         return augmentations;
     }
 

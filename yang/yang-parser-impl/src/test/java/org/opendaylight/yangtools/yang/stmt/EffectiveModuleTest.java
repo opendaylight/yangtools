@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -79,7 +79,7 @@ public class EffectiveModuleTest {
         final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(CONT);
         assertNotNull(contSchemaNode);
 
-        final Set<AugmentationSchema> augmentations = rootModule.getAugmentations();
+        final Set<AugmentationSchemaNode> augmentations = rootModule.getAugmentations();
         assertEquals(1, augmentations.size());
         assertEquals(CONT_SCHEMA_PATH, augmentations.iterator().next().getTargetPath());
 

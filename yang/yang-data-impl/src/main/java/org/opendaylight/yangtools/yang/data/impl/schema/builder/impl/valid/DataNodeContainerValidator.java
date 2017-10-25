@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -31,12 +31,11 @@ public class DataNodeContainerValidator {
 
     public DataNodeContainerValidator(final DataNodeContainer schema) {
         this.schema = Preconditions.checkNotNull(schema, "Schema was null");
-
         this.childNodes = getChildNodes(schema);
 
         if (schema instanceof AugmentationTarget) {
-            for (AugmentationSchema augmentationSchema : ((AugmentationTarget) schema).getAvailableAugmentations()) {
-                augments.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentationSchema));
+            for (AugmentationSchemaNode augmentation : ((AugmentationTarget) schema).getAvailableAugmentations()) {
+                augments.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentation));
             }
         }
     }
@@ -68,7 +67,7 @@ public class DataNodeContainerValidator {
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if (childSchema instanceof ChoiceCaseNode) {
                 allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
-            } else if (!(childSchema instanceof AugmentationSchema)) {
+            } else if (!(childSchema instanceof AugmentationSchemaNode)) {
                 allChildNodes.add(childSchema.getQName());
             }
         }

@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -142,7 +142,7 @@ public class YangParserTest {
         assertEquals(1, (int) constraints.getMinElements());
         assertEquals(11, (int) constraints.getMaxElements());
         // test AugmentationTarget args
-        final Set<AugmentationSchema> availableAugmentations = ifEntry.getAvailableAugmentations();
+        final Set<AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
         // test ListSchemaNode args
         final List<QName> expectedKey = new ArrayList<>();

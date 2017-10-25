@@ -18,7 +18,7 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -43,11 +43,11 @@ public class YinFileUsesStmtTest {
         final Module testModule = TestUtils.findModule(context, "main-impl").get();
         assertNotNull(testModule);
 
-        final Set<AugmentationSchema> augmentations = testModule.getAugmentations();
+        final Set<AugmentationSchemaNode> augmentations = testModule.getAugmentations();
         assertEquals(1, augmentations.size());
 
-        final Iterator<AugmentationSchema> augmentIterator = augmentations.iterator();
-        final AugmentationSchema augment = augmentIterator.next();
+        final Iterator<AugmentationSchemaNode> augmentIterator = augmentations.iterator();
+        final AugmentationSchemaNode augment = augmentIterator.next();
 
         final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(
             QName.create(testModule.getQNameModule(), "main-impl"));

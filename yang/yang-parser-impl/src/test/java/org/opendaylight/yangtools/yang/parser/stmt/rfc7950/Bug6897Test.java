@@ -16,7 +16,7 @@ import java.util.HashSet;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -46,7 +46,7 @@ public class Bug6897Test {
         final Set<Module> modules = schemaContext.getModules();
         assertEquals(1, modules.size());
         final Module foo = modules.iterator().next();
-        final Set<AugmentationSchema> augmentations = foo.getAugmentations();
+        final Set<AugmentationSchemaNode> augmentations = foo.getAugmentations();
         assertEquals(1, augmentations.size());
         assertContainsNotifications(augmentations.iterator().next(), "aug-notification", "grp-notification");
     }

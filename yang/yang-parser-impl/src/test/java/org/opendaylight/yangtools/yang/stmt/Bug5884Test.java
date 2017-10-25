@@ -15,7 +15,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -40,18 +40,18 @@ public class Bug5884Test {
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
             testContainerQname);
         final ChoiceSchemaNode dataChildByName = (ChoiceSchemaNode) testContainer.getDataChildByName(choice);
-        final Set<AugmentationSchema> augmentations = foo.getAugmentations();
-        final Set<AugmentationSchema> availableAugmentations = dataChildByName.getAvailableAugmentations();
-        final Iterator<AugmentationSchema> iterator = augmentations.iterator();
-        final Iterator<AugmentationSchema> availableIterator = availableAugmentations.iterator();
+        final Set<AugmentationSchemaNode> augmentations = foo.getAugmentations();
+        final Set<AugmentationSchemaNode> availableAugmentations = dataChildByName.getAvailableAugmentations();
+        final Iterator<AugmentationSchemaNode> iterator = augmentations.iterator();
+        final Iterator<AugmentationSchemaNode> availableIterator = availableAugmentations.iterator();
 
         testIterator(iterator);
         testIterator(availableIterator);
     }
 
-    private static void testIterator(final Iterator<AugmentationSchema> iterator) {
+    private static void testIterator(final Iterator<AugmentationSchemaNode> iterator) {
         while (iterator.hasNext()) {
-            AugmentationSchema allAugments = iterator.next();
+            AugmentationSchemaNode allAugments = iterator.next();
             final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();
             assertTrue(currentChoice instanceof ChoiceCaseNode);
         }

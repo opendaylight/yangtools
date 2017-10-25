@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -138,7 +138,7 @@ public class NormalizedDataBuilderTest {
         builder.withChild(list);
 
         LeafSchemaNode augmentUint32SchemaNode = (LeafSchemaNode) getSchemaNode(schema, "test", "augmentUint32");
-        AugmentationSchema augmentationSchema = getAugmentationSchemaForChild(containerNode,
+        AugmentationSchemaNode augmentationSchema = getAugmentationSchemaForChild(containerNode,
                 augmentUint32SchemaNode.getQName());
 
         AugmentationNode augmentation = Builders.augmentationBuilder(augmentationSchema)
@@ -168,9 +168,9 @@ public class NormalizedDataBuilderTest {
         // .build());
     }
 
-    private static AugmentationSchema getAugmentationSchemaForChild(final ContainerSchemaNode containerNode,
+    private static AugmentationSchemaNode getAugmentationSchemaForChild(final ContainerSchemaNode containerNode,
             final QName qname) {
-        for (AugmentationSchema augmentationSchema : containerNode.getAvailableAugmentations()) {
+        for (AugmentationSchemaNode augmentationSchema : containerNode.getAvailableAugmentations()) {
             if (augmentationSchema.getDataChildByName(qname) != null) {
                 return augmentationSchema;
             }

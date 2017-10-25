@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -32,7 +32,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private final String defaultCase;
 
     private final Set<ChoiceCaseNode> cases;
-    private final Set<AugmentationSchema> augmentations;
+    private final Set<AugmentationSchemaNode> augmentations;
 
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
@@ -43,12 +43,12 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         this.defaultCase = defaultStmt == null ? null : defaultStmt.argument();
 
         // initSubstatementCollectionsAndFields
-        final Set<AugmentationSchema> augmentationsInit = new LinkedHashSet<>();
+        final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
         final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>((o1, o2) -> o1.getQName().compareTo(o2.getQName()));
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof AugmentationSchema) {
-                final AugmentationSchema augmentationSchema = (AugmentationSchema) effectiveStatement;
+            if (effectiveStatement instanceof AugmentationSchemaNode) {
+                final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
             if (effectiveStatement instanceof ChoiceCaseNode) {
@@ -94,7 +94,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     }
 
     @Override
-    public Set<AugmentationSchema> getAvailableAugmentations() {
+    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return augmentations;
     }
 

@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
@@ -1209,7 +1209,7 @@ abstract class SchemaContextEmitter {
 
             emitDataNodeContainer(input);
 
-            for (final AugmentationSchema augmentation : input.getAugmentations()) {
+            for (final AugmentationSchemaNode augmentation : input.getAugmentations()) {
                 emitAugment(augmentation);
             }
             for (final RpcDefinition rpc : input.getRpcs()) {
@@ -1964,7 +1964,7 @@ abstract class SchemaContextEmitter {
                 for (final Entry<SchemaPath, SchemaNode> refine : usesNode.getRefines().entrySet()) {
                     emitRefine(refine);
                 }
-                for (final AugmentationSchema aug : usesNode.getAugmentations()) {
+                for (final AugmentationSchemaNode aug : usesNode.getAugmentations()) {
                     emitUsesAugmentNode(aug);
                 }
                 super.writer.endNode();
@@ -2116,7 +2116,7 @@ abstract class SchemaContextEmitter {
 
         }
 
-        private void emitUsesAugmentNode(final AugmentationSchema aug) {
+        private void emitUsesAugmentNode(final AugmentationSchemaNode aug) {
             /**
              * differs only in location in schema, otherwise currently (as of
              * RFC6020) it is same, so we could freely reuse path.
@@ -2124,7 +2124,7 @@ abstract class SchemaContextEmitter {
             emitAugment(aug);
         }
 
-        private void emitAugment(final AugmentationSchema augmentation) {
+        private void emitAugment(final AugmentationSchemaNode augmentation) {
             super.writer.startAugmentNode(augmentation.getTargetPath());
             // FIXME: BUG-2444: whenNode //Optional
             // FIXME: BUG-2444: *(ifFeatureNode )

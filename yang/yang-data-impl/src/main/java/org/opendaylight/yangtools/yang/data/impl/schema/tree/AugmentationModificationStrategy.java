@@ -16,13 +16,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchema;
+import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
-final class AugmentationModificationStrategy extends AbstractDataNodeContainerModificationStrategy<AugmentationSchema> {
-    AugmentationModificationStrategy(final AugmentationSchema schema, final DataNodeContainer resolved,
+final class AugmentationModificationStrategy
+        extends AbstractDataNodeContainerModificationStrategy<AugmentationSchemaNode> {
+    AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
         super(createAugmentProxy(schema,resolved), AugmentationNode.class, treeConfig);
     }
@@ -41,7 +42,7 @@ final class AugmentationModificationStrategy extends AbstractDataNodeContainerMo
                 .withNodeIdentifier(((AugmentationNode) original).getIdentifier()).build();
     }
 
-    private static AugmentationSchema createAugmentProxy(final AugmentationSchema schema,
+    private static AugmentationSchemaNode createAugmentProxy(final AugmentationSchemaNode schema,
             final DataNodeContainer resolved) {
         final Set<DataSchemaNode> realChildSchemas = new HashSet<>();
         for (final DataSchemaNode augChild : schema.getChildNodes()) {
