@@ -449,9 +449,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
     private static SourceSpecificContext getRequiredLibSource(final SourceIdentifier requiredSource,
             final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable) {
-        return requiredSource.getRevision() == null ? getLatestRevision(libSourcesTable.row(requiredSource.getName()))
-                : libSourcesTable.get(requiredSource.getName(),
-                    Optional.of(Revision.valueOf(requiredSource.getRevision())));
+        return requiredSource.getRevision().isPresent()
+                ? libSourcesTable.get(requiredSource.getName(), requiredSource.getRevision())
+                        : getLatestRevision(libSourcesTable.row(requiredSource.getName()));
     }
 
     private static SourceSpecificContext getLatestRevision(final SortedMap<Optional<Revision>,

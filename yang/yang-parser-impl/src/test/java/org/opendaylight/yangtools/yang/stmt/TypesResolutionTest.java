@@ -53,7 +53,7 @@ public class TypesResolutionTest {
 
     @Before
     public void init() throws Exception {
-        final StatementStreamSource yangFile = sourceForResource("/types/custom-types-test@2012-4-4.yang");
+        final StatementStreamSource yangFile = sourceForResource("/types/custom-types-test@2012-04-04.yang");
         final StatementStreamSource yangFileDependency1 = sourceForResource("/ietf/iana-timezones@2012-07-09.yang");
         final StatementStreamSource yangFileDependency2 = sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final StatementStreamSource yangFileDependency3 = sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang");

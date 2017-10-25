@@ -13,8 +13,10 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Optional;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 
 /**
@@ -30,16 +32,10 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  */
 @Beta
 public abstract class SourceIdentifier implements Identifier, Immutable {
-    /**
-     * Default revision for sources without specified revision. This should be used for comparisons
-     * based on revision when a SourceIdentifier does not have a revision.
-     */
-    public static final String NOT_PRESENT_FORMATTED_REVISION = "0000-00-00";
-
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
+    private static final long serialVersionUID = 2L;
 
-    private static final long serialVersionUID = 1L;
-    private final String revision;
+    private final Revision revision;
     private final String name;
 
     /**
@@ -49,8 +45,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *            Name of schema
      */
     SourceIdentifier(final String name) {
-        this.name = requireNonNull(name);
-        this.revision = null;
+        this(name, (Revision) null);
     }
 
     /**
@@ -58,12 +53,12 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @param name
      *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd
+     * @param revision
+     *            Revision of source, may be null
      */
-    SourceIdentifier(final String name, final String formattedRevision) {
+    SourceIdentifier(final String name, @Nullable final Revision revision) {
         this.name = requireNonNull(name);
-        this.revision = requireNonNull(formattedRevision);
+        this.revision = revision;
     }
 
     /**
@@ -71,13 +66,11 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @param name
      *            Name of schema
-     * @param formattedRevision
-     *            Revision of source in format YYYY-mm-dd. If not present,
-     *            default value will be used.
+     * @param revision
+     *            Revision of source, possibly not present
      */
-    SourceIdentifier(final String name, final Optional<String> formattedRevision) {
-        this.name = requireNonNull(name);
-        this.revision = formattedRevision.orElse(null);
+    SourceIdentifier(final String name, final Optional<Revision> revision) {
+        this(name, revision.orElse(null));
     }
 
     /**
@@ -103,9 +96,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return revision of source or null if revision was not supplied.
      */
-    // FIXME: version 2.0.0: this should return Optional<String>
-    public String getRevision() {
-        return revision;
+    public Optional<Revision> getRevision() {
+        return Optional.ofNullable(revision);
     }
 
     /**
@@ -121,8 +113,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @return Filename for this source identifier.
      */
     public String toYangFilename() {
-        final String rev = NOT_PRESENT_FORMATTED_REVISION.equals(revision) ? null : revision;
-        return toYangFileName(name, Optional.ofNullable(rev));
+        return toYangFileName(name, Optional.ofNullable(revision));
     }
 
     /**
@@ -137,7 +128,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return Filename for this source identifier.
      */
-    public static String toYangFileName(final String moduleName, final Optional<String> revision) {
+    public static String toYangFileName(final String moduleName, final Optional<Revision> revision) {
         StringBuilder filename = new StringBuilder(moduleName);
         if (revision.isPresent()) {
             filename.append('@');

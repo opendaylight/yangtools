@@ -12,7 +12,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -25,9 +24,12 @@ public class DependencyResolverTest {
     public void testModulesWithoutRevisionAndImport() throws Exception {
         final Map<SourceIdentifier, YangModelDependencyInfo> map = new HashMap<>();
 
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/imported.yang"));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/imported@2012-12-12.yang"));
-        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/no-revision/top@2012-10-10.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(),
+            "/no-revision/imported.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(),
+            "/no-revision/imported@2012-12-12.yang"));
+        addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(),
+            "/no-revision/top@2012-10-10.yang"));
 
         final DependencyResolver resolved = RevisionDependencyResolver.create(map);
 
@@ -61,18 +63,18 @@ public class DependencyResolverTest {
         addToMap(map, YangModelDependencyInfo.ModuleDependencyInfo.forResource(getClass(), "/model/baz.yang"));
 
         final DependencyResolver resolved = RevisionDependencyResolver.create(map);
-
-        assertEquals(4, resolved.getResolvedSources().size());
         assertEquals(0, resolved.getUnresolvedSources().size());
         assertEquals(0, resolved.getUnsatisfiedImports().size());
+        assertEquals(4, resolved.getResolvedSources().size());
     }
 
-    private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map, final YangModelDependencyInfo yangModelDependencyInfo) {
+    private static void addToMap(final Map<SourceIdentifier, YangModelDependencyInfo> map,
+            final YangModelDependencyInfo yangModelDependencyInfo) {
         map.put(getSourceId(yangModelDependencyInfo), yangModelDependencyInfo);
     }
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
         final String name = depInfo.getName();
-        return RevisionSourceIdentifier.create(name, Optional.ofNullable(depInfo.getFormattedRevision()));
+        return RevisionSourceIdentifier.create(name, depInfo.getRevision());
     }
 }

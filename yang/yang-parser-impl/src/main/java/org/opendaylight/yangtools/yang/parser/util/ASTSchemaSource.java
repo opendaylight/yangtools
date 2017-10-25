@@ -183,13 +183,13 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
         final String name = depInfo.getName();
         return depInfo.getFormattedRevision() == null ? RevisionSourceIdentifier.create(name)
-                : RevisionSourceIdentifier.create(name, depInfo.getFormattedRevision());
+                : RevisionSourceIdentifier.create(name, depInfo.getRevision());
     }
 
     private static SemVerSourceIdentifier getSemVerSourceId(final YangModelDependencyInfo depInfo) {
         return depInfo.getFormattedRevision() == null
                 ? SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getSemanticVersion().orElse(null))
-                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getFormattedRevision(),
+                        : SemVerSourceIdentifier.create(depInfo.getName(), depInfo.getRevision(),
                             depInfo.getSemanticVersion().orElse(null));
     }
 }

@@ -19,8 +19,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
-import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
 
@@ -42,7 +42,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
         final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), Optional.ofNullable(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), parsed.getValue() == null ? null
+                : Revision.valueOf(parsed.getValue()));
     }
 
     /**

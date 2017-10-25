@@ -34,7 +34,6 @@ import org.apache.maven.model.Plugin;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -264,9 +263,6 @@ final class Util {
     }
 
     static SourceIdentifier moduleToIdentifier(final Module module) {
-        final QNameModule mod = module.getQNameModule();
-        final String rev = mod.getFormattedRevision();
-        return rev != null ? RevisionSourceIdentifier.create(module.getName(), rev)
-                : RevisionSourceIdentifier.create(module.getName());
+        return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
     }
 }

@@ -19,6 +19,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
@@ -54,23 +55,24 @@ public class YangTextSchemaContextResolverTest {
 
         assertEquals(3, yangTextSchemaContextResolver.getAvailableSources().size());
 
-        final SourceIdentifier fooModuleId = RevisionSourceIdentifier.create("foo", "2016-09-26");
+        final SourceIdentifier fooModuleId = RevisionSourceIdentifier.create("foo", Revision.valueOf("2016-09-26"));
         final ListenableFuture<YangTextSchemaSource> foo = yangTextSchemaContextResolver.getSource(fooModuleId);
         assertTrue(foo.isDone());
         assertEquals(fooModuleId, foo.get().getIdentifier());
 
-        final SourceIdentifier barModuleId = RevisionSourceIdentifier.create("bar", "2016-09-26");
+        final SourceIdentifier barModuleId = RevisionSourceIdentifier.create("bar", Revision.valueOf("2016-09-26"));
         final ListenableFuture<YangTextSchemaSource> bar = yangTextSchemaContextResolver.getSource(barModuleId);
         assertTrue(bar.isDone());
         assertEquals(barModuleId, bar.get().getIdentifier());
 
-        final SourceIdentifier bazModuleId = RevisionSourceIdentifier.create("baz", "2016-09-26");
+        final SourceIdentifier bazModuleId = RevisionSourceIdentifier.create("baz", Revision.valueOf("2016-09-26"));
         final ListenableFuture<YangTextSchemaSource> baz =
                 yangTextSchemaContextResolver.getSource(bazModuleId);
         assertTrue(baz.isDone());
         assertEquals(bazModuleId, baz.get().getIdentifier());
 
-        final SourceIdentifier foobarModuleId = RevisionSourceIdentifier.create("foobar", "2016-09-26");
+        final SourceIdentifier foobarModuleId = RevisionSourceIdentifier.create("foobar",
+            Revision.valueOf("2016-09-26"));
         final ListenableFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
         assertTrue(foobar.isDone());
         try {

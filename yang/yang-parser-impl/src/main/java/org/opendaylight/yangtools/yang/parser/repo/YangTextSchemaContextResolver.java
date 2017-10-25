@@ -29,6 +29,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -110,9 +111,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                 LOG.info("Provided module name {} does not match actual text {}, corrected",
                     providedId.toYangFilename(), parsedId.toYangFilename());
             } else {
-                final String sourceRev = providedId.getRevision();
-                final String astRev = parsedId.getRevision();
-                if (sourceRev != null && !SourceIdentifier.NOT_PRESENT_FORMATTED_REVISION.equals(sourceRev)) {
+                final Optional<Revision> sourceRev = providedId.getRevision();
+                final Optional<Revision> astRev = parsedId.getRevision();
+                if (sourceRev.isPresent()) {
                     if (!sourceRev.equals(astRev)) {
                         LOG.info("Provided module revision {} does not match actual text {}, corrected",
                             providedId.toYangFilename(), parsedId.toYangFilename());

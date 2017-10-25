@@ -52,7 +52,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         } else {
             final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
                 ImportPrefixToSemVerSourceIdentifier.class, prefix);
-            revision = Revision.valueOf(importedModuleIdentifier.getRevision());
+            revision = importedModuleIdentifier.getRevision().orElse(null);
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
