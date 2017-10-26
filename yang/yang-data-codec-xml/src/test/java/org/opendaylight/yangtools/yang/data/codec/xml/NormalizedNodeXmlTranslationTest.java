@@ -99,7 +99,7 @@ public class NormalizedNodeXmlTranslationTest {
     }
 
     private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
-    private static final Revision REVISION = Revision.valueOf("2014-03-13");
+    private static final Revision REVISION = Revision.of("2014-03-13");
 
     static final XMLOutputFactory XML_FACTORY;
 

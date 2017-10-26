@@ -55,7 +55,7 @@ public class NormalizedNodeWriterTest {
 
     @Before
     public void setUp() {
-        bazModule = QNameModule.create(URI.create("baz-namespace"), Revision.valueOf("1970-01-01"));
+        bazModule = QNameModule.create(URI.create("baz-namespace"), Revision.of("1970-01-01"));
         myKeyedList = QName.create(bazModule, "my-keyed-list");
         myKeyLeaf = QName.create(bazModule, "my-key-leaf");
         myLeafList = QName.create(bazModule, "my-leaf-list");

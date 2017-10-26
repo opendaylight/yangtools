@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.time.format.DateTimeParseException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -182,8 +183,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
                 String revStr = match.group();
                 Revision rev;
                 try {
-                    rev = Revision.valueOf(revStr);
-                } catch (final IllegalArgumentException e) {
+                    rev = Revision.of(revStr);
+                } catch (final DateTimeParseException e) {
                     LOG.info("Unable to parse date from yang file name {}, falling back to not-present", fileName, e);
                     rev = null;
                 }
@@ -289,8 +290,7 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
             if (matcher.matches()) {
                 final String moduleName = matcher.group("moduleName");
                 final String revision = matcher.group("revision");
-                return Optional.of(RevisionSourceIdentifier.create(moduleName, revision == null ? Optional.empty()
-                        : Optional.of(Revision.valueOf(revision))));
+                return Optional.of(RevisionSourceIdentifier.create(moduleName, Revision.ofNullable(revision)));
             }
             return Optional.empty();
         }

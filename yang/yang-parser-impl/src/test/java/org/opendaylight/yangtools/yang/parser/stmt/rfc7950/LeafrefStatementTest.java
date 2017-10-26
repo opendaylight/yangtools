@@ -32,7 +32,7 @@ public class LeafrefStatementTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/leafref-stmt/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module foo = schemaContext.findModule("foo", Revision.valueOf("2016-12-20")).get();
+        final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-20")).get();
         final Set<TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 

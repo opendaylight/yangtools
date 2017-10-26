@@ -83,7 +83,7 @@ public class ImmutableNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() throws URISyntaxException, ParseException {
-        bazModule = QNameModule.create(new URI("baz-namespace"), Revision.valueOf("1970-01-01"));
+        bazModule = QNameModule.create(new URI("baz-namespace"), Revision.of("1970-01-01"));
 
         outerContainer = QName.create(bazModule, "outer-container");
 

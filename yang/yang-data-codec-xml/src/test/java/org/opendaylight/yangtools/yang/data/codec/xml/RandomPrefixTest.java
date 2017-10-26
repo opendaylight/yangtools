@@ -48,7 +48,7 @@ public class RandomPrefixTest {
         for (int i = 0; i < MAX_COUNTER; i++) {
             final String prefix = RandomPrefix.encode(i);
             final URI uri = new URI("localhost:" + prefix);
-            final QName qname = QName.create(QNameModule.create(uri, Revision.valueOf("2000-01-01")), "local-name");
+            final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
             allGenerated.add(a.encodePrefix(qname.getNamespace()));
         }
 
@@ -68,8 +68,8 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
-        final QName qname = QName.create(QNameModule.create(uri, Revision.valueOf("2000-01-01")), "local-name");
-        final QName qname2 = QName.create(QNameModule.create(uri, Revision.valueOf("2000-01-01")), "local-name");
+        final QName qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
+        final QName qname2 = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
 
         assertEquals(a.encodePrefix(qname.getNamespace()), a.encodePrefix(qname2.getNamespace()));
     }
@@ -79,11 +79,11 @@ public class RandomPrefixTest {
         final RandomPrefix a = new RandomPrefix(null);
 
         final URI uri = URI.create("localhost");
-        QName qname = QName.create(uri, Revision.valueOf("2000-01-01"), "local-name");
+        QName qname = QName.create(uri, Revision.of("2000-01-01"), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
-        qname = QName.create(QNameModule.create(uri, Revision.valueOf("2000-01-01")), "local-name");
+        qname = QName.create(QNameModule.create(uri, Revision.of("2000-01-01")), "local-name");
         assertEquals("a", a.encodePrefix(qname.getNamespace()));
-        qname = QName.create(QNameModule.create(URI.create("second"), Revision.valueOf("2000-01-01")), "local-name");
+        qname = QName.create(QNameModule.create(URI.create("second"), Revision.of("2000-01-01")), "local-name");
         assertEquals("b", a.encodePrefix(qname.getNamespace()));
 
     }

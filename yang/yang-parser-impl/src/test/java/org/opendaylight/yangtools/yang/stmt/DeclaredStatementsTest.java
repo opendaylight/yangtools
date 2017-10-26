@@ -304,7 +304,7 @@ public class DeclaredStatementsTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources(rootModule, importedModule);
         assertNotNull(schemaContext);
 
-        final Revision revision = Revision.valueOf("2016-09-28");
+        final Revision revision = Revision.of("2016-09-28");
         final Module testModule = schemaContext.findModule("root-module-declared-test", revision).get();
         assertNotNull(testModule);
 

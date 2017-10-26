@@ -44,7 +44,7 @@ public class DeviationResolutionTest {
                 "/deviation-resolution-test/deviation-not-supported");
         assertNotNull(schemaContext);
 
-        final Module importedModule = schemaContext.findModule("imported", Revision.valueOf("2017-01-20")).get();
+        final Module importedModule = schemaContext.findModule("imported", Revision.of("2017-01-20")).get();
         final ContainerSchemaNode myContA = (ContainerSchemaNode) importedModule.getDataChildByName(
                 QName.create(importedModule.getQNameModule(), "my-cont-a"));
         assertNotNull(myContA);
@@ -72,7 +72,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-add/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list"));
         assertNotNull(myLeafList);
@@ -116,7 +116,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-replace/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
         assertNotNull(barModule);
 
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
@@ -179,7 +179,7 @@ public class DeviationResolutionTest {
                 sourceForResource("/deviation-resolution-test/deviation-delete/bar.yang"));
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-01-20")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-01-20")).get();
         final LeafSchemaNode myLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);

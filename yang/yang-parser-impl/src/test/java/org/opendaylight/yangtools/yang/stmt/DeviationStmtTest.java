@@ -45,7 +45,7 @@ public class DeviationStmtTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        Module testModule = schemaContext.findModule("foo", Revision.valueOf("2016-06-23")).get();
+        Module testModule = schemaContext.findModule("foo", Revision.of("2016-06-23")).get();
         Set<Deviation> deviations = testModule.getDeviations();
         assertEquals(4, deviations.size());
 
@@ -82,7 +82,7 @@ public class DeviationStmtTest {
             }
         }
 
-        testModule = schemaContext.findModule("bar", Revision.valueOf("2016-09-22")).get();
+        testModule = schemaContext.findModule("bar", Revision.of("2016-09-22")).get();
         assertNotNull(testModule);
 
         deviations = testModule.getDeviations();

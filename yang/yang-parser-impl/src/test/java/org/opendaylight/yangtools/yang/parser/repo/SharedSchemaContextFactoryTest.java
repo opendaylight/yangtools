@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -41,8 +42,8 @@ public class SharedSchemaContextFactoryTest {
 
         final YangTextSchemaSource source1 = YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang");
         final YangTextSchemaSource source2 = YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang");
-        s1 = RevisionSourceIdentifier.create("ietf-inet-types", Revision.valueOf("2010-09-24"));
-        s2 = RevisionSourceIdentifier.create("iana-timezones", Revision.valueOf("2012-07-09"));
+        s1 = RevisionSourceIdentifier.create("ietf-inet-types", Revision.of("2010-09-24"));
+        s2 = RevisionSourceIdentifier.create("iana-timezones", Revision.of("2012-07-09"));
 
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
@@ -55,7 +56,7 @@ public class SharedSchemaContextFactoryTest {
     }
 
     @Test
-    public void testCreateSchemaContextWithDuplicateRequiredSources() throws Exception {
+    public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             filter);
         final ListenableFuture<SchemaContext> schemaContext =

@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -31,12 +30,12 @@ public class Bug8597Test {
         for (final ModuleImport moduleImport : imports) {
             switch (moduleImport.getModuleName()) {
                 case "bar":
-                    assertEquals(Optional.of(Revision.valueOf("1970-01-01")), moduleImport.getRevision());
+                    assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());
                     assertEquals("bar-ref", moduleImport.getReference());
                     assertEquals("bar-desc", moduleImport.getDescription());
                     break;
                 case "baz":
-                    assertEquals(Optional.of(Revision.valueOf("2010-10-10")), moduleImport.getRevision());
+                    assertEquals(Revision.ofNullable("2010-10-10"), moduleImport.getRevision());
                     assertEquals("baz-ref", moduleImport.getReference());
                     assertEquals("baz-desc", moduleImport.getDescription());
                     break;

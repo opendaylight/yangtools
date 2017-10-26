@@ -9,12 +9,13 @@ package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import java.io.Externalizable;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
 import java.io.Serializable;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -38,9 +39,11 @@ import javax.annotation.RegEx;
  * @author Robert Varga
  */
 public final class Revision implements Comparable<Revision>, Serializable {
+    // Note: since we are using writeReplace() this version is not significant.
     private static final long serialVersionUID = 1L;
 
     @RegEx
+    // FIXME: we should improve this to filter incorrect dates -- see constructor.
     private static final String STRING_FORMAT_PATTERN_STR = "\\d\\d\\d\\d\\-\\d\\d-\\d\\d";
 
     /**
@@ -48,12 +51,22 @@ public final class Revision implements Comparable<Revision>, Serializable {
      */
     public static final Pattern STRING_FORMAT_PATTERN = Pattern.compile(STRING_FORMAT_PATTERN_STR);
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     private final String str;
 
     private Revision(final String str) {
-        // Since all strings conform to this format, compareTo() can be delegated to String.compareTo()
-        Preconditions.checkArgument(STRING_FORMAT_PATTERN.matcher(str).matches(),
-            "String '%s' does match revision format YYYY-MM-DD", str);
+        /*
+         * According to RFC7950 (https://tools.ietf.org/html/rfc7950#section-7.1.9):
+         *
+         *   The "revision" statement specifies the editorial revision history of
+         *   the module, including the initial revision.  A series of "revision"
+         *   statements detail the changes in the module's definition.  The
+         *   argument is a date string in the format "YYYY-MM-DD", [...]
+         *
+         * Hence we use JDK-provided parsing faculties to parse the date.
+         */
+        FORMATTER.parse(str);
         this.str = str;
     }
 
@@ -62,11 +75,22 @@ public final class Revision implements Comparable<Revision>, Serializable {
      *
      * @param str String to be parsed
      * @return A Revision instance.
-     * @throws IllegalArgumentException if the string format does not conform specification.
+     * @throws DateTimeParseException if the string format does not conform specification.
      * @throws NullPointerException if the string is null
      */
-    public static Revision valueOf(@Nonnull final String str) {
+    public static Revision of(@Nonnull final String str) {
         return new Revision(str);
+    }
+
+    /**
+     * Parse a (potentially null) revision string. Null strings result result in {@link Optional#empty()}.
+     *
+     * @param str String to be parsed
+     * @return An optional Revision instance.
+     * @throws IllegalArgumentException if the string format does not conform specification.
+     */
+    public static Optional<Revision> ofNullable(@Nullable final String str) {
+        return str == null ? Optional.empty() : Optional.of(new Revision(str));
     }
 
     /**
@@ -103,6 +127,8 @@ public final class Revision implements Comparable<Revision>, Serializable {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final Revision o) {
+        // Since all strings conform to the format, we can use their comparable property to do the correct thing
+        // with respect to temporal ordering.
         return str.compareTo(o.str);
     }
 
@@ -150,7 +176,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
         }
 
         private Object readResolve() {
-            return Revision.valueOf(str);
+            return Revision.of(str);
         }
     }
 }

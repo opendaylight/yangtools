@@ -29,7 +29,7 @@ public class Bug9241Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug9241/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module fooModule = schemaContext.findModule("foo", Revision.valueOf("2017-10-13")).get();
+        final Module fooModule = schemaContext.findModule("foo", Revision.of("2017-10-13")).get();
 
         final ContainerSchemaNode actionCont = (ContainerSchemaNode) fooModule.getDataChildByName(QName.create(
                 fooModule.getQNameModule(), "action-cont"));

@@ -203,7 +203,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final String namespace, final String revision, final String localName) {
         final URI namespaceUri = parseNamespace(namespace);
-        final Revision revisionDate = Revision.valueOf(revision);
+        final Revision revisionDate = Revision.of(revision);
         return create(namespaceUri, revisionDate, localName);
     }
 

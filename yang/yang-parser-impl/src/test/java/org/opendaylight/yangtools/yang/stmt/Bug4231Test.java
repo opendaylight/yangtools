@@ -27,7 +27,7 @@ public class Bug4231Test {
 
         assertNotNull(context);
 
-        QNameModule foo = QNameModule.create(new URI("foo"), Revision.valueOf("2015-09-02"));
+        QNameModule foo = QNameModule.create(new URI("foo"), Revision.of("2015-09-02"));
 
         SchemaPath targetPath = SchemaPath
                 .create(true, QName.create(foo, "augment-target"))

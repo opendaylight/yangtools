@@ -31,7 +31,7 @@ public class Bug2872Test {
         final SchemaContext schema = StmtTestUtils.parseYangSources("/bugs/bug2872");
         assertNotNull(schema);
 
-        final QNameModule bug2872module = QNameModule.create(URI.create("bug2872"), Revision.valueOf("2016-06-08"));
+        final QNameModule bug2872module = QNameModule.create(URI.create("bug2872"), Revision.of("2016-06-08"));
         final QName foo = QName.create(bug2872module, "bar");
 
         final DataSchemaNode dataSchemaNode = schema.getDataChildByName(foo);

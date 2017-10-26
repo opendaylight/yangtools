@@ -42,8 +42,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
 
         final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), parsed.getValue() == null ? null
-                : Revision.valueOf(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 
     /**

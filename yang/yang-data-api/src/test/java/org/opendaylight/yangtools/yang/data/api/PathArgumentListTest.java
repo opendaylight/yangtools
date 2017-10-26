@@ -95,7 +95,7 @@ public class PathArgumentListTest {
     @Test
     public void testPathArgument() {
         final QNameModule qNameModule = QNameModule.create(URI.create("urn:opendaylight.test2"),
-            Revision.valueOf("2015-08-08"));
+            Revision.of("2015-08-08"));
         final QName qNameRoot = QName.create(qNameModule, "root");
         final QName qNameList = QName.create(qNameModule, "list");
         final QName qNameLeaf = QName.create(qNameModule, "leaf-a");

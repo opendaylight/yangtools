@@ -77,7 +77,7 @@ public abstract class YangModelDependencyInfo {
             final ImmutableSet<ModuleImport> includes,
             final Optional<SemVer> semVer) {
         this.name = name;
-        this.revision = formattedRevision == null ? null : Revision.valueOf(formattedRevision);
+        this.revision = Revision.ofNullable(formattedRevision).orElse(null);
         this.moduleImports = imports;
         this.submoduleIncludes = includes;
         this.dependencies = ImmutableSet.<ModuleImport>builder()
@@ -224,7 +224,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Revision revisionDate = revisionDateStr == null ? null : Revision.valueOf(revisionDateStr);
+                final Revision revisionDate = Revision.ofNullable(revisionDateStr).orElse(null);
                 final SemVer importSemVer = findSemanticVersion(subStatementContext, sourceName);
                 result.add(new ModuleImportImpl(importedModuleName, revisionDate, importSemVer));
             }
@@ -253,7 +253,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String IncludeModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Revision revisionDate = revisionDateStr == null ? null : Revision.valueOf(revisionDateStr);
+                final Revision revisionDate = Revision.ofNullable(revisionDateStr).orElse(null);
                 result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
             }
         }

@@ -27,7 +27,7 @@ public class Bug9242Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9242/");
         assertNotNull(schemaContext);
 
-        final Revision revision = Revision.valueOf("2017-10-13");
+        final Revision revision = Revision.of("2017-10-13");
         final Module rootModule = schemaContext.findModule("root-module", revision).get();
         final Module impModule = schemaContext.findModule("imp-module", revision).get();
 

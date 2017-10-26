@@ -32,7 +32,7 @@ public class Bug6871Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6871/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module foo = schemaContext.findModule("foo", Revision.valueOf("2016-12-14")).get();
+        final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-14")).get();
 
         final Set<NotificationDefinition> notifications = foo.getNotifications();
         assertEquals(1, notifications.size());

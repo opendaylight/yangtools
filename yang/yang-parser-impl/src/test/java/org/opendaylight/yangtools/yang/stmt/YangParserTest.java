@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,12 +69,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class YangParserTest {
-    private static final QNameModule FOO = QNameModule.create(
-        URI.create("urn:opendaylight.foo"), Revision.valueOf("2013-02-27"));
-    private static final QNameModule BAR = QNameModule.create(
-        URI.create("urn:opendaylight.bar"), Revision.valueOf("2013-07-03"));
-    private static final QNameModule BAZ = QNameModule.create(
-        URI.create("urn:opendaylight.baz"), Revision.valueOf("2013-02-27"));
+    private static final QNameModule FOO = QNameModule.create(URI.create("urn:opendaylight.foo"),
+        Revision.of("2013-02-27"));
+    private static final QNameModule BAR = QNameModule.create(URI.create("urn:opendaylight.bar"),
+        Revision.of("2013-07-03"));
+    private static final QNameModule BAZ = QNameModule.create(URI.create("urn:opendaylight.baz"),
+        Revision.of("2013-02-27"));
 
     private SchemaContext context;
     private Module foo;
@@ -110,7 +109,7 @@ public class YangParserTest {
 
         assertEquals("opendaylight", foo.getOrganization());
         assertEquals("http://www.opendaylight.org/", foo.getContact());
-        assertEquals(Optional.of(Revision.valueOf("2013-02-27")), foo.getRevision());
+        assertEquals(Revision.ofNullable("2013-02-27"), foo.getRevision());
         assertNull(foo.getReference());
     }
 

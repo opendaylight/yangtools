@@ -39,11 +39,11 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public class AugmentTest {
     private static final QNameModule FOO = QNameModule.create(
-        URI.create("urn:opendaylight.foo"), Revision.valueOf("2013-10-13"));
+        URI.create("urn:opendaylight.foo"), Revision.of("2013-10-13"));
     private static final QNameModule BAR = QNameModule.create(
-        URI.create("urn:opendaylight.bar"), Revision.valueOf("2013-10-14"));
+        URI.create("urn:opendaylight.bar"), Revision.of("2013-10-14"));
     private static final QNameModule BAZ = QNameModule.create(
-        URI.create("urn:opendaylight.baz"), Revision.valueOf("2013-10-15"));
+        URI.create("urn:opendaylight.baz"), Revision.of("2013-10-15"));
 
     private static final QName Q0 = QName.create(BAR, "interfaces");
     private static final QName Q1 = QName.create(BAR, "ifEntry");
@@ -331,7 +331,7 @@ public class AugmentTest {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/rpc").toURI());
         final URI NS_BAR = URI.create("urn:opendaylight:bar");
         final URI NS_FOO = URI.create("urn:opendaylight:foo");
-        final Revision revision = Revision.valueOf("2013-10-11");
+        final Revision revision = Revision.of("2013-10-11");
         final Module bar = TestUtils.findModule(context, "bar").get();
         final Set<RpcDefinition> rpcs = bar.getRpcs();
         assertEquals(2, rpcs.size());

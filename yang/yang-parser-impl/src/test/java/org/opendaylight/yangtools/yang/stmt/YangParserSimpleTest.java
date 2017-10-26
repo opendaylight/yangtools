@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public class YangParserSimpleTest {
     private static final QNameModule SN = QNameModule.create(URI.create("urn:opendaylight:simple-nodes"),
-        Revision.valueOf("2013-07-30"));
+        Revision.of("2013-07-30"));
     private static final QName SN_NODES = QName.create(SN, "nodes");
     private static final SchemaPath SN_NODES_PATH = SchemaPath.create(true, SN_NODES);
 
@@ -191,7 +191,7 @@ public class YangParserSimpleTest {
     private static final URI NS = URI.create("urn:opendaylight:simple-nodes");
 
     private static SchemaPath createPath(final String... names) {
-        final Revision rev = Revision.valueOf("2013-07-30");
+        final Revision rev = Revision.of("2013-07-30");
         final List<QName> path = new ArrayList<>();
         for (final String name : names) {
             path.add(QName.create(NS, rev, name));

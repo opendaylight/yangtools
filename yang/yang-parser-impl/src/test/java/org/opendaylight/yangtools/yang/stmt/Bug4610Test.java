@@ -28,7 +28,7 @@ public class Bug4610Test {
     public void test() throws Exception {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug4610");
 
-        Revision revision = Revision.valueOf("2015-12-12");
+        Revision revision = Revision.of("2015-12-12");
         QNameModule foo = QNameModule.create(URI.create("foo"), revision);
         QNameModule bar = QNameModule.create(URI.create("bar"), revision);
 
