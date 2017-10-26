@@ -64,7 +64,7 @@ public class Bug5446Test extends XMLTestCase {
     private final SchemaContext schemaContext;
 
     public Bug5446Test() throws Exception {
-        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.valueOf("2015-11-05"));
+        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 

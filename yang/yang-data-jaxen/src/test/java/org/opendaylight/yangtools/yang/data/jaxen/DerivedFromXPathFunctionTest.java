@@ -56,7 +56,7 @@ public class DerivedFromXPathFunctionTest {
     public static void setup() {
         jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
 
-        barModule = QNameModule.create(URI.create("bar-ns"), Revision.valueOf("2017-04-03"));
+        barModule = QNameModule.create(URI.create("bar-ns"), Revision.of("2017-04-03"));
         myContainer = QName.create(barModule, "my-container");
         myList = QName.create(barModule, "my-list");
         keyLeaf = QName.create(barModule, "key-leaf");

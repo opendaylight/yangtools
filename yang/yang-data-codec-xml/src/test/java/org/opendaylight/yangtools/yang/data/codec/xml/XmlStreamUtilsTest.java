@@ -108,7 +108,7 @@ public class XmlStreamUtilsTest {
         final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
         writer.writeStartElement("element");
-        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.valueOf("2000-01-01"));
+        final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.of("2000-01-01"));
         XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
         writer.writeEndElement();
 

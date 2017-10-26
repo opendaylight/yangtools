@@ -43,7 +43,7 @@ public class Bug6887Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/foo.yang");
         assertNotNull(schemaContext);
 
-        final Module foo = schemaContext.findModule("foo", Revision.valueOf("2017-01-26")).get();
+        final Module foo = schemaContext.findModule("foo", Revision.of("2017-01-26")).get();
         final LeafSchemaNode myEnumerationLeaf = (LeafSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-enumeration-leaf"));
         assertNotNull(myEnumerationLeaf);
@@ -169,7 +169,7 @@ public class Bug6887Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rfc7950/bug6887/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module bar = schemaContext.findModule("bar", Revision.valueOf("2017-02-02")).get();
+        final Module bar = schemaContext.findModule("bar", Revision.of("2017-02-02")).get();
         final LeafSchemaNode myBitsLeaf = (LeafSchemaNode) bar.getDataChildByName(
                 QName.create(bar.getQNameModule(), "my-bits-leaf"));
         assertNotNull(myBitsLeaf);

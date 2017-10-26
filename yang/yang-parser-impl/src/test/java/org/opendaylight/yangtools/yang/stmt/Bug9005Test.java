@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -24,14 +23,14 @@ public class Bug9005Test {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug9005");
         assertNotNull(context);
 
-        final Module foo = context.findModule("foo", Revision.valueOf("2017-07-07")).get();
+        final Module foo = context.findModule("foo", Revision.of("2017-07-07")).get();
 
         final Set<ModuleImport> imports = foo.getImports();
         assertEquals(1, imports.size());
         final ModuleImport imp1 = imports.iterator().next();
         assertEquals("bar-2", imp1.getModuleName());
         assertEquals("bar", imp1.getPrefix());
-        assertEquals(Optional.of(Revision.valueOf("2000-01-02")), imp1.getRevision());
+        assertEquals(Revision.ofNullable("2000-01-02"), imp1.getRevision());
 
         final Set<Module> submodules = foo.getSubmodules();
         assertEquals(1, submodules.size());
@@ -42,6 +41,6 @@ public class Bug9005Test {
         final ModuleImport subImp1 = subImports.iterator().next();
         assertEquals("bar-1", subImp1.getModuleName());
         assertEquals("bar", subImp1.getPrefix());
-        assertEquals(Optional.of(Revision.valueOf("2000-01-01")), subImp1.getRevision());
+        assertEquals(Revision.ofNullable("2000-01-01"), subImp1.getRevision());
     }
 }

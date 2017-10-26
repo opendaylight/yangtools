@@ -55,8 +55,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         }
 
         final Entry<String, String> parsed = YangNames.parseFilename(baseName);
-        return RevisionSourceIdentifier.create(parsed.getKey(), parsed.getValue() == null ? null
-                : Revision.valueOf(parsed.getValue()));
+        return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 
     @Override

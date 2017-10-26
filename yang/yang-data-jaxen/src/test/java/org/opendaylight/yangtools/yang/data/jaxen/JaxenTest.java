@@ -220,7 +220,7 @@ public class JaxenTest {
     }
 
     private void initQNames() throws URISyntaxException, ParseException {
-        this.moduleQName = QNameModule.create(new URI("urn:opendaylight.test2"), Revision.valueOf("2015-08-08"));
+        this.moduleQName = QNameModule.create(new URI("urn:opendaylight.test2"), Revision.of("2015-08-08"));
         this.rootQName = QName.create(moduleQName, "root");
         this.listAQName = QName.create(moduleQName, "list-a");
         this.listBQName = QName.create(moduleQName, "list-b");

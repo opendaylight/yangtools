@@ -435,7 +435,7 @@ public class GroupingTest {
         assertNotNull(gzz);
 
         final QNameModule expectedModule = QNameModule.create(URI.create("urn:grouping:cascade-uses"),
-            Revision.valueOf("2013-07-18"));
+            Revision.of("2013-07-18"));
 
         // grouping-U
         Collection<DataSchemaNode> childNodes = gu.getChildNodes();

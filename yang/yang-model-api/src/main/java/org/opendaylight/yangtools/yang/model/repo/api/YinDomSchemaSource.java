@@ -85,7 +85,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
-            Revision.valueOf(dateAttr.getValue()));
+            Revision.of(dateAttr.getValue()));
         final SourceIdentifier id;
         if (!parsedId.equals(identifier)) {
             LOG.debug("Changed identifier from {} to {}", identifier, parsedId);

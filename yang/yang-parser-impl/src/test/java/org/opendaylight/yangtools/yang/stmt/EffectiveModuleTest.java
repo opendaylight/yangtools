@@ -58,7 +58,7 @@ public class EffectiveModuleTest {
     private static final SchemaPath CONT_SCHEMA_PATH = SchemaPath.create(true, CONT);
     private static final SchemaPath FEATURE1_SCHEMA_PATH = SchemaPath.create(true, FEATURE1);
 
-    private static final Revision REVISION = Revision.valueOf("2000-01-01");
+    private static final Revision REVISION = Revision.of("2000-01-01");
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {

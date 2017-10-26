@@ -45,7 +45,7 @@ public class CaseStmtTest {
     @Before
     public void setup() throws Exception {
         schema = StmtTestUtils.parseYangSources("/case-test");
-        Revision rev = Revision.valueOf("2015-09-09");
+        Revision rev = Revision.of("2015-09-09");
         rootFoo = schema.findModule("foo", rev).get();
         rootBar = schema.findModule("bar", rev).get();
         assertNotNull(rootFoo);

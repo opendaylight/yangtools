@@ -79,9 +79,8 @@ public class EffectiveSchemaContextTest {
 
         assertNull(schemaContext.getDataChildByName(QName.create("foo-namespace", "2016-09-21", "foo-cont")));
 
-        assertFalse(schemaContext.findModule("foo", Revision.valueOf("2016-08-21")).isPresent());
-        assertFalse(schemaContext.findModule(URI.create("foo-namespace"), Revision.valueOf("2016-08-21"))
-            .isPresent());
+        assertFalse(schemaContext.findModule("foo", Revision.of("2016-08-21")).isPresent());
+        assertFalse(schemaContext.findModule(URI.create("foo-namespace"), Revision.of("2016-08-21")).isPresent());
 
         assertFalse(schemaContext.isAugmenting());
         assertFalse(schemaContext.isAddedByUses());
@@ -98,7 +97,7 @@ public class EffectiveSchemaContextTest {
         assertNotNull(schemaContext.getAvailableAugmentations());
         assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
-        Module fooModule = schemaContext.findModule("foo", Revision.valueOf("2016-09-21")).get();
+        Module fooModule = schemaContext.findModule("foo", Revision.of("2016-09-21")).get();
         assertEquals(3, schemaContext.getModules().size());
         assertEquals(3, ((EffectiveSchemaContext) schemaContext).getRootDeclaredStatements().size());
         assertEquals(3,((EffectiveSchemaContext) schemaContext).getRootEffectiveStatements().size());

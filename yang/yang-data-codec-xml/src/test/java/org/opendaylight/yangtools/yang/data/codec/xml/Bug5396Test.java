@@ -43,7 +43,7 @@ public class Bug5396Test {
 
     @Before
     public void setUp() throws Exception {
-        fooModuleQName = QNameModule.create(new URI("foo"), Revision.valueOf("2016-03-22"));
+        fooModuleQName = QNameModule.create(new URI("foo"), Revision.of("2016-03-22"));
         schemaContext = YangParserTestUtils.parseYangResource("/bug5396/yang/foo.yang");
     }
 

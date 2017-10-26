@@ -39,7 +39,7 @@ public class Bug1412Test {
         assertEquals(1, unknownNodes.size());
         final UnknownSchemaNode action = unknownNodes.get(0);
 
-        final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), Revision.valueOf("2014-07-25"));
+        final QNameModule qm = QNameModule.create(URI.create("urn:test:bug1412"), Revision.of("2014-07-25"));
         QName expectedNodeType = QName.create("urn:test:bug1412:ext:definitions", "2014-07-25", "action");
         assertEquals(expectedNodeType, action.getNodeType());
         assertEquals("hello", action.getNodeParameter());

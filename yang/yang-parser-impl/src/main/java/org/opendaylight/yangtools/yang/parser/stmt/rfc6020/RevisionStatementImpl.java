@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
+import java.time.format.DateTimeParseException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -44,8 +45,8 @@ public class RevisionStatementImpl extends AbstractDeclaredStatement<Revision>
         @Override
         public Revision parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
             try {
-                return Revision.valueOf(value);
-            } catch (IllegalArgumentException e) {
+                return Revision.of(value);
+            } catch (DateTimeParseException e) {
                 throw new SourceException(ctx.getStatementSourceReference(), e,
                     "Revision value %s is not in required format yyyy-MM-dd", value);
             }

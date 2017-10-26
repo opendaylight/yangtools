@@ -29,7 +29,7 @@ public class Bug9244Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug9244/");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2017-10-13")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2017-10-13")).get();
         final ContainerSchemaNode barCont = (ContainerSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-cont"));
         assertNotNull(barCont);

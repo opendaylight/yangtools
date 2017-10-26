@@ -64,7 +64,7 @@ public class DerefXPathFunctionTest {
     public static void setup() {
         jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
 
-        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.valueOf("2017-04-03"));
+        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
         myContainer = QName.create(fooModule, "my-container");
         myInnerContainer = QName.create(fooModule, "my-inner-container");
         myList = QName.create(fooModule, "my-list");

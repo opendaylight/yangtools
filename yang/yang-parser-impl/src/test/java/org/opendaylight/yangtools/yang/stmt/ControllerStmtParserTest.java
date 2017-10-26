@@ -42,8 +42,7 @@ public class ControllerStmtParserTest {
     }
 
     private static void salDomBrokerImplModuleTest(final SchemaContext context) {
-        final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
-            Revision.valueOf("2013-10-28")).get();
+        final Module module = context.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28")).get();
 
         final Set<AugmentationSchemaNode> augmentations = module.getAugmentations();
         boolean checked = false;
@@ -73,9 +72,8 @@ public class ControllerStmtParserTest {
     }
 
     private static void configModuleTest(final SchemaContext context) {
-        final Module configModule = context.findModule("config", Revision.valueOf("2013-04-05")).get();
-        final Module module = context.findModule("opendaylight-sal-dom-broker-impl",
-            Revision.valueOf("2013-10-28")).get();
+        final Module configModule = context.findModule("config", Revision.of("2013-04-05")).get();
+        final Module module = context.findModule("opendaylight-sal-dom-broker-impl", Revision.of("2013-10-28")).get();
 
         final DataSchemaNode dataNode = configModule.getDataChildByName(QName.create(configModule.getQNameModule(),
             "modules"));
@@ -136,7 +134,7 @@ public class ControllerStmtParserTest {
 
         final UnknownSchemaNode typeUnknownSchemaNode = typeUnknownSchemaNodes.get(0);
         final QNameModule qNameModule = QNameModule.create(
-            URI.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.valueOf("2013-10-28"));
+            URI.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom"), Revision.of("2013-10-28"));
         final QName qName = QName.create(qNameModule, "schema-service");
 
         assertEquals(qName, typeUnknownSchemaNode.getQName());

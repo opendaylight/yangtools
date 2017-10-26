@@ -31,7 +31,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Assert;
 import org.junit.Before;
@@ -196,8 +195,7 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test",
-            Revision.valueOf("2013-12-12"));
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2013-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         final YangTextSchemaSource checkedGet = checked.get();
@@ -213,8 +211,7 @@ public class FilesystemSchemaSourceCacheTest {
         final String content = "content1";
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
-        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1",
-            Revision.valueOf("2012-12-12"));
+        final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1", Revision.of("2012-12-12"));
         final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         checked.get();
@@ -229,8 +226,7 @@ public class FilesystemSchemaSourceCacheTest {
         private final String content;
 
         TestingYangSource(final String name, final String revision, final String content) {
-            super(RevisionSourceIdentifier.create(name, revision == null ? Optional.empty() :
-                    Optional.of(Revision.valueOf(revision))));
+            super(RevisionSourceIdentifier.create(name, Revision.ofNullable(revision)));
             this.content = content;
         }
 

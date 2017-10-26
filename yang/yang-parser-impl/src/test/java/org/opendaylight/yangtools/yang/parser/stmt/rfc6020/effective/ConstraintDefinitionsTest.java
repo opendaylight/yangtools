@@ -45,7 +45,7 @@ public class ConstraintDefinitionsTest {
         final SchemaContext schemaContext = reactor.buildEffective();
         assertNotNull(schemaContext);
 
-        final Module testModule = schemaContext.findModule("foo", Revision.valueOf("2016-09-20")).get();
+        final Module testModule = schemaContext.findModule("foo", Revision.of("2016-09-20")).get();
         final LeafSchemaNode mandatoryLeaf1 = (LeafSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-1"));
         assertNotNull(mandatoryLeaf1);

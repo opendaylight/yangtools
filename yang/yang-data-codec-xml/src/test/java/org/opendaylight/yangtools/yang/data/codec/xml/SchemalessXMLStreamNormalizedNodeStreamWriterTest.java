@@ -103,7 +103,7 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
 
     @Before
     public void setup() {
-        foobarModule = QNameModule.create(URI.create("foobar-namespace"), Revision.valueOf("2016-09-19"));
+        foobarModule = QNameModule.create(URI.create("foobar-namespace"), Revision.of("2016-09-19"));
 
         outerContainer = QName.create(foobarModule, "outer-container");
 

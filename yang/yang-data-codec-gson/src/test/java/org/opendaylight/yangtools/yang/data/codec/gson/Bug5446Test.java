@@ -49,7 +49,7 @@ public class Bug5446Test {
 
     @BeforeClass
     public static void init() {
-        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.valueOf("2015-11-05"));
+        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
         rootQName = QName.create(fooModuleQName, "root");
         ipAddressQName = QName.create(fooModuleQName, "ip-address");
 

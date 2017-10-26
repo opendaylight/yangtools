@@ -47,7 +47,7 @@ public class Bug8307Test {
     private static final URI BAR_NS = URI.create("bar-ns");
     private static final URI BAZ_NS = URI.create("baz-ns");
 
-    private static Revision revision;
+    private static final Revision REVISION = Revision.of("2017-05-16");
     private static QNameModule foo;
     private static QName myFooContA;
     private static QName myFooContB;
@@ -60,15 +60,14 @@ public class Bug8307Test {
 
     @BeforeClass
     public static void setup() {
-        revision = Revision.valueOf("2017-05-16");
-        foo = QNameModule.create(FOO_NS, revision);
+        foo = QNameModule.create(FOO_NS, REVISION);
         myFooContA = QName.create(foo, "my-foo-cont-a");
         myFooContB = QName.create(foo, "my-foo-cont-b");
         myFooContC = QName.create(foo, "my-foo-cont-c");
-        bar = QNameModule.create(BAR_NS, revision);
+        bar = QNameModule.create(BAR_NS, REVISION);
         myBarContA = QName.create(bar, "my-bar-cont-a");
         myBarContB = QName.create(bar, "my-bar-cont-b");
-        baz = QNameModule.create(BAZ_NS, revision);
+        baz = QNameModule.create(BAZ_NS, REVISION);
         myBazCont = QName.create(baz, "my-baz-cont");
     }
 

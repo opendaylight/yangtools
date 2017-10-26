@@ -69,7 +69,7 @@ public class RpcStmtTest {
         anyXml = (AnyXmlSchemaNode) output.getDataChildByName(QName.create(testModule.getQNameModule(), "data"));
         assertNotNull(anyXml);
 
-        final Module fooModule = result.findModule("foo", Revision.valueOf("2016-09-23")).get();
+        final Module fooModule = result.findModule("foo", Revision.of("2016-09-23")).get();
         final Set<RpcDefinition> rpcs = fooModule.getRpcs();
         assertEquals(2, rpcs.size());
 
@@ -107,7 +107,7 @@ public class RpcStmtTest {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSource("/rpc-stmt-test/bar.yang");
         assertNotNull(schemaContext);
 
-        final Module barModule = schemaContext.findModule("bar", Revision.valueOf("2016-11-25")).get();
+        final Module barModule = schemaContext.findModule("bar", Revision.of("2016-11-25")).get();
         final Set<RpcDefinition> rpcs = barModule.getRpcs();
         assertEquals(1, rpcs.size());
 

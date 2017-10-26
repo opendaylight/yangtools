@@ -33,7 +33,7 @@ public class Bug6972Test {
         assertNotNull(schemaContext);
         assertEquals(3, schemaContext.getModules().size());
 
-        final Revision revision = Revision.valueOf("2016-10-20");
+        final Revision revision = Revision.of("2016-10-20");
         final Module foo = schemaContext.findModule("foo", revision).get();
         final Module bar = schemaContext.findModule("bar", revision).get();
         final Module baz = schemaContext.findModule("baz", revision).get();

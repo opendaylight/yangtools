@@ -26,7 +26,7 @@ public class Bug6961Test {
 
     @Test
     public void testBug6961SchemaContext() throws Exception {
-        final Optional<Revision> revision = Optional.of(Revision.valueOf("2016-01-01"));
+        final Optional<Revision> revision = Revision.ofNullable("2016-01-01");
         final ModuleIdentifier foo = ModuleIdentifierImpl.create("foo", revision);
         final ModuleIdentifier sub1Foo = ModuleIdentifierImpl.create("sub1-foo", revision);
         final ModuleIdentifier sub2Foo = ModuleIdentifierImpl.create("sub2-foo", revision);

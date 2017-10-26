@@ -30,7 +30,7 @@ public class Bug7440Test {
         final SchemaContext schemaContext = StmtTestUtils.parseYangSources("/bugs/bug7440");
         assertNotNull(schemaContext);
 
-        final Revision revision = Revision.valueOf("2016-12-23");
+        final Revision revision = Revision.of("2016-12-23");
         final Module foo = schemaContext.findModule("foo", revision).get();
         final Module bar = schemaContext.findModule("bar", revision).get();
 

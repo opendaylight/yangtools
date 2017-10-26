@@ -54,7 +54,7 @@ public class YangDataExtensionTest {
     private static final StatementStreamSource IETF_RESTCONF_MODULE = sourceForResource(
             "/yang-data-extension-test/ietf-restconf.yang");
 
-    private static final Revision REVISION = Revision.valueOf("2017-06-01");
+    private static final Revision REVISION = Revision.of("2017-06-01");
     private static final QNameModule FOO_QNAMEMODULE = QNameModule.create(URI.create("foo"), REVISION);
     private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
     private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");

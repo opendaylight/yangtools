@@ -35,7 +35,7 @@ public class Bug5884Test {
         final QName root = QName.create(NS, REV, "main-container");
         final QName choice = QName.create(NS, REV, "test-choice");
         final QName testContainerQname = QName.create(NS, REV, "test");
-        final Module foo = context.findModule("foo", Revision.valueOf("2016-01-01")).get();
+        final Module foo = context.findModule("foo", Revision.of("2016-01-01")).get();
         final ContainerSchemaNode rootContainer = (ContainerSchemaNode) context.getDataChildByName(root);
         final ContainerSchemaNode testContainer = (ContainerSchemaNode) rootContainer.getDataChildByName(
             testContainerQname);
