@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
-import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -51,12 +50,7 @@ public final class EnumTypeEffectiveStatementImpl extends DeclaredEffectiveState
                     effectiveValue = enumSubStmt.getDeclaredValue();
                 }
 
-                final EnumPairBuilder pairBuilder = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
-                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes());
-                enumSubStmt.getDescription().ifPresent(pairBuilder::setDescription);
-                enumSubStmt.getReference().ifPresent(pairBuilder::setReference);
-
-                builder.addEnum(pairBuilder.build());
+                builder.addEnum(EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue));
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }

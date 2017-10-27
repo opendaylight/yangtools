@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecific
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -49,12 +48,7 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                     effectivePos = bitSubStmt.getDeclaredPosition();
                 }
 
-                final BitBuilder bitBuilder = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setStatus(bitSubStmt.getStatus());
-                bitSubStmt.getDescription().ifPresent(bitBuilder::setDescription);
-                bitSubStmt.getReference().ifPresent(bitBuilder::setReference);
-
-                final Bit bit = bitBuilder.build();
+                final Bit bit = EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos);
                 SourceException.throwIf(bit.getPosition() < 0L && bit.getPosition() > 4294967295L,
                         ctx.getStatementSourceReference(), "Bit %s has illegal position", bit);
 
