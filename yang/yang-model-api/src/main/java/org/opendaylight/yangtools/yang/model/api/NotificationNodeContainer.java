@@ -8,26 +8,17 @@
 
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 import javax.annotation.Nonnull;
 
 public interface NotificationNodeContainer {
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used in YANG 1.0 (RFC6020) implementations of
-     * AugmentationSchema, GroupingDefinition, ListSchemaNode and ContainerSchemaNode
-     * which do not allow notification statements.
-     * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain notification statements.
-     *
-     * <p>
-     * The default definition is also used by implementations of ContainerSchemaNode which do not support
-     * notification statements such as InputEffectiveStatementImpl and OutputEffectiveStatementImpl.
-     *
+     * Return the set of notifications in this container, keyed by QName. RFC7950 specifies that
+     * {@link AugmentationSchemaNode}s, {@link GroupingDefinition}s, {@link ListSchemaNode}s and
+     * {@link ContainerSchemaNode}s can also contain {@link NotificationDefinition}s.
+      *
      * @return set of notification nodes
      */
-    @Nonnull default Set<NotificationDefinition> getNotifications() {
-        return ImmutableSet.of();
-    }
+    @Nonnull Set<NotificationDefinition> getNotifications();
 }
