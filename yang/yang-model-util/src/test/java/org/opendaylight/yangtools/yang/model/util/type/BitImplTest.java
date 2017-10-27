@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -68,8 +69,8 @@ public class BitImplTest {
         // test of getter methods
         assertEquals("Incorrect value for qname.", qnameA2, biA.getQName());
         assertEquals("Incorrect value for schema path.", schemaPathA, biA.getPath());
-        assertEquals("Incorrect value for description.", "description", biA.getDescription());
-        assertEquals("Incorrect value for reference.", "reference", biA.getReference());
+        assertEquals("Incorrect value for description.", Optional.of("description"), biA.getDescription());
+        assertEquals("Incorrect value for reference.", Optional.of("reference"), biA.getReference());
         assertEquals("Incorrect value for status.", Status.CURRENT, biA.getStatus());
         assertEquals("Incorrect value for unknown nodes.", emptyList(), biA.getUnknownSchemaNodes());
 

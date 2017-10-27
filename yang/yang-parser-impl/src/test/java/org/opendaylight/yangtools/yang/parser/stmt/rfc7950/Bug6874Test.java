@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -52,8 +53,10 @@ public class Bug6874Test {
 
         // Test for valid import statement
         ModuleImport importStmt = testModule.getImports().iterator().next();
-        assertEquals("Yang 1.1: Allow description and reference in include and import.", importStmt.getDescription());
-        assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", importStmt.getReference());
+        assertEquals(Optional.of("Yang 1.1: Allow description and reference in include and import."),
+            importStmt.getDescription());
+        assertEquals(Optional.of("https://tools.ietf.org/html/rfc7950 section-7.1.5/6"),
+            importStmt.getReference());
     }
 
     @Test

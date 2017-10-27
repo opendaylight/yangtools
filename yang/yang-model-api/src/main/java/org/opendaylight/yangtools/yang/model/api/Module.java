@@ -138,26 +138,6 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
     YangVersion getYangVersion();
 
     /**
-     * Returns the module description.
-     *
-     * @return string with the module description which is specified as argument
-     *         of YANG {@link Module <b><font
-     *         color="#b8860b">description</font></b>} keyword
-     */
-    @Override
-    String getDescription();
-
-    /**
-     * Returns the module reference.
-     *
-     * @return string with the module reference which is specified as argument
-     *         of YANG {@link Module <b><font
-     *         color="#008b8b">reference</font></b>} keyword
-     */
-    @Override
-    String getReference();
-
-    /**
      * Returns the module organization.
      *
      * @return string with the name of the organization specified in the module

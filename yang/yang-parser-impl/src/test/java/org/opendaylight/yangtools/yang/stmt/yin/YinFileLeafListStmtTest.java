@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -51,7 +52,7 @@ public class YinFileLeafListStmtTest {
                 testModule.getQNameModule(), "capability"));
         assertNotNull(leafList);
         assertEquals("uri", leafList.getType().getQName().getLocalName());
-        assertEquals("List of NETCONF capabilities supported by the server.", leafList.getDescription());
+        assertEquals(Optional.of("List of NETCONF capabilities supported by the server."), leafList.getDescription());
         assertFalse(leafList.isUserOrdered());
     }
 }

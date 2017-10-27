@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -32,7 +33,7 @@ public class Bug7879Test {
             instanceof ContainerSchemaNode);
         final SchemaNode myEventValueLeaf = findNode(context, qN("my-alarm"), qN("my-content"), qN("my-event-value"));
         assertTrue(myEventValueLeaf instanceof LeafSchemaNode);
-        assertEquals("new description", myEventValueLeaf.getDescription());
+        assertEquals(Optional.of("new description"), myEventValueLeaf.getDescription());
     }
 
     private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {

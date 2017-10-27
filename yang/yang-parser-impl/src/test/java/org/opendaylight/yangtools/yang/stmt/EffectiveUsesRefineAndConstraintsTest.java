@@ -11,10 +11,10 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -88,8 +88,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(containerInContainerNode);
 
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
-        assertNull(containerSchemaNode.getReference());
-        assertNull(containerSchemaNode.getDescription());
+        assertFalse(containerSchemaNode.getReference().isPresent());
+        assertFalse(containerSchemaNode.getDescription().isPresent());
         assertTrue(containerSchemaNode.isConfiguration());
         assertFalse(containerSchemaNode.isPresenceContainer());
 
@@ -113,8 +113,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(listInContainerNode);
 
         ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
-        assertEquals("original reference", listSchemaNode.getReference());
-        assertEquals("original description", listSchemaNode.getDescription());
+        assertEquals(Optional.of("original reference"), listSchemaNode.getReference());
+        assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
         assertFalse(listSchemaNode.isConfiguration());
 
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
@@ -128,8 +128,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(containerInContainerNode);
 
         ContainerSchemaNode containerSchemaNode = (ContainerSchemaNode) containerInContainerNode;
-        assertEquals("new reference", containerSchemaNode.getReference());
-        assertEquals("new description", containerSchemaNode.getDescription());
+        assertEquals(Optional.of("new reference"), containerSchemaNode.getReference());
+        assertEquals(Optional.of("new description"), containerSchemaNode.getDescription());
         assertTrue(containerSchemaNode.isConfiguration());
         assertTrue(containerSchemaNode.isPresenceContainer());
 
@@ -153,8 +153,8 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(listInContainerNode);
 
         ListSchemaNode listSchemaNode = (ListSchemaNode) listInContainerNode;
-        assertEquals("new reference", listSchemaNode.getReference());
-        assertEquals("new description", listSchemaNode.getDescription());
+        assertEquals(Optional.of("new reference"), listSchemaNode.getReference());
+        assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
         assertTrue(listSchemaNode.isConfiguration());
 
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();

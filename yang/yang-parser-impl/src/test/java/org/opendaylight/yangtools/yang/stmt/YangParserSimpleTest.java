@@ -64,8 +64,8 @@ public class YangParserSimpleTest {
 
         // test SchemaNode args
         assertEquals(QName.create(SN, "data"), data.getQName());
-        assertEquals("anyxml desc", data.getDescription());
-        assertEquals("data ref", data.getReference());
+        assertEquals(Optional.of("anyxml desc"), data.getDescription());
+        assertEquals(Optional.of("data ref"), data.getReference());
         assertEquals(Status.OBSOLETE, data.getStatus());
         assertEquals(0, data.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
@@ -89,8 +89,8 @@ public class YangParserSimpleTest {
                 found2 = true;
                 assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
                 assertEquals(Optional.of("anyxml data error-app-tag"), must.getErrorAppTag());
-                assertEquals("an error occured in data", must.getDescription());
-                assertEquals("data must ref", must.getReference());
+                assertEquals(Optional.of("an error occured in data"), must.getDescription());
+                assertEquals(Optional.of("data must ref"), must.getReference());
             }
         }
         assertTrue(found1);
@@ -108,8 +108,8 @@ public class YangParserSimpleTest {
         // test SchemaNode args
         assertEquals(SN_NODES, nodes.getQName());
         assertEquals(SN_NODES_PATH, nodes.getPath());
-        assertEquals("nodes collection", nodes.getDescription());
-        assertEquals("nodes ref", nodes.getReference());
+        assertEquals(Optional.of("nodes collection"), nodes.getDescription());
+        assertEquals(Optional.of("nodes ref"), nodes.getReference());
         assertEquals(Status.CURRENT, nodes.getStatus());
         assertEquals(0, nodes.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
@@ -136,8 +136,8 @@ public class YangParserSimpleTest {
                 found2 = true;
                 assertFalse(must.getErrorMessage().isPresent());
                 assertFalse(must.getErrorAppTag().isPresent());
-                assertNull(must.getDescription());
-                assertNull(must.getReference());
+                assertFalse(must.getDescription().isPresent());
+                assertFalse(must.getReference().isPresent());
             }
         }
         assertTrue(found1);
@@ -155,8 +155,8 @@ public class YangParserSimpleTest {
         final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
         assertEquals(SN_NODES_PATH.createChild(QName.create(SN, "nodes-type")), nodesType.getPath());
-        assertNull(nodesType.getDescription());
-        assertNull(nodesType.getReference());
+        assertFalse(nodesType.getDescription().isPresent());
+        assertFalse(nodesType.getReference().isPresent());
         assertEquals(Status.CURRENT, nodesType.getStatus());
         assertEquals(0, nodesType.getUnknownSchemaNodes().size());
 
