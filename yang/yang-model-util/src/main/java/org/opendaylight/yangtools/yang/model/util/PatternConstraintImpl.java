@@ -77,6 +77,11 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     }
 
     @Override
+    public Optional<ModifierKind> getModifier() {
+        return Optional.ofNullable(modifier);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(description, errorAppTag, errorMessage, reference, regex, modifier);
     }
