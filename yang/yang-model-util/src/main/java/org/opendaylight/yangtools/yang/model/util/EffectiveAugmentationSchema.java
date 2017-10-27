@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -112,5 +113,10 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     @Override
     public Set<ActionDefinition> getActions() {
         return delegate.getActions();
+    }
+
+    @Override
+    public Set<NotificationDefinition> getNotifications() {
+        return delegate.getNotifications();
     }
 }
