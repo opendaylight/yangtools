@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -31,13 +32,13 @@ public class Bug8597Test {
             switch (moduleImport.getModuleName()) {
                 case "bar":
                     assertEquals(Revision.ofNullable("1970-01-01"), moduleImport.getRevision());
-                    assertEquals("bar-ref", moduleImport.getReference());
-                    assertEquals("bar-desc", moduleImport.getDescription());
+                    assertEquals(Optional.of("bar-ref"), moduleImport.getReference());
+                    assertEquals(Optional.of("bar-desc"), moduleImport.getDescription());
                     break;
                 case "baz":
                     assertEquals(Revision.ofNullable("2010-10-10"), moduleImport.getRevision());
-                    assertEquals("baz-ref", moduleImport.getReference());
-                    assertEquals("baz-desc", moduleImport.getDescription());
+                    assertEquals(Optional.of("baz-ref"), moduleImport.getReference());
+                    assertEquals(Optional.of("baz-desc"), moduleImport.getDescription());
                     break;
                 default:
                     fail("Module 'foo' should only contains import of module 'bar' and 'baz'");

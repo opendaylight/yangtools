@@ -11,9 +11,9 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -43,8 +43,8 @@ public class Bug5481Test {
 
         assertFalse(topContainer.getConstraints().getWhenCondition().isPresent());
         assertEquals(Status.CURRENT, topContainer.getStatus());
-        assertNull(topContainer.getDescription());
-        assertNull(topContainer.getReference());
+        assertFalse(topContainer.getDescription().isPresent());
+        assertFalse(topContainer.getReference().isPresent());
         return topContainer;
     }
 
@@ -58,7 +58,7 @@ public class Bug5481Test {
 
         assertEquals(new RevisionAwareXPathImpl("module1:top = 'extended'", false), whenConditionExtendedLeaf);
         assertEquals(Status.DEPRECATED, extendedLeaf.getStatus());
-        assertEquals("text", extendedLeaf.getDescription());
-        assertEquals("ref", extendedLeaf.getReference());
+        assertEquals(Optional.of("text"), extendedLeaf.getDescription());
+        assertEquals(Optional.of("ref"), extendedLeaf.getReference());
     }
 }
