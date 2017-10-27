@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashMap;
@@ -38,7 +39,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Set<DataSchemaNode> realChildSchemas) {
-        this.delegate = Preconditions.checkNotNull(augmentSchema);
+        this.delegate = requireNonNull(augmentSchema);
         this.realChildSchemas = ImmutableSet.copyOf(realChildSchemas);
 
         final Map<QName, DataSchemaNode> m = new HashMap<>(realChildSchemas.size());
@@ -95,8 +96,8 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final QName name) {
-        return mappedChildSchemas.get(name);
+    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return Optional.ofNullable(mappedChildSchemas.get(requireNonNull(name)));
     }
 
     @Override
