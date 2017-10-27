@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.codecs;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
@@ -62,8 +61,7 @@ public class StringPatternCheckingCodecTest {
             fail("Exception should have been thrown.");
         } catch (final IllegalArgumentException ex) {
             LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains(
-                "Supplied value does not match the regular expression ^[A-Z]+$. [abcd]"));
+            assertEquals("Supplied value does not match the regular expression ^[A-Z]+$.", ex.getMessage());
         }
     }
 }
