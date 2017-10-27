@@ -187,6 +187,11 @@ public final class ContainerSchemaNodes {
         public Set<ActionDefinition> getActions() {
             return ImmutableSet.of();
         }
+
+        @Override
+        public Set<NotificationDefinition> getNotifications() {
+            return ImmutableSet.of();
+        }
     }
 
     private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
