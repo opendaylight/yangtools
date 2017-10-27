@@ -191,7 +191,7 @@ public class GroupingTest {
         final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
                 foo.getQNameModule(), "address"));
         assertNotNull(address_u);
-        assertEquals("1.2.3.4", address_u.getDefault());
+        assertEquals("1.2.3.4", address_u.getType().getDefaultValue());
         assertEquals(Optional.of("IP address of target node"), address_u.getDescription());
         assertEquals(Optional.of("address reference added by refine"), address_u.getReference());
         assertFalse(address_u.isConfiguration());
@@ -202,7 +202,7 @@ public class GroupingTest {
                 baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertNull(address_g.getDefault());
+        assertNull(address_g.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
         assertTrue(address_g.isConfiguration());
@@ -312,7 +312,7 @@ public class GroupingTest {
         final LeafSchemaNode address_u = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "address"));
         assertNotNull(address_u);
-        assertNull(address_u.getDefault());
+        assertNull(address_u.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_u.getDescription());
         assertFalse(address_u.getReference().isPresent());
         assertTrue(address_u.isConfiguration());
@@ -322,7 +322,7 @@ public class GroupingTest {
                 baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertNull(address_g.getDefault());
+        assertNull(address_g.getType().getDefaultValue());
         assertEquals(Optional.of("Target IP address"), address_g.getDescription());
         assertFalse(address_g.getReference().isPresent());
         assertTrue(address_g.isConfiguration());
