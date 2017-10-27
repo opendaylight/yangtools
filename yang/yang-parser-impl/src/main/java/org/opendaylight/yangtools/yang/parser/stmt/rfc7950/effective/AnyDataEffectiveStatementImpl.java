@@ -46,6 +46,11 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
     }
 
     @Override
+    public Optional<ContainerSchemaNode> getDataSchema() {
+        return Optional.ofNullable(schema);
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(getQName(),getPath());
     }
@@ -69,10 +74,5 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
     @Override
     public String toString() {
         return MoreObjects.toStringHelper(this).add("qname", getQName()).add("path", getPath()).toString();
-    }
-
-    @Override
-    public ContainerSchemaNode getSchemaOfAnyData() {
-        return schema;
     }
 }
