@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
 import java.util.Set;
 
 /**
@@ -18,19 +17,9 @@ import java.util.Set;
 @Beta
 public interface ActionNodeContainer {
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used in YANG 1.0 (RFC6020) implementations of
-     * AugmentationSchema, GroupingDefinition, ListSchemaNode and ContainerSchemaNode
-     * which do not allow action statements.
-     * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain action statements.
-     *
-     * <p>
-     * The default definition is also used by implementations of ContainerSchemaNode which do not support
-     * action statements such as InputEffectiveStatementImpl, OutputEffectiveStatementImpl and SchemaContext.
+     * Return the set of actions.
      *
      * @return set of action nodes
      */
-    default Set<ActionDefinition> getActions() {
-        return ImmutableSet.of();
-    }
+    Set<ActionDefinition> getActions();
 }
