@@ -10,16 +10,14 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffectiveStatementImpl
-        implements YangModeledAnyXmlSchemaNode {
+public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffectiveStatementImpl {
 
     private final ContainerSchemaNode schemaOfAnyXmlData;
 
@@ -29,10 +27,9 @@ public final class YangModeledAnyXmlEffectiveStatementImpl extends AnyXmlEffecti
         schemaOfAnyXmlData = requireNonNull(contentSchema);
     }
 
-    @Nonnull
     @Override
-    public ContainerSchemaNode getSchemaOfAnyXmlData() {
-        return schemaOfAnyXmlData;
+    public Optional<ContainerSchemaNode> getDataSchema() {
+        return Optional.of(schemaOfAnyXmlData);
     }
 
     @Override
