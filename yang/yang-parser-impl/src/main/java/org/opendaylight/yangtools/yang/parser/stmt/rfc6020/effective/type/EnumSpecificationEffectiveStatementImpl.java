@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.EnumSpecific
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumerationTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -50,12 +49,7 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                     effectiveValue = enumSubStmt.getDeclaredValue();
                 }
 
-                final EnumPairBuilder pairBuilder = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
-                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes());
-                enumSubStmt.getDescription().ifPresent(pairBuilder::setDescription);
-                enumSubStmt.getReference().ifPresent(pairBuilder::setReference);
-
-                final EnumPair pair = pairBuilder.build();
+                final EnumPair pair = EffectiveTypeUtil.buildEnumPair(enumSubStmt, effectiveValue);
                 if (highestValue == null || highestValue < pair.getValue()) {
                     highestValue = pair.getValue();
                 }
