@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
@@ -37,12 +38,12 @@ public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveState
     }
 
     @Override
-    public String getDescription() {
-        return this.description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public String getReference() {
-        return this.reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 }
