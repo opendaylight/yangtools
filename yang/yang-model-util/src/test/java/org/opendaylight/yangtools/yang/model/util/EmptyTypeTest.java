@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.emptyType;
 
@@ -29,9 +29,9 @@ public class EmptyTypeTest {
         assertEquals("BaseType", null, emptyType.getBaseType());
         assertEquals("DefaultValue", null, emptyType.getDefaultValue());
         assertEquals("Status", Status.CURRENT, emptyType.getStatus());
-        assertNull("Reference", emptyType.getReference());
+        assertFalse(emptyType.getReference().isPresent());
         assertEquals("Units", null, emptyType.getUnits());
-        assertNull("Description is not null", emptyType.getDescription());
+        assertFalse(emptyType.getDescription().isPresent());
         assertEquals("UnknownSchemaNodes", Collections.EMPTY_LIST, emptyType.getUnknownSchemaNodes());
         assertTrue("toString", emptyType.toString().contains("empty"));
     }

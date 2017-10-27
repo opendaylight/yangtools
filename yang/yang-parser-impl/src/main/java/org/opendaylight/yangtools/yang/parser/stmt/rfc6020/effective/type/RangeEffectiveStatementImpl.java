@@ -21,6 +21,7 @@ public class RangeEffectiveStatementImpl extends
     @Override
     final RangeConstraint createCustomizedConstraint(final RangeConstraint rangeConstraint) {
         return new RangeConstraintEffectiveImpl(rangeConstraint.getMin(), rangeConstraint.getMax(),
-                getDescription(), getReference(), getErrorAppTag().orElse(null), getErrorMessage().orElse(null));
+                getDescription().orElse(null), getReference().orElse(null), getErrorAppTag().orElse(null),
+                getErrorMessage().orElse(null));
     }
 }

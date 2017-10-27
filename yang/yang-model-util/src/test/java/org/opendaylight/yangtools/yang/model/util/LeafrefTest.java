@@ -46,8 +46,8 @@ public class LeafrefTest {
         assertNull("Leafref does not have a default value", leafref.getDefaultValue());
         assertEquals(QName.create("test", "List1"), leafref.getQName());
         assertEquals("SchemaPath of 'leafref' is '/Cont1/List1'.", schemaPath, leafref.getPath());
-        assertNull(leafref.getDescription());
-        assertNull(leafref.getReference());
+        assertFalse(leafref.getDescription().isPresent());
+        assertFalse(leafref.getReference().isPresent());
         assertEquals("Status of 'leafref' is current.", Status.CURRENT, leafref.getStatus());
         assertTrue("Object 'leafref' shouldn't have any unknown schema nodes.",
                 leafref.getUnknownSchemaNodes().isEmpty());
