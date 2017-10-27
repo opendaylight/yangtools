@@ -1791,9 +1791,9 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getUnits());
+            emitUnitsNode(child.getType().getUnits());
             emitMustNodes(child.getConstraints().getMustConstraints());
-            emitDefaultNode(child.getDefault());
+            emitDefaultNode(child.getType().getDefaultValue());
             emitConfigNode(child.isConfiguration());
             emitMandatoryNode(child.getConstraints().isMandatory());
             emitDocumentedNode(child);
@@ -1996,8 +1996,8 @@ abstract class SchemaContextEmitter {
             final LeafSchemaNode original = getOriginalChecked(value);
 
             // emitMustNodes(child.getConstraints().getMustConstraints());
-            if (Objects.deepEquals(original.getDefault(), value.getDefault())) {
-                emitDefaultNode(value.getDefault());
+            if (Objects.deepEquals(original.getType().getDefaultValue(), value.getType().getDefaultValue())) {
+                emitDefaultNode(value.getType().getDefaultValue());
             }
             if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {
                 emitConfigNode(value.isConfiguration());
