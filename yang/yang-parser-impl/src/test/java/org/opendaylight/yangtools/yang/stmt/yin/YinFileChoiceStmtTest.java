@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
@@ -67,8 +66,7 @@ public class YinFileChoiceStmtTest {
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());
 
-        final RevisionAwareXPath whenCondition = caseNode.getConstraints().getWhenCondition();
-        assertNotNull(whenCondition);
+        assertTrue(caseNode.getConstraints().getWhenCondition().isPresent());
 
         choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "state"));
         assertNotNull(choice);

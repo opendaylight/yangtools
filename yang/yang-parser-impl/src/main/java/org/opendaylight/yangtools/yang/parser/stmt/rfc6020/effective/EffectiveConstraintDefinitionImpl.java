@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.data.util.ConstraintDefinitions;
 import org.opendaylight.yangtools.yang.data.util.EmptyConstraintDefinition;
@@ -75,8 +76,8 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     }
 
     @Override
-    public RevisionAwareXPath getWhenCondition() {
-        return whenCondition;
+    public Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.ofNullable(whenCondition);
     }
 
     @Override

@@ -133,11 +133,11 @@ public class AugmentTest {
         AugmentationSchemaNode augment2 = null;
         AugmentationSchemaNode augment3 = null;
         for (final AugmentationSchemaNode as : augmentations) {
-            if (as.getWhenCondition() == null) {
+            if (!as.getWhenCondition().isPresent()) {
                 augment3 = as;
-            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().toString())) {
+            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().get().toString())) {
                 augment1 = as;
-            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().toString())) {
+            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().get().toString())) {
                 augment2 = as;
             }
         }

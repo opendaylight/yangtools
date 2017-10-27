@@ -1814,7 +1814,7 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitConstraints(final ConstraintDefinition constraints) {
-            emitWhen(constraints.getWhenCondition());
+            constraints.getWhenCondition().ifPresent(this::emitWhen);
             for (final MustDefinition mustCondition : constraints.getMustConstraints()) {
                 emitMust(mustCondition);
             }
@@ -1822,7 +1822,7 @@ abstract class SchemaContextEmitter {
 
         private void emitLeaf(final LeafSchemaNode child) {
             super.writer.startLeafNode(child.getQName());
-            emitWhen(child.getConstraints().getWhenCondition());
+            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
             emitUnitsNode(child.getUnits());
@@ -1839,7 +1839,7 @@ abstract class SchemaContextEmitter {
         private void emitLeafList(final LeafListSchemaNode child) {
             super.writer.startLeafListNode(child.getQName());
 
-            emitWhen(child.getConstraints().getWhenCondition());
+            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
             emitUnitsNode(child.getType().getUnits());
@@ -1858,7 +1858,7 @@ abstract class SchemaContextEmitter {
 
         private void emitList(final ListSchemaNode child) {
             super.writer.startListNode(child.getQName());
-            emitWhen(child.getConstraints().getWhenCondition());
+            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
 
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitMustNodes(child.getConstraints().getMustConstraints());
@@ -1903,7 +1903,7 @@ abstract class SchemaContextEmitter {
 
         private void emitChoice(final ChoiceSchemaNode choice) {
             super.writer.startChoiceNode(choice.getQName());
-            emitWhen(choice.getConstraints().getWhenCondition());
+            choice.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             // FIXME: BUG-2444: defaultNode //Optional
             emitConfigNode(choice.isConfiguration());
@@ -1922,7 +1922,7 @@ abstract class SchemaContextEmitter {
                 return;
             }
             super.writer.startCaseNode(caze.getQName());
-            emitWhen(caze.getConstraints().getWhenCondition());
+            caze.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitDocumentedNode(caze);
             emitDataNodeContainer(caze);
@@ -1944,7 +1944,7 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitBodyOfDataSchemaNode(final DataSchemaNode dataSchemaNode) {
-            emitWhen(dataSchemaNode.getConstraints().getWhenCondition());
+            dataSchemaNode.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitMustNodes(dataSchemaNode.getConstraints().getMustConstraints());
             emitConfigNode(dataSchemaNode.isConfiguration());
