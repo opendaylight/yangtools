@@ -79,7 +79,7 @@ public class ListTest {
         assertNotNull(leaf);
         assertFalse(leaf.getConstraints().isMandatory());
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
-        assertEquals("default-value", leaf.getDefault());
+        assertEquals("default-value", leaf.getType().getDefaultValue());
 
         final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
             QName.create(testModule.getQNameModule(), "list-of-leaves"));

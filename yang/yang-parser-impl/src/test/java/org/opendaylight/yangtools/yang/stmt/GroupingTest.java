@@ -190,7 +190,7 @@ public class GroupingTest {
         final LeafSchemaNode address_u = (LeafSchemaNode) destination.getDataChildByName(QName.create(
                 foo.getQNameModule(), "address"));
         assertNotNull(address_u);
-        assertEquals("1.2.3.4", address_u.getDefault());
+        assertEquals("1.2.3.4", address_u.getType().getDefaultValue());
         assertEquals("IP address of target node", address_u.getDescription());
         assertEquals("address reference added by refine", address_u.getReference());
         assertFalse(address_u.isConfiguration());
@@ -201,7 +201,7 @@ public class GroupingTest {
                 baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertNull(address_g.getDefault());
+        assertNull(address_g.getType().getDefaultValue());
         assertEquals("Target IP address", address_g.getDescription());
         assertNull(address_g.getReference());
         assertTrue(address_g.isConfiguration());
@@ -311,7 +311,7 @@ public class GroupingTest {
         final LeafSchemaNode address_u = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "address"));
         assertNotNull(address_u);
-        assertNull(address_u.getDefault());
+        assertNull(address_u.getType().getDefaultValue());
         assertEquals("Target IP address", address_u.getDescription());
         assertNull(address_u.getReference());
         assertTrue(address_u.isConfiguration());
@@ -321,7 +321,7 @@ public class GroupingTest {
                 baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
-        assertNull(address_g.getDefault());
+        assertNull(address_g.getType().getDefaultValue());
         assertEquals("Target IP address", address_g.getDescription());
         assertNull(address_g.getReference());
         assertTrue(address_g.isConfiguration());
