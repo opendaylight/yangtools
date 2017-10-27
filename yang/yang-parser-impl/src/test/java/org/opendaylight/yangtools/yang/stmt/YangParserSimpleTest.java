@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -76,20 +77,18 @@ public class YangParserSimpleTest {
         assertEquals(2, constraints.getMustConstraints().size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
-        final String errMsg1 = "An ethernet MTU must be 1500";
         final String must2 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
-        final String errMsg2 = "An atm MTU must be  64 .. 17966";
 
         boolean found1 = false;
         boolean found2 = false;
         for (final MustDefinition must : mustConstraints) {
             if (must1.equals(must.toString())) {
                 found1 = true;
-                assertEquals(errMsg1, must.getErrorMessage());
+                assertEquals(Optional.of("An ethernet MTU must be 1500"), must.getErrorMessage());
             } else if (must2.equals(must.toString())) {
                 found2 = true;
-                assertEquals(errMsg2, must.getErrorMessage());
-                assertEquals("anyxml data error-app-tag", must.getErrorAppTag());
+                assertEquals(Optional.of("An atm MTU must be  64 .. 17966"), must.getErrorMessage());
+                assertEquals(Optional.of("anyxml data error-app-tag"), must.getErrorAppTag());
                 assertEquals("an error occured in data", must.getDescription());
                 assertEquals("data must ref", must.getReference());
             }
@@ -132,11 +131,11 @@ public class YangParserSimpleTest {
         for (final MustDefinition must : mustConstraints) {
             if (must1.equals(must.toString())) {
                 found1 = true;
-                assertEquals(errMsg1, must.getErrorMessage());
+                assertEquals(Optional.of(errMsg1), must.getErrorMessage());
             } else if (must2.equals(must.toString())) {
                 found2 = true;
-                assertNull(must.getErrorMessage());
-                assertNull(must.getErrorAppTag());
+                assertFalse(must.getErrorMessage().isPresent());
+                assertFalse(must.getErrorAppTag().isPresent());
                 assertNull(must.getDescription());
                 assertNull(must.getReference());
             }
