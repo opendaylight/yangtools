@@ -1171,8 +1171,7 @@ abstract class SchemaContextEmitter {
         private void emitMetaNodes(final Module input) {
             input.getOrganization().ifPresent(this::emitOrganizationNode);
             input.getContact().ifPresent(this::emitContact);
-            emitDescriptionNode(input.getDescription());
-            emitReferenceNode(input.getReference());
+            emitDocumentedNode(input);
         }
 
         private void emitLinkageNodes(final Module input) {
@@ -1266,10 +1265,8 @@ abstract class SchemaContextEmitter {
 
         private void emitImport(final ModuleImport importNode) {
             super.writer.startImportNode(importNode.getModuleName());
-            emitDescriptionNode(importNode.getDescription());
-            emitReferenceNode(importNode.getReference());
+            emitDocumentedNode(importNode);
             emitPrefixNode(importNode.getPrefix());
-
             importNode.getRevision().ifPresent(this::emitRevisionDateNode);
             super.writer.endNode();
         }
@@ -1324,18 +1321,14 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitDescriptionNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startDescriptionNode(input);
-                super.writer.endNode();
-            }
+        private void emitDescriptionNode(final String input) {
+            super.writer.startDescriptionNode(input);
+            super.writer.endNode();
         }
 
-        private void emitReferenceNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startReferenceNode(input);
-                super.writer.endNode();
-            }
+        private void emitReferenceNode(final String input) {
+            super.writer.startReferenceNode(input);
+            super.writer.endNode();
         }
 
         private void emitUnitsNode(@Nullable final String input) {
@@ -1365,9 +1358,7 @@ abstract class SchemaContextEmitter {
         private void emitExtension(final ExtensionDefinition extension) {
             super.writer.startExtensionNode(extension.getQName());
             emitArgument(extension.getArgument(), extension.isYinElement());
-            emitStatusNode(extension.getStatus());
-            emitDescriptionNode(extension.getDescription());
-            emitReferenceNode(extension.getReference());
+            emitDocumentedNode(extension);
             emitUnknownStatementNodes(extension.getUnknownSchemaNodes());
             super.writer.endNode();
 
@@ -1391,9 +1382,7 @@ abstract class SchemaContextEmitter {
         private void emitIdentity(final IdentitySchemaNode identity) {
             super.writer.startIdentityNode(identity.getQName());
             emitBaseIdentities(identity.getBaseIdentities());
-            emitStatusNode(identity.getStatus());
-            emitDescriptionNode(identity.getDescription());
-            emitReferenceNode(identity.getReference());
+            emitDocumentedNode(identity);
             super.writer.endNode();
         }
 
@@ -1413,11 +1402,8 @@ abstract class SchemaContextEmitter {
 
             // FIXME: BUG-2444: FIXME: BUG-2444: Expose ifFeature
             // *(ifFeatureNode )
-            emitStatusNode(definition.getStatus());
-            emitDescriptionNode(definition.getDescription());
-            emitReferenceNode(definition.getReference());
+            emitDocumentedNode(definition);
             super.writer.endNode();
-
         }
 
         @SuppressWarnings("unused")
@@ -1436,12 +1422,9 @@ abstract class SchemaContextEmitter {
             emitTypeNodeDerived(typedef);
             emitUnitsNode(typedef.getUnits());
             emitDefaultNode(typedef.getDefaultValue());
-            emitStatusNode(typedef.getStatus());
-            emitDescriptionNode(typedef.getDescription());
-            emitReferenceNode(typedef.getReference());
+            emitDocumentedNode(typedef);
             emitUnknownStatementNodes(typedef.getUnknownSchemaNodes());
             super.writer.endNode();
-
         }
 
         private void emitTypeNode(final SchemaPath parentPath, final TypeDefinition<?> subtype) {
@@ -1516,8 +1499,7 @@ abstract class SchemaContextEmitter {
                 final RangeConstraint first = list.iterator().next();
                 first.getErrorMessage().ifPresent(this::emitErrorMessageNode);
                 first.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
-                emitDescriptionNode(first.getDescription());
-                emitReferenceNode(first.getReference());
+                emitDocumentedNode(first);
                 super.writer.endNode();
             }
 
@@ -1526,7 +1508,6 @@ abstract class SchemaContextEmitter {
         private void emitDecimal64Specification(final DecimalTypeDefinition typeDefinition) {
             emitFranctionDigitsNode(typeDefinition.getFractionDigits());
             emitRangeNodeOptional(typeDefinition.getRangeConstraints());
-
         }
 
         private void emitFranctionDigitsNode(final Integer fractionDigits) {
@@ -1546,8 +1527,7 @@ abstract class SchemaContextEmitter {
             super.writer.startLengthNode(toLengthString(constraint.getAllowedRanges()));
             constraint.getErrorMessage().ifPresent(this::emitErrorMessageNode);
             constraint.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
-            emitDescriptionNode(constraint.getDescription());
-            emitReferenceNode(constraint.getReference());
+            emitDocumentedNode(constraint);
             super.writer.endNode();
         }
 
@@ -1601,7 +1581,7 @@ abstract class SchemaContextEmitter {
             super.writer.startPatternNode(pattern.getRawRegularExpression());
             pattern.getErrorMessage().ifPresent(this::emitErrorMessageNode);
             pattern.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
-            emitDescriptionNode(pattern.getDescription());
+            emitDocumentedNode(pattern);
             emitModifier(pattern.getModifier());
             super.writer.endNode();
         }
@@ -1635,9 +1615,7 @@ abstract class SchemaContextEmitter {
         private void emitEnumNode(final EnumPair enumValue) {
             super.writer.startEnumNode(enumValue.getName());
             emitValueNode(enumValue.getValue());
-            emitStatusNode(enumValue.getStatus());
-            emitDescriptionNode(enumValue.getDescription());
-            emitReferenceNode(enumValue.getReference());
+            emitDocumentedNode(enumValue);
             super.writer.endNode();
         }
 
@@ -1683,9 +1661,7 @@ abstract class SchemaContextEmitter {
         private void emitBit(final Bit bit) {
             super.writer.startBitNode(bit.getName());
             emitPositionNode(bit.getPosition());
-            emitStatusNode(bit.getStatus());
-            emitDescriptionNode(bit.getDescription());
-            emitReferenceNode(bit.getReference());
+            emitDocumentedNode(bit);
             super.writer.endNode();
         }
 
@@ -1732,11 +1708,9 @@ abstract class SchemaContextEmitter {
                 super.writer.startMustNode(mustCondition.getXpath());
                 mustCondition.getErrorMessage().ifPresent(this::emitErrorMessageNode);
                 mustCondition.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
-                emitDescriptionNode(mustCondition.getDescription());
-                emitReferenceNode(mustCondition.getReference());
+                emitDocumentedNode(mustCondition);
                 super.writer.endNode();
             }
-
         }
 
         private void emitErrorMessageNode(@Nullable final String input) {
@@ -1770,10 +1744,14 @@ abstract class SchemaContextEmitter {
             }
         }
 
+        private void emitDocumentedNode(final DocumentedNode input) {
+            input.getDescription().ifPresent(this::emitDescriptionNode);
+            input.getReference().ifPresent(this::emitReferenceNode);
+        }
+
         private void emitDocumentedNode(final DocumentedNode.WithStatus input) {
             emitStatusNode(input.getStatus());
-            emitDescriptionNode(input.getDescription());
-            emitReferenceNode(input.getReference());
+            emitDocumentedNode((DocumentedNode) input);
         }
 
         private void emitGrouping(final GroupingDefinition grouping) {
@@ -1995,10 +1973,10 @@ abstract class SchemaContextEmitter {
 
         private void emitDocumentedNodeRefine(final DocumentedNode original, final DocumentedNode value) {
             if (Objects.deepEquals(original.getDescription(), value.getDescription())) {
-                emitDescriptionNode(value.getDescription());
+                value.getDescription().ifPresent(this::emitDescriptionNode);
             }
             if (Objects.deepEquals(original.getReference(), value.getReference())) {
-                emitReferenceNode(value.getReference());
+                value.getReference().ifPresent(this::emitReferenceNode);
             }
         }
 
@@ -2119,9 +2097,7 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: whenNode //Optional
             // FIXME: BUG-2444: *(ifFeatureNode )
 
-            emitStatusNode(augmentation.getStatus());
-            emitDescriptionNode(augmentation.getDescription());
-            emitReferenceNode(augmentation.getReference());
+            emitDocumentedNode(augmentation);
             for (final UsesNode uses : augmentation.getUses()) {
                 emitUsesNode(uses);
             }
@@ -2183,9 +2159,7 @@ abstract class SchemaContextEmitter {
 
         private void emitOperationBody(final OperationDefinition rpc) {
             // FIXME: BUG-2444: *(ifFeatureNode )
-            emitStatusNode(rpc.getStatus());
-            emitDescriptionNode(rpc.getDescription());
-            emitReferenceNode(rpc.getReference());
+            emitDocumentedNode(rpc);
 
             for (final TypeDefinition<?> typedef : rpc.getTypeDefinitions()) {
                 emitTypedefNode(typedef);
