@@ -526,7 +526,7 @@ public class SchemaContextProxyTest {
 
         final QName qname = QName.create("config-namespace", "2016-08-11", "cont");
         final ContainerSchemaNode mockedContainer = mock(ContainerSchemaNode.class);
-        doReturn(mockedContainer).when(moduleConfig).getDataChildByName(any(QName.class));
+        doReturn(Optional.of(mockedContainer)).when(moduleConfig).findDataChildByName(any(QName.class));
 
         final DataSchemaNode dataSchemaNode = filteringSchemaContextProxy.getDataChildByName(qname);
         assertTrue(dataSchemaNode instanceof ContainerSchemaNode);

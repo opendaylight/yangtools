@@ -8,6 +8,8 @@
 
 package org.opendaylight.yangtools.yang.model.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
 import java.util.ArrayList;
@@ -199,14 +201,15 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final QName name) {
+    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        requireNonNull(name);
         for (Module module : getModules()) {
-            final DataSchemaNode result = module.getDataChildByName(name);
-            if (result != null) {
+            final Optional<DataSchemaNode> result = module.findDataChildByName(name);
+            if (result.isPresent()) {
                 return result;
             }
         }
-        return null;
+        return Optional.empty();
     }
 
     @Override

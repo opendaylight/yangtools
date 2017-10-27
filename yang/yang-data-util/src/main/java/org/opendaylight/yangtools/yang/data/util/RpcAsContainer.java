@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -89,15 +90,15 @@ public final class RpcAsContainer implements ContainerSchemaNode {
     }
 
     @Override
-    public DataSchemaNode getDataChildByName(final QName name) {
+    public Optional<DataSchemaNode> findDataChildByName(final QName name) {
         // FIXME: check QNameModule
         switch (name.getLocalName()) {
             case "input":
-                return delegate.getInput();
+                return Optional.of(delegate.getInput());
             case "output":
-                return delegate.getOutput();
+                return Optional.of(delegate.getOutput());
             default:
-                return null;
+                return Optional.empty();
         }
     }
 

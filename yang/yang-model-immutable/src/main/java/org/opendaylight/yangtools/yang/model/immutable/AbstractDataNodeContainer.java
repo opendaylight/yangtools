@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.immutable;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -23,7 +26,7 @@ abstract class AbstractDataNodeContainer implements DataNodeContainer {
     }
 
     @Override
-    public final DataSchemaNode getDataChildByName(final QName name) {
-        return children().get(name);
+    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        return Optional.ofNullable(children().get(requireNonNull(name)));
     }
 }
