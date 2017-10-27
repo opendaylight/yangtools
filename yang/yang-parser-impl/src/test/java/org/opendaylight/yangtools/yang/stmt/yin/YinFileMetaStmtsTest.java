@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -35,8 +36,8 @@ public class YinFileMetaStmtsTest {
         Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
         assertNotNull(testModule);
 
-        assertEquals("IETF NETCONF (Network Configuration) Working Group", testModule.getOrganization());
-        assertEquals("WG Web:   <http://tools.ietf.org/wg/netconf/>\n"
+        assertEquals(Optional.of("IETF NETCONF (Network Configuration) Working Group"), testModule.getOrganization());
+        assertEquals(Optional.of("WG Web:   <http://tools.ietf.org/wg/netconf/>\n"
                 + "WG List:  <mailto:netconf@ietf.org>\n"
                 + "\n"
                 + "WG Chair: Mehmet Ersue\n"
@@ -49,7 +50,7 @@ public class YinFileMetaStmtsTest {
                 + "        <mailto:mark.scott@ericsson.com>\n"
                 + "\n"
                 + "Editor:   Martin Bjorklund\n"
-                + "        <mailto:mbj@tail-f.com>", testModule.getContact());
+                + "        <mailto:mbj@tail-f.com>"), testModule.getContact());
         assertEquals("NETCONF Monitoring Module.\n" + "All elements in this module are read-only.\n" + "\n"
                 + "Copyright (c) 2010 IETF Trust and the persons identified as\n" + "authors of the code. All rights "
                 + "reserved.\n" + "\n" + "Redistribution and use in source and binary forms, with or\n" +  "without "

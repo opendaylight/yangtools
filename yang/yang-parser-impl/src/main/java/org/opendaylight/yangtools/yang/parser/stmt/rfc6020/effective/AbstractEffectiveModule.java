@@ -301,13 +301,13 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public String getOrganization() {
-        return organization;
+    public Optional<String> getOrganization() {
+        return Optional.ofNullable(organization);
     }
 
     @Override
-    public String getContact() {
-        return contact;
+    public Optional<String> getContact() {
+        return Optional.ofNullable(contact);
     }
 
     @Override

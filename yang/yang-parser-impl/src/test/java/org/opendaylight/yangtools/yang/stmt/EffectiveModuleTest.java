@@ -73,8 +73,8 @@ public class EffectiveModuleTest {
 
         assertEquals("root-pref", rootModule.getPrefix());
         assertEquals(YangVersion.VERSION_1, rootModule.getYangVersion());
-        assertEquals("cisco", rootModule.getOrganization());
-        assertEquals("cisco email", rootModule.getContact());
+        assertEquals(Optional.of("cisco"), rootModule.getOrganization());
+        assertEquals(Optional.of("cisco email"), rootModule.getContact());
 
         final ContainerSchemaNode contSchemaNode = (ContainerSchemaNode) rootModule.getDataChildByName(CONT);
         assertNotNull(contSchemaNode);

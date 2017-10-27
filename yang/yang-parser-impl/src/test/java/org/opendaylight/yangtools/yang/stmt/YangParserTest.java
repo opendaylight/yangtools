@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -107,8 +108,8 @@ public class YangParserTest {
         assertEquals("baz", import3.getModuleName());
         assertEquals(BAZ.getRevision(), import3.getRevision());
 
-        assertEquals("opendaylight", foo.getOrganization());
-        assertEquals("http://www.opendaylight.org/", foo.getContact());
+        assertEquals(Optional.of("opendaylight"), foo.getOrganization());
+        assertEquals(Optional.of("http://www.opendaylight.org/"), foo.getContact());
         assertEquals(Revision.ofNullable("2013-02-27"), foo.getRevision());
         assertNull(foo.getReference());
     }
