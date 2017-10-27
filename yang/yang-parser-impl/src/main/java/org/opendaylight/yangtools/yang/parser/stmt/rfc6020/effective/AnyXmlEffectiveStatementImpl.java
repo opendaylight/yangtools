@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
@@ -30,6 +31,11 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     @Override
     public Optional<AnyXmlSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
+    }
+
+    @Override
+    public Optional<ContainerSchemaNode> getDataSchema() {
+        return Optional.empty();
     }
 
     @Override
