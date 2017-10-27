@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.net.URI;
 import java.util.Optional;
@@ -141,5 +142,10 @@ public interface SchemaContext extends ContainerSchemaNode {
      */
     default Set<Module> findModules(final URI namespace) {
         return Sets.filter(getModules(), m -> namespace.equals(m.getNamespace()));
+    }
+
+    @Override
+    default Set<ActionDefinition> getActions() {
+        return ImmutableSet.of();
     }
 }
