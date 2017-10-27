@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -315,8 +317,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
 
     @Override
     public Set<Module> getSubmodules() {
-        Preconditions.checkState(sealed,
-            "Attempt to get base submodules from unsealed submodule effective statement %s", getQNameModule());
+        checkState(sealed, "Attempt to get base submodules from unsealed submodule effective statement %s",
+            getQNameModule());
         return submodules;
     }
 
@@ -377,10 +379,9 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public final DataSchemaNode getDataChildByName(final QName name) {
-        // Child nodes are keyed by their container name, so we can do a direct
-        // lookup
-        return childNodes.get(name);
+    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        // Child nodes are keyed by their container name, so we can do a direct lookup
+        return Optional.ofNullable(childNodes.get(requireNonNull(name)));
     }
 
     @Override
