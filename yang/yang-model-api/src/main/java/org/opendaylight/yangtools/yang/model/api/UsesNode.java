@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 /**
- * Contains the methods for getting data and checking properties of the YANG
- * <code>uses</code> substatement.
+ * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
  */
-public interface UsesNode extends DocumentedNode.WithStatus {
+public interface UsesNode extends WhenConditionAware, WithStatus {
 
     /**
      * Returns the schema path to used grouping.
@@ -58,19 +57,4 @@ public interface UsesNode extends DocumentedNode.WithStatus {
      *         refined node
      */
     @Nonnull Map<SchemaPath, SchemaNode> getRefines();
-
-    /**
-     * Returns when statement.
-     *
-     * <p>
-     * If when condition is present node defined by the parent data definition
-     * statement is only valid when the returned XPath expression conceptually
-     * evaluates to "true" for a particular instance, then the node defined by
-     * the parent data definition statement is valid; otherwise, it is not.
-     *
-     * @return Optional of XPath condition
-     */
-    default @Nonnull Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.empty();
-    }
 }
