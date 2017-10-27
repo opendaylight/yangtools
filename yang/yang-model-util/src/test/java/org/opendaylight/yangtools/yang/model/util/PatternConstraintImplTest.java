@@ -38,7 +38,7 @@ public class PatternConstraintImplTest {
         assertEquals(Optional.of("invalid-regular-expression"), patternConstraint.getErrorAppTag());
         assertTrue(patternConstraint.getErrorMessage().isPresent());
         assertEquals(Optional.of("RFC 6020"), patternConstraint.getReference());
-        assertEquals("Regular expression should be equls '\\D'.", "\\D", patternConstraint.getRegularExpression());
+        assertEquals("Regular expression should be equls '\\D'.", "\\D", patternConstraint.getJavaPatternString());
         assertNotEquals("Hash codes shouldn't be equals.", patternConstraint.hashCode(), patternConstraint2.hashCode());
         assertFalse("String representation shouldn't be empty.", patternConstraint.toString().isEmpty());
 

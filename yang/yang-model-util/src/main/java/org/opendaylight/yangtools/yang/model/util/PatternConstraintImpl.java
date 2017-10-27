@@ -72,8 +72,13 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
     }
 
     @Override
-    public String getRegularExpression() {
+    public String getJavaPatternString() {
         return regex;
+    }
+
+    @Override
+    public String getRegularExpressionString() {
+        throw new UnsupportedOperationException();
     }
 
     @Override

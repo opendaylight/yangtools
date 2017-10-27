@@ -75,12 +75,12 @@ public class Bug5410Test {
 
         final PatternConstraint pattern = getPatternConstraintOf(context, "leaf-with-pattern");
 
-        final String rawRegex = pattern.getRawRegularExpression();
+        final String rawRegex = pattern.getRegularExpressionString();
         final String expectedYangRegex = "$0$.*|$1$[a-zA-Z0-9./]{1,8}$[a-zA-Z0-9./]{22}|$5$(rounds=\\d+$)?"
                 + "[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{43}|$6$(rounds=\\d+$)?[a-zA-Z0-9./]{1,16}$[a-zA-Z0-9./]{86}";
         assertEquals(expectedYangRegex, rawRegex);
 
-        final String javaRegexFromYang = pattern.getRegularExpression();
+        final String javaRegexFromYang = pattern.getJavaPatternString();
         final String expectedJavaRegex = "^\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$"
                 + "(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?"
                 + "[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86}$";
