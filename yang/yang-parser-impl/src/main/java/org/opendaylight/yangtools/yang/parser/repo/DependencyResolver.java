@@ -167,6 +167,16 @@ abstract class DependencyResolver {
         }
 
         @Override
+        public Optional<String> getDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getReference() {
+            return Optional.empty();
+        }
+
+        @Override
         public String getPrefix() {
             return null;
         }

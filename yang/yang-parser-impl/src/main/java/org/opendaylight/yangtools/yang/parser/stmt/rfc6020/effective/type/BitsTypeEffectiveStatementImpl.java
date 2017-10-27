@@ -49,12 +49,11 @@ public final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveState
                     effectivePos = bitSubStmt.getDeclaredPosition();
                 }
 
-                final Bit b = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setDescription(bitSubStmt.getDescription()).setReference(bitSubStmt.getReference())
-                        .setStatus(bitSubStmt.getStatus()).setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
-                        .build();
-
-                builder.addBit(b);
+                final BitBuilder bitBuilder = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
+                        .setStatus(bitSubStmt.getStatus());
+                bitSubStmt.getDescription().ifPresent(bitBuilder::setDescription);
+                bitSubStmt.getReference().ifPresent(bitBuilder::setReference);
+                builder.addBit(bitBuilder.build());
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }
