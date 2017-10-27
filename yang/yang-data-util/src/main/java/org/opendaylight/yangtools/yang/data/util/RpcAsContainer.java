@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -149,4 +151,8 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         return null;
     }
 
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return ImmutableSet.of();
+    }
 }

@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +18,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -165,7 +165,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             switch (name.getLocalName()) {
                 case "input":
                     return rpcDefinition.getInput();
@@ -179,6 +179,11 @@ public final class ContainerSchemaNodes {
         @Override
         public boolean isAddedByUses() {
             return false;
+        }
+
+        @Override
+        public Set<ActionDefinition> getActions() {
+            return ImmutableSet.of();
         }
     }
 
@@ -219,7 +224,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(QName name) {
+        public DataSchemaNode getDataChildByName(final QName name) {
             return mapNodes.get(name);
         }
 
@@ -227,6 +232,11 @@ public final class ContainerSchemaNodes {
         public boolean isAddedByUses() {
             //FIXME: reference to https://bugs.opendaylight.org/show_bug.cgi?id=6897
             return false;
+        }
+
+        @Override
+        public Set<ActionDefinition> getActions() {
+            return ImmutableSet.of();
         }
     }
 }

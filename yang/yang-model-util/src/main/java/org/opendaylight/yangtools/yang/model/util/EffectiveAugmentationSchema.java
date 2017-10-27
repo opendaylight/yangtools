@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -106,5 +107,10 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     @Override
     public Optional<AugmentationSchemaNode> getOriginalDefinition() {
         return delegate.getOriginalDefinition();
+    }
+
+    @Override
+    public Set<ActionDefinition> getActions() {
+        return delegate.getActions();
     }
 }
