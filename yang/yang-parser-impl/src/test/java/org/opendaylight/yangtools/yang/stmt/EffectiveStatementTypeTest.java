@@ -438,7 +438,7 @@ public class EffectiveStatementTypeTest {
         final PatternConstraintEffectiveImpl patternConstraintSecond = (PatternConstraintEffectiveImpl)
                 ((StringTypeDefinition) currentLeaf.getType()).getPatternConstraints().get(0);
 
-        assertEquals("^[0-9a-fA-F]*$", patternConstraint.getRegularExpression());
+        assertEquals("^[0-9a-fA-F]*$", patternConstraint.getJavaPatternString());
         assertFalse(patternConstraint.getReference().isPresent());
         assertFalse(patternConstraint.getDescription().isPresent());
         assertEquals(Optional.of("Supplied value does not match the regular expression ^[0-9a-fA-F]*$."),
