@@ -79,16 +79,6 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     }
 
     @Override
-    public String getDefault() {
-        return defaultStr;
-    }
-
-    @Override
-    public String getUnits() {
-        return unitsStr;
-    }
-
-    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;

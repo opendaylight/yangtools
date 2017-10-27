@@ -124,10 +124,8 @@ public class DeviationResolutionTest {
         assertNotNull(myLeaf);
 
         assertTrue(myLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertNotNull(myLeaf.getUnits());
-        assertEquals("bytes", myLeaf.getUnits());
-        assertNotNull(myLeaf.getDefault());
-        assertEquals("10", myLeaf.getDefault());
+        assertEquals("bytes", myLeaf.getType().getUnits());
+        assertEquals("10", myLeaf.getType().getDefaultValue());
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
@@ -153,10 +151,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
         assertTrue(myAugLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertNotNull(myAugLeaf.getUnits());
-        assertEquals("seconds", myAugLeaf.getUnits());
-        assertNotNull(myAugLeaf.getDefault());
-        assertEquals("new-def-val", myAugLeaf.getDefault());
+        assertEquals("seconds", myAugLeaf.getType().getUnits());
+        assertEquals("new-def-val", myAugLeaf.getType().getDefaultValue());
         assertEquals(1, myAugLeaf.getUnknownSchemaNodes().size());
         assertEquals("new arg", myAugLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
 
@@ -164,10 +160,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
         assertTrue(myUsedLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertNotNull(myUsedLeaf.getUnits());
-        assertEquals("weeks", myUsedLeaf.getUnits());
-        assertNotNull(myUsedLeaf.getDefault());
-        assertEquals("new-def-val", myUsedLeaf.getDefault());
+        assertEquals("weeks", myUsedLeaf.getType().getUnits());
+        assertEquals("new-def-val", myUsedLeaf.getType().getDefaultValue());
         assertEquals(1, myUsedLeaf.getUnknownSchemaNodes().size());
         assertEquals("new arg", myUsedLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
     }
@@ -184,8 +178,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
-        assertNull(myLeaf.getDefault());
-        assertNull(myLeaf.getUnits());
+        assertNull(myLeaf.getType().getDefaultValue());
+        assertNull(myLeaf.getType().getUnits());
         assertEquals(0, myLeaf.getUnknownSchemaNodes().size());
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
@@ -209,16 +203,16 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
-        assertNull(myAugLeaf.getDefault());
-        assertNull(myAugLeaf.getUnits());
+        assertNull(myAugLeaf.getType().getDefaultValue());
+        assertNull(myAugLeaf.getType().getUnits());
         assertEquals(0, myAugLeaf.getConstraints().getMustConstraints().size());
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
-        assertNull(myUsedLeaf.getDefault());
-        assertNull(myUsedLeaf.getUnits());
+        assertNull(myUsedLeaf.getType().getDefaultValue());
+        assertNull(myUsedLeaf.getType().getUnits());
         assertEquals(0, myUsedLeaf.getConstraints().getMustConstraints().size());
         assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }
