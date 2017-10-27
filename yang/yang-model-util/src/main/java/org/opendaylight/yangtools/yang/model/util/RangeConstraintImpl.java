@@ -58,13 +58,13 @@ final class RangeConstraintImpl implements RangeConstraint, Immutable {
     }
 
     @Override
-    public String getErrorAppTag() {
-        return errorAppTag;
+    public Optional<String> getErrorAppTag() {
+        return Optional.ofNullable(errorAppTag);
     }
 
     @Override
-    public String getErrorMessage() {
-        return errorMessage;
+    public Optional<String> getErrorMessage() {
+        return Optional.ofNullable(errorMessage);
     }
 
     @Override
