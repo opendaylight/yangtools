@@ -16,17 +16,7 @@ import javax.annotation.Nullable;
  * YANG element therefore if the constraint doesn't have sense for some element
  * then the method returns <code>null</code> value.
  */
-public interface ConstraintDefinition {
-
-    /**
-     * Specifies the condition when the data node which contains
-     * <code>when</code> YANG substatement has to be present. If XPath
-     * expression is evaluated as true then the data node has to be present.
-     *
-     * @return XPath expression.
-     */
-    RevisionAwareXPath getWhenCondition();
-
+public interface ConstraintDefinition extends WhenConditionAware {
     /**
      * Specifies the rules which the node which contains <code>must</code> YANG
      * substatement has to match.

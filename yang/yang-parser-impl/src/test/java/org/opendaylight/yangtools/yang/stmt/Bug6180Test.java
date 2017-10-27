@@ -70,7 +70,7 @@ public class Bug6180Test {
         final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
-        final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition();
+        final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition().get();
         assertEquals("/foo != \"bar\"", whenCondition.toString());
 
         final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
@@ -88,7 +88,7 @@ public class Bug6180Test {
         final DataSchemaNode dataNodeBar = schemaContext.getDataChildByName(QName.create("foo", "2016-07-11", "bar"));
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
-        final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition();
+        final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition().get();
         assertEquals("/foo != 'bar'", whenCondition.toString());
 
         final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();

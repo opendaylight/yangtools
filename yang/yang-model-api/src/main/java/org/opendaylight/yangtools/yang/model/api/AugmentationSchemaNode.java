@@ -16,21 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
  * from a grouping in a "uses" statement.
  */
 public interface AugmentationSchemaNode extends DataNodeContainer, NotificationNodeContainer, ActionNodeContainer,
-        WithStatus {
-    /**
-     * Returns when statement.
-     *
-     * <p>
-     * If when condition is present node defined by the parent data definition
-     * statement is only valid when the returned XPath
-     * expression conceptually evaluates to "true"
-     * for a particular instance, then the node defined by the parent data
-     * definition statement is valid; otherwise, it is not.
-     *
-     * @return XPath condition
-     */
-    RevisionAwareXPath getWhenCondition();
-
+        WhenConditionAware, WithStatus {
     /**
      * Returns augmentation schema path.
      *
