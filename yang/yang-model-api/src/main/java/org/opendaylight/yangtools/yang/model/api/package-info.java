@@ -65,7 +65,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}
  *
  * <dt>default
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.LeafSchemaNode#getDefault()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.TypeDefinition#getDefaultValue()}
  *
  * <dt>description
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getDescription()}

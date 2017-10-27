@@ -8,35 +8,15 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * Interface describing YANG <code>leaf</code> statement. The interface contains
- * the methods for getting the following data (substatements of
- * <code>leaf</code> statement)
- * <ul>
- * <li><code>type</code></li>
- * <li><code>default</code></li>
- * <li><code>units</code></li>
- * </ul>
+ * Interface describing YANG <code>leaf</code> statement.
+ *
  * <p>
  * The 'leaf' statement is used to define a leaf node in the schema tree.
- * </p>
+ *
+ * <p>
+ * Since we are presenting the effective model of the world, the information dictated by 'default' and 'units'
+ * substatements is captured in the type returned via {@link #getType()}.
  */
 public interface LeafSchemaNode extends TypedSchemaNode {
-    /**
-     * Returns the default value of YANG <code>leaf</code>.
-     *
-     * @return string with the value of the argument of YANG
-     *         <code>default</code> substatement of the <code>leaf</code>
-     *         statement
-     */
-    String getDefault();
-
-    /**
-     * Returns the units in which are the values of the <code>leaf</code>
-     * presented.
-     *
-     * @return string with the value of the argument of YANG <code>units</code>
-     *         substatement of the <code>leaf</code> statement
-     */
-    String getUnits();
 
 }
