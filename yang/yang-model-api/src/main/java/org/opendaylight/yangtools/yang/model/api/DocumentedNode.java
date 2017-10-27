@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.collect.ImmutableList;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
  * Node which can have documentation assigned.
@@ -21,29 +20,21 @@ public interface DocumentedNode {
      *
      * @return string with the description, or null if description was not provided.
      */
-    // FIXME: version 2.0.0: make this method non-default
-    @Nullable default String getDescription() {
-        return null;
-    }
+    Optional<String> getDescription();
 
     /**
      * Returns the value of the argument of YANG <code>reference</code> keyword.
      *
      * @return string with reference to some other document, or null if reference was not provided.
      */
-    // FIXME: version 2.0.0: make this method non-default
-    @Nullable default String getReference() {
-        return null;
-    }
+    Optional<String> getReference();
 
     /**
      * Returns unknown schema nodes which belongs to this instance.
      *
      * @return list of unknown schema nodes defined under this node.
      */
-    default @Nonnull List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return ImmutableList.of();
-    }
+    @Nonnull List<UnknownSchemaNode> getUnknownSchemaNodes();
 
     interface WithStatus extends DocumentedNode {
         /**

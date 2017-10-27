@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 /**
  * Proxy for AugmentationSchema. Child node schemas are replaced with actual schemas from parent.
- *
  */
 public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
     private final AugmentationSchemaNode delegate;
@@ -56,12 +55,12 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return delegate.getDescription();
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return delegate.getReference();
     }
 
