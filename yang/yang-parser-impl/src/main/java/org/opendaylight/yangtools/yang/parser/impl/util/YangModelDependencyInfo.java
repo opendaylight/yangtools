@@ -411,6 +411,16 @@ public abstract class YangModelDependencyInfo {
         }
 
         @Override
+        public Optional<String> getDescription() {
+            return Optional.empty();
+        }
+
+        @Override
+        public Optional<String> getReference() {
+            return Optional.empty();
+        }
+
+        @Override
         public int hashCode() {
             final int prime = 31;
             int result = 1;

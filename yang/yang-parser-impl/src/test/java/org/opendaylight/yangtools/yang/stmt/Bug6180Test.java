@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.junit.Test;
@@ -36,10 +37,10 @@ public class Bug6180Test {
         assertNotNull(schemaContext);
         assertEquals(1, schemaContext.getModules().size());
         final Module module = schemaContext.getModules().iterator().next();
-        assertEquals("    1. this text contains \"string enclosed in double quotes\" and"
+        assertEquals(Optional.of("    1. this text contains \"string enclosed in double quotes\" and"
                 + " special characters: \\,\n,\t          2. this text contains \"string enclosed in double quotes\""
                 + " and special characters: \\,\n,\n,                     3. this text contains \"string enclosed in"
-                + " double quotes\" and special characters: \\,\n,\t      ", module.getDescription());
+                + " double quotes\" and special characters: \\,\n,\t      "), module.getDescription());
     }
 
     @Test

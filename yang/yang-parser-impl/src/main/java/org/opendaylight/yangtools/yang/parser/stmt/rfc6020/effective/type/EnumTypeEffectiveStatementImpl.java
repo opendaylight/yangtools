@@ -51,12 +51,12 @@ public final class EnumTypeEffectiveStatementImpl extends DeclaredEffectiveState
                     effectiveValue = enumSubStmt.getDeclaredValue();
                 }
 
-                final EnumPair p = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
-                        .setDescription(enumSubStmt.getDescription()).setReference(enumSubStmt.getReference())
-                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes())
-                        .build();
+                final EnumPairBuilder pairBuilder = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
+                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes());
+                enumSubStmt.getDescription().ifPresent(pairBuilder::setDescription);
+                enumSubStmt.getReference().ifPresent(pairBuilder::setReference);
 
-                builder.addEnum(p);
+                builder.addEnum(pairBuilder.build());
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }

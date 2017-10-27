@@ -33,11 +33,11 @@ public class PatternConstraintImplTest {
         final PatternConstraintImpl patternConstraint5 = new PatternConstraintImpl(regexExp2, description2, reference2);
 
         assertNotNull("Object of PatternConstraintImpl shouldn't be null.", patternConstraint);
-        assertEquals("Description should be 'test description'.", "test description",
+        assertEquals("Description should be 'test description'.", Optional.of("test description"),
                 patternConstraint.getDescription());
         assertEquals(Optional.of("invalid-regular-expression"), patternConstraint.getErrorAppTag());
         assertTrue(patternConstraint.getErrorMessage().isPresent());
-        assertEquals("Reference should be equals 'RFC 6020'.", "RFC 6020", patternConstraint.getReference());
+        assertEquals(Optional.of("RFC 6020"), patternConstraint.getReference());
         assertEquals("Regular expression should be equls '\\D'.", "\\D", patternConstraint.getRegularExpression());
         assertNotEquals("Hash codes shouldn't be equals.", patternConstraint.hashCode(), patternConstraint2.hashCode());
         assertFalse("String representation shouldn't be empty.", patternConstraint.toString().isEmpty());
