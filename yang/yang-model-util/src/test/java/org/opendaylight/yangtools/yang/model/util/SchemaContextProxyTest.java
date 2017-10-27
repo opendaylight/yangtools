@@ -608,6 +608,16 @@ public class SchemaContextProxyTest {
                 }
 
                 @Override
+                public Optional<String> getDescription() {
+                    return module.getDescription();
+                }
+
+                @Override
+                public Optional<String> getReference() {
+                    return module.getReference();
+                }
+
+                @Override
                 public String toString() {
                     return String.format("Module: %s, revision:%s", module.getName(), module.getRevision());
                 }

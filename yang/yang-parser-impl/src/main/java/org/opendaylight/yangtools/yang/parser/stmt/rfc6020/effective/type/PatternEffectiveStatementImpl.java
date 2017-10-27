@@ -24,7 +24,7 @@ public class PatternEffectiveStatementImpl extends
         }
 
         return new PatternConstraintEffectiveImpl(argument.getRegularExpression(), argument.getRawRegularExpression(),
-            getDescription(), getReference(), getErrorAppTag().orElse(null), getErrorMessage().orElse(null),
-            getModifier());
+            getDescription().orElse(null), getReference().orElse(null), getErrorAppTag().orElse(null),
+            getErrorMessage().orElse(null), getModifier());
     }
 }
