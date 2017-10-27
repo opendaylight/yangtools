@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -64,7 +65,7 @@ public class YinFileListStmtTest {
         final Iterator<DataSchemaNode> childrenIterator = children.iterator();
         LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
-        assertEquals("Unique module instance name", leaf.getDescription());
+        assertEquals(Optional.of("Unique module instance name"), leaf.getDescription());
         assertEquals(BaseTypes.stringType(), leaf.getType());
         assertTrue(leaf.getConstraints().isMandatory());
 

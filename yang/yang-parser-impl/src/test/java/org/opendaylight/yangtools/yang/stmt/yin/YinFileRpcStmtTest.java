@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,7 +43,7 @@ public class YinFileRpcStmtTest {
 
         RpcDefinition rpc = rpcs.iterator().next();
         assertEquals("get-schema", rpc.getQName().getLocalName());
-        assertEquals("This operation is used to retrieve a schema from the\n"
+        assertEquals(Optional.of("This operation is used to retrieve a schema from the\n"
                 + "NETCONF server.\n"
                 + "\n"
                 + "Positive Response:\n"
@@ -54,7 +55,7 @@ public class YinFileRpcStmtTest {
                 + "\n"
                 + "If more than one schema matches the requested parameters, the\n"
                 + "<error-tag> is 'operation-failed', and <error-app-tag> is\n"
-                + "'data-not-unique'.", rpc.getDescription());
+                + "'data-not-unique'."), rpc.getDescription());
 
         ContainerSchemaNode input = rpc.getInput();
         assertNotNull(input);

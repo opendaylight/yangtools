@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,8 +38,8 @@ public class Bug5942Test {
         assertEquals(1, uses.size());
         final UsesNode usesNode = uses.iterator().next();
 
-        assertEquals("uses description", usesNode.getDescription());
-        assertEquals("uses reference", usesNode.getReference());
+        assertEquals(Optional.of("uses description"), usesNode.getDescription());
+        assertEquals(Optional.of("uses reference"), usesNode.getReference());
         assertEquals(Status.DEPRECATED, usesNode.getStatus());
         assertEquals(new RevisionAwareXPathImpl("0!=1", false), usesNode.getWhenCondition().get());
 

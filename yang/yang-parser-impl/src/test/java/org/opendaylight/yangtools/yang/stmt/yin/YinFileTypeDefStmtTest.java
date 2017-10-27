@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
@@ -44,7 +45,7 @@ public class YinFileTypeDefStmtTest {
         Iterator<TypeDefinition<?>> typeDefIterator = typeDefs.iterator();
         TypeDefinition<?> typeDef = typeDefIterator.next();
         assertEquals("service-type-ref", typeDef.getQName().getLocalName());
-        assertEquals("Internal type of references to service type identity.", typeDef.getDescription());
+        assertEquals(Optional.of("Internal type of references to service type identity."), typeDef.getDescription());
         assertEquals("identityref", typeDef.getBaseType().getQName().getLocalName());
     }
 }

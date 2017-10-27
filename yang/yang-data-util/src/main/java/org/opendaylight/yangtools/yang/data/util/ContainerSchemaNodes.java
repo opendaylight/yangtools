@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -102,15 +101,13 @@ public final class ContainerSchemaNodes {
             return schemaNode.getPath();
         }
 
-        @Nullable
         @Override
-        public String getDescription() {
+        public Optional<String> getDescription() {
             return schemaNode.getDescription();
         }
 
-        @Nullable
         @Override
-        public String getReference() {
+        public Optional<String> getReference() {
             return schemaNode.getReference();
         }
 

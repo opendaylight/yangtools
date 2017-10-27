@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -30,7 +31,7 @@ public class Bug8922Test {
         assertNotNull(context);
         final SchemaNode findNode = findNode(context, qN("target"), qN("my-con"));
         assertTrue(findNode instanceof ContainerSchemaNode);
-        assertEquals("New description", ((ContainerSchemaNode) findNode).getDescription());
+        assertEquals(Optional.of("New description"), ((ContainerSchemaNode) findNode).getDescription());
     }
 
     @Test

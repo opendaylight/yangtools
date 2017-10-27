@@ -16,6 +16,7 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -37,8 +38,8 @@ public class EnumPairImplTest {
 
         assertNotNull(enumPair);
         assertEquals(unknownSchemaNodes, enumPair.getUnknownSchemaNodes());
-        assertEquals("enum description", enumPair.getDescription());
-        assertEquals("enum reference", enumPair.getReference());
+        assertEquals(Optional.of("enum description"), enumPair.getDescription());
+        assertEquals(Optional.of("enum reference"), enumPair.getReference());
         assertEquals(Status.DEPRECATED, enumPair.getStatus());
 
         final EnumPair enumPair2 = EnumPairBuilder.create("enum-zero", 0).setStatus(Status.DEPRECATED)

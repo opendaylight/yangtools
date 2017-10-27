@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.net.URI;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -163,7 +164,7 @@ public class EffectiveModulesAndSubmodulesTest {
         final DataSchemaNode containerInRoot = result.getDataChildByName(QName
                 .create(root.getQNameModule(), "container-in-root-module"));
         assertNotNull(containerInRoot);
-        assertEquals("desc", containerInRoot.getDescription());
+        assertEquals(Optional.of("desc"), containerInRoot.getDescription());
     }
 
     private static void findModulesSubTest(final SchemaContext result, final Module root, final Module imported) {
