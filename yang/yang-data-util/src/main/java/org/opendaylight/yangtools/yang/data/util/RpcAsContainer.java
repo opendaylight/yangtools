@@ -34,12 +34,12 @@ public final class RpcAsContainer implements ContainerSchemaNode {
     private final RpcDefinition delegate;
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return delegate.getDescription();
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return delegate.getReference();
     }
 
