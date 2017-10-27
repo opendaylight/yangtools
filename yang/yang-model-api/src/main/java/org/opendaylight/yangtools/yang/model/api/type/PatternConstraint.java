@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import javax.annotation.Nullable;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 
 /**
- * Contains the method for getting the data from the YANG <code>pattern</code>
- * which is substatement of <code>type</code> statement.
+ * Contains the method for getting the data from the YANG <code>pattern</code> which is substatement of
+ * <code>type</code> statement.
  */
 public interface PatternConstraint extends ConstraintMetaDefinition {
 
@@ -35,15 +35,10 @@ public interface PatternConstraint extends ConstraintMetaDefinition {
     }
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020)
-     * implementations of PatternConstraint which do not support modifier statement.
-     * YANG pattern statement has been changed in YANG 1.1 (RFC7950) and now allows modifier statement.
+     * RFC7950 allows a pattern constraint to be inverted. For this purpose a general modifier concept has been
+     * introduced. A pattern can have at most one such modifier.
      *
-     * @return enum constant which represents the value of modifier statement
+     * @return modifier, if present
      */
-     // FIXME: version 2.0.0: make this method non-default
-    @Nullable default ModifierKind getModifier() {
-        return null;
-    }
+    Optional<ModifierKind> getModifier();
 }
