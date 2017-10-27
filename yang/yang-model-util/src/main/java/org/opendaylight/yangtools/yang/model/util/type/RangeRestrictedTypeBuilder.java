@@ -65,7 +65,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                     ?  ((UnresolvedNumber)min).resolveRange(baseRangeConstraints) : min;
 
                 builder.add(BaseConstraints.newRangeConstraint(rMin, rMax, Optional.ofNullable(c.getDescription()),
-                    Optional.ofNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
+                    Optional.ofNullable(c.getReference()), c.getErrorAppTag().orElse(null),
+                    c.getErrorMessage().orElse(null)));
             } else {
                 builder.add(c);
             }
@@ -106,7 +107,8 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
                         c, clazz.getSimpleName()), e);
                 }
                 builder.add(BaseConstraints.newRangeConstraint(min, max, Optional.ofNullable(c.getDescription()),
-                    Optional.ofNullable(c.getReference()), c.getErrorAppTag(), c.getErrorMessage()));
+                    Optional.ofNullable(c.getReference()), c.getErrorAppTag().orElse(null),
+                    c.getErrorMessage().orElse(null)));
             } else {
                 builder.add(c);
             }
