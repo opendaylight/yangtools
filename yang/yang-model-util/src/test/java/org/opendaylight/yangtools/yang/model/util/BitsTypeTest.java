@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
@@ -37,11 +38,11 @@ public class BitsTypeTest {
 
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
 
-        assertNull("Description is not null", bitsType.getDescription());
+        assertFalse(bitsType.getDescription().isPresent());
         assertEquals("QName", qname, bitsType.getQName());
         assertNull("Should be null", bitsType.getUnits());
         assertNotEquals("Description should not be null", null, bitsType.toString());
-        assertNull("Reference is not null", bitsType.getReference());
+        assertFalse(bitsType.getReference().isPresent());
         assertNull("BaseType should be null", bitsType.getBaseType());
         assertNull("Default value should be null", bitsType.getDefaultValue());
         assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
