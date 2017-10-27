@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -14,6 +16,7 @@ import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -32,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-
 
 /**
  * yang-data-util
@@ -165,14 +167,14 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
+        public Optional<DataSchemaNode> findDataChildByName(final QName name) {
             switch (name.getLocalName()) {
                 case "input":
-                    return rpcDefinition.getInput();
+                    return Optional.of(rpcDefinition.getInput());
                 case "output":
-                    return rpcDefinition.getOutput();
+                    return Optional.of(rpcDefinition.getOutput());
                 default:
-                    return null;
+                    return Optional.empty();
             }
         }
 
@@ -224,8 +226,8 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public DataSchemaNode getDataChildByName(final QName name) {
-            return mapNodes.get(name);
+        public Optional<DataSchemaNode> findDataChildByName(final QName name) {
+            return Optional.ofNullable(mapNodes.get(requireNonNull(name)));
         }
 
         @Override

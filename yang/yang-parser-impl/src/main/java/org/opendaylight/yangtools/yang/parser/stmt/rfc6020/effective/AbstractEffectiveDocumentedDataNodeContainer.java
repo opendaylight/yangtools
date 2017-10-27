@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -121,10 +124,9 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
     }
 
     @Override
-    public final DataSchemaNode getDataChildByName(final QName name) {
-        // Child nodes are keyed by their container name, so we can do a direct
-        // lookup
-        return childNodes.get(name);
+    public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
+        // Child nodes are keyed by their container name, so we can do a direct lookup
+        return Optional.ofNullable(childNodes.get(requireNonNull(name)));
     }
 
     @Override

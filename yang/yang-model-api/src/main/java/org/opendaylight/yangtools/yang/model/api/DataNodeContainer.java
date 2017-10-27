@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -44,10 +46,24 @@ public interface DataNodeContainer {
      *
      * @param name
      *            QName of child
-     * @return child node of this DataNodeContainer if child with given name is
-     *         present, null otherwise
+     * @return child node of this DataNodeContainer if child with given name is present, null otherwise
+     *
+     * @deprecated Use {@link #findDataChildByName(QName)} instead.
      */
-    DataSchemaNode getDataChildByName(QName name);
+    @Deprecated
+    @Nullable default DataSchemaNode getDataChildByName(final QName name) {
+        return findDataChildByName(name).orElse(null);
+    }
+
+    /**
+     * Returns the child node corresponding to the specified name.
+     *
+     * @param name
+     *            QName of child
+     * @return child node of this DataNodeContainer if child with given name is present, empty otherwise
+     * @throws NullPointerException if name is null
+     */
+    Optional<DataSchemaNode> findDataChildByName(QName name);
 
     /**
      * Returns grouping nodes used ny this container.
