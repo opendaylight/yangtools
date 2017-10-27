@@ -43,12 +43,12 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public String getRegularExpression() {
+    public String getJavaPatternString() {
         return regEx;
     }
 
     @Override
-    public String getRawRegularExpression() {
+    public String getRegularExpressionString() {
         return rawRegEx;
     }
 
