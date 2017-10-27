@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
 
 /**
  * The "anydata" statement defines an interior node in the schema tree.
@@ -25,11 +24,6 @@ import java.util.Optional;
  * of this document.
  */
 @Beta
-public interface AnyDataSchemaNode extends DataSchemaNode {
-    /**
-     * Schema of data.
-     *
-     * @return schema of contained data or empty if it is not provided
-     */
-    Optional<ContainerSchemaNode> getDataSchema();
+public interface AnyDataSchemaNode extends DataSchemaNode, ForeignDataSchemaAware {
+
 }
