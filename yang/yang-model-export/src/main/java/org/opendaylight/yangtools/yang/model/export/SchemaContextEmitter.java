@@ -1582,15 +1582,13 @@ abstract class SchemaContextEmitter {
             pattern.getErrorMessage().ifPresent(this::emitErrorMessageNode);
             pattern.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
             emitDocumentedNode(pattern);
-            emitModifier(pattern.getModifier());
+            pattern.getModifier().ifPresent(this::emitModifier);
             super.writer.endNode();
         }
 
         private void emitModifier(final ModifierKind modifier) {
-            if (modifier != null) {
-                super.writer.startModifierNode(modifier);
-                super.writer.endNode();
-            }
+            super.writer.startModifierNode(modifier);
+            super.writer.endNode();
         }
 
         private void emitDefaultNodes(final Collection<String> defaults) {

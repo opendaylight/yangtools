@@ -16,6 +16,7 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -56,7 +57,7 @@ public class Bug6870Test {
         assertEquals(1, patternConstraints.size());
 
         final PatternConstraint patternConstraint = patternConstraints.iterator().next();
-        assertEquals(expectedModifierKind, patternConstraint.getModifier());
+        assertEquals(Optional.of(expectedModifierKind), patternConstraint.getModifier());
     }
 
     private static SchemaNode findNode(final SchemaContext context, final Iterable<String> localNamesPath) {
