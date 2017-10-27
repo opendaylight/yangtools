@@ -23,7 +23,8 @@ public class PatternEffectiveStatementImpl extends
             return argument;
         }
 
-        return new PatternConstraintEffectiveImpl(argument.getRegularExpression(), argument.getRawRegularExpression(),
+        return new PatternConstraintEffectiveImpl(argument.getJavaPatternString(),
+            argument.getRegularExpressionString(),
             getDescription().orElse(null), getReference().orElse(null), getErrorAppTag().orElse(null),
             getErrorMessage().orElse(null), getModifier());
     }
