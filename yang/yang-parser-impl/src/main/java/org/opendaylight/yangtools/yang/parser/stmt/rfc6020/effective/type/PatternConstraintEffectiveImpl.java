@@ -68,8 +68,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public ModifierKind getModifier() {
-        return modifier;
+    public Optional<ModifierKind> getModifier() {
+        return Optional.ofNullable(modifier);
     }
 
     @Override
