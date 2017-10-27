@@ -1514,8 +1514,8 @@ abstract class SchemaContextEmitter {
             if (!list.isEmpty()) {
                 super.writer.startRangeNode(toRangeString(list));
                 final RangeConstraint first = list.iterator().next();
-                emitErrorMessageNode(first.getErrorMessage());
-                emitErrorAppTagNode(first.getErrorAppTag());
+                first.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+                first.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
                 emitDescriptionNode(first.getDescription());
                 emitReferenceNode(first.getReference());
                 super.writer.endNode();
@@ -1544,8 +1544,8 @@ abstract class SchemaContextEmitter {
 
         private void emitLength(final LengthConstraint constraint) {
             super.writer.startLengthNode(toLengthString(constraint.getAllowedRanges()));
-            emitErrorMessageNode(constraint.getErrorMessage());
-            emitErrorAppTagNode(constraint.getErrorAppTag());
+            constraint.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+            constraint.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
             emitDescriptionNode(constraint.getDescription());
             emitReferenceNode(constraint.getReference());
             super.writer.endNode();
@@ -1599,10 +1599,8 @@ abstract class SchemaContextEmitter {
 
         private void emitPatternNode(final PatternConstraint pattern) {
             super.writer.startPatternNode(pattern.getRawRegularExpression());
-            // FIXME: BUG-2444: Optional
-            emitErrorMessageNode(pattern.getErrorMessage());
-            // FIXME: BUG-2444: Optional
-            emitErrorAppTagNode(pattern.getErrorAppTag());
+            pattern.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+            pattern.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
             emitDescriptionNode(pattern.getDescription());
             emitModifier(pattern.getModifier());
             super.writer.endNode();
@@ -1732,8 +1730,8 @@ abstract class SchemaContextEmitter {
         private void emitMust(@Nullable final MustDefinition mustCondition) {
             if (mustCondition != null && mustCondition.getXpath() != null) {
                 super.writer.startMustNode(mustCondition.getXpath());
-                emitErrorMessageNode(mustCondition.getErrorMessage());
-                emitErrorAppTagNode(mustCondition.getErrorAppTag());
+                mustCondition.getErrorMessage().ifPresent(this::emitErrorMessageNode);
+                mustCondition.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
                 emitDescriptionNode(mustCondition.getDescription());
                 emitReferenceNode(mustCondition.getReference());
                 super.writer.endNode();
@@ -1742,17 +1740,13 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitErrorMessageNode(@Nullable final String input) {
-            if (input != null && !input.isEmpty()) {
-                super.writer.startErrorMessageNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startErrorMessageNode(input);
+            super.writer.endNode();
         }
 
         private void emitErrorAppTagNode(final String input) {
-            if (input != null && !input.isEmpty()) {
-                super.writer.startErrorAppTagNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startErrorAppTagNode(input);
+            super.writer.endNode();
         }
 
         private void emitMinElementsNode(final Integer min) {
