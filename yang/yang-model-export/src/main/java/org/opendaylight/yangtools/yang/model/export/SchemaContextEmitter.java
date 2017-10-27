@@ -1578,7 +1578,7 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitPatternNode(final PatternConstraint pattern) {
-            super.writer.startPatternNode(pattern.getRawRegularExpression());
+            super.writer.startPatternNode(pattern.getRegularExpressionString());
             pattern.getErrorMessage().ifPresent(this::emitErrorMessageNode);
             pattern.getErrorAppTag().ifPresent(this::emitErrorAppTagNode);
             emitDocumentedNode(pattern);
