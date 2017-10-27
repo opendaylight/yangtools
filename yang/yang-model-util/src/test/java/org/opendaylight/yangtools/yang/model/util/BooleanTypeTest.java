@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.booleanType;
@@ -27,7 +28,7 @@ public class BooleanTypeTest {
         assertEquals("getPath gives List of BOOLEAN_QNAME",
                 Collections.singletonList(BaseTypes.BOOLEAN_QNAME), boolType.getPath().getPathFromRoot());
         assertEquals("getQName gives BOOLEAN_QNAME", BaseTypes.BOOLEAN_QNAME, boolType.getQName());
-        assertNull(boolType.getDescription());
+        assertFalse(boolType.getDescription().isPresent());
 
         final String strPath = boolType.getPath().toString();
         assertTrue("Should contain string of getPath", stringBoolType.contains(strPath));
