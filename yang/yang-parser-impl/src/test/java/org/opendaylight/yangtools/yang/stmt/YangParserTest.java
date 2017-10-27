@@ -159,7 +159,7 @@ public class YangParserTest {
             "ifIndex"));
         assertEquals(ifEntry.getKeyDefinition().get(0), ifIndex.getQName());
         assertTrue(ifIndex.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertEquals("minutes", ifIndex.getUnits());
+        assertEquals("minutes", ifIndex.getType().getUnits());
         final LeafSchemaNode ifMtu = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(),
             "ifMtu"));
         assertEquals(BaseTypes.int32Type(), ifMtu.getType());
