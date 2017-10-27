@@ -14,10 +14,12 @@ class CompiledPatternContext {
 
     private final Pattern pattern;
     private final String errorMessage;
+    private final String regEx;
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
-        pattern = Pattern.compile("^" + yangConstraint.getRegularExpression() + "$");
+        pattern = Pattern.compile("^" + yangConstraint.getJavaPatternString() + "$");
         errorMessage = yangConstraint.getErrorMessage().orElse(null);
+        regEx = errorMessage == null ? yangConstraint.getRegularExpressionString() : null;
     }
 
     void validate(final String str) {
@@ -26,8 +28,7 @@ class CompiledPatternContext {
                 throw new IllegalArgumentException(errorMessage);
             }
 
-            throw new IllegalArgumentException("Value " + str + "does not match regular expression <"
-                    + pattern.pattern() + ">");
+            throw new IllegalArgumentException("Value " + str + "does not match regular expression <" + regEx + ">");
         }
     }
 }
