@@ -17,12 +17,9 @@ import javax.annotation.Nullable;
  */
 public interface DocumentedNode {
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * ModuleImport which do not allow a description statement.
-     * YANG import statement has been changed in YANG 1.1 (RFC7950) and can now contain a description statement.
+     * Returns the value of the argument of YANG <code>description</code> keyword.
      *
-     * @return string that represents the argument of description statement
+     * @return string with the description, or null if description was not provided.
      */
     // FIXME: version 2.0.0: make this method non-default
     @Nullable default String getDescription() {
@@ -30,12 +27,9 @@ public interface DocumentedNode {
     }
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * ModuleImport which do not allow a reference statement.
-     * YANG import statement has been changed in YANG 1.1 (RFC7950) and can now contain a reference statement.
+     * Returns the value of the argument of YANG <code>reference</code> keyword.
      *
-     * @return string that represents the argument of reference statement
+     * @return string with reference to some other document, or null if reference was not provided.
      */
     // FIXME: version 2.0.0: make this method non-default
     @Nullable default String getReference() {
