@@ -53,8 +53,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public String getDescription() {
-        return description;
+    public Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
@@ -73,8 +73,8 @@ public class PatternConstraintEffectiveImpl implements PatternConstraint {
     }
 
     @Override
-    public String getReference() {
-        return reference;
+    public Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

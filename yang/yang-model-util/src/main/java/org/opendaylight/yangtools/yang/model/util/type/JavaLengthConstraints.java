@@ -23,8 +23,8 @@ final class JavaLengthConstraints {
 
     static final LengthConstraint INTEGER_SIZE_CONSTRAINTS = new LengthConstraint() {
         @Override
-        public String getReference() {
-            return null;
+        public Optional<String> getReference() {
+            return Optional.empty();
         }
 
         @Override
@@ -38,8 +38,8 @@ final class JavaLengthConstraints {
         }
 
         @Override
-        public String getDescription() {
-            return null;
+        public Optional<String> getDescription() {
+            return Optional.empty();
         }
 
         @Override
