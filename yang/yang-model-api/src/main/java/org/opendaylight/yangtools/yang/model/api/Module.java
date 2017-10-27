@@ -164,7 +164,7 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
      *         as the argument of YANG {@link Module <b><font
      *         color="#606060">organization</font></b>} keyword
      */
-    String getOrganization();
+    Optional<String> getOrganization();
 
     /**
      * Returns the module contact.
@@ -178,7 +178,7 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
      *         argument of YANG {@link Module <b><font
      *         color="#FF9900">contact</font></b>} keyword
      */
-    String getContact();
+    Optional<String> getContact();
 
     /**
      * Returns imports which represents YANG modules which are imported to this

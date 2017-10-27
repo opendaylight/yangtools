@@ -1169,8 +1169,8 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitMetaNodes(final Module input) {
-            emitOrganizationNode(input.getOrganization());
-            emitContact(input.getContact());
+            input.getOrganization().ifPresent(this::emitOrganizationNode);
+            input.getContact().ifPresent(this::emitContact);
             emitDescriptionNode(input.getDescription());
             emitReferenceNode(input.getReference());
         }
@@ -1315,17 +1315,13 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitOrganizationNode(final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startOrganizationNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startOrganizationNode(input);
+            super.writer.endNode();
         }
 
         private void emitContact(final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startContactNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startContactNode(input);
+            super.writer.endNode();
         }
 
         private void emitDescriptionNode(@Nullable final String input) {
