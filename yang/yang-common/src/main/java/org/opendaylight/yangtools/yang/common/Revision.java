@@ -87,7 +87,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      *
      * @param str String to be parsed
      * @return An optional Revision instance.
-     * @throws IllegalArgumentException if the string format does not conform specification.
+     * @throws DateTimeParseException if the string format does not conform specification.
      */
     public static Optional<Revision> ofNullable(@Nullable final String str) {
         return str == null ? Optional.empty() : Optional.of(new Revision(str));
