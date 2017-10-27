@@ -74,8 +74,8 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     }
 
     @Override
-    public final String getDescription() {
-        return description;
+    public final Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     public final ModifierKind getModifier() {
@@ -83,8 +83,8 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
     }
 
     @Override
-    public final String getReference() {
-        return reference;
+    public final Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Override

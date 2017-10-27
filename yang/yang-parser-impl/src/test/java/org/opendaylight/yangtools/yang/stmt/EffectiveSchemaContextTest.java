@@ -87,8 +87,8 @@ public class EffectiveSchemaContextTest {
         assertFalse(schemaContext.isConfiguration());
         assertFalse(schemaContext.isPresenceContainer());
         assertNull(schemaContext.getConstraints());
-        assertNull(schemaContext.getDescription());
-        assertNull(schemaContext.getReference());
+        assertFalse(schemaContext.getDescription().isPresent());
+        assertFalse(schemaContext.getReference().isPresent());
         assertEquals(SchemaContext.NAME, schemaContext.getQName());
         assertEquals(SchemaPath.ROOT, schemaContext.getPath());
         assertEquals(Status.CURRENT, schemaContext.getStatus());

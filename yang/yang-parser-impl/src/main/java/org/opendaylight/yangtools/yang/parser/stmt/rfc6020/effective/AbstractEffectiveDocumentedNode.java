@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -52,13 +53,13 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     }
 
     @Override
-    public final String getDescription() {
-        return description;
+    public final Optional<String> getDescription() {
+        return Optional.ofNullable(description);
     }
 
     @Override
-    public final String getReference() {
-        return reference;
+    public final Optional<String> getReference() {
+        return Optional.ofNullable(reference);
     }
 
     @Nonnull

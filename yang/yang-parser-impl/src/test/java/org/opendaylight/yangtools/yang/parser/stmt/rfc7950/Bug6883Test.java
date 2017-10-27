@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
@@ -34,7 +35,7 @@ public class Bug6883Test {
 
         final AnyDataSchemaNode topAnyData = assertAnyData(schemaContext, ImmutableList.of("top"));
         assertEquals(Status.DEPRECATED, topAnyData.getStatus());
-        assertEquals("top anydata", topAnyData.getDescription());
+        assertEquals(Optional.of("top anydata"), topAnyData.getDescription());
 
         assertAnyData(schemaContext, ImmutableList.of("root", "root-anydata"));
         assertAnyData(schemaContext, ImmutableList.of("root", "aug-anydata"));

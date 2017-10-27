@@ -112,7 +112,7 @@ public class EffectiveModuleTest {
         final SchemaPath importedContSchemaPath = SchemaPath.create(true, importedContQName);
         assertEquals(importedContSchemaPath, deviationStmt.getTargetPath());
         assertEquals(DeviateKind.ADD, deviationStmt.getDeviates().iterator().next().getDeviateType());
-        assertEquals("deviate reference", deviationStmt.getReference());
+        assertEquals(Optional.of("deviate reference"), deviationStmt.getReference());
 
         final Set<IdentitySchemaNode> identities = rootModule.getIdentities();
         assertEquals(1, identities.size());
@@ -124,8 +124,8 @@ public class EffectiveModuleTest {
         assertNotNull(featureStmt);
         assertEquals(FEATURE1, featureStmt.getQName());
         assertEquals(FEATURE1_SCHEMA_PATH, featureStmt.getPath());
-        assertEquals("feature1 description", featureStmt.getDescription());
-        assertEquals("feature1 reference", featureStmt.getReference());
+        assertEquals(Optional.of("feature1 description"), featureStmt.getDescription());
+        assertEquals(Optional.of("feature1 reference"), featureStmt.getReference());
         assertEquals(Status.CURRENT, featureStmt.getStatus());
 
         final List<ExtensionDefinition> extensionSchemaNodes = rootModule.getExtensionSchemaNodes();

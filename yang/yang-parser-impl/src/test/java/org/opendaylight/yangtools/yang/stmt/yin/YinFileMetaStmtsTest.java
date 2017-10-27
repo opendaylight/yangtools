@@ -51,13 +51,13 @@ public class YinFileMetaStmtsTest {
                 + "\n"
                 + "Editor:   Martin Bjorklund\n"
                 + "        <mailto:mbj@tail-f.com>"), testModule.getContact());
-        assertEquals("NETCONF Monitoring Module.\n" + "All elements in this module are read-only.\n" + "\n"
+        assertEquals(Optional.of("NETCONF Monitoring Module.\n" + "All elements in this module are read-only.\n" + "\n"
                 + "Copyright (c) 2010 IETF Trust and the persons identified as\n" + "authors of the code. All rights "
                 + "reserved.\n" + "\n" + "Redistribution and use in source and binary forms, with or\n" +  "without "
                 + "modification, is permitted pursuant to, and subject\n" + "to the license terms contained in, the "
                 + "Simplified BSD\n" + "License set forth in Section 4.c of the IETF Trust's\n" + "Legal Provisions "
                 + "Relating to IETF Documents\n" + "(http://trustee.ietf.org/license-info).\n" + "\n" + "This version "
-                + "of this YANG module is part of RFC 6022; see\n" + "the RFC itself for full legal notices.",
+                + "of this YANG module is part of RFC 6022; see\n" + "the RFC itself for full legal notices."),
                 testModule.getDescription());
     }
 }

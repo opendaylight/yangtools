@@ -111,7 +111,7 @@ public class YangParserTest {
         assertEquals(Optional.of("opendaylight"), foo.getOrganization());
         assertEquals(Optional.of("http://www.opendaylight.org/"), foo.getContact());
         assertEquals(Revision.ofNullable("2013-02-27"), foo.getRevision());
-        assertNull(foo.getReference());
+        assertFalse(foo.getReference().isPresent());
     }
 
     @Test
@@ -126,8 +126,8 @@ public class YangParserTest {
 
         final SchemaPath expectedPath = TestUtils.createPath(true, BAR, "interfaces", "ifEntry");
         assertEquals(expectedPath, ifEntry.getPath());
-        assertNull(ifEntry.getDescription());
-        assertNull(ifEntry.getReference());
+        assertFalse(ifEntry.getDescription().isPresent());
+        assertFalse(ifEntry.getReference().isPresent());
         assertEquals(Status.CURRENT, ifEntry.getStatus());
         assertEquals(0, ifEntry.getUnknownSchemaNodes().size());
         // test DataSchemaNode args
@@ -538,7 +538,7 @@ public class YangParserTest {
         final Set<Deviation> deviations = foo.getDeviations();
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
-        assertEquals("system/user ref", dev.getReference());
+        assertEquals(Optional.of("system/user ref"), dev.getReference());
 
         final SchemaPath expectedPath = SchemaPath.create(true,
             QName.create(BAR, "interfaces"),
@@ -571,7 +571,8 @@ public class YangParserTest {
         assertEquals(1, extensions.size());
         final ExtensionDefinition extension = extensions.get(0);
         assertEquals("name", extension.getArgument());
-        assertEquals("Takes as argument a name string. Makes the code generator use the given name in the #define.",
+        assertEquals(
+            Optional.of("Takes as argument a name string. Makes the code generator use the given name in the #define."),
                 extension.getDescription());
         assertTrue(extension.isYinElement());
     }
@@ -586,8 +587,8 @@ public class YangParserTest {
         assertEquals(QName.create(BAZ, "event"), notification.getQName());
         final SchemaPath expectedPath = SchemaPath.create(true,  QName.create(BAZ, "event"));
         assertEquals(expectedPath, notification.getPath());
-        assertNull(notification.getDescription());
-        assertNull(notification.getReference());
+        assertFalse(notification.getDescription().isPresent());
+        assertFalse(notification.getReference().isPresent());
         assertEquals(Status.CURRENT, notification.getStatus());
         assertEquals(0, notification.getUnknownSchemaNodes().size());
         // test DataNodeContainer args
@@ -610,8 +611,8 @@ public class YangParserTest {
         assertEquals(1, rpcs.size());
 
         final RpcDefinition rpc = rpcs.iterator().next();
-        assertEquals("Retrieve all or part of a specified configuration.", rpc.getDescription());
-        assertEquals("RFC 6241, Section 7.1", rpc.getReference());
+        assertEquals(Optional.of("Retrieve all or part of a specified configuration."), rpc.getDescription());
+        assertEquals(Optional.of("RFC 6241, Section 7.1"), rpc.getReference());
     }
 
     @Test

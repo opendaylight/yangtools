@@ -384,9 +384,9 @@ public class TypeTest {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
         final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>)
             DerivedTypes.derivedTypeBuilder(baseBinaryType1, SCHEMA_PATH).build();
-        assertEquals(abstractDerivedType.getDescription(), null);
-        assertEquals(abstractDerivedType.getReference(), null);
-        assertEquals(abstractDerivedType.getStatus().toString(), "CURRENT");
+        assertEquals(Optional.empty(), abstractDerivedType.getDescription());
+        assertEquals(Optional.empty(), abstractDerivedType.getReference());
+        assertEquals(Status.CURRENT, abstractDerivedType.getStatus());
         assertFalse(DerivedTypes.isInt8(baseBinaryType1));
         assertFalse(DerivedTypes.isUint8(baseBinaryType1));
         assertFalse(DerivedTypes.isInt16(baseBinaryType1));

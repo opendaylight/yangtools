@@ -18,6 +18,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -256,8 +257,8 @@ public class YangParserWithContextTest {
         // leaf address
         assertNotNull(refineLeaf);
         assertEquals("address", refineLeaf.getQName().getLocalName());
-        assertEquals("description of address defined by refine", refineLeaf.getDescription());
-        assertEquals("address reference added by refine", refineLeaf.getReference());
+        assertEquals(Optional.of("description of address defined by refine"), refineLeaf.getDescription());
+        assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
         assertTrue(refineLeaf.getConstraints().isMandatory());
         final Set<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
@@ -269,15 +270,15 @@ public class YangParserWithContextTest {
         assertNotNull(refineContainer);
         final Set<MustDefinition> mustConstraints = refineContainer.getConstraints().getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
-        assertEquals("description of port defined by refine", refineContainer.getDescription());
-        assertEquals("port reference added by refine", refineContainer.getReference());
+        assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
+        assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
         assertFalse(refineContainer.isConfiguration());
         assertTrue(refineContainer.isPresenceContainer());
 
         // list addresses
         assertNotNull(refineList);
-        assertEquals("description of addresses defined by refine", refineList.getDescription());
-        assertEquals("addresses reference added by refine", refineList.getReference());
+        assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
+        assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertFalse(refineList.isConfiguration());
         assertEquals(2, (int) refineList.getConstraints().getMinElements());
         assertEquals(12, (int) refineList.getConstraints().getMaxElements());
@@ -392,7 +393,7 @@ public class YangParserWithContextTest {
         assertEquals(1, deviations.size());
         final Deviation dev = deviations.iterator().next();
 
-        assertEquals("system/user ref", dev.getReference());
+        assertEquals(Optional.of("system/user ref"), dev.getReference());
 
         final URI expectedNS = URI.create("urn:opendaylight.bar");
         final Revision expectedRev = Revision.of("2013-07-03");
