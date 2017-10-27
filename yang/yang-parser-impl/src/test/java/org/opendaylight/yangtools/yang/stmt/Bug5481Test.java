@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -39,9 +40,8 @@ public class Bug5481Test {
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
 
         ContainerSchemaNode topContainer = (ContainerSchemaNode) dataChildByName;
-        RevisionAwareXPath whenConditionTopContainer = topContainer.getConstraints().getWhenCondition();
 
-        assertNull(whenConditionTopContainer);
+        assertFalse(topContainer.getConstraints().getWhenCondition().isPresent());
         assertEquals(Status.CURRENT, topContainer.getStatus());
         assertNull(topContainer.getDescription());
         assertNull(topContainer.getReference());
@@ -54,7 +54,7 @@ public class Bug5481Test {
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
 
         LeafSchemaNode extendedLeaf = (LeafSchemaNode) dataChildByName2;
-        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getConstraints().getWhenCondition();
+        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getConstraints().getWhenCondition().get();
 
         assertEquals(new RevisionAwareXPathImpl("module1:top = 'extended'", false), whenConditionExtendedLeaf);
         assertEquals(Status.DEPRECATED, extendedLeaf.getStatus());

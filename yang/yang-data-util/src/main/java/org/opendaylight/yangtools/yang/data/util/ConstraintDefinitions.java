@@ -58,7 +58,7 @@ public final class ConstraintDefinitions {
 
     public static String toString(final ConstraintDefinition def) {
         return MoreObjects.toStringHelper(def).omitNullValues()
-                .add("whenCondition", def.getWhenCondition())
+                .add("whenCondition", def.getWhenCondition().orElse(null))
                 .add("mustConstraints", def.getMustConstraints())
                 .add("mandatory", def.isMandatory())
                 .add("minElements", def.getMinElements())

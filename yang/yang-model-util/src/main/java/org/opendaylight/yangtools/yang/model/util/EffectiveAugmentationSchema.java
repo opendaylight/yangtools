@@ -50,7 +50,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public RevisionAwareXPath getWhenCondition() {
+    public Optional<RevisionAwareXPath> getWhenCondition() {
         return delegate.getWhenCondition();
     }
 

@@ -71,7 +71,7 @@ public class YangParserSimpleTest {
         assertFalse(data.isAugmenting());
         assertFalse(data.isConfiguration());
         final ConstraintDefinition constraints = data.getConstraints();
-        assertEquals("class != 'wheel'", constraints.getWhenCondition().toString());
+        assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
         final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
@@ -119,7 +119,7 @@ public class YangParserSimpleTest {
 
         // constraints
         final ConstraintDefinition constraints = nodes.getConstraints();
-        assertEquals("class != 'wheel'", constraints.getWhenCondition().toString());
+        assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
         final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
