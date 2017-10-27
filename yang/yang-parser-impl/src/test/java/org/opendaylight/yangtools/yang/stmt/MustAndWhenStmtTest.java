@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -57,15 +58,18 @@ public class MustAndWhenStmtTest {
         MustDefinition mustStmt = mustsIterator.next();
         assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
                 + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
-        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 "
-                + ".. 17966")));
-        assertThat(mustStmt.getErrorAppTag(), anyOf(is("An ethernet error"), is("An atm error")));
+        assertThat(mustStmt.getErrorMessage(), anyOf(is(Optional.of("An ethernet MTU must be 1500")),
+            is(Optional.of("An atm MTU must be 64 .. 17966"))));
+        assertThat(mustStmt.getErrorAppTag(), anyOf(is(Optional.of("An ethernet error")),
+            is(Optional.of("An atm error"))));
         mustStmt = mustsIterator.next();
-        assertThat(mustStmt.getXpath().toString(), anyOf(is("ifType != 'ethernet' or (ifType = 'ethernet' and "
-                + "ifMTU = 1500)"), is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
-        assertThat(mustStmt.getErrorMessage(), anyOf(is("An ethernet MTU must be 1500"), is("An atm MTU must be 64 "
-                + ".. 17966")));
-        assertThat(mustStmt.getErrorAppTag(), anyOf(is("An ethernet error"), is("An atm error")));
+        assertThat(mustStmt.getXpath().toString(), anyOf(
+            is("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)"),
+            is("ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)")));
+        assertThat(mustStmt.getErrorMessage(), anyOf(is(Optional.of("An ethernet MTU must be 1500")),
+            is(Optional.of("An atm MTU must be 64 .. 17966"))));
+        assertThat(mustStmt.getErrorAppTag(), anyOf(is(Optional.of("An ethernet error")),
+            is(Optional.of("An atm error"))));
     }
 
     @Test

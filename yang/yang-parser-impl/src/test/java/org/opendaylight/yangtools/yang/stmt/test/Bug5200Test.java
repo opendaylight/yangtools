@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -59,18 +60,18 @@ public class Bug5200Test {
         assertEquals(1, lengthConstraint.getAllowedRanges().asRanges().size());
         assertEquals(1, patternConstraints.size());
 
-        assertEquals("lenght constraint error-app-tag", lengthConstraint.getErrorAppTag());
-        assertEquals("lenght constraint error-app-message", lengthConstraint.getErrorMessage());
+        assertEquals(Optional.of("lenght constraint error-app-tag"), lengthConstraint.getErrorAppTag());
+        assertEquals(Optional.of("lenght constraint error-app-message"), lengthConstraint.getErrorMessage());
 
         PatternConstraint patternConstraint = patternConstraints.iterator().next();
-        assertEquals("pattern constraint error-app-tag", patternConstraint.getErrorAppTag());
-        assertEquals("pattern constraint error-app-message", patternConstraint.getErrorMessage());
+        assertEquals(Optional.of("pattern constraint error-app-tag"), patternConstraint.getErrorAppTag());
+        assertEquals(Optional.of("pattern constraint error-app-message"), patternConstraint.getErrorMessage());
 
         List<RangeConstraint> rangeConstraints = ((IntegerTypeDefinition) myLeaf2Type).getRangeConstraints();
         assertEquals(1, rangeConstraints.size());
 
         RangeConstraint rangeConstraint = rangeConstraints.iterator().next();
-        assertEquals("range constraint error-app-tag", rangeConstraint.getErrorAppTag());
-        assertEquals("range constraint error-app-message", rangeConstraint.getErrorMessage());
+        assertEquals(Optional.of("range constraint error-app-tag"), rangeConstraint.getErrorAppTag());
+        assertEquals(Optional.of("range constraint error-app-message"), rangeConstraint.getErrorMessage());
     }
 }

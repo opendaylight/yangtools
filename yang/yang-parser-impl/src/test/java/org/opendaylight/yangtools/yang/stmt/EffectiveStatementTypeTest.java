@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import com.google.common.collect.Range;
 import java.util.List;
+import java.util.Optional;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -406,8 +407,8 @@ public class EffectiveStatementTypeTest {
         assertEquals(255, span.upperEndpoint().intValue());
         assertNull(lengthConstraint.getReference());
         assertNull(lengthConstraint.getDescription());
-        assertNull(lengthConstraint.getErrorMessage());
-        assertNull(lengthConstraint.getErrorAppTag());
+        assertFalse(lengthConstraint.getErrorMessage().isPresent());
+        assertFalse(lengthConstraint.getErrorAppTag().isPresent());
         assertNotNull(lengthConstraint.toString());
         assertNotNull(lengthConstraint.hashCode());
         assertFalse(lengthConstraint.equals(null));
@@ -439,9 +440,9 @@ public class EffectiveStatementTypeTest {
         assertEquals("^[0-9a-fA-F]*$", patternConstraint.getRegularExpression());
         assertNull(patternConstraint.getReference());
         assertNull(patternConstraint.getDescription());
-        assertEquals("Supplied value does not match the regular expression ^[0-9a-fA-F]*$.",
+        assertEquals(Optional.of("Supplied value does not match the regular expression ^[0-9a-fA-F]*$."),
             patternConstraint.getErrorMessage());
-        assertEquals("invalid-regular-expression", patternConstraint.getErrorAppTag());
+        assertEquals(Optional.of("invalid-regular-expression"), patternConstraint.getErrorAppTag());
         assertNotNull(patternConstraint.toString());
         assertNotNull(patternConstraint.hashCode());
         assertFalse(patternConstraint.equals(null));
