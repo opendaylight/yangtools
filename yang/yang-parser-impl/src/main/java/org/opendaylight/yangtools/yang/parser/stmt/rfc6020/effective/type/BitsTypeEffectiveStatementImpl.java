@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
-import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.BitsTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -49,11 +48,7 @@ public final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveState
                     effectivePos = bitSubStmt.getDeclaredPosition();
                 }
 
-                final BitBuilder bitBuilder = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setStatus(bitSubStmt.getStatus());
-                bitSubStmt.getDescription().ifPresent(bitBuilder::setDescription);
-                bitSubStmt.getReference().ifPresent(bitBuilder::setReference);
-                builder.addBit(bitBuilder.build());
+                builder.addBit(EffectiveTypeUtil.buildBit(bitSubStmt, effectivePos));
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);
             }
