@@ -67,8 +67,8 @@ public class TypesResolutionTest {
         assertEquals(14, typedefs.size());
 
         TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
-        assertTrue(type.getDescription().contains("This value represents the version of the IP protocol."));
-        assertTrue(type.getReference().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
+        assertTrue(type.getDescription().get().contains("This value represents the version of the IP protocol."));
+        assertTrue(type.getReference().get().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
 
         EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
         List<EnumPair> values = enumType.getValues();
@@ -277,7 +277,7 @@ public class TypesResolutionTest {
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
         String expectedDesc = "A timezone location as defined by the IANA timezone";
-        assertTrue(testedType.getDescription().contains(expectedDesc));
+        assertTrue(testedType.getDescription().get().contains(expectedDesc));
         assertNull(testedType.getReference());
         assertEquals(Status.CURRENT, testedType.getStatus());
 

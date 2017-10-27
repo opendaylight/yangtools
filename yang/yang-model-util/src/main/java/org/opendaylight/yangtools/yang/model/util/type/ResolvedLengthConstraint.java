@@ -25,7 +25,7 @@ final class ResolvedLengthConstraint implements LengthConstraint {
     }
 
     @Override
-    public String getDescription() {
+    public Optional<String> getDescription() {
         return meta.getDescription();
     }
 
@@ -40,7 +40,7 @@ final class ResolvedLengthConstraint implements LengthConstraint {
     }
 
     @Override
-    public String getReference() {
+    public Optional<String> getReference() {
         return meta.getReference();
     }
 

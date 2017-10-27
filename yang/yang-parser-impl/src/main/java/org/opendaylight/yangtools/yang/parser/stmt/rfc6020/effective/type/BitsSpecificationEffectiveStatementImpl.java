@@ -49,19 +49,20 @@ public final class BitsSpecificationEffectiveStatementImpl extends
                     effectivePos = bitSubStmt.getDeclaredPosition();
                 }
 
-                final Bit b = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
-                        .setDescription(bitSubStmt.getDescription()).setReference(bitSubStmt.getReference())
-                        .setStatus(bitSubStmt.getStatus()).setUnknownSchemaNodes(bitSubStmt.getUnknownSchemaNodes())
-                        .build();
+                final BitBuilder bitBuilder = BitBuilder.create(bitSubStmt.getPath(), effectivePos)
+                        .setStatus(bitSubStmt.getStatus());
+                bitSubStmt.getDescription().ifPresent(bitBuilder::setDescription);
+                bitSubStmt.getReference().ifPresent(bitBuilder::setReference);
 
-                SourceException.throwIf(b.getPosition() < 0L && b.getPosition() > 4294967295L,
-                        ctx.getStatementSourceReference(), "Bit %s has illegal position", b);
+                final Bit bit = bitBuilder.build();
+                SourceException.throwIf(bit.getPosition() < 0L && bit.getPosition() > 4294967295L,
+                        ctx.getStatementSourceReference(), "Bit %s has illegal position", bit);
 
-                if (highestPosition == null || highestPosition < b.getPosition()) {
-                    highestPosition = b.getPosition();
+                if (highestPosition == null || highestPosition < bit.getPosition()) {
+                    highestPosition = bit.getPosition();
                 }
 
-                builder.addBit(b);
+                builder.addBit(bit);
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);

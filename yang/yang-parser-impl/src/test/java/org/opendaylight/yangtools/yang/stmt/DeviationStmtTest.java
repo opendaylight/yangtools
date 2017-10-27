@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.text.ParseException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -53,7 +54,7 @@ public class DeviationStmtTest {
             final List<DeviateDefinition> deviates = deviation.getDeviates();
             final String targetLocalName = deviation.getTargetPath().getLastComponent().getLocalName();
             if ("test-leaf".equals(targetLocalName)) {
-                assertEquals("test-leaf is not supported", deviation.getDescription());
+                assertEquals(Optional.of("test-leaf is not supported"), deviation.getDescription());
                 assertEquals(1, deviates.size());
                 assertEquals(DeviateKind.NOT_SUPPORTED, deviates.iterator().next().getDeviateType());
             } else if ("test-leaf-2".equals(targetLocalName)) {
@@ -114,7 +115,7 @@ public class DeviationStmtTest {
             }
 
             if ("bar-leaf-1".equals(targetLocalName)) {
-                if ("desc".equals(deviation.getDescription())) {
+                if (Optional.of("desc").equals(deviation.getDescription())) {
                     deviation4 = deviation;
                 } else {
                     deviation5 = deviation;
@@ -122,7 +123,7 @@ public class DeviationStmtTest {
             }
 
             if ("bar-leaf-2".equals(targetLocalName)) {
-                if ("ref".equals(deviation.getReference())) {
+                if (Optional.of("ref").equals(deviation.getReference())) {
                     deviation6 = deviation;
                 } else {
                     deviation7 = deviation;

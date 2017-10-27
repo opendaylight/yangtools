@@ -104,13 +104,13 @@ public final class ContainerSchemaNodes {
 
         @Nullable
         @Override
-        public String getDescription() {
+        public Optional<String> getDescription() {
             return schemaNode.getDescription();
         }
 
         @Nullable
         @Override
-        public String getReference() {
+        public Optional<String> getReference() {
             return schemaNode.getReference();
         }
 
