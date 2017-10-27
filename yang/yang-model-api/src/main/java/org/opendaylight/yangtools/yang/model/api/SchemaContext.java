@@ -148,4 +148,14 @@ public interface SchemaContext extends ContainerSchemaNode {
     default Set<ActionDefinition> getActions() {
         return ImmutableSet.of();
     }
+
+    @Override
+    default Optional<String> getDescription() {
+        return Optional.empty();
+    }
+
+    @Override
+    default Optional<String> getReference() {
+        return Optional.empty();
+    }
 }

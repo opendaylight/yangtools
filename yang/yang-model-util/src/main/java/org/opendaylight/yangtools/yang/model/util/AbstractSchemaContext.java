@@ -147,16 +147,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return SchemaPath.ROOT;
     }
 
-    @Override
-    public String getDescription() {
-        return null;
-    }
-
-    @Override
-    public String getReference() {
-        return null;
-    }
-
     @Nonnull
     @Override
     public Status getStatus() {
