@@ -50,16 +50,17 @@ public final class EnumSpecificationEffectiveStatementImpl extends
                     effectiveValue = enumSubStmt.getDeclaredValue();
                 }
 
-                final EnumPair p = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
-                        .setDescription(enumSubStmt.getDescription()).setReference(enumSubStmt.getReference())
-                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes())
-                        .build();
+                final EnumPairBuilder pairBuilder = EnumPairBuilder.create(enumSubStmt.getName(), effectiveValue)
+                        .setStatus(enumSubStmt.getStatus()).setUnknownSchemaNodes(enumSubStmt.getUnknownSchemaNodes());
+                enumSubStmt.getDescription().ifPresent(pairBuilder::setDescription);
+                enumSubStmt.getReference().ifPresent(pairBuilder::setReference);
 
-                if (highestValue == null || highestValue < p.getValue()) {
-                    highestValue = p.getValue();
+                final EnumPair pair = pairBuilder.build();
+                if (highestValue == null || highestValue < pair.getValue()) {
+                    highestValue = pair.getValue();
                 }
 
-                builder.addEnum(p);
+                builder.addEnum(pair);
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl) stmt);

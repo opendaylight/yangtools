@@ -26,15 +26,9 @@ public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends D
     ConcreteTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
 
-        if (baseType.getDescription() != null) {
-            setDescription(baseType.getDescription());
-        }
-        if (baseType.getReference() != null) {
-            setReference(baseType.getReference());
-        }
-        if (baseType.getStatus() != null) {
-            setStatus(baseType.getStatus());
-        }
+        setStatus(baseType.getStatus());
+        baseType.getDescription().ifPresent(this::setDescription);
+        baseType.getReference().ifPresent(this::setDescription);
     }
 
     /**
