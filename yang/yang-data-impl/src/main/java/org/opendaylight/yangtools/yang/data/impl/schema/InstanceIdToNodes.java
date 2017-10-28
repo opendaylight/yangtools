@@ -179,7 +179,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         ChoiceSchemaNode foundChoice = null;
         choiceLoop:
         for (final ChoiceSchemaNode choice : choices) {
-            for (final ChoiceCaseNode caze : choice.getCases()) {
+            for (final ChoiceCaseNode caze : choice.getCases().values()) {
                 if (findChildSchemaNode(caze, child).isPresent()) {
                     foundChoice = choice;
                     break choiceLoop;

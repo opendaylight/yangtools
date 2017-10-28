@@ -7,14 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
@@ -31,8 +31,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private final ChoiceSchemaNode original;
     private final String defaultCase;
 
-    private final Set<ChoiceCaseNode> cases;
     private final Set<AugmentationSchemaNode> augmentations;
+    private final SortedMap<QName, ChoiceCaseNode> cases;
 
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
@@ -44,7 +44,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
 
         // initSubstatementCollectionsAndFields
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final SortedSet<ChoiceCaseNode> casesInit = new TreeSet<>((o1, o2) -> o1.getQName().compareTo(o2.getQName()));
+        final SortedMap<QName, ChoiceCaseNode> casesInit = new TreeMap<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchemaNode) {
@@ -53,12 +53,14 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
             }
             if (effectiveStatement instanceof ChoiceCaseNode) {
                 final ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
-                casesInit.add(choiceCaseNode);
+                // FIXME: we may be overwriting a previous entry, is that really okay?
+                casesInit.put(choiceCaseNode.getQName(), choiceCaseNode);
             }
             if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
                 final ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
-                casesInit.add(shorthandCase);
+                // FIXME: we may be overwriting a previous entry, is that really okay?
+                casesInit.put(shorthandCase.getQName(), shorthandCase);
                 if (dataSchemaNode.isAugmenting() && !this.augmenting) {
                     resetAugmenting(dataSchemaNode);
                 }
@@ -66,7 +68,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         }
 
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.cases = ImmutableSet.copyOf(casesInit);
+        this.cases = ImmutableSortedMap.copyOfSorted(casesInit);
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
@@ -99,32 +101,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     }
 
     @Override
-    public Set<ChoiceCaseNode> getCases() {
+    public SortedMap<QName, ChoiceCaseNode> getCases() {
         return cases;
-    }
-
-    @Override
-    public ChoiceCaseNode getCaseNodeByName(final QName name) {
-        Preconditions.checkArgument(name != null, "Choice Case QName cannot be NULL!");
-
-        for (final ChoiceCaseNode caseNode : cases) {
-            if (caseNode != null && name.equals(caseNode.getQName())) {
-                return caseNode;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public ChoiceCaseNode getCaseNodeByName(final String name) {
-        Preconditions.checkArgument(name != null, "Choice Case string Name cannot be NULL!");
-
-        for (final ChoiceCaseNode caseNode : cases) {
-            if (caseNode != null && caseNode.getQName() != null && name.equals(caseNode.getQName().getLocalName())) {
-                return caseNode;
-            }
-        }
-        return null;
     }
 
     @Override

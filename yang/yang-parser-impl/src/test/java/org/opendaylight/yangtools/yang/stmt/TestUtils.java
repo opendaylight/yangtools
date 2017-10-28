@@ -153,7 +153,7 @@ public final class TestUtils {
                 checkIsAugmenting(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
+            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
                 checkIsAugmenting(caseNode, expected);
             }
         }
@@ -176,7 +176,7 @@ public final class TestUtils {
                 checkIsAddedByUses(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases()) {
+            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
                 checkIsAddedByUses(caseNode, expected);
             }
         }
