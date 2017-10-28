@@ -14,11 +14,14 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSortedMap;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -78,8 +81,11 @@ public class DataNodeIteratorTest {
 
         final ChoiceSchemaNode mockedChoice = mock(ChoiceSchemaNode.class);
         final ChoiceCaseNode mockedCase1 = mock(ChoiceCaseNode.class);
+        final QName mockedCase1QName = QName.create("", "case1");
         final ChoiceCaseNode mockedCase2 = mock(ChoiceCaseNode.class);
-        final Set<ChoiceCaseNode> cases = ImmutableSet.of(mockedCase1, mockedCase2);
+        final QName mockedCase2QName = QName.create("", "case2");
+        final SortedMap<QName, ChoiceCaseNode> cases = ImmutableSortedMap.of(mockedCase1QName, mockedCase1,
+            mockedCase2QName, mockedCase2);
         doReturn(cases).when(mockedChoice).getCases();
 
         final Set<DataSchemaNode> childNodes = ImmutableSet.of(mockedAugmentingContainer, mockedContainer, mockedList,
@@ -114,8 +120,8 @@ public class DataNodeIteratorTest {
         assertTrue(dataNodeIterator.allContainers().contains(mockedContainer));
         assertTrue(dataNodeIterator.allLists().contains(mockedList));
         assertTrue(dataNodeIterator.allChoices().contains(mockedChoice));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().contains(mockedCase1));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().contains(mockedCase2));
+        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase1));
+        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase2));
         assertTrue(dataNodeIterator.allContainers().contains(mockedContainerInNotification));
         assertTrue(dataNodeIterator.allLists().contains(mockedListInRpcInputContainer));
         assertTrue(dataNodeIterator.allGroupings().contains(mockedGrouping));
