@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
+import java.util.Optional;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 class CompiledPatternContext {
@@ -15,20 +17,36 @@ class CompiledPatternContext {
     private final Pattern pattern;
     private final String errorMessage;
     private final String regEx;
+    private final boolean invert;
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
         pattern = Pattern.compile(yangConstraint.getJavaPatternString());
         errorMessage = yangConstraint.getErrorMessage().orElse(null);
         regEx = errorMessage == null ? yangConstraint.getRegularExpressionString() : null;
+
+        final Optional<ModifierKind> optModifier = yangConstraint.getModifier();
+        if (optModifier.isPresent()) {
+            final ModifierKind modifier = optModifier.get();
+            switch (modifier) {
+                case INVERT_MATCH:
+                    invert = true;
+                    break;
+                default:
+                    throw new IllegalStateException("Unhandled modifier " + modifier);
+            }
+        } else {
+            invert = false;
+        }
     }
 
     void validate(final String str) {
-        if (!pattern.matcher(str).matches()) {
+        if (pattern.matcher(str).matches() == invert) {
             if (errorMessage != null) {
                 throw new IllegalArgumentException(errorMessage);
             }
 
-            throw new IllegalArgumentException("Value " + str + "does not match regular expression '" + regEx + "'");
+            throw new IllegalArgumentException("Value " + str + " " + (invert ? "matches" : "does not match")
+                    + " regular expression '" + regEx + "'");
         }
     }
 }
