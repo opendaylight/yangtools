@@ -51,15 +51,15 @@ public class ChoiceStmtTest {
         assertNotNull(choice);
         assertEquals(5, choice.getCases().size());
 
-        ChoiceCaseNode caseNode = choice.getCaseNodeByName("input");
+        ChoiceCaseNode caseNode = choice.findCaseNodes("input").iterator().next();
         assertNotNull(caseNode);
-        caseNode = choice.getCaseNodeByName("output");
+        caseNode = choice.findCaseNodes("output").iterator().next();
         assertNotNull(caseNode);
-        caseNode = choice.getCaseNodeByName("interval");
+        caseNode = choice.findCaseNodes("interval").iterator().next();
         assertNotNull(caseNode);
-        caseNode = choice.getCaseNodeByName("daily");
+        caseNode = choice.findCaseNodes("daily").iterator().next();
         assertNotNull(caseNode);
-        caseNode = choice.getCaseNodeByName("manual");
+        caseNode = choice.findCaseNodes("manual").iterator().next();
         assertNotNull(caseNode);
         assertEquals("interval", choice.getDefaultCase());
     }
