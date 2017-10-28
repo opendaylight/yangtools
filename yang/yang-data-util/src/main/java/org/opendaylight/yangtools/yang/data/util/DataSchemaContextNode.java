@@ -97,23 +97,23 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     static DataSchemaContextNode<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
         DataSchemaNode result = findChildSchemaNode(schema, child);
         // We try to look up if this node was added by augmentation
-        if (result != null && (schema instanceof DataSchemaNode) && result.isAugmenting()) {
+        if (result != null && schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
         return fromDataSchemaNode(result);
     }
 
+    // FIXME: this looks like it should be a Predicate on a stream with findFirst()
     private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
-        ChoiceSchemaNode foundChoice = null;
-        choiceLoop: for (ChoiceSchemaNode choice : choices) {
-            for (ChoiceCaseNode caze : choice.getCases()) {
+        for (ChoiceSchemaNode choice : choices) {
+            // FIXME: this looks weird: what are we looking for again?
+            for (ChoiceCaseNode caze : choice.getCases().values()) {
                 if (findChildSchemaNode(caze, child) != null) {
-                    foundChoice = choice;
-                    break choiceLoop;
+                    return choice;
                 }
             }
         }
-        return foundChoice;
+        return null;
     }
 
     public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode augmentation) {
