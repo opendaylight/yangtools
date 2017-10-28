@@ -424,7 +424,7 @@ public final class SchemaContextUtil {
 
             if (foundNode == null) {
                 // fallback that tries to map into one of the child cases
-                for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) parent).getCases()) {
+                for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) parent).getCases().values()) {
                     final DataSchemaNode maybeChild = caseNode.getDataChildByName(current);
                     if (maybeChild != null) {
                         foundNode = findNodeIn(maybeChild, nextPath);
