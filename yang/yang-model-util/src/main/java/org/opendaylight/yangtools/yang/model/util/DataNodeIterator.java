@@ -125,11 +125,8 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
                 } else if (childNode instanceof ChoiceSchemaNode) {
                     final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) childNode;
                     allChoices.add(choiceNode);
-                    final Set<ChoiceCaseNode> cases = choiceNode.getCases();
-                    if (cases != null) {
-                        for (final ChoiceCaseNode caseNode : cases) {
-                            traverse(caseNode);
-                        }
+                    for (final ChoiceCaseNode caseNode : choiceNode.getCases().values()) {
+                        traverse(caseNode);
                     }
                 }
             }
@@ -183,7 +180,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
         if (container.getChildNodes() != null) {
             final Collection<DataSchemaNode> childNodes = container.getChildNodes();
 
-            if ((childNodes != null) && !childNodes.isEmpty()) {
+            if (childNodes != null && !childNodes.isEmpty()) {
                 return childNodes.iterator().hasNext();
             }
         }
