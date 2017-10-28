@@ -25,7 +25,7 @@ class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
         ImmutableMap.Builder<QName, DataSchemaContextNode<?>> byQNameBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<PathArgument, DataSchemaContextNode<?>> byArgBuilder = ImmutableMap.builder();
 
-        for (ChoiceCaseNode caze : schema.getCases()) {
+        for (ChoiceCaseNode caze : schema.getCases().values()) {
             for (DataSchemaNode cazeChild : caze.getChildNodes()) {
                 DataSchemaContextNode<?> childOp = fromDataSchemaNode(cazeChild);
                 byArgBuilder.put(childOp.getIdentifier(), childOp);

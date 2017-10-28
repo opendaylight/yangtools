@@ -92,7 +92,7 @@ public class ControllerStmtParserTest {
         assertTrue(dataChildChoice instanceof ChoiceSchemaNode);
 
         final ChoiceSchemaNode confChoice = (ChoiceSchemaNode) dataChildChoice;
-        final ChoiceCaseNode caseNodeByName = confChoice.getCaseNodeByName("dom-broker-impl");
+        final ChoiceCaseNode caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
 
         assertNotNull(caseNodeByName);
         final DataSchemaNode dataNode2 = caseNodeByName
@@ -110,7 +110,8 @@ public class ControllerStmtParserTest {
         assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
         assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
 
-        final ChoiceCaseNode domInmemoryDataBroker = confChoice.getCaseNodeByName("dom-inmemory-data-broker");
+        final ChoiceCaseNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
+                .next();
 
         assertNotNull(domInmemoryDataBroker);
         final DataSchemaNode schemaService = domInmemoryDataBroker
