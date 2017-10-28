@@ -21,12 +21,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.xml.stream.XMLInputFactory;
@@ -70,6 +68,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -352,7 +351,7 @@ public class NormalizedNodeXmlTranslationTest {
                                                final String childNodeName) {
         for (Module module : context.getModules()) {
             if (module.getName().equals(moduleName)) {
-                DataSchemaNode found = findChildNode(module.getChildNodes(), childNodeName);
+                DataSchemaNode found = findChildNode(module, childNodeName);
                 checkState(found != null, "Unable to find %s", childNodeName);
                 return found;
             }
@@ -360,27 +359,26 @@ public class NormalizedNodeXmlTranslationTest {
         throw new IllegalStateException("Unable to find child node " + childNodeName);
     }
 
-    private static DataSchemaNode findChildNode(final Iterable<DataSchemaNode> children, final String name) {
-        List<DataNodeContainer> containers = new ArrayList<>();
-
-        for (DataSchemaNode dataSchemaNode : children) {
+    // FIXME: duplicate of NormalizedDataBuilderTest.findChildNode()
+    private static DataSchemaNode findChildNode(final DataNodeContainer container, final String name) {
+        for (DataSchemaNode dataSchemaNode : container.getChildNodes()) {
             if (dataSchemaNode.getQName().getLocalName().equals(name)) {
                 return dataSchemaNode;
             }
             if (dataSchemaNode instanceof DataNodeContainer) {
-                containers.add((DataNodeContainer) dataSchemaNode);
+                DataSchemaNode retVal = findChildNode((DataNodeContainer) dataSchemaNode, name);
+                if (retVal != null) {
+                    return retVal;
+                }
             } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                containers.addAll(((ChoiceSchemaNode) dataSchemaNode).getCases());
+                for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
+                    DataSchemaNode retVal = findChildNode(caseNode, name);
+                    if (retVal != null) {
+                        return retVal;
+                    }
+                }
             }
         }
-
-        for (DataNodeContainer container : containers) {
-            DataSchemaNode retVal = findChildNode(container.getChildNodes(), name);
-            if (retVal != null) {
-                return retVal;
-            }
-        }
-
         return null;
     }
 

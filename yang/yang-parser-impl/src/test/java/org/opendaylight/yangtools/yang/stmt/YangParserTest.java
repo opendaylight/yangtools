@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -516,11 +517,11 @@ public class YangParserTest {
             QName.create(foo.getQNameModule(), "transfer"));
         final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(
             QName.create(foo.getQNameModule(), "how"));
-        final Set<ChoiceCaseNode> cases = how.getCases();
+        final SortedMap<QName, ChoiceCaseNode> cases = how.getCases();
         assertEquals(5, cases.size());
         ChoiceCaseNode input = null;
         ChoiceCaseNode output = null;
-        for (final ChoiceCaseNode caseNode : cases) {
+        for (final ChoiceCaseNode caseNode : cases.values()) {
             if ("input".equals(caseNode.getQName().getLocalName())) {
                 input = caseNode;
             } else if ("output".equals(caseNode.getQName().getLocalName())) {

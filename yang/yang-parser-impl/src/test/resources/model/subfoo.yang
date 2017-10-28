@@ -34,7 +34,7 @@ submodule subfoo {
 
     container sub-transfer {
         choice how {
-            default interval;
+            default input;
             container input {
             }
             list output {
