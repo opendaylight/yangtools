@@ -49,7 +49,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
-        for (final ChoiceCaseNode caze : schemaNode.getCases()) {
+        for (final ChoiceCaseNode caze : schemaNode.getCases().values()) {
             final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
                 for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {

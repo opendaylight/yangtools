@@ -102,10 +102,8 @@ class LeafRefContextTreeBuilder {
         } else if (node instanceof ChoiceSchemaNode) {
 
             final ChoiceSchemaNode choice = (ChoiceSchemaNode) node;
-            final Set<ChoiceCaseNode> cases = choice.getCases();
             // :FIXME choice without case
-
-            for (final ChoiceCaseNode caseNode : cases) {
+            for (final ChoiceCaseNode caseNode : choice.getCases().values()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(
                         caseNode, currentModule);
 
@@ -182,32 +180,21 @@ class LeafRefContextTreeBuilder {
                 }
             }
         } else if (node instanceof ChoiceSchemaNode) {
+            for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+                final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(caseNode, currentModule);
 
-            final ChoiceSchemaNode choice = (ChoiceSchemaNode) node;
-            final Set<ChoiceCaseNode> cases = choice.getCases();
-
-            for (final ChoiceCaseNode caseNode : cases) {
-                final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(
-                        caseNode, currentModule);
-
-                if (childLeafRefContext.hasReferencedChild()
-                        || childLeafRefContext.isReferenced()) {
-                    currentLeafRefContextBuilder.addReferencedByChild(
-                            childLeafRefContext,
-                            childLeafRefContext.getNodeName());
+                if (childLeafRefContext.hasReferencedChild() || childLeafRefContext.isReferenced()) {
+                    currentLeafRefContextBuilder.addReferencedByChild(childLeafRefContext,
+                        childLeafRefContext.getNodeName());
                 }
             }
 
-        } else if (node instanceof LeafSchemaNode
-                || node instanceof LeafListSchemaNode) {
-
-            final List<LeafRefContext> foundLeafRefs = getLeafRefsFor(node,
-                    currentModule);
+        } else if (node instanceof LeafSchemaNode || node instanceof LeafListSchemaNode) {
+            final List<LeafRefContext> foundLeafRefs = getLeafRefsFor(node, currentModule);
             if (!foundLeafRefs.isEmpty()) {
                 currentLeafRefContextBuilder.setReferencedBy(true);
                 for (final LeafRefContext leafRef : foundLeafRefs) {
-                    currentLeafRefContextBuilder.addReferencedByLeafRefCtx(
-                            leafRef.getNodeName(), leafRef);
+                    currentLeafRefContextBuilder.addReferencedByLeafRefCtx(leafRef.getNodeName(), leafRef);
                 }
             }
         }
