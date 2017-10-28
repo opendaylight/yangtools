@@ -10,25 +10,29 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import java.util.regex.Pattern;
+import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 class CompiledPatternContext {
 
     private final Pattern pattern;
     private final String errorMessage;
+    private final boolean match;
 
     CompiledPatternContext(final PatternConstraint yangConstraint) {
         pattern = Pattern.compile("^" + yangConstraint.getRegularExpression() + "$");
+
+        match = yangConstraint.getModifier() != ModifierKind.INVERT_MATCH;
         final String yangMessage = yangConstraint.getErrorMessage();
         if (Strings.isNullOrEmpty(yangMessage)) {
-            errorMessage = "Value %s does not match regular expression <" + pattern.pattern() + ">";
+            errorMessage = "Value %s " + (match ? "does not match" : "matches") + " regular expression <"
+                    + pattern.pattern() + ">";
         } else {
             errorMessage = yangMessage;
         }
     }
 
     public void validate(final String s) {
-        Preconditions.checkArgument(pattern.matcher(s).matches(), errorMessage, s);
+        Preconditions.checkArgument(pattern.matcher(s).matches() == match, errorMessage, s);
     }
-
 }
