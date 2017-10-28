@@ -20,7 +20,7 @@ import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
-public final class QNameModule implements Immutable, Serializable {
+public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
@@ -95,6 +95,16 @@ public final class QNameModule implements Immutable, Serializable {
      */
     public Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
+    }
+
+    @Override
+    @SuppressWarnings("checkstyle:parameterName")
+    public int compareTo(final QNameModule o) {
+        int cmp = namespace.compareTo(o.namespace);
+        if (cmp != 0) {
+            return cmp;
+        }
+        return Revision.compare(revision, o.revision);
     }
 
     @Override

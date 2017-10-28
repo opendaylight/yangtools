@@ -394,18 +394,17 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
 
+    // FIXME: this comparison function looks odd. We are sorting first by local name and then by module? What is
+    //        the impact on iteration order of SortedMap<QName, ?>?
     @Override
-    public int compareTo(@Nonnull final QName other) {
-        // compare mandatory localName parameter
-        int result = localName.compareTo(other.localName);
-        if (result != 0) {
-            return result;
-        }
-        result = getNamespace().compareTo(other.getNamespace());
-        if (result != 0) {
-            return result;
-        }
+    @SuppressWarnings("checkstyle:parameterName")
+    public int compareTo(@Nonnull final QName o) {
 
-        return Revision.compare(getRevision(), other.getRevision());
+        // compare mandatory localName parameter
+        int result = localName.compareTo(o.localName);
+        if (result != 0) {
+            return result;
+        }
+        return module.compareTo(o.module);
     }
 }
