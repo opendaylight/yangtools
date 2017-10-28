@@ -1875,7 +1875,7 @@ abstract class SchemaContextEmitter {
             emitConfigNode(choice.isConfiguration());
             emitMandatoryNode(choice.getConstraints().isMandatory());
             emitDocumentedNode(choice);
-            for (final ChoiceCaseNode caze : choice.getCases()) {
+            for (final ChoiceCaseNode caze : choice.getCases().values()) {
                 // TODO: emit short case?
                 emitCaseNode(caze);
             }

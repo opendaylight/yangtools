@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedMap;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -241,7 +242,7 @@ public class AugmentTest {
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
         final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName(QName.create(FOO, "odl"));
         assertNotNull(odl);
-        final Set<ChoiceCaseNode> cases = odl.getCases();
+        final SortedMap<QName, ChoiceCaseNode> cases = odl.getCases();
         assertEquals(4, cases.size());
 
         ChoiceCaseNode id = null;
@@ -249,7 +250,7 @@ public class AugmentTest {
         ChoiceCaseNode node2 = null;
         ChoiceCaseNode node3 = null;
 
-        for (final ChoiceCaseNode ccn : cases) {
+        for (final ChoiceCaseNode ccn : cases.values()) {
             if ("id".equals(ccn.getQName().getLocalName())) {
                 id = ccn;
             } else if ("node1".equals(ccn.getQName().getLocalName())) {
@@ -355,13 +356,13 @@ public class AugmentTest {
         final QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());
-        final Set<ChoiceCaseNode> cases = arguments.getCases();
+        final SortedMap<QName, ChoiceCaseNode> cases = arguments.getCases();
         assertEquals(3, cases.size());
 
         ChoiceCaseNode attach = null;
         ChoiceCaseNode create = null;
         ChoiceCaseNode destroy = null;
-        for (final ChoiceCaseNode child : cases) {
+        for (final ChoiceCaseNode child : cases.values()) {
             if ("attach".equals(child.getQName().getLocalName())) {
                 attach = child;
             } else if ("create".equals(child.getQName().getLocalName())) {

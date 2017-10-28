@@ -114,8 +114,8 @@ public class DataNodeIteratorTest {
         assertTrue(dataNodeIterator.allContainers().contains(mockedContainer));
         assertTrue(dataNodeIterator.allLists().contains(mockedList));
         assertTrue(dataNodeIterator.allChoices().contains(mockedChoice));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().contains(mockedCase1));
-        assertTrue(dataNodeIterator.allChoices().get(0).getCases().contains(mockedCase2));
+        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase1));
+        assertTrue(dataNodeIterator.allChoices().get(0).getCases().values().contains(mockedCase2));
         assertTrue(dataNodeIterator.allContainers().contains(mockedContainerInNotification));
         assertTrue(dataNodeIterator.allLists().contains(mockedListInRpcInputContainer));
         assertTrue(dataNodeIterator.allGroupings().contains(mockedGrouping));
