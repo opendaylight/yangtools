@@ -91,7 +91,7 @@ public class DeviationResolutionTest {
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
-        assertEquals("c2", myChoice.getDefaultCase());
+        assertEquals("c2", myChoice.getDefaultCase().get().getQName().getLocalName());
 
         final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
         final ContainerSchemaNode input = myRpc.getInput();
