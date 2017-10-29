@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class YangParserSimpleTest {
         assertFalse(data.isConfiguration());
         final ConstraintDefinition constraints = data.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
-        final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
+        final Collection<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
@@ -119,7 +120,7 @@ public class YangParserSimpleTest {
         // constraints
         final ConstraintDefinition constraints = nodes.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
-        final Set<MustDefinition> mustConstraints = constraints.getMustConstraints();
+        final Collection<MustDefinition> mustConstraints = constraints.getMustConstraints();
         assertEquals(2, constraints.getMustConstraints().size());
 
         final String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
