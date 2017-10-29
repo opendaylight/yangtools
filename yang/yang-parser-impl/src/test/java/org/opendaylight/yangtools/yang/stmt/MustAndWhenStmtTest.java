@@ -16,9 +16,9 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
-import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -51,7 +51,7 @@ public class MustAndWhenStmtTest {
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
 
-        final Set<MustDefinition> musts = container.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> musts = container.getConstraints().getMustConstraints();
         assertEquals(2, musts.size());
 
         final Iterator<MustDefinition> mustsIterator = musts.iterator();
