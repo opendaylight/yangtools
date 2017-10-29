@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -17,7 +18,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -31,19 +32,17 @@ public class NotificationEffectiveStatementImpl extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement> implements NotificationDefinition {
     private final QName qname;
     private final SchemaPath path;
-    private final ConstraintDefinition constraints;
     private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
+    private final Collection<MustDefinition> mustConstraints;
 
     public NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
         super(ctx);
         this.qname = ctx.getStatementArgument();
         this.path = ctx.getSchemaPath().get();
-
-        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
 
         // initSubstatementCollections
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
@@ -60,6 +59,7 @@ public class NotificationEffectiveStatementImpl extends
         }
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
+        this.mustConstraints = ImmutableSet.copyOf(this.allSubstatementsOfType(MustDefinition.class));
 
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
@@ -84,8 +84,8 @@ public class NotificationEffectiveStatementImpl extends
     }
 
     @Override
-    public ConstraintDefinition getConstraints() {
-        return constraints;
+    public Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 
     @Override

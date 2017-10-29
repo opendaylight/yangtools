@@ -11,7 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Set;
+import java.util.Collection;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -28,7 +28,7 @@ public class Bug5518Test {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "root"));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
-        final Set<MustDefinition> mustConstraints = root.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> mustConstraints = root.getConstraints().getMustConstraints();
         assertEquals(1, mustConstraints.size());
         final MustDefinition must = mustConstraints.iterator().next();
         assertEquals("not(deref(.)/../same-pass)", must.getXpath().toString());
