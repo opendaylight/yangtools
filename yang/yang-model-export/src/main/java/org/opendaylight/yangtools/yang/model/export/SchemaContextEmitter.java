@@ -1843,7 +1843,7 @@ abstract class SchemaContextEmitter {
 
         }
 
-        private void emitMustNodes(final Set<MustDefinition> mustConstraints) {
+        private void emitMustNodes(final Collection<MustDefinition> mustConstraints) {
             for (final MustDefinition must : mustConstraints) {
                 emitMust(must);
             }
@@ -2226,7 +2226,9 @@ abstract class SchemaContextEmitter {
 
             super.writer.startNotificationNode(notification.getQName());
             // FIXME: BUG-2444: *(ifFeatureNode )
-            emitConstraints(notification.getConstraints());
+            for (final MustDefinition mustCondition : notification.getMustConstraints()) {
+                emitMust(mustCondition);
+            }
             emitDocumentedNode(notification);
             emitDataNodeContainer(notification);
             emitUnknownStatementNodes(notification.getUnknownSchemaNodes());
