@@ -100,7 +100,7 @@ public class DeviationResolutionTest {
         assertEquals(2, output.getConstraints().getMustConstraints().size());
 
         final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
-        assertEquals(2, myNotification.getConstraints().getMustConstraints().size());
+        assertEquals(2, myNotification.getMustConstraints().size());
 
         final AnyXmlSchemaNode myAnyxml = (AnyXmlSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
