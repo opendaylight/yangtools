@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -37,7 +38,7 @@ public class Bug6871Test {
         final Set<NotificationDefinition> notifications = foo.getNotifications();
         assertEquals(1, notifications.size());
         final NotificationDefinition myNotification = notifications.iterator().next();
-        Set<MustDefinition> mustConstraints = myNotification.getConstraints().getMustConstraints();
+        Collection<MustDefinition> mustConstraints = myNotification.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final Set<RpcDefinition> rpcs = foo.getRpcs();

@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import java.util.Set;
 import javax.annotation.Nullable;
 
 /**
@@ -16,16 +15,7 @@ import javax.annotation.Nullable;
  * YANG element therefore if the constraint doesn't have sense for some element
  * then the method returns <code>null</code> value.
  */
-public interface ConstraintDefinition extends WhenConditionAware {
-    /**
-     * Specifies the rules which the node which contains <code>must</code> YANG
-     * substatement has to match.
-     *
-     * @return set of <code>MustDefinition</code> (XPath) instances which
-     *         represents the concrete data constraints
-     */
-    Set<MustDefinition> getMustConstraints();
-
+public interface ConstraintDefinition extends MustConstraintAware, WhenConditionAware {
     /**
      * Expreses if the presence of the data element for which this constraint is
      * specified is|isn't required.
