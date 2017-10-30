@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.model.util.type.BaseTypes.emptyType;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
@@ -27,10 +28,10 @@ public class EmptyTypeTest {
         assertEquals("Path", Collections.singletonList(BaseTypes.EMPTY_QNAME),
                 emptyType.getPath().getPathFromRoot());
         assertEquals("BaseType", null, emptyType.getBaseType());
-        assertEquals("DefaultValue", null, emptyType.getDefaultValue());
+        assertEquals("DefaultValue", Optional.empty(), emptyType.getDefaultValue());
         assertEquals("Status", Status.CURRENT, emptyType.getStatus());
         assertFalse(emptyType.getReference().isPresent());
-        assertEquals("Units", null, emptyType.getUnits());
+        assertEquals("Units", Optional.empty(), emptyType.getUnits());
         assertFalse(emptyType.getDescription().isPresent());
         assertEquals("UnknownSchemaNodes", Collections.EMPTY_LIST, emptyType.getUnknownSchemaNodes());
         assertTrue("toString", emptyType.toString().contains("empty"));

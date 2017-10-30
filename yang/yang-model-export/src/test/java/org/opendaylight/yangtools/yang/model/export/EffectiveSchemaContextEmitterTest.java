@@ -59,7 +59,7 @@ public class EffectiveSchemaContextEmitterTest {
                 assertNotEquals(0, output.length());
 
                 final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin-effective-emitter", module);
-                assertXMLEquals(doc, output);
+                assertXMLEquals(module.getName(), doc, output);
             } finally {
                 byteArrayOutputStream.close();
                 bufferedOutputStream.close();
@@ -116,7 +116,7 @@ public class EffectiveSchemaContextEmitterTest {
         return outFile;
     }
 
-    private static void assertXMLEquals(final Document expectedXMLDoc, final String output)
+    private static void assertXMLEquals(final String name, final Document expectedXMLDoc, final String output)
             throws SAXException, IOException {
         final String expected = YinExportTestUtils.toString(expectedXMLDoc.getDocumentElement());
 
@@ -126,6 +126,6 @@ public class EffectiveSchemaContextEmitterTest {
 
         final Diff diff = new Diff(expected, output);
         diff.overrideElementQualifier(new ElementNameAndAttributeQualifier());
-        XMLAssert.assertXMLEqual(diff, true);
+        XMLAssert.assertXMLEqual(name, diff, true);
     }
 }
