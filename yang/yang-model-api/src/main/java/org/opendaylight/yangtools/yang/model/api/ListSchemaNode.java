@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -15,11 +14,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Interface describing YANG 'list' statement.
+ *
  * <p>
- * The 'list' statement is used to define an interior data node in the schema
- * tree. A list entry is uniquely identified by the values of the list's keys,
- * if defined.
- * </p>
+ * The 'list' statement is used to define an interior data node in the schema tree. A list entry is uniquely identified
+ * by the values of the list's keys, if defined.
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
         NotificationNodeContainer, ActionNodeContainer {
@@ -45,7 +43,5 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      * @return Collection of unique constraints of this list schema node
      */
     @Nonnull
-    default Collection<UniqueConstraint> getUniqueConstraints() {
-        return ImmutableList.of();
-    }
+    Collection<UniqueConstraint> getUniqueConstraints();
 }
