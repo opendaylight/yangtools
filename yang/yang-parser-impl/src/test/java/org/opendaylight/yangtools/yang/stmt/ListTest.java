@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import java.util.List;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -79,7 +80,7 @@ public class ListTest {
         assertNotNull(leaf);
         assertFalse(leaf.getConstraints().isMandatory());
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
-        assertEquals("default-value", leaf.getType().getDefaultValue());
+        assertEquals(Optional.of("default-value"), leaf.getType().getDefaultValue());
 
         final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
             QName.create(testModule.getQNameModule(), "list-of-leaves"));

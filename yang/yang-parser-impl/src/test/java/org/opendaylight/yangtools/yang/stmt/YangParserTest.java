@@ -160,7 +160,7 @@ public class YangParserTest {
             "ifIndex"));
         assertEquals(ifEntry.getKeyDefinition().get(0), ifIndex.getQName());
         assertTrue(ifIndex.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertEquals("minutes", ifIndex.getType().getUnits());
+        assertEquals(Optional.of("minutes"), ifIndex.getType().getUnits());
         final LeafSchemaNode ifMtu = (LeafSchemaNode) ifEntry.getDataChildByName(QName.create(bar.getQNameModule(),
             "ifMtu"));
         assertEquals(BaseTypes.int32Type(), ifMtu.getType());
@@ -173,8 +173,8 @@ public class YangParserTest {
 
         final IntegerTypeDefinition leafType = (IntegerTypeDefinition) int32Leaf.getType();
         assertEquals(QName.create(FOO, "int32-ext2"), leafType.getQName());
-        assertEquals("mile", leafType.getUnits());
-        assertEquals("11", leafType.getDefaultValue());
+        assertEquals(Optional.of("mile"), leafType.getUnits());
+        assertEquals(Optional.of("11"), leafType.getDefaultValue());
 
         final List<RangeConstraint> ranges = leafType.getRangeConstraints();
         assertEquals(1, ranges.size());
@@ -184,8 +184,8 @@ public class YangParserTest {
 
         final IntegerTypeDefinition baseType = leafType.getBaseType();
         assertEquals(QName.create(BAR, "int32-ext2"), baseType.getQName());
-        assertEquals("mile", baseType.getUnits());
-        assertEquals("11", baseType.getDefaultValue());
+        assertEquals(Optional.of("mile"), baseType.getUnits());
+        assertEquals(Optional.of("11"), baseType.getDefaultValue());
 
         final List<RangeConstraint> baseTypeRanges = baseType.getRangeConstraints();
         assertEquals(2, baseTypeRanges.size());
@@ -200,8 +200,8 @@ public class YangParserTest {
         final QName baseQName = base.getQName();
         assertEquals("int32-ext1", baseQName.getLocalName());
         assertEquals(BAR, baseQName.getModule());
-        assertNull(base.getUnits());
-        assertNull(base.getDefaultValue());
+        assertEquals(Optional.empty(), base.getUnits());
+        assertEquals(Optional.empty(), base.getDefaultValue());
 
         final List<RangeConstraint> baseRanges = base.getRangeConstraints();
         assertEquals(1, baseRanges.size());
@@ -222,8 +222,8 @@ public class YangParserTest {
         final QName typeQName = type.getQName();
         assertEquals("string-ext4", typeQName.getLocalName());
         assertEquals(BAR, typeQName.getModule());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
@@ -234,8 +234,8 @@ public class YangParserTest {
         final QName baseType1QName = baseType1.getQName();
         assertEquals("string-ext3", baseType1QName.getLocalName());
         assertEquals(BAR, baseType1QName.getModule());
-        assertNull(baseType1.getUnits());
-        assertNull(baseType1.getDefaultValue());
+        assertEquals(Optional.empty(), baseType1.getUnits());
+        assertEquals(Optional.empty(), baseType1.getDefaultValue());
         patterns = baseType1.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
@@ -246,8 +246,8 @@ public class YangParserTest {
         final QName baseType2QName = baseType2.getQName();
         assertEquals("string-ext2", baseType2QName.getLocalName());
         assertEquals(BAR, baseType2QName.getModule());
-        assertNull(baseType2.getUnits());
-        assertNull(baseType2.getDefaultValue());
+        assertEquals(Optional.empty(), baseType2.getUnits());
+        assertEquals(Optional.empty(), baseType2.getDefaultValue());
         assertTrue(baseType2.getPatternConstraints().isEmpty());
         final RangeSet<Integer> baseType2Lengths = baseType2.getLengthConstraint().get().getAllowedRanges();
         assertEquals(1, baseType2Lengths.asRanges().size());
@@ -257,8 +257,8 @@ public class YangParserTest {
 
         final StringTypeDefinition baseType3 = baseType2.getBaseType();
         assertEquals(QName.create(BAR, "string-ext1"), baseType3.getQName());
-        assertNull(baseType3.getUnits());
-        assertNull(baseType3.getDefaultValue());
+        assertEquals(Optional.empty(), baseType3.getUnits());
+        assertEquals(Optional.empty(), baseType3.getDefaultValue());
         patterns = baseType3.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
@@ -278,8 +278,8 @@ public class YangParserTest {
                 .getDataChildByName(QName.create(foo.getQNameModule(), "invalid-pattern-string-leaf"));
         StringTypeDefinition type = (StringTypeDefinition) invalidPatternStringLeaf.getType();
         assertEquals(QName.create(BAR, "invalid-string-pattern"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertTrue(patterns.isEmpty());
 
@@ -288,8 +288,8 @@ public class YangParserTest {
         type = (StringTypeDefinition) invalidDirectStringPatternDefLeaf.getType();
 
         assertEquals(QName.create(YangConstants.RFC6020_YANG_MODULE, "string"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         patterns = type.getPatternConstraints();
         assertTrue(patterns.isEmpty());
 
@@ -297,8 +297,8 @@ public class YangParserTest {
                 .getDataChildByName(QName.create(foo.getQNameModule(), "multiple-pattern-string-leaf"));
         type = (StringTypeDefinition) multiplePatternStringLeaf.getType();
         assertEquals(QName.create(BAR, "multiple-pattern-string"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         patterns = type.getPatternConstraints();
         assertTrue(!patterns.isEmpty());
         assertEquals(1, patterns.size());
@@ -310,8 +310,8 @@ public class YangParserTest {
                 .getDataChildByName(QName.create(foo.getQNameModule(), "multiple-pattern-direct-string-def-leaf"));
         type = (StringTypeDefinition) multiplePatternDirectStringDefLeaf.getType();
         assertEquals(QName.create(FOO, "string"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         patterns = type.getPatternConstraints();
         assertTrue(!patterns.isEmpty());
         assertEquals(2, patterns.size());
@@ -336,8 +336,8 @@ public class YangParserTest {
         final StringTypeDefinition type = (StringTypeDefinition) lengthLeaf.getType();
 
         assertEquals(QName.create(FOO, "string-ext2"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         assertTrue(type.getPatternConstraints().isEmpty());
         final RangeSet<Integer> typeLengths = type.getLengthConstraint().get().getAllowedRanges();
         assertEquals(1, typeLengths.asRanges().size());
@@ -347,8 +347,8 @@ public class YangParserTest {
 
         final StringTypeDefinition baseType1 = type.getBaseType();
         assertEquals(QName.create(BAR, "string-ext2"), baseType1.getQName());
-        assertNull(baseType1.getUnits());
-        assertNull(baseType1.getDefaultValue());
+        assertEquals(Optional.empty(), baseType1.getUnits());
+        assertEquals(Optional.empty(), baseType1.getDefaultValue());
         assertTrue(baseType1.getPatternConstraints().isEmpty());
         final RangeSet<Integer> baseType2Lengths = baseType1.getLengthConstraint().get().getAllowedRanges();
         assertEquals(1, baseType2Lengths.asRanges().size());
@@ -358,8 +358,8 @@ public class YangParserTest {
 
         final StringTypeDefinition baseType2 = baseType1.getBaseType();
         assertEquals(QName.create(BAR, "string-ext1"), baseType2.getQName());
-        assertNull(baseType2.getUnits());
-        assertNull(baseType2.getDefaultValue());
+        assertEquals(Optional.empty(), baseType2.getUnits());
+        assertEquals(Optional.empty(), baseType2.getDefaultValue());
         final List<PatternConstraint> patterns = baseType2.getPatternConstraints();
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
@@ -381,15 +381,15 @@ public class YangParserTest {
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition type = (DecimalTypeDefinition) testleaf.getType();
         assertEquals(QName.create(BAR, "my-decimal-type"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
         assertEquals(1, type.getRangeConstraints().size());
 
         final DecimalTypeDefinition typeBase = type.getBaseType();
         assertEquals(QName.create(BAR, "decimal64"), typeBase.getQName());
-        assertNull(typeBase.getUnits());
-        assertNull(typeBase.getDefaultValue());
+        assertEquals(Optional.empty(), typeBase.getUnits());
+        assertEquals(Optional.empty(), typeBase.getDefaultValue());
         assertEquals(6, typeBase.getFractionDigits().intValue());
         assertEquals(1, typeBase.getRangeConstraints().size());
 
@@ -404,8 +404,8 @@ public class YangParserTest {
         assertTrue(testleaf.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition type = (DecimalTypeDefinition) testleaf.getType();
         assertEquals(QName.create(BAR, "my-decimal-type"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
         assertEquals(6, type.getFractionDigits().intValue());
         assertEquals(1, type.getRangeConstraints().size());
 
@@ -421,13 +421,13 @@ public class YangParserTest {
         assertTrue(unionleaf.getType() instanceof UnionTypeDefinition);
         final UnionTypeDefinition type = (UnionTypeDefinition) unionleaf.getType();
         assertEquals(QName.create(BAR, "my-union-ext"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
 
         final UnionTypeDefinition baseType = type.getBaseType();
         assertEquals(QName.create(BAR, "my-union"), baseType.getQName());
-        assertNull(baseType.getUnits());
-        assertNull(baseType.getDefaultValue());
+        assertEquals(Optional.empty(), baseType.getUnits());
+        assertEquals(Optional.empty(), baseType.getDefaultValue());
 
         final UnionTypeDefinition unionType = baseType.getBaseType();
         final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
@@ -435,8 +435,8 @@ public class YangParserTest {
 
         final IntegerTypeDefinition unionType1 = (IntegerTypeDefinition) unionTypes.get(0);
         assertEquals(QName.create(BAR, "my-union"), baseType.getQName());
-        assertNull(unionType1.getUnits());
-        assertNull(unionType1.getDefaultValue());
+        assertEquals(Optional.empty(), unionType1.getUnits());
+        assertEquals(Optional.empty(), unionType1.getDefaultValue());
 
         final List<RangeConstraint> ranges = unionType1.getRangeConstraints();
         assertEquals(1, ranges.size());
@@ -456,13 +456,13 @@ public class YangParserTest {
         assertTrue(testleaf.getType() instanceof UnionTypeDefinition);
         final UnionTypeDefinition type = (UnionTypeDefinition) testleaf.getType();
         assertEquals(QName.create(BAZ, "union1"), type.getQName());
-        assertNull(type.getUnits());
-        assertNull(type.getDefaultValue());
+        assertEquals(Optional.empty(), type.getUnits());
+        assertEquals(Optional.empty(), type.getDefaultValue());
 
         final UnionTypeDefinition typeBase = type.getBaseType();
         assertEquals(QName.create(BAZ, "union2"), typeBase.getQName());
-        assertNull(typeBase.getUnits());
-        assertNull(typeBase.getDefaultValue());
+        assertEquals(Optional.empty(), typeBase.getUnits());
+        assertEquals(Optional.empty(), typeBase.getDefaultValue());
 
         final UnionTypeDefinition union = typeBase.getBaseType();
         final List<TypeDefinition<?>> unionTypes = union.getTypes();
@@ -472,8 +472,8 @@ public class YangParserTest {
 
         final UnionTypeDefinition unionType1 = (UnionTypeDefinition) unionTypes.get(1);
         assertEquals(QName.create(BAR, "nested-union2"), unionType1.getQName());
-        assertNull(unionType1.getUnits());
-        assertNull(unionType1.getDefaultValue());
+        assertEquals(Optional.empty(), unionType1.getUnits());
+        assertEquals(Optional.empty(), unionType1.getDefaultValue());
 
         final UnionTypeDefinition nestedUnion = unionType1.getBaseType();
         final List<TypeDefinition<?>> nestedUnion2Types = nestedUnion.getTypes();
@@ -483,14 +483,14 @@ public class YangParserTest {
 
         final UnionTypeDefinition myUnionExt = (UnionTypeDefinition) nestedUnion2Types.get(0);
         assertEquals(QName.create(BAR, "my-union-ext"), myUnionExt.getQName());
-        assertNull(myUnionExt.getUnits());
-        assertNull(myUnionExt.getDefaultValue());
+        assertEquals(Optional.empty(), myUnionExt.getUnits());
+        assertEquals(Optional.empty(), myUnionExt.getDefaultValue());
 
 
         final UnionTypeDefinition myUnion = myUnionExt.getBaseType();
         assertEquals(QName.create(BAR, "my-union"), myUnion.getQName());
-        assertNull(myUnion.getUnits());
-        assertNull(myUnion.getDefaultValue());
+        assertEquals(Optional.empty(), myUnion.getUnits());
+        assertEquals(Optional.empty(), myUnion.getDefaultValue());
 
         final UnionTypeDefinition myUnionBase = myUnion.getBaseType();
         final List<TypeDefinition<?>> myUnionBaseTypes = myUnionBase.getTypes();
@@ -500,8 +500,8 @@ public class YangParserTest {
 
         final IntegerTypeDefinition int16Ext = (IntegerTypeDefinition) myUnionBaseTypes.get(0);
         assertEquals(QName.create(BAR, "int16"), int16Ext.getQName());
-        assertNull(int16Ext.getUnits());
-        assertNull(int16Ext.getDefaultValue());
+        assertEquals(Optional.empty(), int16Ext.getUnits());
+        assertEquals(Optional.empty(), int16Ext.getDefaultValue());
         final List<RangeConstraint> ranges = int16Ext.getRangeConstraints();
         assertEquals(1, ranges.size());
         final RangeConstraint range = ranges.get(0);
