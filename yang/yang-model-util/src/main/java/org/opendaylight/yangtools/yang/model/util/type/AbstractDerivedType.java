@@ -50,8 +50,8 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     }
 
     @Override
-    public final Object getDefaultValue() {
-        return defaultValue != null ? defaultValue : baseType.getDefaultValue();
+    public final Optional<? extends Object> getDefaultValue() {
+        return defaultValue != null ? Optional.of(defaultValue) : baseType.getDefaultValue();
     }
 
     @Override
@@ -71,8 +71,8 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     }
 
     @Override
-    public final String getUnits() {
-        return units != null ? units : baseType.getUnits();
+    public final Optional<String> getUnits() {
+        return units != null ? Optional.of(units) : baseType.getUnits();
     }
 
     @Override

@@ -32,13 +32,13 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
     }
 
     @Override
-    public final String getUnits() {
-        return null;
+    public final Optional<String> getUnits() {
+        return Optional.empty();
     }
 
     @Override
-    public final Object getDefaultValue() {
-        return null;
+    public final Optional<? extends Object> getDefaultValue() {
+        return Optional.empty();
     }
 
     @Override

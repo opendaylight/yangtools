@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.export;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -1332,10 +1331,8 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitUnitsNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startUnitsNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startUnitsNode(input);
+            super.writer.endNode();
         }
 
         private void emitRevision(final Revision date) {
@@ -1420,8 +1417,8 @@ abstract class SchemaContextEmitter {
             // Differentiate between derived type and existing type
             // name.
             emitTypeNodeDerived(typedef);
-            emitUnitsNode(typedef.getUnits());
-            emitDefaultNode(typedef.getDefaultValue());
+            typedef.getUnits().ifPresent(this::emitUnitsNode);
+            typedef.getDefaultValue().ifPresent(this::emitDefaultNode);
             emitDocumentedNode(typedef);
             emitUnknownStatementNodes(typedef.getUnknownSchemaNodes());
             super.writer.endNode();
@@ -1598,10 +1595,8 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitDefaultNode(@Nullable final Object object) {
-            if (object != null) {
-                super.writer.startDefaultNode(object.toString());
-                super.writer.endNode();
-            }
+            super.writer.startDefaultNode(object.toString());
+            super.writer.endNode();
         }
 
         private void emitEnumSpecification(final EnumTypeDefinition typeDefinition) {
@@ -1791,9 +1786,9 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getType().getUnits());
+            child.getType().getUnits().ifPresent(this::emitUnitsNode);
             emitMustNodes(child.getConstraints().getMustConstraints());
-            emitDefaultNode(child.getType().getDefaultValue());
+            child.getType().getDefaultValue().ifPresent(this::emitDefaultNode);
             emitConfigNode(child.isConfiguration());
             emitMandatoryNode(child.getConstraints().isMandatory());
             emitDocumentedNode(child);
@@ -1808,7 +1803,7 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getType().getUnits());
+            child.getType().getUnits().ifPresent(this::emitUnitsNode);
             // FIXME: BUG-2444: unitsNode /Optional
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitConfigNode(child.isConfiguration());
