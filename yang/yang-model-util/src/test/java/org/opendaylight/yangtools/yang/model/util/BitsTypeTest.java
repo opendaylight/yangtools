@@ -14,6 +14,7 @@ import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.doReturn;
 
 import java.util.Collections;
+import java.util.Optional;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -40,11 +41,11 @@ public class BitsTypeTest {
 
         assertFalse(bitsType.getDescription().isPresent());
         assertEquals("QName", qname, bitsType.getQName());
-        assertNull("Should be null", bitsType.getUnits());
+        assertEquals(Optional.empty(), bitsType.getUnits());
         assertNotEquals("Description should not be null", null, bitsType.toString());
         assertFalse(bitsType.getReference().isPresent());
         assertNull("BaseType should be null", bitsType.getBaseType());
-        assertNull("Default value should be null", bitsType.getDefaultValue());
+        assertEquals(Optional.empty(), bitsType.getDefaultValue());
         assertEquals("getPath should equal schemaPath", schemaPath, bitsType.getPath());
         assertEquals("Status should be CURRENT", Status.CURRENT, bitsType.getStatus());
         assertEquals("Should be empty list", Collections.EMPTY_LIST, bitsType.getUnknownSchemaNodes());
