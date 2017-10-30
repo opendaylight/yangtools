@@ -31,12 +31,12 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
     }
 
     @Override
-    public final String getUnits() {
+    public final Optional<String> getUnits() {
         return baseType.getUnits();
     }
 
     @Override
-    public final Object getDefaultValue() {
+    public final Optional<? extends Object> getDefaultValue() {
         return baseType.getDefaultValue();
     }
 

@@ -41,7 +41,8 @@ public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends D
     @Override
     public final T build() {
         final T base = getBaseType();
-        if (Objects.equals(getDefaultValue(), base.getDefaultValue()) && Objects.equals(getUnits(), base.getUnits())) {
+        if (Objects.equals(getDefaultValue(), base.getDefaultValue().orElse(null))
+                && Objects.equals(getUnits(), base.getUnits().orElse(null))) {
             return base;
         }
 
