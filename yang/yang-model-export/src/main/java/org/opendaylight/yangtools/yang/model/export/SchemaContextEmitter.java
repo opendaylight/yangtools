@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.export;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
-import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
@@ -1332,10 +1331,8 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitUnitsNode(@Nullable final String input) {
-            if (!Strings.isNullOrEmpty(input)) {
-                super.writer.startUnitsNode(input);
-                super.writer.endNode();
-            }
+            super.writer.startUnitsNode(input);
+            super.writer.endNode();
         }
 
         private void emitRevision(final Revision date) {
@@ -1420,7 +1417,7 @@ abstract class SchemaContextEmitter {
             // Differentiate between derived type and existing type
             // name.
             emitTypeNodeDerived(typedef);
-            emitUnitsNode(typedef.getUnits());
+            typedef.getUnits().ifPresent(this::emitUnitsNode);
             emitDefaultNode(typedef.getDefaultValue());
             emitDocumentedNode(typedef);
             emitUnknownStatementNodes(typedef.getUnknownSchemaNodes());
@@ -1791,7 +1788,7 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getType().getUnits());
+            child.getType().getUnits().ifPresent(this::emitUnitsNode);
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitDefaultNode(child.getType().getDefaultValue());
             emitConfigNode(child.isConfiguration());
@@ -1808,7 +1805,7 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
-            emitUnitsNode(child.getType().getUnits());
+            child.getType().getUnits().ifPresent(this::emitUnitsNode);
             // FIXME: BUG-2444: unitsNode /Optional
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitConfigNode(child.isConfiguration());
