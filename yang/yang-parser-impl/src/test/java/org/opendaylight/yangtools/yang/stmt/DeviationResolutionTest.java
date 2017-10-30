@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -124,8 +125,8 @@ public class DeviationResolutionTest {
         assertNotNull(myLeaf);
 
         assertTrue(myLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertEquals("bytes", myLeaf.getType().getUnits());
-        assertEquals("10", myLeaf.getType().getDefaultValue());
+        assertEquals(Optional.of("bytes"), myLeaf.getType().getUnits());
+        assertEquals(Optional.of("10"), myLeaf.getType().getDefaultValue());
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
@@ -151,8 +152,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
         assertTrue(myAugLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertEquals("seconds", myAugLeaf.getType().getUnits());
-        assertEquals("new-def-val", myAugLeaf.getType().getDefaultValue());
+        assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
+        assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
         assertEquals(1, myAugLeaf.getUnknownSchemaNodes().size());
         assertEquals("new arg", myAugLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
 
@@ -160,8 +161,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
         assertTrue(myUsedLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        assertEquals("weeks", myUsedLeaf.getType().getUnits());
-        assertEquals("new-def-val", myUsedLeaf.getType().getDefaultValue());
+        assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
+        assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
         assertEquals(1, myUsedLeaf.getUnknownSchemaNodes().size());
         assertEquals("new arg", myUsedLeaf.getUnknownSchemaNodes().iterator().next().getNodeParameter());
     }
@@ -178,8 +179,8 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
-        assertNull(myLeaf.getType().getDefaultValue());
-        assertNull(myLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myLeaf.getType().getDefaultValue());
+        assertEquals(Optional.empty(), myLeaf.getType().getUnits());
         assertEquals(0, myLeaf.getUnknownSchemaNodes().size());
 
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
@@ -203,16 +204,16 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
-        assertNull(myAugLeaf.getType().getDefaultValue());
-        assertNull(myAugLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myAugLeaf.getType().getDefaultValue());
+        assertEquals(Optional.empty(), myAugLeaf.getType().getUnits());
         assertEquals(0, myAugLeaf.getConstraints().getMustConstraints().size());
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
-        assertNull(myUsedLeaf.getType().getDefaultValue());
-        assertNull(myUsedLeaf.getType().getUnits());
+        assertEquals(Optional.empty(), myUsedLeaf.getType().getDefaultValue());
+        assertEquals(Optional.empty(), myUsedLeaf.getType().getUnits());
         assertEquals(0, myUsedLeaf.getConstraints().getMustConstraints().size());
         assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }

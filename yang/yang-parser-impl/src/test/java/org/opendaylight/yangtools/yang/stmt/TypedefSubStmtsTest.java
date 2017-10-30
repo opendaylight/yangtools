@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -40,7 +41,7 @@ public class TypedefSubStmtsTest {
         TypeDefinition<?> typedef = typedefs.iterator().next();
         assertEquals("time-of-the-day", typedef.getQName().getLocalName());
         assertEquals("string", typedef.getBaseType().getQName().getLocalName());
-        assertEquals("24-hour-clock", typedef.getUnits());
-        assertEquals("1am", typedef.getDefaultValue().toString());
+        assertEquals(Optional.of("24-hour-clock"), typedef.getUnits());
+        assertEquals("1am", typedef.getDefaultValue().map(Object::toString).orElse(null));
     }
 }
