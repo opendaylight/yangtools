@@ -23,12 +23,6 @@ final class DerivedIdentityrefType extends AbstractDerivedType<IdentityrefTypeDe
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    @Deprecated
-    @Override
-    public IdentitySchemaNode getIdentity() {
-        return baseType().getIdentity();
-    }
-
     @Override
     public Set<IdentitySchemaNode> getIdentities() {
         return baseType().getIdentities();
