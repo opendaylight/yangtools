@@ -40,7 +40,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode}
  *
  * <dt>base
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition#getIdentity()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition#getIdentities()}
  *
  * <dt>belongs-to
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement#getBelongsTo()}

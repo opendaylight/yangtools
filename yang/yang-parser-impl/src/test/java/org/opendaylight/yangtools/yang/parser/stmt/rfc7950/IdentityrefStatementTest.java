@@ -44,7 +44,7 @@ public class IdentityrefStatementTest {
         final Set<IdentitySchemaNode> referencedIdentities = idrefType.getIdentities();
         assertEquals(3, referencedIdentities.size());
         assertEquals(identities, referencedIdentities);
-        assertEquals("id-a", idrefType.getIdentity().getQName().getLocalName());
+        assertEquals("id-a", idrefType.getIdentities().iterator().next().getQName().getLocalName());
     }
 
     @Test

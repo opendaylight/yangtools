@@ -340,7 +340,7 @@ public class TypesResolutionTest {
         Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
         TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
-        QName identity = baseType.getIdentity().getQName();
+        QName identity = baseType.getIdentities().iterator().next().getQName();
         assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());
         assertEquals(Revision.ofNullable("2012-04-16"), identity.getRevision());
         assertEquals("service-type", identity.getLocalName());

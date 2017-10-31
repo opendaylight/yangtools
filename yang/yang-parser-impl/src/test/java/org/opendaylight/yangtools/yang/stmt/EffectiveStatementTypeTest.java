@@ -257,7 +257,7 @@ public class EffectiveStatementTypeTest {
         assertNull(identityRefEff.getBaseType());
         assertNotNull(identityRefEff.getUnknownSchemaNodes());
         assertEquals(Status.CURRENT, identityRefEff.getStatus());
-        assertEquals("test-identity", identityRefEff.getIdentity().getQName().getLocalName());
+        assertEquals("test-identity", identityRefEff.getIdentities().iterator().next().getQName().getLocalName());
         assertFalse(identityRefEff.getDescription().isPresent());
         assertFalse(identityRefEff.getReference().isPresent());
         assertNotNull(identityRefEff.toString());

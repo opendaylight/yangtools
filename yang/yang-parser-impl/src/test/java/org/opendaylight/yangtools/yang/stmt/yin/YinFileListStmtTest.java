@@ -74,7 +74,8 @@ public class YinFileListStmtTest {
 
         final TypeDefinition<?> leafType = leaf.getType();
         assertTrue(leafType instanceof IdentityrefTypeDefinition);
-        assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentity().getQName().getLocalName());
+        assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentities().iterator().next().getQName()
+            .getLocalName());
         assertTrue(leaf.getConstraints().isMandatory());
     }
 
