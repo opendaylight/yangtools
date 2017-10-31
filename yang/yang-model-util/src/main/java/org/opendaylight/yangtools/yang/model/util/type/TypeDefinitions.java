@@ -178,7 +178,7 @@ final class TypeDefinitions {
         }
 
         final IdentityrefTypeDefinition other = castIfEquals(IdentityrefTypeDefinition.class, type, obj);
-        return other != null && type.getIdentity().equals(other.getIdentity());
+        return other != null && type.getIdentities().equals(other.getIdentities());
     }
 
     static boolean equals(final InstanceIdentifierTypeDefinition type, final Object obj) {
