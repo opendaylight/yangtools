@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
@@ -33,7 +35,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -88,7 +89,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
             final Map<ValidationBundleType, Collection<?>> supportedValidation,
             final StatementParserMode statementParserMode) {
-        this.supports = Preconditions.checkNotNull(supports, "BuildGlobalContext#supports cannot be null");
+        this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 
         switch (statementParserMode) {
             case DEFAULT_MODE:
@@ -121,9 +122,9 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     void addLibSource(@Nonnull final StatementStreamSource libSource) {
-        Preconditions.checkState(!isEnabledSemanticVersioning(),
-                "Library sources are not supported in semantic version mode currently.");
-        Preconditions.checkState(currentPhase == ModelProcessingPhase.INIT,
+        checkState(!isEnabledSemanticVersioning(),
+            "Library sources are not supported in semantic version mode currently.");
+        checkState(currentPhase == ModelProcessingPhase.INIT,
                 "Add library source is allowed in ModelProcessingPhase.INIT only");
         libSources.add(new SourceSpecificContext(this, libSource));
     }
@@ -230,7 +231,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private EffectiveModelContext transform() {
-        Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         for (final SourceSpecificContext source : sources) {
             rootStatements.add(source.getRoot().buildDeclared());
@@ -256,7 +257,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private EffectiveSchemaContext transformEffective() throws ReactorException {
-        Preconditions.checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
+        checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         final List<EffectiveStatement<?, ?>> rootEffectiveStatements = new ArrayList<>(sources.size());
 
@@ -279,7 +280,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void startPhase(final ModelProcessingPhase phase) {
-        Preconditions.checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
+        checkState(Objects.equals(finishedPhase, phase.getPreviousPhase()));
         startPhaseFor(phase, sources);
         startPhaseFor(phase, libSources);
 
@@ -294,7 +295,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void loadPhaseStatements() throws ReactorException {
-        Preconditions.checkState(currentPhase != null);
+        checkState(currentPhase != null);
         loadPhaseStatementsFor(sources);
         loadPhaseStatementsFor(libSources);
     }
@@ -359,10 +360,10 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private void completePhaseActions() throws ReactorException {
-        Preconditions.checkState(currentPhase != null);
+        checkState(currentPhase != null);
         final List<SourceSpecificContext> sourcesToProgress = new ArrayList<>(sources);
         if (!libSources.isEmpty()) {
-            Preconditions.checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+            checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                     "Yang library sources should be empty after ModelProcessingPhase.SOURCE_PRE_LINKAGE, "
                             + "but current phase was %s", currentPhase);
             sourcesToProgress.addAll(libSources);
@@ -418,13 +419,13 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private Set<SourceSpecificContext> getRequiredSourcesFromLib() {
-        Preconditions.checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
+        checkState(currentPhase == ModelProcessingPhase.SOURCE_PRE_LINKAGE,
                 "Required library sources can be collected only in ModelProcessingPhase.SOURCE_PRE_LINKAGE phase,"
                         + " but current phase was %s", currentPhase);
         final TreeBasedTable<String, Optional<Revision>, SourceSpecificContext> libSourcesTable = TreeBasedTable.create(
             String::compareTo, Revision::compare);
         for (final SourceSpecificContext libSource : libSources) {
-            final ModuleIdentifier libSourceIdentifier = Preconditions.checkNotNull(libSource.getRootIdentifier());
+            final SourceIdentifier libSourceIdentifier = requireNonNull(libSource.getRootIdentifier());
             libSourcesTable.put(libSourceIdentifier.getName(), libSourceIdentifier.getRevision(), libSource);
         }
 
@@ -476,7 +477,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     }
 
     private void endPhase(final ModelProcessingPhase phase) {
-        Preconditions.checkState(currentPhase == phase);
+        checkState(currentPhase == phase);
         finishedPhase = currentPhase;
         LOG.debug("Global phase {} finished", phase);
     }

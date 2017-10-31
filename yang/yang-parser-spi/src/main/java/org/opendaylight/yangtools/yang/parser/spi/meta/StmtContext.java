@@ -17,7 +17,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -249,9 +248,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * Set identifier of current root context.
          *
          * @param identifier
-         *            of current root context
+         *            of current root context, must not be null
          */
-        void setRootIdentifier(ModuleIdentifier identifier);
+        void setRootIdentifier(SourceIdentifier identifier);
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
 

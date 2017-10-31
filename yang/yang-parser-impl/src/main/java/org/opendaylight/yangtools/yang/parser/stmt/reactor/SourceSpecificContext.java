@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -454,7 +453,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return root.getRequiredSources();
     }
 
-    ModuleIdentifier getRootIdentifier() {
+    SourceIdentifier getRootIdentifier() {
         return root.getRootIdentifier();
     }
 }
