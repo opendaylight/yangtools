@@ -13,21 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Contains method for getting data from <code>identityref</code> built-in YANG
- * type.
+ * Contains method for getting data from <code>identityref</code> built-in YANG type.
  */
 public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
-    /**
-     * Returns identity to which the instance of this type refers.
-     *
-     * @deprecated use {@link #getIdentities()} instead
-     *
-     * @return identity which is specified with the <code>identity</code> YANG
-     *         statement
-     */
-    @Deprecated
-    IdentitySchemaNode getIdentity();
-
     /**
      * Returns the set of identities this reference points to.
      *
