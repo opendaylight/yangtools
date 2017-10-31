@@ -450,7 +450,7 @@ public class TypeTest {
         assertEquals(invalidEnumDefinitionException.getOffendingEnum(), enumPair);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test(expected = IllegalStateException.class)
     public void identityrefTypeBuilderException() {
         BaseTypes.identityrefTypeBuilder(SCHEMA_PATH).build();
     }
