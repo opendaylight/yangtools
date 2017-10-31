@@ -50,16 +50,6 @@ public abstract class EmptyConstraintDefinition implements ConstraintDefinition 
     }
 
     @Override
-    public final Integer getMinElements() {
-        return null;
-    }
-
-    @Override
-    public final Integer getMaxElements() {
-        return null;
-    }
-
-    @Override
     public final int hashCode() {
         return ConstraintDefinitions.hashCode(this);
     }

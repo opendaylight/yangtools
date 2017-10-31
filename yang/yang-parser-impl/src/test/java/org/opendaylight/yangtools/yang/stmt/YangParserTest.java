@@ -140,8 +140,8 @@ public class YangParserTest {
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, constraints.getMustConstraints().size());
         assertTrue(constraints.isMandatory());
-        assertEquals(1, (int) constraints.getMinElements());
-        assertEquals(11, (int) constraints.getMaxElements());
+        assertEquals(1, ifEntry.getElementCountConstraint().get().getMinElements());
+        assertEquals(11, ifEntry.getElementCountConstraint().get().getMaxElements());
         // test AugmentationTarget args
         final Set<AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());

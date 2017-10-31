@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -98,8 +97,6 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertTrue(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
     }
 
     @Test
@@ -145,8 +142,6 @@ public class YangParserSimpleTest {
         assertTrue(found2);
 
         assertFalse(constraints.isMandatory());
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
         assertTrue(nodes.isPresenceContainer());
 
         // typedef

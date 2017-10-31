@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -118,8 +119,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertFalse(listSchemaNode.isConfiguration());
 
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
-        assertEquals(10, listConstraints.getMinElements().intValue());
-        assertEquals(20, listConstraints.getMaxElements().intValue());
+        ElementCountConstraint countConstraint = listSchemaNode.getElementCountConstraint().get();
+        assertEquals(10, countConstraint.getMinElements());
+        assertEquals(20, countConstraint.getMaxElements());
         assertEquals(1, listConstraints.getMustConstraints().size());
     }
 
@@ -158,8 +160,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(listSchemaNode.isConfiguration());
 
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
-        assertEquals(5, listConstraints.getMinElements().intValue());
-        assertEquals(7, listConstraints.getMaxElements().intValue());
+        ElementCountConstraint countConstraint = listSchemaNode.getElementCountConstraint().get();
+        assertEquals(5, countConstraint.getMinElements());
+        assertEquals(7, countConstraint.getMaxElements());
         assertEquals(2, listConstraints.getMustConstraints().size());
     }
 }

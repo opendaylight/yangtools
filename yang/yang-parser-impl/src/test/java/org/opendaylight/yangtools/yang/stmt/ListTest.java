@@ -55,8 +55,8 @@ public class ListTest {
         assertEquals("key1", keys.get(0).getLocalName());
         assertEquals("key2", keys.get(1).getLocalName());
 
-        assertEquals(1, list.getConstraints().getMinElements().intValue());
-        assertEquals(10, list.getConstraints().getMaxElements().intValue());
+        assertEquals(1, list.getElementCountConstraint().get().getMinElements());
+        assertEquals(10, list.getElementCountConstraint().get().getMaxElements());
 
         assertEquals(5, list.getChildNodes().size());
 
@@ -87,8 +87,8 @@ public class ListTest {
         assertNotNull(leafList);
         assertTrue(leafList.getConstraints().isMandatory());
         assertTrue(leafList.isUserOrdered());
-        assertEquals(2, leafList.getConstraints().getMinElements().intValue());
-        assertEquals(20, leafList.getConstraints().getMaxElements().intValue());
+        assertEquals(2, leafList.getElementCountConstraint().get().getMinElements());
+        assertEquals(20, leafList.getElementCountConstraint().get().getMaxElements());
         assertEquals("string", leafList.getType().getQName().getLocalName());
     }
 }

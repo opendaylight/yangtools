@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -123,8 +122,8 @@ public class GroupingTest {
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertFalse(refineList.isConfiguration());
-        assertEquals(2, (int) refineList.getConstraints().getMinElements());
-        assertNull(refineList.getConstraints().getMaxElements());
+        assertEquals(2, refineList.getElementCountConstraint().get().getMinElements());
+        assertEquals(Integer.MAX_VALUE, refineList.getElementCountConstraint().get().getMaxElements());
 
         // leaf id
         assertNotNull(refineInnerLeaf);

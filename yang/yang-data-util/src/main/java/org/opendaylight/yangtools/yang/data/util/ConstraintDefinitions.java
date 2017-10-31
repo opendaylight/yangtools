@@ -24,8 +24,6 @@ public final class ConstraintDefinitions {
         int result = 1;
         result = prime * result + Objects.hashCode(def.getWhenCondition());
         result = prime * result + Objects.hashCode(def.getMustConstraints());
-        result = prime * result + Objects.hashCode(def.getMinElements());
-        result = prime * result + Objects.hashCode(def.getMaxElements());
         result = prime * result + Boolean.hashCode(def.isMandatory());
         return result;
     }
@@ -47,12 +45,6 @@ public final class ConstraintDefinitions {
         if (!Objects.equals(def.getMustConstraints(), other.getMustConstraints())) {
             return false;
         }
-        if (!Objects.equals(def.getMinElements(), other.getMinElements())) {
-            return false;
-        }
-        if (!Objects.equals(def.getMaxElements(), other.getMaxElements())) {
-            return false;
-        }
         return true;
     }
 
@@ -61,7 +53,6 @@ public final class ConstraintDefinitions {
                 .add("whenCondition", def.getWhenCondition().orElse(null))
                 .add("mustConstraints", def.getMustConstraints())
                 .add("mandatory", def.isMandatory())
-                .add("minElements", def.getMinElements())
-                .add("maxElements", def.getMaxElements()).toString();
+                .toString();
     }
 }

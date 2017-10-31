@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -41,6 +42,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
+    private final ElementCountConstraint elementCountConstraint;
 
     public ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -93,6 +95,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
+        elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(ctx).orElse(null);
     }
 
     @Override
@@ -124,6 +127,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public boolean isUserOrdered() {
         return userOrdered;
+    }
+
+    @Override
+    public Optional<ElementCountConstraint> getElementCountConstraint() {
+        return Optional.ofNullable(elementCountConstraint);
     }
 
     @Override

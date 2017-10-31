@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -34,6 +35,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
     private final Set<String> defaultValues;
+    private final ElementCountConstraint elementCountConstraint;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -75,6 +77,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
         type = builder.build();
         userOrdered = isUserOrdered;
+        elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(ctx).orElse(null);
     }
 
     @Override
@@ -95,6 +98,11 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     @Override
     public boolean isUserOrdered() {
         return userOrdered;
+    }
+
+    @Override
+    public Optional<ElementCountConstraint> getElementCountConstraint() {
+        return Optional.ofNullable(elementCountConstraint);
     }
 
     @Override

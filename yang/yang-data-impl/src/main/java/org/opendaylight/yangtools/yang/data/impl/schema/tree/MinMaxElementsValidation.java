@@ -5,10 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Verify;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -19,8 +19,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,37 +29,38 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
 
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
     private final SchemaAwareApplyOperation delegate;
-    private final Integer minElements;
-    private final Integer maxElements;
+    private final ElementCountConstraint constraint;
 
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation delegate, final Integer minElements,
-            final Integer maxElements) {
-        this.delegate = Preconditions.checkNotNull(delegate);
-        this.minElements = minElements;
-        this.maxElements = maxElements;
+    private MinMaxElementsValidation(final SchemaAwareApplyOperation delegate,
+            final ElementCountConstraint constraint) {
+        this.delegate = requireNonNull(delegate);
+        this.constraint = requireNonNull(constraint);
     }
 
     static SchemaAwareApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
-        final ConstraintDefinition constraints = schema.getConstraints();
-        if (constraints == null || constraints.getMinElements() == null && constraints.getMaxElements() == null) {
-            return delegate;
+        if (schema instanceof ElementCountConstraintAware) {
+            final Optional<ElementCountConstraint> optConstraint = ((ElementCountConstraintAware) schema)
+                    .getElementCountConstraint();
+            if (optConstraint.isPresent()) {
+                return new MinMaxElementsValidation(delegate, optConstraint.get());
+            }
         }
-        return new MinMaxElementsValidation(delegate, constraints.getMinElements(), constraints.getMaxElements());
 
+        return delegate;
     }
 
     private void validateMinMaxElements(final YangInstanceIdentifier path, final PathArgument id,
             final NormalizedNode<?, ?> data) throws DataValidationFailedException {
         final int children = numOfChildrenFromValue(data);
-        if (minElements != null && minElements > children) {
+        if (constraint.getMinElements() > children) {
             throw new DataValidationFailedException(path, String.format(
-                    "%s does not have enough elements (%s), needs at least %s", id,
-                    children, minElements));
+                    "%s does not have enough elements (%s), needs at least %s", id, children,
+                    constraint.getMinElements()));
         }
-        if (maxElements != null && maxElements < children) {
+        if (constraint.getMaxElements() < children) {
             throw new DataValidationFailedException(path, String.format(
                     "%s has too many elements (%s), can have at most %s", id, children,
-                    maxElements));
+                    constraint.getMinElements()));
         }
     }
 

@@ -41,6 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -1800,13 +1801,18 @@ abstract class SchemaContextEmitter {
             emitMustNodes(child.getConstraints().getMustConstraints());
             emitConfigNode(child.isConfiguration());
             emitDefaultNodes(child.getDefaults());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            emitListLikeNode(child);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitUnknownStatementNodes(child.getUnknownSchemaNodes());
             super.writer.endNode();
+        }
 
+        private void emitListLikeNode(final ElementCountConstraintAware child) {
+            child.getElementCountConstraint().ifPresent(constraint -> {
+                emitMinElementsNode(constraint.getMinElements());
+                emitMaxElementsNode(constraint.getMaxElements());
+            });
         }
 
         private void emitList(final ListSchemaNode child) {
@@ -1818,8 +1824,7 @@ abstract class SchemaContextEmitter {
             emitKey(child.getKeyDefinition());
             emitUniqueConstraints(child.getUniqueConstraints());
             emitConfigNode(child.isConfiguration());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            emitListLikeNode(child);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitDataNodeContainer(child);

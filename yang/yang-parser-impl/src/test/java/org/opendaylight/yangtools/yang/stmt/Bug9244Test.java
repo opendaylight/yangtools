@@ -38,8 +38,8 @@ public class Bug9244Test {
         final LeafListSchemaNode barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf-list"));
         assertNotNull(barLeafList);
-        assertEquals(5, barLeafList.getConstraints().getMinElements().intValue());
-        assertEquals(10, barLeafList.getConstraints().getMaxElements().intValue());
+        assertEquals(5, barLeafList.getElementCountConstraint().get().getMinElements());
+        assertEquals(10, barLeafList.getElementCountConstraint().get().getMaxElements());
 
         final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf"));

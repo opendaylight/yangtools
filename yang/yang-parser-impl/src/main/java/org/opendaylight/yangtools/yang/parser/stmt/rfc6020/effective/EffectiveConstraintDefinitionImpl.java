@@ -23,16 +23,11 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
 
     private final RevisionAwareXPath whenCondition;
     private final Set<MustDefinition> mustConstraints;
-    private final Integer minElements;
-    private final Integer maxElements;
     private final boolean mandatory;
 
-    private EffectiveConstraintDefinitionImpl(final boolean mandatory, final Integer minElements,
-            final Integer maxElements, final RevisionAwareXPath whenCondition,
+    private EffectiveConstraintDefinitionImpl(final boolean mandatory, final RevisionAwareXPath whenCondition,
             final Set<MustDefinition> mustConstraints) {
         this.mandatory = mandatory;
-        this.minElements = minElements;
-        this.maxElements = maxElements;
         this.whenCondition = whenCondition;
         this.mustConstraints = requireNonNull(mustConstraints);
     }
@@ -71,8 +66,8 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             return EmptyConstraintDefinition.create(mandatory);
         }
 
-        return new EffectiveConstraintDefinitionImpl(mandatory, minElements, maxElements,
-            firstWhenStmt == null ? null : firstWhenStmt.argument(), mustSubstatements);
+        return new EffectiveConstraintDefinitionImpl(mandatory, firstWhenStmt == null ? null : firstWhenStmt.argument(),
+                mustSubstatements);
     }
 
     @Override
@@ -88,16 +83,6 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     @Override
     public boolean isMandatory() {
         return mandatory;
-    }
-
-    @Override
-    public Integer getMinElements() {
-        return minElements;
-    }
-
-    @Override
-    public Integer getMaxElements() {
-        return maxElements;
     }
 
     @Override
