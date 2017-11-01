@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
 
-public interface ImportedModuleContext extends ImportedNamespaceContext<ModuleIdentifier> {
+public interface ImportedModuleContext extends ImportedNamespaceContext<SourceIdentifier> {
 
 }

@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -100,7 +101,8 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
         @Override
         public void onLinkageDeclared(
                 final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            final ModuleIdentifier submoduleIdentifier = getSubmoduleIdentifier(stmt);
+            final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.getStatementArgument(),
+                StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
 
             final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>
                 possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);

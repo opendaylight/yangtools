@@ -14,7 +14,6 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.NamespaceToModule;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
@@ -35,8 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
@@ -140,7 +139,7 @@ public class ModuleStatementSupport extends
                     qNameModule.getNamespace(), possibleDuplicateModule.getStatementSourceReference());
         }
 
-        final ModuleIdentifier moduleIdentifier = ModuleIdentifierImpl.create(stmt.getStatementArgument(),
+        final SourceIdentifier moduleIdentifier = RevisionSourceIdentifier.create(stmt.getStatementArgument(),
                 revisionDate);
 
         stmt.addContext(ModuleNamespace.class, moduleIdentifier, stmt);
@@ -154,7 +153,7 @@ public class ModuleStatementSupport extends
         stmt.addToNs(PrefixToModule.class, modulePrefix, qNameModule);
         stmt.addToNs(ModuleNameToModuleQName.class, stmt.getStatementArgument(), qNameModule);
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule); // tu
-        stmt.addToNs(ModuleCtxToModuleIdentifier.class, stmt, moduleIdentifier);
+        stmt.addToNs(ModuleCtxToSourceIdentifier.class, stmt, moduleIdentifier);
         stmt.addToNs(ModuleQNameToModuleName.class, qNameModule, stmt.getStatementArgument());
         stmt.addToNs(ImportPrefixToModuleCtx.class, modulePrefix, stmt);
 
@@ -165,7 +164,7 @@ public class ModuleStatementSupport extends
 
     private static void addToSemVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt,
-            final ModuleIdentifier moduleIdentifier) {
+            final SourceIdentifier moduleIdentifier) {
         final String moduleName = stmt.getStatementArgument();
         final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(moduleName, moduleSemVer);

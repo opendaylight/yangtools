@@ -14,7 +14,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
  * Namespace key matching criterion.
@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
  */
 @Beta
 public abstract class NamespaceKeyCriterion<K> {
-    private static final class LatestRevisionModule extends NamespaceKeyCriterion<ModuleIdentifier> {
+    private static final class LatestRevisionModule extends NamespaceKeyCriterion<SourceIdentifier> {
         private final String moduleName;
 
         LatestRevisionModule(final String moduleName) {
@@ -33,12 +33,12 @@ public abstract class NamespaceKeyCriterion<K> {
         }
 
         @Override
-        public boolean match(final ModuleIdentifier key) {
+        public boolean match(final SourceIdentifier key) {
             return moduleName.equals(key.getName());
         }
 
         @Override
-        public ModuleIdentifier select(final ModuleIdentifier first, final ModuleIdentifier second) {
+        public SourceIdentifier select(final SourceIdentifier first, final SourceIdentifier second) {
             return Revision.compare(first.getRevision(), second.getRevision()) >= 0 ? first : second;
         }
 
@@ -54,7 +54,7 @@ public abstract class NamespaceKeyCriterion<K> {
      * @param moduleName Module name
      * @return A criterion object.
      */
-    public static NamespaceKeyCriterion<ModuleIdentifier> latestRevisionModule(final String moduleName) {
+    public static NamespaceKeyCriterion<SourceIdentifier> latestRevisionModule(final String moduleName) {
         return new LatestRevisionModule(moduleName);
     }
 
