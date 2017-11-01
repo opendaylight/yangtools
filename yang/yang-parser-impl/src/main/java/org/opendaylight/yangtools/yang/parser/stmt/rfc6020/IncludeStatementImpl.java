@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -92,7 +91,7 @@ public class IncludeStatementImpl extends AbstractDeclaredStatement<String> impl
                     NamespaceKeyCriterion.latestRevisionModule(submoduleName), SOURCE_LINKAGE);
             } else {
                 requiresCtxPrerequisite = includeAction.requiresCtx(stmt, SubmoduleNamespace.class,
-                    ModuleIdentifierImpl.create(submoduleName, Optional.of(revision.getStatementArgument())),
+                    RevisionSourceIdentifier.create(submoduleName, Optional.of(revision.getStatementArgument())),
                     SOURCE_LINKAGE);
             }
 
