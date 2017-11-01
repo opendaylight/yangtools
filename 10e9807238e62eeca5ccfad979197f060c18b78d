@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_11eafe74",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ContainerSchemaNodes.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 105,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-01T12:29:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_a3912c9b",
+      "range": {
+        "startLine": 105,
+        "startChar": 8,
+        "endLine": 105,
+        "endChar": 17
+      },
+      "revId": "10e9807238e62eeca5ccfad979197f060c18b78d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_838ce880",
         "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ContainerSchemaNodes.java",
         "patchSetId": 15
@@ -36,6 +60,30 @@
       "writtenOn": "2017-10-31T18:20:54Z",
       "side": 1,
       "message": "The same applies here.",
+      "range": {
+        "startLine": 111,
+        "startChar": 8,
+        "endLine": 111,
+        "endChar": 17
+      },
+      "revId": "10e9807238e62eeca5ccfad979197f060c18b78d",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_f1ec8a91",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/ContainerSchemaNodes.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 111,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-01T12:29:13Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_838ce880",
       "range": {
         "startLine": 111,
         "startChar": 8,
