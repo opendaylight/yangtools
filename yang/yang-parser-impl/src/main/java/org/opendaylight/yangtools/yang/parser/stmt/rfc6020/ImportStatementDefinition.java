@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.PreLinkageModuleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -49,7 +47,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImpPrefixToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportedModuleContext;
-import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ImportEffectiveStatementImpl;
@@ -155,7 +153,7 @@ public class ImportStatementDefinition extends
                     NamespaceKeyCriterion.latestRevisionModule(moduleName), SOURCE_LINKAGE);
             } else {
                 imported = importAction.requiresCtx(stmt, ModuleNamespace.class,
-                    ModuleIdentifierImpl.create(moduleName, Optional.of(revision)), SOURCE_LINKAGE);
+                    RevisionSourceIdentifier.create(moduleName, Optional.of(revision)), SOURCE_LINKAGE);
             }
 
             final Prerequisite<Mutable<?, ?, ?>> linkageTarget = importAction.mutatesCtx(stmt.getRoot(),
@@ -167,7 +165,7 @@ public class ImportStatementDefinition extends
                     final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
 
                     linkageTarget.resolve(ctx).addToNs(ImportedModuleContext.class,
-                        stmt.getFromNamespace(ModuleCtxToModuleIdentifier.class, importedModule), importedModule);
+                        stmt.getFromNamespace(ModuleCtxToSourceIdentifier.class, importedModule), importedModule);
                     final String impPrefix = firstAttributeOf(stmt.declaredSubstatements(), PrefixStatement.class);
                     final URI modNs = firstAttributeOf(importedModule.declaredSubstatements(),
                         NamespaceStatement.class);
@@ -290,8 +288,8 @@ public class ImportStatementDefinition extends
                 public void apply(final InferenceContext ctx) {
                     final StmtContext<?, ?, ?> importedModule = imported.resolve(ctx);
                     final SemVer importedVersion = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
-                    final ModuleIdentifier importedModuleIdentifier = importedModule.getFromNamespace(
-                        ModuleCtxToModuleIdentifier.class, importedModule);
+                    final SourceIdentifier importedModuleIdentifier = importedModule.getFromNamespace(
+                        ModuleCtxToSourceIdentifier.class, importedModule);
                     final SemVerSourceIdentifier semVerModuleIdentifier = createSemVerModuleIdentifier(
                         importedModuleIdentifier, importedVersion);
 
@@ -326,7 +324,7 @@ public class ImportStatementDefinition extends
         }
 
         private static SemVerSourceIdentifier createSemVerModuleIdentifier(
-                final ModuleIdentifier importedModuleIdentifier, final SemVer semVer) {
+                final SourceIdentifier importedModuleIdentifier, final SemVer semVer) {
             return SemVerSourceIdentifier.create(importedModuleIdentifier.getName(),
                 importedModuleIdentifier.getRevision(), semVer);
         }
