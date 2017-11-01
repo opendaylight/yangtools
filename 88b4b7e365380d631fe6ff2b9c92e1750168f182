@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_37f45286",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/ConcreteTypeBuilder.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 4561
+      },
+      "writtenOn": "2017-11-01T20:17:10Z",
+      "side": 1,
+      "message": "Seems like a copy-paste error :-). This should actually be this::setReference.",
+      "range": {
+        "startLine": 31,
+        "startChar": 42,
+        "endLine": 31,
+        "endChar": 62
+      },
+      "revId": "88b4b7e365380d631fe6ff2b9c92e1750168f182",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
