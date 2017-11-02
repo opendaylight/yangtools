@@ -28,11 +28,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -192,16 +198,28 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
                 return new InstanceIdentifierTypeEffectiveStatementImpl(ctx,
                     (InstanceIdentifierTypeDefinition) baseType);
-            } else if (baseType instanceof IntegerTypeDefinition) {
-                return new IntegerTypeEffectiveStatementImpl(ctx, (IntegerTypeDefinition) baseType);
+            } else if (baseType instanceof Int8TypeDefinition) {
+                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int8TypeDefinition) baseType);
+            } else if (baseType instanceof Int16TypeDefinition) {
+                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int16TypeDefinition) baseType);
+            } else if (baseType instanceof Int32TypeDefinition) {
+                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int32TypeDefinition) baseType);
+            } else if (baseType instanceof Int64TypeDefinition) {
+                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int64TypeDefinition) baseType);
             } else if (baseType instanceof LeafrefTypeDefinition) {
                 return new LeafrefTypeEffectiveStatementImpl(ctx, (LeafrefTypeDefinition) baseType);
             } else if (baseType instanceof StringTypeDefinition) {
                 return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) baseType);
+            } else if (baseType instanceof Uint8TypeDefinition) {
+                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint8TypeDefinition) baseType);
+            } else if (baseType instanceof Uint16TypeDefinition) {
+                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint16TypeDefinition) baseType);
+            } else if (baseType instanceof Uint32TypeDefinition) {
+                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint32TypeDefinition) baseType);
+            } else if (baseType instanceof Uint64TypeDefinition) {
+                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint64TypeDefinition) baseType);
             } else if (baseType instanceof UnionTypeDefinition) {
                 return new UnionTypeEffectiveStatementImpl(ctx, (UnionTypeDefinition) baseType);
-            } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-                return new UnsignedIntegerTypeEffectiveStatementImpl(ctx, (UnsignedIntegerTypeDefinition) baseType);
             } else {
                 throw new IllegalStateException("Unhandled base type " + baseType);
             }

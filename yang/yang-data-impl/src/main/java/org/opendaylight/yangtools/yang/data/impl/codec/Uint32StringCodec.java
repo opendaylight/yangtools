@@ -11,12 +11,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint32Codec;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
-final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, UnsignedIntegerTypeDefinition> implements
+final class Uint32StringCodec extends AbstractIntegerStringCodec<Long, Uint32TypeDefinition> implements
         Uint32Codec<String> {
 
-    Uint32StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
+    Uint32StringCodec(final Optional<Uint32TypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orElse(null)), Long.class);
     }
 

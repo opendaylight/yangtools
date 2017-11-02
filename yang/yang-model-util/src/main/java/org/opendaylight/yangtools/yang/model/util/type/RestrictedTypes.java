@@ -19,13 +19,19 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Restricted types are a refinement of the restrictions applied to a particular type. YANG defines restrictions only
@@ -153,12 +159,42 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<IntegerTypeDefinition> newIntegerBuilder(
-            final IntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilderWithBase<IntegerTypeDefinition>(baseType, path) {
+    public static RangeRestrictedTypeBuilder<Int8TypeDefinition> newInt8Builder(
+            final Int8TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Int8TypeDefinition>(baseType, path) {
             @Override
-            IntegerTypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
-                return new RestrictedIntegerType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            Int8TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedInt8Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Int16TypeDefinition> newInt16Builder(
+            final Int16TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Int16TypeDefinition>(baseType, path) {
+            @Override
+            Int16TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedInt16Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Int32TypeDefinition> newInt32Builder(
+            final Int32TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Int32TypeDefinition>(baseType, path) {
+            @Override
+            Int32TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedInt32Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Int64TypeDefinition> newInt64Builder(
+            final Int64TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Int64TypeDefinition>(baseType, path) {
+            @Override
+            Int64TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedInt64Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };
     }
@@ -177,12 +213,42 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition> newUnsignedBuilder(
-            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new RangeRestrictedTypeBuilderWithBase<UnsignedIntegerTypeDefinition>(baseType, path) {
+    public static RangeRestrictedTypeBuilder<Uint8TypeDefinition> newUint8Builder(
+            final Uint8TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Uint8TypeDefinition>(baseType, path) {
             @Override
-            UnsignedIntegerTypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
-                return new RestrictedUnsignedType(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            Uint8TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedUint8Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Uint16TypeDefinition> newUint16Builder(
+            final Uint16TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Uint16TypeDefinition>(baseType, path) {
+            @Override
+            Uint16TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedUint16Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Uint32TypeDefinition> newUint32Builder(
+            final Uint32TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Uint32TypeDefinition>(baseType, path) {
+            @Override
+            Uint32TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedUint32Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
+            }
+        };
+    }
+
+    public static RangeRestrictedTypeBuilder<Uint64TypeDefinition> newUint64Builder(
+            final Uint64TypeDefinition baseType, final SchemaPath path) {
+        return new RangeRestrictedTypeBuilderWithBase<Uint64TypeDefinition>(baseType, path) {
+            @Override
+            Uint64TypeDefinition buildType(final RangeConstraint<?> rangeConstraint) {
+                return new RestrictedUint64Type(getBaseType(), getPath(), getUnknownSchemaNodes(), rangeConstraint);
             }
         };
     }

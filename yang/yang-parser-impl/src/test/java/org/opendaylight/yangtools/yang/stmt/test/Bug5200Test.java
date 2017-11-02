@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -51,7 +51,7 @@ public class Bug5200Test {
         TypeDefinition<?> myLeaf2Type = ((LeafSchemaNode) myLeaf2Node).getType();
 
         assertTrue(myLeafType instanceof StringTypeDefinition);
-        assertTrue(myLeaf2Type instanceof IntegerTypeDefinition);
+        assertTrue(myLeaf2Type instanceof Int32TypeDefinition);
 
         final LengthConstraint lengthConstraint =
                 ((StringTypeDefinition) myLeafType).getLengthConstraint().get();
@@ -67,7 +67,7 @@ public class Bug5200Test {
         assertEquals(Optional.of("pattern constraint error-app-tag"), patternConstraint.getErrorAppTag());
         assertEquals(Optional.of("pattern constraint error-app-message"), patternConstraint.getErrorMessage());
 
-        RangeConstraint<?> rangeConstraint = ((IntegerTypeDefinition) myLeaf2Type).getRangeConstraint().get();
+        RangeConstraint<?> rangeConstraint = ((Int32TypeDefinition) myLeaf2Type).getRangeConstraint().get();
         assertEquals(1, rangeConstraint.getAllowedRanges().asRanges().size());
 
         assertEquals(Optional.of("range constraint error-app-tag"), rangeConstraint.getErrorAppTag());

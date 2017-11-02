@@ -20,7 +20,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * <p>
  * The Integer Built-In Types are defined in <a href="https://tools.ietf.org/html/rfc6020#section-9.2"> [RFC-6020]</a>
+ *
+ * <p>
+ * Note this is an intermediate interface, concretized by sub-interfaces.
+ *
+ * @param <N> native representation type
+ * @param <T> concrete type definition
  */
-public interface IntegerTypeDefinition extends RangeRestrictedTypeDefinition<IntegerTypeDefinition> {
+public interface IntegerTypeDefinition<N extends Number & Comparable<N>, T extends IntegerTypeDefinition<N, T>>
+    extends RangeRestrictedTypeDefinition<T> {
 
 }

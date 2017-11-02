@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-abstract class AbstractUnsignedBaseType<C extends Number & Comparable<C>>
-        extends AbstractRangeRestrictedBaseType<UnsignedIntegerTypeDefinition, C>
-        implements UnsignedIntegerTypeDefinition {
-    AbstractUnsignedBaseType(final QName qname, final C minValue, final C maxValue) {
+abstract class AbstractUnsignedBaseType<N extends Number & Comparable<N>, T extends UnsignedIntegerTypeDefinition<N, T>>
+        extends AbstractRangeRestrictedBaseType<T, N> implements UnsignedIntegerTypeDefinition<N, T> {
+    AbstractUnsignedBaseType(final QName qname, final N minValue, final N maxValue) {
         super(qname, minValue, maxValue);
     }
 

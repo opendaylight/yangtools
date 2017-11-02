@@ -19,11 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Support for creating {@link TypeDefinition} instances defined by leaf and leaf-list statements.
@@ -52,16 +58,28 @@ public final class ConcreteTypes {
             return concreteIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return concreteInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
-        } else if (baseType instanceof IntegerTypeDefinition) {
-            return concreteIntegerBuilder((IntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Int8TypeDefinition) {
+            return concreteInt8Builder((Int8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int16TypeDefinition) {
+            return concreteInt16Builder((Int16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int32TypeDefinition) {
+            return concreteInt32Builder((Int32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int64TypeDefinition) {
+            return concreteInt64Builder((Int64TypeDefinition) baseType, path);
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return concreteLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
         } else if (baseType instanceof StringTypeDefinition) {
             return concreteStringBuilder((StringTypeDefinition) baseType, path);
         } else if (baseType instanceof UnionTypeDefinition) {
             return concreteUnionBuilder((UnionTypeDefinition) baseType, path);
-        } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return concreteUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint8TypeDefinition) {
+            return concreteUint8Builder((Uint8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint16TypeDefinition) {
+            return concreteUint16Builder((Uint16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint32TypeDefinition) {
+            return concreteUint32Builder((Uint32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint64TypeDefinition) {
+            return concreteUint64Builder((Uint64TypeDefinition) baseType, path);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
@@ -163,13 +181,49 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<IntegerTypeDefinition> concreteIntegerBuilder(
-            final IntegerTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<IntegerTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<Int8TypeDefinition> concreteInt8Builder(
+            final Int8TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Int8TypeDefinition>(baseType, path) {
             @Nonnull
             @Override
-            public IntegerTypeDefinition buildType() {
-                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Int8TypeDefinition buildType() {
+                return new DerivedInt8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Int16TypeDefinition> concreteInt16Builder(
+            final Int16TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Int16TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Int16TypeDefinition buildType() {
+                return new DerivedInt16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Int32TypeDefinition> concreteInt32Builder(
+            final Int32TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Int32TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Int32TypeDefinition buildType() {
+                return new DerivedInt32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Int64TypeDefinition> concreteInt64Builder(
+            final Int64TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Int64TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Int64TypeDefinition buildType() {
+                return new DerivedInt64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
@@ -211,13 +265,49 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<UnsignedIntegerTypeDefinition> concreteUnsignedBuilder(
-            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<Uint8TypeDefinition> concreteUint8Builder(
+            final Uint8TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Uint8TypeDefinition>(baseType, path) {
             @Nonnull
             @Override
-            public UnsignedIntegerTypeDefinition buildType() {
-                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Uint8TypeDefinition buildType() {
+                return new DerivedUint8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Uint16TypeDefinition> concreteUint16Builder(
+            final Uint16TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Uint16TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Uint16TypeDefinition buildType() {
+                return new DerivedUint16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Uint32TypeDefinition> concreteUint32Builder(
+            final Uint32TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Uint32TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Uint32TypeDefinition buildType() {
+                return new DerivedUint32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static ConcreteTypeBuilder<Uint64TypeDefinition> concreteUint64Builder(
+            final Uint64TypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<Uint64TypeDefinition>(baseType, path) {
+            @Nonnull
+            @Override
+            public Uint64TypeDefinition buildType() {
+                return new DerivedUint64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };

@@ -9,7 +9,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 /**
  * Contains the method for getting detail data about unsigned integer.
+ *
+ * <p>
+ * Note this is an intermediate interface, concretized by sub-interfaces.
+ *
+ * @param <N> native representation type
+ * @param <T> concrete type definition
  */
-public interface UnsignedIntegerTypeDefinition extends RangeRestrictedTypeDefinition<UnsignedIntegerTypeDefinition> {
+public interface UnsignedIntegerTypeDefinition<N extends Number & Comparable<N>,
+        T extends UnsignedIntegerTypeDefinition<N, T>> extends RangeRestrictedTypeDefinition<T> {
 
 }

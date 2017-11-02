@@ -39,10 +39,16 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 
@@ -191,10 +197,10 @@ public class TypeTest {
 
     @Test
     public void integerTypeTest() {
-        final IntegerTypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
-        final IntegerTypeDefinition integerTypeDefinition16 = BaseTypes.int16Type();
-        final IntegerTypeDefinition integerTypeDefinition32 = BaseTypes.int32Type();
-        final IntegerTypeDefinition integerTypeDefinition64 = BaseTypes.int64Type();
+        final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
+        final Int16TypeDefinition integerTypeDefinition16 = BaseTypes.int16Type();
+        final Int32TypeDefinition integerTypeDefinition32 = BaseTypes.int32Type();
+        final Int64TypeDefinition integerTypeDefinition64 = BaseTypes.int64Type();
         assertTrue(BaseTypes.isInt8(integerTypeDefinition8));
         assertTrue(BaseTypes.isInt16(integerTypeDefinition16));
         assertTrue(BaseTypes.isInt32(integerTypeDefinition32));
@@ -204,16 +210,16 @@ public class TypeTest {
         testInstance(BaseInt32Type.INSTANCE, integerTypeDefinition32);
         testInstance(BaseInt64Type.INSTANCE, integerTypeDefinition64);
 
-        final RestrictedIntegerType restrictedIntegerType1 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder(
+        final RestrictedInt8Type restrictedIntegerType1 = (RestrictedInt8Type)RestrictedTypes.newInt8Builder(
                 integerTypeDefinition8, SCHEMA_PATH).buildType();
-        final RestrictedIntegerType restrictedIntegerType2 = (RestrictedIntegerType)RestrictedTypes.newIntegerBuilder(
+        final RestrictedInt8Type restrictedIntegerType2 = (RestrictedInt8Type)RestrictedTypes.newInt8Builder(
                 BaseInt8Type.INSTANCE, SCHEMA_PATH).buildType();
         hashCodeEqualsToStringTest(restrictedIntegerType1, restrictedIntegerType2);
 
-        final UnsignedIntegerTypeDefinition integerTypeDefinitionu8 = BaseTypes.uint8Type();
-        final UnsignedIntegerTypeDefinition integerTypeDefinitionu16 = BaseTypes.uint16Type();
-        final UnsignedIntegerTypeDefinition integerTypeDefinitionu32 = BaseTypes.uint32Type();
-        final UnsignedIntegerTypeDefinition integerTypeDefinitionu64 = BaseTypes.uint64Type();
+        final Uint8TypeDefinition integerTypeDefinitionu8 = BaseTypes.uint8Type();
+        final Uint16TypeDefinition integerTypeDefinitionu16 = BaseTypes.uint16Type();
+        final Uint32TypeDefinition integerTypeDefinitionu32 = BaseTypes.uint32Type();
+        final Uint64TypeDefinition integerTypeDefinitionu64 = BaseTypes.uint64Type();
         assertTrue(BaseTypes.isUint8(integerTypeDefinitionu8));
         assertTrue(BaseTypes.isUint16(integerTypeDefinitionu16));
         assertTrue(BaseTypes.isUint32(integerTypeDefinitionu32));
@@ -223,22 +229,22 @@ public class TypeTest {
         testInstance(BaseUint32Type.INSTANCE, integerTypeDefinitionu32);
         testInstance(BaseUint64Type.INSTANCE, BaseTypes.baseTypeOf(integerTypeDefinitionu64));
 
-        final DerivedIntegerType derivedIntegerType1 = (DerivedIntegerType)DerivedTypes
+        final DerivedInt8Type derivedIntegerType1 = (DerivedInt8Type)DerivedTypes
                 .derivedTypeBuilder(integerTypeDefinition8, SCHEMA_PATH).build();
-        final DerivedIntegerType derivedIntegerType2 = (DerivedIntegerType)DerivedTypes
+        final DerivedInt8Type derivedIntegerType2 = (DerivedInt8Type)DerivedTypes
                 .derivedTypeBuilder(BaseInt8Type.INSTANCE, SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedIntegerType1, derivedIntegerType2);
 
-        final DerivedUnsignedType derivedUnsignedType1 = (DerivedUnsignedType)DerivedTypes
+        final DerivedUint8Type derivedUnsignedType1 = (DerivedUint8Type)DerivedTypes
                 .derivedTypeBuilder(integerTypeDefinitionu8, SCHEMA_PATH).build();
-        final DerivedUnsignedType derivedUnsignedType2 = (DerivedUnsignedType)DerivedTypes
+        final DerivedUint8Type derivedUnsignedType2 = (DerivedUint8Type)DerivedTypes
                 .derivedTypeBuilder(BaseUint8Type.INSTANCE, SCHEMA_PATH).build();
         hashCodeEqualsToStringTest(derivedUnsignedType1, derivedUnsignedType2);
 
-        final RestrictedUnsignedType restrictedUnsignedType1 = (RestrictedUnsignedType)RestrictedTypes
-                .newUnsignedBuilder(integerTypeDefinitionu8, SCHEMA_PATH).buildType();
-        final RestrictedUnsignedType restrictedUnsignedType2 = (RestrictedUnsignedType)RestrictedTypes
-                .newUnsignedBuilder(BaseUint8Type.INSTANCE, SCHEMA_PATH).buildType();
+        final RestrictedUint8Type restrictedUnsignedType1 = (RestrictedUint8Type)RestrictedTypes
+                .newUint8Builder(integerTypeDefinitionu8, SCHEMA_PATH).buildType();
+        final RestrictedUint8Type restrictedUnsignedType2 = (RestrictedUint8Type)RestrictedTypes
+                .newUint8Builder(BaseUint8Type.INSTANCE, SCHEMA_PATH).buildType();
         hashCodeEqualsToStringTest(restrictedUnsignedType1, restrictedUnsignedType2);
         concreteBuilderTest(integerTypeDefinition8, derivedIntegerType1);
         concreteBuilderTest(integerTypeDefinitionu8, derivedUnsignedType2);
@@ -421,9 +427,9 @@ public class TypeTest {
         final TypeDefinition<?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
 
-        final IntegerTypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
-        final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes
-                .newIntegerBuilder(integerTypeDefinition8, SCHEMA_PATH);
+        final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
+        final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes.newInt8Builder(
+            integerTypeDefinition8, SCHEMA_PATH);
         rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition1);

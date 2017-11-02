@@ -112,13 +112,13 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
-    protected abstract T intCodec(IntegerTypeDefinition type);
+    protected abstract T intCodec(IntegerTypeDefinition<?, ?> type);
 
     protected abstract T decimalCodec(DecimalTypeDefinition type);
 
     protected abstract T stringCodec(StringTypeDefinition type);
 
-    protected abstract T uintCodec(UnsignedIntegerTypeDefinition type);
+    protected abstract T uintCodec(UnsignedIntegerTypeDefinition<?, ?> type);
 
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
 
@@ -138,9 +138,9 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         if (type instanceof StringTypeDefinition) {
             ret = stringCodec((StringTypeDefinition) type);
         } else if (type instanceof IntegerTypeDefinition) {
-            ret = intCodec((IntegerTypeDefinition) type);
+            ret = intCodec((IntegerTypeDefinition<?, ?>) type);
         } else if (type instanceof UnsignedIntegerTypeDefinition) {
-            ret = uintCodec((UnsignedIntegerTypeDefinition) type);
+            ret = uintCodec((UnsignedIntegerTypeDefinition<?, ?>) type);
         } else if (type instanceof BooleanTypeDefinition) {
             ret = booleanCodec((BooleanTypeDefinition) type);
         } else if (type instanceof DecimalTypeDefinition) {

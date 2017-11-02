@@ -245,7 +245,7 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     }
 
     @Override
-    protected JSONCodec<?> intCodec(final IntegerTypeDefinition type) {
+    protected JSONCodec<?> intCodec(final IntegerTypeDefinition<?, ?> type) {
         return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
@@ -255,7 +255,7 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     }
 
     @Override
-    protected JSONCodec<?> uintCodec(final UnsignedIntegerTypeDefinition type) {
+    protected JSONCodec<?> uintCodec(final UnsignedIntegerTypeDefinition<?, ?> type) {
         return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }
 

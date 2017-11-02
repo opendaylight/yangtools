@@ -11,12 +11,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int8Codec;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 
-final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, IntegerTypeDefinition>
-        implements Int8Codec<String> {
+final class Int8StringCodec extends AbstractIntegerStringCodec<Byte, Int8TypeDefinition> implements Int8Codec<String> {
 
-    Int8StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
+    Int8StringCodec(final Optional<Int8TypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orElse(null)), Byte.class);
     }
 

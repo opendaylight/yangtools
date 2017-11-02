@@ -42,7 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
@@ -84,21 +85,21 @@ public class YangParserWithContextTest {
         final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
                 "id"));
 
-        assertTrue(leaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        final UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
+        assertTrue(leaf.getType() instanceof Uint16TypeDefinition);
+        final Uint16TypeDefinition leafType = (Uint16TypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
+        final Uint16TypeDefinition leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
-                module.getTypeDefinitions(), "dscp-ext");
+        final Uint8TypeDefinition dscpExt = (Uint8TypeDefinition) TestUtils.findTypedef(module.getTypeDefinitions(),
+            "dscp-ext");
         final Set<? extends Range<?>> ranges = dscpExt.getRangeConstraint().get().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());
         final Range<?> range = ranges.iterator().next();

@@ -12,6 +12,10 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidRangeConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
@@ -22,18 +26,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class IntegerTypeEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String,TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
+public final class IntegerTypeEffectiveStatementImpl<T extends IntegerTypeDefinition<?, T>> extends
+        DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
 
-    private final IntegerTypeDefinition typeDefinition;
+    private final T typeDefinition;
 
-    public IntegerTypeEffectiveStatementImpl(
+    private IntegerTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final IntegerTypeDefinition baseType) {
+            final RangeRestrictedTypeBuilder<T> builder) {
         super(ctx);
-
-        final RangeRestrictedTypeBuilder<IntegerTypeDefinition> builder =
-                RestrictedTypes.newIntegerBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {
@@ -53,9 +54,37 @@ public final class IntegerTypeEffectiveStatementImpl extends
         }
     }
 
+    public static IntegerTypeEffectiveStatementImpl<Int8TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Int8TypeDefinition baseType) {
+        return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt8Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static IntegerTypeEffectiveStatementImpl<Int16TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Int16TypeDefinition baseType) {
+        return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt16Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static IntegerTypeEffectiveStatementImpl<Int32TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Int32TypeDefinition baseType) {
+        return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt32Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static IntegerTypeEffectiveStatementImpl<Int64TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Int64TypeDefinition baseType) {
+        return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt64Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
     @Nonnull
     @Override
-    public IntegerTypeDefinition getTypeDefinition() {
+    public T getTypeDefinition() {
         return typeDefinition;
     }
 }

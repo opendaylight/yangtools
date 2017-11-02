@@ -8,14 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.INT8_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT16_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT32_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT64_QNAME;
-import static org.opendaylight.yangtools.yang.model.util.BaseTypes.UINT8_QNAME;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
@@ -23,8 +15,16 @@ import com.google.common.collect.RangeSet;
 import java.util.Optional;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
@@ -56,50 +56,33 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         rangeConstraints = (RangeSet<N>) constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
     }
 
-    public static AbstractIntegerStringCodec<?, IntegerTypeDefinition> from(final IntegerTypeDefinition type) {
-        // FIXME: this is not necessary with yang.model.util.type
-        IntegerTypeDefinition baseType = type;
-        while (baseType.getBaseType() != null) {
-            baseType = baseType.getBaseType();
-        }
-
-        final Optional<IntegerTypeDefinition> typeOptional = Optional.of(type);
-
-        // FIXME: use DerivedTypes#isInt8() and friends
-        if (INT8_QNAME.equals(baseType.getQName())) {
-            return new Int8StringCodec(typeOptional);
-        } else if (INT16_QNAME.equals(baseType.getQName())) {
-            return new Int16StringCodec(typeOptional);
-        } else if (INT32_QNAME.equals(baseType.getQName())) {
-            return new Int32StringCodec(typeOptional);
-        } else if (INT64_QNAME.equals(baseType.getQName())) {
-            return new Int64StringCodec(typeOptional);
+    public static AbstractIntegerStringCodec<?, ? extends IntegerTypeDefinition<?, ?>> from(
+            final IntegerTypeDefinition<?, ?> type) {
+        if (type instanceof Int8TypeDefinition) {
+            return new Int8StringCodec(Optional.of((Int8TypeDefinition) type));
+        } else if (type instanceof Int16TypeDefinition) {
+            return new Int16StringCodec(Optional.of((Int16TypeDefinition) type));
+        } else if (type instanceof Int32TypeDefinition) {
+            return new Int32StringCodec(Optional.of((Int32TypeDefinition) type));
+        } else if (type instanceof Int64TypeDefinition) {
+            return new Int64StringCodec(Optional.of((Int64TypeDefinition) type));
         } else {
-            throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
+            throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }
 
-    public static AbstractIntegerStringCodec<?, UnsignedIntegerTypeDefinition> from(
-            final UnsignedIntegerTypeDefinition type) {
-        // FIXME: this is not necessary with yang.model.util.type
-        UnsignedIntegerTypeDefinition baseType = type;
-        while (baseType.getBaseType() != null) {
-            baseType = baseType.getBaseType();
-        }
-
-        final Optional<UnsignedIntegerTypeDefinition> typeOptional = Optional.of(type);
-
-        // FIXME: use DerivedTypes#isUint8() and friends
-        if (UINT8_QNAME.equals(baseType.getQName())) {
-            return new Uint8StringCodec(typeOptional);
-        } else if (UINT16_QNAME.equals(baseType.getQName())) {
-            return new Uint16StringCodec(typeOptional);
-        } else if (UINT32_QNAME.equals(baseType.getQName())) {
-            return new Uint32StringCodec(typeOptional);
-        } else if (UINT64_QNAME.equals(baseType.getQName())) {
-            return new Uint64StringCodec(typeOptional);
+    public static AbstractIntegerStringCodec<?, ? extends UnsignedIntegerTypeDefinition<?, ?>> from(
+            final UnsignedIntegerTypeDefinition<?, ?> type) {
+        if (type instanceof Uint8TypeDefinition) {
+            return new Uint8StringCodec(Optional.of((Uint8TypeDefinition) type));
+        } else if (type instanceof Uint16TypeDefinition) {
+            return new Uint16StringCodec(Optional.of((Uint16TypeDefinition) type));
+        } else if (type instanceof Uint32TypeDefinition) {
+            return new Uint32StringCodec(Optional.of((Uint32TypeDefinition) type));
+        } else if (type instanceof Uint64TypeDefinition) {
+            return new Uint64StringCodec(Optional.of((Uint64TypeDefinition) type));
         } else {
-            throw new IllegalArgumentException("Unsupported base type: " + baseType.getQName());
+            throw new IllegalArgumentException("Unsupported type: " + type);
         }
     }
 
@@ -133,11 +116,11 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         }
     }
 
-    protected static Optional<RangeConstraint<?>> extractRange(final IntegerTypeDefinition type) {
+    protected static Optional<RangeConstraint<?>> extractRange(final IntegerTypeDefinition<?, ?> type) {
         return type == null ? Optional.empty() : type.getRangeConstraint();
     }
 
-    protected static Optional<RangeConstraint<?>> extractRange(final UnsignedIntegerTypeDefinition type) {
+    protected static Optional<RangeConstraint<?>> extractRange(final UnsignedIntegerTypeDefinition<?, ?> type) {
         return type == null ? Optional.empty() : type.getRangeConstraint();
     }
 

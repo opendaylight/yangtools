@@ -13,15 +13,15 @@ import static org.junit.Assert.assertSame;
 
 import java.util.Optional;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
 public class Int8Test {
 
     @Test
     public void testInt8() {
-        IntegerTypeDefinition int8 = BaseTypes.int8Type();
-        IntegerTypeDefinition int8Second = BaseTypes.int8Type();
+        Int8TypeDefinition int8 = BaseTypes.int8Type();
+        Int8TypeDefinition int8Second = BaseTypes.int8Type();
         assertSame("The method 'getInstance()' has to return the same instance", int8, int8Second);
         assertNull("The method 'getBaseType()' is returning incorrect value", int8.getBaseType());
         assertEquals("The method 'getDefaultType()' is returning incorrect value", Optional.empty(),

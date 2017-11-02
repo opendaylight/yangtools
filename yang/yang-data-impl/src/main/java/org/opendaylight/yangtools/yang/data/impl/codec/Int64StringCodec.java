@@ -11,12 +11,12 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Int64Codec;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 
-final class Int64StringCodec extends AbstractIntegerStringCodec<Long, IntegerTypeDefinition>
+final class Int64StringCodec extends AbstractIntegerStringCodec<Long, Int64TypeDefinition>
         implements Int64Codec<String> {
 
-    Int64StringCodec(final Optional<IntegerTypeDefinition> typeDef) {
+    Int64StringCodec(final Optional<Int64TypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orElse(null)), Long.class);
     }
 

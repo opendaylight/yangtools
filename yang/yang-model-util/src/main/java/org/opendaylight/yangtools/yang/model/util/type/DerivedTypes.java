@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -19,11 +21,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * YANG defines 'derived type' as a type created through a 'typedef' statement. These types are exposed in the
@@ -59,115 +67,143 @@ public final class DerivedTypes {
             return derivedIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return derivedInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
-        } else if (baseType instanceof IntegerTypeDefinition) {
-            return derivedIntegerBuilder((IntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Int8TypeDefinition) {
+            return derivedInt8Builder((Int8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int16TypeDefinition) {
+            return derivedInt16Builder((Int16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int32TypeDefinition) {
+            return derivedInt32Builder((Int32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int64TypeDefinition) {
+            return derivedInt64Builder((Int64TypeDefinition) baseType, path);
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return derivedLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
         } else if (baseType instanceof StringTypeDefinition) {
             return derivedStringBuilder((StringTypeDefinition) baseType, path);
         } else if (baseType instanceof UnionTypeDefinition) {
             return derivedUnionBuilder((UnionTypeDefinition) baseType, path);
-        } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return derivedUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint8TypeDefinition) {
+            return derivedUint8Builder((Uint8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint16TypeDefinition) {
+            return derivedUint16Builder((Uint16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint32TypeDefinition) {
+            return derivedUint32Builder((Uint32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint64TypeDefinition) {
+            return derivedUint64Builder((Uint64TypeDefinition) baseType, path);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
     }
 
     /**
-     * Check if a particular type is corresponds to int8. Unlike {@link BaseTypes#isInt8(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, int8.
      *
      * @param type The type to check
      * @return If the type belongs to the int8 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Int8TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isInt8(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isInt8(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Int8TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to int16. Unlike {@link BaseTypes#isInt16(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, int16.
      *
      * @param type The type to check
      * @return If the type belongs to the int16 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Int16TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isInt16(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isInt16(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Int16TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to int32. Unlike {@link BaseTypes#isInt32(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, int32.
      *
      * @param type The type to check
      * @return If the type belongs to the int32 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Int32TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isInt32(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isInt32(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Int32TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to int64. Unlike {@link BaseTypes#isInt64(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, int64.
      *
      * @param type The type to check
      * @return If the type belongs to the int64 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Int64TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isInt64(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isInt64(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Int64TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to uint8. Unlike {@link BaseTypes#isUint8(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, uint8.
      *
      * @param type The type to check
      * @return If the type belongs to the uint8 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Uint8TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isUint8(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Uint8TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to uint16. Unlike {@link BaseTypes#isUint16(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, uint16.
      *
      * @param type The type to check
      * @return If the type belongs to the uint16 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Uint16TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isUint16(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Uint16TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to uint32. Unlike {@link BaseTypes#isUint32(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, uint32.
      *
      * @param type The type to check
      * @return If the type belongs to the uint32 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Uint32TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isUint32(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Uint32TypeDefinition;
     }
 
     /**
-     * Check if a particular type is corresponds to uint64. Unlike {@link BaseTypes#isUint64(TypeDefinition)}, this
-     * method performs recursive lookup to find the base type.
+     * Check if a particular type is itself, or is derived from, uint64.
      *
      * @param type The type to check
      * @return If the type belongs to the uint64 type family.
      * @throws NullPointerException if type is null
+     *
+     * @deprecated Use @{code type instanceof Uint64TypeDefinition} instead.
      */
+    @Deprecated
     public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
-        return BaseTypes.isUint64(BaseTypes.baseTypeOf(type));
+        return requireNonNull(type) instanceof Uint64TypeDefinition;
     }
 
     private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
@@ -258,12 +294,45 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType,
+    private static DerivedTypeBuilder<Int8TypeDefinition> derivedInt8Builder(final Int8TypeDefinition baseType,
             final SchemaPath path) {
-        return new DerivedTypeBuilder<IntegerTypeDefinition>(baseType, path) {
+        return new DerivedTypeBuilder<Int8TypeDefinition>(baseType, path) {
             @Override
-            public IntegerTypeDefinition build() {
-                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Int8TypeDefinition build() {
+                return new DerivedInt8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(final Int16TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int16TypeDefinition>(baseType, path) {
+            @Override
+            public Int16TypeDefinition build() {
+                return new DerivedInt16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(final Int32TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int32TypeDefinition>(baseType, path) {
+            @Override
+            public Int32TypeDefinition build() {
+                return new DerivedInt32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int64TypeDefinition> derivedInt64Builder(final Int64TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int64TypeDefinition>(baseType, path) {
+            @Override
+            public Int64TypeDefinition build() {
+                return new DerivedInt64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
@@ -302,12 +371,45 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(
-            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new DerivedTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
+    private static DerivedTypeBuilder<Uint8TypeDefinition> derivedUint8Builder(
+            final Uint8TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint8TypeDefinition>(baseType, path) {
             @Override
-            public UnsignedIntegerTypeDefinition build() {
-                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Uint8TypeDefinition build() {
+                return new DerivedUint8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint16TypeDefinition> derivedUint16Builder(
+            final Uint16TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint16TypeDefinition>(baseType, path) {
+            @Override
+            public Uint16TypeDefinition build() {
+                return new DerivedUint16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
+            final Uint32TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint32TypeDefinition>(baseType, path) {
+            @Override
+            public Uint32TypeDefinition build() {
+                return new DerivedUint32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
+            final Uint64TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint64TypeDefinition>(baseType, path) {
+            @Override
+            public Uint64TypeDefinition build() {
+                return new DerivedUint64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };

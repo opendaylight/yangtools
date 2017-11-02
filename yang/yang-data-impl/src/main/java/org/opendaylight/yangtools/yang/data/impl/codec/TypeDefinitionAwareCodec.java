@@ -64,13 +64,13 @@ public abstract class TypeDefinitionAwareCodec<J, T extends TypeDefinition<T>> i
         } else if (typeDefinition instanceof EnumTypeDefinition) {
             codec = EnumStringCodec.from((EnumTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof IntegerTypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((IntegerTypeDefinition) typeDefinition);
+            codec = AbstractIntegerStringCodec.from((IntegerTypeDefinition<?, ?>) typeDefinition);
         } else if (typeDefinition instanceof StringTypeDefinition) {
             codec = StringStringCodec.from((StringTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof UnionTypeDefinition) {
             codec = UnionStringCodec.from((UnionTypeDefinition)typeDefinition);
         } else if (typeDefinition instanceof UnsignedIntegerTypeDefinition) {
-            codec = AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition) typeDefinition);
+            codec = AbstractIntegerStringCodec.from((UnsignedIntegerTypeDefinition<?, ?>) typeDefinition);
         } else {
             codec = null;
         }

@@ -1450,9 +1450,9 @@ abstract class SchemaContextEmitter {
 
         private void emitTypeBodyNodes(final TypeDefinition<?> typeDef) {
             if (typeDef instanceof UnsignedIntegerTypeDefinition) {
-                emitUnsignedIntegerSpecification((UnsignedIntegerTypeDefinition) typeDef);
+                emitUnsignedIntegerSpecification((UnsignedIntegerTypeDefinition<?, ?>) typeDef);
             } else if (typeDef instanceof IntegerTypeDefinition) {
-                emitIntegerSpefication((IntegerTypeDefinition) typeDef);
+                emitIntegerSpefication((IntegerTypeDefinition<?, ?>) typeDef);
             } else if (typeDef instanceof DecimalTypeDefinition) {
                 emitDecimal64Specification((DecimalTypeDefinition) typeDef);
             } else if (typeDef instanceof StringTypeDefinition) {
@@ -1478,11 +1478,11 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitIntegerSpefication(final IntegerTypeDefinition typeDef) {
+        private void emitIntegerSpefication(final IntegerTypeDefinition<?, ?> typeDef) {
             typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
-        private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition typeDef) {
+        private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition<?, ?> typeDef) {
             typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 

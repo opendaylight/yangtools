@@ -15,9 +15,15 @@ import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
 /**
  * Utility access methods for creating and accessing YANG base type definitions. YANG types come in two basic variants,
@@ -85,34 +91,59 @@ public final class BaseTypes {
         return BaseInstanceIdentifierType.INSTANCE;
     }
 
-    public static IntegerTypeDefinition int8Type() {
+    public static Int8TypeDefinition int8Type() {
         return BaseInt8Type.INSTANCE;
     }
 
+    /**
+     * Check if a particular type definition represents the built-in int8 type.
+     *
+     * @param type Type definition
+     * @return True if the definition is the built-in int8 type.
+     */
     public static boolean isInt8(final TypeDefinition<?> type) {
         return BaseInt8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static IntegerTypeDefinition int16Type() {
+    public static Int16TypeDefinition int16Type() {
         return BaseInt16Type.INSTANCE;
     }
 
+    /**
+     * Check if a particular type definition represents the built-in int16 type.
+     *
+     * @param type Type definition
+     * @return True if the definition is the built-in int16 type.
+     */
     public static boolean isInt16(final TypeDefinition<?> type) {
         return BaseInt16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static IntegerTypeDefinition int32Type() {
+    public static Int32TypeDefinition int32Type() {
         return BaseInt32Type.INSTANCE;
     }
+
+    /**
+     * Check if a particular type definition represents the built-in int32 type.
+     *
+     * @param type Type definition
+     * @return True if the definition is the built-in int32 type.
+     */
 
     public static boolean isInt32(final TypeDefinition<?> type) {
         return BaseInt32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static IntegerTypeDefinition int64Type() {
+    public static Int64TypeDefinition int64Type() {
         return BaseInt64Type.INSTANCE;
     }
 
+    /**
+     * Check if a particular type definition represents the built-in int64 type.
+     *
+     * @param type Type definition
+     * @return True if the definition is the built-in int64 type.
+     */
     public static boolean isInt64(final TypeDefinition<?> type) {
         return BaseInt64Type.INSTANCE.getPath().equals(type.getPath());
     }
@@ -129,7 +160,7 @@ public final class BaseTypes {
         return new UnionTypeBuilder(path);
     }
 
-    public static UnsignedIntegerTypeDefinition uint8Type() {
+    public static Uint8TypeDefinition uint8Type() {
         return BaseUint8Type.INSTANCE;
     }
 
@@ -145,7 +176,7 @@ public final class BaseTypes {
         return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static UnsignedIntegerTypeDefinition uint16Type() {
+    public static Uint16TypeDefinition uint16Type() {
         return BaseUint16Type.INSTANCE;
     }
 
@@ -161,7 +192,7 @@ public final class BaseTypes {
         return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static UnsignedIntegerTypeDefinition uint32Type() {
+    public static Uint32TypeDefinition uint32Type() {
         return BaseUint32Type.INSTANCE;
     }
 
@@ -177,7 +208,7 @@ public final class BaseTypes {
         return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static UnsignedIntegerTypeDefinition uint64Type() {
+    public static Uint64TypeDefinition uint64Type() {
         return BaseUint64Type.INSTANCE;
     }
 
