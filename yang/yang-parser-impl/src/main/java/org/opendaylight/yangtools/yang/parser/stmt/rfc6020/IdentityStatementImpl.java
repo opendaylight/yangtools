@@ -95,11 +95,6 @@ public class IdentityStatementImpl extends AbstractDeclaredStatement<QName> impl
         return firstDeclared(ReferenceStatement.class);
     }
 
-    @Override
-    public BaseStatement getBase() {
-        return firstDeclared(BaseStatement.class);
-    }
-
     @Nonnull
     @Override
     public Collection<? extends BaseStatement> getBases() {

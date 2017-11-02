@@ -7,10 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -19,18 +17,9 @@ public interface IdentityStatement extends DeclaredStatement<QName>, Documentati
     @Nonnull QName getName();
 
     /**
-     * Returns the base identity.
-     * @deprecated use {@link #getBases()} instead
+     * Returns the base identities of this identity.
      *
-     * @return base statement
+     * @return base identities, empty if there are none.
      */
-    @Deprecated
-    @Nullable
-    BaseStatement getBase();
-
-    // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<? extends BaseStatement> getBases() {
-        final BaseStatement base = getBase();
-        return base == null ? ImmutableList.of() : ImmutableList.of(base);
-    }
+    @Nonnull Collection<? extends BaseStatement> getBases();
 }
