@@ -16,10 +16,11 @@ package org.opendaylight.yangtools.concepts;
  */
 public interface Builder<P> extends Mutable {
     /**
-     * Returns instance of the product.  Multiple calls to this method are not required to return
-     * same instance if the state of the builder has changed.
+     * Returns instance of the product. Multiple calls to this method are not required to return same instance if
+     * the state of the builder has changed.
      *
-     * @return Newly-built instance
+     * @return A newly-built instance
+     * @throws IllegalStateException if the builder's state is not sufficiently initialized
      */
     P build();
 }
