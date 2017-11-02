@@ -89,12 +89,6 @@ public class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Stri
 
     @Nonnull
     @Override
-    public BaseStatement getBase() {
-        return firstDeclared(BaseStatement.class);
-    }
-
-    @Nonnull
-    @Override
     public Collection<? extends BaseStatement> getBases() {
         return allDeclared(BaseStatement.class);
     }

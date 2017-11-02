@@ -72,16 +72,6 @@ public interface TypeStatement extends DeclaredStatement<String> {
 
     @Rfc6020AbnfRule("identityref-specification")
     interface IdentityRefSpecification extends TypeStatement {
-
-        /**
-         * Returns the base identity.
-         * @deprecated use {@link #getBases()} instead
-         *
-         * @return base statement
-         */
-        @Deprecated
-        @Nonnull BaseStatement getBase();
-
         /**
          * Returns the base statements.
          *
