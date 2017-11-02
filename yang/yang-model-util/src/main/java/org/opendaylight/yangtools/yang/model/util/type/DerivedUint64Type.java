@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 
-final class DerivedUint64Type extends AbstractRangeRestrictedDerivedType<Uint64TypeDefinition>
+final class DerivedUint64Type extends AbstractRangeRestrictedDerivedType<Uint64TypeDefinition, BigInteger>
         implements Uint64TypeDefinition {
 
     DerivedUint64Type(final Uint64TypeDefinition baseType, final SchemaPath path,

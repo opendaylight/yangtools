@@ -16,8 +16,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
-abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeDefinition<T>>
-        extends AbstractDerivedType<T> implements RangeRestrictedTypeDefinition<T> {
+abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeDefinition<T, N>,
+        N extends Number & Comparable<N>> extends AbstractDerivedType<T>
+        implements RangeRestrictedTypeDefinition<T, N> {
 
     AbstractRangeRestrictedDerivedType(final T baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
@@ -27,7 +28,7 @@ abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeD
 
     @Nonnull
     @Override
-    public final Optional<RangeConstraint<?>> getRangeConstraint() {
+    public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return baseType().getRangeConstraint();
     }
 }

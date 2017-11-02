@@ -19,7 +19,6 @@ import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
@@ -29,8 +28,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
-public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T>>
-        extends AbstractRestrictedTypeBuilder<T> {
+public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T, N>,
+        N extends Number & Comparable<N>> extends AbstractRestrictedTypeBuilder<T> {
     private ConstraintMetaDefinition constraint;
     private List<ValueRange> ranges;
 
@@ -47,58 +46,32 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         touch();
     }
 
-    final <C extends Number & Comparable<C>> RangeConstraint<C> calculateRangeConstraint(
-            final RangeConstraint<C> baseRangeConstraint) {
+    final RangeConstraint<N> calculateRangeConstraint(final RangeConstraint<N> baseRangeConstraint) {
         if (ranges == null) {
             return baseRangeConstraint;
         }
 
         // Run through alternatives and resolve them against the base type
-        final RangeSet<C> baseRangeSet = (RangeSet<C>) baseRangeConstraint.getAllowedRanges();
+        final RangeSet<N> baseRangeSet = baseRangeConstraint.getAllowedRanges();
         Verify.verify(!baseRangeSet.isEmpty(), "Base type %s does not define constraints", getBaseType());
 
-        final Range<? extends C> baseRange = baseRangeSet.span();
+        final Range<N> baseRange = baseRangeSet.span();
         final List<ValueRange> resolvedRanges = ensureResolvedRanges(ranges, baseRange);
 
         // Next up, ensure the of boundaries match base constraints
-        final RangeSet<C> typedRanges = ensureTypedRanges(resolvedRanges, baseRange.lowerEndpoint().getClass());
+        final RangeSet<N> typedRanges = ensureTypedRanges(resolvedRanges, baseRange.lowerEndpoint().getClass());
 
         // Now verify if new ranges are strict subset of base ranges
         if (!baseRangeSet.enclosesAll(typedRanges)) {
             throw new InvalidRangeConstraintException(typedRanges,
-                "Range constraints %s is not a subset of parent constraints %s", typedRanges, baseRangeSet);
+                "Range constraint %s is not a subset of parent constraint %s", typedRanges, baseRangeSet);
         }
 
-        return new RangeConstraint<C>() {
-            @Override
-            public Optional<String> getErrorAppTag() {
-                return constraint.getErrorAppTag();
-            }
-
-            @Override
-            public Optional<String> getErrorMessage() {
-                return constraint.getErrorMessage();
-            }
-
-            @Override
-            public Optional<String> getDescription() {
-                return constraint.getDescription();
-            }
-
-            @Override
-            public Optional<String> getReference() {
-                return constraint.getReference();
-            }
-
-            @Override
-            public RangeSet<? extends C> getAllowedRanges() {
-                return typedRanges;
-            }
-        };
+        return new ResolvedRangeConstraint<>(constraint, typedRanges);
     }
 
     private static <C extends Number & Comparable<C>> List<ValueRange> ensureResolvedRanges(
-            final List<ValueRange> unresolved, final Range<? extends C> baseRange) {
+            final List<ValueRange> unresolved, final Range<C> baseRange) {
         // First check if we need to resolve anything at all
         for (ValueRange c : unresolved) {
             if (c.lowerBound() instanceof UnresolvedNumber || c.upperBound() instanceof UnresolvedNumber) {
@@ -111,18 +84,18 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     }
 
     private static <T extends Number & Comparable<T>> List<ValueRange> resolveRanges(final List<ValueRange> unresolved,
-            final Range<? extends T> baseRange) {
+            final Range<T> baseRange) {
         final List<ValueRange> ret = new ArrayList<>(unresolved.size());
         for (ValueRange range : unresolved) {
             final Number min = range.lowerBound();
             final Number max = range.upperBound();
 
             if (max instanceof UnresolvedNumber || min instanceof UnresolvedNumber) {
-                final Number rMin = min instanceof UnresolvedNumber
+                final @NonNull Number rMin = min instanceof UnresolvedNumber
                         ?  ((UnresolvedNumber)min).resolveRange(baseRange) : min;
-                final Number rMax = max instanceof UnresolvedNumber
+                final @NonNull Number rMax = max instanceof UnresolvedNumber
                         ?  ((UnresolvedNumber)max).resolveRange(baseRange) : max;
-                ret.add(ValueRange.of((@NonNull Number)rMin, (@NonNull Number)rMax));
+                ret.add(ValueRange.of(rMin, rMax));
             } else {
                 ret.add(range);
             }
@@ -131,6 +104,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         return ret;
     }
 
+    @SuppressWarnings("unchecked")
     private static <T extends Number & Comparable<T>> RangeSet<T> ensureTypedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
         final Builder<T> builder = ImmutableRangeSet.builder();
@@ -145,6 +119,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
         return builder.build();
     }
 
+    @SuppressWarnings("unchecked")
     private static <T extends Number & Comparable<T>> RangeSet<T> typedRanges(final List<ValueRange> ranges,
             final Class<? extends Number> clazz) {
         final Function<Number, ? extends Number> function = NumberUtil.converterTo(clazz);

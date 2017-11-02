@@ -14,9 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class RestrictedInt8Type extends AbstractRangeRestrictedType<Int8TypeDefinition> implements Int8TypeDefinition {
+final class RestrictedInt8Type extends AbstractRangeRestrictedType<Int8TypeDefinition, Byte>
+        implements Int8TypeDefinition {
     RestrictedInt8Type(final Int8TypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<Byte> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 

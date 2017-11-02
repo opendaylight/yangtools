@@ -428,7 +428,7 @@ public class TypeTest {
         assertNotNull(typeDefinition);
 
         final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
-        final RangeRestrictedTypeBuilder<?> rangeRestrictedTypeBuilder = RestrictedTypes.newInt8Builder(
+        final RangeRestrictedTypeBuilder<?, ?> rangeRestrictedTypeBuilder = RestrictedTypes.newInt8Builder(
             integerTypeDefinition8, SCHEMA_PATH);
         rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
         final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();

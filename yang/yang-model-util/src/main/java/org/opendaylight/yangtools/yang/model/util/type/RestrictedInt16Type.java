@@ -14,10 +14,11 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class RestrictedInt16Type extends AbstractRangeRestrictedType<Int16TypeDefinition>
+final class RestrictedInt16Type extends AbstractRangeRestrictedType<Int16TypeDefinition, Short>
         implements Int16TypeDefinition {
     RestrictedInt16Type(final Int16TypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes,
+        final @Nullable RangeConstraint<Short> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
