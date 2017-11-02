@@ -11,7 +11,6 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Lists;
@@ -32,7 +31,6 @@ import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -65,18 +63,16 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
 
-        ImmutableMap.Builder<ModuleIdentifier, String> identifiersToSourcesBuilder = ImmutableMap.builder();
-
-        //preparing map to get all modules with one name but difference in revision
+        // preparing map to get all modules with one name but difference in revision
         final TreeMultimap<String, Module> nameToModulesAll = getStringModuleTreeMultimap();
 
         nameToModulesAll.putAll(getStringModuleMap(delegate));
 
-        //in case there is a particular dependancy to view filteredModules/yang models
-        //dependancy is checked for module name and imports
+        // in case there is a particular dependancy to view filteredModules/yang models dependancy is checked
+        // for module name and imports
         processForRootModules(delegate, rootModules, filteredModulesBuilder);
 
-        //adding additional modules
+        // adding additional modules
         processForAdditionalModules(delegate, additionalModuleIds, filteredModulesBuilder);
 
         filteredModulesBuilder.addAll(getImportedModules(
