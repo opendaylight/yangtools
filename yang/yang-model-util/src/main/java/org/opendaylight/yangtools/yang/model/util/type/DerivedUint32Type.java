@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
-final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32TypeDefinition>
+final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32TypeDefinition, Long>
         implements Uint32TypeDefinition {
 
     DerivedUint32Type(final Uint32TypeDefinition baseType, final SchemaPath path,
