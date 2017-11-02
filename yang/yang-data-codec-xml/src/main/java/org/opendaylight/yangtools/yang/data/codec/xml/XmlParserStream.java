@@ -122,16 +122,6 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     /**
-     * Construct a new {@link XmlParserStream}.
-     *
-     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, SchemaContext, SchemaNode)} instead.
-     */
-    @Deprecated
-    public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
-        return create(writer, schemaContext, schemaContext);
-    }
-
-    /**
      * Utility method for use when caching {@link XmlCodecFactory} is not feasible. Users with high performance
      * requirements should use {@link #create(NormalizedNodeStreamWriter, XmlCodecFactory, SchemaNode)} instead and
      * maintain a {@link XmlCodecFactory} to match the current {@link SchemaContext}.
