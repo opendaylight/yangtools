@@ -13,8 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
-abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeDefinition<T>>
-        extends RangeRestrictedTypeBuilder<T> {
+abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeDefinition<T, N>,
+        N extends Number & Comparable<N>> extends RangeRestrictedTypeBuilder<T, N> {
 
     RangeRestrictedTypeBuilderWithBase(final T baseType, final SchemaPath path) {
         super(requireNonNull(baseType), path);
@@ -25,5 +25,5 @@ abstract class RangeRestrictedTypeBuilderWithBase<T extends RangeRestrictedTypeD
         return buildType(calculateRangeConstraint(getBaseType().getRangeConstraint().get()));
     }
 
-    abstract T buildType(RangeConstraint<?> rangeConstraints);
+    abstract T buildType(RangeConstraint<N> rangeConstraints);
 }
