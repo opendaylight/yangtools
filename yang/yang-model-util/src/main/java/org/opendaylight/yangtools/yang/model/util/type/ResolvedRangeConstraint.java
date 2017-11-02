@@ -46,7 +46,7 @@ final class ResolvedRangeConstraint<T extends Number & Comparable<T>> implements
     }
 
     @Override
-    public RangeSet<? extends T> getAllowedRanges() {
+    public RangeSet<T> getAllowedRanges() {
         return ranges;
     }
 }

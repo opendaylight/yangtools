@@ -26,14 +26,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class IntegerTypeEffectiveStatementImpl<T extends IntegerTypeDefinition<?, T>> extends
-        DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
+public final class IntegerTypeEffectiveStatementImpl<T extends IntegerTypeDefinition<N, T>,
+        N extends Number & Comparable<N>> extends DeclaredEffectiveStatementBase<String, TypeStatement>
+        implements TypeEffectiveStatement<TypeStatement> {
 
     private final T typeDefinition;
 
     private IntegerTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final RangeRestrictedTypeBuilder<T> builder) {
+            final RangeRestrictedTypeBuilder<T, N> builder) {
         super(ctx);
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
@@ -54,28 +55,28 @@ public final class IntegerTypeEffectiveStatementImpl<T extends IntegerTypeDefini
         }
     }
 
-    public static IntegerTypeEffectiveStatementImpl<Int8TypeDefinition> create(
+    public static IntegerTypeEffectiveStatementImpl<Int8TypeDefinition, Byte> create(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final Int8TypeDefinition baseType) {
         return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt8Builder(baseType,
             TypeUtils.typeEffectiveSchemaPath(ctx)));
     }
 
-    public static IntegerTypeEffectiveStatementImpl<Int16TypeDefinition> create(
+    public static IntegerTypeEffectiveStatementImpl<Int16TypeDefinition, Short> create(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final Int16TypeDefinition baseType) {
         return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt16Builder(baseType,
             TypeUtils.typeEffectiveSchemaPath(ctx)));
     }
 
-    public static IntegerTypeEffectiveStatementImpl<Int32TypeDefinition> create(
+    public static IntegerTypeEffectiveStatementImpl<Int32TypeDefinition, Integer> create(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final Int32TypeDefinition baseType) {
         return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt32Builder(baseType,
             TypeUtils.typeEffectiveSchemaPath(ctx)));
     }
 
-    public static IntegerTypeEffectiveStatementImpl<Int64TypeDefinition> create(
+    public static IntegerTypeEffectiveStatementImpl<Int64TypeDefinition, Long> create(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final Int64TypeDefinition baseType) {
         return new IntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newInt64Builder(baseType,

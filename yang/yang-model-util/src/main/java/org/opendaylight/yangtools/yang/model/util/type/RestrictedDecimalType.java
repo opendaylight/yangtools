@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -14,10 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTypeDefinition>
+final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTypeDefinition, BigDecimal>
         implements DecimalTypeDefinition {
     RestrictedDecimalType(final DecimalTypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes,
+        final @Nullable RangeConstraint<BigDecimal> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 

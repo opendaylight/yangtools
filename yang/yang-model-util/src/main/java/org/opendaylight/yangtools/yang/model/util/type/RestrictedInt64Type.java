@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
-final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDefinition>
+final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDefinition, Long>
         implements Int64TypeDefinition {
     RestrictedInt64Type(final Int64TypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<Long> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 

@@ -14,8 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Interface for {@link TypeDefinition}s which can have their values restricted to a set of allowed values.
  *
  * @param <T> Concrete {@link TypeDefinition} subinterface
+ * @param <N> Native data type
  */
-public interface RangeRestrictedTypeDefinition<T extends TypeDefinition<T>> extends TypeDefinition<T> {
+public interface RangeRestrictedTypeDefinition<T extends TypeDefinition<T>, N extends Number & Comparable<N>>
+        extends TypeDefinition<T> {
     /**
      * Returns range constraint of this type, if applicable. This is the effective constraint, e.g. it includes any
      * range constraints implied by base type hierarchy.
@@ -23,5 +25,5 @@ public interface RangeRestrictedTypeDefinition<T extends TypeDefinition<T>> exte
      * @return range constraint which are specified in the <code>range</code> substatement of the <code>type</code>
      *         statement.
      */
-    Optional<RangeConstraint<?>> getRangeConstraint();
+    Optional<RangeConstraint<N>> getRangeConstraint();
 }
