@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -43,6 +42,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
+import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -290,8 +291,8 @@ public final class SchemaContextUtil {
      * @param context SchemaContext to be examined
      * @return Set of ModuleIdentifiers.
      */
-    public static Set<ModuleIdentifier> getConstituentModuleIdentifiers(final SchemaContext context) {
-        final Set<ModuleIdentifier> ret = new HashSet<>();
+    public static Set<SourceIdentifier> getConstituentModuleIdentifiers(final SchemaContext context) {
+        final Set<SourceIdentifier> ret = new HashSet<>();
 
         for (Module module : context.getModules()) {
             ret.add(moduleToIdentifier(module));
@@ -304,8 +305,8 @@ public final class SchemaContextUtil {
         return ret;
     }
 
-    private static ModuleIdentifier moduleToIdentifier(final Module module) {
-        return ModuleIdentifierImpl.create(module.getName(), module.getRevision());
+    private static SourceIdentifier moduleToIdentifier(final Module module) {
+        return RevisionSourceIdentifier.create(module.getName(), module.getRevision());
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
