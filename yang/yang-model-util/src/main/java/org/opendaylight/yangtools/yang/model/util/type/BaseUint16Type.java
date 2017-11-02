@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint16Type extends AbstractUnsignedBaseType<Integer> {
+final class BaseUint16Type extends AbstractUnsignedBaseType<Integer, Uint16TypeDefinition>
+        implements Uint16TypeDefinition {
     static final BaseUint16Type INSTANCE = new BaseUint16Type();
 
     private BaseUint16Type() {

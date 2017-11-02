@@ -16,14 +16,20 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 
 /**
  * Compatibility utilities for dealing with differences between the old parser's ExtendedType-driven type
@@ -139,12 +145,24 @@ public final class CompatUtils {
             return baseTypeIfNotConstrained((DecimalTypeDefinition) leafType);
         } else if (leafType instanceof InstanceIdentifierTypeDefinition) {
             return baseTypeIfNotConstrained((InstanceIdentifierTypeDefinition) leafType);
-        } else if (leafType instanceof IntegerTypeDefinition) {
-            return baseTypeIfNotConstrained((IntegerTypeDefinition) leafType);
+        } else if (leafType instanceof Int8TypeDefinition) {
+            return baseTypeIfNotConstrained((Int8TypeDefinition) leafType);
+        } else if (leafType instanceof Int16TypeDefinition) {
+            return baseTypeIfNotConstrained((Int16TypeDefinition) leafType);
+        } else if (leafType instanceof Int32TypeDefinition) {
+            return baseTypeIfNotConstrained((Int32TypeDefinition) leafType);
+        } else if (leafType instanceof Int64TypeDefinition) {
+            return baseTypeIfNotConstrained((Int64TypeDefinition) leafType);
         } else if (leafType instanceof StringTypeDefinition) {
             return baseTypeIfNotConstrained((StringTypeDefinition) leafType);
-        } else if (leafType instanceof UnsignedIntegerTypeDefinition) {
-            return baseTypeIfNotConstrained((UnsignedIntegerTypeDefinition) leafType);
+        } else if (leafType instanceof Uint8TypeDefinition) {
+            return baseTypeIfNotConstrained((Uint8TypeDefinition) leafType);
+        } else if (leafType instanceof Uint16TypeDefinition) {
+            return baseTypeIfNotConstrained((Uint16TypeDefinition) leafType);
+        } else if (leafType instanceof Uint32TypeDefinition) {
+            return baseTypeIfNotConstrained((Uint32TypeDefinition) leafType);
+        } else if (leafType instanceof Uint64TypeDefinition) {
+            return baseTypeIfNotConstrained((Uint64TypeDefinition) leafType);
         } else {
             // Other types cannot be constrained, return the base type
             return baseType;
@@ -164,10 +182,6 @@ public final class CompatUtils {
         return type.requireInstance() == base.requireInstance() ? base : type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final IntegerTypeDefinition type) {
-        return baseTypeIfNotConstrained(type, type.getBaseType());
-    }
-
     private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
         final StringTypeDefinition base = type.getBaseType();
         final List<PatternConstraint> patterns = type.getPatternConstraints();
@@ -181,7 +195,7 @@ public final class CompatUtils {
         return type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final UnsignedIntegerTypeDefinition type) {
+    private static <T extends RangeRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
