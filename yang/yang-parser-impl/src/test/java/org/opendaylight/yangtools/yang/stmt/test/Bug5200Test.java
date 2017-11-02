@@ -67,7 +67,7 @@ public class Bug5200Test {
         assertEquals(Optional.of("pattern constraint error-app-tag"), patternConstraint.getErrorAppTag());
         assertEquals(Optional.of("pattern constraint error-app-message"), patternConstraint.getErrorMessage());
 
-        RangeConstraint<?> rangeConstraint = ((IntegerTypeDefinition) myLeaf2Type).getRangeConstraint().get();
+        RangeConstraint<?> rangeConstraint = ((IntegerTypeDefinition<?, ?>) myLeaf2Type).getRangeConstraint().get();
         assertEquals(1, rangeConstraint.getAllowedRanges().asRanges().size());
 
         assertEquals(Optional.of("range constraint error-app-tag"), rangeConstraint.getErrorAppTag());
