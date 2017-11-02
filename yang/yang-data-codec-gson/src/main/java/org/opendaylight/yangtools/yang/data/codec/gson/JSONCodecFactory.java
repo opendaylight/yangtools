@@ -112,19 +112,6 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     }
 
     /**
-     * Instantiate a new codec factory attached to a particular context.
-     *
-     * @param context SchemaContext to which the factory should be bound
-     * @return A codec factory instance.
-     *
-     * @deprecated Use {@link #getShared(SchemaContext)} instead.
-     */
-    @Deprecated
-    public static JSONCodecFactory create(final SchemaContext context) {
-        return getShared(context);
-    }
-
-    /**
      * Get a thread-safe, eagerly-caching {@link JSONCodecFactory} for a SchemaContext. This method can, and will,
      * return the same instance as long as the associated SchemaContext is present. Returned object can be safely
      * used by multiple threads concurrently. If the SchemaContext instance does not have a cached instance
