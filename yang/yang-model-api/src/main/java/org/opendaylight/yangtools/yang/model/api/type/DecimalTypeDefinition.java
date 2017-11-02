@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import java.math.BigDecimal;
+
 /**
  * Contains methods for getting data from the YANG <code>type</code> substatement for <code>decimal64</code> built-in
  * type.
  */
-public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<DecimalTypeDefinition> {
+public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<DecimalTypeDefinition, BigDecimal> {
     /**
      * Returns integer between 1 and 18 inclusively.
      *
