@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseInt32Type extends AbstractIntegerBaseType<Integer> {
+final class BaseInt32Type extends AbstractIntegerBaseType<Integer, Int32TypeDefinition> implements Int32TypeDefinition {
     static final BaseInt32Type INSTANCE = new BaseInt32Type();
 
     private BaseInt32Type() {

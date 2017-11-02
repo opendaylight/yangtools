@@ -22,17 +22,17 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class IntegerTypeEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<String,TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
+public final class IntegerTypeEffectiveStatementImpl<T extends IntegerTypeDefinition<?, T>> extends
+        DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
 
-    private final IntegerTypeDefinition typeDefinition;
+    private final T typeDefinition;
 
     public IntegerTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final IntegerTypeDefinition baseType) {
+            final T baseType) {
         super(ctx);
 
-        final RangeRestrictedTypeBuilder<IntegerTypeDefinition> builder =
+        final RangeRestrictedTypeBuilder<T> builder =
                 RestrictedTypes.newIntegerBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
@@ -55,7 +55,7 @@ public final class IntegerTypeEffectiveStatementImpl extends
 
     @Nonnull
     @Override
-    public IntegerTypeDefinition getTypeDefinition() {
+    public T getTypeDefinition() {
         return typeDefinition;
     }
 }

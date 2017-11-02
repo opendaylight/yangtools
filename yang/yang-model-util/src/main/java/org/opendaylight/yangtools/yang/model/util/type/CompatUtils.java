@@ -140,11 +140,11 @@ public final class CompatUtils {
         } else if (leafType instanceof InstanceIdentifierTypeDefinition) {
             return baseTypeIfNotConstrained((InstanceIdentifierTypeDefinition) leafType);
         } else if (leafType instanceof IntegerTypeDefinition) {
-            return baseTypeIfNotConstrained((IntegerTypeDefinition) leafType);
+            return baseTypeIfNotConstrained((IntegerTypeDefinition<?, ?>) leafType);
         } else if (leafType instanceof StringTypeDefinition) {
             return baseTypeIfNotConstrained((StringTypeDefinition) leafType);
         } else if (leafType instanceof UnsignedIntegerTypeDefinition) {
-            return baseTypeIfNotConstrained((UnsignedIntegerTypeDefinition) leafType);
+            return baseTypeIfNotConstrained((UnsignedIntegerTypeDefinition<?, ?>) leafType);
         } else {
             // Other types cannot be constrained, return the base type
             return baseType;
@@ -164,7 +164,7 @@ public final class CompatUtils {
         return type.requireInstance() == base.requireInstance() ? base : type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final IntegerTypeDefinition type) {
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final IntegerTypeDefinition<?, ?> type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
@@ -181,7 +181,7 @@ public final class CompatUtils {
         return type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final UnsignedIntegerTypeDefinition type) {
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final UnsignedIntegerTypeDefinition<?, ?> type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 

@@ -19,11 +19,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * YANG defines 'derived type' as a type created through a 'typedef' statement. These types are exposed in the
@@ -59,16 +65,28 @@ public final class DerivedTypes {
             return derivedIdentityrefBuilder((IdentityrefTypeDefinition) baseType, path);
         } else if (baseType instanceof InstanceIdentifierTypeDefinition) {
             return derivedInstanceIdentifierBuilder((InstanceIdentifierTypeDefinition) baseType, path);
-        } else if (baseType instanceof IntegerTypeDefinition) {
-            return derivedIntegerBuilder((IntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Int8TypeDefinition) {
+            return derivedInt8Builder((Int8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int16TypeDefinition) {
+            return derivedInt16Builder((Int16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int32TypeDefinition) {
+            return derivedInt32Builder((Int32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Int64TypeDefinition) {
+            return derivedInt64Builder((Int64TypeDefinition) baseType, path);
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return derivedLeafrefBuilder((LeafrefTypeDefinition) baseType, path);
         } else if (baseType instanceof StringTypeDefinition) {
             return derivedStringBuilder((StringTypeDefinition) baseType, path);
         } else if (baseType instanceof UnionTypeDefinition) {
             return derivedUnionBuilder((UnionTypeDefinition) baseType, path);
-        } else if (baseType instanceof UnsignedIntegerTypeDefinition) {
-            return derivedUnsignedBuilder((UnsignedIntegerTypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint8TypeDefinition) {
+            return derivedUint8Builder((Uint8TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint16TypeDefinition) {
+            return derivedUint16Builder((Uint16TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint32TypeDefinition) {
+            return derivedUint32Builder((Uint32TypeDefinition) baseType, path);
+        } else if (baseType instanceof Uint64TypeDefinition) {
+            return derivedUint64Builder((Uint64TypeDefinition) baseType, path);
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
@@ -258,12 +276,45 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<IntegerTypeDefinition> derivedIntegerBuilder(final IntegerTypeDefinition baseType,
+    private static DerivedTypeBuilder<Int8TypeDefinition> derivedInt8Builder(final Int8TypeDefinition baseType,
             final SchemaPath path) {
-        return new DerivedTypeBuilder<IntegerTypeDefinition>(baseType, path) {
+        return new DerivedTypeBuilder<Int8TypeDefinition>(baseType, path) {
             @Override
-            public IntegerTypeDefinition build() {
-                return new DerivedIntegerType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Int8TypeDefinition build() {
+                return new DerivedInt8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(final Int16TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int16TypeDefinition>(baseType, path) {
+            @Override
+            public Int16TypeDefinition build() {
+                return new DerivedInt16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(final Int32TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int32TypeDefinition>(baseType, path) {
+            @Override
+            public Int32TypeDefinition build() {
+                return new DerivedInt32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Int64TypeDefinition> derivedInt64Builder(final Int64TypeDefinition baseType,
+            final SchemaPath path) {
+        return new DerivedTypeBuilder<Int64TypeDefinition>(baseType, path) {
+            @Override
+            public Int64TypeDefinition build() {
+                return new DerivedInt64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };
@@ -302,12 +353,45 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<UnsignedIntegerTypeDefinition> derivedUnsignedBuilder(
-            final UnsignedIntegerTypeDefinition baseType, final SchemaPath path) {
-        return new DerivedTypeBuilder<UnsignedIntegerTypeDefinition>(baseType, path) {
+    private static DerivedTypeBuilder<Uint8TypeDefinition> derivedUint8Builder(
+            final Uint8TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint8TypeDefinition>(baseType, path) {
             @Override
-            public UnsignedIntegerTypeDefinition build() {
-                return new DerivedUnsignedType(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+            public Uint8TypeDefinition build() {
+                return new DerivedUint8Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint16TypeDefinition> derivedUint16Builder(
+            final Uint16TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint16TypeDefinition>(baseType, path) {
+            @Override
+            public Uint16TypeDefinition build() {
+                return new DerivedUint16Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
+            final Uint32TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint32TypeDefinition>(baseType, path) {
+            @Override
+            public Uint32TypeDefinition build() {
+                return new DerivedUint32Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
+                        getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
+            }
+        };
+    }
+
+    private static DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
+            final Uint64TypeDefinition baseType, final SchemaPath path) {
+        return new DerivedTypeBuilder<Uint64TypeDefinition>(baseType, path) {
+            @Override
+            public Uint64TypeDefinition build() {
+                return new DerivedUint64Type(getBaseType(), getPath(), getDefaultValue(), getDescription(),
                         getReference(), getStatus(), getUnits(), getUnknownSchemaNodes());
             }
         };

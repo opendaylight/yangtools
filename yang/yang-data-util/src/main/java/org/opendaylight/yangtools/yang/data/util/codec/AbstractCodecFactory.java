@@ -112,13 +112,13 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
-    protected abstract T intCodec(IntegerTypeDefinition type);
+    protected abstract T intCodec(IntegerTypeDefinition<?, ?> type);
 
     protected abstract T decimalCodec(DecimalTypeDefinition type);
 
     protected abstract T stringCodec(StringTypeDefinition type);
 
-    protected abstract T uintCodec(UnsignedIntegerTypeDefinition type);
+    protected abstract T uintCodec(UnsignedIntegerTypeDefinition<?, ?> type);
 
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
 
