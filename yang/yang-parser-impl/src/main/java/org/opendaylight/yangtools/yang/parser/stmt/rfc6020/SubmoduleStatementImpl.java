@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.findFirstDeclaredSubstatement;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
-import java.util.Optional;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ModuleIdentifier;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
@@ -22,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.util.ModuleIdentifierImpl;
 import org.opendaylight.yangtools.yang.parser.spi.SubmoduleNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -122,12 +118,6 @@ public class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleState
             final String prefix = (String) prefixSubStmtCtx.getStatementArgument();
 
             stmt.addToNs(BelongsToPrefixToModuleName.class, prefix, belongsToModuleName);
-        }
-
-        private static ModuleIdentifier getSubmoduleIdentifier(
-                final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
-            final Optional<Revision> maybeDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
-            return ModuleIdentifierImpl.create(stmt.getStatementArgument(), maybeDate);
         }
 
         @Override
