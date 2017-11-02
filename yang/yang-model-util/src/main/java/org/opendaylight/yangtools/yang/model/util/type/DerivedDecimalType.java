@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -22,9 +21,8 @@ final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<Decima
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);
     }
 
-    @Nonnull
     @Override
-    public Integer getFractionDigits() {
+    public int getFractionDigits() {
         return baseType().getFractionDigits();
     }
 

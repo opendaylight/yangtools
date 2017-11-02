@@ -15,7 +15,6 @@ import com.google.common.collect.Range;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -76,17 +75,16 @@ final class BaseDecimalType extends AbstractRangeRestrictedBaseType<DecimalTypeD
         return verifyNotNull(IMPLICIT_RANGE_STATEMENTS.get(fractionDigits - 1));
     }
 
-    private final Integer fractionDigits;
+    private final int fractionDigits;
 
     BaseDecimalType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-            final Integer fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
+            final int fractionDigits, final RangeConstraint<BigDecimal> rangeConstraint) {
         super(path, unknownSchemaNodes, rangeConstraint);
         this.fractionDigits = fractionDigits;
     }
 
-    @Nonnull
     @Override
-    public Integer getFractionDigits() {
+    public int getFractionDigits() {
         return fractionDigits;
     }
 

@@ -155,7 +155,7 @@ final class TypeDefinitions {
         }
 
         final DecimalTypeDefinition other = castIfEquals(DecimalTypeDefinition.class, type, obj);
-        return other != null && type.getFractionDigits().equals(other.getFractionDigits())
+        return other != null && type.getFractionDigits() == other.getFractionDigits()
                 && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 

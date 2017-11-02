@@ -180,7 +180,7 @@ public class EffectiveStatementTypeTest {
         assertEquals(3, decimal64Eff.getRangeConstraint().get().getAllowedRanges().asRanges().size());
         assertNotNull(decimal64Eff.toString());
         assertNotNull(decimal64Eff.hashCode());
-        assertTrue(decimal64Eff.getFractionDigits().equals(2));
+        assertEquals(2, decimal64Eff.getFractionDigits());
         assertFalse(decimal64Eff.equals(null));
         assertFalse(decimal64Eff.equals("test"));
         assertTrue(decimal64Eff.equals(decimal64Eff));
