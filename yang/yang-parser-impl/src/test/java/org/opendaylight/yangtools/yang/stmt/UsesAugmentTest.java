@@ -34,8 +34,8 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -339,7 +339,7 @@ public class UsesAugmentTest {
         path.offer(expectedQName);
         expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, version.getPath());
-        assertTrue(version.getType() instanceof UnsignedIntegerTypeDefinition);
+        assertTrue(version.getType() instanceof Uint8TypeDefinition);
         assertEquals(BaseTypes.uint8Type(), version.getType().getBaseType().getBaseType());
         assertTrue(version.isAddedByUses());
         assertTrue(version.isAugmenting());

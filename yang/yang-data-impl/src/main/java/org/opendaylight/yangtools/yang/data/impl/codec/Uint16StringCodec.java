@@ -11,11 +11,11 @@ package org.opendaylight.yangtools.yang.data.impl.codec;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint16Codec;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 
-final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, UnsignedIntegerTypeDefinition> implements
+final class Uint16StringCodec extends AbstractIntegerStringCodec<Integer, Uint16TypeDefinition> implements
         Uint16Codec<String> {
-    Uint16StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
+    Uint16StringCodec(final Optional<Uint16TypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orElse(null)), Integer.class);
     }
 

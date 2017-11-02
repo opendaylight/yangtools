@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Pantheon Technologies s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2017 Pantheon Technologies s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -11,13 +11,12 @@ import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
-final class RestrictedUnsignedType extends AbstractRangeRestrictedType<UnsignedIntegerTypeDefinition>
-        implements UnsignedIntegerTypeDefinition {
-
-    RestrictedUnsignedType(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path,
+final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDefinition>
+        implements Int64TypeDefinition {
+    RestrictedInt64Type(final Int64TypeDefinition baseType, final SchemaPath path,
         final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
