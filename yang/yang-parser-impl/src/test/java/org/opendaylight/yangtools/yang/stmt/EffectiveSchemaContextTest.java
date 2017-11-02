@@ -35,6 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -103,7 +104,7 @@ public class EffectiveSchemaContextTest {
         assertEquals(3,((EffectiveSchemaContext) schemaContext).getRootEffectiveStatements().size());
 
         final Set<Module> modules = schemaContext.getModules();
-        final SchemaContext copiedSchemaContext = EffectiveSchemaContext.resolveSchemaContext(modules);
+        final SchemaContext copiedSchemaContext =  SimpleSchemaContext.forModules(modules);
         assertNotNull(copiedSchemaContext);
         assertEquals(modules, copiedSchemaContext.getModules());
     }
