@@ -14,7 +14,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
@@ -43,16 +42,6 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext {
         }
 
         return new EffectiveSchemaContext(modules, rootDeclaredStatements, rootEffectiveStatements);
-    }
-
-    /**
-     * Resolve SchemaContext for a set of modules.
-     *
-     * @deprecated Use {@link SimpleSchemaContext#forModules(Set)} instead.
-     */
-    @Deprecated
-    public static SchemaContext resolveSchemaContext(final Set<Module> modules) {
-        return SimpleSchemaContext.forModules(modules);
     }
 
     @VisibleForTesting
