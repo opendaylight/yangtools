@@ -85,19 +85,19 @@ public class YangParserWithContextTest {
                 "id"));
 
         assertTrue(leaf.getType() instanceof UnsignedIntegerTypeDefinition);
-        final UnsignedIntegerTypeDefinition leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
+        final UnsignedIntegerTypeDefinition<?, ?> leafType = (UnsignedIntegerTypeDefinition) leaf.getType();
         QName qname = leafType.getQName();
         assertEquals(URI.create("urn:simple.demo.test1"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2013-06-18"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final UnsignedIntegerTypeDefinition leafBaseType = leafType.getBaseType();
+        final UnsignedIntegerTypeDefinition<?, ?> leafBaseType = leafType.getBaseType();
         qname = leafBaseType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-inet-types"), qname.getNamespace());
         assertEquals(Revision.ofNullable("2010-09-24"), qname.getRevision());
         assertEquals("port-number", qname.getLocalName());
 
-        final UnsignedIntegerTypeDefinition dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
+        final UnsignedIntegerTypeDefinition<?, ?> dscpExt = (UnsignedIntegerTypeDefinition) TestUtils.findTypedef(
                 module.getTypeDefinitions(), "dscp-ext");
         final Set<? extends Range<?>> ranges = dscpExt.getRangeConstraint().get().getAllowedRanges().asRanges();
         assertEquals(1, ranges.size());

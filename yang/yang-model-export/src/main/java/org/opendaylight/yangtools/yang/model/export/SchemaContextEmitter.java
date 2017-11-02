@@ -1478,11 +1478,11 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitIntegerSpefication(final IntegerTypeDefinition typeDef) {
+        private void emitIntegerSpefication(final IntegerTypeDefinition<?, ?> typeDef) {
             typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
-        private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition typeDef) {
+        private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition<?, ?> typeDef) {
             typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
