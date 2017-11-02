@@ -68,7 +68,7 @@ module foo {
 
     leaf decimal-leaf {
         type br:my-decimal-type {
-            fraction-digits 4;
+            fraction-digits 6;
         }
     }
 
