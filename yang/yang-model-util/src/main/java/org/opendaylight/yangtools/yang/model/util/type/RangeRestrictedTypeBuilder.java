@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
-public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T>>
-        extends AbstractRestrictedTypeBuilder<T> {
+public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T, N>,
+        N extends Number & Comparable<N>> extends AbstractRestrictedTypeBuilder<T> {
     private ConstraintMetaDefinition constraint;
     private List<ValueRange> ranges;
 
@@ -91,7 +91,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
             }
 
             @Override
-            public RangeSet<? extends C> getAllowedRanges() {
+            public RangeSet<C> getAllowedRanges() {
                 return typedRanges;
             }
         };

@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
@@ -195,13 +194,13 @@ public final class CompatUtils {
         return type;
     }
 
-    private static <T extends RangeRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type) {
+    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final T type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static <T extends RangeRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,
+    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final T type,
             final T base) {
-        final Optional<RangeConstraint<?>> optConstraint = type.getRangeConstraint();
+        final Optional<?> optConstraint = type.getRangeConstraint();
         if (!optConstraint.isPresent()) {
             return base;
         }

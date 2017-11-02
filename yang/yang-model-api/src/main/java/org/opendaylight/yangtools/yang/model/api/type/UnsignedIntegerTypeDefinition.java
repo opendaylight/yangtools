@@ -17,6 +17,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  * @param <T> concrete type definition
  */
 public interface UnsignedIntegerTypeDefinition<N extends Number & Comparable<N>,
-        T extends UnsignedIntegerTypeDefinition<N, T>> extends RangeRestrictedTypeDefinition<T> {
+        T extends UnsignedIntegerTypeDefinition<N, T>> extends RangeRestrictedTypeDefinition<T, N> {
 
 }
