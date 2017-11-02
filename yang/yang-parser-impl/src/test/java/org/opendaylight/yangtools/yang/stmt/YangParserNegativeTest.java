@@ -112,7 +112,7 @@ public class YangParserNegativeTest {
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
             assertTrue(e.getCause().getMessage()
-                .startsWith("Range constraints [[5..20]] is not a subset of parent constraint [[5..11], [15..20]]"));
+                .startsWith("Range constraint [[5..20]] is not a subset of parent constraint [[5..11], [15..20]]"));
         }
     }
 
