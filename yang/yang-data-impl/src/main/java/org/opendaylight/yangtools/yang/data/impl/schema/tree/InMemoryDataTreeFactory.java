@@ -17,12 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration.Builder;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -44,32 +42,6 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
     private InMemoryDataTreeFactory() {
         // Never instantiated externally
-    }
-
-    @Deprecated
-    @Override
-    public TipProducingDataTree create(final TreeType treeType) {
-        return create(DataTreeConfiguration.getDefault(treeType));
-    }
-
-    @Deprecated
-    @Override
-    public TipProducingDataTree create(final TreeType treeType, final YangInstanceIdentifier rootPath) {
-        if (rootPath.isEmpty()) {
-            return create(treeType);
-        }
-
-        final DataTreeConfiguration defConfig = DataTreeConfiguration.getDefault(treeType);
-        final DataTreeConfiguration config;
-        if (!rootPath.isEmpty()) {
-            config = new Builder(treeType).setMandatoryNodesValidation(defConfig.isMandatoryNodesValidationEnabled())
-                    .setRootPath(rootPath).setUniqueIndexes(defConfig.isUniqueIndexEnabled()).build();
-        } else {
-            config = defConfig;
-        }
-
-        return new InMemoryDataTree(TreeNodeFactory.createTreeNode(createRoot(rootPath), Version.initial()), config,
-            null);
     }
 
     @Override
