@@ -20,5 +20,5 @@ public interface RangeConstraint<T extends Number & Comparable<T>> extends Const
      *
      * @return Set of allowed lengths.
      */
-    RangeSet<? extends T> getAllowedRanges();
+    RangeSet<T> getAllowedRanges();
 }

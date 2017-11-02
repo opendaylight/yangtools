@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 
-final class DerivedInt8Type extends AbstractRangeRestrictedDerivedType<Int8TypeDefinition>
+final class DerivedInt8Type extends AbstractRangeRestrictedDerivedType<Int8TypeDefinition, Byte>
         implements Int8TypeDefinition {
     DerivedInt8Type(final Int8TypeDefinition baseType, final SchemaPath path, final Object defaultValue,
             final String description, final String reference, final Status status, final String units,
