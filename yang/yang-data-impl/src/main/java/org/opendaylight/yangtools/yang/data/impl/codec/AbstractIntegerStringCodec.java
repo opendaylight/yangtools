@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
@@ -50,10 +51,10 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
 
     private final RangeSet<N> rangeConstraints;
 
-    AbstractIntegerStringCodec(final Optional<T> typeDefinition, final Optional<RangeConstraint<?>> constraint,
+    AbstractIntegerStringCodec(final Optional<T> typeDefinition, final Optional<RangeConstraint<N>> constraint,
         final Class<N> outputClass) {
         super(typeDefinition, outputClass);
-        rangeConstraints = (RangeSet<N>) constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
+        rangeConstraints = constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
     }
 
     public static AbstractIntegerStringCodec<?, ? extends IntegerTypeDefinition<?, ?>> from(
@@ -116,11 +117,8 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         }
     }
 
-    protected static Optional<RangeConstraint<?>> extractRange(final IntegerTypeDefinition<?, ?> type) {
-        return type == null ? Optional.empty() : type.getRangeConstraint();
-    }
-
-    protected static Optional<RangeConstraint<?>> extractRange(final UnsignedIntegerTypeDefinition<?, ?> type) {
+    protected static <N extends Number & Comparable<N>> Optional<RangeConstraint<N>> extractRange(
+            final RangeRestrictedTypeDefinition<?, N> type) {
         return type == null ? Optional.empty() : type.getRangeConstraint();
     }
 
