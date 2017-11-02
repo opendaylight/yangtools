@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint32Type extends AbstractUnsignedBaseType<Long> {
+final class BaseUint32Type extends AbstractUnsignedBaseType<Long, Uint32TypeDefinition>
+        implements Uint32TypeDefinition {
     static final BaseUint32Type INSTANCE = new BaseUint32Type();
 
     private BaseUint32Type() {

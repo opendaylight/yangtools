@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 public class Bug6771Test {
@@ -68,6 +68,6 @@ public class Bug6771Test {
 
     private static void verifyLeafType(final SchemaNode schemaNode) {
         assertTrue(schemaNode instanceof LeafSchemaNode);
-        assertTrue(((LeafSchemaNode) schemaNode).getType() instanceof UnsignedIntegerTypeDefinition);
+        assertTrue(((LeafSchemaNode) schemaNode).getType() instanceof Uint32TypeDefinition);
     }
 }
