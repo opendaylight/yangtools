@@ -64,11 +64,10 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EmptyT
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityrefTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.InstanceIdentifierTypeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IntegerTypeEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IntegralTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.StringTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionTypeEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnsignedIntegerTypeEffectiveStatementImpl;
 
 public class TypeStatementImpl extends AbstractDeclaredStatement<String>
         implements TypeStatement {
@@ -199,25 +198,25 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                 return new InstanceIdentifierTypeEffectiveStatementImpl(ctx,
                     (InstanceIdentifierTypeDefinition) baseType);
             } else if (baseType instanceof Int8TypeDefinition) {
-                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int8TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Int8TypeDefinition) baseType);
             } else if (baseType instanceof Int16TypeDefinition) {
-                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int16TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Int16TypeDefinition) baseType);
             } else if (baseType instanceof Int32TypeDefinition) {
-                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int32TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Int32TypeDefinition) baseType);
             } else if (baseType instanceof Int64TypeDefinition) {
-                return IntegerTypeEffectiveStatementImpl.create(ctx, (Int64TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Int64TypeDefinition) baseType);
             } else if (baseType instanceof LeafrefTypeDefinition) {
                 return new LeafrefTypeEffectiveStatementImpl(ctx, (LeafrefTypeDefinition) baseType);
             } else if (baseType instanceof StringTypeDefinition) {
                 return new StringTypeEffectiveStatementImpl(ctx, (StringTypeDefinition) baseType);
             } else if (baseType instanceof Uint8TypeDefinition) {
-                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint8TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Uint8TypeDefinition) baseType);
             } else if (baseType instanceof Uint16TypeDefinition) {
-                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint16TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Uint16TypeDefinition) baseType);
             } else if (baseType instanceof Uint32TypeDefinition) {
-                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint32TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Uint32TypeDefinition) baseType);
             } else if (baseType instanceof Uint64TypeDefinition) {
-                return UnsignedIntegerTypeEffectiveStatementImpl.create(ctx, (Uint64TypeDefinition) baseType);
+                return IntegralTypeEffectiveStatementImpl.create(ctx, (Uint64TypeDefinition) baseType);
             } else if (baseType instanceof UnionTypeDefinition) {
                 return new UnionTypeEffectiveStatementImpl(ctx, (UnionTypeDefinition) baseType);
             } else {
