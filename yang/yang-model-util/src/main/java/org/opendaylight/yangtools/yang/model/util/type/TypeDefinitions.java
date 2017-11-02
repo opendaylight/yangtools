@@ -101,7 +101,7 @@ final class TypeDefinitions {
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
     }
 
-    static int hashCode(final IntegerTypeDefinition type) {
+    static int hashCode(final IntegerTypeDefinition<?, ?> type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
     }
@@ -122,7 +122,7 @@ final class TypeDefinitions {
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getTypes());
     }
 
-    static int hashCode(final UnsignedIntegerTypeDefinition type) {
+    static int hashCode(final UnsignedIntegerTypeDefinition<?, ?> type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
             type.getDefaultValue(), type.getRangeConstraint());
     }
@@ -269,7 +269,7 @@ final class TypeDefinitions {
         return toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
     }
 
-    static String toString(final IntegerTypeDefinition type) {
+    static String toString(final IntegerTypeDefinition<?, ?> type) {
         return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 
@@ -286,7 +286,7 @@ final class TypeDefinitions {
         return toStringHelper(type).add("types", type.getTypes()).toString();
     }
 
-    static String toString(final UnsignedIntegerTypeDefinition type) {
+    static String toString(final UnsignedIntegerTypeDefinition<?, ?> type) {
         return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 }

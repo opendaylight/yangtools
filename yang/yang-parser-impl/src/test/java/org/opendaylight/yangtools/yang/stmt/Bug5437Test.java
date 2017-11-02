@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
@@ -54,6 +54,6 @@ public class Bug5437Test {
                 (LeafrefTypeDefinition) leafRefNode2.getType(), context, leafRefNode2);
 
         assertTrue(baseTypeForLeafRef instanceof BinaryTypeDefinition);
-        assertTrue(baseTypeForLeafRef2 instanceof IntegerTypeDefinition);
+        assertTrue(baseTypeForLeafRef2 instanceof Int16TypeDefinition);
     }
 }

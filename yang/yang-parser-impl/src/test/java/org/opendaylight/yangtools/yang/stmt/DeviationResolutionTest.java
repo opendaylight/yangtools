@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -124,7 +124,7 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf"));
         assertNotNull(myLeaf);
 
-        assertTrue(myLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
+        assertTrue(myLeaf.getType() instanceof Uint32TypeDefinition);
         assertEquals(Optional.of("bytes"), myLeaf.getType().getUnits());
         assertEquals(Optional.of("10"), myLeaf.getType().getDefaultValue());
 
@@ -151,7 +151,7 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myAugLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-aug-leaf"));
         assertNotNull(myAugLeaf);
-        assertTrue(myAugLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
+        assertTrue(myAugLeaf.getType() instanceof Uint32TypeDefinition);
         assertEquals(Optional.of("seconds"), myAugLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myAugLeaf.getType().getDefaultValue());
         assertEquals(1, myAugLeaf.getUnknownSchemaNodes().size());
@@ -160,7 +160,7 @@ public class DeviationResolutionTest {
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-used-leaf"));
         assertNotNull(myUsedLeaf);
-        assertTrue(myUsedLeaf.getType() instanceof UnsignedIntegerTypeDefinition);
+        assertTrue(myUsedLeaf.getType() instanceof Uint32TypeDefinition);
         assertEquals(Optional.of("weeks"), myUsedLeaf.getType().getUnits());
         assertEquals(Optional.of("new-def-val"), myUsedLeaf.getType().getDefaultValue());
         assertEquals(1, myUsedLeaf.getUnknownSchemaNodes().size());

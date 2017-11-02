@@ -12,12 +12,12 @@ import java.math.BigInteger;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.Uint64Codec;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 
-final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, UnsignedIntegerTypeDefinition> implements
+final class Uint64StringCodec extends AbstractIntegerStringCodec<BigInteger, Uint64TypeDefinition> implements
         Uint64Codec<String> {
 
-    Uint64StringCodec(final Optional<UnsignedIntegerTypeDefinition> typeDef) {
+    Uint64StringCodec(final Optional<Uint64TypeDefinition> typeDef) {
         super(typeDef, extractRange(typeDef.orElse(null)), BigInteger.class);
     }
 

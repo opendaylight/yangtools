@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
@@ -70,7 +70,7 @@ public class DeviationStmtTest {
                         assertEquals(12, deviate.getDeviatedMaxElements().intValue());
                     } else if (DeviateKind.REPLACE.equals(deviate.getDeviateType())) {
                         assertEquals(5, deviate.getDeviatedMinElements().intValue());
-                        assertTrue(deviate.getDeviatedType() instanceof UnsignedIntegerTypeDefinition);
+                        assertTrue(deviate.getDeviatedType() instanceof Uint32TypeDefinition);
                     } else {
                         assertEquals(2, deviate.getDeviatedMusts().size());
                         assertEquals("minutes", deviate.getDeviatedUnits());
