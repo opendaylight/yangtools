@@ -171,7 +171,7 @@ public class YangParserTest {
         final LeafSchemaNode int32Leaf = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
             "int32-leaf"));
 
-        final IntegerTypeDefinition leafType = (IntegerTypeDefinition) int32Leaf.getType();
+        final IntegerTypeDefinition<?, ?> leafType = (IntegerTypeDefinition<?, ?>) int32Leaf.getType();
         assertEquals(QName.create(FOO, "int32-ext2"), leafType.getQName());
         assertEquals(Optional.of("mile"), leafType.getUnits());
         assertEquals(Optional.of("11"), leafType.getDefaultValue());
@@ -184,7 +184,7 @@ public class YangParserTest {
         assertEquals(12, range.lowerEndpoint().intValue());
         assertEquals(20, range.upperEndpoint().intValue());
 
-        final IntegerTypeDefinition firstBaseType = leafType.getBaseType();
+        final IntegerTypeDefinition<?, ?> firstBaseType = leafType.getBaseType();
         assertEquals(QName.create(BAR, "int32-ext2"), firstBaseType.getQName());
         assertEquals(Optional.of("mile"), firstBaseType.getUnits());
         assertEquals(Optional.of("11"), firstBaseType.getDefaultValue());
@@ -201,7 +201,7 @@ public class YangParserTest {
         assertEquals(11, baseTypeRange2.lowerEndpoint().intValue());
         assertEquals(20, baseTypeRange2.upperEndpoint().intValue());
 
-        final IntegerTypeDefinition secondBaseType = firstBaseType.getBaseType();
+        final IntegerTypeDefinition<?, ?> secondBaseType = firstBaseType.getBaseType();
         final QName baseQName = secondBaseType.getQName();
         assertEquals("int32-ext1", baseQName.getLocalName());
         assertEquals(BAR, baseQName.getModule());
@@ -439,7 +439,7 @@ public class YangParserTest {
         final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
         assertEquals(2, unionTypes.size());
 
-        final IntegerTypeDefinition unionType1 = (IntegerTypeDefinition) unionTypes.get(0);
+        final IntegerTypeDefinition<?, ?> unionType1 = (IntegerTypeDefinition<?, ?>) unionTypes.get(0);
         assertEquals(QName.create(BAR, "my-union"), baseType.getQName());
         assertEquals(Optional.empty(), unionType1.getUnits());
         assertEquals(Optional.empty(), unionType1.getDefaultValue());
@@ -504,7 +504,7 @@ public class YangParserTest {
         assertTrue(myUnionBaseTypes.get(0) instanceof IntegerTypeDefinition);
         assertEquals(BaseTypes.int32Type(), myUnionBaseTypes.get(1));
 
-        final IntegerTypeDefinition int16Ext = (IntegerTypeDefinition) myUnionBaseTypes.get(0);
+        final IntegerTypeDefinition<?, ?> int16Ext = (IntegerTypeDefinition<?, ?>) myUnionBaseTypes.get(0);
         assertEquals(QName.create(BAR, "int16"), int16Ext.getQName());
         assertEquals(Optional.empty(), int16Ext.getUnits());
         assertEquals(Optional.empty(), int16Ext.getDefaultValue());
@@ -628,7 +628,8 @@ public class YangParserTest {
         final Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
 
         // int32-ext1
-        final IntegerTypeDefinition int32ext1 = (IntegerTypeDefinition) TestUtils.findTypedef(types, "int32-ext1");
+        final IntegerTypeDefinition<?, ?> int32ext1 = (IntegerTypeDefinition<?, ?>) TestUtils.findTypedef(types,
+            "int32-ext1");
         final QName int32TypedefQName = QName.create(BAR, "int32-ext1");
         assertEquals(int32TypedefQName, int32ext1.getQName());
 
@@ -639,7 +640,7 @@ public class YangParserTest {
         assertFalse(typePathIt.hasNext());
 
         // int32-ext1/int32
-        final IntegerTypeDefinition int32 = int32ext1.getBaseType();
+        final IntegerTypeDefinition<?, ?> int32 = int32ext1.getBaseType();
         assertEquals(BaseTypes.int32Type(), int32);
     }
 

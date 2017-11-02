@@ -12,6 +12,10 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
@@ -20,18 +24,15 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-public final class UnsignedIntegerTypeEffectiveStatementImpl extends
+public final class UnsignedIntegerTypeEffectiveStatementImpl<T extends UnsignedIntegerTypeDefinition<?, T>> extends
         DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
 
-    private final UnsignedIntegerTypeDefinition typeDefinition;
+    private final T typeDefinition;
 
-    public UnsignedIntegerTypeEffectiveStatementImpl(
+    private UnsignedIntegerTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final UnsignedIntegerTypeDefinition baseType) {
+            final RangeRestrictedTypeBuilder<T> builder) {
         super(ctx);
-
-        final RangeRestrictedTypeBuilder<UnsignedIntegerTypeDefinition> builder =
-                RestrictedTypes.newUnsignedBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {
@@ -44,6 +45,34 @@ public final class UnsignedIntegerTypeEffectiveStatementImpl extends
         }
 
         typeDefinition = builder.build();
+    }
+
+    public static UnsignedIntegerTypeEffectiveStatementImpl<Uint8TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Uint8TypeDefinition baseType) {
+        return new UnsignedIntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newUint8Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static UnsignedIntegerTypeEffectiveStatementImpl<Uint16TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Uint16TypeDefinition baseType) {
+        return new UnsignedIntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newUint16Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static UnsignedIntegerTypeEffectiveStatementImpl<Uint32TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Uint32TypeDefinition baseType) {
+        return new UnsignedIntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newUint32Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
+    }
+
+    public static UnsignedIntegerTypeEffectiveStatementImpl<Uint64TypeDefinition> create(
+            final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
+            final Uint64TypeDefinition baseType) {
+        return new UnsignedIntegerTypeEffectiveStatementImpl<>(ctx, RestrictedTypes.newUint64Builder(baseType,
+            TypeUtils.typeEffectiveSchemaPath(ctx)));
     }
 
     @Nonnull
