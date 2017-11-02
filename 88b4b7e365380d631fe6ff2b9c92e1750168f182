@@ -22,6 +22,30 @@
       "revId": "88b4b7e365380d631fe6ff2b9c92e1750168f182",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_66ed7def",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/ConcreteTypeBuilder.java",
+        "patchSetId": 16
+      },
+      "lineNbr": 31,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-02T08:27:56Z",
+      "side": 1,
+      "message": "Nice catch, thanks.",
+      "parentUuid": "9a245df4_37f45286",
+      "range": {
+        "startLine": 31,
+        "startChar": 42,
+        "endLine": 31,
+        "endChar": 62
+      },
+      "revId": "88b4b7e365380d631fe6ff2b9c92e1750168f182",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
