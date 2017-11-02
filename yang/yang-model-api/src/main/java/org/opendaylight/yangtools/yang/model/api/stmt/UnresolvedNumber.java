@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Range;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 @Beta
@@ -95,9 +96,9 @@ public abstract class UnresolvedNumber extends Number implements Immutable {
         return number;
     }
 
-    public abstract <T extends Number & Comparable<T>> T resolveLength(Range<? extends T> span);
+    public abstract <T extends Number & Comparable<T>> @NonNull T resolveLength(Range<? extends T> span);
 
-    public abstract <T extends Number & Comparable<T>> T resolveRange(Range<? extends T> span);
+    public abstract <T extends Number & Comparable<T>> @NonNull T resolveRange(Range<? extends T> span);
 
     @Override
     public abstract String toString();

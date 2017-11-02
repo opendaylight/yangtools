@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import java.math.BigInteger;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -14,11 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 
-final class RestrictedUint64Type extends AbstractRangeRestrictedType<Uint64TypeDefinition>
+final class RestrictedUint64Type extends AbstractRangeRestrictedType<Uint64TypeDefinition, BigInteger>
         implements Uint64TypeDefinition {
 
     RestrictedUint64Type(final Uint64TypeDefinition baseType, final SchemaPath path,
-        final Collection<UnknownSchemaNode> unknownSchemaNodes, final @Nullable RangeConstraint<?> rangeConstraint) {
+        final Collection<UnknownSchemaNode> unknownSchemaNodes,
+        final @Nullable RangeConstraint<BigInteger> rangeConstraint) {
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
