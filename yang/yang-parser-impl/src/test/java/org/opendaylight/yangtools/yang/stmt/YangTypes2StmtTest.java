@@ -60,7 +60,7 @@ public class YangTypes2StmtTest {
 
         assertTrue(lfDecimalNode.getType() instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition lfDecimalNodeType = (DecimalTypeDefinition) lfDecimalNode.getType();
-        assertEquals(2, lfDecimalNodeType.getFractionDigits().intValue());
+        assertEquals(2, lfDecimalNodeType.getFractionDigits());
 
         final LeafSchemaNode lfInt8Node = (LeafSchemaNode) result.getDataChildByName(LF_INT8);
         assertNotNull(lfInt8Node);

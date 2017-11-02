@@ -389,14 +389,14 @@ public class YangParserTest {
         assertEquals(QName.create(BAR, "my-decimal-type"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
-        assertEquals(6, type.getFractionDigits().intValue());
+        assertEquals(6, type.getFractionDigits());
         assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition typeBase = type.getBaseType();
         assertEquals(QName.create(BAR, "decimal64"), typeBase.getQName());
         assertEquals(Optional.empty(), typeBase.getUnits());
         assertEquals(Optional.empty(), typeBase.getDefaultValue());
-        assertEquals(6, typeBase.getFractionDigits().intValue());
+        assertEquals(6, typeBase.getFractionDigits());
         assertEquals(1, typeBase.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         assertNull(typeBase.getBaseType());
@@ -412,11 +412,11 @@ public class YangParserTest {
         assertEquals(QName.create(BAR, "my-decimal-type"), type.getQName());
         assertEquals(Optional.empty(), type.getUnits());
         assertEquals(Optional.empty(), type.getDefaultValue());
-        assertEquals(6, type.getFractionDigits().intValue());
+        assertEquals(6, type.getFractionDigits());
         assertEquals(1, type.getRangeConstraint().get().getAllowedRanges().asRanges().size());
 
         final DecimalTypeDefinition baseTypeDecimal = type.getBaseType();
-        assertEquals(6, baseTypeDecimal.getFractionDigits().intValue());
+        assertEquals(6, baseTypeDecimal.getFractionDigits());
     }
 
     @Test

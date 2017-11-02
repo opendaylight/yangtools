@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -22,9 +21,8 @@ final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTyp
         super(baseType, path, unknownSchemaNodes, rangeConstraint);
     }
 
-    @Nonnull
     @Override
-    public Integer getFractionDigits() {
+    public int getFractionDigits() {
         return getBaseType().getFractionDigits();
     }
 
