@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 Pantheon Technologies s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2017 Pantheon Technologies s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -11,12 +11,12 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 
-final class DerivedUnsignedType extends AbstractRangeRestrictedDerivedType<UnsignedIntegerTypeDefinition>
-        implements UnsignedIntegerTypeDefinition {
+final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32TypeDefinition>
+        implements Uint32TypeDefinition {
 
-    DerivedUnsignedType(final UnsignedIntegerTypeDefinition baseType, final SchemaPath path,
+    DerivedUint32Type(final Uint32TypeDefinition baseType, final SchemaPath path,
             final Object defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
