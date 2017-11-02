@@ -170,14 +170,6 @@ public final class SchemaTracker {
         return (LeafListSchemaNode)schema;
     }
 
-    @Deprecated
-    public LeafListSchemaNode leafSetEntryNode() {
-        final Object parent = getParent();
-
-        checkArgument(parent instanceof LeafListSchemaNode, "Not currently in a leaf-list");
-        return (LeafListSchemaNode) parent;
-    }
-
     public LeafListSchemaNode leafSetEntryNode(final QName qname) {
         final Object parent = getParent();
         if (parent instanceof LeafListSchemaNode) {
