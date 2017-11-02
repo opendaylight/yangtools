@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
-import javax.annotation.Nonnull;
-
 /**
  * Contains methods for getting data from the YANG <code>type</code> substatement for <code>decimal64</code> built-in
  * type.
@@ -25,5 +23,5 @@ public interface DecimalTypeDefinition extends RangeRestrictedTypeDefinition<Dec
      *
      * @return number of fraction digits
      */
-    @Nonnull Integer getFractionDigits();
+    int getFractionDigits();
 }

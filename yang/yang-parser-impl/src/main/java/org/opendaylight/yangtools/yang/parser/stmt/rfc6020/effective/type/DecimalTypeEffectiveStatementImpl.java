@@ -44,7 +44,7 @@ public final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveSt
             }
             if (stmt instanceof FractionDigitsEffectiveStatementImpl) {
                 final Integer digits = ((FractionDigitsEffectiveStatementImpl)stmt).argument();
-                SourceException.throwIf(!baseType.getFractionDigits().equals(digits), ctx.getStatementSourceReference(),
+                SourceException.throwIf(baseType.getFractionDigits() != digits, ctx.getStatementSourceReference(),
                     "Cannot override fraction-digits from base type %s to %s", baseType, digits);
             }
         }
