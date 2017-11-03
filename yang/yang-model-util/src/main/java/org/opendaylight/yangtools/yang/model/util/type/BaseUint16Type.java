@@ -20,16 +20,16 @@ final class BaseUint16Type extends AbstractRangeRestrictedBaseType<Uint16TypeDef
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Uint16TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Uint16TypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return Uint16TypeDefinition.toString(this);
     }
 }

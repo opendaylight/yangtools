@@ -24,11 +24,11 @@ final class DerivedUint16Type extends AbstractRangeRestrictedDerivedType<Uint16T
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Uint16TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Uint16TypeDefinition.equals(this, obj);
     }
 }
