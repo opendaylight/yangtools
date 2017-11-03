@@ -63,29 +63,28 @@ public class ListTest {
         LeafSchemaNode leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
             "key1"));
         assertNotNull(leaf);
-        assertTrue(leaf.getConstraints().isMandatory());
+        assertTrue(leaf.isMandatory());
         assertEquals("int32", leaf.getType().getQName().getLocalName());
 
         leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "key2"));
         assertNotNull(leaf);
-        assertTrue(leaf.getConstraints().isMandatory());
+        assertTrue(leaf.isMandatory());
         assertEquals("int16", leaf.getType().getQName().getLocalName());
 
         leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "old-leaf"));
         assertNotNull(leaf);
-        assertFalse(leaf.getConstraints().isMandatory());
+        assertFalse(leaf.isMandatory());
         assertEquals("string", leaf.getType().getQName().getLocalName());
 
         leaf = (LeafSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "young-leaf"));
         assertNotNull(leaf);
-        assertFalse(leaf.getConstraints().isMandatory());
+        assertFalse(leaf.isMandatory());
         assertEquals("young-leaf", leaf.getType().getQName().getLocalName());
         assertEquals(Optional.of("default-value"), leaf.getType().getDefaultValue());
 
         final LeafListSchemaNode leafList = (LeafListSchemaNode) list.getDataChildByName(
             QName.create(testModule.getQNameModule(), "list-of-leaves"));
         assertNotNull(leafList);
-        assertTrue(leafList.getConstraints().isMandatory());
         assertTrue(leafList.isUserOrdered());
         assertEquals(2, leafList.getConstraints().getMinElements().intValue());
         assertEquals(20, leafList.getConstraints().getMaxElements().intValue());

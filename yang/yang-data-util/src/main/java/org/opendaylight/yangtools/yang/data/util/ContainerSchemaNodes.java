@@ -86,7 +86,7 @@ public final class ContainerSchemaNodes {
 
         @Override
         public ConstraintDefinition getConstraints() {
-            return EmptyConstraintDefinition.create(false);
+            return EmptyConstraintDefinition.getInstance();
         }
 
         @Nonnull
