@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Int32TypeDefinition extends IntegerTypeDefinition<Integer, Int32TypeDefinition> {
+public interface Int32TypeDefinition extends RangeRestrictedTypeDefinition<Int32TypeDefinition, Integer> {
 
 }

@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Int16TypeDefinition extends IntegerTypeDefinition<Short, Int16TypeDefinition> {
+public interface Int16TypeDefinition extends RangeRestrictedTypeDefinition<Int16TypeDefinition, Short> {
 
 }

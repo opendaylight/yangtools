@@ -47,7 +47,7 @@ final class UnionStringCodec extends TypeDefinitionAwareCodec<Object, UnionTypeD
         }
 
         for (final TypeDefinition<?> type : getTypeDefinition().get().getTypes()) {
-            final TypeDefinitionAwareCodec<Object, ? extends TypeDefinition<?>> typeAwareCodec = from(type);
+            final TypeDefinitionAwareCodec<Object, ?> typeAwareCodec = from(type);
             if (typeAwareCodec == null) {
                 /*
                  * This is a type for which we have no codec (eg identity ref) so we'll say it's
