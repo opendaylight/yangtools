@@ -44,6 +44,6 @@ public class Bug9244Test {
         final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf"));
         assertNotNull(barLeaf);
-        assertTrue(barLeaf.getConstraints().isMandatory());
+        assertTrue(barLeaf.isMandatory());
     }
 }
