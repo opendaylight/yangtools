@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
@@ -35,6 +37,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private final SortedMap<QName, ChoiceCaseNode> cases;
     private final ChoiceCaseNode defaultCase;
     private final ChoiceSchemaNode original;
+    private final boolean mandatory;
 
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
@@ -85,6 +88,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         } else {
             defaultCase = null;
         }
+
+        mandatory = Boolean.TRUE.equals(StmtContextUtils.firstSubstatementAttributeOf(ctx, MandatoryStatement.class));
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
@@ -124,6 +129,11 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     @Override
     public Optional<ChoiceCaseNode> getDefaultCase() {
         return Optional.ofNullable(defaultCase);
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override

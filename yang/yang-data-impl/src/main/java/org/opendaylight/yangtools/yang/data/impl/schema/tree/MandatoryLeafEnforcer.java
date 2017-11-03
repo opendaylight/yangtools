@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,9 +71,10 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                         findMandatoryNodes(builder, id.node(NodeIdentifier.create(child.getQName())), container, type);
                     }
                 } else {
+                    final boolean mandatory = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
                     final ConstraintDefinition constraints = child.getConstraints();
                     final Integer minElements = constraints.getMinElements();
-                    if (constraints.isMandatory() || minElements != null && minElements.intValue() > 0) {
+                    if (mandatory || minElements != null && minElements.intValue() > 0) {
                         final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
                         LOG.debug("Adding mandatory child {}", childId);
                         builder.add(childId.toOptimized());

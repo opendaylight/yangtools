@@ -15,10 +15,12 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
@@ -28,6 +30,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final TypeDefinition<?> type;
     private final String defaultStr;
     private final String unitsStr;
+    private final boolean mandatory;
 
     public LeafEffectiveStatementImpl(
             final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
@@ -66,6 +69,12 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         defaultStr = dflt;
         unitsStr = units;
         type = builder.build();
+        mandatory = Boolean.TRUE.equals(StmtContextUtils.firstSubstatementAttributeOf(ctx, MandatoryStatement.class));
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override

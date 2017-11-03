@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * A ChoiceSchemaNode defines a set of alternatives. It consists of a number of branches defined as
  * ChoiceCaseSchemaNode objects.
  */
-public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget {
+public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, MandatoryAware {
     /**
      * Returns cases of choice, keyed by their {@link SchemaNode#getQName()}. Returned map does not contain null keys
      * nor values.
