@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
@@ -25,15 +24,11 @@ public interface LeafListSchemaNode extends TypedSchemaNode {
     boolean isUserOrdered();
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
-     * LeafListSchemaNode which does not support default statements.
-     * YANG leaf-list statement has been changed in YANG 1.1 (RFC7950) and now allows default statements.
+     * Return the default value of this leaf-list, as per the rules outlined in
+     * <a href="https://tools.ietf.org/html/rfc7950#section-7.7.4">Section 7.4.4 of RFC7950</a>. RFC6020 does not
+     * allow for default value of leaf-list, hence the returned list will be empty.
      *
-     * @return collection of Strings which specify the default values of this leaf-list
+     * @return Ordered list of Strings which specify the default values of this leaf-list
      */
-     // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<String> getDefaults() {
-        return ImmutableList.of();
-    }
+    @Nonnull Collection<? extends Object> getDefaults();
 }
