@@ -22,6 +22,20 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * a logger instance around.
  */
 public interface BasicCodeGenerator {
+    enum ImportResolutionMode {
+        /**
+         * Standard, RFC6020 and RFC7950 compliant mode. Imports are satisfied by exact revision match (if specified),
+         * or by latest available revision.
+         */
+        REVISION_EXACT_OR_LATEST,
+        /**
+         * Semantic version based mode. Imports which specify a semantic version (via the OpenConfig extension) will
+         * be satisfied by module which exports the latest compatible revision. Imports which do not specify semantic
+         * version will be resolved just as they would be via {@link #REVISION_EXACT_OR_LATEST}.
+         */
+        SEMVER_LATEST,
+    }
+
     /**
      * Generate sources from provided {@link SchemaContext}.
      *
@@ -50,4 +64,14 @@ public interface BasicCodeGenerator {
      * in resulting jar. Feel free to add necessary resources.
      */
     void setResourceBaseDir(File resourceBaseDir);
+
+    /**
+     * Indicate import resolution mode this code generator requires. Default implementation indicates
+     * {@link ImportResolutionMode#REVISION_EXACT_OR_LATEST}.
+     *
+     * @return Import resolution mode.
+     */
+    default ImportResolutionMode getImportResolutionMode() {
+        return ImportResolutionMode.REVISION_EXACT_OR_LATEST;
+    }
 }
