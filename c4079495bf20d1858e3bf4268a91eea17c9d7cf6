@@ -22,6 +22,30 @@
       "revId": "c4079495bf20d1858e3bf4268a91eea17c9d7cf6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_7d74df35",
+        "filename": "yang/yang-model-util/src/main/java/org/opendaylight/yangtools/yang/model/util/type/ResolvedRangeConstraint.java",
+        "patchSetId": 17
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-03T15:46:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_7a3225f3",
+      "range": {
+        "startLine": 1,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 3
+      },
+      "revId": "c4079495bf20d1858e3bf4268a91eea17c9d7cf6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
