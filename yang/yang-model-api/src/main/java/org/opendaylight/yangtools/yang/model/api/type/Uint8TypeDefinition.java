@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Uint8TypeDefinition extends UnsignedIntegerTypeDefinition<Short, Uint8TypeDefinition> {
+public interface Uint8TypeDefinition extends RangeRestrictedTypeDefinition<Uint8TypeDefinition, Short> {
 
 }

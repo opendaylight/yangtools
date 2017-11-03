@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Int8TypeDefinition extends IntegerTypeDefinition<Byte, Int8TypeDefinition> {
+public interface Int8TypeDefinition extends RangeRestrictedTypeDefinition<Int8TypeDefinition, Byte> {
 
 }
