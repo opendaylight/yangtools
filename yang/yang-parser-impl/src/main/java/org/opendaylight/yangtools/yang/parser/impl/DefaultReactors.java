@@ -13,6 +13,8 @@ import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSup
 import org.opendaylight.yangtools.odlext.parser.AnyxmlStatementSupportOverride;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
+import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
@@ -58,6 +60,12 @@ public final class DefaultReactors {
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOR)
                 .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlStatementSupportOverride.getInstance())
+
+                // RFC6536 default-deny-{all,write} support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    DefaultDenyAllStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    DefaultDenyWriteStatementSupport.getInstance())
 
                 // RFC7952 annotation support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())

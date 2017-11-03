@@ -66,6 +66,10 @@
         <module>odlext-model-api</module>
         <module>odlext-parser-support</module>
 
+        <!-- NACM metamodel support -->
+        <module>rfc6536-model-api</module>
+        <module>rfc6536-parser-support</module>
+
         <!-- Metadata (annotation) metamodel support -->
         <module>rfc7952-model-api</module>
         <module>rfc7952-parser-support</module>
