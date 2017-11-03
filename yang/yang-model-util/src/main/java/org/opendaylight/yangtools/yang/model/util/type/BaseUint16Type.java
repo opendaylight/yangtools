@@ -10,11 +10,26 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint16Type extends AbstractUnsignedBaseType<Integer, Uint16TypeDefinition>
+final class BaseUint16Type extends AbstractRangeRestrictedBaseType<Uint16TypeDefinition, Integer>
         implements Uint16TypeDefinition {
     static final BaseUint16Type INSTANCE = new BaseUint16Type();
 
     private BaseUint16Type() {
         super(BaseTypes.UINT16_QNAME, 0, 65535);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
     }
 }

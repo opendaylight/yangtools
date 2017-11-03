@@ -181,8 +181,7 @@
  *
  * <dt>range
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.RangeConstraint}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition#getRangeConstraint()}
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition#getRangeConstraint()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition#getRangeConstraint()}
  *
  * <dt>reference
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.SchemaNode#getReference()}
@@ -286,13 +285,31 @@
  *
  *
  * <dl>
- * <dt>Integer built-in type
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition}
+ * <dt>Int8 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition}
  *
- * <dt>Unsigned integer built-in type
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition}
+ * <dt>Int16 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition}
  *
- * <dt>Decimal64 built-ib type
+ * <dt>Int32 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition}
+ *
+ * <dt>Int64 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition}
+ *
+ * <dt>Uint8 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition}
+ *
+ * <dt>Uint16 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition}
+ *
+ * <dt>Uint32 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition}
+ *
+ * <dt>Uint64 built-in type
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition}
+ *
+ * <dt>Decimal64 built-in type
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition}
  *
  * <dt>Boolean built-in type

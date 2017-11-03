@@ -154,15 +154,14 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
 @Beta
@@ -1449,12 +1448,10 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitTypeBodyNodes(final TypeDefinition<?> typeDef) {
-            if (typeDef instanceof UnsignedIntegerTypeDefinition) {
-                emitUnsignedIntegerSpecification((UnsignedIntegerTypeDefinition<?, ?>) typeDef);
-            } else if (typeDef instanceof IntegerTypeDefinition) {
-                emitIntegerSpefication((IntegerTypeDefinition<?, ?>) typeDef);
-            } else if (typeDef instanceof DecimalTypeDefinition) {
+            if (typeDef instanceof DecimalTypeDefinition) {
                 emitDecimal64Specification((DecimalTypeDefinition) typeDef);
+            } else if (typeDef instanceof RangeRestrictedTypeDefinition) {
+                emitRangeRestrictedSpecification((RangeRestrictedTypeDefinition<?, ?>) typeDef);
             } else if (typeDef instanceof StringTypeDefinition) {
                 emitStringRestrictions((StringTypeDefinition) typeDef);
             } else if (typeDef instanceof EnumTypeDefinition) {
@@ -1478,11 +1475,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitIntegerSpefication(final IntegerTypeDefinition<?, ?> typeDef) {
-            typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
-        }
-
-        private void emitUnsignedIntegerSpecification(final UnsignedIntegerTypeDefinition<?, ?> typeDef) {
+        private void emitRangeRestrictedSpecification(final RangeRestrictedTypeDefinition<?, ?> typeDef) {
             typeDef.getRangeConstraint().ifPresent(this::emitRangeNode);
         }
 
@@ -1496,7 +1489,7 @@ abstract class SchemaContextEmitter {
 
         private void emitDecimal64Specification(final DecimalTypeDefinition typeDefinition) {
             emitFranctionDigitsNode(typeDefinition.getFractionDigits());
-            typeDefinition.getRangeConstraint().ifPresent(this::emitRangeNode);
+            emitRangeRestrictedSpecification(typeDefinition);
         }
 
         private void emitFranctionDigitsNode(final Integer fractionDigits) {

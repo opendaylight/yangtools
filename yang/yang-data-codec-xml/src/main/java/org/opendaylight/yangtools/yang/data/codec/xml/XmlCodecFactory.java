@@ -30,11 +30,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 @Beta
 @ThreadSafe
@@ -90,7 +96,22 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     }
 
     @Override
-    protected XmlCodec<?> intCodec(final IntegerTypeDefinition type) {
+    protected XmlCodec<?> int8Codec(final Int8TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> int16Codec(final Int16TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> int32Codec(final Int32TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> int64Codec(final Int64TypeDefinition type) {
         return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
@@ -105,7 +126,22 @@ public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
     }
 
     @Override
-    protected XmlCodec<?> uintCodec(final UnsignedIntegerTypeDefinition type) {
+    protected XmlCodec<?> uint8Codec(final Uint8TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> uint16Codec(final Uint16TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> uint32Codec(final Uint32TypeDefinition type) {
+        return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected XmlCodec<?> uint64Codec(final Uint64TypeDefinition type) {
         return new NumberXmlCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
