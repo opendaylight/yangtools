@@ -10,10 +10,26 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseInt8Type extends AbstractIntegerBaseType<Byte, Int8TypeDefinition> implements Int8TypeDefinition {
+final class BaseInt8Type extends AbstractRangeRestrictedBaseType<Int8TypeDefinition, Byte>
+        implements Int8TypeDefinition {
     static final BaseInt8Type INSTANCE = new BaseInt8Type();
 
     private BaseInt8Type() {
         super(BaseTypes.INT8_QNAME, Byte.MIN_VALUE, Byte.MAX_VALUE);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
     }
 }

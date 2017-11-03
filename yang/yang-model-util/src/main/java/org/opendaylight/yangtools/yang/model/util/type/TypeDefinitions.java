@@ -19,11 +19,18 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 // TODO: this should be in the API package, as it defines equality for TypeDefinitions
 final class TypeDefinitions {
@@ -101,9 +108,25 @@ final class TypeDefinitions {
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
     }
 
-    static int hashCode(final IntegerTypeDefinition<?, ?> type) {
+    private static int hashCode(final RangeRestrictedTypeDefinition<?, ?> type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getRangeConstraint().orElse(null));
+    }
+
+    static int hashCode(final Int8TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Int16TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Int32TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Int64TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
     }
 
     static int hashCode(final LeafrefTypeDefinition type) {
@@ -122,9 +145,20 @@ final class TypeDefinitions {
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getTypes());
     }
 
-    static int hashCode(final UnsignedIntegerTypeDefinition<?, ?> type) {
-        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(), type.getUnits(),
-            type.getDefaultValue(), type.getRangeConstraint());
+    static int hashCode(final Uint8TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Uint16TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Uint32TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
+    }
+
+    static int hashCode(final Uint64TypeDefinition type) {
+        return hashCode((RangeRestrictedTypeDefinition<?, ?>) type);
     }
 
     static boolean equals(final BinaryTypeDefinition type, final Object obj) {
@@ -190,12 +224,39 @@ final class TypeDefinitions {
         return other != null && type.requireInstance() == other.requireInstance();
     }
 
-    static boolean equals(final IntegerTypeDefinition type, final Object obj) {
+    static boolean equals(final Int8TypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
         }
 
-        final IntegerTypeDefinition other = castIfEquals(IntegerTypeDefinition.class, type, obj);
+        final Int8TypeDefinition other = castIfEquals(Int8TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Int16TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Int16TypeDefinition other = castIfEquals(Int16TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Int32TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Int32TypeDefinition other = castIfEquals(Int32TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Int64TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Int64TypeDefinition other = castIfEquals(Int64TypeDefinition.class, type, obj);
         return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
@@ -227,12 +288,39 @@ final class TypeDefinitions {
         return other != null && type.getTypes().equals(other.getTypes());
     }
 
-    static boolean equals(final UnsignedIntegerTypeDefinition type, final Object obj) {
+    static boolean equals(final Uint8TypeDefinition type, final Object obj) {
         if (type == obj) {
             return true;
         }
 
-        final UnsignedIntegerTypeDefinition other = castIfEquals(UnsignedIntegerTypeDefinition.class, type, obj);
+        final Uint8TypeDefinition other = castIfEquals(Uint8TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Uint16TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Uint16TypeDefinition other = castIfEquals(Uint16TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Uint32TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Uint32TypeDefinition other = castIfEquals(Uint32TypeDefinition.class, type, obj);
+        return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
+    }
+
+    static boolean equals(final Uint64TypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final Uint64TypeDefinition other = castIfEquals(Uint64TypeDefinition.class, type, obj);
         return other != null && type.getRangeConstraint().equals(other.getRangeConstraint());
     }
 
@@ -269,7 +357,19 @@ final class TypeDefinitions {
         return toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
     }
 
-    static String toString(final IntegerTypeDefinition<?, ?> type) {
+    static String toString(final Int8TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
+    static String toString(final Int16TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
+    static String toString(final Int32TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
+    static String toString(final Int64TypeDefinition type) {
         return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
 
@@ -286,7 +386,20 @@ final class TypeDefinitions {
         return toStringHelper(type).add("types", type.getTypes()).toString();
     }
 
-    static String toString(final UnsignedIntegerTypeDefinition<?, ?> type) {
+    static String toString(final Uint8TypeDefinition type) {
         return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
     }
+
+    static String toString(final Uint16TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
+    static String toString(final Uint32TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
+    static String toString(final Uint64TypeDefinition type) {
+        return toStringHelper(type).add("range", type.getRangeConstraint().orElse(null)).toString();
+    }
+
 }
