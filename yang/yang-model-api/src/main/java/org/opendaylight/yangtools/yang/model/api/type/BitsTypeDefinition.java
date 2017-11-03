@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -23,6 +24,24 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
      *         individual bits of <code>bits</code> YANG built-in type
      */
     @Nonnull List<Bit> getBits();
+
+    static int hashCode(final BitsTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getBits());
+    }
+
+    static boolean equals(final BitsTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final BitsTypeDefinition other = TypeDefinitions.castIfEquals(BitsTypeDefinition.class, type, obj);
+        return other != null && type.getBits().equals(other.getBits());
+    }
+
+    static String toString(final BitsTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).add("bits", type.getBits()).toString();
+    }
 
     /**
      * Contains the methods for accessing the data about the individual bit of

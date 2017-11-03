@@ -23,11 +23,11 @@ final class DerivedInt8Type extends AbstractRangeRestrictedDerivedType<Int8TypeD
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Int8TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Int8TypeDefinition.equals(this, obj);
     }
 }

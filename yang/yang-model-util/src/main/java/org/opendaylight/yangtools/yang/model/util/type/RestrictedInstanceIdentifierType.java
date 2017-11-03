@@ -29,16 +29,16 @@ final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<Inst
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return InstanceIdentifierTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return InstanceIdentifierTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return InstanceIdentifierTypeDefinition.toString(this);
     }
 }

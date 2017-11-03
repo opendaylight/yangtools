@@ -11,4 +11,19 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition> {
 
+    static int hashCode(final EmptyTypeDefinition type) {
+        return TypeDefinitions.basicHashCode(type);
+    }
+
+    static boolean equals(final EmptyTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        return TypeDefinitions.castIfEquals(EmptyTypeDefinition.class, type, obj) != null;
+    }
+
+    static String toString(final EmptyTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).toString();
+    }
 }

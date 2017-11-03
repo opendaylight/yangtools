@@ -30,11 +30,11 @@ final class DerivedEnumerationType extends AbstractDerivedType<EnumTypeDefinitio
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return EnumTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return EnumTypeDefinition.equals(this, obj);
     }
 }

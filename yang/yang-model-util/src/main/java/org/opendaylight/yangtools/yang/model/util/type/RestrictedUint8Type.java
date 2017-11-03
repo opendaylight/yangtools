@@ -25,16 +25,16 @@ final class RestrictedUint8Type extends AbstractRangeRestrictedType<Uint8TypeDef
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Uint8TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Uint8TypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return Uint8TypeDefinition.toString(this);
     }
 }

@@ -34,11 +34,11 @@ final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return LeafrefTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return LeafrefTypeDefinition.equals(this, obj);
     }
 }

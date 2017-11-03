@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
- * Builder of {@link TypeDefinitions} for use in leaf statements. While similar to {@link DerivedTypeBuilder}, this
+ * Builder of {@link TypeDefinition}s for use in leaf statements. While similar to {@link DerivedTypeBuilder}, this
  * builder does not support adding of unknown nodes and will return the base type if the type is not modified, hence
  * not preserving the schema path.
  *
