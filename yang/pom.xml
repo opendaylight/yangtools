@@ -49,6 +49,10 @@
         <module>rfc6536-model-api</module>
         <module>rfc6536-parser-support</module>
 
+        <!-- Metadata (annotation) metamodel support -->
+        <module>rfc7952-model-api</module>
+        <module>rfc7952-parser-support</module>
+
         -->
         <module>rfc8040-model-api</module>
         <!-- FIXME: solve circular dependency with rfc6020 and activate this
