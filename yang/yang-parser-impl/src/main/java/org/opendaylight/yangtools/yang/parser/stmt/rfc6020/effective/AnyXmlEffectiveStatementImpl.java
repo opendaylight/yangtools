@@ -20,11 +20,19 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
         implements AnyXmlSchemaNode, DerivableSchemaNode {
 
     private final AnyXmlSchemaNode original;
+    private final boolean mandatory;
 
     public AnyXmlEffectiveStatementImpl(
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
         this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
+        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override
