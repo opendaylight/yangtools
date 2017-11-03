@@ -14,6 +14,6 @@ import java.math.BigInteger;
  *
  * @author Robert Varga
  */
-public interface Uint64TypeDefinition extends UnsignedIntegerTypeDefinition<BigInteger, Uint64TypeDefinition> {
+public interface Uint64TypeDefinition extends RangeRestrictedTypeDefinition<Uint64TypeDefinition, BigInteger> {
 
 }

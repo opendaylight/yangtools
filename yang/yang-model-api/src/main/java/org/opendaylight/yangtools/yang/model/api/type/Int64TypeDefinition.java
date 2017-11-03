@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Int64TypeDefinition extends IntegerTypeDefinition<Long, Int64TypeDefinition> {
+public interface Int64TypeDefinition extends RangeRestrictedTypeDefinition<Int64TypeDefinition, Long> {
 
 }

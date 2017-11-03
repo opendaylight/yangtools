@@ -29,7 +29,7 @@ public final class TypeDefinitionAwareCodecTestHelper {
 
     @SuppressWarnings("unchecked")
     public static <T> T getCodec(final TypeDefinition<?> def, final Class<T> clazz) {
-        Object codec = TypeDefinitionAwareCodec.from(def);
+        Object codec = TypeDefinitionAwareCodec.fromType(def);
         assertNotNull(codec);
         assertTrue(clazz.isAssignableFrom(codec.getClass()));
         return (T)codec;

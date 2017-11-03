@@ -40,11 +40,17 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -245,7 +251,22 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     }
 
     @Override
-    protected JSONCodec<?> intCodec(final IntegerTypeDefinition<?, ?> type) {
+    protected JSONCodec<?> int8Codec(final Int8TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> int16Codec(final Int16TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> int32Codec(final Int32TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> int64Codec(final Int64TypeDefinition type) {
         return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
@@ -255,7 +276,22 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     }
 
     @Override
-    protected JSONCodec<?> uintCodec(final UnsignedIntegerTypeDefinition<?, ?> type) {
+    protected JSONCodec<?> uint8Codec(final Uint8TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> uint16Codec(final Uint16TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> uint32Codec(final Uint32TypeDefinition type) {
+        return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
+    }
+
+    @Override
+    protected JSONCodec<?> uint64Codec(final Uint64TypeDefinition type) {
         return new NumberJSONCodec<>(AbstractIntegerStringCodec.from(type));
     }
 
@@ -268,4 +304,5 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     protected JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullJSONCodec.INSTANCE;
     }
+
 }

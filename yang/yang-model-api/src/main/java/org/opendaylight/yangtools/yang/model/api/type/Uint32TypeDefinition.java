@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Uint32TypeDefinition extends UnsignedIntegerTypeDefinition<Long, Uint32TypeDefinition> {
+public interface Uint32TypeDefinition extends RangeRestrictedTypeDefinition<Uint32TypeDefinition, Long> {
 
 }
