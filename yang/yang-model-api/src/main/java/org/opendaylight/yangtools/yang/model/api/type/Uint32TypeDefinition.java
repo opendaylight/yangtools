@@ -14,4 +14,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface Uint32TypeDefinition extends UnsignedIntegerTypeDefinition<Long, Uint32TypeDefinition> {
 
+    static int hashCode(final Uint32TypeDefinition type) {
+        return TypeDefinitions.hashCode(type);
+    }
+
+    static boolean equals(final Uint32TypeDefinition type, final Object obj) {
+        return TypeDefinitions.equals(Uint32TypeDefinition.class, type, obj);
+    }
+
+    static String toString(final Uint32TypeDefinition type) {
+        return TypeDefinitions.toString(type);
+    }
 }

@@ -14,4 +14,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface Int64TypeDefinition extends IntegerTypeDefinition<Long, Int64TypeDefinition> {
 
+    static int hashCode(final Int64TypeDefinition type) {
+        return TypeDefinitions.hashCode(type);
+    }
+
+    static boolean equals(final Int64TypeDefinition type, final Object obj) {
+        return TypeDefinitions.equals(Int64TypeDefinition.class, type, obj);
+    }
+
+    static String toString(final Int64TypeDefinition type) {
+        return TypeDefinitions.toString(type);
+    }
 }

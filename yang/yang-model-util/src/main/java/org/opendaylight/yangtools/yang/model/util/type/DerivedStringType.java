@@ -30,11 +30,11 @@ final class DerivedStringType extends AbstractLengthRestrictedDerivedType<String
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return StringTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return StringTypeDefinition.equals(this, obj);
     }
 }

@@ -25,11 +25,11 @@ final class DerivedUint64Type extends AbstractRangeRestrictedDerivedType<Uint64T
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Uint64TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Uint64TypeDefinition.equals(this, obj);
     }
 }

@@ -29,11 +29,11 @@ final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> im
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return UnionTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return UnionTypeDefinition.equals(this, obj);
     }
 }

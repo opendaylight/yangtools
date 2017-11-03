@@ -29,11 +29,11 @@ final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<Decima
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return DecimalTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return DecimalTypeDefinition.equals(this, obj);
     }
 }

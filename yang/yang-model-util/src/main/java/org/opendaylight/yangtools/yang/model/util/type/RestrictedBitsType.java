@@ -33,16 +33,16 @@ final class RestrictedBitsType extends AbstractRestrictedType<BitsTypeDefinition
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return BitsTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return BitsTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return BitsTypeDefinition.toString(this);
     }
 }

@@ -37,16 +37,16 @@ final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefi
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return LeafrefTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return LeafrefTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return LeafrefTypeDefinition.toString(this);
     }
 }

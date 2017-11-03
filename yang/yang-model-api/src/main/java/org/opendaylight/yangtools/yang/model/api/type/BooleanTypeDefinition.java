@@ -15,4 +15,19 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface BooleanTypeDefinition extends TypeDefinition<BooleanTypeDefinition> {
 
+    static int hashCode(final BooleanTypeDefinition type) {
+        return TypeDefinitions.basicHashCode(type);
+    }
+
+    static boolean equals(final BooleanTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        return TypeDefinitions.castIfEquals(BooleanTypeDefinition.class, type, obj) != null;
+    }
+
+    static String toString(final BooleanTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).toString();
+    }
 }
