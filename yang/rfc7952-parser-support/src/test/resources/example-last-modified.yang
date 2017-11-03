@@ -1,0 +1,13 @@
+module example-last-modified {
+    namespace "http://example.org/example-last-modified";
+    prefix "elm";
+    import ietf-yang-metadata {
+        prefix "md";
+    }
+    md:annotation last-modified {
+        type string;
+        description
+          "This annotation contains the date and time when the
+           annotated instance was last modified (or created).";
+    }
+}
