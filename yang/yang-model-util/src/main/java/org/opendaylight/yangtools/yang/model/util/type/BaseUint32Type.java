@@ -10,11 +10,26 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseUint32Type extends AbstractUnsignedBaseType<Long, Uint32TypeDefinition>
+final class BaseUint32Type extends AbstractRangeRestrictedBaseType<Uint32TypeDefinition, Long>
         implements Uint32TypeDefinition {
     static final BaseUint32Type INSTANCE = new BaseUint32Type();
 
     private BaseUint32Type() {
         super(BaseTypes.UINT32_QNAME, 0L, 4294967295L);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
     }
 }

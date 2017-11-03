@@ -25,12 +25,18 @@ import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -112,13 +118,25 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
-    protected abstract T intCodec(IntegerTypeDefinition<?, ?> type);
+    protected abstract T int8Codec(Int8TypeDefinition type);
+
+    protected abstract T int16Codec(Int16TypeDefinition type);
+
+    protected abstract T int32Codec(Int32TypeDefinition type);
+
+    protected abstract T int64Codec(Int64TypeDefinition type);
 
     protected abstract T decimalCodec(DecimalTypeDefinition type);
 
     protected abstract T stringCodec(StringTypeDefinition type);
 
-    protected abstract T uintCodec(UnsignedIntegerTypeDefinition<?, ?> type);
+    protected abstract T uint8Codec(Uint8TypeDefinition type);
+
+    protected abstract T uint16Codec(Uint16TypeDefinition type);
+
+    protected abstract T uint32Codec(Uint32TypeDefinition type);
+
+    protected abstract T uint64Codec(Uint64TypeDefinition type);
 
     protected abstract T unionCodec(UnionTypeDefinition type, List<T> codecs);
 
@@ -137,10 +155,22 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         final T ret;
         if (type instanceof StringTypeDefinition) {
             ret = stringCodec((StringTypeDefinition) type);
-        } else if (type instanceof IntegerTypeDefinition) {
-            ret = intCodec((IntegerTypeDefinition<?, ?>) type);
-        } else if (type instanceof UnsignedIntegerTypeDefinition) {
-            ret = uintCodec((UnsignedIntegerTypeDefinition<?, ?>) type);
+        } else if (type instanceof Int8TypeDefinition) {
+            ret = int8Codec((Int8TypeDefinition) type);
+        } else if (type instanceof Int16TypeDefinition) {
+            ret = int16Codec((Int16TypeDefinition) type);
+        } else if (type instanceof Int32TypeDefinition) {
+            ret = int32Codec((Int32TypeDefinition) type);
+        } else if (type instanceof Int64TypeDefinition) {
+            ret = int64Codec((Int64TypeDefinition) type);
+        } else if (type instanceof Uint8TypeDefinition) {
+            ret = uint8Codec((Uint8TypeDefinition) type);
+        } else if (type instanceof Uint16TypeDefinition) {
+            ret = uint16Codec((Uint16TypeDefinition) type);
+        } else if (type instanceof Uint32TypeDefinition) {
+            ret = uint32Codec((Uint32TypeDefinition) type);
+        } else if (type instanceof Uint64TypeDefinition) {
+            ret = uint64Codec((Uint64TypeDefinition) type);
         } else if (type instanceof BooleanTypeDefinition) {
             ret = booleanCodec((BooleanTypeDefinition) type);
         } else if (type instanceof DecimalTypeDefinition) {

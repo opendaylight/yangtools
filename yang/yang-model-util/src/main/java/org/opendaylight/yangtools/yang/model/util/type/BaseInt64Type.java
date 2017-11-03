@@ -10,10 +10,26 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseInt64Type extends AbstractIntegerBaseType<Long, Int64TypeDefinition> implements Int64TypeDefinition {
+final class BaseInt64Type extends AbstractRangeRestrictedBaseType<Int64TypeDefinition, Long>
+        implements Int64TypeDefinition {
     static final BaseInt64Type INSTANCE = new BaseInt64Type();
 
     private BaseInt64Type() {
         super(BaseTypes.INT64_QNAME, Long.MIN_VALUE, Long.MAX_VALUE);
+    }
+
+    @Override
+    public int hashCode() {
+        return TypeDefinitions.hashCode(this);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        return TypeDefinitions.equals(this, obj);
+    }
+
+    @Override
+    public String toString() {
+        return TypeDefinitions.toString(this);
     }
 }

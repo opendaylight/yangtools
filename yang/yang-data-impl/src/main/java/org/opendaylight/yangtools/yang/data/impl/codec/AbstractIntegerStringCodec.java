@@ -12,28 +12,26 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.RangeSet;
+import java.math.BigInteger;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition;
 
 /**
  * Do not use this class outside of yangtools, its presence does not fall into the API stability contract.
  */
 @Beta
-public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>, T extends TypeDefinition<T>>
-        extends TypeDefinitionAwareCodec<N, T> {
+public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N>,
+        T extends RangeRestrictedTypeDefinition<T, N>> extends TypeDefinitionAwareCodec<N, T> {
 
     private static final Pattern INT_PATTERN = Pattern.compile("[+-]?[1-9][0-9]*$");
     private static final Pattern HEX_PATTERN = Pattern.compile("[+-]?0[xX][0-9a-fA-F]+");
@@ -57,34 +55,36 @@ public abstract class AbstractIntegerStringCodec<N extends Number & Comparable<N
         rangeConstraints = constraint.map(RangeConstraint::getAllowedRanges).orElse(null);
     }
 
-    public static AbstractIntegerStringCodec<?, ? extends IntegerTypeDefinition<?, ?>> from(
-            final IntegerTypeDefinition<?, ?> type) {
-        if (type instanceof Int8TypeDefinition) {
-            return new Int8StringCodec(Optional.of((Int8TypeDefinition) type));
-        } else if (type instanceof Int16TypeDefinition) {
-            return new Int16StringCodec(Optional.of((Int16TypeDefinition) type));
-        } else if (type instanceof Int32TypeDefinition) {
-            return new Int32StringCodec(Optional.of((Int32TypeDefinition) type));
-        } else if (type instanceof Int64TypeDefinition) {
-            return new Int64StringCodec(Optional.of((Int64TypeDefinition) type));
-        } else {
-            throw new IllegalArgumentException("Unsupported type: " + type);
-        }
+    public static AbstractIntegerStringCodec<Byte, Int8TypeDefinition> from(final Int8TypeDefinition type) {
+        return new Int8StringCodec(Optional.of(type));
     }
 
-    public static AbstractIntegerStringCodec<?, ? extends UnsignedIntegerTypeDefinition<?, ?>> from(
-            final UnsignedIntegerTypeDefinition<?, ?> type) {
-        if (type instanceof Uint8TypeDefinition) {
-            return new Uint8StringCodec(Optional.of((Uint8TypeDefinition) type));
-        } else if (type instanceof Uint16TypeDefinition) {
-            return new Uint16StringCodec(Optional.of((Uint16TypeDefinition) type));
-        } else if (type instanceof Uint32TypeDefinition) {
-            return new Uint32StringCodec(Optional.of((Uint32TypeDefinition) type));
-        } else if (type instanceof Uint64TypeDefinition) {
-            return new Uint64StringCodec(Optional.of((Uint64TypeDefinition) type));
-        } else {
-            throw new IllegalArgumentException("Unsupported type: " + type);
-        }
+    public static AbstractIntegerStringCodec<Short, Int16TypeDefinition> from(final Int16TypeDefinition type) {
+        return new Int16StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<Integer, Int32TypeDefinition> from(final Int32TypeDefinition type) {
+        return new Int32StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<Long, Int64TypeDefinition> from(final Int64TypeDefinition type) {
+        return new Int64StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<Short, Uint8TypeDefinition> from(final Uint8TypeDefinition type) {
+        return new Uint8StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<Integer, Uint16TypeDefinition> from(final Uint16TypeDefinition type) {
+        return new Uint16StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<Long, Uint32TypeDefinition> from(final Uint32TypeDefinition type) {
+        return new Uint32StringCodec(Optional.of(type));
+    }
+
+    public static AbstractIntegerStringCodec<BigInteger, Uint64TypeDefinition> from(final Uint64TypeDefinition type) {
+        return new Uint64StringCodec(Optional.of(type));
     }
 
     @Override
