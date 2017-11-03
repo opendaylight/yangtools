@@ -20,16 +20,16 @@ final class RestrictedEmptyType extends AbstractRestrictedType<EmptyTypeDefiniti
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return EmptyTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return EmptyTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return EmptyTypeDefinition.toString(this);
     }
 }

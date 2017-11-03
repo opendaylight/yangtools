@@ -16,4 +16,15 @@ import java.math.BigInteger;
  */
 public interface Uint64TypeDefinition extends RangeRestrictedTypeDefinition<Uint64TypeDefinition, BigInteger> {
 
+    static int hashCode(final Uint64TypeDefinition type) {
+        return TypeDefinitions.hashCode(type);
+    }
+
+    static boolean equals(final Uint64TypeDefinition type, final Object obj) {
+        return TypeDefinitions.equals(Uint64TypeDefinition.class, type, obj);
+    }
+
+    static String toString(final Uint64TypeDefinition type) {
+        return TypeDefinitions.toString(type);
+    }
 }

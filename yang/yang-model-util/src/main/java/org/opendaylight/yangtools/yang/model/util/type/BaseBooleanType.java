@@ -19,16 +19,16 @@ final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition> impl
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return BooleanTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return BooleanTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return BooleanTypeDefinition.toString(this);
     }
 }
