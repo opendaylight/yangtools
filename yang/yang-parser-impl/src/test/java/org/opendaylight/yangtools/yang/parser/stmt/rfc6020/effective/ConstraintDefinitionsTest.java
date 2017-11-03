@@ -67,8 +67,8 @@ public class ConstraintDefinitionsTest {
         assertNotNull(mandatoryLeaf3);
         ConstraintDefinition constraints3 = mandatoryLeaf3.getConstraints();
 
-        assertNotEquals(ConstraintDefinitions.hashCode(constraints2), ConstraintDefinitions.hashCode(constraints3));
-        assertFalse(ConstraintDefinitions.equals(constraints2, constraints3));
+        assertEquals(ConstraintDefinitions.hashCode(constraints2), ConstraintDefinitions.hashCode(constraints3));
+        assertTrue(ConstraintDefinitions.equals(constraints2, constraints3));
 
         final LeafSchemaNode mandatoryLeaf4 = (LeafSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-4"));
@@ -117,6 +117,6 @@ public class ConstraintDefinitionsTest {
 
         final String constraintsString = ConstraintDefinitions.toString(constraints4);
         assertEquals("EffectiveConstraintDefinitionImpl{whenCondition=foo = 'bar', mustConstraints=[bar != 'foo'], "
-                + "mandatory=true, minElements=50, maxElements=100}", constraintsString);
+                + "minElements=50, maxElements=100}", constraintsString);
     }
 }
