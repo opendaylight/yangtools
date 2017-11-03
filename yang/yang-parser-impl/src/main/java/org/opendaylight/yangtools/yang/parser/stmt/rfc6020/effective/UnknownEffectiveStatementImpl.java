@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-public final class UnknownEffectiveStatementImpl extends UnknownEffectiveStatementBase<String> {
+public final class UnknownEffectiveStatementImpl
+        extends UnknownEffectiveStatementBase<String, UnknownStatement<String>> {
 
     private final QName maybeQNameArgument;
     private final SchemaPath path;

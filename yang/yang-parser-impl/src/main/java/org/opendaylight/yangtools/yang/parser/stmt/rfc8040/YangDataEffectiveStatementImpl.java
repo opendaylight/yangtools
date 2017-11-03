@@ -13,29 +13,25 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.YangDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
-/**
- * Effective statement representation of 'yang-data' extension defined in
- * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
- */
 @Beta
-public final class YangDataEffectiveStatement extends UnknownEffectiveStatementBase<String>
-        implements YangDataSchemaNode {
+final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
+        implements YangDataEffectiveStatement {
 
     private final SchemaPath path;
     private final QName maybeQNameArgument;
     private final ContainerSchemaNode containerSchemaNode;
 
-    YangDataEffectiveStatement(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    YangDataEffectiveStatementImpl(final StmtContext<String, YangDataStatement, ?> ctx) {
         super(ctx);
 
         QName maybeQNameArgumentInit;
@@ -79,11 +75,11 @@ public final class YangDataEffectiveStatement extends UnknownEffectiveStatementB
             return true;
         }
 
-        if (!(obj instanceof YangDataEffectiveStatement)) {
+        if (!(obj instanceof YangDataEffectiveStatementImpl)) {
             return false;
         }
 
-        final YangDataEffectiveStatement other = (YangDataEffectiveStatement) obj;
+        final YangDataEffectiveStatementImpl other = (YangDataEffectiveStatementImpl) obj;
         return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path);
     }
 
