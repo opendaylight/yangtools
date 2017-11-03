@@ -67,7 +67,7 @@ public class YinFileListStmtTest {
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals(Optional.of("Unique module instance name"), leaf.getDescription());
         assertEquals(BaseTypes.stringType(), leaf.getType());
-        assertTrue(leaf.getConstraints().isMandatory());
+        assertTrue(leaf.isMandatory());
 
         leaf = (LeafSchemaNode) childrenIterator.next();
         assertEquals("type", leaf.getQName().getLocalName());
@@ -76,7 +76,7 @@ public class YinFileListStmtTest {
         assertTrue(leafType instanceof IdentityrefTypeDefinition);
         assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentities().iterator().next().getQName()
             .getLocalName());
-        assertTrue(leaf.getConstraints().isMandatory());
+        assertTrue(leaf.isMandatory());
     }
 
 }

@@ -1775,7 +1775,7 @@ abstract class SchemaContextEmitter {
             emitMustNodes(child.getConstraints().getMustConstraints());
             child.getType().getDefaultValue().ifPresent(this::emitDefaultNode);
             emitConfigNode(child.isConfiguration());
-            emitMandatoryNode(child.getConstraints().isMandatory());
+            emitMandatoryNode(child.isMandatory());
             emitDocumentedNode(child);
             emitUnknownStatementNodes(child.getUnknownSchemaNodes());
             super.writer.endNode();
@@ -1853,7 +1853,7 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: *(ifFeatureNode )
             // FIXME: BUG-2444: defaultNode //Optional
             emitConfigNode(choice.isConfiguration());
-            emitMandatoryNode(choice.getConstraints().isMandatory());
+            emitMandatoryNode(choice.isMandatory());
             emitDocumentedNode(choice);
             for (final ChoiceCaseNode caze : choice.getCases().values()) {
                 // TODO: emit short case?
@@ -1894,7 +1894,6 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitMustNodes(dataSchemaNode.getConstraints().getMustConstraints());
             emitConfigNode(dataSchemaNode.isConfiguration());
-            emitMandatoryNode(dataSchemaNode.getConstraints().isMandatory());
             emitDocumentedNode(dataSchemaNode);
             emitUnknownStatementNodes(dataSchemaNode.getUnknownSchemaNodes());
         }
@@ -1983,8 +1982,8 @@ abstract class SchemaContextEmitter {
                 emitConfigNode(value.isConfiguration());
             }
             emitDocumentedNodeRefine(original, value);
-            if (Objects.deepEquals(original.getConstraints().isMandatory(), value.getConstraints().isMandatory())) {
-                emitMandatoryNode(value.getConstraints().isMandatory());
+            if (Objects.deepEquals(original.isMandatory(), value.isMandatory())) {
+                emitMandatoryNode(value.isMandatory());
             }
 
         }
@@ -2034,8 +2033,8 @@ abstract class SchemaContextEmitter {
             if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {
                 emitConfigNode(value.isConfiguration());
             }
-            if (Objects.deepEquals(original.getConstraints().isMandatory(), value.getConstraints().isMandatory())) {
-                emitMandatoryNode(value.getConstraints().isMandatory());
+            if (Objects.deepEquals(original.isMandatory(), value.isMandatory())) {
+                emitMandatoryNode(value.isMandatory());
             }
             emitDocumentedNodeRefine(original, value);
 
@@ -2055,8 +2054,8 @@ abstract class SchemaContextEmitter {
             if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {
                 emitConfigNode(value.isConfiguration());
             }
-            if (Objects.deepEquals(original.getConstraints().isMandatory(), value.getConstraints().isMandatory())) {
-                emitMandatoryNode(value.getConstraints().isMandatory());
+            if (Objects.deepEquals(original.isMandatory(), value.isMandatory())) {
+                emitMandatoryNode(value.isMandatory());
             }
             emitDocumentedNodeRefine(original, value);
 
