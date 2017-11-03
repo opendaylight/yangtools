@@ -102,9 +102,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(choiceInContainerNode);
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
+        assertFalse(choiceSchemaNode.isMandatory());
 
         ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertFalse(choiceConstraints.isMandatory());
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
@@ -142,9 +142,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertNotNull(choiceInContainerNode);
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
+        assertTrue(choiceSchemaNode.isMandatory());
 
         ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertTrue(choiceConstraints.isMandatory());
         assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
