@@ -28,16 +28,16 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return IdentityrefTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return IdentityrefTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return IdentityrefTypeDefinition.toString(this);
     }
 }
