@@ -12,6 +12,6 @@ package org.opendaylight.yangtools.yang.model.api.type;
  *
  * @author Robert Varga
  */
-public interface Uint16TypeDefinition extends UnsignedIntegerTypeDefinition<Integer, Uint16TypeDefinition> {
+public interface Uint16TypeDefinition extends RangeRestrictedTypeDefinition<Uint16TypeDefinition, Integer> {
 
 }

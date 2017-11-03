@@ -30,7 +30,10 @@
         org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.class,
         org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair.class,
         org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition.class,
-        org.opendaylight.yangtools.yang.model.api.type.IntegerTypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition.class,
         org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition.class,
         org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition.class,
         org.opendaylight.yangtools.yang.model.api.type.LengthConstraint.class,
@@ -38,7 +41,10 @@
         org.opendaylight.yangtools.yang.model.api.type.RangeConstraint.class,
         org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition.class,
         org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition.class,
-        org.opendaylight.yangtools.yang.model.api.type.UnsignedIntegerTypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition.class,
+        org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition.class,
 })
 @Style(
     builderVisibility =  BuilderVisibility.PUBLIC,
