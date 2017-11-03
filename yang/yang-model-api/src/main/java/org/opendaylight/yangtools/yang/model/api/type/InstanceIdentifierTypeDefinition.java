@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -21,4 +22,23 @@ public interface InstanceIdentifierTypeDefinition extends TypeDefinition<Instanc
      * @return boolean value which is true if the <code>require-instance</code> statement is true and vice versa
      */
     boolean requireInstance();
+
+    static int hashCode(final InstanceIdentifierTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
+    }
+
+    static boolean equals(final InstanceIdentifierTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final InstanceIdentifierTypeDefinition other = TypeDefinitions.castIfEquals(
+            InstanceIdentifierTypeDefinition.class, type, obj);
+        return other != null && type.requireInstance() == other.requireInstance();
+    }
+
+    static String toString(final InstanceIdentifierTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
+    }
 }

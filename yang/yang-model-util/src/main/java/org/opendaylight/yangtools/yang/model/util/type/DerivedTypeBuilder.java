@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Builder of {@link TypeDefinitions} for use in typedef statements.
+ * Builder of {@link TypeDefinition}s for use in typedef statements.
  *
  * @param <T> Resulting {@link TypeDefinition}
  */
