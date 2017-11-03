@@ -56,6 +56,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionEffectiveStatement;
 
 abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
@@ -107,8 +108,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                 firstEffective(YangVersionEffectiveStatementImpl.class);
         this.yangVersion = yangVersionStmt == null ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
-        final OpenconfigVersionEffectiveStatementImpl semanticVersionStmt =
-                firstEffective(OpenconfigVersionEffectiveStatementImpl.class);
+        final OpenconfigVersionEffectiveStatement semanticVersionStmt =
+                firstEffective(OpenconfigVersionEffectiveStatement.class);
         this.semanticVersion = semanticVersionStmt == null ? null : semanticVersionStmt.argument();
 
         final OrganizationEffectiveStatementImpl organizationStmt =
