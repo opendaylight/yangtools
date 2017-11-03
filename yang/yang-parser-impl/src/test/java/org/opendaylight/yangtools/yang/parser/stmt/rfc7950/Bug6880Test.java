@@ -37,7 +37,7 @@ public class Bug6880Test {
         assertTrue(findDataSchemaNode instanceof LeafListSchemaNode);
         final LeafListSchemaNode myLeafList = (LeafListSchemaNode) findDataSchemaNode;
 
-        final Collection<String> defaults = myLeafList.getDefaults();
+        final Collection<? extends Object> defaults = myLeafList.getDefaults();
         assertEquals(2, defaults.size());
         assertTrue(defaults.contains("my-default-value-1") && defaults.contains("my-default-value-2"));
     }
