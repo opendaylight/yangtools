@@ -17,24 +17,6 @@ import javax.annotation.Nullable;
  */
 public interface ConstraintDefinition extends MustConstraintAware, WhenConditionAware {
     /**
-     * Expreses if the presence of the data element for which this constraint is
-     * specified is|isn't required.
-     *
-     * <p>
-     * Contains the value of the <b>mandatory</b> YANG substatement.
-     * It is used with YANG statements leaf, choice, anyxml, deviate.
-     *
-     * @return boolean value:
-     *         <ul>
-     *         <li>true - if <code>mandatory</code> YANG keyword argument =
-     *         <i>true</i></li>
-     *         <li>false - if <code>mandatory</code> YANG keyword argument =
-     *         <i>false</i></li>
-     *         </ul>
-     */
-    boolean isMandatory();
-
-    /**
      * Returns the minimum required number of data elements for node where this
      * constraint is specified.
      *

@@ -56,7 +56,7 @@ public class YinFileChoiceStmtTest {
         assertNotNull(choice);
 
         assertEquals("configuration", choice.getQName().getLocalName());
-        assertTrue(choice.getConstraints().isMandatory());
+        assertTrue(choice.isMandatory());
         assertTrue(choice.isConfiguration());
         assertEquals(1, choice.getCases().size());
 
@@ -72,7 +72,7 @@ public class YinFileChoiceStmtTest {
         assertNotNull(choice);
 
         assertEquals("state", choice.getQName().getLocalName());
-        assertFalse(choice.getConstraints().isMandatory());
+        assertFalse(choice.isMandatory());
         assertFalse(choice.isConfiguration());
         assertTrue(choice.getCases().isEmpty());
     }

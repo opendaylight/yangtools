@@ -106,7 +106,7 @@ public class DeviationResolutionTest {
         final AnyXmlSchemaNode myAnyxml = (AnyXmlSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-anyxml"));
         assertNotNull(myAnyxml);
-        assertTrue(myAnyxml.getConstraints().isMandatory());
+        assertTrue(myAnyxml.isMandatory());
         assertEquals(2, myAnyxml.getUnknownSchemaNodes().size());
     }
 
@@ -140,7 +140,7 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-choice"));
         assertNotNull(myChoice);
 
-        assertFalse(myChoice.getConstraints().isMandatory());
+        assertFalse(myChoice.isMandatory());
         assertEquals(1, myChoice.getUnknownSchemaNodes().size());
         assertEquals("new arg", myChoice.getUnknownSchemaNodes().iterator().next().getNodeParameter());
 

@@ -28,6 +28,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final TypeDefinition<?> type;
     private final String defaultStr;
     private final String unitsStr;
+    private final boolean mandatory;
 
     public LeafEffectiveStatementImpl(
             final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
@@ -66,6 +67,13 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         defaultStr = dflt;
         unitsStr = units;
         type = builder.build();
+        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
+        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override

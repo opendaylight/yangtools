@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.MandatoryEffectiveStatement;
 
 /**
  * YANG 1.1 AnyData effective statement implementation.
@@ -29,11 +30,15 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
 
     private final AnyDataSchemaNode original;
     private final ContainerSchemaNode schema;
+    private final boolean mandatory;
 
     public AnyDataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
         this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
+        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+
         /*
          * :TODO we need to determine a way how to set schema of AnyData
          */
@@ -48,6 +53,11 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
     @Override
     public Optional<ContainerSchemaNode> getDataSchema() {
         return Optional.ofNullable(schema);
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override
