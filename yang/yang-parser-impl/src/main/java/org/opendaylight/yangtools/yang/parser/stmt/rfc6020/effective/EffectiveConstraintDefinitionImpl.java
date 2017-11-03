@@ -68,7 +68,7 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
 
         // Check for singleton instances
         if (minElements == null && maxElements == null && mustSubstatements.isEmpty() && firstWhenStmt == null) {
-            return EmptyConstraintDefinition.create(mandatory);
+            return EmptyConstraintDefinition.getInstance();
         }
 
         return new EffectiveConstraintDefinitionImpl(mandatory, minElements, maxElements,
@@ -83,11 +83,6 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     @Override
     public Set<MustDefinition> getMustConstraints() {
         return mustConstraints;
-    }
-
-    @Override
-    public boolean isMandatory() {
-        return mandatory;
     }
 
     @Override

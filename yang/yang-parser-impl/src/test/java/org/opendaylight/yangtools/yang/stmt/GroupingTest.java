@@ -103,7 +103,7 @@ public class GroupingTest {
         assertEquals(Optional.of("IP address of target node"), refineLeaf.getDescription());
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
-        assertFalse(refineLeaf.getConstraints().isMandatory());
+        assertFalse(refineLeaf.isMandatory());
         final Collection<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
@@ -197,7 +197,7 @@ public class GroupingTest {
         assertEquals(Optional.of("address reference added by refine"), address_u.getReference());
         assertFalse(address_u.isConfiguration());
         assertTrue(address_u.isAddedByUses());
-        assertFalse(address_u.getConstraints().isMandatory());
+        assertFalse(address_u.isMandatory());
 
         final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
                 baz.getQNameModule(), "address"));
@@ -208,7 +208,7 @@ public class GroupingTest {
         assertFalse(address_g.getReference().isPresent());
         assertTrue(address_g.isConfiguration());
         assertFalse(address_u.equals(address_g));
-        assertTrue(address_g.getConstraints().isMandatory());
+        assertTrue(address_g.isMandatory());
         assertEquals(address_g, SchemaNodeUtils.getRootOriginalIfPossible(address_u));
 
         final ContainerSchemaNode port_u = (ContainerSchemaNode) destination.getDataChildByName(QName.create(

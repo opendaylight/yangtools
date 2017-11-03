@@ -131,7 +131,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ListSchemaNode}
  *
  * <dt>mandatory
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#isMandatory()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.MandatoryAware#isMandatory()}
  *
  * <dt>max-elements
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getMinElements()}
