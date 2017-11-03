@@ -31,16 +31,16 @@ final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implemen
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return UnionTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return UnionTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return UnionTypeDefinition.toString(this);
     }
 }

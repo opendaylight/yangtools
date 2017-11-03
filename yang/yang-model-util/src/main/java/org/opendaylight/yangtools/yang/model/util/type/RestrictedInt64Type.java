@@ -23,16 +23,16 @@ final class RestrictedInt64Type extends AbstractRangeRestrictedType<Int64TypeDef
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Int64TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Int64TypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return Int64TypeDefinition.toString(this);
     }
 }

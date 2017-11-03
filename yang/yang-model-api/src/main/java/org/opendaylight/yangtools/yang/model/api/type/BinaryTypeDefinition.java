@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import java.util.Objects;
+
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of
  * octets.
@@ -24,4 +26,21 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
 
+    static String toString(final BinaryTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null)).toString();
+    }
+
+    static int hashCode(final BinaryTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null));
+    }
+
+    static boolean equals(final BinaryTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final BinaryTypeDefinition other = TypeDefinitions.castIfEquals(BinaryTypeDefinition.class, type, obj);
+        return other != null && type.getLengthConstraint().equals(other.getLengthConstraint());
+    }
 }
