@@ -45,6 +45,10 @@
         <module>yang-model-validator</module>
         <module>yang-test-util</module>
 
+        <!-- Metadata (annotation) metamodel support -->
+        <module>rfc7952-model-api</module>
+        <module>rfc7952-parser-support</module>
+
         <module>rfc8040-model-api</module>
         <!-- FIXME: solve circular dependency with rfc6020 and activate this
             <module>rfc8040-parser</module>
