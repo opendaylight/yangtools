@@ -8,27 +8,27 @@
 
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
-import com.google.common.annotations.Beta;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
-@Beta
-public final class ThirdPartyExtensionEffectiveStatementImpl extends UnknownEffectiveStatementBase<String> {
+final class ThirdPartyExtensionEffectiveStatementImpl
+        extends UnknownEffectiveStatementBase<String, ThirdPartyExtensionStatement>
+        implements ThirdPartyExtensionEffectiveStatement {
 
     private final SchemaPath path;
     private final String valueFromNamespace;
 
-    public ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
         valueFromNamespace = ctx.getFromNamespace(ThirdPartyNamespace.class, ctx);
     }
 
+    @Override
     public String getValueFromNamespace() {
         return valueFromNamespace;
     }

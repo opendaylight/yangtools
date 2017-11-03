@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext.CustomStatementPa
 public final class CustomInferencePipeline {
     public static final CrossSourceStatementReactor CUSTOM_REACTOR = new CustomStatementParserBuilder()
             .addDefaultRFC6020Bundles()
-            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    new ThirdPartyExtensionStatementImpl.ThirdPartyExtensionSupport())
+            .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, ThirdPartyExtensionSupport.getInstance())
             .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, sourceLocal(ThirdPartyNamespace.class))
             .build();
 
