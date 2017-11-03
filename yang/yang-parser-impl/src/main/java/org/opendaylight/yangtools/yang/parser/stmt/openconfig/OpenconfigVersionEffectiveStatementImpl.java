@@ -5,26 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+package org.opendaylight.yangtools.yang.parser.stmt.openconfig;
 
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
-
-import com.google.common.annotations.Beta;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
-@Beta
-public final class OpenconfigVersionEffectiveStatementImpl extends
-        UnknownEffectiveStatementBase<SemVer> {
+final class OpenconfigVersionEffectiveStatementImpl extends
+        UnknownEffectiveStatementBase<SemVer, OpenconfigVersionStatement>
+        implements OpenconfigVersionEffectiveStatement {
 
     private final SchemaPath path;
 
-    public OpenconfigVersionEffectiveStatementImpl(
-            final StmtContext<SemVer, UnknownStatement<SemVer>, ?> ctx) {
+    OpenconfigVersionEffectiveStatementImpl(final StmtContext<SemVer, OpenconfigVersionStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
