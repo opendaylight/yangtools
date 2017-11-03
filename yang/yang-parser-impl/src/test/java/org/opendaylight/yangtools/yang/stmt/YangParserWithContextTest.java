@@ -262,7 +262,7 @@ public class YangParserWithContextTest {
         assertEquals(Optional.of("description of address defined by refine"), refineLeaf.getDescription());
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
-        assertTrue(refineLeaf.getConstraints().isMandatory());
+        assertTrue(refineLeaf.isMandatory());
         final Collection<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();

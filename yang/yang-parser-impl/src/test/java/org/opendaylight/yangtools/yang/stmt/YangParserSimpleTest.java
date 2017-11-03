@@ -72,6 +72,8 @@ public class YangParserSimpleTest {
         // test DataSchemaNode args
         assertFalse(data.isAugmenting());
         assertFalse(data.isConfiguration());
+
+        assertTrue(data.isMandatory());
         final ConstraintDefinition constraints = data.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
         final Collection<MustDefinition> mustConstraints = constraints.getMustConstraints();
@@ -97,7 +99,6 @@ public class YangParserSimpleTest {
         assertTrue(found1);
         assertTrue(found2);
 
-        assertTrue(constraints.isMandatory());
         assertNull(constraints.getMinElements());
         assertNull(constraints.getMaxElements());
     }
@@ -144,7 +145,6 @@ public class YangParserSimpleTest {
         assertTrue(found1);
         assertTrue(found2);
 
-        assertFalse(constraints.isMandatory());
         assertNull(constraints.getMinElements());
         assertNull(constraints.getMaxElements());
         assertTrue(nodes.isPresenceContainer());
