@@ -12,22 +12,24 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
+import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlSchemaLocationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OpenconfigVersionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionStatement;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
     ANYXML_SCHEMA_LOCATION("urn:opendaylight:yang:extension:yang-ext", "2013-07-09",
-        AnyxmlSchemaLocationStatementImpl.class, AnyxmlSchemaLocationEffectiveStatementImpl.class,
+        AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class,
         "anyxml-schema-location", "target-node", false),
     OPENCONFIG_VERSION("http://openconfig.net/yang/openconfig-ext",
-        OpenconfigVersionStatementImpl.class, OpenconfigVersionEffectiveStatementImpl.class,
+        OpenconfigVersionStatement.class, OpenconfigVersionEffectiveStatement.class,
         "openconfig-version", "semver", false),
     YANG_DATA("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26", YangDataStatement.class,
             YangDataEffectiveStatement.class, "yang-data", "name", true);
