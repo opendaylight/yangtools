@@ -35,6 +35,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private final SortedMap<QName, ChoiceCaseNode> cases;
     private final ChoiceCaseNode defaultCase;
     private final ChoiceSchemaNode original;
+    private final boolean mandatory;
 
     public ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
@@ -85,6 +86,9 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         } else {
             defaultCase = null;
         }
+
+        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
+        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
@@ -124,6 +128,11 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     @Override
     public Optional<ChoiceCaseNode> getDefaultCase() {
         return Optional.ofNullable(defaultCase);
+    }
+
+    @Override
+    public boolean isMandatory() {
+        return mandatory;
     }
 
     @Override
