@@ -1573,8 +1573,8 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitDefaultNodes(final Collection<String> defaults) {
-            for (final String defaultValue : defaults) {
+        private void emitDefaultNodes(final Collection<? extends Object> defaults) {
+            for (final Object defaultValue : defaults) {
                 emitDefaultNode(defaultValue);
             }
         }
