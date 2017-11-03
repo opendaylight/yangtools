@@ -17,26 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 /**
  * Utility holder for constraint definitions which do not really constrain anything.
  */
-public abstract class EmptyConstraintDefinition implements ConstraintDefinition {
-    private static final EmptyConstraintDefinition MANDATORY = new EmptyConstraintDefinition() {
-        @Override
-        public boolean isMandatory() {
-            return true;
-        }
-    };
-    private static final EmptyConstraintDefinition OPTIONAL = new EmptyConstraintDefinition() {
-        @Override
-        public boolean isMandatory() {
-            return false;
-        }
-    };
+public final class EmptyConstraintDefinition implements ConstraintDefinition {
+    private static final EmptyConstraintDefinition INSTANCE = new EmptyConstraintDefinition();
 
     private EmptyConstraintDefinition() {
         // Hidden on purpose
     }
 
-    public static EmptyConstraintDefinition create(final boolean mandatory) {
-        return mandatory ? MANDATORY : OPTIONAL;
+    public static EmptyConstraintDefinition getInstance() {
+        return INSTANCE;
     }
 
     @Override

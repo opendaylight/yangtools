@@ -63,11 +63,11 @@ public class YinFileGroupingStmtTest {
         final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "type"));
         assertNotNull(leaf1);
-        assertTrue(leaf1.getConstraints().isMandatory());
+        assertTrue(leaf1.isMandatory());
 
         final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "name"));
         assertNotNull(leaf2);
-        assertTrue(leaf2.getConstraints().isMandatory());
+        assertTrue(leaf2.isMandatory());
     }
 }
