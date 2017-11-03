@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleName
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
@@ -59,6 +58,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationNamespace;
+import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationSupport;
+import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ActionStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
@@ -142,7 +144,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            .addSupport(new OpenconfigVersionStatementImpl.OpenconfigVersionSupport())
+            .addSupport(OpenconfigVersionSupport.getInstance())
             .addSupport(global(SemanticVersionNamespace.class))
             .addSupport(global(SemanticVersionModuleNamespace.class))
             .addSupport(sourceLocal(ImportPrefixToSemVerSourceIdentifier.class))
@@ -235,7 +237,7 @@ public final class YangInferencePipeline {
             .addSupport(new FeatureStatementImpl.Definition())
             .addSupport(new PositionStatementImpl.Definition())
             .addSupport(new ValueStatementImpl.Definition())
-            .addSupport(new AnyxmlSchemaLocationStatementImpl.AnyxmlSchemaLocationSupport())
+            .addSupport(AnyxmlSchemaLocationSupport.getInstance())
             .addSupport(treeScoped(AnyxmlSchemaLocationNamespace.class))
             .addSupport(YangDataStatementSupport.getInstance())
             .addSupport(global(StmtOrderingNamespace.class))

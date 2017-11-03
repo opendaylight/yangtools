@@ -5,24 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.thirdparty.plugin;
+package org.opendaylight.yangtools.yang.parser.stmt.openconfig;
 
+import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-/**
- * Private implementation of {@link ThirdPartyExtensionStatement}. This class can rely on parser internals and should
- * never be exposed to the world.
- */
-final class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<String> implements
-        ThirdPartyExtensionStatement {
-
-    ThirdPartyExtensionStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> context) {
+final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer>
+        implements OpenconfigVersionStatement {
+    OpenconfigVersionStatementImpl(final StmtContext<SemVer, OpenconfigVersionStatement, ?> context) {
         super(context);
     }
 
     @Override
-    public String getArgument() {
+    public SemVer getArgument() {
         return argument();
     }
 }
