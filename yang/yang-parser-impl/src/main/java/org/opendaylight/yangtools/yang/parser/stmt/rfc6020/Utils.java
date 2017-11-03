@@ -109,7 +109,7 @@ public final class Utils {
             final String argumentValue) {
         final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
-            final SchemaNodeIdentifier nodeIdentifier = Utils.nodeIdentifierFromPath(ctx, uniqueArgToken);
+            final SchemaNodeIdentifier nodeIdentifier = nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
                             + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
@@ -182,7 +182,7 @@ public final class Utils {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
+    public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
         // FIXME: is the path trimming really necessary??
         final List<QName> qNames = new ArrayList<>();
         for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
