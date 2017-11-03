@@ -25,12 +25,9 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private final Set<MustDefinition> mustConstraints;
     private final Integer minElements;
     private final Integer maxElements;
-    private final boolean mandatory;
 
-    private EffectiveConstraintDefinitionImpl(final boolean mandatory, final Integer minElements,
-            final Integer maxElements, final RevisionAwareXPath whenCondition,
-            final Set<MustDefinition> mustConstraints) {
-        this.mandatory = mandatory;
+    private EffectiveConstraintDefinitionImpl(final Integer minElements, final Integer maxElements,
+            final RevisionAwareXPath whenCondition, final Set<MustDefinition> mustConstraints) {
         this.minElements = minElements;
         this.maxElements = maxElements;
         this.whenCondition = whenCondition;
@@ -59,19 +56,16 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             maxElements = null;
         }
 
-        final MandatoryEffectiveStatement firstMandatoryStmt = parent.firstEffective(MandatoryEffectiveStatement.class);
-        final boolean mandatory = firstMandatoryStmt == null ? minElements != null : firstMandatoryStmt.argument();
-
         final Set<MustDefinition> mustSubstatements = ImmutableSet.copyOf(parent.allSubstatementsOfType(
             MustDefinition.class));
         final WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
 
         // Check for singleton instances
         if (minElements == null && maxElements == null && mustSubstatements.isEmpty() && firstWhenStmt == null) {
-            return EmptyConstraintDefinition.create(mandatory);
+            return EmptyConstraintDefinition.getInstance();
         }
 
-        return new EffectiveConstraintDefinitionImpl(mandatory, minElements, maxElements,
+        return new EffectiveConstraintDefinitionImpl(minElements, maxElements,
             firstWhenStmt == null ? null : firstWhenStmt.argument(), mustSubstatements);
     }
 
@@ -83,11 +77,6 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     @Override
     public Set<MustDefinition> getMustConstraints() {
         return mustConstraints;
-    }
-
-    @Override
-    public boolean isMandatory() {
-        return mandatory;
     }
 
     @Override

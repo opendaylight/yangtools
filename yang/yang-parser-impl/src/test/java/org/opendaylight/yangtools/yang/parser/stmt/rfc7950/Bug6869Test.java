@@ -46,7 +46,7 @@ public class Bug6869Test {
         final SchemaNode findNode = findNode(schemaContext, ImmutableList.of("root", "grp-leaf"));
         assertTrue(findNode instanceof LeafSchemaNode);
         final LeafSchemaNode grpLeaf = (LeafSchemaNode) findNode;
-        assertFalse(grpLeaf.getConstraints().isMandatory());
+        assertFalse(grpLeaf.isMandatory());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class Bug6869Test {
         final SchemaNode findNode = findNode(schemaContext, ImmutableList.of("root", "grp-leaf"));
         assertTrue(findNode instanceof LeafSchemaNode);
         final LeafSchemaNode grpLeaf = (LeafSchemaNode) findNode;
-        assertTrue(grpLeaf.getConstraints().isMandatory());
+        assertTrue(grpLeaf.isMandatory());
     }
 
     private static Set<IdentitySchemaNode> getIdentities(final SchemaContext schemaContext) {

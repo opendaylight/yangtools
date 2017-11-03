@@ -190,6 +190,11 @@ public class YangModeledAnyXMLDeserializationTest {
         }
 
         @Override
+        public boolean isMandatory() {
+            return false;
+        }
+
+        @Override
         public ConstraintDefinition getConstraints() {
             return null;
         }
@@ -233,5 +238,6 @@ public class YangModeledAnyXMLDeserializationTest {
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;
         }
+
     }
 }
