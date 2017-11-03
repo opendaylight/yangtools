@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -23,4 +24,22 @@ public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition>
      * @return list of the type definition which contains the union items.
      */
     List<TypeDefinition<?>> getTypes();
+
+    static int hashCode(final UnionTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getTypes());
+    }
+
+    static boolean equals(final UnionTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final UnionTypeDefinition other = TypeDefinitions.castIfEquals(UnionTypeDefinition.class, type, obj);
+        return other != null && type.getTypes().equals(other.getTypes());
+    }
+
+    static String toString(final UnionTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).add("types", type.getTypes()).toString();
+    }
 }

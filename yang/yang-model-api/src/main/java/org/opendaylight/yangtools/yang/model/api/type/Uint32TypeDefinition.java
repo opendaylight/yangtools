@@ -14,4 +14,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface Uint32TypeDefinition extends RangeRestrictedTypeDefinition<Uint32TypeDefinition, Long> {
 
+    static int hashCode(final Uint32TypeDefinition type) {
+        return TypeDefinitions.hashCode(type);
+    }
+
+    static boolean equals(final Uint32TypeDefinition type, final Object obj) {
+        return TypeDefinitions.equals(Uint32TypeDefinition.class, type, obj);
+    }
+
+    static String toString(final Uint32TypeDefinition type) {
+        return TypeDefinitions.toString(type);
+    }
 }

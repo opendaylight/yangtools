@@ -30,16 +30,16 @@ final class RestrictedDecimalType extends AbstractRangeRestrictedType<DecimalTyp
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return DecimalTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return DecimalTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return DecimalTypeDefinition.toString(this);
     }
 }

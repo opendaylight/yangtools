@@ -24,11 +24,11 @@ final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32T
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return Uint32TypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return Uint32TypeDefinition.equals(this, obj);
     }
 }

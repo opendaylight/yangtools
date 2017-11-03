@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Contains method for getting data from the <code>string</code> YANG built-in type.
@@ -21,4 +22,25 @@ public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<Str
      *         statement
      */
     List<PatternConstraint> getPatternConstraints();
+
+    static int hashCode(final StringTypeDefinition type) {
+        return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
+            type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null),
+            type.getPatternConstraints());
+    }
+
+    static boolean equals(final StringTypeDefinition type, final Object obj) {
+        if (type == obj) {
+            return true;
+        }
+
+        final StringTypeDefinition other = TypeDefinitions.castIfEquals(StringTypeDefinition.class, type, obj);
+        return other != null && type.getLengthConstraint().equals(other.getLengthConstraint())
+                && type.getPatternConstraints().equals(other.getPatternConstraints());
+    }
+
+    static String toString(final StringTypeDefinition type) {
+        return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null))
+                .add("patterns", type.getPatternConstraints()).toString();
+    }
 }

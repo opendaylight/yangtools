@@ -33,16 +33,16 @@ final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDef
 
     @Override
     public int hashCode() {
-        return TypeDefinitions.hashCode(this);
+        return EnumTypeDefinition.hashCode(this);
     }
 
     @Override
     public boolean equals(final Object obj) {
-        return TypeDefinitions.equals(this, obj);
+        return EnumTypeDefinition.equals(this, obj);
     }
 
     @Override
     public String toString() {
-        return TypeDefinitions.toString(this);
+        return EnumTypeDefinition.toString(this);
     }
 }
