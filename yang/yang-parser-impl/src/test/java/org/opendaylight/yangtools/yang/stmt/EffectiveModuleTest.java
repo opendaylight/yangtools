@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -35,19 +35,17 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveModuleTest {
 
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
+    private static final YangTextSchemaSource ROOT_MODULE = YangTextSchemaSource.forResource(
             "/semantic-statement-parser/effective-module/root.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource(
+    private static final YangTextSchemaSource IMPORTED_MODULE = YangTextSchemaSource.forResource(
             "/semantic-statement-parser/effective-module/imported.yang");
-    private static final StatementStreamSource SUBMODULE = sourceForResource(
+    private static final YangTextSchemaSource SUBMODULE = YangTextSchemaSource.forResource(
             "/semantic-statement-parser/effective-module/submod.yang");
 
     private static final QNameModule ROOT_MODULE_QNAME = QNameModule.create(URI.create("root-ns"));
@@ -61,11 +59,9 @@ public class EffectiveModuleTest {
     private static final Revision REVISION = Revision.of("2000-01-01");
 
     @Test
-    public void effectiveBuildTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE);
-        SchemaContext result = reactor.buildEffective();
-
+    public void effectiveBuildTest() throws ReactorException, YangSyntaxErrorException, IOException {
+        SchemaContext result = TestUtils.defaultParser().addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE)
+                .buildSchemaContext();
         assertNotNull(result);
 
         Module rootModule = result.findModules("root").iterator().next();

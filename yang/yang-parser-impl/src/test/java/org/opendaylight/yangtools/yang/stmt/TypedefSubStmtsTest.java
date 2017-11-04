@@ -29,7 +29,7 @@ public class TypedefSubStmtsTest {
 
     @Test
     public void typedefSubStmtsTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOOBAR);
 
         SchemaContext result = reactor.buildEffective();

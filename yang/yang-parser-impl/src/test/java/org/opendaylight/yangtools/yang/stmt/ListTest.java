@@ -34,7 +34,7 @@ public class ListTest {
 
     @Test
     public void listAndLeavesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(LIST_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

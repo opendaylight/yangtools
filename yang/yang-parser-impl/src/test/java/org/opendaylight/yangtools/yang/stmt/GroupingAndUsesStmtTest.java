@@ -47,7 +47,7 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void groupingTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(MODULE, GROUPING_MODULE);
 
         final SchemaContext result = reactor.buildEffective();
@@ -94,7 +94,7 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void usesAndRefinesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

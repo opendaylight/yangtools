@@ -13,11 +13,9 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class AugmentSimplestTest {
 
@@ -26,8 +24,8 @@ public class AugmentSimplestTest {
     private static final StatementStreamSource ROOT = sourceForResource("/semantic-statement-parser/root.yang");
 
     @Test
-    public void readAndParseYangFileTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+    public void readAndParseYangFileTest() throws ReactorException {
+        CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         reactor.addSources(AUGMENTED, ROOT);
 
         EffectiveModelContext result = reactor.build();

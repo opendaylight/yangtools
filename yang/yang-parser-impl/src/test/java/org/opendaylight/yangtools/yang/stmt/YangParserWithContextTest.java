@@ -71,7 +71,7 @@ public class YangParserWithContextTest {
     @Test
     public void testTypeFromContext() throws Exception {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
         final StatementStreamSource test1 = sourceForResource("/context-test/test1.yang");
@@ -109,7 +109,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesFromContext() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
@@ -216,7 +216,7 @@ public class YangParserWithContextTest {
     @Test
     public void testUsesRefineFromContext() throws Exception {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
         reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
@@ -289,7 +289,7 @@ public class YangParserWithContextTest {
     @Test
     public void testIdentity() throws Exception {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
         final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
@@ -318,7 +318,7 @@ public class YangParserWithContextTest {
     @Test
     public void testUnknownNodes() throws Exception {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
         final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
@@ -382,7 +382,7 @@ public class YangParserWithContextTest {
     @Test
     public void testDeviation() throws Exception {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final StatementStreamSource bar = sourceForResource("/model/bar.yang");
         final StatementStreamSource deviationTest = sourceForResource("/context-test/deviation-test.yang");

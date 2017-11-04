@@ -26,7 +26,7 @@ public class ListKeysTest {
 
         final StatementStreamSource yangFile = sourceForResource("/list-keys-test/correct-list-keys-test.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         final SchemaContext result = reactor.buildEffective();
@@ -38,7 +38,7 @@ public class ListKeysTest {
 
         final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         try {
@@ -54,7 +54,7 @@ public class ListKeysTest {
 
         final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         try {
@@ -70,7 +70,7 @@ public class ListKeysTest {
 
         final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         try {
@@ -86,7 +86,7 @@ public class ListKeysTest {
 
         final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         try {
