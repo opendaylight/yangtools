@@ -27,11 +27,11 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class Bug8307Test {
 
@@ -76,7 +76,7 @@ public class Bug8307Test {
         final Map<QNameModule, Set<QNameModule>> modulesWithSupportedDeviations = ImmutableMap.of(
                 foo, ImmutableSet.of(bar, baz), bar, ImmutableSet.of(baz));
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
         reactor.setModulesWithSupportedDeviations(modulesWithSupportedDeviations);
 
@@ -92,7 +92,7 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
 
         final SchemaContext schemaContext = reactor.buildEffective();
@@ -107,7 +107,7 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInNoModule() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
         reactor.setModulesWithSupportedDeviations(ImmutableMap.of());
 
@@ -123,7 +123,7 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule() {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_INVALID_MODULE);
 
         try {
@@ -139,7 +139,7 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule2() {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
 
         try {
