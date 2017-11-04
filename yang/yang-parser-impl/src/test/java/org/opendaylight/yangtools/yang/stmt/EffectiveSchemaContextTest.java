@@ -47,7 +47,7 @@ public class EffectiveSchemaContextTest {
     @Test
     public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
             YangSyntaxErrorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         final YangStatementStreamSource source1 = YangStatementStreamSource.create(YangTextSchemaSource.forResource(
             "/effective-schema-context-test/foo.yang"));

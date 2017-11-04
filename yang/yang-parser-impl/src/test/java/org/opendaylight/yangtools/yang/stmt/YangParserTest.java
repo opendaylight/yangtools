@@ -730,7 +730,7 @@ public class YangParserTest {
         final StatementStreamSource yangSubmodule = sourceForResource(
                 "/yang-grammar-test/submodule-header-extension.yang");
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangModule, yangSubmodule);
 
         final SchemaContext result = reactor.buildEffective();
@@ -747,7 +747,7 @@ public class YangParserTest {
         final StatementStreamSource yangFile3 = sourceForResource(
                 "/yang-grammar-test/stmtsep-in-statements-sub.yang");
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile1, yangFile2, yangFile3);
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
