@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * Thrown to indicate error in YANG model source.
@@ -110,7 +111,7 @@ public class SourceException extends RuntimeException {
      * @return Object if it is not null
      * @throws SourceException if object is null
      */
-    @Nonnull public static <T> T throwIfNull(final T obj, @Nonnull final StatementSourceReference source,
+    @Nonnull public static <T> T throwIfNull(@Nullable final T obj, @Nonnull final StatementSourceReference source,
             @Nonnull final String format, final Object... args) {
         throwIf(obj == null, source, format, args);
         return obj;
