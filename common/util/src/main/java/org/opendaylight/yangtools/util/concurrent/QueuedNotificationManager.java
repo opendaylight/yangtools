@@ -311,7 +311,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         NotificationTask(final ListenerKey<L> listenerKey, final Iterator<N> notifications) {
             this.listenerKey = requireNonNull(listenerKey);
             while (notifications.hasNext()) {
-                queue.offer(notifications.next());
+                queue.add(notifications.next());
             }
         }
 
@@ -368,7 +368,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
                             return true;
                         }
 
-                        queue.offer(notifications.next());
+                        queue.add(notifications.next());
                     }
                 }
             } finally {
