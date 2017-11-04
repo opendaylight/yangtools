@@ -31,7 +31,7 @@ public class KeyTest {
     @Test
     public void keySimpleTest() throws ReactorException {
 
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(KEY_SIMPLE_AND_COMP);
 
         EffectiveModelContext result = reactor.build();
@@ -41,7 +41,7 @@ public class KeyTest {
     @Test
     public void keyCompositeInvalid() {
 
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(KEY_COMP_DUPLICATE);
 
         try {

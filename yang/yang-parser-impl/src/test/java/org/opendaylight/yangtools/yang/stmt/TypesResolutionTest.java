@@ -12,10 +12,10 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Range;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -40,23 +40,24 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class TypesResolutionTest {
     private SchemaContext context;
 
     @Before
     public void init() throws Exception {
-        final StatementStreamSource yangFile = sourceForResource("/types/custom-types-test@2012-04-04.yang");
-        final StatementStreamSource yangFileDependency1 = sourceForResource("/ietf/iana-timezones@2012-07-09.yang");
-        final StatementStreamSource yangFileDependency2 = sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang");
-        final StatementStreamSource yangFileDependency3 = sourceForResource("/ietf/ietf-yang-types@2010-09-24.yang");
-        context = TestUtils.parseYangSources(yangFile, yangFileDependency1, yangFileDependency2, yangFileDependency3);
+        context = TestUtils.defaultParser()
+                .addSource(YangTextSchemaSource.forResource("/types/custom-types-test@2012-04-04.yang"))
+                .addSource(YangTextSchemaSource.forResource("/ietf/iana-timezones@2012-07-09.yang"))
+                .addSource(YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang"))
+                .addSource(YangTextSchemaSource.forResource("/ietf/ietf-yang-types@2010-09-24.yang"))
+                .buildSchemaContext();
         assertEquals(4, context.getModules().size());
     }
 
@@ -350,37 +351,25 @@ public class TypesResolutionTest {
     }
 
     @Test
-    public void testUnionWithExt() throws ReactorException {
-
-        final StatementStreamSource yangFile1 = sourceForResource("/types/union-with-ext/extdef.yang");
-        final StatementStreamSource yangFile2 = sourceForResource("/types/union-with-ext/unionbug.yang");
-        final StatementStreamSource yangFile3 = sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile1, yangFile2, yangFile3);
-
-        final SchemaContext result = reactor.buildEffective();
+    public void testUnionWithExt() throws ReactorException, YangSyntaxErrorException, IOException {
+        final SchemaContext result = TestUtils.defaultParser()
+                .addSource(YangTextSchemaSource.forResource("/types/union-with-ext/extdef.yang"))
+                .addSource(YangTextSchemaSource.forResource("/types/union-with-ext/unionbug.yang"))
+                .addSource(YangTextSchemaSource.forResource("/ietf/ietf-inet-types@2010-09-24.yang"))
+                .buildSchemaContext();
         assertNotNull(result);
     }
 
     @Test
     public void testUnionWithBits() throws ReactorException {
-
-        final StatementStreamSource yangFile = sourceForResource("/types/union-with-bits/union-bits-model.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = TestUtils.parseYangSource("/types/union-with-bits/union-bits-model.yang");
         assertNotNull(result);
     }
 
     @Test
     public void testUnionInList() {
-        final StatementStreamSource yangFile = sourceForResource("/types/union-in-list/unioninlisttest.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
+        YangParser reactor = TestUtils.defaultParser();
+        reactor.addSource(YangTextSchemaSource.forResource("/types/union-in-list/unioninlisttest.yang"));
 
         try {
             final SchemaContext result = reactor.buildEffective();

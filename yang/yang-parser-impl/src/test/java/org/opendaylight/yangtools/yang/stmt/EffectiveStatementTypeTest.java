@@ -63,7 +63,7 @@ public class EffectiveStatementTypeTest {
 
     @BeforeClass
     public static void setup() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSource(IMPORTED_MODULE);
         effectiveSchemaContext = reactor.buildEffective();
         types = effectiveSchemaContext.findModules("types").iterator().next();
