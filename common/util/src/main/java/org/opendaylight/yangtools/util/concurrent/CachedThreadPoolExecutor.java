@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
@@ -105,7 +106,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     public long getLargestQueueSize() {
-        return ((TrackingLinkedBlockingQueue<?>)executorQueue.getBackingQueue()).getLargestQueueSize();
+        return executorQueue.getBackingQueue().getLargestQueueSize();
     }
 
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
@@ -140,13 +141,14 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
         private static final long POLL_WAIT_TIME_IN_MS = 300;
 
-        private final LinkedBlockingQueue<Runnable> backingQueue;
+        @SuppressFBWarnings("SE_BAD_FIELD") // Runnable is not Serializable
+        private final TrackingLinkedBlockingQueue<Runnable> backingQueue;
 
         ExecutorQueue(final int maxBackingQueueSize) {
             backingQueue = new TrackingLinkedBlockingQueue<>(maxBackingQueueSize);
         }
 
-        LinkedBlockingQueue<Runnable> getBackingQueue() {
+        TrackingLinkedBlockingQueue<Runnable> getBackingQueue() {
             return backingQueue;
         }
 

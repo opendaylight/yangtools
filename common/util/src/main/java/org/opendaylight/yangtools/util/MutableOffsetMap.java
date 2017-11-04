@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.annotation.Nonnull;
 
 /**
@@ -119,7 +120,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private HashMap<K, V> newKeys;
     private Object[] objects;
     private int removed = 0;
-    private transient volatile int modCount;
+    private transient AtomicInteger modCount = new AtomicInteger();
     private boolean needClone = true;
 
     MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
@@ -232,7 +233,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private void cloneArray() {
         if (needClone) {
             needClone = false;
-            if (!EMPTY_ARRAY.equals(objects)) {
+            if (!Arrays.equals(EMPTY_ARRAY, objects)) {
                 objects = objects.clone();
             }
         }
@@ -257,7 +258,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
                 cloneArray();
                 objects[offset] = value;
                 if (ret == null) {
-                    modCount++;
+                    modCount.incrementAndGet();
                     removed--;
                 }
 
@@ -267,7 +268,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         final V ret = newKeys.put(key, value);
         if (ret == null) {
-            modCount++;
+            modCount.incrementAndGet();
         }
         return ret;
     }
@@ -289,7 +290,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
                 final V ret = (V)obj;
                 objects[offset] = removedObject();
                 if (ret != null) {
-                    modCount++;
+                    modCount.incrementAndGet();
                     removed++;
                 }
                 return ret;
@@ -298,7 +299,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         final V ret = newKeys.remove(key);
         if (ret != null) {
-            modCount++;
+            modCount.incrementAndGet();
         }
         return ret;
     }
@@ -310,7 +311,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             cloneArray();
             Arrays.fill(objects, removedObject());
             removed = objects.length;
-            modCount++;
+            modCount.incrementAndGet();
         }
     }
 
@@ -585,7 +586,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private abstract class AbstractSetIterator<E> implements Iterator<E> {
         private final Iterator<Entry<K, Integer>> oldIterator = offsets.entrySet().iterator();
         private final Iterator<K> newIterator = newKeys.keySet().iterator();
-        private int expectedModCount = modCount;
+        private int expectedModCount = modCount.get();
         private K currentKey;
         private K nextKey;
 
@@ -607,7 +608,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         private void checkModCount() {
-            if (modCount != expectedModCount) {
+            if (modCount.get() != expectedModCount) {
                 throw new ConcurrentModificationException();
             }
         }
@@ -632,7 +633,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
                 newIterator.remove();
             }
 
-            expectedModCount = ++modCount;
+            expectedModCount = modCount.incrementAndGet();
             currentKey = null;
         }
 

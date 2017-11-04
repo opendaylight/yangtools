@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
@@ -304,7 +303,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         private final ListenerKey<L> listenerKey;
 
         @GuardedBy("lock")
-        private final Queue<N> queue = new ArrayDeque<>();
+        private final ArrayDeque<N> queue = new ArrayDeque<>();
         @GuardedBy("lock")
         private boolean exiting;
 
