@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.DescriptionStatementI
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludeStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ReferenceStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
+import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
 public class Bug6874Test {
 
@@ -85,7 +85,7 @@ public class Bug6874Test {
 
     @Test
     public void descriptionAndReferenceTest11() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE);
 
         reactor.build().getRootStatements().forEach(declaredStmt -> {

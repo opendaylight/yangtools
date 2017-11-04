@@ -32,7 +32,7 @@ public class NotificationStmtTest {
 
     @Test
     public void notificationTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(NOTIFICATION_MODULE, IMPORTED_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

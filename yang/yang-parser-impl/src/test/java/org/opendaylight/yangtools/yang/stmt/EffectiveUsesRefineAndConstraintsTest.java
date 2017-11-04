@@ -39,7 +39,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
     @Test
     public void refineTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(REFINE_TEST);
 
