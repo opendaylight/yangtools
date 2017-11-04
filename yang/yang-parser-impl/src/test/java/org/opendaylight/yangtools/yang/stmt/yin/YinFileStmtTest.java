@@ -55,7 +55,7 @@ public class YinFileStmtTest {
 
     @Test
     public void readAndParseYinFileTestModel() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -64,7 +64,7 @@ public class YinFileStmtTest {
     // parsing yin file whose import statement references a module which does not exist
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void readAndParseInvalidYinFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(INVALID_YIN_FILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -72,7 +72,7 @@ public class YinFileStmtTest {
 
     // parsing yin file with duplicate key name in a list statement
     public void readAndParseInvalidYinFileTest2() {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(INVALID_YIN_FILE_2);
 
         try {

@@ -262,24 +262,25 @@ public final class YangInferencePipeline {
             .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
             .build();
 
-    public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor.builder()
-            .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
-            .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
-            .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
-            .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
-                    YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
-                    YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
-                    YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
-                    YangValidationBundles.SUPPORTED_DATA_NODES)
-             .build();
-
     private YangInferencePipeline() {
         throw new UnsupportedOperationException("Utility class");
+    }
+
+    public static CrossSourceStatementReactor.Builder reactorBuilder() {
+        return CrossSourceStatementReactor.builder()
+                .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
+                .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
+                .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
+                .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
+                .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
+                .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
+                .setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+                    YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
+                .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
+                    YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
+                .setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
+                    YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
+                .setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
+                    YangValidationBundles.SUPPORTED_DATA_NODES);
     }
 }

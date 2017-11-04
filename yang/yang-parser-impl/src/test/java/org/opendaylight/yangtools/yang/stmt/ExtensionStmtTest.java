@@ -36,7 +36,7 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionDefinition() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(EXT_DEF_MODULE);
 
         final SchemaContext result = reactor.buildEffective();
@@ -56,7 +56,7 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionUsage() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(EXT_DEF_MODULE2, EXT_USE_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

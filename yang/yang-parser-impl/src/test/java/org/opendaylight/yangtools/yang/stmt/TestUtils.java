@@ -32,20 +32,16 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.SAXException;
 
 public final class TestUtils {
     private static final Logger LOG = LoggerFactory.getLogger(TestUtils.class);
@@ -53,53 +49,53 @@ public final class TestUtils {
     private TestUtils() {
     }
 
+    public static YangParser defaultParser() {
+        return YangParserFactoryImpl.getInstance().createParser();
+    }
+
+    public static YangParser semVerParser() {
+        return YangParserFactoryImpl.getInstance().createParser(StatementParserMode.SEMVER_MODE);
+    }
+
     public static SchemaContext loadModules(final URI resourceDirectory)
             throws ReactorException, IOException, YangSyntaxErrorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        final YangParser reactor = defaultParser();
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
             if (file.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
-                reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
+                reactor.addSource(YangTextSchemaSource.forFile(file));
             } else {
                 LOG.info("Ignoring non-yang file {}", file);
             }
         }
 
-        return reactor.buildEffective();
+        return reactor.buildSchemaContext();
     }
 
     public static SchemaContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
             throws IOException, ReactorException, YangSyntaxErrorException {
-        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
+        final YangParser reactor = defaultParser();
         for (String resourceName : resourceNames) {
-            reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(refClass,
-                resourceName)));
+            reactor.addSource(YangTextSchemaSource.forResource(refClass, resourceName));
         }
 
-        return reactor.buildEffective();
+        return reactor.buildSchemaContext();
     }
 
-    public static SchemaContext loadYinModules(final URI resourceDirectory) throws ReactorException, SAXException,
-            IOException {
-        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
+    public static SchemaContext loadYinModules(final URI resourceDirectory) throws IOException, ReactorException,
+            YangSyntaxErrorException {
+        final YangParser reactor = defaultParser();
         for (File file : new File(resourceDirectory).listFiles()) {
-            reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
-                YinTextSchemaSource.forFile(file))));
+            reactor.addSource(YinTextSchemaSource.forFile(file));
         }
 
-        return reactor.buildEffective();
+        return reactor.buildSchemaContext();
     }
 
-    public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException,
-            IOException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)));
-        SchemaContext ctx = reactor.buildEffective();
-        return ctx.getModules().iterator().next();
+    public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, IOException,
+            YangSyntaxErrorException {
+        return defaultParser().addSource(source).buildSchemaContext().getModules().iterator().next();
     }
 
     public static Optional<Module> findModule(final SchemaContext context, final String moduleName) {
@@ -199,22 +195,17 @@ public final class TestUtils {
         return result;
     }
 
-    public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        reactor.addSources(sources);
-
-        return reactor.buildEffective();
+    public static SchemaContext parseYangSources(final SchemaSourceRepresentation... sources) throws ReactorException {
+        return defaultParser().addSources(sources).buildSchemaContext();
     }
 
     public static SchemaContext parseYangSources(final File... files)
             throws ReactorException, IOException, YangSyntaxErrorException {
 
-        StatementStreamSource[] sources = new StatementStreamSource[files.length];
+        SchemaSourceRepresentation[] sources = new SchemaSourceRepresentation[files.length];
 
         for (int i = 0; i < files.length; i++) {
-            sources[i] = YangStatementStreamSource.create(YangTextSchemaSource.forFile(files[i]));
+            sources[i] = YangTextSchemaSource.forFile(files[i]);
         }
 
         return parseYangSources(sources);

@@ -33,7 +33,7 @@ public class YangTypesStmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3);
         reactor.addSources(FILE1, FILE2, FILE3, FILE4);
         SchemaContext result = reactor.buildEffective();

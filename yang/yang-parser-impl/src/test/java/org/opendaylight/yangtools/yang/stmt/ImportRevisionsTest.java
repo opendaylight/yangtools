@@ -44,7 +44,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void equalRevisionDatesTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITH_EQUAL_DATE, IMPORTED_WITH_EQUAL_DATE);
 
         EffectiveModelContext result = reactor.build();
@@ -53,7 +53,7 @@ public class ImportRevisionsTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void unequalRevisionDatesTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITH_UNEQUAL_DATE, IMPORTED_WITH_UNEQUAL_DATE);
 
         EffectiveModelContext result = reactor.build();
@@ -63,7 +63,7 @@ public class ImportRevisionsTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void revisionDatesInRootOnlyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITH_DATE, IMPORTED_WITHOUT_DATE);
 
         EffectiveModelContext result = reactor.build();
@@ -72,7 +72,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void revisionDatesInImportedOnlyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE);
 
         EffectiveModelContext result = reactor.build();
@@ -81,7 +81,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void noRevisionInRootAndImportedTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITH_NO_DATE, IMPORTED_WITH_NO_DATE);
 
         EffectiveModelContext result = reactor.build();

@@ -47,7 +47,7 @@ public class IdentityStmtTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE);
 
         SchemaContext result = reactor.buildEffective();
@@ -56,7 +56,7 @@ public class IdentityStmtTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityWithPrefixTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE2);
 
         SchemaContext result = reactor.buildEffective();
@@ -65,7 +65,7 @@ public class IdentityStmtTest {
 
     @Test
     public void importedIdentityTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(LEGAL_IDENTITY_MODULE, LEGAL_IDENTITY_MODULE2);
 
         SchemaContext result = reactor.buildEffective();
@@ -74,7 +74,7 @@ public class IdentityStmtTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityThroughChaining() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ILLEGAL_IDENTITY_MODULE3);
 
         SchemaContext result = reactor.buildEffective();
@@ -83,7 +83,7 @@ public class IdentityStmtTest {
 
     @Test
     public void chainedIdentityTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(LEGAL_IDENTITY_MODULE3);
 
         SchemaContext result = reactor.buildEffective();
@@ -115,7 +115,7 @@ public class IdentityStmtTest {
 
     @Test
     public void duplicateIdentityTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(DUPLICATE_IDENTITY_MODULE);
 
         SchemaContext result = reactor.buildEffective();
