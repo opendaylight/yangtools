@@ -26,7 +26,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveIdentityTest {
 
@@ -40,8 +39,7 @@ public class EffectiveIdentityTest {
     public void cyclicefineTest() throws SourceException, ReactorException,
             URISyntaxException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         reactor.addSources(CYCLIC_IDENTITY_TEST);
         try {
             reactor.buildEffective();
@@ -55,7 +53,7 @@ public class EffectiveIdentityTest {
     public void identityTest() throws SourceException, ReactorException,
             URISyntaxException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         reactor.addSources(IDENTITY_TEST);
         SchemaContext result = reactor.buildEffective();
 

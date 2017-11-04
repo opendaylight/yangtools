@@ -45,7 +45,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTestModel() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(BAZ,FOO,BAR,SUBFOO);
         EffectiveModelContext result = reactor.build();
@@ -54,7 +54,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTestModel2() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(BAZ2,FOO2,BAR2,SUBFOO2);
         EffectiveModelContext result = reactor.build();
@@ -63,7 +63,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(YANGFILE, SIMPLENODES, IMPORTEDYANGFILE, FOOBAR);
         reactor.addSources(EXTFILE, EXTUSE);
         SchemaContext result = reactor.buildEffective();

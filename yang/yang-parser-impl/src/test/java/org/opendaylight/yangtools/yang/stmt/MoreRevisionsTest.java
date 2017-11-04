@@ -70,7 +70,7 @@ public class MoreRevisionsTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSource(REVFILE);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -80,7 +80,7 @@ public class MoreRevisionsTest {
 
     @Test
     public void twoRevisionsTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(TED_20130712, TED_20131021, IETF_TYPES);
 
@@ -90,7 +90,7 @@ public class MoreRevisionsTest {
 
     @Test
     public void twoRevisionsTest2() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES);
 
@@ -104,7 +104,7 @@ public class MoreRevisionsTest {
 
     @Test
     public void moreRevisionsListKeyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         reactor.addSources(TED_20130712, TED_20131021, ISIS_20130712,
                 ISIS_20131021, L3_20130712, L3_20131021, IETF_TYPES,

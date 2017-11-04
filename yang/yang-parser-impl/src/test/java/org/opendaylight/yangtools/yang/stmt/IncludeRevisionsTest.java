@@ -39,7 +39,7 @@ public class IncludeRevisionsTest {
     @Test
     public void revsEqualTest() throws ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(EQUAL_REV, EQUAL_ROOT);
 
         EffectiveModelContext result = reactor.build();
@@ -49,7 +49,7 @@ public class IncludeRevisionsTest {
     @Test
     public void revsUnequalTest() throws ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(UNEQUAL_REV, UNEQUAL_ROOT);
 
         try {
@@ -64,7 +64,7 @@ public class IncludeRevisionsTest {
     @Test
     public void revIncludeOnly() throws ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT);
 
         EffectiveModelContext result = reactor.build();
@@ -74,7 +74,7 @@ public class IncludeRevisionsTest {
     @Test
     public void revInModuleOnly() throws ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
 
         try {
@@ -89,7 +89,7 @@ public class IncludeRevisionsTest {
     @Test
     public void revNowhereTest() throws ReactorException {
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(NOWHERE_REV, NOWHERE_ROOT);
 
         EffectiveModelContext result = reactor.build();

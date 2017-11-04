@@ -37,7 +37,7 @@ public class MustAndWhenStmtTest {
 
     @Test
     public void mustStmtTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(MUST_MODULE);
 
         final SchemaContext result = reactor.buildEffective();
@@ -74,7 +74,7 @@ public class MustAndWhenStmtTest {
 
     @Test
     public void whenStmtTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(WHEN_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

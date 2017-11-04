@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class AugmentProcessTest {
 
@@ -87,8 +86,7 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
                 MULTIPLE_AUGMENT_SUBMODULE);
 
@@ -98,8 +96,7 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         addSources(reactor, MULTIPLE_AUGMENT);
 
         SchemaContext result = reactor.buildEffective();
@@ -108,8 +105,7 @@ public class AugmentProcessTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathTest() throws  ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
 
         SchemaContext result = reactor.buildEffective();
@@ -117,9 +113,8 @@ public class AugmentProcessTest {
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
-    public void multipleAugmentIncorrectPathAndGrpTest() throws  ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+    public void multipleAugmentIncorrectPathAndGrpTest() throws ReactorException {
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
         SchemaContext result = reactor.buildEffective();
         assertNull(result);
@@ -127,8 +122,7 @@ public class AugmentProcessTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = TestUtils.defaultParser();
         addSources(reactor, AUGMENTED, ROOT);
 
         final SchemaContext root = reactor.buildEffective();

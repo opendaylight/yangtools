@@ -46,7 +46,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inImportOrderTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED);
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -54,7 +54,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inInverseOfImportOrderTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -62,7 +62,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void missingImportedSourceTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
@@ -76,7 +76,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void circularImportsTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(CYCLE_YIN, CYCLE_YANG);
         try {
             reactor.build();
@@ -89,7 +89,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void selfImportTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(IMPORT_SELF, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
@@ -102,7 +102,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void bug2649Test() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO, IMPORT);
 
         SchemaContext buildEffective = reactor.buildEffective();
