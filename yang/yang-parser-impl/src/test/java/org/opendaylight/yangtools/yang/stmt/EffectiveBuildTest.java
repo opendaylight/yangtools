@@ -28,10 +28,10 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveBuildTest {
 
@@ -43,7 +43,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void effectiveBuildTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(SIMPLE_MODULE);
         SchemaContext result = reactor.buildEffective();
 
@@ -96,7 +96,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void extensionsTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(YANG_EXT);
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
@@ -118,7 +118,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSource(YANG_EXT);
 
         SchemaContext result = reactor.buildEffective();

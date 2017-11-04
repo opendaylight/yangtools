@@ -45,7 +45,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void includeTest() throws SourceException, ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT, SUBMODULE1, SUBMODULE2);
         EffectiveModelContext result = reactor.build();
         assertNotNull(result);
@@ -53,7 +53,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest() throws SourceException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ERROR_MODULE);
         try {
             reactor.build();
@@ -68,7 +68,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest2() throws SourceException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ERROR_SUBMODULE);
         try {
             reactor.build();
@@ -83,7 +83,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest3() throws SourceException, ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(MISSING_PARENT_MODULE);
         try {
             reactor.build();

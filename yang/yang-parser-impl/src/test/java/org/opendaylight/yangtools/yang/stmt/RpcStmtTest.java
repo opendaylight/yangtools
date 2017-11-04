@@ -39,7 +39,7 @@ public class RpcStmtTest {
 
     @Test
     public void rpcTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(RPC_MODULE, IMPORTED_MODULE, FOO_MODULE);
 
         final SchemaContext result = reactor.buildEffective();

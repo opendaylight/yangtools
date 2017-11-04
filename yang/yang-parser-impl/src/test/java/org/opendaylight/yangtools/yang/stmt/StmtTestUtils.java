@@ -132,7 +132,7 @@ public class StmtTestUtils {
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser(
             statementParserMode);
         reactor.addSources(sources);
         if (supportedFeatures != null) {
@@ -225,7 +225,7 @@ public class StmtTestUtils {
     private static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangSources);
         reactor.addLibSources(libSources);
         if (supportedFeatures != null) {

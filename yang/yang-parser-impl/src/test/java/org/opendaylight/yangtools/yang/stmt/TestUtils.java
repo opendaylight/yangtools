@@ -72,7 +72,7 @@ public final class TestUtils {
 
     public static SchemaContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
             throws IOException, ReactorException, YangSyntaxErrorException {
-        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         for (String resourceName : resourceNames) {
             reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(refClass,
@@ -84,7 +84,7 @@ public final class TestUtils {
 
     public static SchemaContext loadYinModules(final URI resourceDirectory) throws ReactorException, SAXException,
             IOException {
-        final BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final BuildAction reactor = YangParserFactoryImpl.defaultParser();
 
         for (File file : new File(resourceDirectory).listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
@@ -96,7 +96,7 @@ public final class TestUtils {
 
     public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException,
             IOException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)));
         SchemaContext ctx = reactor.buildEffective();
         return ctx.getModules().iterator().next();

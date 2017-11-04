@@ -62,7 +62,7 @@ public class EffectiveModuleTest {
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE);
         SchemaContext result = reactor.buildEffective();
 

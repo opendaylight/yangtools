@@ -18,9 +18,9 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.YangParserFactoryImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class Bug7480Test {
     @Test
@@ -62,7 +62,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
         // parent module as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid module namespace collision
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"));
         reactor.addLibSources(StmtTestUtils.sourceForResource(
@@ -77,7 +77,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
         // submodule as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid submodule name collision
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSource(StmtTestUtils.sourceForResource(
                 "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"));
         reactor.addLibSources(StmtTestUtils.sourceForResource(

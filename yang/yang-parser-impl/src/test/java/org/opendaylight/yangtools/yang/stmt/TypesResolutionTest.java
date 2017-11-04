@@ -356,7 +356,7 @@ public class TypesResolutionTest {
         final StatementStreamSource yangFile2 = sourceForResource("/types/union-with-ext/unionbug.yang");
         final StatementStreamSource yangFile3 = sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile1, yangFile2, yangFile3);
 
         final SchemaContext result = reactor.buildEffective();
@@ -368,7 +368,7 @@ public class TypesResolutionTest {
 
         final StatementStreamSource yangFile = sourceForResource("/types/union-with-bits/union-bits-model.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         final SchemaContext result = reactor.buildEffective();
@@ -379,7 +379,7 @@ public class TypesResolutionTest {
     public void testUnionInList() {
         final StatementStreamSource yangFile = sourceForResource("/types/union-in-list/unioninlisttest.yang");
 
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(yangFile);
 
         try {
