@@ -1,0 +1,89 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "9a245df4_a6c12856",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-04T03:34:49Z",
+      "side": 1,
+      "message": "VO_VOLATILE_INCREMENT",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_06b3d40a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-04T03:34:49Z",
+      "side": 1,
+      "message": "EC_BAD_ARRAY_COMPARE",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_46d02c1f",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-04T03:34:49Z",
+      "side": 1,
+      "message": "NP_METHOD_PARAMETER_TIGHTENS_ANNOTATION",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_86c6a466",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/CachedThreadPoolExecutor.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 109,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-04T03:34:49Z",
+      "side": 1,
+      "message": "BC_UNCONFIRMED_CAST_OF_RETURN_VALUE",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_66c3b057",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-04T03:34:49Z",
+      "side": 1,
+      "message": "RV_RETURN_VALUE_IGNORED_BAD_PRACTICE in line 313 on offer",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
