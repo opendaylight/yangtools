@@ -119,7 +119,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.setSupportedFeatures(ImmutableSet.of());
         reactor.addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE);
 

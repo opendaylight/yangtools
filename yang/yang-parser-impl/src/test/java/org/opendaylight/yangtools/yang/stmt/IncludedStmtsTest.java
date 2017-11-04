@@ -42,7 +42,7 @@ public class IncludedStmtsTest {
 
     @Before
     public void setup() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(ROOT_MODULE, CHILD_MODULE);
         result = reactor.buildEffective();
     }

@@ -40,7 +40,7 @@ public class IfFeatureResolutionTest {
                 QName.create("foo-namespace", "test-feature-3"),
                 QName.create("bar-namespace", "imp-feature"));
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
         reactor.setSupportedFeatures(supportedFeatures);
 
@@ -145,7 +145,7 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testAllFeaturesSupported() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
 
         final SchemaContext schemaContext = reactor.buildEffective();
@@ -272,7 +272,7 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testNoFeaturesSupported() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
+        final CrossSourceStatementReactor.BuildAction reactor = YangParserFactoryImpl.defaultParser();
         reactor.addSources(FOO_MODULE, BAR_MODULE);
         reactor.setSupportedFeatures(ImmutableSet.of());
 
