@@ -12,8 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
-import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -30,9 +28,7 @@ public enum SupportedExtensionsMapping implements StatementDefinition {
         "anyxml-schema-location", "target-node", false),
     OPENCONFIG_VERSION("http://openconfig.net/yang/openconfig-ext",
         OpenconfigVersionStatement.class, OpenconfigVersionEffectiveStatement.class,
-        "openconfig-version", "semver", false),
-    YANG_DATA("urn:ietf:params:xml:ns:yang:ietf-restconf", "2017-01-26", YangDataStatement.class,
-            YangDataEffectiveStatement.class, "yang-data", "name", true);
+        "openconfig-version", "semver", false);
 
     private final Class<? extends DeclaredStatement<?>> type;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
