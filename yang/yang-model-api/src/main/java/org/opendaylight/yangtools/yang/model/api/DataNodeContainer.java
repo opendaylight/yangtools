@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -26,6 +28,16 @@ public interface DataNodeContainer {
     Set<TypeDefinition<?>> getTypeDefinitions();
 
     /**
+     * Returns a stream of all newly defined types within this DataNodeContainer.
+     *
+     * @return typedef statements in lexicographical order
+     */
+    @Beta
+    default Stream<TypeDefinition<?>> streamTypeDefinitions() {
+        return getTypeDefinitions().stream();
+    }
+
+    /**
      * Returns set of all child nodes defined within this DataNodeContainer.
      * Although the return type is a collection, each node is guaranteed to
      * be present at most once.
@@ -33,6 +45,16 @@ public interface DataNodeContainer {
      * @return child nodes in lexicographical order
      */
     Collection<DataSchemaNode> getChildNodes();
+
+    /**
+     * Returns a stream of all child nodes defined within this DataNodeContainer.
+     *
+     * @return child nodes in lexicographical order
+     */
+    @Beta
+    default Stream<DataSchemaNode> streamChildNodes() {
+        return getChildNodes().stream();
+    }
 
     /**
      * Returns set of all groupings defined within this DataNodeContainer.

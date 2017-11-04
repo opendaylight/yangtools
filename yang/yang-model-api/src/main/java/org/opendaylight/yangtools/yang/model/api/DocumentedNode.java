@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 /**
@@ -35,8 +37,21 @@ public interface DocumentedNode {
      *
      * @return list of unknown schema nodes defined under this node.
      */
-    @Nonnull default List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    @Nonnull
+    default List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
+    }
+
+    /**
+     * Returns unknown schema nodes as a stream. This is potentially more efficient than
+     * {@link #getUnknownSchemaNodes()}.
+     *
+     * @return A stream of SchemaNodes.
+     */
+    @Beta
+    @Nonnull
+    default Stream<UnknownSchemaNode> streamUnknownSchemaNodes() {
+        return getUnknownSchemaNodes().stream();
     }
 
     interface WithStatus extends DocumentedNode {

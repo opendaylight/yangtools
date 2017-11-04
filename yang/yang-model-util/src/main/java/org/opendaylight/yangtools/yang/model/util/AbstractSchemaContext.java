@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -164,6 +165,12 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
+    @Nonnull
+    public Stream<UnknownSchemaNode> streamUnknownSchemaNodes() {
+        return Stream.of(getModules().stream().map(Module::streamUnknownSchemaNodes).flatMap(stream -> stream));
+    }
+
+    @Override
     public Set<TypeDefinition<?>> getTypeDefinitions() {
         final Set<TypeDefinition<?>> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
@@ -173,12 +180,22 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
+    public Stream<TypeDefinition<?>> streamTypeDefinitions() {
+        return Stream.of(getModules().stream().map(Module::streamTypeDefinitions).flatMap(stream -> stream));
+    }
+
+    @Override
     public Set<DataSchemaNode> getChildNodes() {
         final Set<DataSchemaNode> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
             result.addAll(module.getChildNodes());
         }
         return Collections.unmodifiableSet(result);
+    }
+
+    @Override
+    public Stream<DataSchemaNode> streamChildNodes() {
+        return Stream.of(getModules().stream().map(Module::streamChildNodes).flatMap(stream -> stream));
     }
 
     @Override
