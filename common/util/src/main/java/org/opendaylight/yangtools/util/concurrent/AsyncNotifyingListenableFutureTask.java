@@ -56,13 +56,13 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         private final Executor listenerExecutor;
 
         private DelegatingAsyncNotifyingListenableFutureTask(final Callable<V> callable,
-                @Nullable final Executor listenerExecutor) {
+                final Executor listenerExecutor) {
             super(callable);
             this.listenerExecutor = requireNonNull(listenerExecutor);
         }
 
         private DelegatingAsyncNotifyingListenableFutureTask(final Runnable runnable, @Nullable final V result,
-                @Nullable final Executor listenerExecutor) {
+                final Executor listenerExecutor) {
             super(runnable, result);
             this.listenerExecutor = requireNonNull(listenerExecutor);
         }
@@ -123,7 +123,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         super(callable);
     }
 
-    private AsyncNotifyingListenableFutureTask(final Runnable runnable, @Nullable final V result) {
+    private AsyncNotifyingListenableFutureTask(final Runnable runnable, final V result) {
         super(runnable, result);
     }
 

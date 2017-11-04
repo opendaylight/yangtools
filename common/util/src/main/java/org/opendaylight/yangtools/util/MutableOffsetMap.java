@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
@@ -119,6 +120,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private HashMap<K, V> newKeys;
     private Object[] objects;
     private int removed = 0;
+    // See java.util.Collection fail-fast iterators, this is the same thing. There is no requirement of atomicity.
+    // Furthermore using an AtomicInteger will explode memory overhead.
+    @SuppressFBWarnings("VO_VOLATILE_INCREMENT")
     private transient volatile int modCount;
     private boolean needClone = true;
 
@@ -232,7 +236,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private void cloneArray() {
         if (needClone) {
             needClone = false;
-            if (!EMPTY_ARRAY.equals(objects)) {
+            if (!Arrays.equals(EMPTY_ARRAY, objects)) {
                 objects = objects.clone();
             }
         }

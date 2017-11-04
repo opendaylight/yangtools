@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.util.concurrent;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Function;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
@@ -71,8 +72,9 @@ public abstract class ExceptionMapper<X extends Exception> implements Function<E
      */
     protected abstract X newWithCause(String message, Throwable cause);
 
-    @SuppressWarnings("unchecked")
     @Override
+    @SuppressWarnings("unchecked")
+    @SuppressFBWarnings({"BC_UNCONFIRMED_CAST_OF_RETURN_VALUE", "NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE"})
     public X apply(final Exception input) {
 
         // If exception is of the specified type,return it.
