@@ -93,6 +93,17 @@ public class DataTreeConfiguration implements Immutable {
         }
     }
 
+    public static Builder builder(final TreeType treeType) {
+        return new Builder(treeType);
+    }
+
+    public Builder copyBuilder() {
+        return new Builder(treeType)
+                .setMandatoryNodesValidation(isMandatoryNodesValidationEnabled())
+                .setUniqueIndexes(isUniqueIndexEnabled())
+                .setRootPath(getRootPath());
+    }
+
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<DataTreeConfiguration> {
         private final TreeType treeType;
         private YangInstanceIdentifier rootPath;
