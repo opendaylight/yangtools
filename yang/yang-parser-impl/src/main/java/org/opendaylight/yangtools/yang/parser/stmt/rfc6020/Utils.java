@@ -57,7 +57,7 @@ public final class Utils {
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     @RegEx
     private static final String YANG_XPATH_FUNCTIONS_STRING =
-            "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)(\\()";
+            "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)[ \t\r\n]*(\\()";
     private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
     private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
     private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
