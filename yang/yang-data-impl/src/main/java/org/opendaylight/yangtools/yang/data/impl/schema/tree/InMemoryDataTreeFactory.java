@@ -14,7 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
@@ -51,14 +50,15 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
     }
 
     @Override
-    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext) {
+    public TipProducingDataTree create(final DataTreeConfiguration treeConfig,
+            final SchemaContext initialSchemaContext) {
         return create(treeConfig, initialSchemaContext, true);
     }
 
     @Override
-    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
+    public TipProducingDataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
             final NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
-        final DataTree ret = create(treeConfig, initialSchemaContext, false);
+        final TipProducingDataTree ret = create(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.EMPTY, initialRoot);
@@ -70,8 +70,8 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         return ret;
     }
 
-    private static DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
-            final boolean maskMandatory) {
+    private static TipProducingDataTree create(final DataTreeConfiguration treeConfig,
+            final SchemaContext initialSchemaContext, final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
