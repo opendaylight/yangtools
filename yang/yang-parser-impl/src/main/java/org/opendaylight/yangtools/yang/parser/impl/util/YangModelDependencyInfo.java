@@ -243,7 +243,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String importedModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 final Optional<SemVer> importSemVer = Optional.fromNullable(getSemanticVersion(subStatementContext, sourceName));
                 result.add(new ModuleImportImpl(importedModuleName,
@@ -285,7 +285,7 @@ public abstract class YangModelDependencyInfo {
                 final String revisionDateStr = getRevisionDateString(subStatementContext, sourceName);
                 final String IncludeModuleName = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                final Date revisionDate = (revisionDateStr == null) ? null : QName
+                final Date revisionDate = revisionDateStr == null ? null : QName
                         .parseRevision(revisionDateStr);
                 result.add(new ModuleImportImpl(IncludeModuleName, revisionDate));
             }
@@ -320,8 +320,7 @@ public abstract class YangModelDependencyInfo {
                             .getLocalName())) {
                 final String currentRevision = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(sourceName, subStatementContext));
-                if (latestRevision == null
-                        || latestRevision.compareTo(currentRevision) == -1) {
+                if (latestRevision == null || latestRevision.compareTo(currentRevision) < 0) {
                     latestRevision = currentRevision;
                 }
             }

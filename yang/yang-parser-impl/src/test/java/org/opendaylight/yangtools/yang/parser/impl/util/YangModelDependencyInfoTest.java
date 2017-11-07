@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+
 import java.io.InputStream;
 import org.junit.Test;
 
@@ -61,6 +62,14 @@ public class YangModelDependencyInfoTest {
         assertFalse(info1.equals(null));
         assertFalse(info1.equals(stream1));
         assertFalse(info1.equals(info2));
+    }
+
+    @Test
+    public void testYangtools827() {
+        // Latest revision needs to be picked up irrespective of ordering
+        InputStream stream = getClass().getResourceAsStream("/bugs/YT827/foo.yang");
+        YangModelDependencyInfo info = YangModelDependencyInfo.fromInputStream(stream);
+        assertEquals("2014-12-24", info.getFormattedRevision());
     }
 
     @Test
