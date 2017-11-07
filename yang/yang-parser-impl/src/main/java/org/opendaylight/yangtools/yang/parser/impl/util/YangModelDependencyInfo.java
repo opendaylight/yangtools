@@ -283,7 +283,7 @@ public abstract class YangModelDependencyInfo {
             if (REVISION.equals(subStatementContext.keyword().getText())) {
                 final String currentRevision = Utils.stringFromStringContext(subStatementContext.argument(),
                         getReference(source, subStatementContext));
-                if (latestRevision == null || latestRevision.compareTo(currentRevision) == -1) {
+                if (latestRevision == null || latestRevision.compareTo(currentRevision) < 0) {
                     latestRevision = currentRevision;
                 }
             }

@@ -65,6 +65,14 @@ public class YangModelDependencyInfoTest {
     }
 
     @Test
+    public void testYangtools827() throws IOException, YangSyntaxErrorException {
+        // Latest revision needs to be picked up irrespective of ordering
+        YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
+            "/bugs/YT827/foo.yang");
+        assertEquals("2014-12-24", info.getFormattedRevision());
+    }
+
+    @Test
     public void testHashcode() throws IOException, YangSyntaxErrorException {
         YangModelDependencyInfo info = YangModelDependencyInfo.forResource(getClass(),
                 "/no-revision/module-without-revision.yang");

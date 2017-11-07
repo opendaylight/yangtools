@@ -1,0 +1,8 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision "2010-10-10";
+
+    revision "2014-12-24";
+}
