@@ -1,0 +1,39 @@
+module example {
+    yang-version 1.1;
+
+    namespace "http://www.example.com";
+
+    prefix "ex";
+
+    revision "2017-10-11";
+
+    identity interface-type;
+
+    identity ethernet {
+       base interface-type;
+    }
+
+    list interface {
+       key name;
+
+       leaf name {
+           type string;
+       }
+
+       leaf type {
+           type identityref {
+	       base interface-type;
+	   }
+       }
+    }
+
+    augment "/interface" {
+        when 'derived-from-or-self (type, "ex:ethernet")';
+
+        container extension {
+            leaf speed {
+                type int32;
+            }
+        }
+    }
+}
