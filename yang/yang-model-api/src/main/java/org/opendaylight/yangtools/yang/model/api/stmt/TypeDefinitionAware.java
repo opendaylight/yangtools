@@ -21,5 +21,5 @@ public interface TypeDefinitionAware {
      *
      * @return Effective {@link TypeDefinition} as defined by this statement.
      */
-    @Nonnull TypeDefinition<?> getTypeDefinition();
+    @Nonnull TypeDefinition<?, ?> getTypeDefinition();
 }

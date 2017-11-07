@@ -18,7 +18,7 @@ final class TypeDefinitions {
         throw new UnsupportedOperationException();
     }
 
-    static int basicHashCode(final TypeDefinition<?> type) {
+    static int basicHashCode(final TypeDefinition<?, ?> type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null));
     }
@@ -43,7 +43,7 @@ final class TypeDefinitions {
     }
 
     @Nullable
-    static <T extends TypeDefinition<T>> T castIfEquals(final Class<T> clazz, final T type, final Object obj) {
+    static <T extends TypeDefinition<T, ?>> T castIfEquals(final Class<T> clazz, final T type, final Object obj) {
         if (!clazz.isInstance(obj)) {
             return null;
         }
@@ -56,7 +56,7 @@ final class TypeDefinitions {
                 && Objects.equals(type.getUnits(), other.getUnits()) ? other : null;
     }
 
-    static ToStringHelper toStringHelper(final TypeDefinition<?> type) {
+    static ToStringHelper toStringHelper(final TypeDefinition<?, ?> type) {
         return MoreObjects.toStringHelper(type).omitNullValues()
                 .add("path", type.getPath())
                 .add("baseType", type.getBaseType())
@@ -68,6 +68,6 @@ final class TypeDefinitions {
     }
 
     static ToStringHelper toStringHelper(final RangeRestrictedTypeDefinition<?, ?> type) {
-        return toStringHelper((TypeDefinition<?>) type).add("range", type.getRangeConstraint().orElse(null));
+        return toStringHelper((TypeDefinition<?, ?>) type).add("range", type.getRangeConstraint().orElse(null));
     }
 }

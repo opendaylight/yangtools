@@ -23,7 +23,7 @@ public interface DataNodeContainer {
      *
      * @return typedef statements in lexicographical order
      */
-    Set<TypeDefinition<?>> getTypeDefinitions();
+    Set<TypeDefinition<?, ?>> getTypeDefinitions();
 
     /**
      * Returns set of all child nodes defined within this DataNodeContainer.

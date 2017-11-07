@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Makes is possible to access to the individual bits values of this type.
  */
-public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
+// FIXME: default value should not be an Object, but something more concrete
+public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition, Object> {
     /**
      * Returns all bit values.
      *

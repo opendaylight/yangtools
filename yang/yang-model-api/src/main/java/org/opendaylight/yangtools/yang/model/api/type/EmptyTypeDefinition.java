@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition> {
+public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition, Empty> {
 
     static int hashCode(final EmptyTypeDefinition type) {
         return TypeDefinitions.basicHashCode(type);

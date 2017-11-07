@@ -21,7 +21,7 @@ public interface OperationDefinition extends SchemaNode {
      *
      * @return Set of type definitions declared under this operation.
      */
-    Set<TypeDefinition<?>> getTypeDefinitions();
+    Set<TypeDefinition<?, ?>> getTypeDefinitions();
 
     /**
      * Returns the set of grouping statements declared under this operation.

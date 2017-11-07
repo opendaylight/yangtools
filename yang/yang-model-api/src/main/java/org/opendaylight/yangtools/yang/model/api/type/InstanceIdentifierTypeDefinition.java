@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Contains methods for getting data from the <code>instance-identifier</code>
  * YANG built-in type.
  */
-public interface InstanceIdentifierTypeDefinition extends TypeDefinition<InstanceIdentifierTypeDefinition> {
+// FIXME: Something better than Object?
+public interface InstanceIdentifierTypeDefinition extends TypeDefinition<InstanceIdentifierTypeDefinition, Object> {
     /**
      * Returns true|false which represents argument of <code>require-instance</code> statement. This statement is the
      * substatement of the <code>type</code> statement.

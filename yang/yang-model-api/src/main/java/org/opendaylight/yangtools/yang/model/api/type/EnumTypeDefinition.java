@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * Makes is possible to access to the individual enumeration values of this
  * type.
  */
-public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
+// FIXME: something better than Object?
+public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition, Object> {
     /**
      * Contains the methods for accessing the data about the concrete
      * enumeration item which represents <code>enum</code> YANG type.
