@@ -13,7 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
-public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> {
+public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition, Object> {
     private RevisionAwareXPath pathStatement;
 
     LeafrefTypeBuilder(final SchemaPath path) {

@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseEmptyType extends AbstractBaseType<EmptyTypeDefinition> implements EmptyTypeDefinition {
+final class BaseEmptyType extends AbstractBaseType<EmptyTypeDefinition, Empty> implements EmptyTypeDefinition {
     static final BaseEmptyType INSTANCE = new BaseEmptyType();
 
     private BaseEmptyType() {

@@ -17,15 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
+abstract class AbstractDerivedType<T extends TypeDefinition<T, N>, N> extends AbstractTypeDefinition<T, N> {
     private final T baseType;
-    private final Object defaultValue;
+    private final N defaultValue;
     private final String description;
     private final String reference;
     private final Status status;
     private final String units;
 
-    AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
+    AbstractDerivedType(final T baseType, final SchemaPath path, final N defaultValue, final String description,
             final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(path, unknownSchemNodes);
@@ -50,7 +50,7 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
     }
 
     @Override
-    public final Optional<? extends Object> getDefaultValue() {
+    public final Optional<? extends N> getDefaultValue() {
         return defaultValue != null ? Optional.of(defaultValue) : baseType.getDefaultValue();
     }
 

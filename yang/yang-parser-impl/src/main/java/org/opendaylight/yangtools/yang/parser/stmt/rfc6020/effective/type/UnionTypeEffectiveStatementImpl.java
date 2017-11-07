@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
-public final class UnionTypeEffectiveStatementImpl extends AbstractTypeEffectiveStatement<UnionTypeDefinition> {
+public final class UnionTypeEffectiveStatementImpl extends AbstractTypeEffectiveStatement<UnionTypeDefinition, Object> {
     public UnionTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final UnionTypeDefinition baseType) {

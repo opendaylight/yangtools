@@ -27,7 +27,7 @@ import java.util.Optional;
  *            type of the base type (YANG <code>type</code> substatement) which
  *            is included in the instance of this type
  */
-public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode {
+public interface TypeDefinition<T extends TypeDefinition<T, N>, N> extends SchemaNode {
     /**
      * Returns the base type from which this type is derived. If this is yang built-in type, returns null.
      *
@@ -51,5 +51,5 @@ public interface TypeDefinition<T extends TypeDefinition<?>> extends SchemaNode 
      *
      * @return instance of <code>Object</code> type which contains default value for <code>typedef</code>
      */
-    Optional<? extends Object> getDefaultValue();
+    Optional<? extends N> getDefaultValue();
 }

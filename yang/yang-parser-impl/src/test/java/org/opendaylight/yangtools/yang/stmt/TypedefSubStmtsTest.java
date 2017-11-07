@@ -35,10 +35,10 @@ public class TypedefSubStmtsTest {
         SchemaContext result = reactor.buildEffective();
         assertNotNull(result);
 
-        Set<TypeDefinition<?>> typedefs = result.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typedefs = result.getTypeDefinitions();
         assertEquals(1, typedefs.size());
 
-        TypeDefinition<?> typedef = typedefs.iterator().next();
+        TypeDefinition<?, ?> typedef = typedefs.iterator().next();
         assertEquals("time-of-the-day", typedef.getQName().getLocalName());
         assertEquals("string", typedef.getBaseType().getQName().getLocalName());
         assertEquals(Optional.of("24-hour-clock"), typedef.getUnits());

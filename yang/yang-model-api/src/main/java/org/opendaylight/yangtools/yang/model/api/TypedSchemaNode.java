@@ -13,7 +13,7 @@ package org.opendaylight.yangtools.yang.model.api;
  *
  * @author Robert Varga
  */
-public interface TypedSchemaNode extends DataSchemaNode {
+public interface TypedSchemaNode<T extends TypeDefinition<T, N>, N> extends DataSchemaNode {
     /**
      * Returns type of the instance which implements <code>DataSchemaNode</code>.
      *
@@ -21,5 +21,5 @@ public interface TypedSchemaNode extends DataSchemaNode {
      *         value of the argument of the YANG <code>type</code> substatement
      *         of the <code>leaf</code> or <code>leaf-list</code> statement
      */
-    TypeDefinition<? extends TypeDefinition<?>> getType();
+    T getType();
 }

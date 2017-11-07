@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-final class RestrictedStringType extends AbstractLengthRestrictedType<StringTypeDefinition>
+final class RestrictedStringType extends AbstractLengthRestrictedType<StringTypeDefinition, String>
         implements StringTypeDefinition {
     private final List<PatternConstraint> patternConstraints;
 

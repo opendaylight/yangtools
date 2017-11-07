@@ -13,9 +13,9 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 
-final class DerivedBinaryType extends AbstractLengthRestrictedDerivedType<BinaryTypeDefinition>
+final class DerivedBinaryType extends AbstractLengthRestrictedDerivedType<BinaryTypeDefinition, byte[]>
         implements BinaryTypeDefinition {
-    DerivedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path, final byte[] defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int64TypeDefinition;
 
 final class DerivedInt64Type extends AbstractRangeRestrictedDerivedType<Int64TypeDefinition, Long>
         implements Int64TypeDefinition {
-    DerivedInt64Type(final Int64TypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedInt64Type(final Int64TypeDefinition baseType, final SchemaPath path, final Long defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);

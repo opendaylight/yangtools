@@ -16,11 +16,11 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
-abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTypeDefinition<T>>
-        extends AbstractDerivedType<T> implements LengthRestrictedTypeDefinition<T> {
+abstract class AbstractLengthRestrictedDerivedType<T extends LengthRestrictedTypeDefinition<T, N>, N>
+        extends AbstractDerivedType<T, N> implements LengthRestrictedTypeDefinition<T, N> {
 
     AbstractLengthRestrictedDerivedType(final T baseType, final SchemaPath path,
-            final Object defaultValue, final String description, final String reference, final Status status,
+            final N defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }

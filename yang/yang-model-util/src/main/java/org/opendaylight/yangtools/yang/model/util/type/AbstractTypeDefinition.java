@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractTypeDefinition<T extends TypeDefinition<T>> implements Immutable, TypeDefinition<T> {
+abstract class AbstractTypeDefinition<T extends TypeDefinition<T, N>, N> implements Immutable, TypeDefinition<T, N> {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final SchemaPath path;
 

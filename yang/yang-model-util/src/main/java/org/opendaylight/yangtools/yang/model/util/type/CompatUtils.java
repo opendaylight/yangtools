@@ -118,8 +118,8 @@ public final class CompatUtils {
      * @param leaf Leaf for which we are acquiring the type
      * @return Potentially base type of the leaf type.
      */
-    @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
-        final TypeDefinition<?> leafType = leaf.getType();
+    @Nonnull public static TypeDefinition<?, ?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
+        final TypeDefinition<?, ?> leafType = leaf.getType();
         Preconditions.checkNotNull(leafType);
 
         if (!leaf.getPath().equals(leafType.getPath())) {
@@ -128,7 +128,7 @@ public final class CompatUtils {
         }
 
         // We are dealing with a type generated for the leaf itself
-        final TypeDefinition<?> baseType = leafType.getBaseType();
+        final TypeDefinition<?, ?> baseType = leafType.getBaseType();
         Preconditions.checkArgument(baseType != null, "Leaf %s has type for leaf, but no base type", leaf);
 
         if (leaf.getPath().equals(baseType.getPath().getParent())) {
@@ -172,16 +172,16 @@ public final class CompatUtils {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final DecimalTypeDefinition type) {
+    private static TypeDefinition<?, ?> baseTypeIfNotConstrained(final DecimalTypeDefinition type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final InstanceIdentifierTypeDefinition type) {
+    private static TypeDefinition<?, ?> baseTypeIfNotConstrained(final InstanceIdentifierTypeDefinition type) {
         final InstanceIdentifierTypeDefinition base = type.getBaseType();
         return type.requireInstance() == base.requireInstance() ? base : type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
+    private static TypeDefinition<?, ?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
         final StringTypeDefinition base = type.getBaseType();
         final List<PatternConstraint> patterns = type.getPatternConstraints();
         final Optional<LengthConstraint> optLengths = type.getLengthConstraint();
@@ -207,7 +207,7 @@ public final class CompatUtils {
         return optConstraint.equals(base.getRangeConstraint()) ? base : type;
     }
 
-    private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,
+    private static <T extends LengthRestrictedTypeDefinition<T, N>, N> T baseTypeIfNotConstrained(final T type,
             final T base) {
         final Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
         if (!optConstraint.isPresent()) {

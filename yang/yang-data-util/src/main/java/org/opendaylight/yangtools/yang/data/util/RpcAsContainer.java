@@ -45,7 +45,7 @@ public final class RpcAsContainer implements ContainerSchemaNode {
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 

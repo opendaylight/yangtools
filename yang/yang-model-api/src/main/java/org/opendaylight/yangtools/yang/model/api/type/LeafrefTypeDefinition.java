@@ -11,7 +11,8 @@ import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
+// FIXME: something better than Object
+public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition, Object> {
 
     RevisionAwareXPath getPathStatement();
 

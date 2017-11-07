@@ -24,7 +24,7 @@ import java.util.Objects;
  * href="https://tools.ietf.org/html/rfc6020#section-9.8">[RFC-6020] The binary
  * Built-In Type</a>
  */
-public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
+public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition, byte[]> {
 
     static String toString(final BinaryTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null)).toString();

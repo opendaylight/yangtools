@@ -46,12 +46,12 @@ public class ConstraintDefinitionsTest {
         assertNotNull(schemaContext);
 
         final Module testModule = schemaContext.findModule("foo", Revision.of("2016-09-20")).get();
-        final LeafSchemaNode mandatoryLeaf1 = (LeafSchemaNode) testModule.getDataChildByName(
+        final LeafSchemaNode<?, ?> mandatoryLeaf1 = (LeafSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-1"));
         assertNotNull(mandatoryLeaf1);
         ConstraintDefinition constraints1 = mandatoryLeaf1.getConstraints();
 
-        final LeafSchemaNode mandatoryLeaf2 = (LeafSchemaNode) testModule.getDataChildByName(
+        final LeafSchemaNode<?, ?> mandatoryLeaf2 = (LeafSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-2"));
         assertNotNull(mandatoryLeaf2);
         ConstraintDefinition constraints2 = mandatoryLeaf2.getConstraints();
@@ -62,7 +62,7 @@ public class ConstraintDefinitionsTest {
         assertTrue(ConstraintDefinitions.equals(constraints1, constraints1));
         assertFalse(ConstraintDefinitions.equals(constraints1, "str"));
 
-        final LeafSchemaNode mandatoryLeaf3 = (LeafSchemaNode) testModule.getDataChildByName(
+        final LeafSchemaNode<?, ?> mandatoryLeaf3 = (LeafSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-3"));
         assertNotNull(mandatoryLeaf3);
         ConstraintDefinition constraints3 = mandatoryLeaf3.getConstraints();
@@ -70,7 +70,7 @@ public class ConstraintDefinitionsTest {
         assertEquals(ConstraintDefinitions.hashCode(constraints2), ConstraintDefinitions.hashCode(constraints3));
         assertTrue(ConstraintDefinitions.equals(constraints2, constraints3));
 
-        final LeafSchemaNode mandatoryLeaf4 = (LeafSchemaNode) testModule.getDataChildByName(
+        final LeafSchemaNode<?, ?> mandatoryLeaf4 = (LeafSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-4"));
         assertNotNull(mandatoryLeaf4);
         ConstraintDefinition constraints4 = mandatoryLeaf4.getConstraints();
@@ -78,7 +78,7 @@ public class ConstraintDefinitionsTest {
         assertNotEquals(ConstraintDefinitions.hashCode(constraints3), ConstraintDefinitions.hashCode(constraints4));
         assertFalse(ConstraintDefinitions.equals(constraints3, constraints4));
 
-        final LeafSchemaNode mandatoryLeaf5 = (LeafSchemaNode) testModule.getDataChildByName(
+        final LeafSchemaNode<?, ?> mandatoryLeaf5 = (LeafSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-5"));
         assertNotNull(mandatoryLeaf5);
         final ConstraintDefinition constraints5 = mandatoryLeaf5.getConstraints();
@@ -86,12 +86,12 @@ public class ConstraintDefinitionsTest {
         assertNotEquals(ConstraintDefinitions.hashCode(constraints4), ConstraintDefinitions.hashCode(constraints5));
         assertFalse(ConstraintDefinitions.equals(constraints4, constraints5));
 
-        final LeafListSchemaNode constrainedLeafList1 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final LeafListSchemaNode<?, ?> constrainedLeafList1 = (LeafListSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-1"));
         assertNotNull(constrainedLeafList1);
         constraints1 = constrainedLeafList1.getConstraints();
 
-        final LeafListSchemaNode constrainedLeafList2 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final LeafListSchemaNode<?, ?> constrainedLeafList2 = (LeafListSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-2"));
         assertNotNull(constrainedLeafList2);
         constraints2 = constrainedLeafList2.getConstraints();
@@ -99,7 +99,7 @@ public class ConstraintDefinitionsTest {
         assertEquals(ConstraintDefinitions.hashCode(constraints1), ConstraintDefinitions.hashCode(constraints2));
         assertTrue(ConstraintDefinitions.equals(constraints1, constraints2));
 
-        final LeafListSchemaNode constrainedLeafList3 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final LeafListSchemaNode<?, ?> constrainedLeafList3 = (LeafListSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-3"));
         assertNotNull(constrainedLeafList3);
         constraints3 = constrainedLeafList3.getConstraints();
@@ -107,7 +107,7 @@ public class ConstraintDefinitionsTest {
         assertNotEquals(ConstraintDefinitions.hashCode(constraints2), ConstraintDefinitions.hashCode(constraints3));
         assertFalse(ConstraintDefinitions.equals(constraints2, constraints3));
 
-        final LeafListSchemaNode constrainedLeafList4 = (LeafListSchemaNode) testModule.getDataChildByName(
+        final LeafListSchemaNode<?, ?> constrainedLeafList4 = (LeafListSchemaNode<?, ?>) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-4"));
         assertNotNull(constrainedLeafList4);
         constraints4 = constrainedLeafList4.getConstraints();

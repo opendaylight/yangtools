@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int32TypeDefinition;
 
 final class DerivedInt32Type extends AbstractRangeRestrictedDerivedType<Int32TypeDefinition, Integer>
         implements Int32TypeDefinition {
-    DerivedInt32Type(final Int32TypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedInt32Type(final Int32TypeDefinition baseType, final SchemaPath path, final Integer defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);

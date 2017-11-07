@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseBinaryType extends AbstractLengthRestrictedBaseType<BinaryTypeDefinition>
+final class BaseBinaryType extends AbstractLengthRestrictedBaseType<BinaryTypeDefinition, byte[]>
         implements BinaryTypeDefinition {
     static final BaseBinaryType INSTANCE = new BaseBinaryType();
 

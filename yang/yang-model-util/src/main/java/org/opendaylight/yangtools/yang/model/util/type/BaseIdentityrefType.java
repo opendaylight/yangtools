@@ -11,12 +11,13 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.List;
 import java.util.Set;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition>
+final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition, QName>
         implements IdentityrefTypeDefinition {
     private final Set<IdentitySchemaNode> identities;
 

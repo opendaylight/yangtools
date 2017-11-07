@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Contains the method which access union item in the union type.
  */
-public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition> {
+public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition, Object> {
 
     /**
      * Returns type definitions which represent the values of the arguments for
@@ -23,7 +23,7 @@ public interface UnionTypeDefinition extends TypeDefinition<UnionTypeDefinition>
      *
      * @return list of the type definition which contains the union items.
      */
-    List<TypeDefinition<?>> getTypes();
+    List<TypeDefinition<?, ?>> getTypes();
 
     static int hashCode(final UnionTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),

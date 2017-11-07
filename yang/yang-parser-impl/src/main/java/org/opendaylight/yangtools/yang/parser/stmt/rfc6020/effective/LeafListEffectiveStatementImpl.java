@@ -30,21 +30,21 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
     private static final String ORDER_BY_USER_KEYWORD = "user";
 
-    private final TypeDefinition<?> type;
-    private final LeafListSchemaNode original;
+    private final TypeDefinition<?, ?> type;
+    private final LeafListSchemaNode<?, ?> original;
     private final boolean userOrdered;
     private final Set<String> defaultValues;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         super(ctx);
-        this.original = (LeafListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.original = (LeafListSchemaNode<?, ?>) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
             firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
             "Leaf-list is missing a 'type' statement");
 
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+        final ConcreteTypeBuilder<?, ?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
         final ImmutableSet.Builder<String> defaultValuesBuilder = ImmutableSet.builder();
         boolean isUserOrdered = false;
@@ -86,12 +86,12 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     }
 
     @Override
-    public Optional<LeafListSchemaNode> getOriginal() {
+    public Optional<LeafListSchemaNode<?, ?>> getOriginal() {
         return Optional.ofNullable(original);
     }
 
     @Override
-    public TypeDefinition<?> getType() {
+    public TypeDefinition<?, ?> getType() {
         return type;
     }
 

@@ -8,7 +8,11 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -40,7 +44,7 @@ public final class ConcreteTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static ConcreteTypeBuilder<?> concreteTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
+    public static ConcreteTypeBuilder<?, ?> concreteTypeBuilder(@Nonnull final TypeDefinition<?, ?> baseType,
             @Nonnull final SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
             return concreteBinaryBuilder((BinaryTypeDefinition) baseType, path);
@@ -85,9 +89,9 @@ public final class ConcreteTypes {
         }
     }
 
-    private static ConcreteTypeBuilder<BinaryTypeDefinition> concreteBinaryBuilder(
+    private static ConcreteTypeBuilder<BinaryTypeDefinition, byte[]> concreteBinaryBuilder(
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
-        return new ConcreteTypeBuilder<BinaryTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<BinaryTypeDefinition, byte[]>(baseType, path) {
             @Nonnull
             @Override
             public BinaryTypeDefinition buildType() {
@@ -97,9 +101,10 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<BitsTypeDefinition> concreteBitsBuilder(final BitsTypeDefinition baseType,
+    private static ConcreteTypeBuilder<BitsTypeDefinition, Object> concreteBitsBuilder(
+            final BitsTypeDefinition baseType,
             final SchemaPath path) {
-        return new ConcreteTypeBuilder<BitsTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<BitsTypeDefinition, Object>(baseType, path) {
             @Nonnull
             @Override
             public BitsTypeDefinition buildType() {
@@ -109,9 +114,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<BooleanTypeDefinition> concreteBooleanBuilder(
+    private static ConcreteTypeBuilder<BooleanTypeDefinition, Boolean> concreteBooleanBuilder(
             @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
-        return new ConcreteTypeBuilder<BooleanTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<BooleanTypeDefinition, Boolean>(baseType, path) {
             @Nonnull
             @Override
             public BooleanTypeDefinition buildType() {
@@ -121,9 +126,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<DecimalTypeDefinition> concreteDecimalBuilder(
+    private static ConcreteTypeBuilder<DecimalTypeDefinition, BigDecimal> concreteDecimalBuilder(
             final DecimalTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<DecimalTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<DecimalTypeDefinition, BigDecimal>(baseType, path) {
             @Nonnull
             @Override
             public DecimalTypeDefinition buildType() {
@@ -133,9 +138,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<EmptyTypeDefinition> concreteEmptyBuilder(final EmptyTypeDefinition baseType,
-            final SchemaPath path) {
-        return new ConcreteTypeBuilder<EmptyTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<EmptyTypeDefinition, Empty> concreteEmptyBuilder(
+            final EmptyTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<EmptyTypeDefinition, Empty>(baseType, path) {
             @Nonnull
             @Override
             public EmptyTypeDefinition buildType() {
@@ -145,9 +150,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<EnumTypeDefinition> concreteEnumerationBuilder(
+    private static ConcreteTypeBuilder<EnumTypeDefinition, Object> concreteEnumerationBuilder(
             final EnumTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<EnumTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<EnumTypeDefinition, Object>(baseType, path) {
             @Nonnull
             @Override
             public EnumTypeDefinition buildType() {
@@ -157,9 +162,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<IdentityrefTypeDefinition> concreteIdentityrefBuilder(
+    private static ConcreteTypeBuilder<IdentityrefTypeDefinition, QName> concreteIdentityrefBuilder(
             final IdentityrefTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<IdentityrefTypeDefinition, QName>(baseType, path) {
             @Nonnull
             @Override
             public IdentityrefTypeDefinition buildType() {
@@ -169,9 +174,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<InstanceIdentifierTypeDefinition> concreteInstanceIdentifierBuilder(
+    private static ConcreteTypeBuilder<InstanceIdentifierTypeDefinition, Object> concreteInstanceIdentifierBuilder(
             final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<InstanceIdentifierTypeDefinition, Object>(baseType, path) {
             @Nonnull
             @Override
             public InstanceIdentifierTypeDefinition buildType() {
@@ -181,9 +186,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Int8TypeDefinition> concreteInt8Builder(
+    private static ConcreteTypeBuilder<Int8TypeDefinition, Byte> concreteInt8Builder(
             final Int8TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Int8TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Int8TypeDefinition, Byte>(baseType, path) {
             @Nonnull
             @Override
             public Int8TypeDefinition buildType() {
@@ -193,9 +198,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Int16TypeDefinition> concreteInt16Builder(
+    private static ConcreteTypeBuilder<Int16TypeDefinition, Short> concreteInt16Builder(
             final Int16TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Int16TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Int16TypeDefinition, Short>(baseType, path) {
             @Nonnull
             @Override
             public Int16TypeDefinition buildType() {
@@ -205,9 +210,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Int32TypeDefinition> concreteInt32Builder(
+    private static ConcreteTypeBuilder<Int32TypeDefinition, Integer> concreteInt32Builder(
             final Int32TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Int32TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Int32TypeDefinition, Integer>(baseType, path) {
             @Nonnull
             @Override
             public Int32TypeDefinition buildType() {
@@ -217,9 +222,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Int64TypeDefinition> concreteInt64Builder(
+    private static ConcreteTypeBuilder<Int64TypeDefinition, Long> concreteInt64Builder(
             final Int64TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Int64TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Int64TypeDefinition, Long>(baseType, path) {
             @Nonnull
             @Override
             public Int64TypeDefinition buildType() {
@@ -229,9 +234,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<LeafrefTypeDefinition> concreteLeafrefBuilder(
+    private static ConcreteTypeBuilder<LeafrefTypeDefinition, Object> concreteLeafrefBuilder(
             final LeafrefTypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<LeafrefTypeDefinition, Object>(baseType, path) {
             @Nonnull
             @Override
             public LeafrefTypeDefinition buildType() {
@@ -241,9 +246,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<StringTypeDefinition> concreteStringBuilder(final StringTypeDefinition baseType,
-            final SchemaPath path) {
-        return new ConcreteTypeBuilder<StringTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<StringTypeDefinition, String> concreteStringBuilder(
+            final StringTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<StringTypeDefinition, String>(baseType, path) {
             @Nonnull
             @Override
             public StringTypeDefinition buildType() {
@@ -253,9 +258,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<UnionTypeDefinition> concreteUnionBuilder(final UnionTypeDefinition baseType,
-            final SchemaPath path) {
-        return new ConcreteTypeBuilder<UnionTypeDefinition>(baseType, path) {
+    private static ConcreteTypeBuilder<UnionTypeDefinition, Object> concreteUnionBuilder(
+            final UnionTypeDefinition baseType, final SchemaPath path) {
+        return new ConcreteTypeBuilder<UnionTypeDefinition, Object>(baseType, path) {
             @Nonnull
             @Override
             public DerivedUnionType buildType() {
@@ -265,9 +270,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Uint8TypeDefinition> concreteUint8Builder(
+    private static ConcreteTypeBuilder<Uint8TypeDefinition, Short> concreteUint8Builder(
             final Uint8TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Uint8TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Uint8TypeDefinition, Short>(baseType, path) {
             @Nonnull
             @Override
             public Uint8TypeDefinition buildType() {
@@ -277,9 +282,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Uint16TypeDefinition> concreteUint16Builder(
+    private static ConcreteTypeBuilder<Uint16TypeDefinition, Integer> concreteUint16Builder(
             final Uint16TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Uint16TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Uint16TypeDefinition, Integer>(baseType, path) {
             @Nonnull
             @Override
             public Uint16TypeDefinition buildType() {
@@ -289,9 +294,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Uint32TypeDefinition> concreteUint32Builder(
+    private static ConcreteTypeBuilder<Uint32TypeDefinition, Long> concreteUint32Builder(
             final Uint32TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Uint32TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Uint32TypeDefinition, Long>(baseType, path) {
             @Nonnull
             @Override
             public Uint32TypeDefinition buildType() {
@@ -301,9 +306,9 @@ public final class ConcreteTypes {
         };
     }
 
-    private static ConcreteTypeBuilder<Uint64TypeDefinition> concreteUint64Builder(
+    private static ConcreteTypeBuilder<Uint64TypeDefinition, BigInteger> concreteUint64Builder(
             final Uint64TypeDefinition baseType, final SchemaPath path) {
-        return new ConcreteTypeBuilder<Uint64TypeDefinition>(baseType, path) {
+        return new ConcreteTypeBuilder<Uint64TypeDefinition, BigInteger>(baseType, path) {
             @Nonnull
             @Override
             public Uint64TypeDefinition buildType() {

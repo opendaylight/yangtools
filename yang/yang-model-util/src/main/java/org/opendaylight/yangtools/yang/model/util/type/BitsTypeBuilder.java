@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
-public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTypeDefinition> {
+public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTypeDefinition, Object> {
     private final Builder<String, Bit> builder = ImmutableMap.builder();
 
     BitsTypeBuilder(final SchemaPath path) {

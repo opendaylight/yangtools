@@ -41,14 +41,14 @@ public enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStat
     UINT32(BaseTypes.uint32Type()),
     UINT64(BaseTypes.uint64Type());
 
-    private final TypeDefinition<?> typedef;
+    private final TypeDefinition<?, ?> typedef;
 
-    BuiltinEffectiveStatement(final TypeDefinition<?> typedef) {
+    BuiltinEffectiveStatement(final TypeDefinition<?, ?> typedef) {
         this.typedef = requireNonNull(typedef);
     }
 
     @Override
-    public @Nonnull TypeDefinition<?> getTypeDefinition() {
+    public @Nonnull TypeDefinition<?, ?> getTypeDefinition() {
         return typedef;
     }
 

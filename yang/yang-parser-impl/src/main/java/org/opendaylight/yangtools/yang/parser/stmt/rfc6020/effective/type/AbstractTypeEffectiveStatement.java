@@ -18,13 +18,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
-abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> extends
+abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T, N>, N> extends
         DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
     private final T typeDefinition;
 
     protected AbstractTypeEffectiveStatement(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
-            final TypeBuilder<T> builder) {
+            final TypeBuilder<T, N> builder) {
         super(ctx);
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {

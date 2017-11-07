@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
 abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefinition<T, N>,
-        N extends Number & Comparable<N>> extends AbstractRestrictedType<T>
+        N extends Number & Comparable<N>> extends AbstractRestrictedType<T, N>
         implements RangeRestrictedTypeDefinition<T, N> {
     private final @Nullable RangeConstraint<N> rangeConstraint;
 

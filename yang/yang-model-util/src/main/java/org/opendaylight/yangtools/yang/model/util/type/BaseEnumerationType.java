@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
-final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> implements EnumTypeDefinition {
+final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition, Object> implements EnumTypeDefinition {
     private final List<EnumPair> values;
 
     BaseEnumerationType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,

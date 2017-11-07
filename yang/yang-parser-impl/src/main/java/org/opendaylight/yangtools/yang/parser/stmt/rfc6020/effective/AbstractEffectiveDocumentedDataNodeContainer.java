@@ -39,7 +39,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
-    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<TypeDefinition<?, ?>> typeDefinitions;
     private final Set<DataSchemaNode> publicChildNodes;
 
     protected AbstractEffectiveDocumentedDataNodeContainer(
@@ -49,7 +49,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
         Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         Set<GroupingDefinition> mutableGroupings = new HashSet<>();
         Set<UsesNode> mutableUses = new HashSet<>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        Set<TypeDefinition<?, ?>> mutableTypeDefinitions = new LinkedHashSet<>();
         Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
@@ -84,7 +84,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
             }
             if (stmt instanceof TypeDefEffectiveStatementImpl) {
                 TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) stmt;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                TypeDefinition<?, ?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -109,7 +109,7 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
     }
 
     @Override
-    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+    public final Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 

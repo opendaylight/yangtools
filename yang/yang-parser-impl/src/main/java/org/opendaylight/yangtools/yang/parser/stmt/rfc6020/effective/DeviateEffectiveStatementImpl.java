@@ -31,7 +31,7 @@ public final class DeviateEffectiveStatementImpl
     private final Integer deviatedMaxElements;
     private final Integer deviatedMinElements;
     private final Set<MustDefinition> deviatedMustDefinitions;
-    private final TypeDefinition<?> deviatedType;
+    private final TypeDefinition<?, ?> deviatedType;
     private final Collection<UniqueConstraint> deviatedUniqueConstraints;
     private final String deviatedUnits;
 
@@ -100,7 +100,7 @@ public final class DeviateEffectiveStatementImpl
     }
 
     @Override
-    public TypeDefinition<?> getDeviatedType() {
+    public TypeDefinition<?, ?> getDeviatedType() {
         return deviatedType;
     }
 

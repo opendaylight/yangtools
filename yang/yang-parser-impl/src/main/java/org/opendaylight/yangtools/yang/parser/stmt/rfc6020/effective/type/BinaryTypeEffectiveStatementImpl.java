@@ -31,7 +31,7 @@ public final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveSta
             final BinaryTypeDefinition baseType) {
         super(ctx);
 
-        final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
+        final LengthRestrictedTypeBuilder<BinaryTypeDefinition, byte[]> builder =
                 RestrictedTypes.newBinaryBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {

@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
-final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryTypeDefinition>
+final class RestrictedBinaryType extends AbstractLengthRestrictedType<BinaryTypeDefinition, byte[]>
         implements BinaryTypeDefinition {
     RestrictedBinaryType(final BinaryTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes,

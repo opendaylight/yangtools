@@ -23,26 +23,26 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 @Beta
 @NotThreadSafe
 public final class LazyCodecCache<T> extends CodecCache<T> {
-    private final Map<TypedSchemaNode, T> complexCodecs = new IdentityHashMap<>();
-    private final Map<TypeDefinition<?>, T> simpleCodecs = new IdentityHashMap<>();
+    private final Map<TypedSchemaNode<?, ?>, T> complexCodecs = new IdentityHashMap<>();
+    private final Map<TypeDefinition<?, ?>, T> simpleCodecs = new IdentityHashMap<>();
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode<?, ?> schema, final T codec) {
         return complexCodecs.computeIfAbsent(schema, any -> codec);
     }
 
     @Override
-    T lookupComplex(final TypedSchemaNode schema) {
+    T lookupComplex(final TypedSchemaNode<?, ?> schema) {
         return complexCodecs.get(schema);
     }
 
     @Override
-    T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?, ?> type) {
         return simpleCodecs.get(type);
     }
 
     @Override
-    T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?, ?> type, final T codec) {
         return simpleCodecs.computeIfAbsent(type, any -> codec);
     }
 

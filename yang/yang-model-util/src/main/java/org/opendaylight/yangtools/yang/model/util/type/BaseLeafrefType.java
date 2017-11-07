@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
-final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
+final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition, Object> implements LeafrefTypeDefinition {
     private final RevisionAwareXPath pathStatement;
     private final boolean requireInstance;
 

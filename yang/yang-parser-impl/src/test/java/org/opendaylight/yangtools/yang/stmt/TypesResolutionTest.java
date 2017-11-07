@@ -63,10 +63,10 @@ public class TypesResolutionTest {
     @Test
     public void testIPVersion() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
         assertEquals(14, typedefs.size());
 
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
+        TypeDefinition<?, ?> type = TestUtils.findTypedef(typedefs, "ip-version");
         assertTrue(type.getDescription().get().contains("This value represents the version of the IP protocol."));
         assertTrue(type.getReference().get().contains("RFC 2460: Internet Protocol, Version 6 (IPv6) Specification"));
 
@@ -94,9 +94,9 @@ public class TypesResolutionTest {
     @Test
     public void testEnumeration() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
 
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-version");
+        TypeDefinition<?, ?> type = TestUtils.findTypedef(typedefs, "ip-version");
         EnumTypeDefinition enumType = (EnumTypeDefinition) type.getBaseType();
         List<EnumPair> values = enumType.getValues();
         assertEquals(4, values.size());
@@ -126,10 +126,10 @@ public class TypesResolutionTest {
     @Test
     public void testIpAddress() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> type = TestUtils.findTypedef(typedefs, "ip-address");
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
+        TypeDefinition<?, ?> type = TestUtils.findTypedef(typedefs, "ip-address");
         UnionTypeDefinition baseType = (UnionTypeDefinition) type.getBaseType();
-        List<TypeDefinition<?>> unionTypes = baseType.getTypes();
+        List<TypeDefinition<?, ?>> unionTypes = baseType.getTypes();
 
         StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
         assertNotNull(ipv4.getBaseType());
@@ -153,7 +153,7 @@ public class TypesResolutionTest {
     @Test
     public void testDomainName() {
         Module tested = TestUtils.findModule(context, "ietf-inet-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition type = (StringTypeDefinition) TestUtils.findTypedef(typedefs, "domain-name");
         assertNotNull(type.getBaseType());
         List<PatternConstraint> patterns = type.getPatternConstraints();
@@ -244,8 +244,8 @@ public class TypesResolutionTest {
     @Test
     public void testBitsType2() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
+        TypeDefinition<?, ?> testedType = TestUtils.findTypedef(typedefs, "access-operations-type");
 
         BitsTypeDefinition bitsType = (BitsTypeDefinition) testedType.getBaseType();
         List<Bit> bits = bitsType.getBits();
@@ -275,8 +275,8 @@ public class TypesResolutionTest {
     @Test
     public void testIanaTimezones() {
         Module tested = TestUtils.findModule(context, "iana-timezones").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
+        TypeDefinition<?, ?> testedType = TestUtils.findTypedef(typedefs, "iana-timezone");
 
         String expectedDesc = "A timezone location as defined by the IANA timezone";
         assertTrue(testedType.getDescription().get().contains(expectedDesc));
@@ -306,7 +306,7 @@ public class TypesResolutionTest {
     @Test
     public void testObjectId128() {
         Module tested = TestUtils.findModule(context, "ietf-yang-types").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
         StringTypeDefinition testedType = (StringTypeDefinition) TestUtils.findTypedef(typedefs,
                 "object-identifier-128");
 
@@ -337,8 +337,8 @@ public class TypesResolutionTest {
     @Test
     public void testIdentityref() {
         Module tested = TestUtils.findModule(context, "custom-types-test").get();
-        Set<TypeDefinition<?>> typedefs = tested.getTypeDefinitions();
-        TypeDefinition<?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
+        Set<TypeDefinition<?, ?>> typedefs = tested.getTypeDefinitions();
+        TypeDefinition<?, ?> testedType = TestUtils.findTypedef(typedefs, "service-type-ref");
         IdentityrefTypeDefinition baseType = (IdentityrefTypeDefinition) testedType.getBaseType();
         QName identity = baseType.getIdentities().iterator().next().getQName();
         assertEquals(URI.create("urn:custom.types.demo"), identity.getNamespace());

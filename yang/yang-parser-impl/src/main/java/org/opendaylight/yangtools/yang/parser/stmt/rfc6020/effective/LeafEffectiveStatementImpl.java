@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
         LeafSchemaNode, DerivableSchemaNode {
-    private final LeafSchemaNode original;
-    private final TypeDefinition<?> type;
+    private final LeafSchemaNode<?, ?> original;
+    private final TypeDefinition<?, ?> type;
     private final String defaultStr;
     private final String unitsStr;
     private final boolean mandatory;
@@ -33,7 +33,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     public LeafEffectiveStatementImpl(
             final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         super(ctx);
-        this.original = (LeafSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.original = (LeafSchemaNode<?, ?>) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
@@ -41,8 +41,8 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
 
         String dflt = null;
         String units = null;
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            ctx.getSchemaPath().get());
+        final ConcreteTypeBuilder<?, Object> builder = (ConcreteTypeBuilder<?, Object>)
+                ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(), ctx.getSchemaPath().get());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
                 dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
@@ -77,12 +77,12 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     }
 
     @Override
-    public Optional<LeafSchemaNode> getOriginal() {
+    public Optional<LeafSchemaNode<?, ?>> getOriginal() {
         return Optional.ofNullable(original);
     }
 
     @Override
-    public TypeDefinition<?> getType() {
+    public TypeDefinition<?, ?> getType() {
         return type;
     }
 

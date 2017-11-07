@@ -13,7 +13,7 @@ import java.util.Objects;
 /**
  * Contains method for getting data from the <code>string</code> YANG built-in type.
  */
-public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<StringTypeDefinition> {
+public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<StringTypeDefinition, String> {
     /**
      * Returns patterns specified in the string.
      *

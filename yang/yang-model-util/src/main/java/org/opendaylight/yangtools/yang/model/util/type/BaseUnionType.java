@@ -15,17 +15,17 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition> implements UnionTypeDefinition {
-    private final List<TypeDefinition<?>> types;
+final class BaseUnionType extends AbstractBaseType<UnionTypeDefinition, Object> implements UnionTypeDefinition {
+    private final List<TypeDefinition<?, ?>> types;
 
     BaseUnionType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
-            final Collection<TypeDefinition<?>> types) {
+            final Collection<TypeDefinition<?, ?>> types) {
         super(path, unknownSchemaNodes);
         this.types = ImmutableList.copyOf(types);
     }
 
     @Override
-    public List<TypeDefinition<?>> getTypes() {
+    public List<TypeDefinition<?, ?>> getTypes() {
         return types;
     }
 

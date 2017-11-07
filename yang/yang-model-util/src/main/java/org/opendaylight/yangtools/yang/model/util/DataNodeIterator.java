@@ -39,7 +39,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     private final List<ChoiceSchemaNode> allChoices;
     private final List<DataSchemaNode> allChilds;
     private final List<GroupingDefinition> allGroupings;
-    private final List<TypeDefinition<?>> allTypedefs;
+    private final List<TypeDefinition<?, ?>> allTypedefs;
 
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
@@ -98,7 +98,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
      *
      * @return Returns list all containers present in subtree.
      */
-    public List<TypeDefinition<?>> allTypedefs() {
+    public List<TypeDefinition<?, ?>> allTypedefs() {
         return allTypedefs;
     }
 

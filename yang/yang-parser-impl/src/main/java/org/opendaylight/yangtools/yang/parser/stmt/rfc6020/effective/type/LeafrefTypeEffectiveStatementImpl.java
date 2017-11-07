@@ -31,7 +31,7 @@ public final class LeafrefTypeEffectiveStatementImpl extends DeclaredEffectiveSt
             final LeafrefTypeDefinition baseType) {
         super(ctx);
 
-        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> builder =
+        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition, Object> builder =
                 RestrictedTypes.newLeafrefBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {

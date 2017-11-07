@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.Empty;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -74,9 +76,9 @@ public final class RestrictedTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(
+    public static LengthRestrictedTypeBuilder<BinaryTypeDefinition, byte[]> newBinaryBuilder(
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
-        return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
+        return new LengthRestrictedTypeBuilder<BinaryTypeDefinition, byte[]>(baseType, path) {
             @Override
             BinaryTypeDefinition buildType(final @Nullable LengthConstraint lengthConstraint) {
                 return new RestrictedBinaryType(getBaseType(), getPath(), getUnknownSchemaNodes(), lengthConstraint);
@@ -97,9 +99,9 @@ public final class RestrictedTypes {
         return new BitsTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType,
-            @Nonnull final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
+    public static TypeBuilder<BooleanTypeDefinition, Boolean> newBooleanBuilder(
+            @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+        return new AbstractRestrictedTypeBuilder<BooleanTypeDefinition, Boolean>(baseType, path) {
             @Override
             BooleanTypeDefinition buildType() {
                 return new RestrictedBooleanType(getBaseType(), getPath(), getUnknownSchemaNodes());
@@ -117,9 +119,9 @@ public final class RestrictedTypes {
         };
     }
 
-    public static TypeBuilder<EmptyTypeDefinition> newEmptyBuilder(final EmptyTypeDefinition baseType,
+    public static TypeBuilder<EmptyTypeDefinition, Empty> newEmptyBuilder(final EmptyTypeDefinition baseType,
             final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
+        return new AbstractRestrictedTypeBuilder<EmptyTypeDefinition, Empty>(baseType, path) {
             @Override
             EmptyTypeDefinition buildType() {
                 return new RestrictedEmptyType(getBaseType(), getPath(), getUnknownSchemaNodes());
@@ -132,9 +134,9 @@ public final class RestrictedTypes {
         return new EnumerationTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(final IdentityrefTypeDefinition baseType,
-            final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
+    public static TypeBuilder<IdentityrefTypeDefinition, QName> newIdentityrefBuilder(
+            final IdentityrefTypeDefinition baseType, final SchemaPath path) {
+        return new AbstractRestrictedTypeBuilder<IdentityrefTypeDefinition, QName>(baseType, path) {
             @Override
             IdentityrefTypeDefinition buildType() {
                 return new RestrictedIdentityrefType(getBaseType(), getPath(), getUnknownSchemaNodes());
@@ -147,9 +149,9 @@ public final class RestrictedTypes {
         return new InstanceIdentifierTypeBuilder(baseType, path);
     }
 
-    public static RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> newLeafrefBuilder(
+    public static RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition, Object> newLeafrefBuilder(
             final LeafrefTypeDefinition baseType, final SchemaPath path) {
-        return new RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
+        return new RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition, Object>(baseType, path) {
             @Override
             LeafrefTypeDefinition buildType() {
                 if (getRequireInstance() == getBaseType().requireInstance()) {
@@ -205,9 +207,9 @@ public final class RestrictedTypes {
         return new StringTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<UnionTypeDefinition> newUnionBuilder(final UnionTypeDefinition baseType,
+    public static TypeBuilder<UnionTypeDefinition, Object> newUnionBuilder(final UnionTypeDefinition baseType,
             final SchemaPath path) {
-        return new AbstractRestrictedTypeBuilder<UnionTypeDefinition>(baseType, path) {
+        return new AbstractRestrictedTypeBuilder<UnionTypeDefinition, Object>(baseType, path) {
             @Override
             UnionTypeDefinition buildType() {
                 return new RestrictedUnionType(getBaseType(), getPath(), getUnknownSchemaNodes());

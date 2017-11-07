@@ -164,8 +164,8 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
-        final Set<TypeDefinition<?>> result = new LinkedHashSet<>();
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
+        final Set<TypeDefinition<?, ?>> result = new LinkedHashSet<>();
         for (Module module : getModules()) {
             result.addAll(module.getTypeDefinitions());
         }

@@ -45,7 +45,7 @@ public class OrderingTest {
 
     @Test
     public void testOrderingTypedef() throws Exception {
-        final Set<TypeDefinition<?>> typedefs = bar.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typedefs = bar.getTypeDefinitions();
         final String[] expectedOrder = { "int32-ext1", "int32-ext2", "string-ext1", "string-ext2", "string-ext3",
             "string-ext4", "invalid-string-pattern", "multiple-pattern-string", "my-decimal-type", "my-union",
             "my-union-ext", "nested-union2"
@@ -53,7 +53,7 @@ public class OrderingTest {
         final String[] actualOrder = new String[typedefs.size()];
 
         int offset = 0;
-        for (final TypeDefinition<?> type : typedefs) {
+        for (final TypeDefinition<?, ?> type : typedefs) {
             actualOrder[offset] = type.getQName().getLocalName();
             offset++;
         }

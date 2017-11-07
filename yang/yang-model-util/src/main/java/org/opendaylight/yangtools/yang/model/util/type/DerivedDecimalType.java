@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 
 final class DerivedDecimalType extends AbstractRangeRestrictedDerivedType<DecimalTypeDefinition, BigDecimal>
         implements DecimalTypeDefinition {
-    DerivedDecimalType(final DecimalTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedDecimalType(final DecimalTypeDefinition baseType, final SchemaPath path, final BigDecimal defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);

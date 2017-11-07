@@ -36,7 +36,7 @@ public class Bug6410Test {
         assertEquals(1, rpcs.size());
         final RpcDefinition rpc = rpcs.iterator().next();
 
-        final Set<TypeDefinition<?>> typeDefs = rpc.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typeDefs = rpc.getTypeDefinitions();
         assertEquals(2, typeDefs.size());
     }
 

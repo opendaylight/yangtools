@@ -25,8 +25,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
-public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedTypeDefinition<T>>
-        extends AbstractRestrictedTypeBuilder<T> {
+public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedTypeDefinition<T, N>, N>
+        extends AbstractRestrictedTypeBuilder<T, N> {
     private LengthConstraint lengthConstraint;
 
     LengthRestrictedTypeBuilder(final T baseType, final SchemaPath path) {

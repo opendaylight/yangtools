@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringTypeDefinition> {
+public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringTypeDefinition, String> {
     private final List<PatternConstraint> patternConstraints = new ArrayList<>(0);
 
     StringTypeBuilder(final StringTypeDefinition baseType, final SchemaPath path) {

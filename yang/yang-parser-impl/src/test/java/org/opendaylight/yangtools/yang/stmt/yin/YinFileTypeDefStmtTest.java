@@ -39,11 +39,11 @@ public class YinFileTypeDefStmtTest {
         Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        Set<TypeDefinition<?>> typeDefs = testModule.getTypeDefinitions();
+        Set<TypeDefinition<?, ?>> typeDefs = testModule.getTypeDefinitions();
         assertEquals(1, typeDefs.size());
 
-        Iterator<TypeDefinition<?>> typeDefIterator = typeDefs.iterator();
-        TypeDefinition<?> typeDef = typeDefIterator.next();
+        Iterator<TypeDefinition<?, ?>> typeDefIterator = typeDefs.iterator();
+        TypeDefinition<?, ?> typeDef = typeDefIterator.next();
         assertEquals("service-type-ref", typeDef.getQName().getLocalName());
         assertEquals(Optional.of("Internal type of references to service type identity."), typeDef.getDescription());
         assertEquals("identityref", typeDef.getBaseType().getQName().getLocalName());

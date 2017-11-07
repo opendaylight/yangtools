@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition> implements BooleanTypeDefinition {
+final class BaseBooleanType extends AbstractBaseType<BooleanTypeDefinition, Boolean> implements BooleanTypeDefinition {
     static final BaseBooleanType INSTANCE = new BaseBooleanType();
 
     private BaseBooleanType() {

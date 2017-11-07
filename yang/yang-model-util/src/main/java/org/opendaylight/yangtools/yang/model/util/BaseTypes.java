@@ -101,7 +101,7 @@ public final class BaseTypes {
      * @param type Type definition
      * @return true if type is built-in YANG Types.
      */
-    public static boolean isYangBuildInType(final TypeDefinition<?> type) {
+    public static boolean isYangBuildInType(final TypeDefinition<?, ?> type) {
         return type != null && BUILT_IN_TYPES.contains(type.getQName());
     }
 }

@@ -47,8 +47,8 @@ public class Bug5200Test {
         assertTrue(myLeafNode instanceof LeafSchemaNode);
         assertTrue(myLeaf2Node instanceof LeafSchemaNode);
 
-        TypeDefinition<?> myLeafType = ((LeafSchemaNode) myLeafNode).getType();
-        TypeDefinition<?> myLeaf2Type = ((LeafSchemaNode) myLeaf2Node).getType();
+        TypeDefinition<?, ?> myLeafType = ((LeafSchemaNode<?, ?>) myLeafNode).getType();
+        TypeDefinition<?, ?> myLeaf2Type = ((LeafSchemaNode<?, ?>) myLeaf2Node).getType();
 
         assertTrue(myLeafType instanceof StringTypeDefinition);
         assertTrue(myLeaf2Type instanceof Int32TypeDefinition);

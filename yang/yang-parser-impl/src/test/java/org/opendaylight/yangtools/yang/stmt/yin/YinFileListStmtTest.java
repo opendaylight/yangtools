@@ -63,16 +63,16 @@ public class YinFileListStmtTest {
         assertEquals(4, children.size());
 
         final Iterator<DataSchemaNode> childrenIterator = children.iterator();
-        LeafSchemaNode leaf = (LeafSchemaNode) childrenIterator.next();
+        LeafSchemaNode<?, ?> leaf = (LeafSchemaNode<?, ?>) childrenIterator.next();
         assertEquals("name", leaf.getQName().getLocalName());
         assertEquals(Optional.of("Unique module instance name"), leaf.getDescription());
         assertEquals(BaseTypes.stringType(), leaf.getType());
         assertTrue(leaf.isMandatory());
 
-        leaf = (LeafSchemaNode) childrenIterator.next();
+        leaf = (LeafSchemaNode<?, ?>) childrenIterator.next();
         assertEquals("type", leaf.getQName().getLocalName());
 
-        final TypeDefinition<?> leafType = leaf.getType();
+        final TypeDefinition<?, ?> leafType = leaf.getType();
         assertTrue(leafType instanceof IdentityrefTypeDefinition);
         assertEquals("module-type", ((IdentityrefTypeDefinition)leafType).getIdentities().iterator().next().getQName()
             .getLocalName());

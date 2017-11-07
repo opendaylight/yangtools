@@ -12,8 +12,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
-abstract class AbstractLengthRestrictedBaseType<T extends LengthRestrictedTypeDefinition<T>> extends AbstractBaseType<T>
-        implements LengthRestrictedTypeDefinition<T> {
+abstract class AbstractLengthRestrictedBaseType<T extends LengthRestrictedTypeDefinition<T, N>, N>
+        extends AbstractBaseType<T, N> implements LengthRestrictedTypeDefinition<T, N> {
 
     AbstractLengthRestrictedBaseType(final QName qname) {
         super(qname);

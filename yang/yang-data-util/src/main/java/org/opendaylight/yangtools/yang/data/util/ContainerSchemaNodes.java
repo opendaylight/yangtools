@@ -139,7 +139,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
             return rpcDefinition.getTypeDefinitions();
         }
 
@@ -213,7 +213,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
-        public Set<TypeDefinition<?>> getTypeDefinitions() {
+        public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
             return notification.getTypeDefinitions();
         }
 

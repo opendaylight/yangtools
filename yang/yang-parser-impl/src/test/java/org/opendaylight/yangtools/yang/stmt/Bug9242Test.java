@@ -31,8 +31,8 @@ public class Bug9242Test {
         final Module rootModule = schemaContext.findModule("root-module", revision).get();
         final Module impModule = schemaContext.findModule("imp-module", revision).get();
 
-        TypeDefinition<?> deviatedMyLeafType = null;
-        TypeDefinition<?> deviatedMyLeaf2Type = null;
+        TypeDefinition<?, ?> deviatedMyLeafType = null;
+        TypeDefinition<?, ?> deviatedMyLeaf2Type = null;
 
         for (final Deviation deviation : rootModule.getDeviations()) {
             if (deviation.getTargetPath().getLastComponent().equals(QName.create(

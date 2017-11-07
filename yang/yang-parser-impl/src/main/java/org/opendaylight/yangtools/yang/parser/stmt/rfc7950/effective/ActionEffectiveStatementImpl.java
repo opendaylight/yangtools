@@ -34,7 +34,7 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
         implements ActionDefinition {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
-    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<TypeDefinition<?, ?>> typeDefinitions;
     private final Set<GroupingDefinition> groupings;
     private final boolean augmenting;
     private final boolean addedByUses;
@@ -47,7 +47,7 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
 
         // initSubstatements
         final Set<GroupingDefinition> groupingsInit = new HashSet<>();
-        final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        final Set<TypeDefinition<?, ?>> mutableTypeDefinitions = new LinkedHashSet<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
                 final GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
@@ -55,7 +55,7 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
                 final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                final TypeDefinition<?> type = typeDef.getTypeDefinition();
+                final TypeDefinition<?, ?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -87,7 +87,7 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 

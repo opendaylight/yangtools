@@ -150,9 +150,9 @@ public class YangParserSimpleTest {
         assertTrue(nodes.isPresenceContainer());
 
         // typedef
-        final Set<TypeDefinition<?>> typedefs = nodes.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typedefs = nodes.getTypeDefinitions();
         assertEquals(1, typedefs.size());
-        final TypeDefinition<?> nodesType = typedefs.iterator().next();
+        final TypeDefinition<?, ?> nodesType = typedefs.iterator().next();
         final QName typedefQName = QName.create(SN, "nodes-type");
         assertEquals(typedefQName, nodesType.getQName());
         assertEquals(SN_NODES_PATH.createChild(QName.create(SN, "nodes-type")), nodesType.getPath());

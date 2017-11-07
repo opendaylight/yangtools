@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
-final class DerivedStringType extends AbstractLengthRestrictedDerivedType<StringTypeDefinition>
+final class DerivedStringType extends AbstractLengthRestrictedDerivedType<StringTypeDefinition, String>
         implements StringTypeDefinition {
-    DerivedStringType(final StringTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedStringType(final StringTypeDefinition baseType, final SchemaPath path, final String defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);

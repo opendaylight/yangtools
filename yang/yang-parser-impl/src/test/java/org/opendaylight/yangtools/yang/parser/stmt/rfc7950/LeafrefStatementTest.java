@@ -33,10 +33,10 @@ public class LeafrefStatementTest {
         assertNotNull(schemaContext);
 
         final Module foo = schemaContext.findModule("foo", Revision.of("2016-12-20")).get();
-        final Set<TypeDefinition<?>> typeDefinitions = foo.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typeDefinitions = foo.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
 
-        final TypeDefinition<?> typeDefinition = typeDefinitions.iterator().next();
+        final TypeDefinition<?, ?> typeDefinition = typeDefinitions.iterator().next();
         final LeafrefTypeDefinition leafrefTypeDefinition = (LeafrefTypeDefinition) typeDefinition;
         assertTrue(leafrefTypeDefinition.requireInstance());
 

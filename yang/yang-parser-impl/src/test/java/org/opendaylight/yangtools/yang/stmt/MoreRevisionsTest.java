@@ -267,7 +267,7 @@ public class MoreRevisionsTest {
     }
 
     private static boolean findTypeDef(final Module module, final QName typedef) {
-        for (TypeDefinition<?> typeDefinition : module.getTypeDefinitions()) {
+        for (TypeDefinition<?, ?> typeDefinition : module.getTypeDefinitions()) {
             if (typeDefinition.getQName().equals(typedef)) {
                 return true;
             }

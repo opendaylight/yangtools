@@ -52,11 +52,11 @@ public class IncludedStmtsTest {
         final Module testModule = result.findModules("root-module").iterator().next();
         assertNotNull(testModule);
 
-        final Set<TypeDefinition<?>> typedefs = testModule.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typedefs = testModule.getTypeDefinitions();
         assertEquals(2, typedefs.size());
 
-        final Iterator<TypeDefinition<?>> typedefsIterator = typedefs.iterator();
-        TypeDefinition<?> typedef = typedefsIterator.next();
+        final Iterator<TypeDefinition<?, ?>> typedefsIterator = typedefs.iterator();
+        TypeDefinition<?, ?> typedef = typedefsIterator.next();
         assertThat(typedef.getQName().getLocalName(), anyOf(is("new-string-type"), is("new-int32-type")));
         assertThat(typedef.getBaseType().getQName().getLocalName(), anyOf(is("string"), is("int32")));
         typedef = typedefsIterator.next();

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class OrderedLeafListMixinContextNode extends UnorderedLeafListMixinContextNode {
-    OrderedLeafListMixinContextNode(final LeafListSchemaNode potential) {
+    OrderedLeafListMixinContextNode(final LeafListSchemaNode<?, ?> potential) {
         super(potential);
     }
 }

@@ -40,18 +40,18 @@ public class Bug5396Test {
         assertTrue(findDataSchemaNode instanceof LeafSchemaNode);
 
         LeafSchemaNode leaf2 = (LeafSchemaNode) findDataSchemaNode;
-        TypeDefinition<?> type = leaf2.getType();
+        TypeDefinition<?, ?> type = leaf2.getType();
         assertTrue(type instanceof UnionTypeDefinition);
 
         UnionTypeDefinition union = (UnionTypeDefinition) type;
-        List<TypeDefinition<?>> types = union.getTypes();
+        List<TypeDefinition<?, ?>> types = union.getTypes();
 
         assertEquals(4, types.size());
 
-        TypeDefinition<?> type0 = types.get(0);
-        TypeDefinition<?> type1 = types.get(1);
-        TypeDefinition<?> type2 = types.get(2);
-        TypeDefinition<?> type3 = types.get(3);
+        TypeDefinition<?, ?> type0 = types.get(0);
+        TypeDefinition<?, ?> type1 = types.get(1);
+        TypeDefinition<?, ?> type2 = types.get(2);
+        TypeDefinition<?, ?> type3 = types.get(3);
 
         assertFalse(type0.equals(type1));
         assertFalse(type0.equals(type2));

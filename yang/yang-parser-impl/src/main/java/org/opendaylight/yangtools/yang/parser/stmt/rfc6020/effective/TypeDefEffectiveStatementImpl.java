@@ -33,7 +33,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         TypedefEffectiveStatement {
     private static final Logger LOG = LoggerFactory.getLogger(TypeDefEffectiveStatementImpl.class);
 
-    private final TypeDefinition<?> typeDefinition;
+    private final TypeDefinition<?, ?> typeDefinition;
 
     private TypeEffectiveStatement<TypeStatement> typeStatement;
 
@@ -41,8 +41,8 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
         super(ctx);
 
         final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
-        final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
-            ctx.getSchemaPath().get());
+        final DerivedTypeBuilder<?, Object> builder = (DerivedTypeBuilder<?, Object>) DerivedTypes.derivedTypeBuilder(
+            typeEffectiveStmt.getTypeDefinition(), ctx.getSchemaPath().get());
         String defaultValue = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatementImpl) {
@@ -77,7 +77,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
 
     @Nonnull
     @Override
-    public TypeDefinition<?> getTypeDefinition() {
+    public TypeDefinition<?, ?> getTypeDefinition() {
         return typeDefinition;
     }
 
@@ -138,7 +138,7 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
 
         @Nonnull
         @Override
-        public TypeDefinition<?> getTypeDefinition() {
+        public TypeDefinition<?, ?> getTypeDefinition() {
             return TypeDefEffectiveStatementImpl.this.getTypeDefinition();
         }
     }

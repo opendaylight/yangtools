@@ -64,9 +64,9 @@ public final class LeafInterner {
      * @param schema The leaf node's schema
      * @return An interner instance
      */
-    @Nonnull public static <T extends LeafNode<?>> Interner<T> forSchema(@Nullable final LeafSchemaNode schema) {
+    @Nonnull public static <T extends LeafNode<?>> Interner<T> forSchema(@Nullable final LeafSchemaNode<?, ?> schema) {
         if (schema != null) {
-            final TypeDefinition<?> type = schema.getType();
+            final TypeDefinition<?, ?> type = schema.getType();
             if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition
                     || type instanceof IdentityrefTypeDefinition) {
                 return LeafInterner::intern;

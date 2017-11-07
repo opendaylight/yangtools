@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
-final class DerivedEmptyType extends AbstractDerivedType<EmptyTypeDefinition> implements EmptyTypeDefinition {
-    DerivedEmptyType(final EmptyTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+final class DerivedEmptyType extends AbstractDerivedType<EmptyTypeDefinition, Empty> implements EmptyTypeDefinition {
+    DerivedEmptyType(final EmptyTypeDefinition baseType, final SchemaPath path, final Empty defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemNodes);

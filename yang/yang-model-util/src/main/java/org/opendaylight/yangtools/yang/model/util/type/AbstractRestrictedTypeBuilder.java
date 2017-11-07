@@ -11,7 +11,7 @@ import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
+abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T, N>, N> extends TypeBuilder<T, N> {
     private boolean touched;
 
     AbstractRestrictedTypeBuilder(final T baseType, final SchemaPath path) {

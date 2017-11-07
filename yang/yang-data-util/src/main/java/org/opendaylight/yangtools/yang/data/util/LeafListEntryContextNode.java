@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafListEntryContextNode extends AbstractLeafNodeContext<NodeWithValue<?>> {
-    LeafListEntryContextNode(final LeafListSchemaNode potential) {
+    LeafListEntryContextNode(final LeafListSchemaNode<?, ?> potential) {
         super(new NodeWithValue<>(potential.getQName(), null), potential);
     }
 

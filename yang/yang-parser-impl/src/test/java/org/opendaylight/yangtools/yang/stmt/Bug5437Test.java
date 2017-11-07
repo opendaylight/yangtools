@@ -48,9 +48,9 @@ public class Bug5437Test {
         assertTrue(leafRefNode.getType() instanceof LeafrefTypeDefinition);
         assertTrue(leafRefNode2.getType() instanceof LeafrefTypeDefinition);
 
-        TypeDefinition<?> baseTypeForLeafRef = SchemaContextUtil.getBaseTypeForLeafRef(
+        TypeDefinition<?, ?> baseTypeForLeafRef = SchemaContextUtil.getBaseTypeForLeafRef(
                 (LeafrefTypeDefinition) leafRefNode.getType(), context, leafRefNode);
-        TypeDefinition<?> baseTypeForLeafRef2 = SchemaContextUtil.getBaseTypeForLeafRef(
+        TypeDefinition<?, ?> baseTypeForLeafRef2 = SchemaContextUtil.getBaseTypeForLeafRef(
                 (LeafrefTypeDefinition) leafRefNode2.getType(), context, leafRefNode2);
 
         assertTrue(baseTypeForLeafRef instanceof BinaryTypeDefinition);

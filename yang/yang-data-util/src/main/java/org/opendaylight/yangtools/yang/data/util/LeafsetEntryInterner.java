@@ -69,9 +69,9 @@ public final class LeafsetEntryInterner {
      * @param schema Schema of the parent leaf set
      * @return An interner instance, or null if the leafset's type should not be interned.
      */
-    @Nullable public static LeafsetEntryInterner forSchema(@Nullable final LeafListSchemaNode schema) {
+    @Nullable public static LeafsetEntryInterner forSchema(@Nullable final LeafListSchemaNode<?, ?> schema) {
         if (schema != null) {
-            final TypeDefinition<?> type = schema.getType();
+            final TypeDefinition<?, ?> type = schema.getType();
             if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition
                     || type instanceof IdentityrefTypeDefinition) {
                 return INSTANCE;

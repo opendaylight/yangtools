@@ -66,7 +66,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return schemaContext;
     }
 
-    public final T codecFor(final TypedSchemaNode schema) {
+    public final T codecFor(final TypedSchemaNode<?, ?> schema) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -79,7 +79,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
          *
          * We assume prevalence is in above order and that caching is effective. We therefore
          */
-        final TypeDefinition<?> type = schema.getType();
+        final TypeDefinition<?, ?> type = schema.getType();
         T ret = cache.lookupSimple(type);
         if (ret != null) {
             LOG.trace("Type {} hit simple {}", type, ret);
@@ -142,7 +142,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T unknownCodec(UnknownTypeDefinition type);
 
-    private T getSimpleCodecFor(final TypeDefinition<?> type) {
+    private T getSimpleCodecFor(final TypeDefinition<?, ?> type) {
         // These types are expected to be fully-shared
         if (type instanceof EmptyTypeDefinition) {
             return emptyCodec((EmptyTypeDefinition) type);
@@ -197,7 +197,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     }
 
     private static boolean isSimpleUnion(final UnionTypeDefinition union) {
-        for (TypeDefinition<?> t : union.getTypes()) {
+        for (TypeDefinition<?, ?> t : union.getTypes()) {
             if (t instanceof IdentityrefTypeDefinition || t instanceof LeafrefTypeDefinition
                     || t instanceof UnionTypeDefinition && !isSimpleUnion((UnionTypeDefinition) t)) {
                 LOG.debug("Type {} has non-simple subtype", t);
@@ -209,11 +209,11 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return true;
     }
 
-    private T createComplexCodecFor(final TypedSchemaNode schema, final TypeDefinition<?> type) {
+    private T createComplexCodecFor(final TypedSchemaNode<?, ?> schema, final TypeDefinition<?, ?> type) {
         if (type instanceof UnionTypeDefinition) {
             return createComplexUnion(schema, (UnionTypeDefinition) type);
         } else if (type instanceof LeafrefTypeDefinition) {
-            final TypeDefinition<?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
+            final TypeDefinition<?, ?> target = SchemaContextUtil.getBaseTypeForLeafRef((LeafrefTypeDefinition) type,
                 schemaContext, schema);
             verifyNotNull(target, "Unable to find base type for leafref node %s type %s.", schema.getPath(),
                     target);
@@ -228,10 +228,10 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
     }
 
     private T createSimpleUnion(final UnionTypeDefinition union) {
-        final List<TypeDefinition<?>> types = union.getTypes();
+        final List<TypeDefinition<?, ?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 
-        for (TypeDefinition<?> type : types) {
+        for (TypeDefinition<?, ?> type : types) {
             T codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = verifyNotNull(getSimpleCodecFor(type), "Type %s did not resolve to a simple codec", type);
@@ -243,11 +243,11 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final TypedSchemaNode schema, final UnionTypeDefinition union) {
-        final List<TypeDefinition<?>> types = union.getTypes();
+    private T createComplexUnion(final TypedSchemaNode<?, ?> schema, final UnionTypeDefinition union) {
+        final List<TypeDefinition<?, ?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 
-        for (TypeDefinition<?> type : types) {
+        for (TypeDefinition<?, ?> type : types) {
             T codec = cache.lookupSimple(type);
             if (codec == null) {
                 codec = getSimpleCodecFor(type);

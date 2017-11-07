@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
-final class BaseInstanceIdentifierType extends AbstractBaseType<InstanceIdentifierTypeDefinition>
+final class BaseInstanceIdentifierType extends AbstractBaseType<InstanceIdentifierTypeDefinition, Object>
         implements InstanceIdentifierTypeDefinition {
     static final BaseInstanceIdentifierType INSTANCE = new BaseInstanceIdentifierType();
 

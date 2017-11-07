@@ -76,7 +76,7 @@ public interface DeviateDefinition {
      *
      * @return deviated type statement or null if it is not deviated
      */
-    TypeDefinition<?> getDeviatedType();
+    TypeDefinition<?, ?> getDeviatedType();
 
     /**
      * Returns deviated unique statements.

@@ -13,11 +13,12 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDefinition> {
+public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDefinition, QName> {
     private final Builder<IdentitySchemaNode> builder = ImmutableSet.builder();
 
     IdentityrefTypeBuilder(final SchemaPath path) {

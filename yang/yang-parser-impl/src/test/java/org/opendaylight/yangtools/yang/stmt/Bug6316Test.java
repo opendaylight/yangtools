@@ -37,7 +37,7 @@ public class Bug6316Test {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "enum-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
         final LeafSchemaNode enumLeaf = (LeafSchemaNode) dataChildByName;
-        final TypeDefinition<? extends TypeDefinition<?>> type = enumLeaf.getType();
+        final TypeDefinition<? extends TypeDefinition<?, ?>, ?> type = enumLeaf.getType();
         assertTrue(type instanceof EnumTypeDefinition);
         final EnumTypeDefinition myEnumeration = (EnumTypeDefinition) type;
         final List<EnumPair> values = myEnumeration.getValues();
@@ -69,7 +69,7 @@ public class Bug6316Test {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "bits-leaf"));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
         final LeafSchemaNode bitsLeaf = (LeafSchemaNode) dataChildByName;
-        final TypeDefinition<? extends TypeDefinition<?>> type = bitsLeaf.getType();
+        final TypeDefinition<? extends TypeDefinition<?, ?>, ?> type = bitsLeaf.getType();
         assertTrue(type instanceof BitsTypeDefinition);
         final BitsTypeDefinition myBits = (BitsTypeDefinition) type;
         final List<Bit> positions = myBits.getBits();

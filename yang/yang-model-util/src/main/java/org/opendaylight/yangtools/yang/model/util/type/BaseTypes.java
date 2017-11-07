@@ -101,7 +101,7 @@ public final class BaseTypes {
      * @param type Type definition
      * @return True if the definition is the built-in int8 type.
      */
-    public static boolean isInt8(final TypeDefinition<?> type) {
+    public static boolean isInt8(final TypeDefinition<?, ?> type) {
         return BaseInt8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -115,7 +115,7 @@ public final class BaseTypes {
      * @param type Type definition
      * @return True if the definition is the built-in int16 type.
      */
-    public static boolean isInt16(final TypeDefinition<?> type) {
+    public static boolean isInt16(final TypeDefinition<?, ?> type) {
         return BaseInt16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -130,7 +130,7 @@ public final class BaseTypes {
      * @return True if the definition is the built-in int32 type.
      */
 
-    public static boolean isInt32(final TypeDefinition<?> type) {
+    public static boolean isInt32(final TypeDefinition<?, ?> type) {
         return BaseInt32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -144,7 +144,7 @@ public final class BaseTypes {
      * @param type Type definition
      * @return True if the definition is the built-in int64 type.
      */
-    public static boolean isInt64(final TypeDefinition<?> type) {
+    public static boolean isInt64(final TypeDefinition<?, ?> type) {
         return BaseInt64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -172,7 +172,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint8 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint8(@Nonnull final TypeDefinition<?, ?> type) {
         return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -188,7 +188,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint16 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint16(@Nonnull final TypeDefinition<?, ?> type) {
         return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -204,7 +204,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint32 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint32(@Nonnull final TypeDefinition<?, ?> type) {
         return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -220,7 +220,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint64 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint64(@Nonnull final TypeDefinition<?, ?> type) {
         return BaseUint64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -232,8 +232,8 @@ public final class BaseTypes {
      * @return Base type of specified type
      * @throws NullPointerException if type is null
      */
-    public static TypeDefinition<?> baseTypeOf(@Nonnull final TypeDefinition<?> type) {
-        TypeDefinition<?> ret = type;
+    public static TypeDefinition<?, ?> baseTypeOf(@Nonnull final TypeDefinition<?, ?> type) {
+        TypeDefinition<?, ?> ret = type;
         while (ret.getBaseType() != null) {
             ret = ret.getBaseType();
         }

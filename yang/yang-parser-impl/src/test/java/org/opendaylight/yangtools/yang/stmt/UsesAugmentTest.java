@@ -642,10 +642,10 @@ public class UsesAugmentTest {
     @Test
     public void testTypedefs() throws Exception {
         final Module testModule = TestUtils.findModule(context, "grouping-definitions").get();
-        final Set<TypeDefinition<?>> types = testModule.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> types = testModule.getTypeDefinitions();
 
-        TypeDefinition<?> intExt = null;
-        for (final TypeDefinition<?> td : types) {
+        TypeDefinition<?, ?> intExt = null;
+        for (final TypeDefinition<?, ?> td : types) {
             if ("int-ext".equals(td.getQName().getLocalName())) {
                 intExt = td;
             }
@@ -657,9 +657,9 @@ public class UsesAugmentTest {
 
         final UnionTypeDefinition union = (UnionTypeDefinition) intExt.getBaseType();
 
-        TypeDefinition<?> uint8 = null;
-        TypeDefinition<?> pv = null;
-        for (final TypeDefinition<?> td : union.getTypes()) {
+        TypeDefinition<?, ?> uint8 = null;
+        TypeDefinition<?, ?> pv = null;
+        for (final TypeDefinition<?, ?> td : union.getTypes()) {
             if ("uint8".equals(td.getQName().getLocalName())) {
                 uint8 = td;
             } else if ("protocol-version".equals(td.getQName().getLocalName())) {

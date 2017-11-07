@@ -17,7 +17,7 @@ class UnorderedLeafListMixinContextNode extends AbstractMixinContextNode<NodeIde
 
     private final DataSchemaContextNode<?> innerOp;
 
-    UnorderedLeafListMixinContextNode(final LeafListSchemaNode potential) {
+    UnorderedLeafListMixinContextNode(final LeafListSchemaNode<?, ?> potential) {
         super(NodeIdentifier.create(potential.getQName()), potential);
         innerOp = new LeafListEntryContextNode(potential);
     }

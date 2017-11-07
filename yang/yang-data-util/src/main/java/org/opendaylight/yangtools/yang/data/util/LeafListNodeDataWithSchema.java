@@ -26,7 +26,7 @@ public class LeafListNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        final LeafListSchemaNode schema = (LeafListSchemaNode) getSchema();
+        final LeafListSchemaNode<?, ?> schema = (LeafListSchemaNode<?, ?>) getSchema();
         writer.nextDataSchemaNode(schema);
         if (schema.isUserOrdered()) {
             writer.startOrderedLeafSet(provideNodeIdentifier(), childSizeHint());

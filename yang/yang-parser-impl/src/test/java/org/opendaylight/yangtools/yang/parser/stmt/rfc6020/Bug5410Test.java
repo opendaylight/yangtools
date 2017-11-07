@@ -217,8 +217,8 @@ public class Bug5410Test {
     private static PatternConstraint getPatternConstraintOf(final SchemaContext context, final String leafName) {
         final DataSchemaNode dataChildByName = context.getDataChildByName(foo(leafName));
         assertTrue(dataChildByName instanceof LeafSchemaNode);
-        final LeafSchemaNode leaf = (LeafSchemaNode) dataChildByName;
-        final TypeDefinition<? extends TypeDefinition<?>> type = leaf.getType();
+        final LeafSchemaNode<?, ?> leaf = (LeafSchemaNode<?, ?>) dataChildByName;
+        final TypeDefinition<? extends TypeDefinition<?, ?>, ?> type = leaf.getType();
         assertTrue(type instanceof StringTypeDefinition);
         final StringTypeDefinition strType = (StringTypeDefinition) type;
         return strType.getPatternConstraints().iterator().next();

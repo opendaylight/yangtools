@@ -77,7 +77,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
-    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<TypeDefinition<?, ?>> typeDefinitions;
     private final Set<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
 
@@ -191,7 +191,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
         final Map<QName, DataSchemaNode> mutableChildNodes = new LinkedHashMap<>();
         final Set<GroupingDefinition> mutableGroupings = new HashSet<>();
         final Set<UsesNode> mutableUses = new HashSet<>();
-        final Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        final Set<TypeDefinition<?, ?>> mutableTypeDefinitions = new LinkedHashSet<>();
         final Set<DataSchemaNode> mutablePublicChildNodes = new LinkedHashSet<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements) {
@@ -241,7 +241,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
                 final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                final TypeDefinition<?> type = typeDef.getTypeDefinition();
+                final TypeDefinition<?, ?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -365,7 +365,7 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
     }
 
     @Override
-    public final Set<TypeDefinition<?>> getTypeDefinitions() {
+    public final Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 

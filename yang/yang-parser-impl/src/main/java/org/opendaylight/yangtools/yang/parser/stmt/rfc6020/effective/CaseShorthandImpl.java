@@ -102,7 +102,7 @@ final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return ImmutableSet.of();
     }
 

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
-final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition> implements BitsTypeDefinition {
+final class BaseBitsType extends AbstractBaseType<BitsTypeDefinition, Object> implements BitsTypeDefinition {
     private final List<Bit> bits;
 
     BaseBitsType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes, final Collection<Bit> bits) {

@@ -18,7 +18,7 @@ final class DerivedUint64Type extends AbstractRangeRestrictedDerivedType<Uint64T
         implements Uint64TypeDefinition {
 
     DerivedUint64Type(final Uint64TypeDefinition baseType, final SchemaPath path,
-            final Object defaultValue, final String description, final String reference, final Status status,
+            final BigInteger defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }

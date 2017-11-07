@@ -16,7 +16,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
-final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDefinition> implements EnumTypeDefinition {
+final class RestrictedEnumerationType extends AbstractRestrictedType<EnumTypeDefinition, Object>
+        implements EnumTypeDefinition {
     private final List<EnumPair> values;
 
     RestrictedEnumerationType(final EnumTypeDefinition baseType, final SchemaPath path,

@@ -164,11 +164,11 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         } else if (potential instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) potential);
         } else if (potential instanceof LeafSchemaNode) {
-            return new LeafContextNode((LeafSchemaNode) potential);
+            return new LeafContextNode((LeafSchemaNode<?, ?>) potential);
         } else if (potential instanceof ChoiceSchemaNode) {
             return new ChoiceNodeContextNode((ChoiceSchemaNode) potential);
         } else if (potential instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) potential);
+            return fromLeafListSchemaNode((LeafListSchemaNode<?, ?>) potential);
         } else if (potential instanceof AnyXmlSchemaNode) {
             return new AnyXmlContextNode((AnyXmlSchemaNode) potential);
         }
@@ -186,7 +186,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return new UnorderedMapMixinContextNode(potential);
     }
 
-    private static DataSchemaContextNode<?> fromLeafListSchemaNode(final LeafListSchemaNode potential) {
+    private static DataSchemaContextNode<?> fromLeafListSchemaNode(final LeafListSchemaNode<?, ?> potential) {
         if (potential.isUserOrdered()) {
             return new OrderedLeafListMixinContextNode(potential);
         }

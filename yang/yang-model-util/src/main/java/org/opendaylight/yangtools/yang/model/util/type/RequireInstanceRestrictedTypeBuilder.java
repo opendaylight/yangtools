@@ -14,8 +14,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 @Beta
-public abstract class RequireInstanceRestrictedTypeBuilder<T extends TypeDefinition<T>>
-        extends AbstractRestrictedTypeBuilder<T> {
+public abstract class RequireInstanceRestrictedTypeBuilder<T extends TypeDefinition<T, N>, N>
+        extends AbstractRestrictedTypeBuilder<T, N> {
 
     private boolean requireInstance;
 

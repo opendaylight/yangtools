@@ -17,7 +17,7 @@ final class DerivedUint8Type extends AbstractRangeRestrictedDerivedType<Uint8Typ
         implements Uint8TypeDefinition {
 
     DerivedUint8Type(final Uint8TypeDefinition baseType, final SchemaPath path,
-            final Object defaultValue, final String description, final String reference, final Status status,
+            final Short defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }

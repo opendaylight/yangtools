@@ -319,7 +319,7 @@ public class GroupingTest {
         assertTrue(address_u.isConfiguration());
         assertTrue(address_u.isAddedByUses());
 
-        final LeafSchemaNode address_g = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
+        final LeafSchemaNode<?, ?> address_g = (LeafSchemaNode<?, ?>) grouping.getDataChildByName(QName.create(
                 baz.getQNameModule(), "address"));
         assertNotNull(address_g);
         assertFalse(address_g.isAddedByUses());
@@ -610,9 +610,8 @@ public class GroupingTest {
                 foo.getQNameModule(), "my-container")))
                 .getDataChildByName(QName.create(foo.getQNameModule(), "my-leaf"));
 
-        TypeDefinition<?> impType = null;
-        final Set<TypeDefinition<?>> typeDefinitions = imp.getTypeDefinitions();
-        for (final TypeDefinition<?> typeDefinition : typeDefinitions) {
+        TypeDefinition<?, ?> impType = null;
+        for (final TypeDefinition<?, ?> typeDefinition : imp.getTypeDefinitions()) {
             if (typeDefinition.getQName().getLocalName().equals("imp-type")) {
                 impType = typeDefinition;
                 break;

@@ -179,7 +179,7 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
             }
 
             // Now instantiate the proper effective statement for that type
-            final TypeDefinition<?> baseType = typeStmt.getTypeDefinition();
+            final TypeDefinition<?, ?> baseType = typeStmt.getTypeDefinition();
             if (baseType instanceof BinaryTypeDefinition) {
                 return new BinaryTypeEffectiveStatementImpl(ctx, (BinaryTypeDefinition) baseType);
             } else if (baseType instanceof BitsTypeDefinition) {

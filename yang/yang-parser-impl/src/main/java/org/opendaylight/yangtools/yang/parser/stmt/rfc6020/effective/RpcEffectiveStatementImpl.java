@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement> implements RpcDefinition {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
-    private final Set<TypeDefinition<?>> typeDefinitions;
+    private final Set<TypeDefinition<?, ?>> typeDefinitions;
     private final Set<GroupingDefinition> groupings;
 
     public RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement,
@@ -35,7 +35,7 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
 
         // initSubstatements
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
+        Set<TypeDefinition<?, ?>> mutableTypeDefinitions = new LinkedHashSet<>();
         for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof GroupingDefinition) {
                 GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
@@ -43,7 +43,7 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
             }
             if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
                 TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
+                TypeDefinition<?, ?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
                 } else {
@@ -66,7 +66,7 @@ public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSt
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return typeDefinitions;
     }
 

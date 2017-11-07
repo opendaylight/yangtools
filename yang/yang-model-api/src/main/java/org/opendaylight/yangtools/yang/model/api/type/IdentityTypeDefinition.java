@@ -13,7 +13,8 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 /**
  * Contains the method for getting the details about YANG <code>identity</code>.
  */
-public interface IdentityTypeDefinition extends TypeDefinition<IdentityTypeDefinition> {
+// FIXME: something better than Object?
+public interface IdentityTypeDefinition extends TypeDefinition<IdentityTypeDefinition, Object> {
     /**
      * Returns the name of the YANG identity.
      *

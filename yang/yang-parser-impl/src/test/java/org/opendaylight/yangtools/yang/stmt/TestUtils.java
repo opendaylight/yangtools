@@ -117,9 +117,9 @@ public final class TestUtils {
         return result;
     }
 
-    public static TypeDefinition<?> findTypedef(final Set<TypeDefinition<?>> typedefs, final String name) {
-        TypeDefinition<?> result = null;
-        for (TypeDefinition<?> td : typedefs) {
+    public static TypeDefinition<?, ?> findTypedef(final Set<TypeDefinition<?, ?>> typedefs, final String name) {
+        TypeDefinition<?, ?> result = null;
+        for (TypeDefinition<?, ?> td : typedefs) {
             if (td.getQName().getLocalName().equals(name)) {
                 result = td;
                 break;

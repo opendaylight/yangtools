@@ -81,7 +81,7 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
     }
 
     @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
+    public Set<TypeDefinition<?, ?>> getTypeDefinitions() {
         return delegate.getTypeDefinitions();
     }
 

@@ -33,11 +33,11 @@ public class TypedefConstraintsTest {
 
         assertNotNull(context);
 
-        final Set<TypeDefinition<?>> typeDefinitions = context.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typeDefinitions = context.getTypeDefinitions();
         assertNotNull(typeDefinitions);
         assertEquals(1, typeDefinitions.size());
 
-        final TypeDefinition<?> myDecimal = typeDefinitions.iterator().next();
+        final TypeDefinition<?, ?> myDecimal = typeDefinitions.iterator().next();
 
         assertNotNull(myDecimal);
         assertTrue(myDecimal instanceof DecimalTypeDefinition);
@@ -54,7 +54,7 @@ public class TypedefConstraintsTest {
         assertTrue(dataNode instanceof LeafSchemaNode);
 
         final LeafSchemaNode leafDecimal = (LeafSchemaNode) dataNode;
-        final TypeDefinition<?> type = leafDecimal.getType();
+        final TypeDefinition<?, ?> type = leafDecimal.getType();
 
         assertTrue(type instanceof DecimalTypeDefinition);
         final DecimalTypeDefinition decType = (DecimalTypeDefinition) type;

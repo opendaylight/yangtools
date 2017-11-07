@@ -14,14 +14,15 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefinition> implements UnionTypeDefinition {
+final class RestrictedUnionType extends AbstractRestrictedType<UnionTypeDefinition, Object>
+        implements UnionTypeDefinition {
     RestrictedUnionType(final UnionTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, unknownSchemaNodes);
     }
 
     @Override
-    public List<TypeDefinition<?>> getTypes() {
+    public List<TypeDefinition<?, ?>> getTypes() {
         return getBaseType().getTypes();
     }
 

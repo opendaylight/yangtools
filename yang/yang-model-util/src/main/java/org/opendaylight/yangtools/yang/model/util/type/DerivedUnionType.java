@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 
-final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> implements UnionTypeDefinition {
+final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition, Object> implements UnionTypeDefinition {
     DerivedUnionType(final UnionTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemaNodes) {
@@ -23,7 +23,7 @@ final class DerivedUnionType extends AbstractDerivedType<UnionTypeDefinition> im
     }
 
     @Override
-    public List<TypeDefinition<?>> getTypes() {
+    public List<TypeDefinition<?, ?>> getTypes() {
         return baseType().getTypes();
     }
 

@@ -28,7 +28,7 @@ public abstract class CodecCache<T> {
      * @param schema Schema node
      * @return Cached codec, or null if no codec is cached.
      */
-    @Nullable abstract T lookupComplex(TypedSchemaNode schema);
+    @Nullable abstract T lookupComplex(TypedSchemaNode<?, ?> schema);
 
     /**
      * Lookup a simple codec for a type definition.
@@ -36,7 +36,7 @@ public abstract class CodecCache<T> {
      * @param type Type definition
      * @return Cached codec, or null if no codec is cached.
      */
-    @Nullable abstract T lookupSimple(TypeDefinition<?> type);
+    @Nullable abstract T lookupSimple(TypeDefinition<?, ?> type);
 
     /**
      * Lookup-or-store a complex codec for a particular schema node.
@@ -45,7 +45,7 @@ public abstract class CodecCache<T> {
      * @param codec Codec to cache
      * @return Codec instance, either already-cached, or the codec presented as argument.
      */
-    @Nonnull abstract T getComplex(TypedSchemaNode schema, T codec);
+    @Nonnull abstract T getComplex(TypedSchemaNode<?, ?> schema, T codec);
 
     /**
      * Lookup-or-store a simple codec for a particular schema node.
@@ -54,5 +54,5 @@ public abstract class CodecCache<T> {
      * @param codec Codec to cache
      * @return Codec instance, either already-cached, or the codec presented as argument.
      */
-    @Nonnull abstract T getSimple(TypeDefinition<?> type, T codec);
+    @Nonnull abstract T getSimple(TypeDefinition<?, ?> type, T codec);
 }

@@ -29,33 +29,34 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 @Beta
 @ThreadSafe
 public final class PrecomputedCodecCache<T> extends CodecCache<T> {
-    private final Map<TypeDefinition<?>, T> simpleCodecs;
-    private final Map<TypedSchemaNode, T> complexCodecs;
+    private final Map<TypeDefinition<?, ?>, T> simpleCodecs;
+    private final Map<TypedSchemaNode<?, ?>, T> complexCodecs;
 
-    PrecomputedCodecCache(final Map<TypeDefinition<?>, T> simpleCodecs, final Map<TypedSchemaNode, T> complexCodecs) {
+    PrecomputedCodecCache(final Map<TypeDefinition<?, ?>, T> simpleCodecs,
+        final Map<TypedSchemaNode<?, ?>, T> complexCodecs) {
         this.simpleCodecs = requireNonNull(simpleCodecs);
         this.complexCodecs = requireNonNull(complexCodecs);
     }
 
     @Override
-    T lookupComplex(final TypedSchemaNode schema) {
+    T lookupComplex(final TypedSchemaNode<?, ?> schema) {
         final T ret = complexCodecs.get(schema);
         checkArgument(ret != null, "No codec available for schema %s", schema);
         return ret;
     }
 
     @Override
-    T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?, ?> type) {
         return simpleCodecs.get(type);
     }
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode<?, ?> schema, final T codec) {
         throw new IllegalStateException("Uncached codec for " + schema);
     }
 
     @Override
-    T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?, ?> type, final T codec) {
         throw new IllegalStateException("Uncached codec for " + type);
     }
 

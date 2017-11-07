@@ -30,8 +30,8 @@ public class Bug5712Test {
     }
 
     private static void checkThing2TypeDef(final Module badModule) {
-        TypeDefinition<?> thing2 = null;
-        for (TypeDefinition<?> typeDef : badModule.getTypeDefinitions()) {
+        TypeDefinition<?, ?> thing2 = null;
+        for (TypeDefinition<?, ?> typeDef : badModule.getTypeDefinitions()) {
             if (typeDef.getQName().getLocalName().equals("thing2")) {
                 thing2 = typeDef;
                 break;
@@ -39,7 +39,7 @@ public class Bug5712Test {
         }
 
         assertNotNull(thing2);
-        TypeDefinition<?> baseType = thing2.getBaseType();
+        TypeDefinition<?, ?> baseType = thing2.getBaseType();
         assertEquals(QName.create("urn:opendaylight:bad", "2016-04-11", "thing"), baseType.getQName());
     }
 }

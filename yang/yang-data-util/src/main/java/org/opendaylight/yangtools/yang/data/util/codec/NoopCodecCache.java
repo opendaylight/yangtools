@@ -34,22 +34,22 @@ public final class NoopCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T lookupComplex(final TypedSchemaNode schema) {
+    T lookupComplex(final TypedSchemaNode<?, ?> schema) {
         return null;
     }
 
     @Override
-    T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?, ?> type) {
         return null;
     }
 
     @Override
-    T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?, ?> type, final T codec) {
         return codec;
     }
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode<?, ?> schema, final T codec) {
         return codec;
     }
 }

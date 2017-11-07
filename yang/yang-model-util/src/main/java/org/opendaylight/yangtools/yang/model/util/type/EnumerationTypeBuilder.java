@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
-public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition> {
+public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<EnumTypeDefinition, Object> {
     private final Builder<String, EnumPair> builder = ImmutableMap.builder();
 
     EnumerationTypeBuilder(final SchemaPath path) {

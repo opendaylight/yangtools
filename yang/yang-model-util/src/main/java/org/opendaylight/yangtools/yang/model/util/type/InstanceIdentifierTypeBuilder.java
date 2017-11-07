@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
 public final class InstanceIdentifierTypeBuilder
-        extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition> {
+        extends RequireInstanceRestrictedTypeBuilder<InstanceIdentifierTypeDefinition, Object> {
 
     InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType,
             final SchemaPath path) {

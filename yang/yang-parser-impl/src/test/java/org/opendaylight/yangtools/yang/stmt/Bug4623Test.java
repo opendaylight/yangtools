@@ -41,7 +41,7 @@ public class Bug4623Test {
         // then
         Assert.assertNotNull(leaf);
 
-        final TypeDefinition<?> type = leaf.getType();
+        final TypeDefinition<?, ?> type = leaf.getType();
         Assert.assertNotNull(type);
         final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);
@@ -83,7 +83,7 @@ public class Bug4623Test {
         // then
         Assert.assertNotNull(leaf);
 
-        final TypeDefinition<?> type = leaf.getType();
+        final TypeDefinition<?, ?> type = leaf.getType();
         Assert.assertNotNull(type);
         final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);
@@ -125,7 +125,7 @@ public class Bug4623Test {
         // then
         Assert.assertNotNull(leaf);
 
-        final TypeDefinition<?> type = leaf.getType();
+        final TypeDefinition<?, ?> type = leaf.getType();
         Assert.assertNotNull(type);
         final List<UnknownSchemaNode> unknownSchemaNodes = type.getUnknownSchemaNodes();
         Assert.assertNotNull(unknownSchemaNodes);

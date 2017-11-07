@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 
 final class DerivedInt16Type extends AbstractRangeRestrictedDerivedType<Int16TypeDefinition, Short>
         implements Int16TypeDefinition {
-    DerivedInt16Type(final Int16TypeDefinition baseType, final SchemaPath path, final Object defaultValue,
+    DerivedInt16Type(final Int16TypeDefinition baseType, final SchemaPath path, final Short defaultValue,
             final String description, final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);

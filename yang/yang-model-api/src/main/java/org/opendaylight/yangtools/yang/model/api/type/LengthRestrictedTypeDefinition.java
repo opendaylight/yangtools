@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  *
  * @param <T> Concrete {@link TypeDefinition} subinterface
  */
-public interface LengthRestrictedTypeDefinition<T extends TypeDefinition<T>> extends TypeDefinition<T> {
+public interface LengthRestrictedTypeDefinition<T extends TypeDefinition<T, N>, N> extends TypeDefinition<T, N> {
     /**
      * Returns length constraint of this type, if applicable. This is the effective constraint, e.g. it includes any
      * length constraints implied by base type hierarchy.

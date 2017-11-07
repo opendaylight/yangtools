@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.LengthRestrictedTypeDefinition;
 
-abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefinition<T>>
-        extends AbstractRestrictedType<T> implements LengthRestrictedTypeDefinition<T> {
+abstract class AbstractLengthRestrictedType<T extends LengthRestrictedTypeDefinition<T, N>, N>
+        extends AbstractRestrictedType<T, N> implements LengthRestrictedTypeDefinition<T, N> {
     private final @Nullable LengthConstraint lengthConstraint;
 
     AbstractLengthRestrictedType(final T baseType, final SchemaPath path,

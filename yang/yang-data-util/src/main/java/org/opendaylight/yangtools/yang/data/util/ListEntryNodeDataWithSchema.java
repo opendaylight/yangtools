@@ -40,13 +40,13 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     @Override
     public void addChild(final AbstractNodeDataWithSchema newChild) {
         final DataSchemaNode childSchema = newChild.getSchema();
-        if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode) childSchema)) {
+        if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode<?, ?>) childSchema)) {
             qnameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
         }
         super.addChild(newChild);
     }
 
-    private boolean isPartOfKey(final LeafSchemaNode potentialKey) {
+    private boolean isPartOfKey(final LeafSchemaNode<?, ?> potentialKey) {
         for (QName qname : ((ListSchemaNode) getSchema()).getKeyDefinition()) {
             if (qname.equals(potentialKey.getQName())) {
                 return true;

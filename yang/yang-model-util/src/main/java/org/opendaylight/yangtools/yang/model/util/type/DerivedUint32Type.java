@@ -17,7 +17,7 @@ final class DerivedUint32Type extends AbstractRangeRestrictedDerivedType<Uint32T
         implements Uint32TypeDefinition {
 
     DerivedUint32Type(final Uint32TypeDefinition baseType, final SchemaPath path,
-            final Object defaultValue, final String description, final String reference, final Status status,
+            final Long defaultValue, final String description, final String reference, final Status status,
             final String units, final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }

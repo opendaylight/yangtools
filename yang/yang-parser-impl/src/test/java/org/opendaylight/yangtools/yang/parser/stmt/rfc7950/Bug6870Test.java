@@ -47,9 +47,9 @@ public class Bug6870Test {
             final List<String> localNamePath) {
         final SchemaNode findNode = findNode(schemaContext, localNamePath);
         assertTrue(findNode instanceof LeafSchemaNode);
-        final LeafSchemaNode myLeaf = (LeafSchemaNode) findNode;
+        final LeafSchemaNode<?, ?> myLeaf = (LeafSchemaNode<?, ?>) findNode;
 
-        final TypeDefinition<? extends TypeDefinition<?>> type = myLeaf.getType();
+        final TypeDefinition<? extends TypeDefinition<?, ?>, ?> type = myLeaf.getType();
         assertTrue(type instanceof StringTypeDefinition);
         final StringTypeDefinition stringType = (StringTypeDefinition) type;
 

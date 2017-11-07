@@ -478,11 +478,11 @@ public class SchemaContextProxyTest {
         final FilteringSchemaContextProxy filteringSchemaContextProxy = createProxySchemaCtx(schemaContext,
                 new HashSet<>(), moduleConfig);
 
-        final TypeDefinition<?> mockedTypeDefinition = mock(TypeDefinition.class);
-        final Set<TypeDefinition<?>> typeDefinitions = Collections.singleton(mockedTypeDefinition);
+        final TypeDefinition<?, ?> mockedTypeDefinition = mock(TypeDefinition.class);
+        final Set<TypeDefinition<?, ?>> typeDefinitions = Collections.singleton(mockedTypeDefinition);
         doReturn(typeDefinitions).when(moduleConfig).getTypeDefinitions();
 
-        final Set<TypeDefinition<?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy
+        final Set<TypeDefinition<?, ?>> schemaContextProxyTypeDefinitions = filteringSchemaContextProxy
             .getTypeDefinitions();
         assertTrue(schemaContextProxyTypeDefinitions.contains(mockedTypeDefinition));
     }

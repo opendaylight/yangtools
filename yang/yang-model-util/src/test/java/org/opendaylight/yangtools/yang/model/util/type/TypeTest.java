@@ -79,7 +79,7 @@ public class TypeTest {
                 baseBinaryType2, SCHEMA_PATH).buildType();
         hashCodeEqualsToStringTest(restrictedBinaryType1, restrictedBinaryType2);
 
-        final LengthRestrictedTypeBuilder<BinaryTypeDefinition> lengthRestrictedTypeBuilder = RestrictedTypes
+        final LengthRestrictedTypeBuilder<BinaryTypeDefinition, byte[]> lengthRestrictedTypeBuilder = RestrictedTypes
                 .newBinaryBuilder(baseBinaryType1, SCHEMA_PATH);
         final BaseBinaryType baseBinaryType = (BaseBinaryType)lengthRestrictedTypeBuilder.build();
         assertEquals(baseBinaryType, baseBinaryType1);
@@ -249,9 +249,9 @@ public class TypeTest {
         concreteBuilderTest(integerTypeDefinition8, derivedIntegerType1);
         concreteBuilderTest(integerTypeDefinitionu8, derivedUnsignedType2);
 
-        final DerivedTypeBuilder<?> derivedTypeBuilder = DerivedTypes.derivedTypeBuilder(integerTypeDefinition8,
-                SCHEMA_PATH);
-        derivedTypeBuilder.setDefaultValue(1);
+        final DerivedTypeBuilder<?, Byte> derivedTypeBuilder = (DerivedTypeBuilder<?, Byte>)
+                DerivedTypes.derivedTypeBuilder(integerTypeDefinition8, SCHEMA_PATH);
+        derivedTypeBuilder.setDefaultValue((byte)1);
         derivedTypeBuilder.setDescription("test-description");
         derivedTypeBuilder.setReference("test-reference");
         derivedTypeBuilder.setUnits("Int");
@@ -382,7 +382,7 @@ public class TypeTest {
 
     @Test
     public void abstractTypeDefinitionQnameTest() {
-        final AbstractTypeDefinition<?> abstractTypeDefinition = (AbstractTypeDefinition<?>)
+        final AbstractTypeDefinition<?, ?> abstractTypeDefinition = (AbstractTypeDefinition<?, ?>)
             BaseTypes.decimalTypeBuilder(SCHEMA_PATH).setFractionDigits(1).buildType();
         assertEquals(abstractTypeDefinition.getQName(), Q_NAME);
     }
@@ -390,7 +390,7 @@ public class TypeTest {
     @Test
     public void abstractDerivedTypeTest() {
         final BaseBinaryType baseBinaryType1 = BaseBinaryType.INSTANCE;
-        final AbstractDerivedType<?> abstractDerivedType = (AbstractDerivedType<?>)
+        final AbstractDerivedType<?, ?> abstractDerivedType = (AbstractDerivedType<?, ?>)
             DerivedTypes.derivedTypeBuilder(baseBinaryType1, SCHEMA_PATH).build();
         assertEquals(Optional.empty(), abstractDerivedType.getDescription());
         assertEquals(Optional.empty(), abstractDerivedType.getReference());
@@ -409,29 +409,29 @@ public class TypeTest {
     public void concreteTypeBuilderBuildTest() {
         final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)
             BaseTypes.enumerationTypeBuilder(SCHEMA_PATH).build();
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
+        final ConcreteTypeBuilder<?, ?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
                 baseEnumerationType1, SCHEMA_PATH);
-        final TypeDefinition<?> typeDefinition = concreteTypeBuilder.build();
+        final TypeDefinition<?, ?> typeDefinition = concreteTypeBuilder.build();
         assertNotNull(typeDefinition);
     }
 
     @Test
     public void constraintTypeBuilderTest() throws InvalidLengthConstraintException {
         final BaseBinaryType baseBinaryType = (BaseBinaryType)BaseTypes.binaryType();
-        final LengthRestrictedTypeBuilder<?> lengthRestrictedTypeBuilder = RestrictedTypes
+        final LengthRestrictedTypeBuilder<?, ?> lengthRestrictedTypeBuilder = RestrictedTypes
                 .newBinaryBuilder(baseBinaryType, SCHEMA_PATH);
         final Long min = Long.valueOf(0);
         final UnresolvedNumber max = UnresolvedNumber.max();
         final List<ValueRange> lengthArrayList = ImmutableList.of(ValueRange.of(min, max));
         lengthRestrictedTypeBuilder.setLengthConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
-        final TypeDefinition<?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
+        final TypeDefinition<?, ?> typeDefinition = lengthRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition);
 
         final Int8TypeDefinition integerTypeDefinition8 = BaseTypes.int8Type();
         final RangeRestrictedTypeBuilder<?, ?> rangeRestrictedTypeBuilder = RestrictedTypes.newInt8Builder(
             integerTypeDefinition8, SCHEMA_PATH);
         rangeRestrictedTypeBuilder.setRangeConstraint(mock(ConstraintMetaDefinition.class), lengthArrayList);
-        final TypeDefinition<?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
+        final TypeDefinition<?, ?> typeDefinition1 = rangeRestrictedTypeBuilder.buildType();
         assertNotNull(typeDefinition1);
     }
 
@@ -484,7 +484,7 @@ public class TypeTest {
         enumerationTypeBuilder.build();
     }
 
-    private static void hashCodeEqualsToStringTest(final TypeDefinition<?> type1, final TypeDefinition<?> type2) {
+    private static void hashCodeEqualsToStringTest(final TypeDefinition<?, ?> type1, final TypeDefinition<?, ?> type2) {
         assertEquals(type1.hashCode(), type2.hashCode());
         assertEquals(type1.toString(), type2.toString());
         assertTrue(type1.equals(type2));
@@ -495,15 +495,16 @@ public class TypeTest {
     }
 
     private static void restrictedBuilderTest(final Builder<?> typeBuilder1, final Builder<?> typeBuilder2) {
-        final TypeDefinition<?> typeDefinition1 = ((AbstractRestrictedTypeBuilder<?>) typeBuilder1).buildType();
-        final TypeDefinition<?> typeDefinition2 = ((AbstractRestrictedTypeBuilder<?>) typeBuilder2).buildType();
+        final TypeDefinition<?, ?> typeDefinition1 = ((AbstractRestrictedTypeBuilder<?, ?>) typeBuilder1).buildType();
+        final TypeDefinition<?, ?> typeDefinition2 = ((AbstractRestrictedTypeBuilder<?, ?>) typeBuilder2).buildType();
         hashCodeEqualsToStringTest(typeDefinition1, typeDefinition2);
     }
 
-    private static void concreteBuilderTest(final TypeDefinition<?> baseTypeDef,
-            final TypeDefinition<?> derivedTypeDef) {
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef, SCHEMA_PATH);
-        final TypeDefinition<?> typeDefinition = concreteTypeBuilder.buildType();
+    private static void concreteBuilderTest(final TypeDefinition<?, ?> baseTypeDef,
+            final TypeDefinition<?, ?> derivedTypeDef) {
+        final ConcreteTypeBuilder<?, ?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef,
+            SCHEMA_PATH);
+        final TypeDefinition<?, ?> typeDefinition = concreteTypeBuilder.buildType();
         assertEquals(typeDefinition.getBaseType(), derivedTypeDef.getBaseType());
     }
 }

@@ -15,7 +15,8 @@ import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
-public final class BooleanTypeEffectiveStatementImpl extends AbstractTypeEffectiveStatement<BooleanTypeDefinition> {
+public final class BooleanTypeEffectiveStatementImpl
+        extends AbstractTypeEffectiveStatement<BooleanTypeDefinition, Boolean> {
     public BooleanTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final BooleanTypeDefinition baseType) {

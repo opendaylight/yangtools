@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
-final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<InstanceIdentifierTypeDefinition>
+final class RestrictedInstanceIdentifierType extends AbstractRestrictedType<InstanceIdentifierTypeDefinition, Object>
         implements InstanceIdentifierTypeDefinition {
     private final boolean requireInstance;
 

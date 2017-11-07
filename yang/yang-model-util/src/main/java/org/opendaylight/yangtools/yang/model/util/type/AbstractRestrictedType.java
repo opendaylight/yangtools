@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
+abstract class AbstractRestrictedType<T extends TypeDefinition<T, N>, N> extends AbstractTypeDefinition<T, N> {
     private final T baseType;
 
     AbstractRestrictedType(final T baseType, final SchemaPath path,
@@ -36,7 +36,7 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
     }
 
     @Override
-    public final Optional<? extends Object> getDefaultValue() {
+    public final Optional<? extends N> getDefaultValue() {
         return baseType.getDefaultValue();
     }
 

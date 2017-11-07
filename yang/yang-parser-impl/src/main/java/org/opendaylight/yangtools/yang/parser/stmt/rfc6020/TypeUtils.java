@@ -278,7 +278,7 @@ public final class TypeUtils {
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
-        final TypeDefinition<?> typeDefinition = typeStmt.getTypeDefinition();
+        final TypeDefinition<?, ?> typeDefinition = typeStmt.getTypeDefinition();
         return typeDefinition instanceof EnumTypeDefinition || typeDefinition instanceof BitsTypeDefinition
                 || typeDefinition instanceof UnionTypeDefinition;
     }

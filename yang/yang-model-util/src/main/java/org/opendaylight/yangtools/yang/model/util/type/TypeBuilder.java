@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
-public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builder<T> {
+public abstract class TypeBuilder<T extends TypeDefinition<T, N>, N> implements Builder<T> {
     private final ImmutableList.Builder<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.builder();
     private final SchemaPath path;
     private final T baseType;

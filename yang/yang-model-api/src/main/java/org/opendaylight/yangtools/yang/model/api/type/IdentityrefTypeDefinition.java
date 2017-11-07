@@ -10,13 +10,14 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
  * Contains method for getting data from <code>identityref</code> built-in YANG type.
  */
-public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition> {
+public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTypeDefinition, QName> {
     /**
      * Returns the set of identities this reference points to.
      *

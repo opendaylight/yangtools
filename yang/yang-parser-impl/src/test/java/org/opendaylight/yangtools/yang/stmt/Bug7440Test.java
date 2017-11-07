@@ -45,7 +45,7 @@ public class Bug7440Test {
         final SchemaPath deviatedTypePath = SchemaPath.create(true, QName.create(bar.getQNameModule(), "test-leaf"),
                 QName.create(bar.getQNameModule(), "uint32"));
 
-        final TypeDefinition<?> deviatedType = deviateReplace.getDeviatedType();
+        final TypeDefinition<?, ?> deviatedType = deviateReplace.getDeviatedType();
         assertEquals(deviatedTypePath, deviatedType.getPath());
     }
 }

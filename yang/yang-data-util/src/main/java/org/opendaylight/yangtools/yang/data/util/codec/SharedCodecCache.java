@@ -26,21 +26,23 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 public final class SharedCodecCache<T> extends CodecCache<T> {
     // Weak keys to force identity lookup
     // Soft values to keep unreferenced codecs around for a bit, but eventually we want them to go away
-    private final Cache<TypeDefinition<?>, T> simpleCodecs = CacheBuilder.newBuilder().weakKeys().softValues().build();
-    private final Cache<TypedSchemaNode, T> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues().build();
+    private final Cache<TypeDefinition<?, ?>, T> simpleCodecs = CacheBuilder.newBuilder().weakKeys().softValues()
+            .build();
+    private final Cache<TypedSchemaNode<?, ?>, T> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues()
+            .build();
 
     @Override
-    public T lookupComplex(final TypedSchemaNode schema) {
+    public T lookupComplex(final TypedSchemaNode<?, ?> schema) {
         return complexCodecs.getIfPresent(schema);
     }
 
     @Override
-    T lookupSimple(final TypeDefinition<?> type) {
+    T lookupSimple(final TypeDefinition<?, ?> type) {
         return simpleCodecs.getIfPresent(type);
     }
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedSchemaNode<?, ?> schema, final T codec) {
         try {
             return complexCodecs.get(schema, () -> codec);
         } catch (ExecutionException e) {
@@ -51,7 +53,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T getSimple(final TypeDefinition<?> type, final T codec) {
+    T getSimple(final TypeDefinition<?, ?> type, final T codec) {
         try {
             return simpleCodecs.get(type, () -> codec);
         } catch (ExecutionException e) {

@@ -436,7 +436,7 @@ public class YangParserTest {
         assertEquals(Optional.empty(), baseType.getDefaultValue());
 
         final UnionTypeDefinition unionType = baseType.getBaseType();
-        final List<TypeDefinition<?>> unionTypes = unionType.getTypes();
+        final List<TypeDefinition<?, ?>> unionTypes = unionType.getTypes();
         assertEquals(2, unionTypes.size());
 
         final Int16TypeDefinition unionType1 = (Int16TypeDefinition) unionTypes.get(0);
@@ -471,7 +471,7 @@ public class YangParserTest {
         assertEquals(Optional.empty(), typeBase.getDefaultValue());
 
         final UnionTypeDefinition union = typeBase.getBaseType();
-        final List<TypeDefinition<?>> unionTypes = union.getTypes();
+        final List<TypeDefinition<?, ?>> unionTypes = union.getTypes();
         assertEquals(2, unionTypes.size());
         assertEquals(BaseTypes.int32Type(), unionTypes.get(0));
         assertTrue(unionTypes.get(1) instanceof UnionTypeDefinition);
@@ -482,7 +482,7 @@ public class YangParserTest {
         assertEquals(Optional.empty(), unionType1.getDefaultValue());
 
         final UnionTypeDefinition nestedUnion = unionType1.getBaseType();
-        final List<TypeDefinition<?>> nestedUnion2Types = nestedUnion.getTypes();
+        final List<TypeDefinition<?, ?>> nestedUnion2Types = nestedUnion.getTypes();
         assertEquals(2, nestedUnion2Types.size());
         assertTrue(nestedUnion2Types.get(1) instanceof StringTypeDefinition);
         assertTrue(nestedUnion2Types.get(0) instanceof UnionTypeDefinition);
@@ -499,7 +499,7 @@ public class YangParserTest {
         assertEquals(Optional.empty(), myUnion.getDefaultValue());
 
         final UnionTypeDefinition myUnionBase = myUnion.getBaseType();
-        final List<TypeDefinition<?>> myUnionBaseTypes = myUnionBase.getTypes();
+        final List<TypeDefinition<?, ?>> myUnionBaseTypes = myUnionBase.getTypes();
         assertEquals(2, myUnionBaseTypes.size());
         assertTrue(myUnionBaseTypes.get(0) instanceof Int16TypeDefinition);
         assertEquals(BaseTypes.int32Type(), myUnionBaseTypes.get(1));
@@ -625,7 +625,7 @@ public class YangParserTest {
 
     @Test
     public void testTypePath() throws ParseException {
-        final Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> types = bar.getTypeDefinitions();
 
         // int32-ext1
         final Int32TypeDefinition int32ext1 = (Int32TypeDefinition) TestUtils.findTypedef(types, "int32-ext1");
@@ -645,7 +645,7 @@ public class YangParserTest {
 
     @Test
     public void testTypePath2() throws ParseException {
-        final Set<TypeDefinition<?>> types = bar.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> types = bar.getTypeDefinitions();
 
         // my-decimal-type
         final DecimalTypeDefinition myDecType = (DecimalTypeDefinition) TestUtils.findTypedef(types, "my-decimal-type");

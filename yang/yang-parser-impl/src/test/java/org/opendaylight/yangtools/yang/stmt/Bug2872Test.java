@@ -38,7 +38,7 @@ public class Bug2872Test {
         assertTrue(dataSchemaNode instanceof LeafSchemaNode);
         final LeafSchemaNode myLeaf = (LeafSchemaNode) dataSchemaNode;
 
-        final TypeDefinition<?> type = myLeaf.getType();
+        final TypeDefinition<?, ?> type = myLeaf.getType();
         assertTrue(type instanceof EnumTypeDefinition);
         final EnumTypeDefinition myEnum = (EnumTypeDefinition) type;
 

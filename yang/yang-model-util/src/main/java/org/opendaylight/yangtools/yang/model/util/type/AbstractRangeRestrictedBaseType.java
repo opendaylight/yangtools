@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinition;
 
 abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefinition<T, N>,
-    N extends Number & Comparable<N>> extends AbstractBaseType<T> implements RangeRestrictedTypeDefinition<T, N> {
+    N extends Number & Comparable<N>> extends AbstractBaseType<T, N> implements RangeRestrictedTypeDefinition<T, N> {
     private static final ConstraintMetaDefinition BUILTIN_CONSTRAINT = new ConstraintMetaDefinition() {
 
         @Override

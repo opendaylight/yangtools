@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
-final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition> implements BitsTypeDefinition {
+final class DerivedBitsType extends AbstractDerivedType<BitsTypeDefinition, Object> implements BitsTypeDefinition {
     DerivedBitsType(final BitsTypeDefinition baseType, final SchemaPath path, final Object defaultValue,
         final String description, final String reference, final Status status, final String units,
         final Collection<UnknownSchemaNode> unknownSchemNodes) {

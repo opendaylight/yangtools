@@ -29,8 +29,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -663,7 +661,7 @@ public final class SchemaContextUtil {
      * @return recursively found type definition this leafref is pointing to or null if the xpath is incorrect (null
      *         is there to preserve backwards compatibility)
      */
-    public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
+    public static TypeDefinition<?, ?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final SchemaNode schema) {
         RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement),
@@ -697,7 +695,7 @@ public final class SchemaContextUtil {
             return null;
         }
 
-        final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+        final TypeDefinition<?, ?> targetTypeDefinition = typeDefinition(dataSchemaNode);
 
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
@@ -714,7 +712,7 @@ public final class SchemaContextUtil {
      * <p>
      * Because {@code typeDefinition} is definied via typedef statement, only absolute path is meaningful.
      */
-    public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
+    public static TypeDefinition<?, ?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qname) {
         final RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
         final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(
@@ -728,7 +726,7 @@ public final class SchemaContextUtil {
 
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
             parentModule.get(), strippedPathStatement);
-        final TypeDefinition<?> targetTypeDefinition = typeDefinition(dataSchemaNode);
+        final TypeDefinition<?, ?> targetTypeDefinition = typeDefinition(dataSchemaNode);
         if (targetTypeDefinition instanceof LeafrefTypeDefinition) {
             return getBaseTypeForLeafRef((LeafrefTypeDefinition) targetTypeDefinition, schemaContext, dataSchemaNode);
         }
@@ -741,7 +739,7 @@ public final class SchemaContextUtil {
         Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
         Preconditions.checkArgument(schemaNode instanceof TypedSchemaNode, "Unsupported node %s", schemaNode);
 
-        TypeDefinition<?> nodeType = ((TypedSchemaNode) schemaNode).getType();
+        TypeDefinition<?, ?> nodeType = ((TypedSchemaNode<?, ?>) schemaNode).getType();
         if (nodeType.getBaseType() != null) {
             while (nodeType.getBaseType() != null) {
                 nodeType = nodeType.getBaseType();
@@ -768,29 +766,14 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Extracts the base type of leaf schema node until it reach concrete type of TypeDefinition.
-     *
-     * @param node
-     *            a node representing LeafSchemaNode
-     * @return concrete type definition of node value
-     */
-    private static TypeDefinition<?> typeDefinition(final LeafSchemaNode node) {
-        TypeDefinition<?> baseType = node.getType();
-        while (baseType.getBaseType() != null) {
-            baseType = baseType.getBaseType();
-        }
-        return baseType;
-    }
-
-    /**
-     * Extracts the base type of leaf schema node until it reach concrete type of TypeDefinition.
+     * Extracts the base type of typed schema node until it reach concrete type of TypeDefinition.
      *
      * @param node
      *            a node representing LeafListSchemaNode
      * @return concrete type definition of node value
      */
-    private static TypeDefinition<?> typeDefinition(final LeafListSchemaNode node) {
-        TypeDefinition<?> baseType = node.getType();
+    private static TypeDefinition<?, ?> typeDefinition(final TypedSchemaNode<?, ?> node) {
+        TypeDefinition<?, ?> baseType = node.getType();
         while (baseType.getBaseType() != null) {
             baseType = baseType.getBaseType();
         }
@@ -804,13 +787,8 @@ public final class SchemaContextUtil {
      *            a node representing DataSchemaNode
      * @return concrete type definition of node value
      */
-    private static TypeDefinition<?> typeDefinition(final DataSchemaNode node) {
-        if (node instanceof LeafListSchemaNode) {
-            return typeDefinition((LeafListSchemaNode) node);
-        } else if (node instanceof LeafSchemaNode) {
-            return typeDefinition((LeafSchemaNode) node);
-        } else {
-            throw new IllegalArgumentException("Unhandled parameter type: " + node);
-        }
+    private static TypeDefinition<?, ?> typeDefinition(final DataSchemaNode node) {
+        Preconditions.checkArgument(node instanceof TypedSchemaNode, "Unhandled parameter type: %s", node);
+        return typeDefinition((TypedSchemaNode<?, ?>) node);
     }
 }

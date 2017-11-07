@@ -28,12 +28,12 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
         this.typeDefinition = requireNonNull(typeDefinition);
     }
 
-    protected abstract Codec<String, Object> codecFor(TypeDefinition<?> type);
+    protected abstract Codec<String, Object> codecFor(TypeDefinition<?, ?> type);
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public final String serialize(final Object data) {
-        for (final TypeDefinition<?> type : typeDefinition.getTypes()) {
+        for (final TypeDefinition<?, ?> type : typeDefinition.getTypes()) {
             Codec<String, Object> codec = codecFor(type);
             if (codec == null) {
                 LOG.debug("no codec found for {}", type);
@@ -57,7 +57,7 @@ public abstract class AbstractStringUnionCodec implements Codec<String, Object> 
         }
 
         Object returnValue = null;
-        for (final TypeDefinition<?> type : typeDefinition.getTypes()) {
+        for (final TypeDefinition<?, ?> type : typeDefinition.getTypes()) {
             Codec<String, Object> codec = codecFor(type);
             if (codec == null) {
                 /*

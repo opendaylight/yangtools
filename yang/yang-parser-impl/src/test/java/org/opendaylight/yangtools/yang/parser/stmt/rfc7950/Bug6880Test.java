@@ -35,7 +35,7 @@ public class Bug6880Test {
         final SchemaNode findDataSchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext,
                 SchemaPath.create(true, QName.create(FOO_NS, "my-leaf-list")));
         assertTrue(findDataSchemaNode instanceof LeafListSchemaNode);
-        final LeafListSchemaNode myLeafList = (LeafListSchemaNode) findDataSchemaNode;
+        final LeafListSchemaNode<?, ?> myLeafList = (LeafListSchemaNode<?, ?>) findDataSchemaNode;
 
         final Collection<? extends Object> defaults = myLeafList.getDefaults();
         assertEquals(2, defaults.size());

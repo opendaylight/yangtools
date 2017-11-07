@@ -74,9 +74,9 @@ public class Bug6180Test {
         final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition().get();
         assertEquals("/foo != \"bar\"", whenCondition.toString());
 
-        final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
-        final TypeDefinition<?> type = typeDefinitions.iterator().next();
+        final TypeDefinition<?, ?> type = typeDefinitions.iterator().next();
         assertTrue(type instanceof StringTypeDefinition);
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
@@ -92,9 +92,9 @@ public class Bug6180Test {
         final RevisionAwareXPath whenCondition = bar.getConstraints().getWhenCondition().get();
         assertEquals("/foo != 'bar'", whenCondition.toString());
 
-        final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
+        final Set<TypeDefinition<?, ?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
-        final TypeDefinition<?> type = typeDefinitions.iterator().next();
+        final TypeDefinition<?, ?> type = typeDefinitions.iterator().next();
         assertTrue(type instanceof StringTypeDefinition);
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
