@@ -37,6 +37,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_6c39c5d6",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-07T14:50:58Z",
+      "side": 1,
+      "message": "See java.util.Collection fail-fast iterators, this is the same thing. There is no requirement of atomicity.\n\nFurthermore using an AtomicInteger will explode memory overhead.",
+      "parentUuid": "9a245df4_a6c12856",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_06b3d40a",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
         "patchSetId": 1
@@ -48,6 +66,24 @@
       "writtenOn": "2017-11-04T03:34:49Z",
       "side": 1,
       "message": "EC_BAD_ARRAY_COMPARE",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_0c50090a",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-07T14:50:58Z",
+      "side": 1,
+      "message": "This is intentional, since we are managing lifecycle carefully, that compare is actually safe and accurate.",
+      "parentUuid": "9a245df4_06b3d40a",
       "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
