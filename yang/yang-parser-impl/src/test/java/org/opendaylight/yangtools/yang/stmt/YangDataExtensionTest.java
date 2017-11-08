@@ -28,12 +28,11 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class YangDataExtensionTest {
 
@@ -119,11 +118,10 @@ public class YangDataExtensionTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.setSupportedFeatures(ImmutableSet.of());
-        reactor.addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .setSupportedFeatures(ImmutableSet.of())
+                .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module foobar = schemaContext.findModule("foobar", REVISION).get();

@@ -12,12 +12,10 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class YangFileStmtTest {
     //basic statements to parse and write
@@ -44,29 +42,26 @@ public class YangFileStmtTest {
     private static final StatementStreamSource SUBFOO2 = sourceForResource("/model/subfoo.yang");
 
     @Test
-    public void readAndParseYangFileTestModel() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(BAZ,FOO,BAR,SUBFOO);
-        EffectiveModelContext result = reactor.build();
+    public void readAndParseYangFileTestModel() throws ReactorException {
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAZ, FOO, BAR, SUBFOO)
+                .build();
         assertNotNull(result);
     }
 
     @Test
-    public void readAndParseYangFileTestModel2() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(BAZ2,FOO2,BAR2,SUBFOO2);
-        EffectiveModelContext result = reactor.build();
+    public void readAndParseYangFileTestModel2() throws ReactorException {
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAZ2, FOO2, BAR2, SUBFOO2)
+                .build();
         assertNotNull(result);
     }
 
     @Test
-    public void readAndParseYangFileTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(YANGFILE, SIMPLENODES, IMPORTEDYANGFILE, FOOBAR);
-        reactor.addSources(EXTFILE, EXTUSE);
-        SchemaContext result = reactor.buildEffective();
+    public void readAndParseYangFileTest() throws ReactorException {
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(YANGFILE, SIMPLENODES, IMPORTEDYANGFILE, FOOBAR, EXTFILE, EXTUSE)
+                .buildEffective();
         assertNotNull(result);
     }
 }

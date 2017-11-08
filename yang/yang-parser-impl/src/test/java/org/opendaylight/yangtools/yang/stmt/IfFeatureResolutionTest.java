@@ -22,10 +22,9 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class IfFeatureResolutionTest {
 
@@ -40,11 +39,10 @@ public class IfFeatureResolutionTest {
                 QName.create("foo-namespace", "test-feature-3"),
                 QName.create("bar-namespace", "imp-feature"));
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE);
-        reactor.setSupportedFeatures(supportedFeatures);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE)
+                .setSupportedFeatures(supportedFeatures)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module testModule = schemaContext.findModule("foo").get();
@@ -145,10 +143,9 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testAllFeaturesSupported() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module testModule = schemaContext.findModules("foo").iterator().next();
@@ -272,11 +269,10 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testNoFeaturesSupported() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE);
-        reactor.setSupportedFeatures(ImmutableSet.of());
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE)
+                .setSupportedFeatures(ImmutableSet.of())
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module testModule = schemaContext.findModules("foo").iterator().next();
