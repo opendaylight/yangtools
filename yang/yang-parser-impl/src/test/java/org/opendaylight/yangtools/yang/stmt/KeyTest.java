@@ -14,12 +14,12 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class KeyTest {
 
@@ -30,20 +30,15 @@ public class KeyTest {
 
     @Test
     public void keySimpleTest() throws ReactorException {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(KEY_SIMPLE_AND_COMP);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(KEY_SIMPLE_AND_COMP)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void keyCompositeInvalid() {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(KEY_COMP_DUPLICATE);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(KEY_COMP_DUPLICATE);
         try {
             reactor.build();
             fail("reactor.process should fail due to duplicate name in key");

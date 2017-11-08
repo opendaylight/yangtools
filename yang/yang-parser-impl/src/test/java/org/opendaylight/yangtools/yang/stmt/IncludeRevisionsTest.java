@@ -15,13 +15,13 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class IncludeRevisionsTest {
 
@@ -38,20 +38,15 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revsEqualTest() throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(EQUAL_REV, EQUAL_ROOT);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(EQUAL_REV, EQUAL_ROOT)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void revsUnequalTest() throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(UNEQUAL_REV, UNEQUAL_ROOT);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
         try {
             reactor.build();
             fail("reactor.process should fail due to unequal revisions in include and submodule");
@@ -63,20 +58,15 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revIncludeOnly() throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void revInModuleOnly() throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing revision in included submodule");
@@ -88,11 +78,9 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revNowhereTest() throws ReactorException {
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(NOWHERE_REV, NOWHERE_ROOT);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(NOWHERE_REV, NOWHERE_ROOT)
+                .build();
         assertNotNull(result);
     }
 }

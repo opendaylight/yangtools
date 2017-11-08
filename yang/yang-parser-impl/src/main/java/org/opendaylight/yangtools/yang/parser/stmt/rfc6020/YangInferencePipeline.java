@@ -62,6 +62,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLoca
 import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ActionStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
@@ -262,22 +263,23 @@ public final class YangInferencePipeline {
             .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
             .build();
 
-    public static final CrossSourceStatementReactor RFC6020_REACTOR = CrossSourceStatementReactor.builder()
-            .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
-            .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
-            .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
-            .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
-            .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
+    public static Builder newReactorBuilder() {
+        return CrossSourceStatementReactor.builder()
+                .setBundle(ModelProcessingPhase.INIT, INIT_BUNDLE)
+                .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, PRE_LINKAGE_BUNDLE)
+                .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, LINKAGE_BUNDLE)
+                .setBundle(ModelProcessingPhase.STATEMENT_DEFINITION, STMT_DEF_BUNDLE)
+                .setBundle(ModelProcessingPhase.FULL_DECLARATION, FULL_DECL_BUNDLE)
+                .setBundle(ModelProcessingPhase.EFFECTIVE_MODEL, FULL_DECL_BUNDLE)
+                .setValidationBundle(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
                     YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
+                .setValidationBundle(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS,
                     YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
+                .setValidationBundle(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS,
                     YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
-            .setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
-                    YangValidationBundles.SUPPORTED_DATA_NODES)
-             .build();
+                .setValidationBundle(ValidationBundleType.SUPPORTED_DATA_NODES,
+                    YangValidationBundles.SUPPORTED_DATA_NODES);
+    }
 
     private YangInferencePipeline() {
         throw new UnsupportedOperationException("Utility class");

@@ -23,21 +23,16 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class ListTest {
 
-    private static final StatementStreamSource LIST_MODULE = sourceForResource("/list-test/list-test.yang");
-
     @Test
     public void listAndLeavesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(LIST_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-test/list-test.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("list-test").iterator().next();
