@@ -59,7 +59,7 @@ public class YangParserSimpleTest {
             QName.create(testModule.getQNameModule(), "data"));
         assertNotNull("'anyxml data not found'", data);
         assertFalse(data.equals(null));
-        assertEquals("AnyXmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, "
+        assertEquals("AnyxmlEffectiveStatementImpl[qname=(urn:opendaylight:simple-nodes?revision=2013-07-30)data, "
                 + "path=AbsoluteSchemaPath{path=[(urn:opendaylight:simple-nodes?revision=2013-07-30)data]}]",
                 data.toString());
 

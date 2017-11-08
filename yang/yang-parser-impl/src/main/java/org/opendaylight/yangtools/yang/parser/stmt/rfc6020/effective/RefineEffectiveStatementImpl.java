@@ -15,12 +15,14 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class RefineEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement> implements SchemaNode {
+public final class RefineEffectiveStatementImpl
+        extends AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement>
+        implements RefineEffectiveStatement, SchemaNode {
 
     private final QName qname;
     private final SchemaPath path;

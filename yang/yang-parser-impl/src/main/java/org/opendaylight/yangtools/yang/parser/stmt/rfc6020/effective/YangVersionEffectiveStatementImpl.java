@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class YangVersionEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<YangVersion, YangVersionStatement> {
+        extends DeclaredEffectiveStatementBase<YangVersion, YangVersionStatement>
+        implements YangVersionEffectiveStatement {
     public YangVersionEffectiveStatementImpl(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
         super(ctx);
     }

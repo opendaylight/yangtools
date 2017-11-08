@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -32,7 +33,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 public final class AugmentEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
-        implements AugmentationSchemaNode, NamespaceRevisionAware {
+        implements AugmentEffectiveStatement, AugmentationSchemaNode, NamespaceRevisionAware {
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Revision revision;
