@@ -19,25 +19,37 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 final class SystemTestUtils {
 
     private static final Pattern MODULE_PATTERN = Pattern.compile("module(.*?)\\{");
     private static final Pattern WHITESPACES = Pattern.compile("\\s+");
+    private static final @NonNull YangParserFactory PARSER_FACTORY;
+
+    static {
+        final Iterator<@NonNull YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("No YangParserFactory found");
+        }
+        PARSER_FACTORY = it.next();
+    }
 
     private SystemTestUtils() {
         throw new UnsupportedOperationException();
@@ -87,14 +99,13 @@ final class SystemTestUtils {
             final List<StatementStreamSource> libSources, final Set<QName> supportedFeatures) throws ReactorException {
         Preconditions.checkArgument(testSources != null && !testSources.isEmpty(), "No yang sources");
 
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
-                .addLibSources(libSources).addSources(testSources);
+        final YangParser parser = PARSER_FACTORY.createParser().addLibSources(libSources).addSources(testSources);
 
         if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
+            parser.setSupportedFeatures(supportedFeatures);
         }
 
-        return reactor.buildEffective();
+        return parser.buildSchemaContext();
     }
 
     private static File findInFiles(final List<File> libFiles, final String yangTestFile) throws IOException {
