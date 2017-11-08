@@ -17,9 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -50,20 +56,20 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         final ImmutableSet.Builder<String> defaultValuesBuilder = ImmutableSet.builder();
         boolean isUserOrdered = false;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof OrderedByEffectiveStatementImpl) {
+            if (stmt instanceof OrderedByEffectiveStatement) {
                 isUserOrdered = ORDER_BY_USER_KEYWORD.equals(stmt.argument());
             }
 
-            if (stmt instanceof DefaultEffectiveStatementImpl) {
-                defaultValuesBuilder.add(((DefaultEffectiveStatementImpl) stmt).argument());
-            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
-                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
-                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatementImpl) {
-                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
-                builder.setUnits(((UnitsEffectiveStatementImpl)stmt).argument());
+            if (stmt instanceof DefaultEffectiveStatement) {
+                defaultValuesBuilder.add(((DefaultEffectiveStatement) stmt).argument());
+            } else if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
             }
         }
 

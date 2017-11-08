@@ -26,8 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -49,7 +51,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
-        final OrderedByEffectiveStatementImpl orderedByStmt = firstEffective(OrderedByEffectiveStatementImpl.class);
+        final OrderedByEffectiveStatement orderedByStmt = firstEffective(OrderedByEffectiveStatement.class);
         if (orderedByStmt != null && ORDER_BY_USER_KEYWORD.equals(orderedByStmt.argument())) {
             this.userOrdered = true;
         } else {
@@ -58,7 +60,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         // initKeyDefinition
         final List<QName> keyDefinitionInit = new LinkedList<>();
-        final KeyEffectiveStatementImpl keyEffectiveSubstatement = firstEffective(KeyEffectiveStatementImpl.class);
+        final KeyEffectiveStatement keyEffectiveSubstatement = firstEffective(KeyEffectiveStatement.class);
         if (keyEffectiveSubstatement != null) {
             final Set<QName> possibleLeafQNamesForKey = new HashSet<>();
             for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {

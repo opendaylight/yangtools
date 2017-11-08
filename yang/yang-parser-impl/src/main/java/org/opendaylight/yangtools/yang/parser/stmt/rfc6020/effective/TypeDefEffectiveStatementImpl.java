@@ -17,10 +17,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -45,17 +50,17 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
             ctx.getSchemaPath().get());
         String defaultValue = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatementImpl) {
-                defaultValue = ((DefaultEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof DefaultEffectiveStatement) {
+                defaultValue = ((DefaultEffectiveStatement) stmt).argument();
                 builder.setDefaultValue(defaultValue);
-            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
-                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
-                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatementImpl) {
-                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
-                builder.setUnits(((UnitsEffectiveStatementImpl)stmt).argument());
+            } else if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
             } else if (stmt instanceof UnknownEffectiveStatementImpl) {
                 // FIXME: should not directly implement, I think
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

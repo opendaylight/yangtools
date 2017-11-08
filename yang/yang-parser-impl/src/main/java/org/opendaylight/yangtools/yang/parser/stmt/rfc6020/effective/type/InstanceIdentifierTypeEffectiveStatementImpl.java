@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -18,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.RequireInstanceEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class InstanceIdentifierTypeEffectiveStatementImpl
@@ -34,8 +34,8 @@ public final class InstanceIdentifierTypeEffectiveStatementImpl
                 RestrictedTypes.newInstanceIdentifierBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof RequireInstanceEffectiveStatementImpl) {
-                builder.setRequireInstance(((RequireInstanceEffectiveStatementImpl)stmt).argument());
+            if (stmt instanceof RequireInstanceEffectiveStatement) {
+                builder.setRequireInstance(((RequireInstanceEffectiveStatement)stmt).argument());
             }
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);

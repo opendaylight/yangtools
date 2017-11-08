@@ -18,10 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.PositionEffectiveStatementImpl;
 
 public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement>
         implements BitEffectiveStatement {
@@ -40,8 +40,8 @@ public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         Long declaredPositionInit = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof PositionEffectiveStatementImpl) {
-                declaredPositionInit = ((PositionEffectiveStatementImpl) effectiveStatement).argument();
+            if (effectiveStatement instanceof PositionEffectiveStatement) {
+                declaredPositionInit = ((PositionEffectiveStatement) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);

@@ -14,10 +14,15 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -46,17 +51,17 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof DefaultEffectiveStatementImpl) {
-                dflt = ((DefaultEffectiveStatementImpl)stmt).argument();
+            if (stmt instanceof DefaultEffectiveStatement) {
+                dflt = ((DefaultEffectiveStatement)stmt).argument();
                 builder.setDefaultValue(stmt.argument());
-            } else if (stmt instanceof DescriptionEffectiveStatementImpl) {
-                builder.setDescription(((DescriptionEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof ReferenceEffectiveStatementImpl) {
-                builder.setReference(((ReferenceEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof StatusEffectiveStatementImpl) {
-                builder.setStatus(((StatusEffectiveStatementImpl)stmt).argument());
-            } else if (stmt instanceof UnitsEffectiveStatementImpl) {
-                units = ((UnitsEffectiveStatementImpl)stmt).argument();
+            } else if (stmt instanceof DescriptionEffectiveStatement) {
+                builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof ReferenceEffectiveStatement) {
+                builder.setReference(((ReferenceEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof StatusEffectiveStatement) {
+                builder.setStatus(((StatusEffectiveStatement)stmt).argument());
+            } else if (stmt instanceof UnitsEffectiveStatement) {
+                units = ((UnitsEffectiveStatement)stmt).argument();
                 builder.setUnits(units);
             }
         }

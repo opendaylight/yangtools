@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>> extends
@@ -19,7 +20,7 @@ abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<
 
     AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        this.presence = firstEffective(PresenceEffectiveStatementImpl.class) != null;
+        this.presence = firstEffective(PresenceEffectiveStatement.class) != null;
     }
 
     @Override
