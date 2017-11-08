@@ -14,10 +14,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class InputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<InputStatement> {
+public final class InputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<InputStatement>
+        implements InputEffectiveStatement {
 
     public InputEffectiveStatementImpl(
             final StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {

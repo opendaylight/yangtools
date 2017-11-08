@@ -13,11 +13,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement> implements
-        ChoiceCaseNode, DerivableSchemaNode {
+public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement>
+        implements CaseEffectiveStatement, ChoiceCaseNode, DerivableSchemaNode {
 
     private final ChoiceCaseNode original;
     private final boolean configuration;

@@ -21,12 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class GroupingEffectiveStatementImpl extends
-        AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement> implements GroupingDefinition {
+public class GroupingEffectiveStatementImpl
+        extends AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement>
+        implements GroupingDefinition, GroupingEffectiveStatement {
     private final QName qname;
     private final SchemaPath path;
     private final boolean addedByUses;

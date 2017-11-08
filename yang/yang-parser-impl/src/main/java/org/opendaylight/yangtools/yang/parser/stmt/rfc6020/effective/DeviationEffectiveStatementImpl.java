@@ -18,13 +18,14 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class DeviationEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<SchemaNodeIdentifier, DeviationStatement>
-        implements Deviation, Immutable {
+        implements Deviation, DeviationEffectiveStatement, Immutable {
     private final SchemaPath targetPath;
     private final String description;
     private final String reference;
