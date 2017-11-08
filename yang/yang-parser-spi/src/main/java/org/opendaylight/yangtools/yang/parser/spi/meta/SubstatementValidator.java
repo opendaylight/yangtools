@@ -19,17 +19,6 @@ import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class SubstatementValidator {
-    /**
-     * Shorthand for unlimited number of occurances.
-     *
-     * @deprecated Deprecated since version 1.1.0. Use {@link Builder#addAny(StatementDefinition)},
-     *             {@link Builder#addAtLeast(StatementDefinition, int)},
-     *             {@link Builder#addMandatory(StatementDefinition)}, or
-     *             {@link Builder#addMultiple(StatementDefinition)} instead.
-     */
-    @Deprecated
-    public static final int MAX = Integer.MAX_VALUE;
-
     private final Map<StatementDefinition, Cardinality> cardinalityMap;
     private final Map<StatementDefinition, Cardinality> mandatoryStatements;
     private final StatementDefinition currentStatement;
