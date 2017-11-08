@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToSemVerSou
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ImportStatement>
-        implements ModuleImport {
+        implements ImportEffectiveStatement, ModuleImport {
 
     private final String moduleName;
     private final Revision revision;

@@ -19,14 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class DeviateEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement> implements DeviateDefinition {
+public final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement>
+        implements DeviateDefinition, DeviateEffectiveStatement {
 
     private final DeviateKind deviateType;
     private final String deviatedDefault;

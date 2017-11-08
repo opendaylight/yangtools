@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class UnitsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, UnitsStatement> {
+public final class UnitsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, UnitsStatement>
+        implements UnitsEffectiveStatement {
     public UnitsEffectiveStatementImpl(final StmtContext<String, UnitsStatement, ?> ctx) {
         super(ctx);
     }

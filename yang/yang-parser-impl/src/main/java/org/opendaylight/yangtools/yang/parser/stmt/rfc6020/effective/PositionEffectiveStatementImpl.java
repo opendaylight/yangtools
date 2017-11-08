@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class PositionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Long, PositionStatement> {
+public final class PositionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Long, PositionStatement>
+        implements PositionEffectiveStatement {
     public PositionEffectiveStatementImpl(final StmtContext<Long, PositionStatement, ?> ctx) {
         super(ctx);
     }

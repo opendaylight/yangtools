@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -18,8 +19,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEff
  * YANG 1.1 Modifier effective statement implementation.
  */
 @Beta
-public final class ModifierEffectiveStatementImpl extends
-        DeclaredEffectiveStatementBase<ModifierKind, ModifierStatement> {
+public final class ModifierEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<ModifierKind, ModifierStatement>
+        implements ModifierEffectiveStatement {
     public ModifierEffectiveStatementImpl(final StmtContext<ModifierKind, ModifierStatement, ?> ctx) {
         super(ctx);
     }

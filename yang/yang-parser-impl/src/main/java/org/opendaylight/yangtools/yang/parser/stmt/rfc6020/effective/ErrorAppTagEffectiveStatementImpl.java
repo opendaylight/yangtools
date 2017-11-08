@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ErrorAppTagEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<String, ErrorAppTagStatement> {
+        extends DeclaredEffectiveStatementBase<String, ErrorAppTagStatement> implements ErrorAppTagEffectiveStatement {
     public ErrorAppTagEffectiveStatementImpl(final StmtContext<String, ErrorAppTagStatement, ?> ctx) {
         super(ctx);
     }

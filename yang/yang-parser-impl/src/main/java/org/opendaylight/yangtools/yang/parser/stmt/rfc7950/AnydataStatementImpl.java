@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.AnyDataEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.AnydataEffectiveStatementImpl;
 
 /**
  * YANG 1.1 AnyData declared statement implementation.
@@ -77,7 +77,7 @@ public final class AnydataStatementImpl extends AbstractDeclaredStatement<QName>
         @Override
         public EffectiveStatement<QName, AnydataStatement> createEffective(
                 final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
-            return new AnyDataEffectiveStatementImpl(ctx);
+            return new AnydataEffectiveStatementImpl(ctx);
         }
 
         @Override

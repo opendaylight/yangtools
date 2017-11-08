@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class YinElementEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<Boolean, YinElementStatement> {
+        extends DeclaredEffectiveStatementBase<Boolean, YinElementStatement>
+        implements YinElementEffectiveStatement {
     public YinElementEffectiveStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> ctx) {
         super(ctx);
     }

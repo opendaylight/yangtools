@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,14 +26,14 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEff
  * YANG 1.1 AnyData effective statement implementation.
  */
 @Beta
-public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement> implements
-        AnyDataSchemaNode, DerivableSchemaNode {
+public final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement>
+        implements AnydataEffectiveStatement, AnyDataSchemaNode, DerivableSchemaNode {
 
     private final AnyDataSchemaNode original;
     private final ContainerSchemaNode schema;
     private final boolean mandatory;
 
-    public AnyDataEffectiveStatementImpl(
+    public AnydataEffectiveStatementImpl(
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
         this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
@@ -77,7 +78,7 @@ public final class AnyDataEffectiveStatementImpl extends AbstractEffectiveDataSc
             return false;
         }
 
-        final AnyDataEffectiveStatementImpl other = (AnyDataEffectiveStatementImpl) obj;
+        final AnydataEffectiveStatementImpl other = (AnydataEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 

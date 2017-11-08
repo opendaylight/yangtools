@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class RevisionDateEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<Revision, RevisionDateStatement> {
+        extends DeclaredEffectiveStatementBase<Revision, RevisionDateStatement>
+        implements RevisionDateEffectiveStatement {
     public RevisionDateEffectiveStatementImpl(final StmtContext<Revision, RevisionDateStatement, ?> ctx) {
         super(ctx);
     }
