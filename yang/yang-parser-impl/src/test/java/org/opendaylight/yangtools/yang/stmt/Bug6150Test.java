@@ -12,10 +12,9 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class Bug6150Test {
 
@@ -25,25 +24,25 @@ public class Bug6150Test {
 
     @Test
     public void effectiveAugmentFirstTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(TARGET, AUGMENT_FIRST);
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(TARGET, AUGMENT_FIRST)
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void effectiveAugmentSecondTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(TARGET, AUGMENT_SECOND);
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(TARGET, AUGMENT_SECOND)
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void effectiveAugmentBothTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(TARGET, AUGMENT_FIRST, AUGMENT_SECOND);
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(TARGET, AUGMENT_FIRST, AUGMENT_SECOND)
+                .buildEffective();
         assertNotNull(result);
     }
 }
