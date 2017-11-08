@@ -9,31 +9,19 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
 /**
- * The "anydata" statement defines an interior node in the schema tree.
- * It takes one argument, which is an identifier, followed by a block of
- * substatements that holds detailed anydata information.
+ * The "anydata" statement defines an interior node in the schema tree. It takes one argument, which is an identifier,
+ * followed by a block of substatements that holds detailed anydata information.
  *
  * <p>
- * The "anydata" statement is used to represent an unknown set of nodes
- * that can be modeled with YANG, except anyxml, but for which the data
- * model is not known at module design time.  It is possible, though not
- * required, for the data model for anydata content to become known
- * through protocol signaling or other means that are outside the scope
+ * The "anydata" statement is used to represent an unknown set of nodes that can be modeled with YANG, except anyxml,
+ * but for which the data model is not known at module design time.  It is possible, though not required, for the data
+ * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
 @Beta
-public interface AnydataStatement extends DataDefinitionStatement {
+public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementContainer,
+        MandatoryStatementContainer, MustStatementContainer {
 
-    @Nonnull
-    Collection<? extends MustStatement> getMusts();
-
-    @Nullable
-    ConfigStatement getConfig();
-
-    @Nullable MandatoryStatement getMandatory();
 }

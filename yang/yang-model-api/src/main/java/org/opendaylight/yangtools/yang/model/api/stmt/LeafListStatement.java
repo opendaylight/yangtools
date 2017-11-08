@@ -7,27 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup {
-
-    @Nullable Collection<? extends MustStatement> getMusts();
-
-    @Nullable ConfigStatement getConfig();
-
+public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup,
+        ConfigStatementContainer, MustStatementContainer {
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
-     * LeafListStatement which does not support default statements.
-     * YANG leaf-list statement has been changed in YANG 1.1 (RFC7950) and now allows default statements.
+     * Return default statements defined in this leaf-list. For RFC6020 semantics, this method returns an empty
+     * collection.
      *
      * @return collection of default statements
      */
-     // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<? extends DefaultStatement> getDefaults() {
-        return ImmutableList.of();
-    }
+    @Nonnull Collection<? extends DefaultStatement> getDefaults();
 }

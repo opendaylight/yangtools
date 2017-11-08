@@ -9,15 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public interface ChoiceStatement extends DataDefinitionStatement {
-
-    @Nullable DefaultStatement getDefault();
-
-    @Nullable ConfigStatement getConfig();
-
-    @Nullable MandatoryStatement getMandatory();
+public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementContainer, DefaultStatementContainer,
+        MandatoryStatementContainer {
 
     @Nonnull Collection<? extends CaseStatement> getCases();
 }
