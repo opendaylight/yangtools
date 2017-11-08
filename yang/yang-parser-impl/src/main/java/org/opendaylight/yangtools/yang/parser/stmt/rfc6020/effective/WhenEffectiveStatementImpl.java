@@ -8,11 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class WhenEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<RevisionAwareXPath, WhenStatement> {
+        extends DeclaredEffectiveStatementBase<RevisionAwareXPath, WhenStatement> implements WhenEffectiveStatement {
     public WhenEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, WhenStatement, ?> ctx) {
         super(ctx);
     }

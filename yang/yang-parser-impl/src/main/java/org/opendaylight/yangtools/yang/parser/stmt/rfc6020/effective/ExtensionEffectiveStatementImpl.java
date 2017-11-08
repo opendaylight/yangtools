@@ -21,11 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
-        implements ExtensionDefinition {
+        implements ExtensionDefinition, ExtensionEffectiveStatement {
     private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
         boolean check(final ExtensionEffectiveStatementImpl current) {
             final Deque<ExtensionEffectiveStatementImpl> stack = get();
