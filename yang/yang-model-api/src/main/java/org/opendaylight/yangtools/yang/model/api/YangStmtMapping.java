@@ -17,40 +17,75 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
@@ -76,7 +111,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -91,104 +128,102 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
  */
 @Beta
 public enum YangStmtMapping implements StatementDefinition {
-    ACTION(ActionStatement.class, "action", "name"),
-    ANYDATA(AnydataStatement.class, "anydata", "name"),
-    ANYXML(AnyxmlStatement.class, "anyxml", "name"),
-    ARGUMENT(ArgumentStatement.class, "argument", "name"),
-    AUGMENT(AugmentStatement.class, "augment", "target-node"),
-    BASE(BaseStatement.class, "base", "name"),
-    BELONGS_TO(BelongsToStatement.class, "belongs-to", "module"),
-    BIT(BitStatement.class, "bit", "name"),
-    CASE(CaseStatement.class, "case", "name"),
-    CHOICE(ChoiceStatement.class, "choice", "name"),
-    CONFIG(ConfigStatement.class, "config", "value"),
-    CONTACT(ContactStatement.class, "contact", "text", true),
-    CONTAINER(ContainerStatement.class, "container", "name"),
-    DEFAULT(DefaultStatement.class, "default", "value"),
-    DESCRIPTION(DescriptionStatement.class, "description", "text", true),
-    DEVIATE(DeviateStatement.class, "deviate", "value"),
-    DEVIATION(DeviationStatement.class, "deviation", "target-node"),
-    ENUM(EnumStatement.class, "enum", "name"),
-    ERROR_APP_TAG(ErrorAppTagStatement.class, "error-app-tag", "value"),
-    ERROR_MESSAGE(ErrorMessageStatement.class, "error-message", "value", true),
-    EXTENSION(ExtensionStatement.class, "extension", "name"),
-    FEATURE(FeatureStatement.class, "feature", "name"),
-    FRACTION_DIGITS(FractionDigitsStatement.class, "fraction-digits", "value"),
-    GROUPING(GroupingStatement.class, "grouping", "name"),
-    IDENTITY(IdentityStatement.class, "identity", "name"),
-    IF_FEATURE(IfFeatureStatement.class, "if-feature", "name"),
-    IMPORT(ImportStatement.class, "import", "module"),
-    INCLUDE(IncludeStatement.class, "include", "module"),
-    INPUT(InputStatement.class, "input"),
-    KEY(KeyStatement.class, "key", "value"),
-    LEAF(LeafStatement.class, "leaf", "name"),
-    LEAF_LIST(LeafListStatement.class, "leaf-list", "name"),
-    LENGTH(LengthStatement.class, "length", "value"),
-    LIST(ListStatement.class, "list", "name"),
-    MANDATORY(MandatoryStatement.class, "mandatory", "value"),
-    MAX_ELEMENTS(MaxElementsStatement.class, "max-elements", "value"),
-    MIN_ELEMENTS(MinElementsStatement.class, "min-elements", "value"),
-    MODIFIER(ModifierStatement.class, "modifier", "value"),
-    MODULE(ModuleStatement.class, "module", "name"),
-    MUST(MustStatement.class, "must", "condition"),
-    NAMESPACE(NamespaceStatement.class, "namespace", "uri"),
-    NOTIFICATION(NotificationStatement.class, "notification", "name"),
-    ORDERED_BY(OrderedByStatement.class, "ordered-by", "value"),
-    ORGANIZATION(OrganizationStatement.class, "organization", "text", true),
-    OUTPUT(OutputStatement.class, "output"),
-    PATH(PathStatement.class, "path", "value"),
-    PATTERN(PatternStatement.class, "pattern", "value"),
-    POSITION(PositionStatement.class, "position", "value"),
-    PREFIX(PrefixStatement.class, "prefix", "value"),
-    PRESENCE(PresenceStatement.class, "presence", "value"),
-    RANGE(RangeStatement.class, "range", "value"),
-    REFERENCE(ReferenceStatement.class, "reference", "text", true),
-    REFINE(RefineStatement.class, "refine", "target-node"),
-    REQUIRE_INSTANCE(RequireInstanceStatement.class, "require-instance", "value"),
-    REVISION(RevisionStatement.class, "revision", "date"),
-    REVISION_DATE(RevisionDateStatement.class, "revision-date", "date"),
-    RPC(RpcStatement.class, "rpc", "name"),
-    STATUS(StatusStatement.class, "status", "value"),
-    SUBMODULE(SubmoduleStatement.class, "submodule", "name"),
-    TYPE(TypeStatement.class, "type", "name"),
-    TYPEDEF(TypedefStatement.class, "typedef", "name"),
-    UNIQUE(UniqueStatement.class, "unique", "tag"),
-    UNITS(UnitsStatement.class, "units", "name"),
-    USES(UsesStatement.class, "uses", "name"),
-    VALUE(ValueStatement.class, "value", "value"),
-    WHEN(WhenStatement.class, "when", "condition"),
-    YANG_VERSION(YangVersionStatement.class, "yang-version", "value"),
-    YIN_ELEMENT(YinElementStatement.class, "yin-element", "value");
+    ACTION(ActionStatement.class, ActionEffectiveStatement.class, "action", "name"),
+    ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
+    ANYXML(AnyxmlStatement.class, AnyxmlEffectiveStatement.class, "anyxml", "name"),
+    ARGUMENT(ArgumentStatement.class, ArgumentEffectiveStatement.class, "argument", "name"),
+    AUGMENT(AugmentStatement.class, AugmentEffectiveStatement.class, "augment", "target-node"),
+    BASE(BaseStatement.class, BaseEffectiveStatement.class, "base", "name"),
+    BELONGS_TO(BelongsToStatement.class, BelongsToEffectiveStatement.class, "belongs-to", "module"),
+    BIT(BitStatement.class, BitEffectiveStatement.class, "bit", "name"),
+    CASE(CaseStatement.class, CaseEffectiveStatement.class, "case", "name"),
+    CHOICE(ChoiceStatement.class, ChoiceEffectiveStatement.class, "choice", "name"),
+    CONFIG(ConfigStatement.class, ConfigEffectiveStatement.class, "config", "value"),
+    CONTACT(ContactStatement.class, ContactEffectiveStatement.class, "contact", "text", true),
+    CONTAINER(ContainerStatement.class, ContainerEffectiveStatement.class, "container", "name"),
+    DEFAULT(DefaultStatement.class, DefaultEffectiveStatement.class, "default", "value"),
+    DESCRIPTION(DescriptionStatement.class, DescriptionEffectiveStatement.class, "description", "text", true),
+    DEVIATE(DeviateStatement.class, DeviateEffectiveStatement.class, "deviate", "value"),
+    DEVIATION(DeviationStatement.class, DeviationEffectiveStatement.class, "deviation", "target-node"),
+    ENUM(EnumStatement.class, EnumEffectiveStatement.class, "enum", "name"),
+    ERROR_APP_TAG(ErrorAppTagStatement.class, ErrorAppTagEffectiveStatement.class, "error-app-tag", "value"),
+    ERROR_MESSAGE(ErrorMessageStatement.class, ErrorMessageEffectiveStatement.class, "error-message", "value", true),
+    EXTENSION(ExtensionStatement.class, ExtensionEffectiveStatement.class, "extension", "name"),
+    FEATURE(FeatureStatement.class, FeatureEffectiveStatement.class, "feature", "name"),
+    FRACTION_DIGITS(FractionDigitsStatement.class, FractionDigitsEffectiveStatement.class, "fraction-digits", "value"),
+    GROUPING(GroupingStatement.class, GroupingEffectiveStatement.class, "grouping", "name"),
+    IDENTITY(IdentityStatement.class, IdentityEffectiveStatement.class, "identity", "name"),
+    IF_FEATURE(IfFeatureStatement.class, IfFeatureEffectiveStatement.class, "if-feature", "name"),
+    IMPORT(ImportStatement.class, ImportEffectiveStatement.class, "import", "module"),
+    INCLUDE(IncludeStatement.class, IncludeEffectiveStatement.class, "include", "module"),
+    INPUT(InputStatement.class, InputEffectiveStatement.class, "input"),
+    KEY(KeyStatement.class, KeyEffectiveStatement.class, "key", "value"),
+    LEAF(LeafStatement.class, LeafEffectiveStatement.class, "leaf", "name"),
+    LEAF_LIST(LeafListStatement.class, LeafListEffectiveStatement.class, "leaf-list", "name"),
+    LENGTH(LengthStatement.class, LengthEffectiveStatement.class, "length", "value"),
+    LIST(ListStatement.class, ListEffectiveStatement.class, "list", "name"),
 
-    private final Class<? extends DeclaredStatement<?>> type;
-    private final Class<? extends EffectiveStatement<?,?>> effectiveType;
+    MANDATORY(MandatoryStatement.class, MandatoryEffectiveStatement.class, "mandatory", "value"),
+    MAX_ELEMENTS(MaxElementsStatement.class, null, "max-elements", "value"),
+    MIN_ELEMENTS(MinElementsStatement.class, null, "min-elements", "value"),
+    MODIFIER(ModifierStatement.class, null, "modifier", "value"),
+    MODULE(ModuleStatement.class, null, "module", "name"),
+    MUST(MustStatement.class, null, "must", "condition"),
+    NAMESPACE(NamespaceStatement.class, null, "namespace", "uri"),
+    NOTIFICATION(NotificationStatement.class, null, "notification", "name"),
+    ORDERED_BY(OrderedByStatement.class, null, "ordered-by", "value"),
+    ORGANIZATION(OrganizationStatement.class, null, "organization", "text", true),
+    OUTPUT(OutputStatement.class, null, "output"),
+    PATH(PathStatement.class, null, "path", "value"),
+    PATTERN(PatternStatement.class, null, "pattern", "value"),
+    POSITION(PositionStatement.class, null, "position", "value"),
+    PREFIX(PrefixStatement.class, null, "prefix", "value"),
+    PRESENCE(PresenceStatement.class, null, "presence", "value"),
+    RANGE(RangeStatement.class, null, "range", "value"),
+    REFERENCE(ReferenceStatement.class, null, "reference", "text", true),
+    REFINE(RefineStatement.class, null, "refine", "target-node"),
+    REQUIRE_INSTANCE(RequireInstanceStatement.class, null, "require-instance", "value"),
+    REVISION(RevisionStatement.class, null, "revision", "date"),
+    REVISION_DATE(RevisionDateStatement.class, null, "revision-date", "date"),
+    RPC(RpcStatement.class, null, "rpc", "name"),
+    STATUS(StatusStatement.class, null, "status", "value"),
+    SUBMODULE(SubmoduleStatement.class, null, "submodule", "name"),
+    @SuppressWarnings("unchecked")
+    TYPE(TypeStatement.class, (Class<? extends EffectiveStatement<?, ?>>) TypeEffectiveStatement.class, "type", "name"),
+    TYPEDEF(TypedefStatement.class, TypedefEffectiveStatement.class, "typedef", "name"),
+    UNIQUE(UniqueStatement.class, null, "unique", "tag"),
+    UNITS(UnitsStatement.class, null, "units", "name"),
+    USES(UsesStatement.class, null, "uses", "name"),
+    VALUE(ValueStatement.class, null, "value", "value"),
+    WHEN(WhenStatement.class, null, "when", "condition"),
+    YANG_VERSION(YangVersionStatement.class, null, "yang-version", "value"),
+    YIN_ELEMENT(YinElementStatement.class, null, "yin-element", "value");
+
+    private final Class<? extends DeclaredStatement<?>> declaredType;
+    private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final QName name;
     private final QName argument;
     private final boolean yinElement;
 
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr) {
-        type = requireNonNull(clz);
-        //FIXME: fill up effective type correctly
-        effectiveType = null;
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
+        declaredType = requireNonNull(declared);
+        effectiveType = requireNonNull(effective);
         name = yinQName(nameStr);
         argument = null;
         yinElement = false;
     }
 
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr) {
-        type = requireNonNull(clz);
-        //FIXME: fill up effective type correctly
-        effectiveType = null;
-        name = yinQName(nameStr);
-        argument = yinQName(argumentStr);
-        this.yinElement = false;
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr) {
+        this(declared, effective, nameStr, argumentStr, false);
     }
 
-    YangStmtMapping(final Class<? extends DeclaredStatement<?>> clz, final String nameStr, final String argumentStr,
+    YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
+            final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr, final String argumentStr,
             final boolean yinElement) {
-        type = requireNonNull(clz);
-        //FIXME: fill up effective type correctly
-        effectiveType = null;
+        declaredType = requireNonNull(declared);
+        effectiveType = requireNonNull(effective);
         name = yinQName(nameStr);
         argument = yinQName(argumentStr);
         this.yinElement = yinElement;
@@ -211,12 +246,12 @@ public enum YangStmtMapping implements StatementDefinition {
 
     @Override
     @Nonnull public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return type;
+        return declaredType;
     }
 
     @Nonnull
     @Override
-    public Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
+    public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
     }
 
