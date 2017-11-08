@@ -55,6 +55,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_037734a1",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-08T16:15:26Z",
+      "side": 1,
+      "message": "you sound like you think you know what you are doing, so @SuppressFBWarnings it is on this one instead then (with you justification copy/pasted as in-line code comment for posteriority).",
+      "parentUuid": "9a245df4_6c39c5d6",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_06b3d40a",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
         "patchSetId": 1
@@ -84,6 +102,24 @@
       "side": 1,
       "message": "This is intentional, since we are managing lifecycle carefully, that compare is actually safe and accurate.",
       "parentUuid": "9a245df4_06b3d40a",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_c3323cf1",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 5867
+      },
+      "writtenOn": "2017-11-08T16:15:26Z",
+      "side": 1,
+      "message": "Kewl, but what would be the harm of using Arrays.equals() anywhere, to avoid flags from static code analyzers, who cannot be not as smart as you? ;) Performance really isn\u0027t an argument here, so why not?",
+      "parentUuid": "9a245df4_0c50090a",
       "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
