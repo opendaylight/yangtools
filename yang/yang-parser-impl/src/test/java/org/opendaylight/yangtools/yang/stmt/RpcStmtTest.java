@@ -26,23 +26,18 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class RpcStmtTest {
 
-    private static final StatementStreamSource RPC_MODULE = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource FOO_MODULE = sourceForResource("/rpc-stmt-test/foo.yang");
-
     @Test
     public void rpcTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(RPC_MODULE, IMPORTED_MODULE, FOO_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/model/baz.yang"))
+                .addSource(sourceForResource("/model/bar.yang"))
+                .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("baz").iterator().next();

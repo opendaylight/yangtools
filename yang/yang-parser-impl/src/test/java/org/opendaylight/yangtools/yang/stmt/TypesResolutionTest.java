@@ -40,12 +40,12 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class TypesResolutionTest {
     private SchemaContext context;
@@ -351,36 +351,26 @@ public class TypesResolutionTest {
 
     @Test
     public void testUnionWithExt() throws ReactorException {
-
-        final StatementStreamSource yangFile1 = sourceForResource("/types/union-with-ext/extdef.yang");
-        final StatementStreamSource yangFile2 = sourceForResource("/types/union-with-ext/unionbug.yang");
-        final StatementStreamSource yangFile3 = sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile1, yangFile2, yangFile3);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/types/union-with-ext/extdef.yang"))
+                .addSource(sourceForResource("/types/union-with-ext/unionbug.yang"))
+                .addSource(sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"))
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void testUnionWithBits() throws ReactorException {
-
-        final StatementStreamSource yangFile = sourceForResource("/types/union-with-bits/union-bits-model.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/types/union-with-bits/union-bits-model.yang"))
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void testUnionInList() {
-        final StatementStreamSource yangFile = sourceForResource("/types/union-in-list/unioninlisttest.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/types/union-in-list/unioninlisttest.yang"));
 
         try {
             final SchemaContext result = reactor.buildEffective();

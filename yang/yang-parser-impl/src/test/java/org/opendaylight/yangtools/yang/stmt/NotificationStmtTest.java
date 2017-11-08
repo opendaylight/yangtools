@@ -20,22 +20,16 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class NotificationStmtTest {
 
-    private static final StatementStreamSource NOTIFICATION_MODULE = sourceForResource("/model/baz.yang");
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/model/bar.yang");
-
     @Test
     public void notificationTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(NOTIFICATION_MODULE, IMPORTED_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(sourceForResource("/model/baz.yang"), sourceForResource("/model/bar.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("baz").iterator().next();
