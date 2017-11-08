@@ -50,7 +50,12 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -98,25 +103,22 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                     "Unable to find belongs-to statement in submodule %s.", ctx.getStatementArgument());
         }
 
-        final PrefixEffectiveStatementImpl prefixStmt = parentOfPrefix
-                .firstEffective(PrefixEffectiveStatementImpl.class);
+        final PrefixEffectiveStatement prefixStmt = parentOfPrefix.firstEffective(PrefixEffectiveStatement.class);
         SourceException.throwIfNull(prefixStmt, ctx.getStatementSourceReference(),
                 "Unable to resolve prefix for module or submodule %s.", ctx.getStatementArgument());
         this.prefix = prefixStmt.argument();
 
-        final YangVersionEffectiveStatementImpl yangVersionStmt =
-                firstEffective(YangVersionEffectiveStatementImpl.class);
+        final YangVersionEffectiveStatement yangVersionStmt = firstEffective(YangVersionEffectiveStatement.class);
         this.yangVersion = yangVersionStmt == null ? YangVersion.VERSION_1 : yangVersionStmt.argument();
 
         final OpenconfigVersionEffectiveStatement semanticVersionStmt =
                 firstEffective(OpenconfigVersionEffectiveStatement.class);
         this.semanticVersion = semanticVersionStmt == null ? null : semanticVersionStmt.argument();
 
-        final OrganizationEffectiveStatementImpl organizationStmt =
-                firstEffective(OrganizationEffectiveStatementImpl.class);
+        final OrganizationEffectiveStatement organizationStmt = firstEffective(OrganizationEffectiveStatement.class);
         this.organization = organizationStmt == null ? null : organizationStmt.argument();
 
-        final ContactEffectiveStatementImpl contactStmt = firstEffective(ContactEffectiveStatementImpl.class);
+        final ContactEffectiveStatement contactStmt = firstEffective(ContactEffectiveStatement.class);
         this.contact = contactStmt == null ? null : contactStmt.argument();
 
         // init submodules and substatements of submodules
@@ -239,8 +241,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
                 }
             }
-            if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
-                final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+            if (effectiveStatement instanceof TypedefEffectiveStatement) {
+                final TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
                 final TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);

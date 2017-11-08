@@ -21,7 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnitsEffectiveStatementImpl;
 
 public class Bug6972Test {
@@ -64,8 +65,8 @@ public class Bug6972Test {
         final LeafSchemaNode leaf = (LeafSchemaNode) cont.getDataChildByName(leafQName);
         assertNotNull(leaf);
 
-        for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatementImpl) leaf).effectiveSubstatements()) {
-            if (effStmt instanceof UnitsEffectiveStatementImpl) {
+        for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatement) leaf).effectiveSubstatements()) {
+            if (effStmt instanceof UnitsEffectiveStatement) {
                 units = (UnitsEffectiveStatementImpl) effStmt;
                 break;
             }

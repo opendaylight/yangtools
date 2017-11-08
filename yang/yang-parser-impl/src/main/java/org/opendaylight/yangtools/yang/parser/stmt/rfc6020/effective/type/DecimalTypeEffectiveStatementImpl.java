@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 import java.math.BigDecimal;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -20,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
@@ -43,8 +43,8 @@ public final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveSt
             if (stmt instanceof UnknownEffectiveStatementImpl) {
                 builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
             }
-            if (stmt instanceof FractionDigitsEffectiveStatementImpl) {
-                final Integer digits = ((FractionDigitsEffectiveStatementImpl)stmt).argument();
+            if (stmt instanceof FractionDigitsEffectiveStatement) {
+                final Integer digits = ((FractionDigitsEffectiveStatement)stmt).argument();
                 SourceException.throwIf(baseType.getFractionDigits() != digits, ctx.getStatementSourceReference(),
                     "Cannot override fraction-digits from base type %s to %s", baseType, digits);
             }

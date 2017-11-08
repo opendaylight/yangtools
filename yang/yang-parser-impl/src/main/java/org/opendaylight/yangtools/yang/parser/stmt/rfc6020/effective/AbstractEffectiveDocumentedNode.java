@@ -12,6 +12,9 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
@@ -30,21 +33,21 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
     protected AbstractEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
 
-        final DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        final DescriptionEffectiveStatement descStmt = firstEffective(DescriptionEffectiveStatement.class);
         if (descStmt != null) {
             description = descStmt.argument();
         } else {
             description = null;
         }
 
-        final ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        final ReferenceEffectiveStatement refStmt = firstEffective(ReferenceEffectiveStatement.class);
         if (refStmt != null) {
             reference = refStmt.argument();
         } else {
             reference = null;
         }
 
-        final StatusEffectiveStatementImpl statusStmt = firstEffective(StatusEffectiveStatementImpl.class);
+        final StatusEffectiveStatement statusStmt = firstEffective(StatusEffectiveStatement.class);
         if (statusStmt != null) {
             status = statusStmt.argument();
         } else {

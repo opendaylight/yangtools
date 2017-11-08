@@ -19,13 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.DescriptionStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludeStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ReferenceStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -87,10 +87,9 @@ public class Bug6874Test {
         YangInferencePipeline.RFC6020_REACTOR.newBuild()
             .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
             .build().getRootStatements().forEach(declaredStmt -> {
-                if (declaredStmt instanceof ModuleStatementImpl) {
+                if (declaredStmt instanceof ModuleStatement) {
                     declaredStmt.declaredSubstatements().forEach(subStmt -> {
-                        if (subStmt instanceof IncludeStatementImpl
-                                && subStmt.rawArgument().equals("child-module")) {
+                        if (subStmt instanceof IncludeStatement && subStmt.rawArgument().equals("child-module")) {
                             subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
                         }
                     });
@@ -100,12 +99,12 @@ public class Bug6874Test {
 
     @SuppressWarnings("rawtypes")
     private static void verifyDescAndRef(final DeclaredStatement stmt) {
-        if (stmt instanceof DescriptionStatementImpl) {
+        if (stmt instanceof DescriptionStatement) {
             assertEquals("Yang 1.1: Allow description and reference in include and import.",
-                ((DescriptionStatementImpl) stmt).argument());
+                ((DescriptionStatement) stmt).argument());
         }
-        if (stmt instanceof ReferenceStatementImpl) {
-            assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", ((ReferenceStatementImpl) stmt).argument());
+        if (stmt instanceof ReferenceStatement) {
+            assertEquals("https://tools.ietf.org/html/rfc7950 section-7.1.5/6", ((ReferenceStatement) stmt).argument());
         }
     }
 }
