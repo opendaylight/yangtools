@@ -7,16 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
-import javax.annotation.Nullable;
+public interface LeafStatement extends DataDefinitionStatement, TypeGroup, ConfigStatementContainer,
+        DefaultStatementContainer, MandatoryStatementContainer, MustStatementContainer {
 
-public interface LeafStatement extends DataDefinitionStatement, TypeGroup {
-
-    @Nullable Collection<? extends MustStatement> getMusts();
-
-    @Nullable DefaultStatement getDefault();
-
-    @Nullable ConfigStatement getConfig();
-
-    @Nullable MandatoryStatement getMandatory();
 }

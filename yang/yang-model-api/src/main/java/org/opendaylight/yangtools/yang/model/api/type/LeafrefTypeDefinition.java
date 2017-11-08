@@ -13,26 +13,21 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
 
+    // FIXME: this is not the same syntax as when statement. See https://tools.ietf.org/html/rfc7950#section-9.9.2
     RevisionAwareXPath getPathStatement();
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of
-     * LeafrefTypeDefinition which does not support require-instance statement.
-     * YANG leafref type has been changed in YANG 1.1 (RFC7950) and now allows require-instance statement.
+     * Require instance pointed to by {@link #getPathStatement()} to be present or not. For YANG version (RFC6020), this
+     * should always return true.
      *
-     * @return boolean value which is true if the <code>require-instance</code> statement is true and vice versa
+     * @return True if the instance pointed to by {@link #getPathStatement()} must be present in the data tree.
      */
-     // FIXME: version 2.0.0: make this method non-default
-    default boolean requireInstance() {
-        return true;
-    }
+    boolean requireInstance();
 
     static int hashCode(final LeafrefTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getPathStatement());
     }
-
 
     static boolean equals(final LeafrefTypeDefinition type, final Object obj) {
         if (type == obj) {

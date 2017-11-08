@@ -5,11 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
@@ -18,17 +16,11 @@ import javax.annotation.Nonnull;
  */
 @Beta
 public interface ActionStatementContainer {
-
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * AugmentStatement, ContainerStatement, GroupingStatement and ListStatement which do not allow action statements.
-     * These YANG statements have been changed in YANG 1.1 (RFC 7950) and can now contain action statements.
+     * Return actions in this container. Since actions were introduced in RFC7950, hence RFC6020 semantics always
+     * returns an empty collection.
      *
      * @return collection of action statements
      */
-     // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<? extends ActionStatement> getActions() {
-        return ImmutableList.of();
-    }
+    @Nonnull Collection<? extends ActionStatement> getActions();
 }

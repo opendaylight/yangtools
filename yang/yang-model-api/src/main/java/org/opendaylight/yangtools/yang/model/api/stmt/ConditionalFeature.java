@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
@@ -15,15 +14,10 @@ import javax.annotation.Nonnull;
 public interface ConditionalFeature {
 
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * BitStatement, EnumStatement, IdentityStatement and RefineStatement which do not allow if-feature statements.
-     * These YANG statements have been changed in YANG 1.1 (RFC7950) and can now contain if-feature statements.
+     * Return attached if-feature statements. Metamodel differs here between RFC6020 and RFC7950: some nodes will be
+     * returning an empty collection in YANG 1.0 mode.
      *
      * @return collection of if-feature statements
      */
-     // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<? extends IfFeatureStatement> getIfFeatures() {
-        return ImmutableList.of();
-    }
+    @Nonnull Collection<? extends IfFeatureStatement> getIfFeatures();
 }

@@ -8,23 +8,19 @@
 
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
+/**
+ * Marker interface for statements which may contain a 'notification' statement, as defined in RFC7950. There is
+ * a significant difference RFC6020 (YANG 1) and RFC7590 (YANG 1.1) in which statements sport this feature.
+ */
 public interface NotificationStatementContainer {
-
     /**
-     * All implementations should override this method.
-     * The default definition of this method is used only in YANG 1.0 (RFC6020) implementations of
-     * AugmentStatement, ContainerStatement, GroupingStatement and ListStatement
-     * which do not allow notification statements.
-     * These YANG statements have been changed in YANG 1.1 (RFC 7950) and can now contain notification statements.
+     * Return collection of {@link NotificationStatement}. For RFC6020, this method returns an empty collection for
+     * statements which do not allow for must statement children.
      *
      * @return collection of notification statements
      */
-    // FIXME: version 2.0.0: make this method non-default
-    @Nonnull default Collection<? extends NotificationStatement> getNotifications() {
-        return ImmutableList.of();
-    }
+    @Nonnull Collection<? extends NotificationStatement> getNotifications();
 }
