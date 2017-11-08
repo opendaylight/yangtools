@@ -10,7 +10,14 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface UnknownStatement<S> extends DeclaredStatement<S> {
+/**
+ * A statement not covered by the base metamodel, e.g. it is not expressed directly in terms of concrete statement
+ * interfaces in this package. This interface is meant to be specialized by external semantic plugins, such that they
+ * are properly anchored in the metamodel.
+ *
+ * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ */
+public interface UnknownStatement<A> extends DeclaredStatement<A> {
 
-    @Nullable S getArgument();
+    @Nullable A getArgument();
 }
