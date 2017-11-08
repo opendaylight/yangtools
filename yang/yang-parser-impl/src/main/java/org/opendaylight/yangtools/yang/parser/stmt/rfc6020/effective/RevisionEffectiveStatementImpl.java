@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -23,14 +25,14 @@ public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveState
     public RevisionEffectiveStatementImpl(final StmtContext<Revision, RevisionStatement, ?> ctx) {
         super(ctx);
 
-        final DescriptionEffectiveStatementImpl descStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        final DescriptionEffectiveStatement descStmt = firstEffective(DescriptionEffectiveStatement.class);
         if (descStmt != null) {
             this.description = descStmt.argument();
         } else {
             this.description = null;
         }
 
-        final ReferenceEffectiveStatementImpl refStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        final ReferenceEffectiveStatement refStmt = firstEffective(ReferenceEffectiveStatement.class);
         if (refStmt != null) {
             this.reference = refStmt.argument();
         } else {

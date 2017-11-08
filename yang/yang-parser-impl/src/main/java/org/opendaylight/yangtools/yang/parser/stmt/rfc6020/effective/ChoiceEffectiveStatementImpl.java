@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -72,7 +73,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.cases = ImmutableSortedMap.copyOfSorted(casesInit);
 
-        final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
+        final DefaultEffectiveStatement defaultStmt = firstEffective(DefaultEffectiveStatement.class);
         if (defaultStmt != null) {
             final QName qname;
             try {
