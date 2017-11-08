@@ -40,10 +40,8 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
@@ -54,8 +52,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Patter
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.UnionSpecificationEffectiveStatementImpl;
 
 public class EffectiveStatementTypeTest {
-
-    private static final StatementStreamSource IMPORTED_MODULE = sourceForResource("/type-tests/types.yang");
     private static SchemaContext effectiveSchemaContext;
     private static Module types;
 
@@ -63,9 +59,9 @@ public class EffectiveStatementTypeTest {
 
     @BeforeClass
     public static void setup() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSource(IMPORTED_MODULE);
-        effectiveSchemaContext = reactor.buildEffective();
+        effectiveSchemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/type-tests/types.yang"))
+                .buildEffective();
         types = effectiveSchemaContext.findModules("types").iterator().next();
         assertNotNull(types);
     }
