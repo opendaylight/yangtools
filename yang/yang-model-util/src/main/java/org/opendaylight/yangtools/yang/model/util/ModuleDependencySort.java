@@ -53,33 +53,18 @@ public final class ModuleDependencySort {
      * @throws IllegalArgumentException when provided modules are not consistent.
      */
     public static List<Module> sort(final Collection<Module> modules) {
-        return sort((Iterable<Module>)modules);
-    }
-
-    /**
-     * Topological sort of module dependency graph.
-     *
-     * @param modules YANG modules
-     * @return Sorted list of Modules. Modules can be further processed in
-     *         returned order.
-     * @throws IllegalArgumentException when provided modules are not consistent.
-     *
-     * @deprecated Use {@link #sort(Collection)} instead.
-     */
-    @Deprecated
-    public static List<Module> sort(final Iterable<Module> modules) {
         final List<Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
         return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getReference());
     }
 
-    private static List<Node> sortInternal(final Iterable<Module> modules) {
+    private static List<Node> sortInternal(final Collection<Module> modules) {
         final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
         return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
 
     private static Table<String, Optional<Revision>, ModuleNodeImpl> createModuleGraph(
-            final Iterable<Module> builders) {
+            final Collection<Module> builders) {
         final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
 
         processModules(moduleGraph, builders);
@@ -92,7 +77,7 @@ public final class ModuleDependencySort {
      * Extract module:revision from modules.
      */
     private static void processDependencies(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
-            final Iterable<Module> mmbs) {
+            final Collection<Module> mmbs) {
         final Map<URI, Module> allNS = new HashMap<>();
 
         // Create edges in graph
