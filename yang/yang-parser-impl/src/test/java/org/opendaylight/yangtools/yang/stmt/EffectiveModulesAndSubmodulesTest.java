@@ -23,10 +23,9 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveModulesAndSubmodulesTest {
 
@@ -45,11 +44,9 @@ public class EffectiveModulesAndSubmodulesTest {
 
     @Test
     public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        reactor.addSources(ROOT_MODULE, IMPORTED_MODULE,
-                SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1);
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
+                .buildEffective();
 
         assertNotNull(result);
 

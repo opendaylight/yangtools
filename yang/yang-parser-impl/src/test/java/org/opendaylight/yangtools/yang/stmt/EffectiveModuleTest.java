@@ -35,11 +35,10 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveModuleTest {
 
@@ -62,9 +61,9 @@ public class EffectiveModuleTest {
 
     @Test
     public void effectiveBuildTest() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE)
+                .buildEffective();
 
         assertNotNull(result);
 
