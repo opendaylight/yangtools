@@ -17,21 +17,22 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 /**
  * Utility class which provides convenience methods for producing effective schema context based on the supplied
@@ -44,6 +45,16 @@ public final class YangParserTestUtils {
         final String name = file.getName().toLowerCase();
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
+
+    private static final @NonNull YangParserFactory PARSER_FACTORY;
+
+    static {
+        final Iterator<@NonNull YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("No YangParserFactory found");
+        }
+        PARSER_FACTORY = it.next();
+    }
 
     private YangParserTestUtils() {
         throw new UnsupportedOperationException("Utility class should not be instantiated.");
@@ -186,7 +197,7 @@ public final class YangParserTestUtils {
      */
     public static SchemaContext parseYangFiles(final Set<QName> supportedFeatures,
             final StatementParserMode parserMode, final Collection<File> files) {
-        return parseYangSources(supportedFeatures, parserMode,
+        return parseSources(parserMode, supportedFeatures,
             files.stream().map(YangTextSchemaSource::forFile).collect(Collectors.toList()));
     }
 
@@ -264,7 +275,7 @@ public final class YangParserTestUtils {
         for (final String r : resources) {
             sources.add(YangTextSchemaSource.forResource(clazz, r));
         }
-        return parseYangSources(null, StatementParserMode.DEFAULT_MODE, sources);
+        return parseSources(StatementParserMode.DEFAULT_MODE, null, sources);
     }
 
     /**
@@ -326,101 +337,28 @@ public final class YangParserTestUtils {
 
     public static SchemaContext parseYangSources(final StatementParserMode parserMode,
             final Set<QName> supportedFeatures, final YangTextSchemaSource... sources) {
-        return parseYangSources(supportedFeatures, parserMode, Arrays.asList(sources));
+        return parseSources(parserMode, supportedFeatures, Arrays.asList(sources));
     }
 
-    public static SchemaContext parseYangSources(final Set<QName> supportedFeatures,
-            final StatementParserMode parserMode, final Collection<? extends YangTextSchemaSource> sources) {
-        final Collection<YangStatementStreamSource> streams = new ArrayList<>(sources.size());
-        for (YangTextSchemaSource source : sources) {
-            try {
-                streams.add(YangStatementStreamSource.create(source));
-            } catch (IOException e) {
-                throw new IllegalArgumentException("Failed to read source " + source, e);
-            } catch (YangSyntaxErrorException e) {
-                throw new IllegalArgumentException("Malformed source " + source, e);
-            }
-        }
-
-        return parseSources(supportedFeatures, parserMode, streams);
-    }
-
-    /**
-     * Creates a new effective schema context containing the specified YIN sources. Statement parser mode is set to
-     * default mode and all YANG features are supported.
-     *
-     * @param sources YIN sources to be parsed
-     * @return effective schema context
-     */
-    public static SchemaContext parseYinSources(final YinStatementStreamSource... sources) {
-        return parseYinSources(StatementParserMode.DEFAULT_MODE, sources);
-    }
-
-    /**
-     * Creates a new effective schema context containing the specified YIN sources. Statement parser mode is set to
-     * default mode.
-     *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YIN
-     *                          models are resolved
-     * @param sources YIN sources to be parsed
-     *
-     * @return effective schema context
-     * @throws ReactorException if there is an error in one of the parsed YIN sources
-     */
-    public static SchemaContext parseYinSources(final Set<QName> supportedFeatures,
-            final YinStatementStreamSource... sources) throws ReactorException {
-        return parseSources(supportedFeatures, StatementParserMode.DEFAULT_MODE, sources);
-    }
-
-    /**
-     * Creates a new effective schema context containing the specified YIN sources. All YANG features are supported.
-     *
-     * @param statementParserMode mode of statement parser
-     * @param sources YIN sources to be parsed
-     * @return effective schema context
-     */
-    public static SchemaContext parseYinSources(final StatementParserMode statementParserMode,
-            final YinStatementStreamSource... sources) {
-        return parseSources(null, statementParserMode, sources);
-    }
-
-    /**
-     * Creates a new effective schema context containing the specified YANG sources.
-     *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
-     *                          models are resolved
-     * @param parserMode mode of statement parser
-     * @param sources sources to be parsed
-     *
-     * @return effective schema context
-     */
-    public static SchemaContext parseSources(final Set<QName> supportedFeatures,
-            final StatementParserMode parserMode, final StatementStreamSource... sources) {
-        return parseSources(supportedFeatures, parserMode, Arrays.asList(sources));
-    }
-
-    /**
-     * Creates a new effective schema context containing the specified YANG sources.
-     *
-     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
-     *                          models are resolved
-     * @param statementParserMode mode of statement parser
-     * @param sources sources to be parsed
-     *
-     * @return effective schema context
-     */
-    public static SchemaContext parseSources(final Set<QName> supportedFeatures,
-            final StatementParserMode statementParserMode, final Collection<? extends StatementStreamSource> sources) {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode);
+    public static SchemaContext parseSources(final StatementParserMode parserMode, final Set<QName> supportedFeatures,
+            final Collection<? extends SchemaSourceRepresentation> sources) {
+        final YangParser parser = PARSER_FACTORY.createParser(parserMode);
         if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
+            parser.setSupportedFeatures(supportedFeatures);
         }
-        reactor.addSources(sources);
 
         try {
-            return reactor.buildEffective();
-        } catch (ReactorException e) {
-            throw new IllegalStateException(e);
+            parser.addSources(sources);
+        } catch (YangSyntaxErrorException e) {
+            throw new IllegalArgumentException("Malformed source", e);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read a source", e);
+        }
+
+        try {
+            return parser.buildSchemaContext();
+        } catch (YangParserException e) {
+            throw new IllegalStateException("Failed to assemble SchemaContext", e);
         }
     }
 

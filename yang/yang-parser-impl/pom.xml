@@ -39,6 +39,10 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>concepts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
@@ -111,6 +115,17 @@
         </dependency>
 
         <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <version>1.7</version>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
         </dependency>
@@ -127,10 +142,6 @@
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>concepts</artifactId>
         </dependency>
     </dependencies>
 
@@ -158,6 +169,8 @@
                             org.opendaylight.yangtools.yang.parser.impl.*,
                             ;-split-package:=error
                         </Export-Package>
+                        <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
+                        <Bundle-Activator>org.opendaylight.yangtools.yang.parser.impl.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
