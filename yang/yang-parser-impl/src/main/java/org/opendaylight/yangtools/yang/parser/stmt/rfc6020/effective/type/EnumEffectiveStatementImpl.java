@@ -13,12 +13,14 @@ import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
-public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement> {
+public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
+        implements EnumEffectiveStatement {
     private final List<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
     private final Integer declaredValue;

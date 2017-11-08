@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyXmlEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
@@ -92,7 +92,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
                     return new YangModeledAnyXmlEffectiveStatementImpl(ctx, anyXmlSchema.get());
                 }
             }
-            return new AnyXmlEffectiveStatementImpl(ctx);
+            return new AnyxmlEffectiveStatementImpl(ctx);
         }
 
         private static Optional<ContainerSchemaNode> getAnyXmlSchema(

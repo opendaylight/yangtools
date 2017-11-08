@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class BaseEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BaseStatement> {
+public class BaseEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BaseStatement>
+        implements BaseEffectiveStatement {
     public BaseEffectiveStatementImpl(final StmtContext<QName, BaseStatement, ?> ctx) {
         super(ctx);
     }

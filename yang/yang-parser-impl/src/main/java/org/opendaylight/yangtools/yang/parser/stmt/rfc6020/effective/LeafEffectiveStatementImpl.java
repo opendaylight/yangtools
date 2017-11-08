@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -23,8 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
-public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement> implements
-        LeafSchemaNode, DerivableSchemaNode {
+public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
+        implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
     private final LeafSchemaNode original;
     private final TypeDefinition<?> type;
     private final String defaultStr;

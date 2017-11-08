@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Revision, RevisionStatement>
-        implements DocumentedNode {
+        implements DocumentedNode, RevisionEffectiveStatement {
 
     private final String reference;
     private final String description;
