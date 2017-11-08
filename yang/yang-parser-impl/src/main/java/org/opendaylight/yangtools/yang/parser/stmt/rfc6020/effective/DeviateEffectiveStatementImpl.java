@@ -19,11 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement>
@@ -48,19 +52,17 @@ public final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatem
 
         final ConfigEffectiveStatement configStmt = firstEffective(ConfigEffectiveStatement.class);
         this.deviatedConfig = OptionalBoolean.ofNullable(configStmt == null ? null : configStmt.argument());
-        final DefaultEffectiveStatementImpl defaultStmt = firstEffective(DefaultEffectiveStatementImpl.class);
+        final DefaultEffectiveStatement defaultStmt = firstEffective(DefaultEffectiveStatement.class);
         this.deviatedDefault = defaultStmt == null ? null : defaultStmt.argument();
         final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
         this.deviatedMandatory = OptionalBoolean.ofNullable(mandatoryStmt == null ? null : mandatoryStmt.argument());
-        final MaxElementsEffectiveStatementImpl maxElementsStmt =
-                firstEffective(MaxElementsEffectiveStatementImpl.class);
+        final MaxElementsEffectiveStatement maxElementsStmt = firstEffective(MaxElementsEffectiveStatement.class);
         this.deviatedMaxElements = maxElementsStmt == null ? null : Integer.valueOf(maxElementsStmt.argument());
-        final MinElementsEffectiveStatementImpl minElementsStmt =
-                firstEffective(MinElementsEffectiveStatementImpl.class);
+        final MinElementsEffectiveStatement minElementsStmt = firstEffective(MinElementsEffectiveStatement.class);
         this.deviatedMinElements = minElementsStmt == null ? null : minElementsStmt.argument();
         final TypeEffectiveStatement<TypeStatement> typeStmt = firstEffective(TypeEffectiveStatement.class);
         this.deviatedType = typeStmt == null ? null : typeStmt.getTypeDefinition();
-        final UnitsEffectiveStatementImpl unitsStmt = firstEffective(UnitsEffectiveStatementImpl.class);
+        final UnitsEffectiveStatement unitsStmt = firstEffective(UnitsEffectiveStatement.class);
         this.deviatedUnits = unitsStmt == null ? null : unitsStmt.argument();
 
         this.deviatedMustDefinitions = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));

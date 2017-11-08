@@ -11,14 +11,14 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DescriptionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorAppTagEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ErrorMessageEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ReferenceEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.effective.ModifierEffectiveStatementImpl;
 
 abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
         DeclaredEffectiveStatementBase<A, D> implements ConstraintMetaDefinition {
@@ -38,20 +38,20 @@ abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStateme
         ModifierKind modifierInit = null;
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof DescriptionEffectiveStatementImpl) {
-                descriptionInit = ((DescriptionEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof DescriptionEffectiveStatement) {
+                descriptionInit = ((DescriptionEffectiveStatement) stmt).argument();
             }
-            if (stmt instanceof ReferenceEffectiveStatementImpl) {
-                referenceInit = ((ReferenceEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof ReferenceEffectiveStatement) {
+                referenceInit = ((ReferenceEffectiveStatement) stmt).argument();
             }
-            if (stmt instanceof ErrorAppTagEffectiveStatementImpl) {
-                errorAppTagInit = ((ErrorAppTagEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof ErrorAppTagEffectiveStatement) {
+                errorAppTagInit = ((ErrorAppTagEffectiveStatement) stmt).argument();
             }
-            if (stmt instanceof ErrorMessageEffectiveStatementImpl) {
-                errorMessageInit = ((ErrorMessageEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof ErrorMessageEffectiveStatement) {
+                errorMessageInit = ((ErrorMessageEffectiveStatement) stmt).argument();
             }
-            if (stmt instanceof ModifierEffectiveStatementImpl) {
-                modifierInit = ((ModifierEffectiveStatementImpl) stmt).argument();
+            if (stmt instanceof ModifierEffectiveStatement) {
+                modifierInit = ((ModifierEffectiveStatement) stmt).argument();
             }
         }
 

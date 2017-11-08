@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
@@ -52,8 +53,8 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
                         length.argument());
                 }
             }
-            if (stmt instanceof PatternEffectiveStatementImpl) {
-                final PatternConstraint pattern = ((PatternEffectiveStatementImpl)stmt).argument();
+            if (stmt instanceof PatternEffectiveStatement) {
+                final PatternConstraint pattern = ((PatternEffectiveStatement)stmt).argument();
                 if (pattern != null) {
                     builder.addPatternConstraint(pattern);
                 } else {

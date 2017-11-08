@@ -17,6 +17,9 @@ import org.opendaylight.yangtools.yang.data.util.EmptyConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 
 final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private static final String UNBOUNDED_STR = "unbounded";
@@ -35,8 +38,8 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     }
 
     static ConstraintDefinition forParent(final EffectiveStatementBase<?, ?> parent) {
-        final MinElementsEffectiveStatementImpl firstMinElementsStmt = parent
-                .firstEffective(MinElementsEffectiveStatementImpl.class);
+        final MinElementsEffectiveStatement firstMinElementsStmt = parent
+                .firstEffective(MinElementsEffectiveStatement.class);
         final Integer minElements;
         if (firstMinElementsStmt != null) {
             final Integer m = firstMinElementsStmt.argument();
@@ -45,8 +48,8 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             minElements = null;
         }
 
-        final MaxElementsEffectiveStatementImpl firstMaxElementsStmt = parent
-                .firstEffective(MaxElementsEffectiveStatementImpl.class);
+        final MaxElementsEffectiveStatement firstMaxElementsStmt = parent
+                .firstEffective(MaxElementsEffectiveStatement.class);
         final String maxElementsArg = firstMaxElementsStmt == null ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
         final Integer maxElements;
         if (!UNBOUNDED_STR.equals(maxElementsArg)) {
@@ -58,7 +61,7 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
 
         final Set<MustDefinition> mustSubstatements = ImmutableSet.copyOf(parent.allSubstatementsOfType(
             MustDefinition.class));
-        final WhenEffectiveStatementImpl firstWhenStmt = parent.firstEffective(WhenEffectiveStatementImpl.class);
+        final WhenEffectiveStatement firstWhenStmt = parent.firstEffective(WhenEffectiveStatement.class);
 
         // Check for singleton instances
         if (minElements == null && maxElements == null && mustSubstatements.isEmpty() && firstWhenStmt == null) {

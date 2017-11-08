@@ -14,8 +14,12 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -37,7 +41,7 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
-        final PrefixEffectiveStatementImpl prefixStmt = firstEffective(PrefixEffectiveStatementImpl.class);
+        final PrefixEffectiveStatement prefixStmt = firstEffective(PrefixEffectiveStatement.class);
         if (prefixStmt != null) {
             this.prefix = prefixStmt.argument();
         } else {
@@ -46,8 +50,8 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
         }
 
         if (!ctx.isEnabledSemanticVersioning()) {
-            final RevisionDateEffectiveStatementImpl revisionDateStmt = firstEffective(
-                RevisionDateEffectiveStatementImpl.class);
+            final RevisionDateEffectiveStatement revisionDateStmt = firstEffective(
+                RevisionDateEffectiveStatement.class);
             this.revision = revisionDateStmt == null ? getImportedRevision(ctx) : revisionDateStmt.argument();
             this.semVer = null;
         } else {
@@ -57,11 +61,10 @@ public class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
-        final DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(
-            DescriptionEffectiveStatementImpl.class);
+        final DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
         this.description = descriptionStmt != null ? descriptionStmt.argument() : null;
 
-        final ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        final ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
         this.reference = referenceStmt != null ? referenceStmt.argument() : null;
     }
 

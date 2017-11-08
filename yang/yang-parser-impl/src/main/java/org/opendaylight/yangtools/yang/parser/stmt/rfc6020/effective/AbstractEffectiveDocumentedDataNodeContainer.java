@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
@@ -82,8 +83,8 @@ abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends Declare
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
             }
-            if (stmt instanceof TypeDefEffectiveStatementImpl) {
-                TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) stmt;
+            if (stmt instanceof TypedefEffectiveStatement) {
+                TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) stmt;
                 TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);
