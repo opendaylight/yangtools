@@ -16,6 +16,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.logging.Logger;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -23,7 +24,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class IncludeResolutionTest {
 
@@ -45,16 +45,15 @@ public class IncludeResolutionTest {
 
     @Test
     public void includeTest() throws SourceException, ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT, SUBMODULE1, SUBMODULE2);
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT, SUBMODULE1, SUBMODULE2)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void missingIncludedSourceTest() throws SourceException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ERROR_MODULE);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(ERROR_MODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing included source");
@@ -68,8 +67,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest2() throws SourceException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ERROR_SUBMODULE);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(ERROR_SUBMODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing included source");
@@ -83,8 +81,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest3() throws SourceException, ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(MISSING_PARENT_MODULE);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(MISSING_PARENT_MODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing belongsTo source");

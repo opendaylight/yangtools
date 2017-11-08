@@ -21,25 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class ExtensionStmtTest {
-
-    private static final StatementStreamSource EXT_DEF_MODULE = sourceForResource("/model/bar.yang");
-    private static final StatementStreamSource EXT_DEF_MODULE2 = sourceForResource(
-        "/semantic-statement-parser/ext-typedef.yang");
-    private static final StatementStreamSource EXT_USE_MODULE = sourceForResource(
-        "/semantic-statement-parser/ext-use.yang");
-
     @Test
     public void testExtensionDefinition() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(EXT_DEF_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/model/bar.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("bar").iterator().next();
@@ -56,10 +46,10 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionUsage() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(EXT_DEF_MODULE2, EXT_USE_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/semantic-statement-parser/ext-typedef.yang"))
+                .addSource(sourceForResource("/semantic-statement-parser/ext-use.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule1 = result.findModules("ext-typedef").iterator().next();

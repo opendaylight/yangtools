@@ -15,12 +15,12 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class AugmentArgumentParsingTest {
 
@@ -43,19 +43,15 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void validAugAbsTest() throws ReactorException {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(IMPORTED, VALID_ARGS);
-
-        final EffectiveModelContext result = reactor.build();
+        final EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(IMPORTED, VALID_ARGS)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void invalidAugRel1Test() {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_REL1);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_REL1);
 
         try {
             reactor.build();
@@ -67,9 +63,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugRel2Test() {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_REL2);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_REL2);
 
         try {
             reactor.build();
@@ -81,9 +75,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugAbs() {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_ABS);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_ABS);
 
         try {
             reactor.build();
@@ -95,9 +87,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugAbsPrefixedNoImp() {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_ABS_PREFIXED_NO_IMP);
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_ABS_PREFIXED_NO_IMP);
 
         try {
             reactor.build();
@@ -110,21 +100,14 @@ public class AugmentArgumentParsingTest {
     @Test(expected = IllegalArgumentException.class)
     @Ignore
     public void invalidAugEmptyTest() throws ReactorException {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_EMPTY);
-
-        reactor.build();
+        DefaultReactors.defaultReactor().newBuild().addSources(INVALID_EMPTY).build();
         fail("reactor.process should fail due to empty path");
     }
 
     @Test(expected = IllegalArgumentException.class)
     @Ignore
     public void invalidAugXPathTest() throws ReactorException {
-
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_XPATH);
-        reactor.build();
+        DefaultReactors.defaultReactor().newBuild().addSources(INVALID_XPATH).build();
         fail("reactor.process should fail due to invalid XPath");
     }
 

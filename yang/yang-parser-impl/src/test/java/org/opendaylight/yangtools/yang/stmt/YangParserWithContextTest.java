@@ -44,9 +44,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class YangParserWithContextTest {
     private static final URI T1_NS = URI.create("urn:simple.demo.test1");
@@ -69,17 +69,12 @@ public class YangParserWithContextTest {
             sourceForResource("/ietf/network-topology@2013-10-21.yang") };
 
     @Test
-    public void testTypeFromContext() throws Exception {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
-        final StatementStreamSource test1 = sourceForResource("/context-test/test1.yang");
-
-        reactor.addSources(IETF);
-        reactor.addSources(types, test1);
-
-        final SchemaContext context = reactor.buildEffective();
+    public void testTypeFromContext() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSources(IETF)
+                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+                .addSource(sourceForResource("/context-test/test1.yang"))
+                .buildEffective();
 
         final Module module = context.findModule("test1", Revision.of("2013-06-18")).get();
         final LeafSchemaNode leaf = (LeafSchemaNode) module.getDataChildByName(QName.create(module.getQNameModule(),
@@ -108,12 +103,10 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUsesFromContext() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
-        reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
-        final SchemaContext context = reactor.buildEffective();
+    public void testUsesFromContext() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+                .buildEffective();
 
         final Module testModule = context.findModule("test2", Revision.of("2013-06-18")).get();
         final Module contextModule = context.findModules(URI.create("urn:opendaylight.baz")).iterator().next();
@@ -214,13 +207,10 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUsesRefineFromContext() throws Exception {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource test2 = sourceForResource("/context-test/test2.yang");
-        reactor.addSources(BAZ, FOO, BAR, SUBFOO, test2);
-        final SchemaContext context = reactor.buildEffective();
+    public void testUsesRefineFromContext() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
+                .buildEffective();
 
         final Module module = context.findModule("test2", Revision.of("2013-06-18")).get();
         final ContainerSchemaNode peer = (ContainerSchemaNode) module.getDataChildByName(QName.create(
@@ -287,16 +277,12 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testIdentity() throws Exception {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
-        final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
-
-        reactor.addSources(IETF);
-        reactor.addSources(types, test3);
-        final SchemaContext context = reactor.buildEffective();
+    public void testIdentity() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSources(IETF)
+                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+                .addSource(sourceForResource("/context-test/test3.yang"))
+                .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final Set<IdentitySchemaNode> identities = module.getIdentities();
@@ -316,17 +302,12 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testUnknownNodes() throws Exception {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource types = sourceForResource("/types/custom-types-test@2012-04-04.yang");
-        final StatementStreamSource test3 = sourceForResource("/context-test/test3.yang");
-
-        reactor.addSources(IETF);
-        reactor.addSources(types, test3);
-
-        final SchemaContext context = reactor.buildEffective();
+    public void testUnknownNodes() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSources(IETF)
+                .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
+                .addSource(sourceForResource("/context-test/test3.yang"))
+                .buildEffective();
 
         final Module module = context.findModule("test3", Revision.of("2013-06-18")).get();
         final ContainerSchemaNode network = (ContainerSchemaNode) module.getDataChildByName(QName.create(
@@ -344,7 +325,7 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testAugment() throws Exception {
+    public void testAugment() throws ReactorException {
         final StatementStreamSource resource = sourceForResource("/context-augment-test/test4.yang");
         final StatementStreamSource test1 = sourceForResource("/context-augment-test/test1.yang");
         final StatementStreamSource test2 = sourceForResource("/context-augment-test/test2.yang");
@@ -380,15 +361,11 @@ public class YangParserWithContextTest {
     }
 
     @Test
-    public void testDeviation() throws Exception {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        final StatementStreamSource bar = sourceForResource("/model/bar.yang");
-        final StatementStreamSource deviationTest = sourceForResource("/context-test/deviation-test.yang");
-
-        reactor.addSources(bar, deviationTest);
-        final SchemaContext context = reactor.buildEffective();
+    public void testDeviation() throws ReactorException {
+        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/model/bar.yang"))
+                .addSource(sourceForResource("/context-test/deviation-test.yang"))
+                .buildEffective();
 
         final Module testModule = context.findModule("deviation-test", Revision.of("2013-02-27")).get();
         final Set<Deviation> deviations = testModule.getDeviations();

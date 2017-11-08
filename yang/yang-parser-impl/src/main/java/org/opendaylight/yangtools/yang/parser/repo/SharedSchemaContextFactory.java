@@ -31,8 +31,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.util.concurrent.ExceptionMapper;
-import org.opendaylight.yangtools.util.concurrent.ReflectiveExceptionMapper;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
@@ -40,18 +38,16 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 final class SharedSchemaContextFactory implements SchemaContextFactory {
-    private static final ExceptionMapper<SchemaResolutionException> MAPPER = ReflectiveExceptionMapper
-            .create("resolve sources", SchemaResolutionException.class);
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
     private final Cache<Collection<SourceIdentifier>, SchemaContext> cache = CacheBuilder.newBuilder().weakValues()
@@ -211,8 +207,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                         res.getResolvedSources(), res.getUnsatisfiedImports());
             }
 
-            final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-                statementParserMode);
+            final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode);
             if (supportedFeatures.isPresent()) {
                 reactor.setSupportedFeatures(supportedFeatures.get());
             }
