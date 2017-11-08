@@ -18,8 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -38,10 +40,10 @@ public class DeviationEffectiveStatementImpl
 
         this.deviateDefinitions = ImmutableList.copyOf(allSubstatementsOfType(DeviateDefinition.class));
 
-        DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
         this.description = descriptionStmt == null ? null : descriptionStmt.argument();
 
-        ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
         this.reference = referenceStmt == null ? null : referenceStmt.argument();
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();

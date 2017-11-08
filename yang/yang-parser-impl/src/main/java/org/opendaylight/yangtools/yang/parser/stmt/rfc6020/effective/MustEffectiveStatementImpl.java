@@ -11,8 +11,12 @@ import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, MustStatement>
@@ -28,16 +32,16 @@ public class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<R
         super(ctx);
         this.xpath = ctx.getStatementArgument();
 
-        DescriptionEffectiveStatementImpl descriptionStmt = firstEffective(DescriptionEffectiveStatementImpl.class);
+        DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
         this.description = descriptionStmt == null ? null : descriptionStmt.argument();
 
-        ErrorAppTagEffectiveStatementImpl errorAppTagStmt = firstEffective(ErrorAppTagEffectiveStatementImpl.class);
+        ErrorAppTagEffectiveStatement errorAppTagStmt = firstEffective(ErrorAppTagEffectiveStatement.class);
         this.errorAppTag = errorAppTagStmt == null ? null : errorAppTagStmt.argument();
 
-        ErrorMessageEffectiveStatementImpl errorMessageStmt = firstEffective(ErrorMessageEffectiveStatementImpl.class);
+        ErrorMessageEffectiveStatement errorMessageStmt = firstEffective(ErrorMessageEffectiveStatement.class);
         this.errorMessage = errorMessageStmt == null ? null : errorMessageStmt.argument();
 
-        ReferenceEffectiveStatementImpl referenceStmt = firstEffective(ReferenceEffectiveStatementImpl.class);
+        ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
         this.reference = referenceStmt == null ? null : referenceStmt.argument();
     }
 

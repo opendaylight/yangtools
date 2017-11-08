@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
@@ -87,8 +88,8 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
         if (argumentSubstatement != null) {
             this.argument = argumentSubstatement.argument().getLocalName();
 
-            YinElementEffectiveStatementImpl yinElement = argumentSubstatement
-                    .firstEffective(YinElementEffectiveStatementImpl.class);
+            YinElementEffectiveStatement yinElement = argumentSubstatement
+                    .firstEffective(YinElementEffectiveStatement.class);
             if (yinElement != null) {
                 this.yin = yinElement.argument();
             } else {
