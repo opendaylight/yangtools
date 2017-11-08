@@ -7,13 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.parser.api;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
-public class YangSyntaxErrorException extends Exception {
+public class YangSyntaxErrorException extends YangParserException {
     private static final long serialVersionUID = 2L;
 
     private final SourceIdentifier source;
@@ -27,7 +25,7 @@ public class YangSyntaxErrorException extends Exception {
 
     public YangSyntaxErrorException(@Nullable final SourceIdentifier source, final int line,
             final int charPositionInLine, final String message, @Nullable final Throwable cause) {
-        super(requireNonNull(message), cause);
+        super(message, cause);
         this.source = source;
         this.line = line;
         this.charPositionInLine = charPositionInLine;
