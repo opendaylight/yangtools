@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -92,118 +90,6 @@ public final class DerivedTypes {
         } else {
             throw new IllegalArgumentException("Unhandled type definition class " + baseType.getClass());
         }
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, int8.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the int8 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Int8TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isInt8(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Int8TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, int16.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the int16 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Int16TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isInt16(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Int16TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, int32.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the int32 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Int32TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isInt32(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Int32TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, int64.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the int64 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Int64TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isInt64(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Int64TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, uint8.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the uint8 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Uint8TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Uint8TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, uint16.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the uint16 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Uint16TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Uint16TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, uint32.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the uint32 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Uint32TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Uint32TypeDefinition;
-    }
-
-    /**
-     * Check if a particular type is itself, or is derived from, uint64.
-     *
-     * @param type The type to check
-     * @return If the type belongs to the uint64 type family.
-     * @throws NullPointerException if type is null
-     *
-     * @deprecated Use @{code type instanceof Uint64TypeDefinition} instead.
-     */
-    @Deprecated
-    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
-        return requireNonNull(type) instanceof Uint64TypeDefinition;
     }
 
     private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
