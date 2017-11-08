@@ -18,9 +18,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
 
 public class Bug4610Test {
 
@@ -40,10 +40,10 @@ public class Bug4610Test {
         QName g3 = QName.create(foo, "g3");
         QName root = QName.create(foo, "root");
 
-        ContainerEffectiveStatementImpl effectiveContainerStatementG1 = findContainer(context, g1, c1Bar);
-        ContainerEffectiveStatementImpl effectiveContainerStatementG2 = findContainer(context, g2, c1Bar);
-        ContainerEffectiveStatementImpl effectiveContainerStatementG3 = findContainer(context, g3, c1Foo);
-        ContainerEffectiveStatementImpl effectiveContainerStatementRoot = findContainer(context, root, c1Foo);
+        ContainerEffectiveStatement effectiveContainerStatementG1 = findContainer(context, g1, c1Bar);
+        ContainerEffectiveStatement effectiveContainerStatementG2 = findContainer(context, g2, c1Bar);
+        ContainerEffectiveStatement effectiveContainerStatementG3 = findContainer(context, g3, c1Foo);
+        ContainerEffectiveStatement effectiveContainerStatementRoot = findContainer(context, root, c1Foo);
 
         // check arguments
         QName originalStatementArgument = effectiveContainerStatementG1.argument();
@@ -63,10 +63,9 @@ public class Bug4610Test {
 
     }
 
-    private static ContainerEffectiveStatementImpl findContainer(final SchemaContext context, final QName... path) {
+    private static ContainerEffectiveStatement findContainer(final SchemaContext context, final QName... path) {
         SchemaNode node = SchemaContextUtil.findDataSchemaNode(context, SchemaPath.create(true, path));
-        assertTrue(node instanceof ContainerEffectiveStatementImpl);
-        ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) node;
-        return container;
+        assertTrue(node instanceof ContainerEffectiveStatement);
+        return (ContainerEffectiveStatement) node;
     }
 }

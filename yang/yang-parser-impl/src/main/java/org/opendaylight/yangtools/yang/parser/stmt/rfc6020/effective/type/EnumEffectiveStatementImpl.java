@@ -15,9 +15,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ValueEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ValueEffectiveStatementImpl;
 
 public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
         implements EnumEffectiveStatement {
@@ -33,8 +33,8 @@ public class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<
         final List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         Integer declaredValueInit = null;
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof ValueEffectiveStatementImpl) {
-                declaredValueInit = ((ValueEffectiveStatementImpl) effectiveStatement).argument();
+            if (effectiveStatement instanceof ValueEffectiveStatement) {
+                declaredValueInit = ((ValueEffectiveStatement) effectiveStatement).argument();
             }
             if (effectiveStatement instanceof UnknownSchemaNode) {
                 unknownSchemaNodesInit.add((UnknownSchemaNode) effectiveStatement);

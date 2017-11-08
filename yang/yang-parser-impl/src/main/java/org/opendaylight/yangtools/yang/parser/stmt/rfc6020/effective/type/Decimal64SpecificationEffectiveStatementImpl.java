@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
@@ -16,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.FractionDigitsEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class Decimal64SpecificationEffectiveStatementImpl extends
@@ -32,8 +32,8 @@ public final class Decimal64SpecificationEffectiveStatementImpl extends
         final DecimalTypeBuilder builder = BaseTypes.decimalTypeBuilder(ctx.getSchemaPath().get());
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof FractionDigitsEffectiveStatementImpl) {
-                builder.setFractionDigits(((FractionDigitsEffectiveStatementImpl) stmt).argument());
+            if (stmt instanceof FractionDigitsEffectiveStatement) {
+                builder.setFractionDigits(((FractionDigitsEffectiveStatement) stmt).argument());
             }
             if (stmt instanceof RangeEffectiveStatementImpl) {
                 final RangeEffectiveStatementImpl range = (RangeEffectiveStatementImpl) stmt;
