@@ -92,7 +92,7 @@ public final class DerivedTypes {
         }
     }
 
-    private static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
+    public static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
             @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
@@ -103,7 +103,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType,
+    public static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Override
@@ -114,7 +114,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
+    public static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
             @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
@@ -136,7 +136,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType,
+    public static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
@@ -158,7 +158,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(
+    public static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(
             final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
@@ -169,7 +169,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(
+    public static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(
             final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Override
@@ -191,7 +191,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(final Int16TypeDefinition baseType,
+    public static DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(final Int16TypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<Int16TypeDefinition>(baseType, path) {
             @Override
@@ -202,7 +202,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(final Int32TypeDefinition baseType,
+    public static DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(final Int32TypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<Int32TypeDefinition>(baseType, path) {
             @Override
@@ -224,7 +224,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType,
+    public static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
@@ -246,7 +246,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType,
+    public static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
@@ -279,7 +279,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
+    public static DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
             final Uint32TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint32TypeDefinition>(baseType, path) {
             @Override
@@ -290,7 +290,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
+    public static DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
             final Uint64TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint64TypeDefinition>(baseType, path) {
             @Override
