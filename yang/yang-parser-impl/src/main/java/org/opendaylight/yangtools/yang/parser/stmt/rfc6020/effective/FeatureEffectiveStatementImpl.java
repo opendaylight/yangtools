@@ -10,11 +10,12 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class FeatureEffectiveStatementImpl extends AbstractEffectiveSchemaNode<FeatureStatement> implements
-        FeatureDefinition {
+        FeatureDefinition, FeatureEffectiveStatement {
 
     public FeatureEffectiveStatementImpl(final StmtContext<QName, FeatureStatement, ?> ctx) {
         super(ctx);

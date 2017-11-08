@@ -13,17 +13,18 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
-        implements AnyXmlSchemaNode, DerivableSchemaNode {
+public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
+        implements AnyxmlEffectiveStatement, AnyXmlSchemaNode, DerivableSchemaNode {
 
     private final AnyXmlSchemaNode original;
     private final boolean mandatory;
 
-    public AnyXmlEffectiveStatementImpl(
+    public AnyxmlEffectiveStatementImpl(
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
         this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
@@ -62,13 +63,13 @@ public class AnyXmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
             return false;
         }
 
-        AnyXmlEffectiveStatementImpl other = (AnyXmlEffectiveStatementImpl) obj;
+        AnyxmlEffectiveStatementImpl other = (AnyxmlEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
     public String toString() {
-        return AnyXmlEffectiveStatementImpl.class.getSimpleName() + "["
+        return AnyxmlEffectiveStatementImpl.class.getSimpleName() + "["
                 + "qname=" + getQName()
                 + ", path=" + getPath()
                 + "]";
