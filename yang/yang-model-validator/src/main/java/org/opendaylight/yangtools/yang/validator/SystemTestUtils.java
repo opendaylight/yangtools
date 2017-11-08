@@ -19,25 +19,34 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 final class SystemTestUtils {
 
     private static final Pattern MODULE_PATTERN = Pattern.compile("module(.*?)\\{");
     private static final Pattern WHITESPACES = Pattern.compile("\\s+");
+    private static final @NonNull YangParserFactory PARSER_FACTORY;
+
+    static {
+        final Iterator<@NonNull YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("No YangParserFactory found");
+        }
+        PARSER_FACTORY = it.next();
+    }
 
     private SystemTestUtils() {
         throw new UnsupportedOperationException();
@@ -49,8 +58,7 @@ final class SystemTestUtils {
     };
 
     static SchemaContext parseYangSources(final List<String> yangLibDirs, final List<String> yangTestFiles,
-            final Set<QName> supportedFeatures, final boolean recursiveSearch)
-            throws ReactorException, IOException, YangSyntaxErrorException {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch) throws IOException, YangParserException {
         /*
          * Current dir "." should be always present implicitly in the list of
          * directories where dependencies are searched for
@@ -77,24 +85,22 @@ final class SystemTestUtils {
     }
 
     static SchemaContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
-            final List<File> libFiles) throws ReactorException, IOException, YangSyntaxErrorException {
-        final List<StatementStreamSource> testSources = getYangStatementSources(testFiles);
-        final List<StatementStreamSource> libSources = getYangStatementSources(libFiles);
-        return parseYangSources(testSources, libSources, supportedFeatures);
-    }
+            final List<File> libFiles) throws IOException, YangParserException {
+        Preconditions.checkArgument(!testFiles.isEmpty(), "No yang sources");
 
-    static SchemaContext parseYangSources(final List<StatementStreamSource> testSources,
-            final List<StatementStreamSource> libSources, final Set<QName> supportedFeatures) throws ReactorException {
-        Preconditions.checkArgument(testSources != null && !testSources.isEmpty(), "No yang sources");
-
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
-                .addLibSources(libSources).addSources(testSources);
-
+        final YangParser parser = PARSER_FACTORY.createParser();
         if (supportedFeatures != null) {
-            reactor.setSupportedFeatures(supportedFeatures);
+            parser.setSupportedFeatures(supportedFeatures);
         }
 
-        return reactor.buildEffective();
+        for (File file : testFiles) {
+            parser.addSource(YangTextSchemaSource.forFile(file));
+        }
+        for (File file : libFiles) {
+            parser.addLibSource(YangTextSchemaSource.forFile(file));
+        }
+
+        return parser.buildSchemaContext();
     }
 
     private static File findInFiles(final List<File> libFiles, final String yangTestFile) throws IOException {
@@ -109,24 +115,11 @@ final class SystemTestUtils {
     private static String getModelNameFromFile(final File file) throws IOException {
         final String fileAsString = readFile(file.getAbsolutePath());
         final Matcher matcher = MODULE_PATTERN.matcher(fileAsString);
-        if (matcher.find()) {
-            return matcher.group(1);
-        } else {
-            return "";
-        }
+        return matcher.find() ? matcher.group(1) : "";
     }
 
     private static String readFile(final String path) throws IOException {
         return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
-    }
-
-    private static List<StatementStreamSource> getYangStatementSources(final List<File> yangFiles)
-            throws IOException, YangSyntaxErrorException {
-        final List<StatementStreamSource> yangSources = new ArrayList<>(yangFiles.size());
-        for (final File file : yangFiles) {
-            yangSources.add(YangStatementStreamSource.create(YangTextSchemaSource.forFile(file)));
-        }
-        return yangSources;
     }
 
     private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath, final boolean recursiveSearch)
