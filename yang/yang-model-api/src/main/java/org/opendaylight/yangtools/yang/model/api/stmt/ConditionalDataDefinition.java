@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import javax.annotation.Nullable;
+
 public interface ConditionalDataDefinition extends ConditionalFeature {
 
-    WhenStatement getWhenStatement();
+    @Nullable WhenStatement getWhenStatement();
 }

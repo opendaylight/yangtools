@@ -100,7 +100,7 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
 
     @Nonnull
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 }

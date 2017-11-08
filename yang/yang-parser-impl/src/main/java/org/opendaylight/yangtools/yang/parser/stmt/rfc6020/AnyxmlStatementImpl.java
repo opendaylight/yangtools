@@ -133,7 +133,7 @@ public class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implem
 
     @Nonnull
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 

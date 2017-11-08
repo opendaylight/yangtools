@@ -7,15 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementContainer, MandatoryStatementContainer,
+        MustStatementContainer {
 
-public interface AnyxmlStatement extends DataDefinitionStatement {
-
-    @Nonnull Collection<? extends MustStatement> getMusts();
-
-    @Nullable ConfigStatement getConfig();
-
-    @Nullable MandatoryStatement getMandatory();
 }

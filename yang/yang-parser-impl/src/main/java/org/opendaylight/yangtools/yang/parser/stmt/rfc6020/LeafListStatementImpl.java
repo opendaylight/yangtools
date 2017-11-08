@@ -153,7 +153,7 @@ public class LeafListStatementImpl extends AbstractDeclaredStatement<QName> impl
     }
 
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 

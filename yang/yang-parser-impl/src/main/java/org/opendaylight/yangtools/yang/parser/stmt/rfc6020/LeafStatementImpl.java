@@ -96,7 +96,7 @@ public class LeafStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
     @Nullable
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 

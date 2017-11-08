@@ -181,7 +181,7 @@ public class ListStatementImpl extends AbstractDeclaredStatement<QName> implemen
 
     @Nonnull
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 

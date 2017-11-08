@@ -108,7 +108,7 @@ public class DeclaredStatementsTest {
         final Predicate<Set<QName>> ifFeaturePredicate = ifFeatureStatements.iterator().next().getIfFeaturePredicate();
         assertNotNull(ifFeaturePredicate);
 
-        final Collection<? extends MustStatement> mustStatements = anyxmlStatement.getMusts();
+        final Collection<? extends MustStatement> mustStatements = anyxmlStatement.getMustStatements();
         assertNotNull(mustStatements);
         assertEquals(1, mustStatements.size());
         final MustStatement mustStatement = mustStatements.iterator().next();
@@ -396,7 +396,7 @@ public class DeclaredStatementsTest {
         assertNotNull(containerStatementIfFeatures);
         assertEquals(1, containerStatementIfFeatures.size());
 
-        final Collection<? extends MustStatement> containerStatementMusts = containerStatement.getMusts();
+        final Collection<? extends MustStatement> containerStatementMusts = containerStatement.getMustStatements();
         assertNotNull(containerStatementMusts);
         assertEquals(1, containerStatementMusts.size());
 

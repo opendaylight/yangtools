@@ -748,7 +748,7 @@ abstract class SchemaContextEmitter {
         private void emitContainer(final ContainerStatement container) {
             super.writer.startContainerNode(container.rawArgument());
             emitWhen(container.getWhenStatement());
-            emitMustNodes(container.getMusts());
+            emitMustNodes(container.getMustStatements());
             emitIfFeatures(container.getIfFeatures());
             emitPresenceNode(container.getPresence());
             emitConfigNode(container.getConfig());
@@ -767,7 +767,7 @@ abstract class SchemaContextEmitter {
             emitIfFeatures(leaf.getIfFeatures());
             emitType(leaf.getType());
             emitUnitsNode(leaf.getUnits());
-            emitMustNodes(leaf.getMusts());
+            emitMustNodes(leaf.getMustStatements());
             emitDefaultNode(leaf.getDefault());
             emitConfigNode(leaf.getConfig());
             emitMandatoryNode(leaf.getMandatory());
@@ -782,7 +782,7 @@ abstract class SchemaContextEmitter {
             emitIfFeatures(leafList.getIfFeatures());
             emitType(leafList.getType());
             emitUnitsNode(leafList.getUnits());
-            emitMustNodes(leafList.getMusts());
+            emitMustNodes(leafList.getMustStatements());
             emitConfigNode(leafList.getConfig());
             emitDefaultNodes(leafList.getDefaults());
             emitMinElementsNode(leafList.getMinElements());
@@ -797,7 +797,7 @@ abstract class SchemaContextEmitter {
             super.writer.startListNode(list.rawArgument());
             emitWhen(list.getWhenStatement());
             emitIfFeatures(list.getIfFeatures());
-            emitMustNodes(list.getMusts());
+            emitMustNodes(list.getMustStatements());
             emitKey(list.getKey());
             emitUniqueConstraints(list.getUnique());
             emitConfigNode(list.getConfig());
@@ -899,7 +899,7 @@ abstract class SchemaContextEmitter {
             emitDocumentedNodeWithStatus(anyxml);
             emitWhen(anyxml.getWhenStatement());
             emitIfFeatures(anyxml.getIfFeatures());
-            emitMustNodes(anyxml.getMusts());
+            emitMustNodes(anyxml.getMustStatements());
             emitConfigNode(anyxml.getConfig());
             emitMandatoryNode(anyxml.getMandatory());
             emitDocumentedNodeWithStatus(anyxml);
@@ -911,7 +911,7 @@ abstract class SchemaContextEmitter {
             super.writer.startAnydataNode(anydata.rawArgument());
             emitWhen(anydata.getWhenStatement());
             emitIfFeatures(anydata.getIfFeatures());
-            emitMustNodes(anydata.getMusts());
+            emitMustNodes(anydata.getMustStatements());
             emitConfigNode(anydata.getConfig());
             emitMandatoryNode(anydata.getMandatory());
             emitDocumentedNodeWithStatus(anydata);
@@ -937,7 +937,7 @@ abstract class SchemaContextEmitter {
             super.writer.startRefineNode(refine.rawArgument());
             emitDocumentedNode(refine);
             emitIfFeatures(refine.getIfFeatures());
-            emitMustNodes(refine.getMusts());
+            emitMustNodes(refine.getMustStatements());
             emitPresenceNode(refine.getPresence());
             emitDefaultNodes(refine.getDefaults());
             emitConfigNode(refine.getConfig());
@@ -1034,7 +1034,7 @@ abstract class SchemaContextEmitter {
         private void emitInput(final InputStatement inputStatement) {
             if (isExplicitStatement(inputStatement)) {
                 super.writer.startInputNode();
-                emitMustNodes(inputStatement.getMusts());
+                emitMustNodes(inputStatement.getMustStatements());
                 emitDataNodeContainer(inputStatement);
                 emitUnknownStatementNodes(inputStatement);
                 super.writer.endNode();
@@ -1044,7 +1044,7 @@ abstract class SchemaContextEmitter {
         private void emitOutput(final OutputStatement output) {
             if (isExplicitStatement(output)) {
                 super.writer.startOutputNode();
-                emitMustNodes(output.getMusts());
+                emitMustNodes(output.getMustStatements());
                 emitDataNodeContainer(output);
                 emitUnknownStatementNodes(output);
                 super.writer.endNode();
@@ -1064,7 +1064,7 @@ abstract class SchemaContextEmitter {
         private void emitNotificationNode(final NotificationStatement notification) {
             super.writer.startNotificationNode(notification.rawArgument());
             emitIfFeatures(notification.getIfFeatures());
-            emitMustNodes(notification.getMusts());
+            emitMustNodes(notification.getMustStatements());
             emitDocumentedNodeWithStatus(notification);
             emitDataNodeContainer(notification);
             emitUnknownStatementNodes(notification);

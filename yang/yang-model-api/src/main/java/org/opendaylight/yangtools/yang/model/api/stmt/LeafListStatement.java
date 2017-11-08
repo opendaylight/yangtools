@@ -10,14 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
-public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup {
-
-    @Nullable Collection<? extends MustStatement> getMusts();
-
-    @Nullable ConfigStatement getConfig();
-
+public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup,
+        ConfigStatementContainer, MustStatementContainer {
     /**
      * All implementations should override this method.
      * The default definition of this method is used only in YANG 1.0 (RFC6020) implementation of

@@ -104,7 +104,7 @@ public class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIde
 
     @Nonnull
     @Override
-    public Collection<? extends MustStatement> getMusts() {
+    public Collection<? extends MustStatement> getMustStatements() {
         return allDeclared(MustStatement.class);
     }
 
