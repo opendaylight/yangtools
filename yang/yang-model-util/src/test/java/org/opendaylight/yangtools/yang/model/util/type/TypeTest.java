@@ -395,14 +395,6 @@ public class TypeTest {
         assertEquals(Optional.empty(), abstractDerivedType.getDescription());
         assertEquals(Optional.empty(), abstractDerivedType.getReference());
         assertEquals(Status.CURRENT, abstractDerivedType.getStatus());
-        assertFalse(DerivedTypes.isInt8(baseBinaryType1));
-        assertFalse(DerivedTypes.isUint8(baseBinaryType1));
-        assertFalse(DerivedTypes.isInt16(baseBinaryType1));
-        assertFalse(DerivedTypes.isUint16(baseBinaryType1));
-        assertFalse(DerivedTypes.isInt32(baseBinaryType1));
-        assertFalse(DerivedTypes.isUint32(baseBinaryType1));
-        assertFalse(DerivedTypes.isInt64(baseBinaryType1));
-        assertFalse(DerivedTypes.isUint64(baseBinaryType1));
     }
 
     @Test
