@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport;
 import org.opendaylight.yangtools.odlext.parser.AnyxmlStatementSupportOverride;
@@ -30,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
  */
 @Beta
 public final class DefaultReactors {
-    private static final CrossSourceStatementReactor DEFAULT_REACTOR = defaultReactorBuilder().build();
+    private static final @NonNull CrossSourceStatementReactor DEFAULT_REACTOR = defaultReactorBuilder().build();
 
     private DefaultReactors() {
         throw new UnsupportedOperationException();
@@ -38,11 +39,18 @@ public final class DefaultReactors {
 
     /**
      * Get a shared default-configured reactor instance. This instance is configured to handle both RFC6020 and RFC7950,
-     * as well as RFC8040's yang-data extension.
+     * as well as
+     * <ul>
+     * <li>RFC6536's default-deny-{all,write} extensions</li>
+     * <li>RFC7952's annotation extension</li>
+     * <li>RFC8040's yang-data extension</li>
+     * <li>OpenConfig extensions</li>
+     * <li>OpenDaylight extensions</li>
+     * </ul>
      *
      * @return a shared default-configured reactor instance.
      */
-    public static CrossSourceStatementReactor defaultReactor() {
+    public static @NonNull CrossSourceStatementReactor defaultReactor() {
         return DEFAULT_REACTOR;
     }
 

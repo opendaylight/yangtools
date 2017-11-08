@@ -13,6 +13,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import javax.annotation.Nonnull;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
@@ -28,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
  * Note: for current implementation, "same" means the same filter and the same set of {@link SourceIdentifier}s.
  */
 @Beta
+@MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
     private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cache =
             CacheBuilder.newBuilder().softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
