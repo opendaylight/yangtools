@@ -17,22 +17,16 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class TypedefSubStmtsTest {
 
-    private static final StatementStreamSource FOOBAR = sourceForResource(
-        "/typedef-substmts-test/typedef-substmts-test.yang");
-
     @Test
     public void typedefSubStmtsTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOOBAR);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/typedef-substmts-test/typedef-substmts-test.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         Set<TypeDefinition<?>> typedefs = result.getTypeDefinitions();

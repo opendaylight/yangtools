@@ -17,7 +17,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.Iterator;
 import java.util.Set;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -26,25 +26,18 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class IncludedStmtsTest {
+    private static SchemaContext result;
 
-    private static final StatementStreamSource ROOT_MODULE = sourceForResource(
-        "/included-statements-test/root-module.yang");
-    private static final StatementStreamSource CHILD_MODULE = sourceForResource(
-            "/included-statements-test/child-module.yang");
-
-    private SchemaContext result;
-
-    @Before
-    public void setup() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, CHILD_MODULE);
-        result = reactor.buildEffective();
+    @BeforeClass
+    public static void setup() throws ReactorException {
+        result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/included-statements-test/root-module.yang"))
+                .addSource(sourceForResource("/included-statements-test/child-module.yang"))
+                .buildEffective();
     }
 
     @Test

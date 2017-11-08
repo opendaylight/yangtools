@@ -33,10 +33,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class GroupingAndUsesStmtTest {
 
@@ -47,10 +46,9 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void groupingTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(MODULE, GROUPING_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(MODULE, GROUPING_MODULE)
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("baz").iterator().next();
@@ -94,10 +92,9 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void usesAndRefinesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE)
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("foo").iterator().next();

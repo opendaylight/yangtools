@@ -12,10 +12,9 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class YangTypesStmtTest {
 
@@ -33,10 +32,9 @@ public class YangTypesStmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3);
-        reactor.addSources(FILE1, FILE2, FILE3, FILE4);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, FILE1, FILE2, FILE3, FILE4)
+                .buildEffective();
         assertNotNull(result);
     }
 }

@@ -28,23 +28,16 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveUsesRefineAndConstraintsTest {
 
-    private static final StatementStreamSource REFINE_TEST = sourceForResource("/stmt-test/uses/refine-test.yang");
-
     @Test
     public void refineTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(REFINE_TEST);
-
-        SchemaContext result = reactor.buildEffective();
-
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/stmt-test/uses/refine-test.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         Set<Module> modules = result.getModules();

@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -26,10 +25,9 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class DeviationStmtTest {
 
@@ -40,10 +38,9 @@ public class DeviationStmtTest {
 
     @Test
     public void testDeviationAndDeviate() throws ReactorException, ParseException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         Module testModule = schemaContext.findModule("foo", Revision.of("2016-06-23")).get();
