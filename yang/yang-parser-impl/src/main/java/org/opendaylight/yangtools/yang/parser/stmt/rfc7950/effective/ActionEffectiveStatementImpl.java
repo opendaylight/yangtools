@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -29,7 +30,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEff
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.InputEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
 public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<ActionStatement>
         implements ActionDefinition, ActionEffectiveStatement {
@@ -54,8 +54,8 @@ public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ac
                 final GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
                 groupingsInit.add(groupingDefinition);
             }
-            if (effectiveStatement instanceof TypeDefEffectiveStatementImpl) {
-                final TypeDefEffectiveStatementImpl typeDef = (TypeDefEffectiveStatementImpl) effectiveStatement;
+            if (effectiveStatement instanceof TypedefEffectiveStatement) {
+                final TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
                 final TypeDefinition<?> type = typeDef.getTypeDefinition();
                 if (!mutableTypeDefinitions.contains(type)) {
                     mutableTypeDefinitions.add(type);

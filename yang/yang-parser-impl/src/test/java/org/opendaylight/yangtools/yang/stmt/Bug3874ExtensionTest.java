@@ -21,10 +21,10 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public class Bug3874ExtensionTest {
 
@@ -37,9 +37,8 @@ public class Bug3874ExtensionTest {
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
         DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
-        assertTrue(dataChildByName instanceof YangModeledAnyXmlEffectiveStatementImpl);
-        YangModeledAnyXmlEffectiveStatementImpl yangModeledAnyXml =
-                (YangModeledAnyXmlEffectiveStatementImpl) dataChildByName;
+        assertTrue(dataChildByName instanceof YangModeledAnyXmlSchemaNode);
+        YangModeledAnyXmlSchemaNode yangModeledAnyXml = (YangModeledAnyXmlSchemaNode) dataChildByName;
 
         SchemaNode myContainer2 = SchemaContextUtil.findDataSchemaNode(context,
             SchemaPath.create(true, myContainer2QName));

@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -79,7 +80,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
 
-        final WhenEffectiveStatementImpl whenStmt = firstEffective(WhenEffectiveStatementImpl.class);
+        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
         this.whenCondition = whenStmt == null ? null : whenStmt.argument();
     }
 
