@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.DescriptionStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.IncludeStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ModuleStatementImpl;
@@ -85,19 +84,18 @@ public class Bug6874Test {
 
     @Test
     public void descriptionAndReferenceTest11() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE);
-
-        reactor.build().getRootStatements().forEach(declaredStmt -> {
-            if (declaredStmt instanceof ModuleStatementImpl) {
-                declaredStmt.declaredSubstatements().forEach(subStmt -> {
-                    if (subStmt instanceof IncludeStatementImpl
-                            && subStmt.rawArgument().equals("child-module")) {
-                        subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
-                    }
-                });
-            }
-        });
+        YangInferencePipeline.RFC6020_REACTOR.newBuild()
+            .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
+            .build().getRootStatements().forEach(declaredStmt -> {
+                if (declaredStmt instanceof ModuleStatementImpl) {
+                    declaredStmt.declaredSubstatements().forEach(subStmt -> {
+                        if (subStmt instanceof IncludeStatementImpl
+                                && subStmt.rawArgument().equals("child-module")) {
+                            subStmt.declaredSubstatements().forEach(Bug6874Test::verifyDescAndRef);
+                        }
+                    });
+                }
+            });
     }
 
     @SuppressWarnings("rawtypes")

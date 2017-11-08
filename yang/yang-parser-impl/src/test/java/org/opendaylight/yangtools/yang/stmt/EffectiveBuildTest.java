@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveBuildTest {
@@ -43,9 +42,8 @@ public class EffectiveBuildTest {
 
     @Test
     public void effectiveBuildTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(SIMPLE_MODULE);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSources(SIMPLE_MODULE)
+                .buildEffective();
 
         assertNotNull(result);
 
@@ -96,9 +94,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void extensionsTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(YANG_EXT);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 
         Set<GroupingDefinition> groupings = result.getGroupings();
@@ -118,10 +114,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSource(YANG_EXT);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
     }
 }

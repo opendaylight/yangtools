@@ -102,9 +102,11 @@ public final class CrossSourceStatementReactor {
          *
          * @param source
          *            which should be added into main sources
+         * @return This build action, for fluent use.
          */
-        public void addSource(final StatementStreamSource source) {
+        public BuildAction addSource(final StatementStreamSource source) {
             context.addSource(source);
+            return this;
         }
 
         /**
@@ -112,15 +114,18 @@ public final class CrossSourceStatementReactor {
          *
          * @param sources
          *            which should be added into main sources
+         * @return This build action, for fluent use.
          */
-        public void addSources(final StatementStreamSource... sources) {
+        public BuildAction addSources(final StatementStreamSource... sources) {
             addSources(Arrays.asList(sources));
+            return this;
         }
 
-        public void addSources(final Collection<? extends StatementStreamSource> sources) {
+        public BuildAction addSources(final Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
                 context.addSource(source);
             }
+            return this;
         }
 
         /**
@@ -132,15 +137,18 @@ public final class CrossSourceStatementReactor {
          *
          * @param libSources
          *            yang sources which should be added into library sources
+         * @return This build action, for fluent use.
          */
-        public void addLibSources(final StatementStreamSource... libSources) {
+        public BuildAction addLibSources(final StatementStreamSource... libSources) {
             addLibSources(Arrays.asList(libSources));
+            return this;
         }
 
-        public void addLibSources(final Collection<StatementStreamSource> libSources) {
+        public BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
             for (final StatementStreamSource libSource : libSources) {
                 context.addLibSource(libSource);
             }
+            return this;
         }
 
         /**
@@ -150,11 +158,13 @@ public final class CrossSourceStatementReactor {
          * @param supportedFeatures
          *            Set of supported features in the final SchemaContext.
          *            If the set is empty, no features encountered will be supported.
+         * @return This build action, for fluent use.
          */
-        public void setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
+        public BuildAction setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
             checkState(!supportedFeaturesSet, "Supported features should be set only once.");
             context.setSupportedFeatures(requireNonNull(supportedFeatures));
             supportedFeaturesSet = true;
+            return this;
         }
 
         /**
@@ -164,12 +174,14 @@ public final class CrossSourceStatementReactor {
          * @param modulesDeviatedByModules
          *            Map of YANG modules (Map key) which can be deviated by specified modules (Map value) in the final
          *            SchemaContext. If the map is empty, no deviations encountered will be supported.
+         * @return This build action, for fluent use.
          */
-        public void setModulesWithSupportedDeviations(
+        public BuildAction setModulesWithSupportedDeviations(
                 @Nonnull final Map<QNameModule, Set<QNameModule>> modulesDeviatedByModules) {
             checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
             context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
             modulesDeviatedByModulesSet = true;
+            return this;
         }
 
         /**
