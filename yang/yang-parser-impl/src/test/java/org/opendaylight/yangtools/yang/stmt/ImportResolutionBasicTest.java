@@ -16,13 +16,13 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class ImportResolutionBasicTest {
 
@@ -46,7 +46,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inImportOrderTest() throws ReactorException {
-        EffectiveModelContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED)
                 .build();
         assertNotNull(result);
@@ -54,7 +54,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inInverseOfImportOrderTest() throws ReactorException {
-        EffectiveModelContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
                 .addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT)
                 .build();
         assertNotNull(result);
@@ -62,7 +62,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void missingImportedSourceTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
                 .addSources(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
@@ -76,7 +76,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void circularImportsTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
                 .addSources(CYCLE_YIN, CYCLE_YANG);
         try {
             reactor.build();
@@ -89,7 +89,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void selfImportTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
                 .addSources(IMPORT_SELF, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
@@ -102,7 +102,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void bug2649Test() throws ReactorException {
-        SchemaContext buildEffective = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        SchemaContext buildEffective = DefaultReactors.defaultReactor().newBuild()
                 .addSources(FOO, IMPORT)
                 .buildEffective();
         assertNotNull(buildEffective);

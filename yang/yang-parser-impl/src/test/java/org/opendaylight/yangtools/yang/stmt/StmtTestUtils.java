@@ -31,13 +31,13 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -132,9 +132,8 @@ public class StmtTestUtils {
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild(
-            statementParserMode);
-        reactor.addSources(sources);
+        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode)
+                .addSources(sources);
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(supportedFeatures);
         }
@@ -225,9 +224,8 @@ public class StmtTestUtils {
     private static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangSources);
-        reactor.addLibSources(libSources);
+        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSources(yangSources).addLibSources(libSources);
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(supportedFeatures);
         }
@@ -253,12 +251,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYinSources(final StatementParserMode statementParserMode,
             final StatementStreamSource... sources) throws ReactorException {
-
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild(statementParserMode);
-        reactor.addSources(sources);
-
-        return reactor.buildEffective();
+        return DefaultReactors.defaultReactor().newBuild(statementParserMode).addSources(sources).buildEffective();
     }
 
     public static Module findImportedModule(final SchemaContext context, final Module rootModule,

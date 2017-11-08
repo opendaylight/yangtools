@@ -12,12 +12,11 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class ImportRevisionsTest {
 
@@ -44,47 +43,40 @@ public class ImportRevisionsTest {
 
     @Test
     public void equalRevisionDatesTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITH_EQUAL_DATE, IMPORTED_WITH_EQUAL_DATE);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_WITH_EQUAL_DATE, IMPORTED_WITH_EQUAL_DATE)
+                .build();
         assertNotNull(result);
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void unequalRevisionDatesTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITH_UNEQUAL_DATE, IMPORTED_WITH_UNEQUAL_DATE);
-
-        EffectiveModelContext result = reactor.build();
-        assertNotNull(result);
-
+        DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_WITH_UNEQUAL_DATE, IMPORTED_WITH_UNEQUAL_DATE)
+                .build();
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void revisionDatesInRootOnlyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITH_DATE, IMPORTED_WITHOUT_DATE);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_WITH_DATE, IMPORTED_WITHOUT_DATE)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void revisionDatesInImportedOnlyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void noRevisionInRootAndImportedTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITH_NO_DATE, IMPORTED_WITH_NO_DATE);
-
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSources(ROOT_WITH_NO_DATE, IMPORTED_WITH_NO_DATE)
+                .build();
         assertNotNull(result);
     }
 }
