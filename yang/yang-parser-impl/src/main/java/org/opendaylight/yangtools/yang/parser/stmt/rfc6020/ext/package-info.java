@@ -6,10 +6,9 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * Provides builders and classes necessary for customization of yang stmt parser
+ * Provides builders and classes necessary for customization of YANG stmt parser
  * (e.g. add support for an third-party extension etc.).
- * {@link CustomStatementParserBuilder} is designed for building a custom yang
- * statement parser with extended support for a custom statement or yang
- * extension.
+ * {@link org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext.CustomStatementParserBuilder} is designed for building
+ * a custom YANG statement parser with extended support for a custom statement or YANG extension.
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext;

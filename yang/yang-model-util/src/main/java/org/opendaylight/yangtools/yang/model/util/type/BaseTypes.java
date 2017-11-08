@@ -165,8 +165,7 @@ public final class BaseTypes {
     }
 
     /**
-     * Check if a particular type is the base type for uint8. Unlike {@link DerivedTypes#isUint8(TypeDefinition)},
-     * this method does not perform recursive base type lookup.
+     * Check if a particular type is the base type for uint8.
      *
      * @param type The type to check
      * @return If the type corresponds to the base uint8 type.
@@ -181,8 +180,7 @@ public final class BaseTypes {
     }
 
     /**
-     * Check if a particular type is the base type for uint16. Unlike {@link DerivedTypes#isUint16(TypeDefinition)},
-     * this method does not perform recursive base type lookup.
+     * Check if a particular type is the base type for uint16.
      *
      * @param type The type to check
      * @return If the type corresponds to the base uint16 type.
@@ -197,8 +195,7 @@ public final class BaseTypes {
     }
 
     /**
-     * Check if a particular type is the base type for uint32. Unlike {@link DerivedTypes#isUint32(TypeDefinition)},
-     * this method does not perform recursive base type lookup.
+     * Check if a particular type is the base type for uint32.
      *
      * @param type The type to check
      * @return If the type corresponds to the base uint32 type.
@@ -213,8 +210,7 @@ public final class BaseTypes {
     }
 
     /**
-     * Check if a particular type is the base type for uint64. Unlike {@link DerivedTypes#isUint64(TypeDefinition)},
-     * this method does not perform recursive base type lookup.
+     * Check if a particular type is the base type for uint64.
      *
      * @param type The type to check
      * @return If the type corresponds to the base uint64 type.
