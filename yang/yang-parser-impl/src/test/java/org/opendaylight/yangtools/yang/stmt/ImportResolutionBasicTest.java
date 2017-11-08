@@ -46,24 +46,24 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inImportOrderTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED);
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void inInverseOfImportOrderTest() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
-        EffectiveModelContext result = reactor.build();
+        EffectiveModelContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT)
+                .build();
         assertNotNull(result);
     }
 
     @Test
     public void missingImportedSourceTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
+        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(IMPORT_DERIVED, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing imported source");
@@ -76,8 +76,8 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void circularImportsTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(CYCLE_YIN, CYCLE_YANG);
+        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(CYCLE_YIN, CYCLE_YANG);
         try {
             reactor.build();
             fail("reactor.process should fail due to circular import");
@@ -89,8 +89,8 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void selfImportTest() {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(IMPORT_SELF, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
+        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(IMPORT_SELF, IMPORT_ROOT, ROOT_WITHOUT_IMPORT);
         try {
             reactor.build();
             fail("reactor.process should fail due to self import");
@@ -102,10 +102,9 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void bug2649Test() throws ReactorException {
-        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO, IMPORT);
-
-        SchemaContext buildEffective = reactor.buildEffective();
+        SchemaContext buildEffective = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(FOO, IMPORT)
+                .buildEffective();
         assertNotNull(buildEffective);
     }
 }

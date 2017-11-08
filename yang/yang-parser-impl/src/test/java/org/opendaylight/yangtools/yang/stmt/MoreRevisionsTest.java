@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class MoreRevisionsTest {
@@ -70,9 +69,7 @@ public class MoreRevisionsTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSource(REVFILE);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSource(REVFILE).buildEffective();
         assertNotNull(result);
         final Module moduleByName = result.getModules().iterator().next();
         assertEquals("2015-06-07", moduleByName.getQNameModule().getRevision().get().toString());
@@ -80,21 +77,17 @@ public class MoreRevisionsTest {
 
     @Test
     public void twoRevisionsTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(TED_20130712, TED_20131021, IETF_TYPES);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(TED_20130712, TED_20131021, IETF_TYPES)
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void twoRevisionsTest2() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021, IETF_TYPES)
+                .buildEffective();
         assertNotNull(result);
         Set<Module> modules = result.getModules();
 
@@ -104,13 +97,10 @@ public class MoreRevisionsTest {
 
     @Test
     public void moreRevisionsListKeyTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-
-        reactor.addSources(TED_20130712, TED_20131021, ISIS_20130712,
-                ISIS_20131021, L3_20130712, L3_20131021, IETF_TYPES,
-                NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(TED_20130712, TED_20131021, ISIS_20130712, ISIS_20131021, L3_20130712, L3_20131021)
+                .addSources(IETF_TYPES,NETWORK_TOPOLOGY_20130712, NETWORK_TOPOLOGY_20131021)
+                .buildEffective();
         assertNotNull(result);
     }
 

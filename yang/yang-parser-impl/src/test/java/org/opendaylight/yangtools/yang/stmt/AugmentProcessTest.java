@@ -30,7 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class AugmentProcessTest {
@@ -87,51 +86,41 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED,
-                MULTIPLE_AUGMENT_SUBMODULE);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE)
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void multipleAugmentTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSource(MULTIPLE_AUGMENT)
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathTest() throws  ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT_INCORRECT);
-
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSource(MULTIPLE_AUGMENT_INCORRECT)
+                .buildEffective();
         assertNull(result);
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathAndGrpTest() throws  ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        addSources(reactor, MULTIPLE_AUGMENT_INCORRECT2);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSource(MULTIPLE_AUGMENT_INCORRECT2)
+                .buildEffective();
         assertNull(result);
     }
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR
-                .newBuild();
-        addSources(reactor, AUGMENTED, ROOT);
-
-        final SchemaContext root = reactor.buildEffective();
+        final SchemaContext root = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(AUGMENTED, ROOT)
+                .buildEffective();
         assertNotNull(root);
 
         final Module augmentedModule = root.findModules("augmented").iterator().next();
@@ -170,13 +159,6 @@ public class AugmentProcessTest {
 
         final ContainerSchemaNode grpAddNode = (ContainerSchemaNode) grpCont22Node.getDataChildByName(grpAdd);
         assertNotNull(grpAddNode);
-    }
-
-    private static void addSources(final CrossSourceStatementReactor.BuildAction reactor,
-            final StatementStreamSource... sources) {
-        for (final StatementStreamSource source : sources) {
-            reactor.addSource(source);
-        }
     }
 
     @Test

@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 import org.xml.sax.SAXException;
@@ -55,25 +55,25 @@ public class YinFileStmtTest {
 
     @Test
     public void readAndParseYinFileTestModel() throws SourceException, ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE)
+                .buildEffective();
         assertNotNull(result);
     }
 
     // parsing yin file whose import statement references a module which does not exist
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void readAndParseInvalidYinFileTest() throws ReactorException {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_YIN_FILE);
-        SchemaContext result = reactor.buildEffective();
+        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSource(INVALID_YIN_FILE)
+                .buildEffective();
         assertNotNull(result);
     }
 
     // parsing yin file with duplicate key name in a list statement
     public void readAndParseInvalidYinFileTest2() {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(INVALID_YIN_FILE_2);
+        BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+                .addSource(INVALID_YIN_FILE_2);
 
         try {
             reactor.buildEffective();
