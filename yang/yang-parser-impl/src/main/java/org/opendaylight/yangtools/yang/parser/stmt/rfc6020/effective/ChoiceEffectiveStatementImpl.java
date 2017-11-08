@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -30,7 +31,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
 public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
-        ChoiceSchemaNode, DerivableSchemaNode {
+        ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
 
     private final Set<AugmentationSchemaNode> augmentations;
     private final SortedMap<QName, ChoiceCaseNode> cases;
@@ -105,8 +106,8 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
         } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
             final ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
             list.augmenting = false;
-        } else if (dataSchemaNode instanceof AnyXmlEffectiveStatementImpl) {
-            final AnyXmlEffectiveStatementImpl anyXml = (AnyXmlEffectiveStatementImpl) dataSchemaNode;
+        } else if (dataSchemaNode instanceof AnyxmlEffectiveStatementImpl) {
+            final AnyxmlEffectiveStatementImpl anyXml = (AnyxmlEffectiveStatementImpl) dataSchemaNode;
             anyXml.augmenting = false;
         }
     }

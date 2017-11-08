@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import java.util.List;
+import org.opendaylight.yangtools.yang.model.api.stmt.LengthEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class LengthEffectiveStatementImpl extends
-        AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement> {
+public class LengthEffectiveStatementImpl
+        extends AbstractListConstraintEffectiveStatement<ValueRange, LengthStatement>
+        implements LengthEffectiveStatement {
     public LengthEffectiveStatementImpl(final StmtContext<List<ValueRange>, LengthStatement, ?> ctx) {
         super(ctx);
     }

@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.net.URI;
+import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class NamespaceEffectiveStatementImpl extends DeclaredEffectiveStatementBase<URI, NamespaceStatement>  {
+public final class NamespaceEffectiveStatementImpl extends DeclaredEffectiveStatementBase<URI, NamespaceStatement>
+        implements NamespaceEffectiveStatement {
     public NamespaceEffectiveStatementImpl(final StmtContext<URI, NamespaceStatement, ?> ctx) {
         super(ctx);
     }

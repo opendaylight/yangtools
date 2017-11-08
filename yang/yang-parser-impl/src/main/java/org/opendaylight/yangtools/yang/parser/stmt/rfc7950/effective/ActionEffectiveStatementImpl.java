@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -31,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.OutputEffec
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 
 public class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<ActionStatement>
-        implements ActionDefinition {
+        implements ActionDefinition, ActionEffectiveStatement {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
     private final Set<TypeDefinition<?>> typeDefinitions;

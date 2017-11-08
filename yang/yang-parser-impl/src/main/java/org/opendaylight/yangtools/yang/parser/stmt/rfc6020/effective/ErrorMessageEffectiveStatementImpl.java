@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ErrorMessageEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<String, ErrorMessageStatement> {
+        extends DeclaredEffectiveStatementBase<String, ErrorMessageStatement>
+        implements ErrorMessageEffectiveStatement {
     public ErrorMessageEffectiveStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
         super(ctx);
     }

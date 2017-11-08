@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.model.api.stmt.KeyEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class KeyEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Collection<SchemaNodeIdentifier>,
-        KeyStatement> {
+public final class KeyEffectiveStatementImpl
+        extends DeclaredEffectiveStatementBase<Collection<SchemaNodeIdentifier>, KeyStatement>
+        implements KeyEffectiveStatement {
     public KeyEffectiveStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> ctx) {
         super(ctx);
     }
