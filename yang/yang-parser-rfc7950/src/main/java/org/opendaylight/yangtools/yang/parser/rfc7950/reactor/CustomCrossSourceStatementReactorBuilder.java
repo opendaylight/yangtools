@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -109,7 +110,7 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
     }
 
     @Override
-    public CrossSourceStatementReactor build() {
+    public @NonNull CrossSourceStatementReactor build() {
         final StatementSupportBundle initBundle = reactorSupportBundles.get(ModelProcessingPhase.INIT).build();
         final StatementSupportBundle preLinkageBundle = reactorSupportBundles
                 .get(ModelProcessingPhase.SOURCE_PRE_LINKAGE).setParent(initBundle).build();
