@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
@@ -27,11 +26,11 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class Bug8307Test {
 
@@ -76,11 +75,10 @@ public class Bug8307Test {
         final Map<QNameModule, Set<QNameModule>> modulesWithSupportedDeviations = ImmutableMap.of(
                 foo, ImmutableSet.of(bar, baz), bar, ImmutableSet.of(baz));
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
-        reactor.setModulesWithSupportedDeviations(modulesWithSupportedDeviations);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+                .setModulesWithSupportedDeviations(modulesWithSupportedDeviations)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
@@ -92,10 +90,9 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
@@ -107,11 +104,10 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInNoModule() throws Exception {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE);
-        reactor.setModulesWithSupportedDeviations(ImmutableMap.of());
-
-        final SchemaContext schemaContext = reactor.buildEffective();
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
+                .setModulesWithSupportedDeviations(ImmutableMap.of())
+                .buildEffective();
         assertNotNull(schemaContext);
 
         assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
@@ -123,8 +119,7 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule() {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(FOO_INVALID_MODULE);
+        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_MODULE);
 
         try {
             reactor.buildEffective();
@@ -139,8 +134,8 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule2() {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
+        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
 
         try {
             reactor.buildEffective();

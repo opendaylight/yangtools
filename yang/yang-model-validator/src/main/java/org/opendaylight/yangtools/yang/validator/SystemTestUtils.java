@@ -28,11 +28,11 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 final class SystemTestUtils {
 
@@ -87,9 +87,8 @@ final class SystemTestUtils {
             final List<StatementStreamSource> libSources, final Set<QName> supportedFeatures) throws ReactorException {
         Preconditions.checkArgument(testSources != null && !testSources.isEmpty(), "No yang sources");
 
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addLibSources(libSources);
-        reactor.addSources(testSources);
+        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addLibSources(libSources).addSources(testSources);
 
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(supportedFeatures);

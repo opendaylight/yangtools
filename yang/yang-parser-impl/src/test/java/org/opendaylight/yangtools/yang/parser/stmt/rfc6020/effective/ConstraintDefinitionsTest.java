@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import static org.junit.Assert.assertEquals;
@@ -28,16 +27,16 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class ConstraintDefinitionsTest {
 
     @Test
     public void testConstraintDefinitions() throws ParseException, ReactorException, URISyntaxException, IOException,
             YangSyntaxErrorException {
-        final SchemaContext schemaContext = YangInferencePipeline.RFC6020_REACTOR.newBuild()
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
                 .addSource(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/constraint-definitions-test/foo.yang")))
                 .buildEffective();

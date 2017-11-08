@@ -25,22 +25,15 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class MustAndWhenStmtTest {
-
-    private static final StatementStreamSource MUST_MODULE = sourceForResource("/must-when-stmt-test/must-test.yang");
-    private static final StatementStreamSource WHEN_MODULE = sourceForResource("/must-when-stmt-test/when-test.yang");
-
     @Test
     public void mustStmtTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(MUST_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/must-when-stmt-test/must-test.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("must-test").iterator().next();
@@ -74,10 +67,9 @@ public class MustAndWhenStmtTest {
 
     @Test
     public void whenStmtTest() throws ReactorException {
-        final CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(WHEN_MODULE);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/must-when-stmt-test/when-test.yang"))
+                .buildEffective();
         assertNotNull(result);
 
         final Module testModule = result.findModules("when-test").iterator().next();

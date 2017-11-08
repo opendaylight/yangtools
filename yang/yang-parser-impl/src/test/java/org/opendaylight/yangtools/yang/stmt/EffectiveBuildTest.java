@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -28,9 +27,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class EffectiveBuildTest {
 
@@ -42,7 +41,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void effectiveBuildTest() throws ReactorException {
-        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSources(SIMPLE_MODULE)
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
                 .buildEffective();
 
         assertNotNull(result);
@@ -89,12 +88,11 @@ public class EffectiveBuildTest {
         assertEquals(SchemaPath.create(true, q1, q2, q3), subSubCon.getPath());
         assertEquals(SchemaPath.create(true, q4, q5, q6), subSubCon2.getPath());
         assertEquals(SchemaPath.create(true, q7, q5, q6), grpSubSubCon2.getPath());
-
     }
 
     @Test
     public void extensionsTest() throws ReactorException {
-        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSource(YANG_EXT).buildEffective();
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 
         Set<GroupingDefinition> groupings = result.getGroupings();
@@ -114,7 +112,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        SchemaContext result = YangInferencePipeline.RFC6020_REACTOR.newBuild().addSource(YANG_EXT).buildEffective();
+        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
     }
 }

@@ -14,33 +14,24 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
 public class ListKeysTest {
 
     @Test
     public void correctListKeysTest() throws ReactorException {
-
-        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/correct-list-keys-test.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
-        final SchemaContext result = reactor.buildEffective();
+        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-keys-test/correct-list-keys-test.yang"))
+                .buildEffective();
         assertNotNull(result);
     }
 
     @Test
     public void incorrectListKeysTest1() {
-
-        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test.yang"));
         try {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf referenced in list key");
@@ -51,12 +42,8 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest2() {
-
-        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang"));
         try {
             reactor.buildEffective();
             fail("effective build should fail due to missing leaf referenced in list key");
@@ -67,12 +54,8 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest3() {
-
-        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang"));
         try {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf in grouping referenced in list key");
@@ -83,12 +66,8 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest4()  {
-
-        final StatementStreamSource yangFile = sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang");
-
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        reactor.addSources(yangFile);
-
+        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+                .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang"));
         try {
             reactor.buildEffective();
             fail("effective build should fail due to list instead of leaf in grouping augmented to list referenced "
