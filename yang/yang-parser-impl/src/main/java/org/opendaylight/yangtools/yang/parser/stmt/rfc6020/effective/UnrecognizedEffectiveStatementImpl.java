@@ -13,17 +13,19 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-public final class UnknownEffectiveStatementImpl
-        extends UnknownEffectiveStatementBase<String, UnknownStatement<String>> {
+public final class UnrecognizedEffectiveStatementImpl
+        extends UnknownEffectiveStatementBase<String, UnrecognizedStatement>
+        implements UnrecognizedEffectiveStatement {
 
     private final QName maybeQNameArgument;
     private final SchemaPath path;
 
-    public UnknownEffectiveStatementImpl(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    public UnrecognizedEffectiveStatementImpl(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
         super(ctx);
 
         // FIXME: Remove following section after fixing 4380
@@ -71,10 +73,10 @@ public final class UnknownEffectiveStatementImpl
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof UnknownEffectiveStatementImpl)) {
+        if (!(obj instanceof UnrecognizedEffectiveStatementImpl)) {
             return false;
         }
-        UnknownEffectiveStatementImpl other = (UnknownEffectiveStatementImpl) obj;
+        UnrecognizedEffectiveStatementImpl other = (UnrecognizedEffectiveStatementImpl) obj;
         return Objects.equals(maybeQNameArgument, other.maybeQNameArgument) && Objects.equals(path, other.path)
                 && Objects.equals(getNodeType(), other.getNodeType())
                 && Objects.equals(getNodeParameter(), other.getNodeParameter());
