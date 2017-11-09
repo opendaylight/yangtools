@@ -20,6 +20,15 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.argument.ArgumentStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.base.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.belongsto.BelongsToStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.config.ConfigStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.description.DescriptionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.dflt.DefaultStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.errorapptag.ErrorAppTagStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.errormessage.ErrorMessageStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.mandatory.MandatoryStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -110,7 +119,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1_1, new ImportStatementRfc7950Support())
             .addVersionSpecificSupport(VERSION_1, new IncludeStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new IncludeStatementRfc7950Support())
-            .addSupport(new BelongsToStatementImpl.Definition())
+            .addSupport(new BelongsToStatementSupport())
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(new RevisionStatementImpl.Definition())
@@ -123,7 +132,7 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(PRE_LINKAGE_BUNDLE)
-            .addSupport(new DescriptionStatementImpl.Definition())
+            .addSupport(new DescriptionStatementSupport())
             .addSupport(new ReferenceStatementImpl.Definition())
             .addSupport(new ContactStatementImpl.Definition())
             .addSupport(new OrganizationStatementImpl.Definition())
@@ -154,7 +163,7 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
             .derivedFrom(LINKAGE_BUNDLE)
             .addSupport(new YinElementStatementImpl.Definition())
-            .addSupport(new ArgumentStatementImpl.Definition())
+            .addSupport(new ArgumentStatementSupport())
             .addSupport(new ExtensionStatementImpl.Definition())
             .addSupport(new ChildSchemaNodes<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
@@ -164,7 +173,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1, new IdentityStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new IdentityStatementRfc7950Support())
             .addSupport(global(IdentityNamespace.class))
-            .addSupport(new DefaultStatementImpl.Definition())
+            .addSupport(new DefaultStatementSupport())
             .addSupport(new StatusStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new TypeStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new TypeStatementRfc7950Support())
@@ -198,7 +207,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1, new NotificationStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRfc7950Support())
             .addSupport(new FractionDigitsStatementImpl.Definition())
-            .addSupport(new BaseStatementImpl.Definition())
+            .addSupport(new BaseStatementSupport())
             .addSupport(global(DerivedIdentitiesNamespace.class))
             .addSupport(global(StatementDefinitionNamespace.class))
             .build();
@@ -206,7 +215,7 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
             .addSupport(new LeafStatementImpl.Definition())
-            .addSupport(new ConfigStatementImpl.Definition())
+            .addSupport(new ConfigStatementSupport())
             .addSupport(new DeviationStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new DeviateStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRfc7950Support())
@@ -215,14 +224,14 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1, new CaseStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new CaseStatementRfc7950Support())
             .addSupport(new MustStatementImpl.Definition())
-            .addSupport(new MandatoryStatementImpl.Definition())
+            .addSupport(new MandatoryStatementSupport())
             .addSupport(new AnyxmlStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementImpl.Definition())
             .addSupport(new IfFeatureStatementImpl.Definition())
             .addSupport(new UsesStatementImpl.Definition())
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
-            .addSupport(new ErrorMessageStatementImpl.Definition())
-            .addSupport(new ErrorAppTagStatementImpl.Definition())
+            .addSupport(new ErrorMessageStatementSupport())
+            .addSupport(new ErrorAppTagStatementSupport())
             .addVersionSpecificSupport(VERSION_1, new LeafListStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new LeafListStatementRfc7950Support())
             .addSupport(new PresenceStatementImpl.Definition())
