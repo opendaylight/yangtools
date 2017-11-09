@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.EffectiveStatementBase;
 
 final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private static final String UNBOUNDED_STR = "unbounded";

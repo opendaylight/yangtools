@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class RefineEffectiveStatementImpl

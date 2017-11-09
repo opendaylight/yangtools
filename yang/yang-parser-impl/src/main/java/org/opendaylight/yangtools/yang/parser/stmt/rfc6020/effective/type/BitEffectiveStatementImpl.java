@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BitEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PositionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEffectiveDocumentedNode;
 
 public class BitEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, BitStatement>
         implements BitEffectiveStatement {

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -27,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementBase;
 
 final class Annotation extends AbstractStatementSupport<String, AnnotationStatement, AnnotationEffectiveStatement> {
 
