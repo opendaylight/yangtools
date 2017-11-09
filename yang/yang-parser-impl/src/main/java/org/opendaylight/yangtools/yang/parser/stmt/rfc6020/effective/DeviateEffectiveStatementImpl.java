@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase<DeviateKind, DeviateStatement>

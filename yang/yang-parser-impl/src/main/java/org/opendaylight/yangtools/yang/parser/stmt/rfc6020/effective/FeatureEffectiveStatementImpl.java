@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class FeatureEffectiveStatementImpl extends AbstractEffectiveSchemaNode<FeatureStatement> implements
