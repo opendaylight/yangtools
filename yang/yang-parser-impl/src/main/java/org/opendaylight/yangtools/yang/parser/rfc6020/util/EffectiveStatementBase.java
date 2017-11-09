@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc6020.util;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
@@ -55,12 +55,13 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     /**
      * Create a set of substatements. This method is split out so it can be overridden in
-     * {@link ExtensionEffectiveStatementImpl} to leak a not-fully-initialized instance.
+     * {@link org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ExtensionEffectiveStatementImpl} to leak
+     * a not-fully-initialized instance.
      *
      * @param substatementsInit proposed substatements
      * @return Filtered substatements
      */
-    Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
             final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
         return Collections2.transform(Collections2.filter(substatementsInit,
             StmtContext::isSupportedToBuildEffective), StmtContext::buildEffective);
@@ -83,7 +84,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         return substatements;
     }
 
-    protected final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
+    public final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
         return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }
 
@@ -92,7 +93,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     @SuppressWarnings("unchecked")
-    protected final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
+    public final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
         return Collection.class.cast(Collections2.filter(substatements, type::isInstance));
     }
 

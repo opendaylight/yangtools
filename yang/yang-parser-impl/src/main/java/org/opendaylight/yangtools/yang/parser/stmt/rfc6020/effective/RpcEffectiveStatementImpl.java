@@ -21,6 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement>
