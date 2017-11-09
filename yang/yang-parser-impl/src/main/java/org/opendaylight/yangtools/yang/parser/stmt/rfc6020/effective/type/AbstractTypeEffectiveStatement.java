@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.util.type.TypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> extends
         DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
@@ -28,8 +28,8 @@ abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> exten
         super(ctx);
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
-            if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+            if (stmt instanceof UnknownSchemaNode) {
+                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
             }
         }
 

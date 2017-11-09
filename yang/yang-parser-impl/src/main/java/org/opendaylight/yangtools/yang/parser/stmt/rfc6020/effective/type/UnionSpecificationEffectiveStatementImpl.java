@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
@@ -16,7 +17,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.UnionTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class UnionSpecificationEffectiveStatementImpl extends
         DeclaredEffectiveStatementBase<String, UnionSpecification> implements
@@ -34,8 +34,8 @@ public final class UnionSpecificationEffectiveStatementImpl extends
             if (stmt instanceof TypeEffectiveStatement) {
                 builder.addType(((TypeEffectiveStatement<?>)stmt).getTypeDefinition());
             }
-            if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+            if (stmt instanceof UnknownSchemaNode) {
+                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
             }
         }
 

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -17,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.DecimalTypeBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 
 public final class Decimal64SpecificationEffectiveStatementImpl extends
         DeclaredEffectiveStatementBase<String, Decimal64Specification>
@@ -39,8 +39,8 @@ public final class Decimal64SpecificationEffectiveStatementImpl extends
                 final RangeEffectiveStatementImpl range = (RangeEffectiveStatementImpl) stmt;
                 builder.setRangeConstraint(range, range.argument());
             }
-            if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+            if (stmt instanceof UnknownSchemaNode) {
+                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
             }
         }
 
