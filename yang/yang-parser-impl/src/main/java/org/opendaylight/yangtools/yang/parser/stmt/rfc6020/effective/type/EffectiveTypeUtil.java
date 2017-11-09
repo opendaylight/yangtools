@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.EnumPairBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit.BitEffectiveStatementImpl;
 
 final class EffectiveTypeUtil {
     private EffectiveTypeUtil() {

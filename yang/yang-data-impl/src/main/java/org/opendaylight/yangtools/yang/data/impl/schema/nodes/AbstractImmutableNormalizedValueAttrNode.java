@@ -53,7 +53,7 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
     @Override
     protected boolean valueEquals(final AbstractImmutableNormalizedNode<?, ?> other) {
         // We can not call directly getValue.equals because of Empty Type
-        // Definition leaves which allways have NULL value
+        // RequireInstanceStatementSupport leaves which allways have NULL value
 
         if (!Objects.deepEquals(value(), other.getValue())) {
             return false;

@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef.TypedefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -54,7 +55,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.TypeDefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BinaryTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsTypeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BooleanTypeEffectiveStatementImpl;
@@ -170,8 +170,8 @@ public class TypeStatementImpl extends AbstractDeclaredStatement<String>
                                 ctx.getStatementSourceReference(), "Type '%s' not found", qname);
 
                     final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
-                    Verify.verify(effectiveTypedef instanceof TypeDefEffectiveStatementImpl);
-                    typeStmt = ((TypeDefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
+                    Verify.verify(effectiveTypedef instanceof TypedefEffectiveStatementImpl);
+                    typeStmt = ((TypedefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
             }
 
             if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
