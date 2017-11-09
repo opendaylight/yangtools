@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnitsEffectiveStatementImpl;
 
 public class Bug6972Test {
 
@@ -43,22 +42,22 @@ public class Bug6972Test {
         final QName barFooCont = QName.create("bar-ns", "bar-foo", revision);
         final QName barFooLeaf = QName.create("bar-ns", "foo", revision);
 
-        final UnitsEffectiveStatementImpl unitsBar1 = getEffectiveUnits(bar, barExportCont, barFooLeaf);
-        final UnitsEffectiveStatementImpl unitsBar2 = getEffectiveUnits(bar, barFooCont, barFooLeaf);
+        final UnitsEffectiveStatement unitsBar1 = getEffectiveUnits(bar, barExportCont, barFooLeaf);
+        final UnitsEffectiveStatement unitsBar2 = getEffectiveUnits(bar, barFooCont, barFooLeaf);
 
         final QName bazExportCont = QName.create("baz-ns", "baz-export", revision);
         final QName bazFooCont = QName.create("baz-ns", "baz-foo", revision);
         final QName bazFooLeaf = QName.create("baz-ns", "foo", revision);
 
-        final UnitsEffectiveStatementImpl unitsBaz1 = getEffectiveUnits(baz, bazExportCont, bazFooLeaf);
-        final UnitsEffectiveStatementImpl unitsBaz2 = getEffectiveUnits(baz, bazFooCont, bazFooLeaf);
+        final UnitsEffectiveStatement unitsBaz1 = getEffectiveUnits(baz, bazExportCont, bazFooLeaf);
+        final UnitsEffectiveStatement unitsBaz2 = getEffectiveUnits(baz, bazFooCont, bazFooLeaf);
 
         assertTrue(unitsBar1 == unitsBar2 && unitsBar1 == unitsBaz1 && unitsBar1 == unitsBaz2);
     }
 
-    private static UnitsEffectiveStatementImpl getEffectiveUnits(final Module module, final QName containerQName,
+    private static UnitsEffectiveStatement getEffectiveUnits(final Module module, final QName containerQName,
             final QName leafQName) {
-        UnitsEffectiveStatementImpl units = null;
+        UnitsEffectiveStatement units = null;
 
         final ContainerSchemaNode cont = (ContainerSchemaNode) module.getDataChildByName(containerQName);
         assertNotNull(cont);
@@ -67,7 +66,7 @@ public class Bug6972Test {
 
         for (EffectiveStatement<?, ?> effStmt : ((LeafEffectiveStatement) leaf).effectiveSubstatements()) {
             if (effStmt instanceof UnitsEffectiveStatement) {
-                units = (UnitsEffectiveStatementImpl) effStmt;
+                units = (UnitsEffectiveStatement) effStmt;
                 break;
             }
         }

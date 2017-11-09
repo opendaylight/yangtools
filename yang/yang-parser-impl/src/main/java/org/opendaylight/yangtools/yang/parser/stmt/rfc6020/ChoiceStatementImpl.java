@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementRFC6020Support;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -60,7 +61,7 @@ public class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
 
     public static class Definition extends
             AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
-        private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementImpl.Definition();
+        private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new Definition();
 
         public Definition() {
             super(YangStmtMapping.CHOICE);

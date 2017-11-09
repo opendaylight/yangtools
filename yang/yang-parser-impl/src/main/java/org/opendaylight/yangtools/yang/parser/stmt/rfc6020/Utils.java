@@ -13,7 +13,6 @@ import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FU
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -105,24 +104,11 @@ public final class Utils {
         return keyNodes;
     }
 
-    static Collection<SchemaNodeIdentifier.Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
-            final String argumentValue) {
-        final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
-        for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
-            final SchemaNodeIdentifier nodeIdentifier = nodeIdentifierFromPath(ctx, uniqueArgToken);
-            SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
-                    "Unique statement argument '%s' contains schema node identifier '%s' "
-                            + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
-            uniqueConstraintNodes.add((SchemaNodeIdentifier.Relative) nodeIdentifier);
-        }
-        return ImmutableSet.copyOf(uniqueConstraintNodes);
-    }
-
     private static String trimSingleLastSlashFromXPath(final String path) {
         return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
     }
 
-    static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
+    public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
         xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
                 ImmutableBiMap.of(RFC6020_YANG_NAMESPACE.toString(), YANG_XPATH_FUNCTIONS_PREFIX)));
@@ -279,7 +265,7 @@ public final class Utils {
             node);
     }
 
-    static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
+    public static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
         if ("true".equals(input)) {
             return Boolean.TRUE;
         } else if ("false".equals(input)) {
@@ -291,7 +277,7 @@ public final class Utils {
         }
     }
 
-    static String internBoolean(final String input) {
+    public static String internBoolean(final String input) {
         if ("true".equals(input)) {
             return "true";
         } else if ("false".equals(input)) {
