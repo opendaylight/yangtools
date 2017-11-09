@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -18,28 +18,27 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 /**
  * StatementSupport for statements defined via YANG extensions. This is implemented by piggy-backing
- * to a {@link UnknownStatementImpl.Definition}.
+ * to a {@link UnrecognizedStatementImpl.Definition}.
  *
  * @author Robert Varga
  */
 public final class ModelDefinedStatementSupport extends AbstractStatementSupport<String,
-        UnknownStatement<String>, EffectiveStatement<String, UnknownStatement<String>>> {
-    private final UnknownStatementImpl.Definition definition;
+        UnrecognizedStatement, EffectiveStatement<String, UnrecognizedStatement>> {
+    private final UnrecognizedStatementImpl.Definition definition;
 
     ModelDefinedStatementSupport(final ModelDefinedStatementDefinition publicDefinition) {
         super(publicDefinition);
-        this.definition = new UnknownStatementImpl.Definition(publicDefinition);
+        this.definition = new UnrecognizedStatementImpl.Definition(publicDefinition);
     }
 
     @Override
-    public UnknownStatement<String> createDeclared(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
+    public UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
         return definition.createDeclared(ctx);
     }
 
     @Override
-    public EffectiveStatement<String, UnknownStatement<String>> createEffective(
-            final StmtContext<String, UnknownStatement<String>,
-            EffectiveStatement<String, UnknownStatement<String>>> ctx) {
+    public EffectiveStatement<String, UnrecognizedStatement> createEffective(
+            final StmtContext<String, UnrecognizedStatement, EffectiveStatement<String, UnrecognizedStatement>> ctx) {
         return definition.createEffective(ctx);
     }
 

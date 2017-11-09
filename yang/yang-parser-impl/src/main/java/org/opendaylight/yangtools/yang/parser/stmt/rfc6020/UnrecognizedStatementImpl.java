@@ -12,23 +12,23 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnrecognizedEffectiveStatementImpl;
 
-public class UnknownStatementImpl extends AbstractDeclaredStatement<String> implements UnrecognizedStatement {
+public final class UnrecognizedStatementImpl extends AbstractDeclaredStatement<String>
+        implements UnrecognizedStatement {
 
-    protected UnknownStatementImpl(final StmtContext<String, ?, ?> context) {
+    protected UnrecognizedStatementImpl(final StmtContext<String, ?, ?> context) {
         super(context);
     }
 
-    public static class Definition extends AbstractStatementSupport<String, UnknownStatement<String>,
-            EffectiveStatement<String, UnknownStatement<String>>> {
+    public static class Definition extends AbstractStatementSupport<String, UnrecognizedStatement,
+            EffectiveStatement<String, UnrecognizedStatement>> {
 
         public Definition(final StatementDefinition publicDefinition) {
             super(publicDefinition);
@@ -40,15 +40,15 @@ public class UnknownStatementImpl extends AbstractDeclaredStatement<String> impl
         }
 
         @Override
-        public UnknownStatement<String> createDeclared(final StmtContext<String, UnknownStatement<String>, ?> ctx) {
-            return new UnknownStatementImpl(ctx);
+        public UnrecognizedStatement createDeclared(final StmtContext<String, UnrecognizedStatement, ?> ctx) {
+            return new UnrecognizedStatementImpl(ctx);
         }
 
         @Override
-        public EffectiveStatement<String, UnknownStatement<String>> createEffective(
-                final StmtContext<String, UnknownStatement<String>,
-                EffectiveStatement<String, UnknownStatement<String>>> ctx) {
-            return new UnknownEffectiveStatementImpl(ctx);
+        public EffectiveStatement<String, UnrecognizedStatement> createEffective(
+                final StmtContext<String, UnrecognizedStatement,
+                EffectiveStatement<String, UnrecognizedStatement>> ctx) {
+            return new UnrecognizedEffectiveStatementImpl(ctx);
         }
 
         @Override
