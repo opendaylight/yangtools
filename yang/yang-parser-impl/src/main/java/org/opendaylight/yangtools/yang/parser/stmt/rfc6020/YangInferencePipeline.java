@@ -20,6 +20,96 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata.AnydataStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument.ArgumentStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment.AugmentStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to.BelongsToStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit.BitStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit.BitStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_.CaseStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice.ChoiceStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice.ChoiceStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config.ConfigStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.contact.ContactStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_.DefaultStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description.DescriptionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate.DeviateStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation.DeviationStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_.EnumStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_app_tag.ErrorAppTagStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message.ErrorMessageStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature.FeatureStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.fraction_digits.FractionDigitsStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping.GroupingStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping.GroupingStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity.IdentityStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature.IfFeatureStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_.ImportStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include.IncludeStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include.IncludeStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key.KeyStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf.LeafStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length.LengthStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory.MandatoryStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.max_elements.MaxElementsStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements.MinElementsStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier.ModifierStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module.ModuleStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must.MustStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace.NamespaceStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification.NotificationStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by.OrderedByStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization.OrganizationStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path.PathStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern.PatternStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.position.PositionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix.PrefixStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence.PresenceStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range.RangeStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference.ReferenceStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine.RefineStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.require_instance.RequireInstanceStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision.RevisionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision_date.RevisionDateStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc.RpcStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc.RpcStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status.StatusStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC6020Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.TypeStatementRFC7950Support;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef.TypedefStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique.UniqueStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units.UnitsStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses.UsesStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.value.ValueStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when.WhenStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version.YangVersionStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element.YinElementStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -63,31 +153,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLoca
 import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ActionStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AnydataStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.AugmentStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.BitStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.CaseStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ChoiceStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ContainerStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.DeviateStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.EnumStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.GroupingStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IdentityStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ImportStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.IncludeStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.InputStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.LeafListStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ListStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModifierStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.ModuleStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.NotificationStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.OutputStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.PatternStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RefineStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.RpcStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.SubmoduleStatementRfc7950Support;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc7950.TypeStatementRfc7950Support;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
 public final class YangInferencePipeline {
@@ -101,20 +166,20 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(INIT_BUNDLE)
-            .addVersionSpecificSupport(VERSION_1, new ModuleStatementSupport())
-            .addVersionSpecificSupport(VERSION_1_1, new ModuleStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new SubmoduleStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new SubmoduleStatementRfc7950Support())
-            .addSupport(new NamespaceStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new ImportStatementDefinition())
-            .addVersionSpecificSupport(VERSION_1_1, new ImportStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new IncludeStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new IncludeStatementRfc7950Support())
-            .addSupport(new BelongsToStatementImpl.Definition())
-            .addSupport(new PrefixStatementImpl.Definition())
-            .addSupport(new YangVersionStatementImpl.Definition())
-            .addSupport(new RevisionStatementImpl.Definition())
-            .addSupport(new RevisionDateStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new ModuleStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ModuleStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new SubmoduleStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new SubmoduleStatementRFC7950Support())
+            .addSupport(new NamespaceStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new ImportStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ImportStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new IncludeStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new IncludeStatementRFC7950Support())
+            .addSupport(new BelongsToStatementSupport())
+            .addSupport(new PrefixStatementSupport())
+            .addSupport(new YangVersionStatementSupport())
+            .addSupport(new RevisionStatementSupport())
+            .addSupport(new RevisionDateStatementSupport())
             .addSupport(global(ModuleNameToNamespace.class))
             .addSupport(global(PreLinkageModuleNamespace.class))
             .addSupport(sourceLocal(ImpPrefixToNamespace.class))
@@ -123,10 +188,10 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
             .derivedFrom(PRE_LINKAGE_BUNDLE)
-            .addSupport(new DescriptionStatementImpl.Definition())
-            .addSupport(new ReferenceStatementImpl.Definition())
-            .addSupport(new ContactStatementImpl.Definition())
-            .addSupport(new OrganizationStatementImpl.Definition())
+            .addSupport(new DescriptionStatementSupport())
+            .addSupport(new ReferenceStatementSupport())
+            .addSupport(new ContactStatementSupport())
+            .addSupport(new OrganizationStatementSupport())
             .addSupport(global(ModuleNamespace.class))
             .addSupport(global(ModuleNamespaceForBelongsTo.class))
             .addSupport(global(SubmoduleNamespace.class))
@@ -153,91 +218,91 @@ public final class YangInferencePipeline {
 
     public static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
             .derivedFrom(LINKAGE_BUNDLE)
-            .addSupport(new YinElementStatementImpl.Definition())
-            .addSupport(new ArgumentStatementImpl.Definition())
-            .addSupport(new ExtensionStatementImpl.Definition())
+            .addSupport(new YinElementStatementSupport())
+            .addSupport(new ArgumentStatementSupport())
+            .addSupport(new ExtensionStatementSupport())
             .addSupport(new ChildSchemaNodes<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
             .addSupport(global(ExtensionNamespace.class))
-            .addSupport(new TypedefStatementImpl.Definition())
+            .addSupport(new TypedefStatementSupport())
             .addSupport(treeScoped(TypeNamespace.class))
-            .addVersionSpecificSupport(VERSION_1, new IdentityStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new IdentityStatementRfc7950Support())
+            .addVersionSpecificSupport(VERSION_1, new IdentityStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new IdentityStatementRFC7950Support())
             .addSupport(global(IdentityNamespace.class))
-            .addSupport(new DefaultStatementImpl.Definition())
-            .addSupport(new StatusStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new TypeStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new TypeStatementRfc7950Support())
-            .addSupport(new UnitsStatementImpl.Definition())
-            .addSupport(new RequireInstanceStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new BitStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new BitStatementRfc7950Support())
-            .addSupport(new PathStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new EnumStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new EnumStatementRfc7950Support())
-            .addSupport(new LengthStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new PatternStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new PatternStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1_1, new ModifierStatementImpl.Definition())
-            .addSupport(new RangeStatementImpl.Definition())
-            .addSupport(new KeyStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new ContainerStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new ContainerStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new GroupingStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new GroupingStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new ListStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new ListStatementRfc7950Support())
-            .addSupport(new UniqueStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new ActionStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new RpcStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new RpcStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new InputStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new InputStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new OutputStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new OutputStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new NotificationStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRfc7950Support())
-            .addSupport(new FractionDigitsStatementImpl.Definition())
-            .addSupport(new BaseStatementImpl.Definition())
+            .addSupport(new DefaultStatementSupport())
+            .addSupport(new StatusStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new TypeStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new TypeStatementRFC7950Support())
+            .addSupport(new UnitsStatementSupport())
+            .addSupport(new RequireInstanceStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new BitStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new BitStatementRFC7950Support())
+            .addSupport(new PathStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new EnumStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new EnumStatementRFC7950Support())
+            .addSupport(new LengthStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new PatternStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new PatternStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ModifierStatementSupport())
+            .addSupport(new RangeStatementSupport())
+            .addSupport(new KeyStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new ContainerStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ContainerStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new GroupingStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new GroupingStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new ListStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ListStatementRFC7950Support())
+            .addSupport(new UniqueStatementSupport())
+            .addVersionSpecificSupport(VERSION_1_1, new ActionStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new RpcStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new RpcStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new InputStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new InputStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new OutputStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new OutputStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new NotificationStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRFC7950Support())
+            .addSupport(new FractionDigitsStatementSupport())
+            .addSupport(new BaseStatementSupport())
             .addSupport(global(DerivedIdentitiesNamespace.class))
             .addSupport(global(StatementDefinitionNamespace.class))
             .build();
 
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
-            .addSupport(new LeafStatementImpl.Definition())
-            .addSupport(new ConfigStatementImpl.Definition())
-            .addSupport(new DeviationStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new DeviateStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new ChoiceStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new ChoiceStatementRfc7950Support())
-            .addVersionSpecificSupport(VERSION_1, new CaseStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new CaseStatementRfc7950Support())
-            .addSupport(new MustStatementImpl.Definition())
-            .addSupport(new MandatoryStatementImpl.Definition())
-            .addSupport(new AnyxmlStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementImpl.Definition())
-            .addSupport(new IfFeatureStatementImpl.Definition())
-            .addSupport(new UsesStatementImpl.Definition())
+            .addSupport(new LeafStatementSupport())
+            .addSupport(new ConfigStatementSupport())
+            .addSupport(new DeviationStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new DeviateStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new ChoiceStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new ChoiceStatementRFC7950Support())
+            .addVersionSpecificSupport(VERSION_1, new CaseStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new CaseStatementRFC7950Support())
+            .addSupport(new MustStatementSupport())
+            .addSupport(new MandatoryStatementSupport())
+            .addSupport(new AnyxmlStatementSupport())
+            .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport())
+            .addSupport(new IfFeatureStatementSupport())
+            .addSupport(new UsesStatementSupport())
             .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
-            .addSupport(new ErrorMessageStatementImpl.Definition())
-            .addSupport(new ErrorAppTagStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new LeafListStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new LeafListStatementRfc7950Support())
-            .addSupport(new PresenceStatementImpl.Definition())
-            .addSupport(new MaxElementsStatementImpl.Definition())
-            .addSupport(new MinElementsStatementImpl.Definition())
-            .addSupport(new OrderedByStatementImpl.Definition())
-            .addSupport(new WhenStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1, new AugmentStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRfc7950Support())
+            .addSupport(new ErrorMessageStatementSupport())
+            .addSupport(new ErrorAppTagStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new LeafListStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new LeafListStatementRFC7950Support())
+            .addSupport(new PresenceStatementSupport())
+            .addSupport(new MaxElementsStatementSupport())
+            .addSupport(new MinElementsStatementSupport())
+            .addSupport(new OrderedByStatementSupport())
+            .addSupport(new WhenStatementSupport())
+            .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support())
             .addSupport(treeScoped(AugmentToChoiceNamespace.class))
-            .addVersionSpecificSupport(VERSION_1, new RefineStatementImpl.Definition())
-            .addVersionSpecificSupport(VERSION_1_1, new RefineStatementRfc7950Support())
-            .addSupport(new FeatureStatementImpl.Definition())
-            .addSupport(new PositionStatementImpl.Definition())
-            .addSupport(new ValueStatementImpl.Definition())
+            .addVersionSpecificSupport(VERSION_1, new RefineStatementRFC6020Support())
+            .addVersionSpecificSupport(VERSION_1_1, new RefineStatementRFC7950Support())
+            .addSupport(new FeatureStatementSupport())
+            .addSupport(new PositionStatementSupport())
+            .addSupport(new ValueStatementSupport())
             .addSupport(AnyxmlSchemaLocationSupport.getInstance())
             .addSupport(treeScoped(AnyxmlSchemaLocationNamespace.class))
             .addSupport(YangDataStatementSupport.getInstance())
