@@ -5,16 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc6020.stmt.base;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class ConfigEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, ConfigStatement>
-        implements ConfigEffectiveStatement {
-    public ConfigEffectiveStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> ctx) {
+final class BaseEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, BaseStatement>
+        implements BaseEffectiveStatement {
+    BaseEffectiveStatementImpl(final StmtContext<QName, BaseStatement, ?> ctx) {
         super(ctx);
     }
 }

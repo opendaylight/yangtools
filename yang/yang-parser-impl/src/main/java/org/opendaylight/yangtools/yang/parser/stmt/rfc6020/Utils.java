@@ -279,7 +279,7 @@ public final class Utils {
             node);
     }
 
-    static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
+    public static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
         if ("true".equals(input)) {
             return Boolean.TRUE;
         } else if ("false".equals(input)) {
@@ -291,7 +291,7 @@ public final class Utils {
         }
     }
 
-    static String internBoolean(final String input) {
+    public static String internBoolean(final String input) {
         if ("true".equals(input)) {
             return "true";
         } else if ("false".equals(input)) {

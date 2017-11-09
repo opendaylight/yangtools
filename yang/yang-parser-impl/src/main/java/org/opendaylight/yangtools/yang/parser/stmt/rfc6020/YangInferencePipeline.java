@@ -20,6 +20,10 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.argument.ArgumentStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.base.BaseStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.belongsto.BelongsToStatementSupport;
+import org.opendaylight.yangtools.yang.parser.rfc6020.stmt.config.ConfigStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
@@ -110,7 +114,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1_1, new ImportStatementRfc7950Support())
             .addVersionSpecificSupport(VERSION_1, new IncludeStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new IncludeStatementRfc7950Support())
-            .addSupport(new BelongsToStatementImpl.Definition())
+            .addSupport(new BelongsToStatementSupport())
             .addSupport(new PrefixStatementImpl.Definition())
             .addSupport(new YangVersionStatementImpl.Definition())
             .addSupport(new RevisionStatementImpl.Definition())
@@ -154,7 +158,7 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
             .derivedFrom(LINKAGE_BUNDLE)
             .addSupport(new YinElementStatementImpl.Definition())
-            .addSupport(new ArgumentStatementImpl.Definition())
+            .addSupport(new ArgumentStatementSupport())
             .addSupport(new ExtensionStatementImpl.Definition())
             .addSupport(new ChildSchemaNodes<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
@@ -198,7 +202,7 @@ public final class YangInferencePipeline {
             .addVersionSpecificSupport(VERSION_1, new NotificationStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRfc7950Support())
             .addSupport(new FractionDigitsStatementImpl.Definition())
-            .addSupport(new BaseStatementImpl.Definition())
+            .addSupport(new BaseStatementSupport())
             .addSupport(global(DerivedIdentitiesNamespace.class))
             .addSupport(global(StatementDefinitionNamespace.class))
             .build();
@@ -206,7 +210,7 @@ public final class YangInferencePipeline {
     public static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
             .derivedFrom(STMT_DEF_BUNDLE)
             .addSupport(new LeafStatementImpl.Definition())
-            .addSupport(new ConfigStatementImpl.Definition())
+            .addSupport(new ConfigStatementSupport())
             .addSupport(new DeviationStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1, new DeviateStatementImpl.Definition())
             .addVersionSpecificSupport(VERSION_1_1, new DeviateStatementRfc7950Support())
