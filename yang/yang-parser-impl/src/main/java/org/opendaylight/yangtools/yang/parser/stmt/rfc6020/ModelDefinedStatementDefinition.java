@@ -17,7 +17,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 
 /**
  * Public definition for statements declared by extensions. This class is instantiated for every extension that is seen
@@ -50,13 +51,13 @@ public final class ModelDefinedStatementDefinition implements StatementDefinitio
     @Nonnull
     @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return UnknownStatementImpl.class;
+        return UnrecognizedStatement.class;
     }
 
     @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        return UnknownEffectiveStatementImpl.class;
+        return UnrecognizedEffectiveStatement.class;
     }
 
     @Override
