@@ -273,7 +273,7 @@ public final class TypeUtils {
                 && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
     }
 
-    static String findBuiltinString(final String rawArgument) {
+    public static String findBuiltinString(final String rawArgument) {
         return BUILT_IN_TYPES.get(rawArgument);
     }
 

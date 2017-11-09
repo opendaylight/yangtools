@@ -41,11 +41,11 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.BitsSpecificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.Decimal64SpecificationEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.EnumSpecificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.LeafEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.BitsSpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.Decimal64SpecificationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.EnumSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.IdentityRefSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.LeafrefSpecificationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type.PatternConstraintEffectiveImpl;
@@ -96,7 +96,7 @@ public class EffectiveStatementTypeTest {
         final Bit bitEff = bitsEffIter.get(0);
         final Bit bitEffSecond = bitsEffIter.get(1);
 
-        final BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatementImpl)
+        final BitsTypeDefinition bitsEff = ((BitsSpecificationEffectiveStatement)
                 ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next())
                 .getTypeDefinition();
 
@@ -156,7 +156,7 @@ public class EffectiveStatementTypeTest {
     public void testDecimal64() {
         currentLeaf = (LeafSchemaNode) types.getDataChildByName(QName.create(types.getQNameModule(), "leaf-decimal64"));
         assertNotNull(currentLeaf.getType());
-        final DecimalTypeDefinition decimal64Eff = ((Decimal64SpecificationEffectiveStatementImpl)
+        final DecimalTypeDefinition decimal64Eff = ((Decimal64SpecificationEffectiveStatement)
                 ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next())
                 .getTypeDefinition();
 
@@ -210,7 +210,7 @@ public class EffectiveStatementTypeTest {
         final List<EnumTypeDefinition.EnumPair> enumEffIter = ((EnumTypeDefinition) currentLeaf.getType()).getValues();
         final EnumPair enumEff = enumEffIter.iterator().next();
 
-        final EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatementImpl)
+        final EnumTypeDefinition enumSpecEff = ((EnumSpecificationEffectiveStatement)
                 ((LeafEffectiveStatementImpl) currentLeaf).effectiveSubstatements().iterator().next())
                 .getTypeDefinition();
 
