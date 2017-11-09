@@ -29,13 +29,17 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.Status;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AugmentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
@@ -50,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
@@ -59,18 +64,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AugmentEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ModuleEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.SubmoduleEffectiveStatementImpl;
 
 public class DeclaredStatementsTest {
 
@@ -88,7 +88,7 @@ public class DeclaredStatementsTest {
         final AnyXmlSchemaNode anyxmlSchemaNode = (AnyXmlSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "foobar"));
         assertNotNull(anyxmlSchemaNode);
-        final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatementImpl) anyxmlSchemaNode).getDeclared();
+        final AnyxmlStatement anyxmlStatement = ((AnyxmlEffectiveStatement) anyxmlSchemaNode).getDeclared();
 
         final QName name = anyxmlStatement.getName();
         assertNotNull(name);
@@ -158,7 +158,7 @@ public class DeclaredStatementsTest {
         final ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "test-choice"));
         assertNotNull(choiceSchemaNode);
-        final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatementImpl) choiceSchemaNode).getDeclared();
+        final ChoiceStatement choiceStatement = ((ChoiceEffectiveStatement) choiceSchemaNode).getDeclared();
 
         final QName name = choiceStatement.getName();
         assertNotNull(name);
@@ -228,7 +228,7 @@ public class DeclaredStatementsTest {
         assertEquals(1, augmentationSchemas.size());
 
         final AugmentationSchemaNode augmentationSchema = augmentationSchemas.iterator().next();
-        final AugmentStatement augmentStatement = ((AugmentEffectiveStatementImpl) augmentationSchema).getDeclared();
+        final AugmentStatement augmentStatement = ((AugmentEffectiveStatement) augmentationSchema).getDeclared();
 
         final SchemaNodeIdentifier targetNode = augmentStatement.getTargetNode();
         assertNotNull(targetNode);
@@ -253,7 +253,7 @@ public class DeclaredStatementsTest {
         final Module testModule = schemaContext.findModules("parent-module-declared-test").iterator().next();
         assertNotNull(testModule);
 
-        final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
+        final ModuleStatement moduleStatement = ((ModuleEffectiveStatement) testModule).getDeclared();
 
         final String moduleStatementName = moduleStatement.getName();
         assertNotNull(moduleStatementName);
@@ -279,7 +279,7 @@ public class DeclaredStatementsTest {
         assertEquals(1, submodules.size());
 
         final Module submodule = submodules.iterator().next();
-        final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatementImpl) submodule).getDeclared();
+        final SubmoduleStatement submoduleStatement = ((SubmoduleEffectiveStatement) submodule).getDeclared();
 
         final String submoduleStatementName = submoduleStatement.getName();
         assertNotNull(submoduleStatementName);
@@ -308,7 +308,7 @@ public class DeclaredStatementsTest {
         final Module testModule = schemaContext.findModule("root-module-declared-test", revision).get();
         assertNotNull(testModule);
 
-        final ModuleStatement moduleStatement = ((ModuleEffectiveStatementImpl) testModule).getDeclared();
+        final ModuleStatement moduleStatement = ((ModuleEffectiveStatement) testModule).getDeclared();
 
         assertEquals(1, moduleStatement.getImports().size());
         final ImportStatement importStatement = moduleStatement.getImports().iterator().next();
@@ -383,7 +383,7 @@ public class DeclaredStatementsTest {
                 QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(containerSchemaNode);
         final ContainerStatement containerStatement =
-                ((ContainerEffectiveStatementImpl) containerSchemaNode).getDeclared();
+                ((ContainerEffectiveStatement) containerSchemaNode).getDeclared();
 
         final QName name = containerStatement.getName();
         assertNotNull(name);
