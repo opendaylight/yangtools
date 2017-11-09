@@ -12,8 +12,8 @@ import com.google.common.base.MoreObjects;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 /**
  * YANG 1.1 Modifier effective statement implementation.

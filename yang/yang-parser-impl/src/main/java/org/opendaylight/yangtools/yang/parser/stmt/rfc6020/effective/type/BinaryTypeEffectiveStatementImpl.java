@@ -17,10 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidLengthConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.LengthRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {

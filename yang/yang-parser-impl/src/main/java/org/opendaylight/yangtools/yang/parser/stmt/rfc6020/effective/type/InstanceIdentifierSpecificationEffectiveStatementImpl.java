@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefi
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public final class InstanceIdentifierSpecificationEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<String, InstanceIdentifierSpecification>

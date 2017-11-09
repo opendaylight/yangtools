@@ -26,10 +26,10 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.InvalidRangeConstraintException;
 import org.opendaylight.yangtools.yang.model.util.type.RangeRestrictedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public final class IntegralTypeEffectiveStatementImpl<T extends RangeRestrictedTypeDefinition<T, N>,
         N extends Number & Comparable<N>> extends DeclaredEffectiveStatementBase<String, TypeStatement>

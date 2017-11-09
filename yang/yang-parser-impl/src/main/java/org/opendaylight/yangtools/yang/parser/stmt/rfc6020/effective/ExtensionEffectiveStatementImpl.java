@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
@@ -127,7 +128,7 @@ public class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumented
     }
 
     @Override
-    Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
             final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
         // WARNING: this leaks an incompletely-initialized object
         RecursiveObjectLeaker.inConstructor(this);

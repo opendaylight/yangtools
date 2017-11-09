@@ -56,6 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveDocumentedNode;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.EffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
