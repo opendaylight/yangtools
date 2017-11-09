@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -61,9 +62,9 @@ public final class TypeDefEffectiveStatementImpl extends AbstractEffectiveSchema
                 builder.setStatus(((StatusEffectiveStatement)stmt).argument());
             } else if (stmt instanceof UnitsEffectiveStatement) {
                 builder.setUnits(((UnitsEffectiveStatement)stmt).argument());
-            } else if (stmt instanceof UnknownEffectiveStatementImpl) {
+            } else if (stmt instanceof UnknownSchemaNode) {
                 // FIXME: should not directly implement, I think
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
             } else {
                 if (!(stmt instanceof TypeEffectiveStatement)) {
                     LOG.debug("Ignoring statement {}", stmt);
