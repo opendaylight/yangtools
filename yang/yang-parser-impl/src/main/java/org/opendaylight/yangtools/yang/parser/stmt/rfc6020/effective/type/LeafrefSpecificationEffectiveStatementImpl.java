@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpeci
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public final class LeafrefSpecificationEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<String, LeafrefSpecification>

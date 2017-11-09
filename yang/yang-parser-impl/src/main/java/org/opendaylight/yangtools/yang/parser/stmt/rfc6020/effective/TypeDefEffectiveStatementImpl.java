@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;

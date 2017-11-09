@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class PrefixEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, PrefixStatement>

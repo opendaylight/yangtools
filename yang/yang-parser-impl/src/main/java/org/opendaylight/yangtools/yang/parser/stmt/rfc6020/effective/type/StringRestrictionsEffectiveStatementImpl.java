@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.StringRestrictions;
+import org.opendaylight.yangtools.yang.parser.rfc6020.util.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
 
 public class StringRestrictionsEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<String, StringRestrictions> {
