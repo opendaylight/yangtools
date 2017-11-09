@@ -90,15 +90,20 @@ public final class TypeUtils {
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
+    // these objects are to compare whether range has MAX or MIN value
+    // none of these values should appear as Yang number according to spec so they are safe to use
+    private static final BigDecimal YANG_MIN_NUM = BigDecimal.valueOf(-Double.MAX_VALUE);
+    private static final BigDecimal YANG_MAX_NUM = BigDecimal.valueOf(Double.MAX_VALUE);
+
     private TypeUtils() {
     }
 
     private static BigDecimal yangConstraintToBigDecimal(final Number number) {
         if (UnresolvedNumber.max().equals(number)) {
-            return RangeStatementImpl.YANG_MAX_NUM;
+            return YANG_MAX_NUM;
         }
         if (UnresolvedNumber.min().equals(number)) {
-            return RangeStatementImpl.YANG_MIN_NUM;
+            return YANG_MIN_NUM;
         }
 
         return new BigDecimal(number.toString());
@@ -207,6 +212,8 @@ public final class TypeUtils {
         return ranges;
     }
 
+    // Not used anywhere
+    @Deprecated
     public static boolean isYangTypeBodyStmtString(final String typeName) {
         return TYPE_BODY_STMTS.contains(typeName);
     }
@@ -273,7 +280,7 @@ public final class TypeUtils {
                 && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
     }
 
-    static String findBuiltinString(final String rawArgument) {
+    public static String findBuiltinString(final String rawArgument) {
         return BUILT_IN_TYPES.get(rawArgument);
     }
 
