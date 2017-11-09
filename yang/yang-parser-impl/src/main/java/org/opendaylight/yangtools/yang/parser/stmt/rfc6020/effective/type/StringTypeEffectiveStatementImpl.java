@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.type;
 
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -22,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.DeclaredEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.UnknownEffectiveStatementImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,8 +61,8 @@ public final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveSta
                     LOG.debug("Ignoring empty pattern statement {}", stmt);
                 }
             }
-            if (stmt instanceof UnknownEffectiveStatementImpl) {
-                builder.addUnknownSchemaNode((UnknownEffectiveStatementImpl)stmt);
+            if (stmt instanceof UnknownSchemaNode) {
+                builder.addUnknownSchemaNode((UnknownSchemaNode)stmt);
             }
         }
 
