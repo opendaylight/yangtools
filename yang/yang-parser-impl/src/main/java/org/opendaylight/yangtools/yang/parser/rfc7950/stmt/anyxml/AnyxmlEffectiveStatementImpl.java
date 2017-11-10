@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -19,8 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
+// FIXME: hide this class
 public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
         implements AnyxmlEffectiveStatement, AnyXmlSchemaNode, DerivableSchemaNode {
 
@@ -28,7 +30,7 @@ public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     private final AnyXmlSchemaNode original;
     private final boolean mandatory;
 
-    public AnyxmlEffectiveStatementImpl(
+    AnyxmlEffectiveStatementImpl(
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
         this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);

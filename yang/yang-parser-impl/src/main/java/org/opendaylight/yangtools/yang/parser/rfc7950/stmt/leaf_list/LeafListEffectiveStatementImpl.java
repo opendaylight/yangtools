@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -30,11 +30,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
+// FIXME: hide this class
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode {
 
@@ -47,7 +49,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final Collection<MustDefinition> mustConstraints;
     private final ElementCountConstraint elementCountConstraint;
 
-    public LeafListEffectiveStatementImpl(
+    LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
         super(ctx);
         this.original = (LeafListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);

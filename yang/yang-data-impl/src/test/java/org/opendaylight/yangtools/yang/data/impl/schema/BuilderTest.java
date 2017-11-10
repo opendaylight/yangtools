@@ -64,7 +64,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ContainerEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderTest {
@@ -99,8 +98,8 @@ public class BuilderTest {
         final SchemaContext schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
         final Module module = schema.getModules().iterator().next();
         final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
-        list = (ListSchemaNode)((ContainerEffectiveStatementImpl) root).getDataChildByName(LIST_MAIN);
-        leafList = (LeafListSchemaNode)((ContainerEffectiveStatementImpl) root).getDataChildByName(LEAF_LIST_MAIN);
+        list = (ListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LIST_MAIN);
+        leafList = (LeafListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LEAF_LIST_MAIN);
     }
 
     @Test

@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSortedMap;
@@ -26,13 +26,19 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf.LeafEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
-public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement> implements
-        ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
+final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement>
+        implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
 
     private final Set<AugmentationSchemaNode> augmentations;
     private final SortedMap<QName, ChoiceCaseNode> cases;
@@ -40,7 +46,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private final ChoiceSchemaNode original;
     private final boolean mandatory;
 
-    public ChoiceEffectiveStatementImpl(
+    ChoiceEffectiveStatementImpl(
             final StmtContext<QName, ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> ctx) {
         super(ctx);
         this.original = (ChoiceSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
@@ -61,7 +67,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
             }
             if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                final ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
+                final ChoiceCaseNode shorthandCase = new ImplicitChoiceCaseNode(dataSchemaNode);
                 // FIXME: we may be overwriting a previous entry, is that really okay?
                 casesInit.put(shorthandCase.getQName(), shorthandCase);
                 if (dataSchemaNode.isAugmenting() && !isAugmenting()) {
