@@ -12,7 +12,7 @@ import java.util.IdentityHashMap;
 import java.util.Map;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
  * Lazily-populated CodecCache. This is a non-thread-safe factory, which performs caching of codecs. It is most
@@ -23,16 +23,16 @@ import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
 @Beta
 @NotThreadSafe
 public final class LazyCodecCache<T> extends CodecCache<T> {
-    private final Map<TypedSchemaNode, T> complexCodecs = new IdentityHashMap<>();
+    private final Map<TypedDataSchemaNode, T> complexCodecs = new IdentityHashMap<>();
     private final Map<TypeDefinition<?>, T> simpleCodecs = new IdentityHashMap<>();
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedDataSchemaNode schema, final T codec) {
         return complexCodecs.computeIfAbsent(schema, any -> codec);
     }
 
     @Override
-    T lookupComplex(final TypedSchemaNode schema) {
+    T lookupComplex(final TypedDataSchemaNode schema) {
         return complexCodecs.get(schema);
     }
 

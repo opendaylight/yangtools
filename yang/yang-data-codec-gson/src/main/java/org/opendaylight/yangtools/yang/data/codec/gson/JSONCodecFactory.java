@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -83,8 +83,8 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
         private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
             int ret = 0;
             for (DataSchemaNode child : parent.getChildNodes()) {
-                if (child instanceof TypedSchemaNode) {
-                    lazy.codecFor((TypedSchemaNode) child);
+                if (child instanceof TypedDataSchemaNode) {
+                    lazy.codecFor((TypedDataSchemaNode) child);
                     ++ret;
                 } else if (child instanceof DataNodeContainer) {
                     ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
