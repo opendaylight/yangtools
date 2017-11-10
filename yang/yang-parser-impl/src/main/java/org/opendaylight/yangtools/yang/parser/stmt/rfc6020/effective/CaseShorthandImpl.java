@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -135,6 +136,11 @@ public final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaN
     @Override
     public Optional<? extends SchemaNode> getOriginal() {
         return Optional.ofNullable(original);
+    }
+
+    @Override
+    public Optional<RevisionAwareXPath> getWhenCondition() {
+        return caseShorthandNode.getWhenCondition();
     }
 
     @Override

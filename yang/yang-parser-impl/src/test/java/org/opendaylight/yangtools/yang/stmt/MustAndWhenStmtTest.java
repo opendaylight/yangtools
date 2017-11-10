@@ -78,7 +78,6 @@ public class MustAndWhenStmtTest {
         final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(
             QName.create(testModule.getQNameModule(), "test-container"));
         assertNotNull(container);
-        assertEquals("conditional-leaf = 'autumn-leaf'", container.getConstraints().getWhenCondition()
-            .get().toString());
+        assertEquals("conditional-leaf = 'autumn-leaf'", container.getWhenCondition().get().toString());
     }
 }
