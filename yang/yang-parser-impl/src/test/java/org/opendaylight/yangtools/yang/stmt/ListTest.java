@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -50,8 +51,9 @@ public class ListTest {
         assertEquals("key1", keys.get(0).getLocalName());
         assertEquals("key2", keys.get(1).getLocalName());
 
-        assertEquals(1, list.getConstraints().getMinElements().intValue());
-        assertEquals(10, list.getConstraints().getMaxElements().intValue());
+        ElementCountConstraint constraint = list.getElementCountConstraint().get();
+        assertEquals(1, constraint.getMinElements().intValue());
+        assertEquals(10, constraint.getMaxElements().intValue());
 
         assertEquals(5, list.getChildNodes().size());
 
@@ -81,8 +83,10 @@ public class ListTest {
             QName.create(testModule.getQNameModule(), "list-of-leaves"));
         assertNotNull(leafList);
         assertTrue(leafList.isUserOrdered());
-        assertEquals(2, leafList.getConstraints().getMinElements().intValue());
-        assertEquals(20, leafList.getConstraints().getMaxElements().intValue());
+
+        constraint = leafList.getElementCountConstraint().get();
+        assertEquals(2, constraint.getMinElements().intValue());
+        assertEquals(20, constraint.getMaxElements().intValue());
         assertEquals("string", leafList.getType().getQName().getLocalName());
     }
 }

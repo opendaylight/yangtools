@@ -134,10 +134,10 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.MandatoryAware#isMandatory()}
  *
  * <dt>max-elements
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getMinElements()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ElementCountConstraint#getMinElements()}
  *
  * <dt>min-elements
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getMaxElements()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ElementCountConstraint#getMaxElements()}
  *
  * <dt>module
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Module}
