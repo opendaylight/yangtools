@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -19,6 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSchemaNode<D> implements DataSchemaNode {
 
+    private final RevisionAwareXPath whenCondition;
     private final boolean addedByUses;
     private final boolean configuration;
     private final ConstraintDefinition constraints;
@@ -31,10 +35,14 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
         this.configuration = ctx.isConfiguration();
 
+        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
+        whenCondition = whenStmt != null ? whenStmt.argument() : null;
+
         // initCopyType
         final CopyHistory originalHistory = ctx.getCopyHistory();
         if (originalHistory.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByUses = this.augmenting = true;
+            this.augmenting = true;
+            this.addedByUses = true;
         } else {
             this.augmenting = originalHistory.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = originalHistory.contains(CopyType.ADDED_BY_USES);
@@ -42,23 +50,28 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     }
 
     @Override
-    public boolean isAugmenting() {
+    public final boolean isAugmenting() {
         return augmenting;
     }
 
     @Override
-    public boolean isAddedByUses() {
+    public final boolean isAddedByUses() {
         return addedByUses;
     }
 
     @Override
-    public boolean isConfiguration() {
+    public final boolean isConfiguration() {
         return configuration;
     }
 
     @Override
-    public ConstraintDefinition getConstraints() {
+    public final ConstraintDefinition getConstraints() {
         return constraints;
+    }
+
+    @Override
+    public final Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.ofNullable(whenCondition);
     }
 
     /**
@@ -68,7 +81,7 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
      *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
      */
     @Deprecated
-    protected void resetAugmenting() {
+    protected final void resetAugmenting() {
         augmenting = false;
     }
 }

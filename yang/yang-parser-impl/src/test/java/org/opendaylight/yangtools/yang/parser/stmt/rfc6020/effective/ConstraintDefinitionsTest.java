@@ -70,10 +70,6 @@ public class ConstraintDefinitionsTest {
         final LeafSchemaNode mandatoryLeaf4 = (LeafSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-4"));
         assertNotNull(mandatoryLeaf4);
-        ConstraintDefinition constraints4 = mandatoryLeaf4.getConstraints();
-
-        assertNotEquals(ConstraintDefinitions.hashCode(constraints3), ConstraintDefinitions.hashCode(constraints4));
-        assertFalse(ConstraintDefinitions.equals(constraints3, constraints4));
 
         final LeafSchemaNode mandatoryLeaf5 = (LeafSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "mandatory-leaf-5"));
@@ -103,13 +99,12 @@ public class ConstraintDefinitionsTest {
         final LeafListSchemaNode constrainedLeafList4 = (LeafListSchemaNode) testModule.getDataChildByName(
                 QName.create(testModule.getQNameModule(), "constrained-leaf-list-4"));
         assertNotNull(constrainedLeafList4);
-        constraints4 = constrainedLeafList4.getConstraints();
+        ConstraintDefinition constraints4 = constrainedLeafList4.getConstraints();
 
         assertNotEquals(ConstraintDefinitions.hashCode(constraints3), ConstraintDefinitions.hashCode(constraints4));
         assertFalse(ConstraintDefinitions.equals(constraints3, constraints4));
 
         final String constraintsString = ConstraintDefinitions.toString(constraints4);
-        assertEquals("EffectiveConstraintDefinitionImpl{whenCondition=foo = 'bar', minElements=50, maxElements=100}",
-            constraintsString);
+        assertEquals("EffectiveConstraintDefinitionImpl{minElements=50, maxElements=100}", constraintsString);
     }
 }
