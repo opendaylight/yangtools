@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 @Beta
 final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List<PathArgument>> {
@@ -72,14 +72,14 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
 
     private final String xpathString;
     private final SchemaContext schemaContext;
-    private final TypedSchemaNode schemaNode;
+    private final TypedDataSchemaNode schemaNode;
     private final NormalizedNodeContext currentNodeCtx;
     private final List<PathArgument> product = new ArrayList<>();
 
     private int offset = 0;
 
     LeafrefXPathStringParsingPathArgumentBuilder(final String xpathString, final SchemaContext schemaContext,
-            final TypedSchemaNode schemaNode, final NormalizedNodeContext currentNodeCtx) {
+            final TypedDataSchemaNode schemaNode, final NormalizedNodeContext currentNodeCtx) {
         this.xpathString = xpathString;
         this.schemaContext = schemaContext;
         this.schemaNode = schemaNode;

@@ -11,7 +11,6 @@ import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -80,21 +79,6 @@ final class Annotation extends AbstractStatementSupport<String, AnnotationStatem
         @Override
         public TypeDefinition<?> getType() {
             return type;
-        }
-
-        @Override
-        public boolean isConfiguration() {
-            return false;
-        }
-
-        @Override
-        public ConstraintDefinition getConstraints() {
-            return null;
-        }
-
-        @Override
-        public boolean isAugmenting() {
-            return false;
         }
     }
 
