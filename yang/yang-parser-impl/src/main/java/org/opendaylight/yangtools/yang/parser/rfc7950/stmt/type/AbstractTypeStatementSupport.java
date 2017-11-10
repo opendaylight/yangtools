@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
@@ -39,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef.TypedefEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -148,10 +146,7 @@ abstract class AbstractTypeStatementSupport
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
                         SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
                             ctx.getStatementSourceReference(), "Type '%s' not found", qname);
-
-                final TypedefEffectiveStatement effectiveTypedef = typedef.buildEffective();
-                Verify.verify(effectiveTypedef instanceof TypedefEffectiveStatementImpl);
-                typeStmt = ((TypedefEffectiveStatementImpl) effectiveTypedef).asTypeEffectiveStatement();
+                typeStmt = typedef.buildEffective().asTypeEffectiveStatement();
         }
 
         if (ctx.declaredSubstatements().isEmpty() && ctx.effectiveSubstatements().isEmpty()) {
