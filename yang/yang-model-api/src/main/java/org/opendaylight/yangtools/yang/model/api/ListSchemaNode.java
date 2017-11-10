@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * by the values of the list's keys, if defined.
  */
 public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, DataSchemaNode,
-        NotificationNodeContainer, ActionNodeContainer {
+        NotificationNodeContainer, ActionNodeContainer, ElementCountConstraintAware {
     /**
      * Returns the list of leaf identifiers.
      *
