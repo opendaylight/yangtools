@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -38,8 +39,9 @@ public class Bug9244Test {
         final LeafListSchemaNode barLeafList = (LeafListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf-list"));
         assertNotNull(barLeafList);
-        assertEquals(5, barLeafList.getConstraints().getMinElements().intValue());
-        assertEquals(10, barLeafList.getConstraints().getMaxElements().intValue());
+        final ElementCountConstraint constraint = barLeafList.getElementCountConstraint().get();
+        assertEquals(5, constraint.getMinElements().intValue());
+        assertEquals(10, constraint.getMaxElements().intValue());
 
         final LeafSchemaNode barLeaf = (LeafSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "bar-leaf"));

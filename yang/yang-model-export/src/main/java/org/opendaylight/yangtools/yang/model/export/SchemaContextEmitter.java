@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -1776,6 +1777,11 @@ abstract class SchemaContextEmitter {
 
         }
 
+        private void emitCountConstraint(final ElementCountConstraint constraint) {
+            emitMinElementsNode(constraint.getMinElements());
+            emitMaxElementsNode(constraint.getMaxElements());
+        }
+
         private void emitLeafList(final LeafListSchemaNode child) {
             super.writer.startLeafListNode(child.getQName());
 
@@ -1787,13 +1793,11 @@ abstract class SchemaContextEmitter {
             child.getMustConstraints().forEach(this::emitMust);
             emitConfigNode(child.isConfiguration());
             emitDefaultNodes(child.getDefaults());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            child.getElementCountConstraint().ifPresent(this::emitCountConstraint);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitUnknownStatementNodes(child.getUnknownSchemaNodes());
             super.writer.endNode();
-
         }
 
         private void emitList(final ListSchemaNode child) {
@@ -1805,8 +1809,7 @@ abstract class SchemaContextEmitter {
             emitKey(child.getKeyDefinition());
             emitUniqueConstraints(child.getUniqueConstraints());
             emitConfigNode(child.isConfiguration());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            child.getElementCountConstraint().ifPresent(this::emitCountConstraint);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitDataNodeContainer(child);
@@ -1975,7 +1978,21 @@ abstract class SchemaContextEmitter {
             if (Objects.deepEquals(original.isMandatory(), value.isMandatory())) {
                 emitMandatoryNode(value.isMandatory());
             }
+        }
 
+        private void emitRefinedMinMaxNodes(final Optional<ElementCountConstraint> value,
+                final Optional<ElementCountConstraint> original) {
+            Integer val = value.map(ElementCountConstraint::getMinElements).orElse(null);
+            Integer orig = original.map(ElementCountConstraint::getMinElements).orElse(null);
+            if (Objects.equals(val, orig)) {
+                emitMinElementsNode(val);
+            }
+
+            val = value.map(ElementCountConstraint::getMinElements).orElse(null);
+            orig = original.map(ElementCountConstraint::getMinElements).orElse(null);
+            if (Objects.equals(val, orig)) {
+                emitMaxElementsNode(val);
+            }
         }
 
         private void emitRefineLeafListNodes(final LeafListSchemaNode value) {
@@ -1985,14 +2002,8 @@ abstract class SchemaContextEmitter {
             if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {
                 emitConfigNode(value.isConfiguration());
             }
-            if (Objects.deepEquals(original.getConstraints().getMinElements(),
-                    value.getConstraints().getMinElements())) {
-                emitMinElementsNode(value.getConstraints().getMinElements());
-            }
-            if (Objects.deepEquals(original.getConstraints().getMaxElements(),
-                    value.getConstraints().getMaxElements())) {
-                emitMaxElementsNode(value.getConstraints().getMaxElements());
-            }
+
+            emitRefinedMinMaxNodes(value.getElementCountConstraint(), original.getElementCountConstraint());
             emitDocumentedNodeRefine(original, value);
 
         }
@@ -2004,14 +2015,7 @@ abstract class SchemaContextEmitter {
             if (Objects.deepEquals(original.isConfiguration(), value.isConfiguration())) {
                 emitConfigNode(value.isConfiguration());
             }
-            if (Objects.deepEquals(original.getConstraints().getMinElements(),
-                    value.getConstraints().getMinElements())) {
-                emitMinElementsNode(value.getConstraints().getMinElements());
-            }
-            if (Objects.deepEquals(original.getConstraints().getMaxElements(),
-                    value.getConstraints().getMaxElements())) {
-                emitMaxElementsNode(value.getConstraints().getMaxElements());
-            }
+            emitRefinedMinMaxNodes(value.getElementCountConstraint(), original.getElementCountConstraint());
             emitDocumentedNodeRefine(original, value);
 
         }

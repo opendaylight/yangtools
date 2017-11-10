@@ -20,7 +20,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -62,11 +61,6 @@ public final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaN
     @Override
     public boolean isConfiguration() {
         return caseShorthandNode.isConfiguration();
-    }
-
-    @Override
-    public ConstraintDefinition getConstraints() {
-        return caseShorthandNode.getConstraints();
     }
 
     @Nonnull
