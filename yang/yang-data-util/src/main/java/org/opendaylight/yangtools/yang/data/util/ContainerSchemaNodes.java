@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -127,6 +128,11 @@ public final class ContainerSchemaNodes {
         @Override
         public Collection<MustDefinition> getMustConstraints() {
             return ImmutableList.of();
+        }
+
+        @Override
+        public Optional<RevisionAwareXPath> getWhenCondition() {
+            return Optional.empty();
         }
     }
 
