@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -57,36 +57,36 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         super(ctx);
 
         this.original = (ListSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-
-        final OrderedByEffectiveStatement orderedByStmt = firstEffective(OrderedByEffectiveStatement.class);
-        if (orderedByStmt != null && ORDER_BY_USER_KEYWORD.equals(orderedByStmt.argument())) {
-            this.userOrdered = true;
-        } else {
-            this.userOrdered = false;
-        }
+        this.userOrdered = findFirstEffectiveSubstatementArgument(OrderedByEffectiveStatement.class)
+                .map(ORDER_BY_USER_KEYWORD::equals).orElse(Boolean.FALSE).booleanValue();
 
         // initKeyDefinition
-        final List<QName> keyDefinitionInit = new LinkedList<>();
-        final KeyEffectiveStatement keyEffectiveSubstatement = firstEffective(KeyEffectiveStatement.class);
-        if (keyEffectiveSubstatement != null) {
+        final Optional<KeyEffectiveStatement> optKeyStmt = findFirstEffectiveSubstatement(KeyEffectiveStatement.class);
+        if (optKeyStmt.isPresent()) {
+            final KeyEffectiveStatement keyStmt = optKeyStmt.get();
+            final List<QName> keyDefinitionInit = new ArrayList<>(keyStmt.argument().size());
             final Set<QName> possibleLeafQNamesForKey = new HashSet<>();
             for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
                 if (effectiveStatement instanceof LeafSchemaNode) {
                     possibleLeafQNamesForKey.add(((LeafSchemaNode) effectiveStatement).getQName());
                 }
             }
-            for (final SchemaNodeIdentifier key : keyEffectiveSubstatement.argument()) {
+            for (final SchemaNodeIdentifier key : keyStmt.argument()) {
                 final QName keyQName = key.getLastComponent();
 
                 if (!possibleLeafQNamesForKey.contains(keyQName)) {
                     throw new InferenceException(ctx.getStatementSourceReference(),
-                            "Key '%s' misses node '%s' in list '%s'", keyEffectiveSubstatement.getDeclared()
-                                    .rawArgument(), keyQName.getLocalName(), ctx.getStatementArgument());
+                            "Key '%s' misses node '%s' in list '%s'", keyStmt.getDeclared().rawArgument(),
+                            keyQName.getLocalName(), ctx.getStatementArgument());
                 }
                 keyDefinitionInit.add(keyQName);
             }
+
+            this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
+        } else {
+            this.keyDefinition = ImmutableList.of();
         }
-        this.keyDefinition = ImmutableList.copyOf(keyDefinitionInit);
+
         this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
 
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();

@@ -41,11 +41,8 @@ final class DeviationEffectiveStatementImpl
 
         this.deviateDefinitions = ImmutableList.copyOf(allSubstatementsOfType(DeviateDefinition.class));
 
-        DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
-        this.description = descriptionStmt == null ? null : descriptionStmt.argument();
-
-        ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
-        this.reference = referenceStmt == null ? null : referenceStmt.argument();
+        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
+        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
 
         List<UnknownSchemaNode> unknownSchemaNodesInit = new ArrayList<>();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {

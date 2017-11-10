@@ -34,8 +34,8 @@ public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
         super(ctx);
         this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
+                .booleanValue();
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 

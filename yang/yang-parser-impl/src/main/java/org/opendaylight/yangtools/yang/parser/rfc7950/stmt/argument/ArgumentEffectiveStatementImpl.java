@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 Cisco Systems, Inc. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
@@ -13,8 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class ArgumentEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, ArgumentStatement>
+final class ArgumentEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, ArgumentStatement>
         implements ArgumentEffectiveStatement {
     ArgumentEffectiveStatementImpl(final StmtContext<QName, ArgumentStatement, ?> ctx) {
         super(ctx);

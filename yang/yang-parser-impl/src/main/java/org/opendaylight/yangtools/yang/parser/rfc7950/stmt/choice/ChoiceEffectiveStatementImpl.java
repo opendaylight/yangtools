@@ -79,14 +79,15 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.cases = ImmutableSortedMap.copyOfSorted(casesInit);
 
-        final DefaultEffectiveStatement defaultStmt = firstEffective(DefaultEffectiveStatement.class);
-        if (defaultStmt != null) {
+        final Optional<String> defaultArg = findFirstEffectiveSubstatementArgument(DefaultEffectiveStatement.class);
+        if (defaultArg.isPresent()) {
+            final String arg = defaultArg.get();
             final QName qname;
             try {
-                qname = QName.create(getQName(), defaultStmt.argument());
+                qname = QName.create(getQName(), arg);
             } catch (IllegalArgumentException e) {
                 throw new SourceException(ctx.getStatementSourceReference(), "Default statement has invalid name '%s'",
-                    defaultStmt.argument(), e);
+                    arg, e);
             }
 
             // FIXME: this does not work with submodules, as they are
@@ -96,8 +97,8 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
             defaultCase = null;
         }
 
-        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
+                .booleanValue();
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {

@@ -31,19 +31,11 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
 
     MustEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> ctx) {
         super(ctx);
-        this.xpath = ctx.getStatementArgument();
-
-        DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
-        this.description = descriptionStmt == null ? null : descriptionStmt.argument();
-
-        ErrorAppTagEffectiveStatement errorAppTagStmt = firstEffective(ErrorAppTagEffectiveStatement.class);
-        this.errorAppTag = errorAppTagStmt == null ? null : errorAppTagStmt.argument();
-
-        ErrorMessageEffectiveStatement errorMessageStmt = firstEffective(ErrorMessageEffectiveStatement.class);
-        this.errorMessage = errorMessageStmt == null ? null : errorMessageStmt.argument();
-
-        ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
-        this.reference = referenceStmt == null ? null : referenceStmt.argument();
+        xpath = ctx.getStatementArgument();
+        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
+        errorAppTag = findFirstEffectiveSubstatementArgument(ErrorAppTagEffectiveStatement.class).orElse(null);
+        errorMessage = findFirstEffectiveSubstatementArgument(ErrorMessageEffectiveStatement.class).orElse(null);
+        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     @Override
