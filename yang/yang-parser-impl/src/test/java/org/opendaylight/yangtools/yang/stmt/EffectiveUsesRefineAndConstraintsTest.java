@@ -20,7 +20,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -87,8 +86,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(containerSchemaNode.isConfiguration());
         assertFalse(containerSchemaNode.isPresenceContainer());
 
-        ConstraintDefinition containerConstraints = containerSchemaNode.getConstraints();
-        assertEquals(0, containerConstraints.getMustConstraints().size());
+        assertEquals(0, containerSchemaNode.getMustConstraints().size());
     }
 
     private static void checkOriginalChoice(final SchemaContext result, final SchemaPath path) {
@@ -97,9 +95,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertFalse(choiceSchemaNode.isMandatory());
-
-        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
     private static void checkOriginalList(final SchemaContext result, final SchemaPath path) {
@@ -114,7 +109,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
         assertEquals(10, listConstraints.getMinElements());
         assertEquals(20, listConstraints.getMaxElements());
-        assertEquals(1, listSchemaNode.getConstraints().getMustConstraints().size());
+        assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
     private static void checkRefinedContainer(final SchemaContext result, final SchemaPath path) {
@@ -126,9 +121,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(Optional.of("new description"), containerSchemaNode.getDescription());
         assertTrue(containerSchemaNode.isConfiguration());
         assertTrue(containerSchemaNode.isPresenceContainer());
-
-        ConstraintDefinition containerConstraints = containerSchemaNode.getConstraints();
-        assertEquals(1, containerConstraints.getMustConstraints().size());
+        assertEquals(1, containerSchemaNode.getMustConstraints().size());
     }
 
     private static void checkRefinedChoice(final SchemaContext result, final SchemaPath path) {
@@ -137,9 +130,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertTrue(choiceSchemaNode.isMandatory());
-
-        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
     private static void checkRefinedList(final SchemaContext result, final SchemaPath path) {
@@ -154,6 +144,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
         assertEquals(5, listConstraints.getMinElements());
         assertEquals(7, listConstraints.getMaxElements());
-        assertEquals(2, listSchemaNode.getConstraints().getMustConstraints().size());
+        assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }

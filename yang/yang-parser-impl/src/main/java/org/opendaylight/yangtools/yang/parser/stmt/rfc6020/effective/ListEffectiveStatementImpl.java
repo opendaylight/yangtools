@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -47,6 +48,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
+    private final Collection<MustDefinition> mustConstraints;
 
     public ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -100,6 +102,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(ctx).orElse(null);
+        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -136,6 +139,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public Optional<ElementCountConstraint> getElementCountConstraint() {
         return Optional.ofNullable(elementCountConstraint);
+    }
+
+    @Override
+    public Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 
     @Override

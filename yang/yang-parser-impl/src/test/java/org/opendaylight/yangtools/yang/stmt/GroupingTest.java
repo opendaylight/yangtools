@@ -103,7 +103,7 @@ public class GroupingTest {
         assertEquals(Optional.of("address reference added by refine"), refineLeaf.getReference());
         assertFalse(refineLeaf.isConfiguration());
         assertFalse(refineLeaf.isMandatory());
-        final Collection<MustDefinition> leafMustConstraints = refineLeaf.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> leafMustConstraints = refineLeaf.getMustConstraints();
         assertEquals(1, leafMustConstraints.size());
         final MustDefinition leafMust = leafMustConstraints.iterator().next();
         assertEquals("ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)", leafMust.toString());
@@ -111,7 +111,7 @@ public class GroupingTest {
 
         // container port
         assertNotNull(refineContainer);
-        final Collection<MustDefinition> mustConstraints = refineContainer.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> mustConstraints = refineContainer.getMustConstraints();
         assertTrue(mustConstraints.isEmpty());
         assertEquals(Optional.of("description of port defined by refine"), refineContainer.getDescription());
         assertEquals(Optional.of("port reference added by refine"), refineContainer.getReference());
