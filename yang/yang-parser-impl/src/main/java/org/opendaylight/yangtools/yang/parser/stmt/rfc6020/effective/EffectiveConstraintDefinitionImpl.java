@@ -7,28 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.util.ConstraintDefinitions;
 import org.opendaylight.yangtools.yang.data.util.EmptyConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MaxElementsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStatementBase;
 
 final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     private static final String UNBOUNDED_STR = "unbounded";
 
-    private final RevisionAwareXPath whenCondition;
     private final Integer minElements;
     private final Integer maxElements;
 
-    private EffectiveConstraintDefinitionImpl(final Integer minElements, final Integer maxElements,
-            final RevisionAwareXPath whenCondition) {
+    private EffectiveConstraintDefinitionImpl(final Integer minElements, final Integer maxElements) {
         this.minElements = minElements;
         this.maxElements = maxElements;
-        this.whenCondition = whenCondition;
     }
 
     static ConstraintDefinition forParent(final EffectiveStatementBase<?, ?> parent) {
@@ -53,20 +47,12 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
             maxElements = null;
         }
 
-        final WhenEffectiveStatement firstWhenStmt = parent.firstEffective(WhenEffectiveStatement.class);
-
         // Check for singleton instances
-        if (minElements == null && maxElements == null && firstWhenStmt == null) {
+        if (minElements == null && maxElements == null) {
             return EmptyConstraintDefinition.getInstance();
         }
 
-        return new EffectiveConstraintDefinitionImpl(minElements, maxElements,
-            firstWhenStmt == null ? null : firstWhenStmt.argument());
-    }
-
-    @Override
-    public Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.ofNullable(whenCondition);
+        return new EffectiveConstraintDefinitionImpl(minElements, maxElements);
     }
 
     @Override

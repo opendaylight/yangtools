@@ -229,7 +229,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair#getValue()}
  *
  * <dt>when
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getWhenCondition()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.WhenConditionAware#getWhenCondition()}
  *
  * <dt>yang-version
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Module#getYangVersion()}

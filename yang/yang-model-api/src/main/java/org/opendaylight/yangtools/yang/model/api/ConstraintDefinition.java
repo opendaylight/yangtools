@@ -15,7 +15,7 @@ import javax.annotation.Nullable;
  * YANG element therefore if the constraint doesn't have sense for some element
  * then the method returns <code>null</code> value.
  */
-public interface ConstraintDefinition extends WhenConditionAware {
+public interface ConstraintDefinition {
     /**
      * Returns the minimum required number of data elements for node where this
      * constraint is specified.
