@@ -86,8 +86,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertTrue(containerSchemaNode.isConfiguration());
         assertFalse(containerSchemaNode.isPresenceContainer());
 
-        ConstraintDefinition containerConstraints = containerSchemaNode.getConstraints();
-        assertEquals(0, containerConstraints.getMustConstraints().size());
+        assertEquals(0, containerSchemaNode.getMustConstraints().size());
     }
 
     private static void checkOriginalChoice(final SchemaContext result, final SchemaPath path) {
@@ -96,9 +95,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertFalse(choiceSchemaNode.isMandatory());
-
-        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
     private static void checkOriginalList(final SchemaContext result, final SchemaPath path) {
@@ -113,7 +109,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
         assertEquals(10, listConstraints.getMinElements().intValue());
         assertEquals(20, listConstraints.getMaxElements().intValue());
-        assertEquals(1, listConstraints.getMustConstraints().size());
+        assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
     private static void checkRefinedContainer(final SchemaContext result, final SchemaPath path) {
@@ -125,9 +121,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(Optional.of("new description"), containerSchemaNode.getDescription());
         assertTrue(containerSchemaNode.isConfiguration());
         assertTrue(containerSchemaNode.isPresenceContainer());
-
-        ConstraintDefinition containerConstraints = containerSchemaNode.getConstraints();
-        assertEquals(1, containerConstraints.getMustConstraints().size());
+        assertEquals(1, containerSchemaNode.getMustConstraints().size());
     }
 
     private static void checkRefinedChoice(final SchemaContext result, final SchemaPath path) {
@@ -136,9 +130,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         ChoiceSchemaNode choiceSchemaNode = (ChoiceSchemaNode) choiceInContainerNode;
         assertTrue(choiceSchemaNode.isMandatory());
-
-        ConstraintDefinition choiceConstraints = choiceSchemaNode.getConstraints();
-        assertTrue(choiceConstraints.getMustConstraints().isEmpty());
     }
 
     private static void checkRefinedList(final SchemaContext result, final SchemaPath path) {
@@ -153,6 +144,6 @@ public class EffectiveUsesRefineAndConstraintsTest {
         ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
         assertEquals(5, listConstraints.getMinElements().intValue());
         assertEquals(7, listConstraints.getMaxElements().intValue());
-        assertEquals(2, listConstraints.getMustConstraints().size());
+        assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }

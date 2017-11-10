@@ -9,12 +9,15 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
@@ -29,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AbstractEff
 final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement>
         implements AnydataEffectiveStatement, AnyDataSchemaNode, DerivableSchemaNode {
 
+    private final Collection<MustDefinition> mustConstraints;
     private final AnyDataSchemaNode original;
     private final ContainerSchemaNode schema;
     private final boolean mandatory;
@@ -39,6 +43,7 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
         this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
         mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
 
         /*
          * :TODO we need to determine a way how to set schema of AnyData
@@ -59,6 +64,11 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     @Override
     public boolean isMandatory() {
         return mandatory;
+    }
+
+    @Override
+    public Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 
     @Override

@@ -22,7 +22,7 @@ import java.util.Optional;
  * of this document.
  */
 @Beta
-public interface AnyDataSchemaNode extends DataSchemaNode, MandatoryAware {
+public interface AnyDataSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
     /**
      * Schema of data.
      *

@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
@@ -27,6 +28,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final ContainerSchemaNode original;
+    private final boolean presence;
 
     public ContainerEffectiveStatementImpl(
             final StmtContext<QName, ContainerStatement, EffectiveStatement<QName, ContainerStatement>> ctx) {
@@ -46,6 +48,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
+        presence = firstEffective(PresenceEffectiveStatement.class) != null;
     }
 
     @Override
@@ -61,6 +64,11 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
+    }
+
+    @Override
+    public boolean isPresenceContainer() {
+        return presence;
     }
 
     @Override

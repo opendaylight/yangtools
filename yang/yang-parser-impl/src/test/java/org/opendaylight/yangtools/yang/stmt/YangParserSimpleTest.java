@@ -76,8 +76,8 @@ public class YangParserSimpleTest {
         assertTrue(data.isMandatory());
         final ConstraintDefinition constraints = data.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
-        final Collection<MustDefinition> mustConstraints = constraints.getMustConstraints();
-        assertEquals(2, constraints.getMustConstraints().size());
+        final Collection<MustDefinition> mustConstraints = data.getMustConstraints();
+        assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'ethernet' or (ifType = 'ethernet' and ifMTU = 1500)";
         final String must2 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
@@ -121,8 +121,8 @@ public class YangParserSimpleTest {
         // constraints
         final ConstraintDefinition constraints = nodes.getConstraints();
         assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
-        final Collection<MustDefinition> mustConstraints = constraints.getMustConstraints();
-        assertEquals(2, constraints.getMustConstraints().size());
+        final Collection<MustDefinition> mustConstraints = nodes.getMustConstraints();
+        assertEquals(2, mustConstraints.size());
 
         final String must1 = "ifType != 'atm' or (ifType = 'atm' and ifMTU <= 17966 and ifMTU >= 64)";
         final String errMsg1 = "An atm MTU must be  64 .. 17966";

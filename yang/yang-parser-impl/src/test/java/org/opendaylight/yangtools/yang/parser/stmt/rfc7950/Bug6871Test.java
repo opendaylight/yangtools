@@ -47,12 +47,12 @@ public class Bug6871Test {
 
         final ContainerSchemaNode input = myRpc.getInput();
         assertNotNull(input);
-        mustConstraints = input.getConstraints().getMustConstraints();
+        mustConstraints = input.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
         final ContainerSchemaNode output = myRpc.getOutput();
         assertNotNull(output);
-        mustConstraints = output.getConstraints().getMustConstraints();
+        mustConstraints = output.getMustConstraints();
         assertEquals(2, mustConstraints.size());
     }
 
