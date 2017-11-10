@@ -25,6 +25,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -80,8 +81,10 @@ public class DeviationResolutionTest {
 
         assertFalse(myLeafList.isConfiguration());
         assertEquals(3, myLeafList.getDefaults().size());
-        assertEquals(10, myLeafList.getConstraints().getMaxElements().intValue());
-        assertEquals(5, myLeafList.getConstraints().getMinElements().intValue());
+
+        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        assertEquals(10, constraint.getMaxElements().intValue());
+        assertEquals(5, constraint.getMinElements().intValue());
         assertNotNull(myLeafList.getType().getUnits());
 
         final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
@@ -132,8 +135,9 @@ public class DeviationResolutionTest {
                 QName.create(barModule.getQNameModule(), "my-leaf-list-test"));
         assertNotNull(myLeafList);
 
-        assertEquals(6, myLeafList.getConstraints().getMaxElements().intValue());
-        assertEquals(3, myLeafList.getConstraints().getMinElements().intValue());
+        final ElementCountConstraint constraint = myLeafList.getElementCountConstraint().get();
+        assertEquals(6, constraint.getMaxElements().intValue());
+        assertEquals(3, constraint.getMinElements().intValue());
         assertTrue(myLeafList.isConfiguration());
 
         final ChoiceSchemaNode myChoice = (ChoiceSchemaNode) barModule.getDataChildByName(

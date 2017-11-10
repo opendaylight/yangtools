@@ -13,7 +13,7 @@ import javax.annotation.Nonnull;
 /**
  * Interface describing YANG 'leaf-list' statement.
  */
-public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware {
+public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintAware, ElementCountConstraintAware {
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries
      * within this leaf-list are determined by the user or the system. If not

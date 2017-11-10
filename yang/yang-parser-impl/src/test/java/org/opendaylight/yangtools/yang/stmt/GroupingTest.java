@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -123,8 +124,10 @@ public class GroupingTest {
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertFalse(refineList.isConfiguration());
-        assertEquals(2, (int) refineList.getConstraints().getMinElements());
-        assertNull(refineList.getConstraints().getMaxElements());
+
+        final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
+        assertEquals(2, constraint.getMinElements().intValue());
+        assertNull(constraint.getMaxElements());
 
         // leaf id
         assertNotNull(refineInnerLeaf);

@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -128,11 +127,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     @Override
     public boolean isConfiguration() {
         return false;
-    }
-
-    @Override
-    public ConstraintDefinition getConstraints() {
-        return null;
     }
 
     @Nonnull
