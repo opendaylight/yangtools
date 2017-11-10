@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
@@ -135,13 +134,12 @@ public class YangParserTest {
         // test DataSchemaNode args
         assertFalse(ifEntry.isAugmenting());
         assertTrue(ifEntry.isConfiguration());
-        final ConstraintDefinition constraints = ifEntry.getConstraints();
         // :TODO augment to ifEntry have when condition and so in consequence
         // ifEntry should be a context node ?
         // assertNull(constraints.getWhenCondition());
         assertEquals(0, ifEntry.getMustConstraints().size());
-        assertEquals(1, (int) constraints.getMinElements());
-        assertEquals(11, (int) constraints.getMaxElements());
+        assertEquals(1, ifEntry.getElementCountConstraint().get().getMinElements());
+        assertEquals(11, ifEntry.getElementCountConstraint().get().getMaxElements());
         // test AugmentationTarget args
         final Set<AugmentationSchemaNode> availableAugmentations = ifEntry.getAvailableAugmentations();
         assertEquals(2, availableAugmentations.size());
