@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
@@ -31,6 +34,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
+    private final Collection<MustDefinition> mustConstraints;
     private final LeafSchemaNode original;
     private final TypeDefinition<?> type;
     private final String defaultStr;
@@ -76,6 +80,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         type = builder.build();
         final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
         mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -91,6 +96,11 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     @Override
     public TypeDefinition<?> getType() {
         return type;
+    }
+
+    @Override
+    public final Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 
     @Override

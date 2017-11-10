@@ -79,11 +79,6 @@ final class EffectiveConstraintDefinitionImpl implements ConstraintDefinition {
     }
 
     @Override
-    public Set<MustDefinition> getMustConstraints() {
-        return mustConstraints;
-    }
-
-    @Override
     public Integer getMinElements() {
         return minElements;
     }

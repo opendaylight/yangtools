@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
@@ -37,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -237,6 +239,11 @@ public class YangModeledAnyXMLDeserializationTest {
         @Override
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;
+        }
+
+        @Override
+        public Collection<MustDefinition> getMustConstraints() {
+            return ImmutableSet.of();
         }
 
     }
