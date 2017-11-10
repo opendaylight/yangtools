@@ -41,7 +41,7 @@ public class Bug5481Test {
 
         ContainerSchemaNode topContainer = (ContainerSchemaNode) dataChildByName;
 
-        assertFalse(topContainer.getConstraints().getWhenCondition().isPresent());
+        assertFalse(topContainer.getWhenCondition().isPresent());
         assertEquals(Status.CURRENT, topContainer.getStatus());
         assertFalse(topContainer.getDescription().isPresent());
         assertFalse(topContainer.getReference().isPresent());
@@ -54,7 +54,7 @@ public class Bug5481Test {
         assertTrue(dataChildByName2 instanceof LeafSchemaNode);
 
         LeafSchemaNode extendedLeaf = (LeafSchemaNode) dataChildByName2;
-        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getConstraints().getWhenCondition().get();
+        RevisionAwareXPath whenConditionExtendedLeaf = extendedLeaf.getWhenCondition().get();
 
         assertEquals(new RevisionAwareXPathImpl("module1:top = 'extended'", false), whenConditionExtendedLeaf);
         assertEquals(Status.DEPRECATED, extendedLeaf.getStatus());
