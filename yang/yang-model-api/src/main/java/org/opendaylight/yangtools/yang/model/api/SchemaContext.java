@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -157,5 +158,10 @@ public interface SchemaContext extends ContainerSchemaNode {
     @Override
     default Optional<String> getReference() {
         return Optional.empty();
+    }
+
+    @Override
+    default Collection<MustDefinition> getMustConstraints() {
+        return ImmutableSet.of();
     }
 }

@@ -139,7 +139,7 @@ public class YangParserTest {
         // :TODO augment to ifEntry have when condition and so in consequence
         // ifEntry should be a context node ?
         // assertNull(constraints.getWhenCondition());
-        assertEquals(0, constraints.getMustConstraints().size());
+        assertEquals(0, ifEntry.getMustConstraints().size());
         assertEquals(1, (int) constraints.getMinElements());
         assertEquals(11, (int) constraints.getMaxElements());
         // test AugmentationTarget args

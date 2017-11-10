@@ -72,16 +72,6 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
     }
 
     @Override
-    public final String toString() {
-        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
-    }
-
-    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return toStringHelper.add("modules", modules);
-    }
-
-
-    @Override
     protected final SetMultimap<URI, Module> getNamespaceToModules() {
         return namespaceToModules;
     }
@@ -89,5 +79,14 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
     @Override
     protected final SetMultimap<String, Module> getNameToModules() {
         return nameToModules;
+    }
+
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
+        return toStringHelper.add("modules", modules);
     }
 }

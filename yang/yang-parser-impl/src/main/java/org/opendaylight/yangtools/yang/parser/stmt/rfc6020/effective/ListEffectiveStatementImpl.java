@@ -23,6 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -44,6 +45,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
+    private final Collection<MustDefinition> mustConstraints;
 
     public ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -96,6 +98,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
+        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
@@ -127,6 +130,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public boolean isUserOrdered() {
         return userOrdered;
+    }
+
+    @Override
+    public Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 
     @Override

@@ -50,6 +50,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
+import org.opendaylight.yangtools.yang.model.api.MustConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
@@ -1745,6 +1746,7 @@ abstract class SchemaContextEmitter {
 
         private void emitContainer(final ContainerSchemaNode child) {
             super.writer.startContainerNode(child.getQName());
+            child.getMustConstraints().forEach(this::emitMust);
             emitConstraints(child.getConstraints());
             // FIXME: BUG-2444: whenNode //:Optional
             // FIXME: BUG-2444: *(ifFeatureNode )
@@ -1761,9 +1763,6 @@ abstract class SchemaContextEmitter {
 
         private void emitConstraints(final ConstraintDefinition constraints) {
             constraints.getWhenCondition().ifPresent(this::emitWhen);
-            for (final MustDefinition mustCondition : constraints.getMustConstraints()) {
-                emitMust(mustCondition);
-            }
         }
 
         private void emitLeaf(final LeafSchemaNode child) {
@@ -1772,7 +1771,7 @@ abstract class SchemaContextEmitter {
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
             child.getType().getUnits().ifPresent(this::emitUnitsNode);
-            emitMustNodes(child.getConstraints().getMustConstraints());
+            child.getMustConstraints().forEach(this::emitMust);
             child.getType().getDefaultValue().ifPresent(this::emitDefaultNode);
             emitConfigNode(child.isConfiguration());
             emitMandatoryNode(child.isMandatory());
@@ -1790,7 +1789,7 @@ abstract class SchemaContextEmitter {
             emitTypeNode(child.getPath(), child.getType());
             child.getType().getUnits().ifPresent(this::emitUnitsNode);
             // FIXME: BUG-2444: unitsNode /Optional
-            emitMustNodes(child.getConstraints().getMustConstraints());
+            child.getMustConstraints().forEach(this::emitMust);
             emitConfigNode(child.isConfiguration());
             emitDefaultNodes(child.getDefaults());
             emitMinElementsNode(child.getConstraints().getMinElements());
@@ -1807,7 +1806,7 @@ abstract class SchemaContextEmitter {
             child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
 
             // FIXME: BUG-2444: *(ifFeatureNode )
-            emitMustNodes(child.getConstraints().getMustConstraints());
+            child.getMustConstraints().forEach(this::emitMust);
             emitKey(child.getKeyDefinition());
             emitUniqueConstraints(child.getUniqueConstraints());
             emitConfigNode(child.isConfiguration());
@@ -1821,12 +1820,6 @@ abstract class SchemaContextEmitter {
             emitActions(child.getActions());
             super.writer.endNode();
 
-        }
-
-        private void emitMustNodes(final Collection<MustDefinition> mustConstraints) {
-            for (final MustDefinition must : mustConstraints) {
-                emitMust(must);
-            }
         }
 
         private void emitKey(final List<QName> keyList) {
@@ -1892,7 +1885,9 @@ abstract class SchemaContextEmitter {
         private void emitBodyOfDataSchemaNode(final DataSchemaNode dataSchemaNode) {
             dataSchemaNode.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
-            emitMustNodes(dataSchemaNode.getConstraints().getMustConstraints());
+            if (dataSchemaNode instanceof MustConstraintAware) {
+                ((MustConstraintAware) dataSchemaNode).getMustConstraints().forEach(this::emitMust);
+            }
             emitConfigNode(dataSchemaNode.isConfiguration());
             emitDocumentedNode(dataSchemaNode);
             emitUnknownStatementNodes(dataSchemaNode.getUnknownSchemaNodes());
@@ -2168,7 +2163,7 @@ abstract class SchemaContextEmitter {
         private void emitInput(@Nonnull final ContainerSchemaNode input) {
             if (isExplicitStatement(input)) {
                 super.writer.startInputNode();
-                emitConstraints(input.getConstraints());
+                input.getMustConstraints().forEach(this::emitMust);
                 emitDataNodeContainer(input);
                 emitUnknownStatementNodes(input.getUnknownSchemaNodes());
                 super.writer.endNode();
@@ -2179,7 +2174,7 @@ abstract class SchemaContextEmitter {
         private void emitOutput(@Nonnull final ContainerSchemaNode output) {
             if (isExplicitStatement(output)) {
                 super.writer.startOutputNode();
-                emitConstraints(output.getConstraints());
+                output.getMustConstraints().forEach(this::emitMust);
                 emitDataNodeContainer(output);
                 emitUnknownStatementNodes(output.getUnknownSchemaNodes());
                 super.writer.endNode();

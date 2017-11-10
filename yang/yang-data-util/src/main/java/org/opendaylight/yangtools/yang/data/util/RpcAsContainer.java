@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -160,6 +161,11 @@ public final class RpcAsContainer implements ContainerSchemaNode {
 
     @Override
     public Set<NotificationDefinition> getNotifications() {
+        return ImmutableSet.of();
+    }
+
+    @Override
+    public Collection<MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
 }
