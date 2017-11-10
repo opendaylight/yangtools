@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
+final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode {
     private final SchemaPath groupingPath;
     private final boolean addedByUses;
@@ -47,8 +47,7 @@ public final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumente
     private final List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
 
-    public UsesEffectiveStatementImpl(
-            final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
+    UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
         // initGroupingPath

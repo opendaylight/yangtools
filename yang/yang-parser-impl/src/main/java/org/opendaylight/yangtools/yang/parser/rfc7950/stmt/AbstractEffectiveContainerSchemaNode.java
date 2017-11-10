@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -15,11 +15,11 @@ import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>> extends
-        AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
+public abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>>
+        extends AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
     private final Collection<MustDefinition> mustConstraints;
 
-    AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
+    protected AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }

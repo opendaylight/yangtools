@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import static java.util.Objects.requireNonNull;
 
@@ -32,14 +32,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 // FIXME: hide this somewhere
-public final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaNode {
+public final class ImplicitChoiceCaseNode implements ChoiceCaseNode, DerivableSchemaNode {
 
     private final DataSchemaNode caseShorthandNode;
     private final ChoiceCaseNode original;
     private final SchemaPath path;
     private final boolean augmenting;
 
-    public CaseShorthandImpl(final DataSchemaNode caseShorthandNode) {
+    public ImplicitChoiceCaseNode(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = requireNonNull(caseShorthandNode);
         this.path = requireNonNull(caseShorthandNode.getPath().getParent());
         this.original = getOriginalIfPresent(caseShorthandNode);
@@ -157,20 +157,20 @@ public final class CaseShorthandImpl implements ChoiceCaseNode, DerivableSchemaN
         if (getClass() != obj.getClass()) {
             return false;
         }
-        CaseShorthandImpl other = (CaseShorthandImpl) obj;
+        ImplicitChoiceCaseNode other = (ImplicitChoiceCaseNode) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        return CaseShorthandImpl.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return ImplicitChoiceCaseNode.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }
 
     private static ChoiceCaseNode getOriginalIfPresent(final SchemaNode caseShorthandNode) {
         if (caseShorthandNode instanceof DerivableSchemaNode) {
             final Optional<? extends SchemaNode> original = ((DerivableSchemaNode) caseShorthandNode).getOriginal();
             if (original.isPresent()) {
-                return new CaseShorthandImpl((DataSchemaNode) original.get());
+                return new ImplicitChoiceCaseNode((DataSchemaNode) original.get());
             }
         }
         return null;
