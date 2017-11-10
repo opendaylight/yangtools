@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.stmt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -74,8 +72,7 @@ public class YangParserSimpleTest {
         assertFalse(data.isConfiguration());
 
         assertTrue(data.isMandatory());
-        final ConstraintDefinition constraints = data.getConstraints();
-        assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
+        assertEquals("class != 'wheel'", data.getWhenCondition().get().toString());
         final Collection<MustDefinition> mustConstraints = data.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -98,9 +95,6 @@ public class YangParserSimpleTest {
         }
         assertTrue(found1);
         assertTrue(found2);
-
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
     }
 
     @Test
@@ -119,8 +113,7 @@ public class YangParserSimpleTest {
         assertFalse(nodes.isConfiguration());
 
         // constraints
-        final ConstraintDefinition constraints = nodes.getConstraints();
-        assertEquals("class != 'wheel'", constraints.getWhenCondition().get().toString());
+        assertEquals("class != 'wheel'", nodes.getWhenCondition().get().toString());
         final Collection<MustDefinition> mustConstraints = nodes.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -145,8 +138,6 @@ public class YangParserSimpleTest {
         assertTrue(found1);
         assertTrue(found2);
 
-        assertNull(constraints.getMinElements());
-        assertNull(constraints.getMaxElements());
         assertTrue(nodes.isPresenceContainer());
 
         // typedef

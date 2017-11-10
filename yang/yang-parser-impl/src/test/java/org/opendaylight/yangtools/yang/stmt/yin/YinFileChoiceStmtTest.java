@@ -66,7 +66,7 @@ public class YinFileChoiceStmtTest {
         assertEquals("main-impl", caseNode.getQName().getLocalName());
         assertEquals(13, caseNode.getChildNodes().size());
 
-        assertTrue(caseNode.getConstraints().getWhenCondition().isPresent());
+        assertTrue(caseNode.getWhenCondition().isPresent());
 
         choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "state"));
         assertNotNull(choice);

@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -246,5 +247,9 @@ public class YangModeledAnyXMLDeserializationTest {
             return ImmutableSet.of();
         }
 
+        @Override
+        public Optional<RevisionAwareXPath> getWhenCondition() {
+            return Optional.empty();
+        }
     }
 }

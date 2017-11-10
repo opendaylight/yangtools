@@ -7,9 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
  * Utility holder for constraint definitions which do not really constrain anything.
@@ -23,11 +21,6 @@ public final class EmptyConstraintDefinition implements ConstraintDefinition {
 
     public static EmptyConstraintDefinition getInstance() {
         return INSTANCE;
-    }
-
-    @Override
-    public Optional<RevisionAwareXPath> getWhenCondition() {
-        return Optional.empty();
     }
 
     @Override

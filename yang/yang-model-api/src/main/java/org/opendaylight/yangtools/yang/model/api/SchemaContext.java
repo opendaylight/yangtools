@@ -164,4 +164,9 @@ public interface SchemaContext extends ContainerSchemaNode {
     default Collection<MustDefinition> getMustConstraints() {
         return ImmutableSet.of();
     }
+
+    @Override
+    default Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.empty();
+    }
 }
