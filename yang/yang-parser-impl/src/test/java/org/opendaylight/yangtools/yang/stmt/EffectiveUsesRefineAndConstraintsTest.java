@@ -20,8 +20,8 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -106,9 +106,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(Optional.of("original description"), listSchemaNode.getDescription());
         assertFalse(listSchemaNode.isConfiguration());
 
-        ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
-        assertEquals(10, listConstraints.getMinElements().intValue());
-        assertEquals(20, listConstraints.getMaxElements().intValue());
+        ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
+        assertEquals(10, listConstraints.getMinElements());
+        assertEquals(20, listConstraints.getMaxElements());
         assertEquals(1, listSchemaNode.getMustConstraints().size());
     }
 
@@ -141,9 +141,9 @@ public class EffectiveUsesRefineAndConstraintsTest {
         assertEquals(Optional.of("new description"), listSchemaNode.getDescription());
         assertTrue(listSchemaNode.isConfiguration());
 
-        ConstraintDefinition listConstraints = listSchemaNode.getConstraints();
-        assertEquals(5, listConstraints.getMinElements().intValue());
-        assertEquals(7, listConstraints.getMaxElements().intValue());
+        ElementCountConstraint listConstraints = listSchemaNode.getElementCountConstraint().get();
+        assertEquals(5, listConstraints.getMinElements());
+        assertEquals(7, listConstraints.getMaxElements());
         assertEquals(2, listSchemaNode.getMustConstraints().size());
     }
 }
