@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * Data Schema Node represents abstract supertype from which all data tree
- * definitions are derived.
+ * Data Schema Node represents abstract supertype from which all data tree definitions are derived.
  *
  * <p>
- * Contains the method which are used for getting metadata from the schema nodes
- * which contains data.
+ * Common interface is composed of {@link #isConfiguration()}, governing validity in config/operation data stores
+ * and {@link WhenConditionAware} mixin, which governs validity based on other document data.
  *
  * @see ContainerSchemaNode
  * @see ListSchemaNode
@@ -24,7 +23,7 @@ package org.opendaylight.yangtools.yang.model.api;
  * @see AnyXmlSchemaNode
  * @see AnyDataSchemaNode
  */
-public interface DataSchemaNode extends SchemaNode, CopyableNode {
+public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionAware {
     /**
      * Returns <code>true</code> if the data represents configuration data,
      * otherwise returns <code>false</code>.
