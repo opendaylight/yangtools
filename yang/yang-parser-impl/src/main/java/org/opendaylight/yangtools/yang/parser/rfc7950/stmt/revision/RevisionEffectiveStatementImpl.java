@@ -25,20 +25,8 @@ final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBas
 
     RevisionEffectiveStatementImpl(final StmtContext<Revision, RevisionStatement, ?> ctx) {
         super(ctx);
-
-        final DescriptionEffectiveStatement descStmt = firstEffective(DescriptionEffectiveStatement.class);
-        if (descStmt != null) {
-            this.description = descStmt.argument();
-        } else {
-            this.description = null;
-        }
-
-        final ReferenceEffectiveStatement refStmt = firstEffective(ReferenceEffectiveStatement.class);
-        if (refStmt != null) {
-            this.reference = refStmt.argument();
-        } else {
-            this.reference = null;
-        }
+        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
+        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     @Override

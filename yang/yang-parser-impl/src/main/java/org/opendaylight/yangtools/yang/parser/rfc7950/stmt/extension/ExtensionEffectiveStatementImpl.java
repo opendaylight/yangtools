@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -21,11 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument.ArgumentEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 // FIXME: hide this class
@@ -87,17 +88,13 @@ public final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocu
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
 
         // initFields
-        ArgumentEffectiveStatementImpl argumentSubstatement = firstEffective(ArgumentEffectiveStatementImpl.class);
-        if (argumentSubstatement != null) {
-            this.argument = argumentSubstatement.argument().getLocalName();
-
-            YinElementEffectiveStatement yinElement = argumentSubstatement
-                    .firstEffective(YinElementEffectiveStatement.class);
-            if (yinElement != null) {
-                this.yin = yinElement.argument();
-            } else {
-                this.yin = false;
-            }
+        final Optional<ArgumentEffectiveStatement> optArgumentSubstatement = findFirstEffectiveSubstatement(
+            ArgumentEffectiveStatement.class);
+        if (optArgumentSubstatement.isPresent()) {
+            final ArgumentEffectiveStatement argumentStatement = optArgumentSubstatement.get();
+            this.argument = argumentStatement.argument().getLocalName();
+            this.yin = argumentStatement.findFirstEffectiveSubstatement(YinElementEffectiveStatement.class)
+                    .map(YinElementEffectiveStatement::argument).orElse(Boolean.FALSE).booleanValue();
         } else {
             this.argument = null;
             this.yin = false;
