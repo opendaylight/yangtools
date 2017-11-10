@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -20,10 +21,12 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -36,6 +39,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
     private final ConstraintDefinition constraints;
+    private final RevisionAwareXPath whenCondition;
     private final SchemaPath path;
     private final boolean configuration;
     private final boolean addedByUses;
@@ -49,6 +53,9 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         this.path = ctx.getSchemaPath().get();
         this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
         this.configuration = ctx.isConfiguration();
+
+        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
+        whenCondition = whenStmt != null ? whenStmt.argument() : null;
 
         // initSubstatementCollectionsAndFields
 
@@ -117,6 +124,11 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    @Override
+    public final Optional<RevisionAwareXPath> getWhenCondition() {
+        return Optional.ofNullable(whenCondition);
     }
 
     /**

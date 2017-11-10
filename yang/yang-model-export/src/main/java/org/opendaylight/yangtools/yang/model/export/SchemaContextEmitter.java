@@ -35,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -1747,7 +1746,7 @@ abstract class SchemaContextEmitter {
         private void emitContainer(final ContainerSchemaNode child) {
             super.writer.startContainerNode(child.getQName());
             child.getMustConstraints().forEach(this::emitMust);
-            emitConstraints(child.getConstraints());
+            child.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: whenNode //:Optional
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitPresenceNode(child.isPresenceContainer());
@@ -1761,13 +1760,9 @@ abstract class SchemaContextEmitter {
 
         }
 
-        private void emitConstraints(final ConstraintDefinition constraints) {
-            constraints.getWhenCondition().ifPresent(this::emitWhen);
-        }
-
         private void emitLeaf(final LeafSchemaNode child) {
             super.writer.startLeafNode(child.getQName());
-            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            child.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
             child.getType().getUnits().ifPresent(this::emitUnitsNode);
@@ -1784,7 +1779,7 @@ abstract class SchemaContextEmitter {
         private void emitLeafList(final LeafListSchemaNode child) {
             super.writer.startLeafListNode(child.getQName());
 
-            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            child.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitTypeNode(child.getPath(), child.getType());
             child.getType().getUnits().ifPresent(this::emitUnitsNode);
@@ -1803,7 +1798,7 @@ abstract class SchemaContextEmitter {
 
         private void emitList(final ListSchemaNode child) {
             super.writer.startListNode(child.getQName());
-            child.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            child.getWhenCondition().ifPresent(this::emitWhen);
 
             // FIXME: BUG-2444: *(ifFeatureNode )
             child.getMustConstraints().forEach(this::emitMust);
@@ -1842,7 +1837,7 @@ abstract class SchemaContextEmitter {
 
         private void emitChoice(final ChoiceSchemaNode choice) {
             super.writer.startChoiceNode(choice.getQName());
-            choice.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            choice.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             // FIXME: BUG-2444: defaultNode //Optional
             emitConfigNode(choice.isConfiguration());
@@ -1861,7 +1856,7 @@ abstract class SchemaContextEmitter {
                 return;
             }
             super.writer.startCaseNode(caze.getQName());
-            caze.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            caze.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             emitDocumentedNode(caze);
             emitDataNodeContainer(caze);
@@ -1883,7 +1878,7 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitBodyOfDataSchemaNode(final DataSchemaNode dataSchemaNode) {
-            dataSchemaNode.getConstraints().getWhenCondition().ifPresent(this::emitWhen);
+            dataSchemaNode.getWhenCondition().ifPresent(this::emitWhen);
             // FIXME: BUG-2444: *(ifFeatureNode )
             if (dataSchemaNode instanceof MustConstraintAware) {
                 ((MustConstraintAware) dataSchemaNode).getMustConstraints().forEach(this::emitMust);
