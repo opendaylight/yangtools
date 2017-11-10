@@ -32,11 +32,4 @@ public interface DataSchemaNode extends SchemaNode, CopyableNode, WhenConditionA
      *         otherwise returns <code>false</code>
      */
     boolean isConfiguration();
-
-    /**
-     * Returns the constraints associated with Data Schema Node.
-     *
-     * @return the constraints associated with Data Schema Node
-     */
-    ConstraintDefinition getConstraints();
 }
