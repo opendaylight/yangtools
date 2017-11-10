@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -15,4 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  */
 public interface TypedefEffectiveStatement extends EffectiveStatement<QName, TypedefStatement>, TypeDefinitionAware {
 
+    /**
+     * Return this type definition as an effective type statement.
+     *
+     * @return Effective type statement.
+     */
+    @Beta
+    @Nonnull TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement();
 }
