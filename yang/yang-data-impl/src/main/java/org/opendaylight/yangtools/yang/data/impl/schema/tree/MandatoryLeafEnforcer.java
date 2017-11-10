@@ -20,10 +20,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.opendaylight.yangtools.yang.model.api.MandatoryAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,10 +71,15 @@ abstract class MandatoryLeafEnforcer implements Immutable {
                         findMandatoryNodes(builder, id.node(NodeIdentifier.create(child.getQName())), container, type);
                     }
                 } else {
-                    final boolean mandatory = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
-                    final ConstraintDefinition constraints = child.getConstraints();
-                    final Integer minElements = constraints.getMinElements();
-                    if (mandatory || minElements != null && minElements.intValue() > 0) {
+                    boolean needEnforce = child instanceof MandatoryAware && ((MandatoryAware) child).isMandatory();
+                    if (!needEnforce && child instanceof ElementCountConstraintAware) {
+                        needEnforce = ((ElementCountConstraintAware) child)
+                                .getElementCountConstraint().map(constraint -> {
+                                    final Integer min = constraint.getMinElements();
+                                    return min != null && min > 0;
+                                }).orElse(Boolean.FALSE).booleanValue();
+                    }
+                    if (needEnforce) {
                         final YangInstanceIdentifier childId = id.node(NodeIdentifier.create(child.getQName()));
                         LOG.debug("Adding mandatory child {}", childId);
                         builder.add(childId.toOptimized());

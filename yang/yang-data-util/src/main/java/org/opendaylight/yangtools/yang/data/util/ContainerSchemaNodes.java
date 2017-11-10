@@ -22,7 +22,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -84,11 +83,6 @@ public final class ContainerSchemaNodes {
         @Override
         public boolean isConfiguration() {
             return false;
-        }
-
-        @Override
-        public ConstraintDefinition getConstraints() {
-            return EmptyConstraintDefinition.getInstance();
         }
 
         @Nonnull
