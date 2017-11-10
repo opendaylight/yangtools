@@ -28,7 +28,7 @@ public class Bug5518Test {
         final DataSchemaNode dataChildByName = context.getDataChildByName(QName.create("foo", "root"));
         assertTrue(dataChildByName instanceof ContainerSchemaNode);
         final ContainerSchemaNode root = (ContainerSchemaNode) dataChildByName;
-        final Collection<MustDefinition> mustConstraints = root.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> mustConstraints = root.getMustConstraints();
         assertEquals(1, mustConstraints.size());
         final MustDefinition must = mustConstraints.iterator().next();
         assertEquals("not(deref(.)/../same-pass)", must.getXpath().toString());

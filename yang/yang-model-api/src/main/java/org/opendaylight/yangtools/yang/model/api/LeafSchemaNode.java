@@ -17,6 +17,6 @@ package org.opendaylight.yangtools.yang.model.api;
  * Since we are presenting the effective model of the world, the information dictated by 'default' and 'units'
  * substatements is captured in the type returned via {@link #getType()}.
  */
-public interface LeafSchemaNode extends TypedSchemaNode, MandatoryAware {
+public interface LeafSchemaNode extends TypedSchemaNode, MandatoryAware, MustConstraintAware {
 
 }

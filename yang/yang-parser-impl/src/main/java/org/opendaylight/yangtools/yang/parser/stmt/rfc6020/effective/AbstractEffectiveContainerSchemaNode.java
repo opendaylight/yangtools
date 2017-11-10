@@ -7,24 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
+import com.google.common.collect.ImmutableSet;
+import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
-
-    private final boolean presence;
+    private final Collection<MustDefinition> mustConstraints;
 
     AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        this.presence = firstEffective(PresenceEffectiveStatement.class) != null;
+        mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
     @Override
-    public boolean isPresenceContainer() {
-        return presence;
+    public final Collection<MustDefinition> getMustConstraints() {
+        return mustConstraints;
     }
 }

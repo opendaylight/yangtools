@@ -143,7 +143,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.Module}
  *
  * <dt>must
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ConstraintDefinition#getMustConstraints()}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.MustConstraintAware#getMustConstraints()}
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.MustDefinition}
  *
  * <dt>namespace
