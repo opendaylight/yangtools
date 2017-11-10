@@ -13,13 +13,14 @@ package org.opendaylight.yangtools.yang.model.api;
  *
  * @author Robert Varga
  */
-public interface TypedSchemaNode extends DataSchemaNode {
+public interface TypedDataSchemaNode extends DataSchemaNode, TypeAware {
     /**
      * Returns type of the instance which implements <code>DataSchemaNode</code>.
      *
-     * @return type definition of leaf-list schema node which represents the
+     * @return type definition of leaf or leaf-list schema node which represents the
      *         value of the argument of the YANG <code>type</code> substatement
      *         of the <code>leaf</code> or <code>leaf-list</code> statement
      */
+    @Override
     TypeDefinition<? extends TypeDefinition<?>> getType();
 }

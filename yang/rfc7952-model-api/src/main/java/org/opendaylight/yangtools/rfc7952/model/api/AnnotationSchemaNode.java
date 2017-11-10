@@ -15,7 +15,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 /**
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>, being attached to a SchemaNode.
  */
 @Beta
-public interface AnnotationSchemaNode extends UnknownSchemaNode, TypedSchemaNode {
+public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
     /**
      * Find specified annotation if it is supported by the specified SchemaContext.
      *
