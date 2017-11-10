@@ -14,6 +14,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -29,6 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
@@ -43,6 +45,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final boolean userOrdered;
     private final Set<String> defaultValues;
     private final Collection<MustDefinition> mustConstraints;
+    private final ElementCountConstraint elementCountConstraint;
 
     public LeafListEffectiveStatementImpl(
             final StmtContext<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> ctx) {
@@ -87,6 +90,7 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
 
         type = builder.build();
         userOrdered = isUserOrdered;
+        elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(this).orElse(null);
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
@@ -108,6 +112,11 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     @Override
     public boolean isUserOrdered() {
         return userOrdered;
+    }
+
+    @Override
+    public Optional<ElementCountConstraint> getElementCountConstraint() {
+        return Optional.ofNullable(elementCountConstraint);
     }
 
     @Override

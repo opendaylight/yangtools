@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -1776,6 +1777,11 @@ abstract class SchemaContextEmitter {
 
         }
 
+        private void emitCountConstraint(final ElementCountConstraint constraint) {
+            emitMinElementsNode(constraint.getMinElements());
+            emitMaxElementsNode(constraint.getMaxElements());
+        }
+
         private void emitLeafList(final LeafListSchemaNode child) {
             super.writer.startLeafListNode(child.getQName());
 
@@ -1787,13 +1793,11 @@ abstract class SchemaContextEmitter {
             child.getMustConstraints().forEach(this::emitMust);
             emitConfigNode(child.isConfiguration());
             emitDefaultNodes(child.getDefaults());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            child.getElementCountConstraint().ifPresent(this::emitCountConstraint);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitUnknownStatementNodes(child.getUnknownSchemaNodes());
             super.writer.endNode();
-
         }
 
         private void emitList(final ListSchemaNode child) {
@@ -1805,8 +1809,7 @@ abstract class SchemaContextEmitter {
             emitKey(child.getKeyDefinition());
             emitUniqueConstraints(child.getUniqueConstraints());
             emitConfigNode(child.isConfiguration());
-            emitMinElementsNode(child.getConstraints().getMinElements());
-            emitMaxElementsNode(child.getConstraints().getMaxElements());
+            child.getElementCountConstraint().ifPresent(this::emitCountConstraint);
             emitOrderedBy(child.isUserOrdered());
             emitDocumentedNode(child);
             emitDataNodeContainer(child);
