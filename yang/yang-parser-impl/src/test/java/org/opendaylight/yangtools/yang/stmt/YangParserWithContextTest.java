@@ -31,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -272,8 +273,9 @@ public class YangParserWithContextTest {
         assertEquals(Optional.of("description of addresses defined by refine"), refineList.getDescription());
         assertEquals(Optional.of("addresses reference added by refine"), refineList.getReference());
         assertFalse(refineList.isConfiguration());
-        assertEquals(2, (int) refineList.getConstraints().getMinElements());
-        assertEquals(12, (int) refineList.getConstraints().getMaxElements());
+        final ElementCountConstraint constraint = refineList.getElementCountConstraint().get();
+        assertEquals(2, constraint.getMinElements().intValue());
+        assertEquals(12, constraint.getMaxElements().intValue());
     }
 
     @Test

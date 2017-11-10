@@ -18,7 +18,6 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -38,7 +37,6 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
 
     private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
-    private final ConstraintDefinition constraints;
     private final RevisionAwareXPath whenCondition;
     private final SchemaPath path;
     private final boolean configuration;
@@ -51,7 +49,6 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         super(ctx);
 
         this.path = ctx.getSchemaPath().get();
-        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
         this.configuration = ctx.isConfiguration();
 
         final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
@@ -108,11 +105,6 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     @Override
     public boolean isConfiguration() {
         return configuration;
-    }
-
-    @Override
-    public ConstraintDefinition getConstraints() {
-        return constraints;
     }
 
     @Override
