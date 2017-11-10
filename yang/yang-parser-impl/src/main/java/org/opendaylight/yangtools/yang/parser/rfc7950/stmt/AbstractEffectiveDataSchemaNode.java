@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -13,7 +13,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -28,7 +27,7 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     // FIXME: YANGTOOLS-724: this field should be final
     private boolean augmenting;
 
-    public AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
+    protected AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.configuration = ctx.isConfiguration();
 
@@ -73,7 +72,7 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
      *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
      */
     @Deprecated
-    protected final void resetAugmenting() {
+    public final void resetAugmenting() {
         augmenting = false;
     }
 }

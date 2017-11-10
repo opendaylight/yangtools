@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ChoiceEffectiveStatementImpl;
 
 abstract class AbstractChoiceStatementSupport extends
         AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {

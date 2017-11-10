@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.ListEffectiveStatementImpl;
 
 abstract class AbstractListStatementSupport
         extends AbstractQNameStatementSupport<ListStatement, EffectiveStatement<QName, ListStatement>> {
