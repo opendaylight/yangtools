@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -25,14 +24,12 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     private final RevisionAwareXPath whenCondition;
     private final boolean addedByUses;
     private final boolean configuration;
-    private final ConstraintDefinition constraints;
 
     // FIXME: YANGTOOLS-724: this field should be final
     private boolean augmenting;
 
     public AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
-        this.constraints = EffectiveConstraintDefinitionImpl.forParent(this);
         this.configuration = ctx.isConfiguration();
 
         final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
@@ -62,11 +59,6 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     @Override
     public final boolean isConfiguration() {
         return configuration;
-    }
-
-    @Override
-    public final ConstraintDefinition getConstraints() {
-        return constraints;
     }
 
     @Override
