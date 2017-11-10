@@ -23,7 +23,6 @@ public final class ConstraintDefinitions {
         final int prime = 31;
         int result = 1;
         result = prime * result + Objects.hashCode(def.getWhenCondition());
-        result = prime * result + Objects.hashCode(def.getMustConstraints());
         result = prime * result + Objects.hashCode(def.getMinElements());
         result = prime * result + Objects.hashCode(def.getMaxElements());
         return result;
@@ -40,9 +39,6 @@ public final class ConstraintDefinitions {
         if (!Objects.equals(def.getWhenCondition(), other.getWhenCondition())) {
             return false;
         }
-        if (!Objects.equals(def.getMustConstraints(), other.getMustConstraints())) {
-            return false;
-        }
         if (!Objects.equals(def.getMinElements(), other.getMinElements())) {
             return false;
         }
@@ -55,7 +51,6 @@ public final class ConstraintDefinitions {
     public static String toString(final ConstraintDefinition def) {
         return MoreObjects.toStringHelper(def).omitNullValues()
                 .add("whenCondition", def.getWhenCondition().orElse(null))
-                .add("mustConstraints", def.getMustConstraints())
                 .add("minElements", def.getMinElements())
                 .add("maxElements", def.getMaxElements()).toString();
     }

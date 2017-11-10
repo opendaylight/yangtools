@@ -44,7 +44,7 @@ public class MustAndWhenStmtTest {
         assertNotNull(container);
         assertTrue(container.isPresenceContainer());
 
-        final Collection<MustDefinition> musts = container.getConstraints().getMustConstraints();
+        final Collection<MustDefinition> musts = container.getMustConstraints();
         assertEquals(2, musts.size());
 
         final Iterator<MustDefinition> mustsIterator = musts.iterator();

@@ -7,11 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.ConstraintDefinition;
-import org.opendaylight.yangtools.yang.model.api.MustDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
@@ -31,11 +28,6 @@ public final class EmptyConstraintDefinition implements ConstraintDefinition {
     @Override
     public Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();
-    }
-
-    @Override
-    public Set<MustDefinition> getMustConstraints() {
-        return ImmutableSet.of();
     }
 
     @Override

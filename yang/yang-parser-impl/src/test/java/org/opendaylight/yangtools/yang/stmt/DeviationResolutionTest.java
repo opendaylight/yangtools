@@ -96,9 +96,9 @@ public class DeviationResolutionTest {
 
         final RpcDefinition myRpc = barModule.getRpcs().iterator().next();
         final ContainerSchemaNode input = myRpc.getInput();
-        assertEquals(2, input.getConstraints().getMustConstraints().size());
+        assertEquals(2, input.getMustConstraints().size());
         final ContainerSchemaNode output = myRpc.getOutput();
-        assertEquals(2, output.getConstraints().getMustConstraints().size());
+        assertEquals(2, output.getMustConstraints().size());
 
         final NotificationDefinition myNotification = barModule.getNotifications().iterator().next();
         assertEquals(2, myNotification.getMustConstraints().size());
@@ -188,7 +188,7 @@ public class DeviationResolutionTest {
         assertNotNull(myLeafList);
 
         assertEquals(0, myLeafList.getDefaults().size());
-        assertEquals(0, myLeafList.getConstraints().getMustConstraints().size());
+        assertEquals(0, myLeafList.getMustConstraints().size());
 
         final ListSchemaNode myList = (ListSchemaNode) barModule.getDataChildByName(
                 QName.create(barModule.getQNameModule(), "my-list"));
@@ -206,7 +206,7 @@ public class DeviationResolutionTest {
         assertNotNull(myAugLeaf);
         assertEquals(Optional.empty(), myAugLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myAugLeaf.getType().getUnits());
-        assertEquals(0, myAugLeaf.getConstraints().getMustConstraints().size());
+        assertEquals(0, myAugLeaf.getMustConstraints().size());
         assertEquals(0, myAugLeaf.getUnknownSchemaNodes().size());
 
         final LeafSchemaNode myUsedLeaf = (LeafSchemaNode) myCont.getDataChildByName(
@@ -214,7 +214,7 @@ public class DeviationResolutionTest {
         assertNotNull(myUsedLeaf);
         assertEquals(Optional.empty(), myUsedLeaf.getType().getDefaultValue());
         assertEquals(Optional.empty(), myUsedLeaf.getType().getUnits());
-        assertEquals(0, myUsedLeaf.getConstraints().getMustConstraints().size());
+        assertEquals(0, myUsedLeaf.getMustConstraints().size());
         assertEquals(0, myUsedLeaf.getUnknownSchemaNodes().size());
     }
 

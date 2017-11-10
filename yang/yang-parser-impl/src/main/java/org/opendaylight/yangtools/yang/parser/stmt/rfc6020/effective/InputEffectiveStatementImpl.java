@@ -37,6 +37,12 @@ public final class InputEffectiveStatementImpl extends AbstractEffectiveContaine
     }
 
     @Override
+    public boolean isPresenceContainer() {
+        // FIXME: this should not really be here
+        return false;
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
