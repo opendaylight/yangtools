@@ -79,8 +79,8 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         defaultStr = dflt;
         unitsStr = units;
         type = builder.build();
-        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
+                .booleanValue();
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 

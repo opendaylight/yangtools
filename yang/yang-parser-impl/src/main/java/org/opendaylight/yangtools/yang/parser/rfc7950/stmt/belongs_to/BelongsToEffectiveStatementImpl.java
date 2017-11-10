@@ -12,8 +12,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class BelongsToEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, BelongsToStatement>
+final class BelongsToEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, BelongsToStatement>
         implements BelongsToEffectiveStatement {
     BelongsToEffectiveStatementImpl(final StmtContext<String, BelongsToStatement, ?> ctx) {
         super(ctx);

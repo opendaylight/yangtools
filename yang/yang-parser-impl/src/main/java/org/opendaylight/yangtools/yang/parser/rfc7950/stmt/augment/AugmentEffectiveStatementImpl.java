@@ -56,9 +56,7 @@ final class AugmentEffectiveStatementImpl
         this.revision = rootModuleQName.getRevision().orElse(null);
 
         this.copyOf = (AugmentationSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-
-        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
-        this.whenCondition = whenStmt == null ? null : whenStmt.argument();
+        whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
 
         // initSubstatementCollections
         final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();

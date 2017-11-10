@@ -81,8 +81,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
         this.refines = ImmutableMap.copyOf(refinesInit);
 
-        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
-        this.whenCondition = whenStmt == null ? null : whenStmt.argument();
+        whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
     }
 
     @Nonnull
