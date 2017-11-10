@@ -42,18 +42,15 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
         super(ctx);
 
         moduleName = ctx.getStatementArgument();
-        final PrefixEffectiveStatement prefixStmt = firstEffective(PrefixEffectiveStatement.class);
-        if (prefixStmt != null) {
-            this.prefix = prefixStmt.argument();
-        } else {
-            throw new MissingSubstatementException("Prefix is mandatory substatement of import statement",
-                    ctx.getStatementSourceReference());
-        }
+        final Optional<String> prefixStmt = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class);
+        MissingSubstatementException.throwIf(!prefixStmt.isPresent(), ctx.getStatementSourceReference(),
+            "Prefix is mandatory substatement of import statement");
+        this.prefix = prefixStmt.get();
 
         if (!ctx.isEnabledSemanticVersioning()) {
-            final RevisionDateEffectiveStatement revisionDateStmt = firstEffective(
+            final Optional<Revision> optRev = findFirstEffectiveSubstatementArgument(
                 RevisionDateEffectiveStatement.class);
-            this.revision = revisionDateStmt == null ? getImportedRevision(ctx) : revisionDateStmt.argument();
+            this.revision = optRev.isPresent() ? optRev.get() : getImportedRevision(ctx);
             this.semVer = null;
         } else {
             final SemVerSourceIdentifier importedModuleIdentifier = ctx.getFromNamespace(
@@ -62,11 +59,8 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
             semVer = importedModuleIdentifier.getSemanticVersion().orElse(null);
         }
 
-        final DescriptionEffectiveStatement descriptionStmt = firstEffective(DescriptionEffectiveStatement.class);
-        this.description = descriptionStmt != null ? descriptionStmt.argument() : null;
-
-        final ReferenceEffectiveStatement referenceStmt = firstEffective(ReferenceEffectiveStatement.class);
-        this.reference = referenceStmt != null ? referenceStmt.argument() : null;
+        description = findFirstEffectiveSubstatementArgument(DescriptionEffectiveStatement.class).orElse(null);
+        reference = findFirstEffectiveSubstatementArgument(ReferenceEffectiveStatement.class).orElse(null);
     }
 
     private Revision getImportedRevision(final StmtContext<String, ImportStatement, ?> ctx) {

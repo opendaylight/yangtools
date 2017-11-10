@@ -50,7 +50,7 @@ public final class ContainerEffectiveStatementImpl extends AbstractEffectiveCont
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
-        presence = firstEffective(PresenceEffectiveStatement.class) != null;
+        presence = findFirstEffectiveSubstatement(PresenceEffectiveStatement.class).isPresent();
     }
 
     @Override
