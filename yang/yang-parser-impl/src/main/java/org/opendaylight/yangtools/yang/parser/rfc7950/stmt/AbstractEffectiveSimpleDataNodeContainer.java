@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -26,12 +26,11 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
+public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
         DataSchemaNode {
 
@@ -45,7 +44,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     // FIXME: YANGTOOLS-724: this field should be final
     private boolean augmenting;
 
-    AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
+    protected AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
 
         this.path = ctx.getSchemaPath().get();
@@ -130,7 +129,7 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
      *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
      */
     @Deprecated
-    protected void resetAugmenting() {
+    public final void resetAugmenting() {
         augmenting = false;
     }
 }

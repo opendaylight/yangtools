@@ -196,10 +196,8 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
         final SchemaNodeIdentifier refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
-        final StatementContextBase<?, ?, ?> refineTargetNodeCtx = Utils.findNode(usesParentCtx,
-                refineTargetNodeIdentifier);
-
-        InferenceException.throwIfNull(refineTargetNodeCtx, subStmtCtx.getStatementSourceReference(),
+        final StatementContextBase<?, ?, ?> refineTargetNodeCtx = InferenceException.throwIfNull(
+            Utils.findNode(usesParentCtx, refineTargetNodeIdentifier), subStmtCtx.getStatementSourceReference(),
             "Refine target node %s not found.", refineTargetNodeIdentifier);
 
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
