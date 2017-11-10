@@ -21,6 +21,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ElementCountConstraint;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -32,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ListEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -45,6 +47,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
     private final Collection<UniqueConstraint> uniqueConstraints;
+    private final ElementCountConstraint elementCountConstraint;
     private final Collection<MustDefinition> mustConstraints;
 
     public ListEffectiveStatementImpl(
@@ -98,6 +101,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
+        elementCountConstraint = EffectiveStmtUtils.createElementCountConstraint(this).orElse(null);
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
     }
 
@@ -130,6 +134,11 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     @Override
     public boolean isUserOrdered() {
         return userOrdered;
+    }
+
+    @Override
+    public Optional<ElementCountConstraint> getElementCountConstraint() {
+        return Optional.ofNullable(elementCountConstraint);
     }
 
     @Override
