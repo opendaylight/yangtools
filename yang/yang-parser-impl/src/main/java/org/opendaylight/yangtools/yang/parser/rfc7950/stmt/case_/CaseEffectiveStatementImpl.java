@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -15,16 +15,16 @@ import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimpleDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement>
+final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement>
         implements CaseEffectiveStatement, ChoiceCaseNode, DerivableSchemaNode {
 
     private final ChoiceCaseNode original;
     private final boolean configuration;
 
-    public CaseEffectiveStatementImpl(
-            final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
+    CaseEffectiveStatementImpl(final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
         super(ctx);
         this.original = (ChoiceCaseNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 

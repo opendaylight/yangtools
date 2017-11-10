@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf;
 
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
@@ -28,10 +28,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
+// FIXME: hide this class
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
     private final Collection<MustDefinition> mustConstraints;
@@ -41,8 +43,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
     private final String unitsStr;
     private final boolean mandatory;
 
-    public LeafEffectiveStatementImpl(
-            final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
+    LeafEffectiveStatementImpl(final StmtContext<QName, LeafStatement, EffectiveStatement<QName, LeafStatement>> ctx) {
         super(ctx);
         this.original = (LeafSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
