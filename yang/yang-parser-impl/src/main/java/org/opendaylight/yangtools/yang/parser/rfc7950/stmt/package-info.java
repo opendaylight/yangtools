@@ -15,7 +15,13 @@
  * interactions follow properly-exposed API interfaces.
  *
  * <p>
- * Common base and utility classes for individual statement implementations are maintained in this package.
+ * Common base and utility classes for individual statement implementations are maintained in this package. This package
+ * is not meant for consumption by end users and should be used only by parser extensions.
+ *
+ * <p>
+ * Do not use bare implementation classes exposed from statement sub-packages, as their details are explicitly outside
+ * of API contract. The only exception to this rule are the StatementSupport classes, which allow for correlation and
+ * creation of known YANG statements.
  *
  * @author Robert Varga
  */
