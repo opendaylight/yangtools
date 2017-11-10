@@ -36,8 +36,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// FIXME: hide this class
-public final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
+final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<TypedefStatement> implements
         TypedefEffectiveStatement {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
@@ -89,6 +88,7 @@ public final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchema
         return typeDefinition;
     }
 
+    @Override
     public TypeEffectiveStatement<TypeStatement> asTypeEffectiveStatement() {
         TypeEffectiveStatement<TypeStatement> ret = typeStatement;
         if (ret == null) {
