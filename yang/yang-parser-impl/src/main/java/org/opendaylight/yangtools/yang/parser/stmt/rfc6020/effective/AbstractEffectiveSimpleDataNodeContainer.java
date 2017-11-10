@@ -33,16 +33,15 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements DataNodeContainer, AugmentationTarget,
         DataSchemaNode {
 
-    private final SchemaPath path;
-
-    // :FIXME should be private and final
-    boolean augmenting;
-    private final boolean addedByUses;
-    private final boolean configuration;
-    private final ConstraintDefinition constraints;
-
     private final Set<AugmentationSchemaNode> augmentations;
     private final List<UnknownSchemaNode> unknownNodes;
+    private final ConstraintDefinition constraints;
+    private final SchemaPath path;
+    private final boolean configuration;
+    private final boolean addedByUses;
+
+    // FIXME: YANGTOOLS-724: this field should be final
+    private boolean augmenting;
 
     AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
@@ -69,7 +68,8 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
         // initCopyType
         final CopyHistory copyTypesFromOriginal = ctx.getCopyHistory();
         if (copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES_AUGMENTATION)) {
-            this.addedByUses = this.augmenting = true;
+            this.augmenting = true;
+            this.addedByUses = true;
         } else {
             this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
@@ -117,5 +117,16 @@ abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatem
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
+    }
+
+    /**
+     * Reset {@link #isAugmenting()} to false.
+     *
+     * @deprecated This method is a violation of immutable contract and is a side-effect of bad/incomplete lifecycle,
+     *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
+     */
+    @Deprecated
+    protected void resetAugmenting() {
+        augmenting = false;
     }
 }

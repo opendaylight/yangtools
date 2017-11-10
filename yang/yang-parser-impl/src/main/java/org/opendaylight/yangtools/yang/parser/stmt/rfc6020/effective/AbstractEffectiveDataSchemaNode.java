@@ -19,11 +19,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveSchemaNode<D> implements DataSchemaNode {
 
-    // :FIXME Bug-7277
-    boolean augmenting;
     private final boolean addedByUses;
     private final boolean configuration;
     private final ConstraintDefinition constraints;
+
+    // FIXME: YANGTOOLS-724: this field should be final
+    private boolean augmenting;
 
     public AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
@@ -58,5 +59,16 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     @Override
     public ConstraintDefinition getConstraints() {
         return constraints;
+    }
+
+    /**
+     * Reset {@link #isAugmenting()} to false.
+     *
+     * @deprecated This method is a violation of immutable contract and is a side-effect of bad/incomplete lifecycle,
+     *             which needs to be fixed. Do not introduce new callers. This deficiency is tracked in YANGTOOLS-724.
+     */
+    @Deprecated
+    protected void resetAugmenting() {
+        augmenting = false;
     }
 }

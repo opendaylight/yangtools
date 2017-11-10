@@ -64,7 +64,7 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
                 final ChoiceCaseNode shorthandCase = new CaseShorthandImpl(dataSchemaNode);
                 // FIXME: we may be overwriting a previous entry, is that really okay?
                 casesInit.put(shorthandCase.getQName(), shorthandCase);
-                if (dataSchemaNode.isAugmenting() && !this.augmenting) {
+                if (dataSchemaNode.isAugmenting() && !isAugmenting()) {
                     resetAugmenting(dataSchemaNode);
                 }
             }
@@ -97,19 +97,19 @@ public final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSch
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
         if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
             final LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
-            leaf.augmenting = false;
+            leaf.resetAugmenting();
         } else if (dataSchemaNode instanceof ContainerEffectiveStatementImpl) {
             final ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
-            container.augmenting = false;
+            container.resetAugmenting();
         } else if (dataSchemaNode instanceof LeafListEffectiveStatementImpl) {
             final LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
-            leafList.augmenting = false;
+            leafList.resetAugmenting();
         } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
             final ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
-            list.augmenting = false;
+            list.resetAugmenting();
         } else if (dataSchemaNode instanceof AnyxmlEffectiveStatementImpl) {
             final AnyxmlEffectiveStatementImpl anyXml = (AnyxmlEffectiveStatementImpl) dataSchemaNode;
-            anyXml.augmenting = false;
+            anyXml.resetAugmenting();
         }
     }
 
