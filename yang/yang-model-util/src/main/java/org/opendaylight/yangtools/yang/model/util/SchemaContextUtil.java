@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -739,9 +739,9 @@ public final class SchemaContextUtil {
     private static Module findParentModuleOfReferencingType(final SchemaContext schemaContext,
             final SchemaNode schemaNode) {
         Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
-        Preconditions.checkArgument(schemaNode instanceof TypedSchemaNode, "Unsupported node %s", schemaNode);
+        Preconditions.checkArgument(schemaNode instanceof TypedDataSchemaNode, "Unsupported node %s", schemaNode);
 
-        TypeDefinition<?> nodeType = ((TypedSchemaNode) schemaNode).getType();
+        TypeDefinition<?> nodeType = ((TypedDataSchemaNode) schemaNode).getType();
         if (nodeType.getBaseType() != null) {
             while (nodeType.getBaseType() != null) {
                 nodeType = nodeType.getBaseType();

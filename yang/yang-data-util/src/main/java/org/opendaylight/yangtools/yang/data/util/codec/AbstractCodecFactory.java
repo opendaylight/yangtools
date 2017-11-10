@@ -16,7 +16,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -66,7 +66,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return schemaContext;
     }
 
-    public final T codecFor(final TypedSchemaNode schema) {
+    public final T codecFor(final TypedDataSchemaNode schema) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -209,7 +209,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return true;
     }
 
-    private T createComplexCodecFor(final TypedSchemaNode schema, final TypeDefinition<?> type) {
+    private T createComplexCodecFor(final TypedDataSchemaNode schema, final TypeDefinition<?> type) {
         if (type instanceof UnionTypeDefinition) {
             return createComplexUnion(schema, (UnionTypeDefinition) type);
         } else if (type instanceof LeafrefTypeDefinition) {
@@ -243,7 +243,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final TypedSchemaNode schema, final UnionTypeDefinition union) {
+    private T createComplexUnion(final TypedDataSchemaNode schema, final UnionTypeDefinition union) {
         final List<TypeDefinition<?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 

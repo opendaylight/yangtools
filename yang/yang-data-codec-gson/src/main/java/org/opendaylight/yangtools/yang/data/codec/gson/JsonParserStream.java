@@ -52,7 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -284,8 +284,8 @@ public final class JsonParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node) {
-        checkArgument(node instanceof TypedSchemaNode);
-        return codecs.codecFor((TypedSchemaNode) node).parseValue(null, value);
+        checkArgument(node instanceof TypedDataSchemaNode);
+        return codecs.codecFor((TypedDataSchemaNode) node).parseValue(null, value);
     }
 
     private void removeNamespace() {

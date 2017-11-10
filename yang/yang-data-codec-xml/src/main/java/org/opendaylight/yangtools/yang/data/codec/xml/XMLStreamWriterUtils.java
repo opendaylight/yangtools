@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -68,11 +68,11 @@ abstract class XMLStreamWriterUtils {
             return;
         }
 
-        checkArgument(schemaNode instanceof TypedSchemaNode,
+        checkArgument(schemaNode instanceof TypedDataSchemaNode,
             "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
             schemaNode.getQName());
 
-        TypeDefinition<?> type = ((TypedSchemaNode) schemaNode).getType();
+        TypeDefinition<?> type = ((TypedDataSchemaNode) schemaNode).getType();
         if (type instanceof LeafrefTypeDefinition) {
             type = getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type);
         }
