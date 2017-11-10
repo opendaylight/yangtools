@@ -26,8 +26,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLoca
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.AnyxmlEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective.YangModeledAnyXmlEffectiveStatementImpl;
 
 public final class AnyxmlStatementSupport extends
         AbstractQNameStatementSupport<AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> {

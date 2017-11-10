@@ -5,41 +5,34 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.effective;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
-import com.google.common.collect.ImmutableSet;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Objects;
-import java.util.Set;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
-import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public final class InputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<InputStatement>
-        implements InputEffectiveStatement {
+final class YangModeledAnyXmlEffectiveStatementImpl extends AnyxmlEffectiveStatementImpl
+        implements YangModeledAnyXmlSchemaNode {
 
-    public InputEffectiveStatementImpl(
-            final StmtContext<QName, InputStatement, EffectiveStatement<QName, InputStatement>> ctx) {
+    private final ContainerSchemaNode schemaOfAnyXmlData;
+
+    YangModeledAnyXmlEffectiveStatementImpl(final StmtContext<QName, AnyxmlStatement,
+            EffectiveStatement<QName, AnyxmlStatement>> ctx, final ContainerSchemaNode contentSchema) {
         super(ctx);
+        schemaOfAnyXmlData = requireNonNull(contentSchema);
     }
 
+    @Nonnull
     @Override
-    public Set<ActionDefinition> getActions() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public Set<NotificationDefinition> getNotifications() {
-        return ImmutableSet.of();
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        // FIXME: this should not really be here
-        return false;
+    public ContainerSchemaNode getSchemaOfAnyXmlData() {
+        return schemaOfAnyXmlData;
     }
 
     @Override
@@ -62,12 +55,16 @@ public final class InputEffectiveStatementImpl extends AbstractEffectiveContaine
         if (getClass() != obj.getClass()) {
             return false;
         }
-        InputEffectiveStatementImpl other = (InputEffectiveStatementImpl) obj;
+
+        YangModeledAnyXmlEffectiveStatementImpl other = (YangModeledAnyXmlEffectiveStatementImpl) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
     }
 
     @Override
     public String toString() {
-        return "RPC input " + getQName().getLocalName();
+        return YangModeledAnyXmlEffectiveStatementImpl.class.getSimpleName() + "["
+               + "qname=" + getQName()
+               + ", path=" + getPath()
+               + "]";
     }
 }
