@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -51,13 +52,13 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to.BelongsToEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
@@ -101,30 +102,30 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
         this.name = argument();
 
-        EffectiveStatementBase<?, ?> parentOfPrefix = this;
+        final EffectiveStatement<?, ?> parentOfPrefix;
         if (ctx.getPublicDefinition() == YangStmtMapping.SUBMODULE) {
-            parentOfPrefix = firstEffective(BelongsToEffectiveStatementImpl.class);
-            SourceException.throwIfNull(parentOfPrefix, ctx.getStatementSourceReference(),
+            final Optional<BelongsToEffectiveStatement> optParent =
+                    findFirstEffectiveSubstatement(BelongsToEffectiveStatement.class);
+            SourceException.throwIf(!optParent.isPresent(), ctx.getStatementSourceReference(),
                     "Unable to find belongs-to statement in submodule %s.", ctx.getStatementArgument());
+            parentOfPrefix = optParent.get();
+        } else {
+            parentOfPrefix = this;
         }
 
-        final PrefixEffectiveStatement prefixStmt = parentOfPrefix.firstEffective(PrefixEffectiveStatement.class);
-        SourceException.throwIfNull(prefixStmt, ctx.getStatementSourceReference(),
+        final Optional<@NonNull PrefixEffectiveStatement> prefixStmt = parentOfPrefix.findFirstEffectiveSubstatement(
+            PrefixEffectiveStatement.class);
+        SourceException.throwIf(!prefixStmt.isPresent(), ctx.getStatementSourceReference(),
                 "Unable to resolve prefix for module or submodule %s.", ctx.getStatementArgument());
-        this.prefix = prefixStmt.argument();
-
-        final YangVersionEffectiveStatement yangVersionStmt = firstEffective(YangVersionEffectiveStatement.class);
-        this.yangVersion = yangVersionStmt == null ? YangVersion.VERSION_1 : yangVersionStmt.argument();
-
-        final OpenconfigVersionEffectiveStatement semanticVersionStmt =
-                firstEffective(OpenconfigVersionEffectiveStatement.class);
-        this.semanticVersion = semanticVersionStmt == null ? null : semanticVersionStmt.argument();
-
-        final OrganizationEffectiveStatement organizationStmt = firstEffective(OrganizationEffectiveStatement.class);
-        this.organization = organizationStmt == null ? null : organizationStmt.argument();
-
-        final ContactEffectiveStatement contactStmt = firstEffective(ContactEffectiveStatement.class);
-        this.contact = contactStmt == null ? null : contactStmt.argument();
+        this.prefix = prefixStmt.get().argument();
+        this.yangVersion = findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
+                .orElse(YangVersion.VERSION_1);
+        this.semanticVersion = findFirstEffectiveSubstatementArgument(OpenconfigVersionEffectiveStatement.class)
+                .orElse(null);
+        this.organization = findFirstEffectiveSubstatementArgument(OrganizationEffectiveStatement.class)
+                .orElse(null);
+        this.contact = findFirstEffectiveSubstatementArgument(ContactEffectiveStatement.class)
+                .orElse(null);
 
         // init submodules and substatements of submodules
         final List<EffectiveStatement<?, ?>> substatementsOfSubmodules;

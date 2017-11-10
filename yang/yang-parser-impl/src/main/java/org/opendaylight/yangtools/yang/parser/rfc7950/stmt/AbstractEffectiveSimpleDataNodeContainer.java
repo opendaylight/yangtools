@@ -50,8 +50,7 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         this.path = ctx.getSchemaPath().get();
         this.configuration = ctx.isConfiguration();
 
-        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
-        whenCondition = whenStmt != null ? whenStmt.argument() : null;
+        whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
 
         // initSubstatementCollectionsAndFields
 

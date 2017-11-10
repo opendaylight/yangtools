@@ -33,24 +33,21 @@ public final class EffectiveStmtUtils {
             effectiveStatement.argument());
     }
 
-    public static Optional<ElementCountConstraint> createElementCountConstraint(
-            final EffectiveStatementBase<?, ?> stmt) {
-        final MinElementsEffectiveStatement firstMinElementsStmt = stmt.firstEffective(
-            MinElementsEffectiveStatement.class);
+    public static Optional<ElementCountConstraint> createElementCountConstraint(final EffectiveStatement<?, ?> stmt) {
         final Integer minElements;
-        if (firstMinElementsStmt != null) {
-            final Integer m = firstMinElementsStmt.argument();
+        final Optional<Integer> min = stmt.findFirstEffectiveSubstatementArgument(MinElementsEffectiveStatement.class);
+        if (min.isPresent()) {
+            final Integer m = min.get();
             minElements = m > 0 ? m : null;
         } else {
             minElements = null;
         }
 
-        final MaxElementsEffectiveStatement firstMaxElementsStmt = stmt.firstEffective(
-            MaxElementsEffectiveStatement.class);
-        final String maxElementsArg = firstMaxElementsStmt == null ? UNBOUNDED_STR : firstMaxElementsStmt.argument();
         final Integer maxElements;
-        if (!UNBOUNDED_STR.equals(maxElementsArg)) {
-            final Integer m = Integer.valueOf(maxElementsArg);
+        final String max = stmt.findFirstEffectiveSubstatementArgument(MaxElementsEffectiveStatement.class)
+                .orElse(UNBOUNDED_STR);
+        if (!UNBOUNDED_STR.equals(max)) {
+            final Integer m = Integer.valueOf(max);
             maxElements = m < Integer.MAX_VALUE ? m : null;
         } else {
             maxElements = null;

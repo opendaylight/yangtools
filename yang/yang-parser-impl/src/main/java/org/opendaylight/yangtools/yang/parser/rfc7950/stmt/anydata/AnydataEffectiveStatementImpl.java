@@ -41,8 +41,8 @@ final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
             final StmtContext<QName, AnydataStatement, EffectiveStatement<QName, AnydataStatement>> ctx) {
         super(ctx);
         this.original = (AnyDataSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
-        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
+                .booleanValue();
         mustConstraints = ImmutableSet.copyOf(allSubstatementsOfType(MustDefinition.class));
 
         /*

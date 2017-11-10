@@ -30,9 +30,7 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
     protected AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
         this.configuration = ctx.isConfiguration();
-
-        final WhenEffectiveStatement whenStmt = firstEffective(WhenEffectiveStatement.class);
-        whenCondition = whenStmt != null ? whenStmt.argument() : null;
+        whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
 
         // initCopyType
         final CopyHistory originalHistory = ctx.getCopyHistory();

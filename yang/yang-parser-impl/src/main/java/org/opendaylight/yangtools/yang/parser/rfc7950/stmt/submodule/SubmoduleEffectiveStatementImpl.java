@@ -10,7 +10,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
@@ -33,9 +35,10 @@ public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModu
         final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);
         final QNameModule belongsToModuleQName = ctx.getFromNamespace(ModuleNameToModuleQName.class,
                 belongsToModuleName);
-        final RevisionEffectiveStatement submoduleRevision = firstEffective(RevisionEffectiveStatement.class);
-        this.qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(),
-            submoduleRevision == null ? null : submoduleRevision.argument()).intern();
+
+        final Optional<Revision> submoduleRevision = findFirstEffectiveSubstatementArgument(
+            RevisionEffectiveStatement.class);
+        this.qnameModule = QNameModule.create(belongsToModuleQName.getNamespace(), submoduleRevision).intern();
     }
 
     @Override
