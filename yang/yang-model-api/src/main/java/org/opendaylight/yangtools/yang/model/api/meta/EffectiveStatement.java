@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -74,4 +77,37 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      * @return collection of all effective substatements.
      */
     @Nonnull Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
+
+    /**
+     * Finds the first effective substatement of specified type.
+     *
+     * @return First effective substatement, or empty if no match is found.
+     */
+    @Beta
+    default <T extends EffectiveStatement<?, ?>> Optional<T> findFirstEffectiveSubstatement(
+            @Nonnull final Class<T> type) {
+        return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast);
+    }
+
+    /**
+     * Finds the first effective substatement of specified type and return its value
+     *
+     * @return First effective substatement's argument, or empty if no match is found.
+     */
+    @Beta
+    default <V, T extends EffectiveStatement<V, ?>> Optional<V> findFirstEffectiveSubstatementArgument(
+            @Nonnull final Class<T> type) {
+        return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast)
+                .map(EffectiveStatement::argument);
+    }
+
+    /**
+     * Find all effective substatements of specified type and return them as a stream.
+     *
+     * @return A stream of all effective substatements of specified type.
+     */
+    @Beta
+    default <T extends EffectiveStatement<?, ?>> Stream<T> streamEffectiveSubstatements(@Nonnull final Class<T> type) {
+        return effectiveSubstatements().stream().filter(type::isInstance).map(type::cast);
+    }
 }

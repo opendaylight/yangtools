@@ -96,8 +96,8 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
             defaultCase = null;
         }
 
-        final MandatoryEffectiveStatement mandatoryStmt = firstEffective(MandatoryEffectiveStatement.class);
-        mandatory = mandatoryStmt == null ? false : mandatoryStmt.argument().booleanValue();
+        mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
+                .booleanValue();
     }
 
     private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
