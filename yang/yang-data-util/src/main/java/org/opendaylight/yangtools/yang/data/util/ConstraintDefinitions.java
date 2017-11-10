@@ -22,7 +22,6 @@ public final class ConstraintDefinitions {
     public static int hashCode(final ConstraintDefinition def) {
         final int prime = 31;
         int result = 1;
-        result = prime * result + Objects.hashCode(def.getWhenCondition());
         result = prime * result + Objects.hashCode(def.getMinElements());
         result = prime * result + Objects.hashCode(def.getMaxElements());
         return result;
@@ -36,9 +35,6 @@ public final class ConstraintDefinitions {
             return false;
         }
         final ConstraintDefinition other = (ConstraintDefinition) obj;
-        if (!Objects.equals(def.getWhenCondition(), other.getWhenCondition())) {
-            return false;
-        }
         if (!Objects.equals(def.getMinElements(), other.getMinElements())) {
             return false;
         }
@@ -50,7 +46,6 @@ public final class ConstraintDefinitions {
 
     public static String toString(final ConstraintDefinition def) {
         return MoreObjects.toStringHelper(def).omitNullValues()
-                .add("whenCondition", def.getWhenCondition().orElse(null))
                 .add("minElements", def.getMinElements())
                 .add("maxElements", def.getMaxElements()).toString();
     }
