@@ -14,7 +14,7 @@ import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
 import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
  * A thread-safe lazily-populated codec cache. Instances are cached in an internal weak/soft cache.
@@ -27,10 +27,11 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     // Weak keys to force identity lookup
     // Soft values to keep unreferenced codecs around for a bit, but eventually we want them to go away
     private final Cache<TypeDefinition<?>, T> simpleCodecs = CacheBuilder.newBuilder().weakKeys().softValues().build();
-    private final Cache<TypedSchemaNode, T> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues().build();
+    private final Cache<TypedDataSchemaNode, T> complexCodecs = CacheBuilder.newBuilder().weakKeys().softValues()
+        .build();
 
     @Override
-    public T lookupComplex(final TypedSchemaNode schema) {
+    public T lookupComplex(final TypedDataSchemaNode schema) {
         return complexCodecs.getIfPresent(schema);
     }
 
@@ -40,7 +41,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T getComplex(final TypedSchemaNode schema, final T codec) {
+    T getComplex(final TypedDataSchemaNode schema, final T codec) {
         try {
             return complexCodecs.get(schema, () -> codec);
         } catch (ExecutionException e) {
