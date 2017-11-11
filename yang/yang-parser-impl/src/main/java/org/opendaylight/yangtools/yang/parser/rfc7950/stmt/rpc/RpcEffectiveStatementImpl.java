@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -18,13 +19,13 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement>
@@ -37,8 +38,8 @@ final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSta
     RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement,
             EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
-        this.input = firstEffective(InputEffectiveStatementImpl.class);
-        this.output = firstEffective(OutputEffectiveStatementImpl.class);
+        input = findAsContainer(this, InputEffectiveStatement.class);
+        output = findAsContainer(this, OutputEffectiveStatement.class);
 
         // initSubstatements
         Set<GroupingDefinition> groupingsInit = new HashSet<>();
@@ -60,6 +61,13 @@ final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcSta
         }
         this.groupings = ImmutableSet.copyOf(groupingsInit);
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
+    }
+
+    private static ContainerSchemaNode findAsContainer(final EffectiveStatement<?, ?> parent,
+            final Class<? extends EffectiveStatement<QName, ?>> statementType) {
+        final EffectiveStatement<?, ?> statement = parent.findFirstEffectiveSubstatement(statementType).get();
+        Verify.verify(statement instanceof ContainerSchemaNode, "Child statement %s is not a ContainerSchemaNode");
+        return (ContainerSchemaNode) statement;
     }
 
     @Override
