@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class YinElementStatementSupport extends
         AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
@@ -26,7 +26,7 @@ public final class YinElementStatementSupport extends
 
     @Override
     public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Utils.parseBoolean(ctx, value);
+        return ArgumentUtils.parseBoolean(ctx, value);
     }
 
     @Override
@@ -42,7 +42,7 @@ public final class YinElementStatementSupport extends
 
     @Override
     public String internArgument(final String rawArgument) {
-        return Utils.internBoolean(rawArgument);
+        return ArgumentUtils.internBoolean(rawArgument);
     }
 
     @Override
