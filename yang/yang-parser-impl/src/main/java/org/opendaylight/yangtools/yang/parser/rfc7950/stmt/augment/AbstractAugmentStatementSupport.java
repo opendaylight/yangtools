@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -147,9 +147,9 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                  * Do not fail, if it is an uses-augment to an unknown node.
                  */
                 if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
-                    final StatementContextBase<?, ?, ?> targetNode = Utils.findNode(getSearchRoot(augmentNode),
-                            augmentNode.getStatementArgument());
-                    if (targetNode != null && StmtContextUtils.isUnknownStatement(targetNode)) {
+                    final Optional<StmtContext<?, ?, ?>> targetNode = SchemaNodeIdentifierBuildNamespace.findNode(
+                        getSearchRoot(augmentNode), augmentNode.getStatementArgument());
+                    if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
                         augmentNode.setIsSupportedToBuildEffective(false);
                         LOG.warn(
                                 "Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
@@ -164,8 +164,8 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
         });
     }
 
-    private static Mutable<?, ?, ?> getSearchRoot(final Mutable<?, ?, ?> augmentContext) {
-        final Mutable<?, ?, ?> parent = augmentContext.getParentContext();
+    private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
+        final StmtContext<?, ?, ?> parent = augmentContext.getParentContext();
         // Augment is in uses - we need to augment instantiated nodes in parent.
         if (YangStmtMapping.USES == parent.getPublicDefinition()) {
             return parent.getParentContext();
