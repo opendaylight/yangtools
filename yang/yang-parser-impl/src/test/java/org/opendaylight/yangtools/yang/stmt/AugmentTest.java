@@ -23,7 +23,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -36,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
+import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 public class AugmentTest {
     private static final QNameModule FOO = QNameModule.create(
@@ -97,8 +96,7 @@ public class AugmentTest {
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getPath());
         assertFalse(ds0ChannelNumber.isAugmenting());
         // type of leaf ds0ChannelNumber
-        final QName typeQName = QName.create(YangConstants.RFC6020_YANG_MODULE, TypeUtils.STRING);
-        final List<QName> typePath = Collections.singletonList(typeQName);
+        final List<QName> typePath = Collections.singletonList(BaseTypes.STRING_QNAME);
         expectedSchemaPath = SchemaPath.create(typePath, true);
         assertEquals(expectedSchemaPath, ds0ChannelNumber.getType().getPath());
 

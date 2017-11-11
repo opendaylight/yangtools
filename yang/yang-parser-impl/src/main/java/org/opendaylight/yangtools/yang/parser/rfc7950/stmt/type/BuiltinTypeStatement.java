@@ -20,26 +20,25 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class BuiltinTypeStatement implements TypeStatement {
     private static final Map<String, BuiltinTypeStatement> BUILTINS;
 
     static {
         final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();
-        putBuiltin(builder, TypeUtils.BINARY);
-        putBuiltin(builder, TypeUtils.BOOLEAN);
-        putBuiltin(builder, TypeUtils.EMPTY);
-        putBuiltin(builder, TypeUtils.INSTANCE_IDENTIFIER);
-        putBuiltin(builder, TypeUtils.INT8);
-        putBuiltin(builder, TypeUtils.INT16);
-        putBuiltin(builder, TypeUtils.INT32);
-        putBuiltin(builder, TypeUtils.INT64);
-        putBuiltin(builder, TypeUtils.STRING);
-        putBuiltin(builder, TypeUtils.UINT8);
-        putBuiltin(builder, TypeUtils.UINT16);
-        putBuiltin(builder, TypeUtils.UINT32);
-        putBuiltin(builder, TypeUtils.UINT64);
+        putBuiltin(builder, AbstractTypeStatementSupport.BINARY);
+        putBuiltin(builder, AbstractTypeStatementSupport.BOOLEAN);
+        putBuiltin(builder, AbstractTypeStatementSupport.EMPTY);
+        putBuiltin(builder, AbstractTypeStatementSupport.INSTANCE_IDENTIFIER);
+        putBuiltin(builder, AbstractTypeStatementSupport.INT8);
+        putBuiltin(builder, AbstractTypeStatementSupport.INT16);
+        putBuiltin(builder, AbstractTypeStatementSupport.INT32);
+        putBuiltin(builder, AbstractTypeStatementSupport.INT64);
+        putBuiltin(builder, AbstractTypeStatementSupport.STRING);
+        putBuiltin(builder, AbstractTypeStatementSupport.UINT8);
+        putBuiltin(builder, AbstractTypeStatementSupport.UINT16);
+        putBuiltin(builder, AbstractTypeStatementSupport.UINT32);
+        putBuiltin(builder, AbstractTypeStatementSupport.UINT64);
         BUILTINS = builder.build();
     }
 
