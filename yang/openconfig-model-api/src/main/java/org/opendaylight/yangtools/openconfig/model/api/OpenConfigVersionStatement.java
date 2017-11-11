@@ -12,6 +12,6 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 
 @Beta
-public interface OpenconfigVersionStatement extends UnknownStatement<SemVer> {
+public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
 
 }

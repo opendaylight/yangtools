@@ -19,20 +19,23 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
 public enum OpenConfigStatements implements StatementDefinition {
-    // FIXME: add support for hashed value
-    OPENCONFIG_VERSION(QName.create(OpenConfigConstants.SEMVER_MODULE.getNamespace(), "openconfig-version"), "semver",
-        OpenconfigVersionStatement.class, OpenconfigVersionEffectiveStatement.class);
+    OPENCONFIG_ENCRYPTED_VALUE(QName.create(OpenConfigConstants.ENCRYPTED_VALUE_MODULE, "openconfig-encrypted-value"),
+        null, OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class),
+    OPENCONFIG_HASHED_VALUE(QName.create(OpenConfigConstants.HASHED_VALUE_MODULE, "openconfig-hashed-value"), null,
+        OpenConfigHashedValueStatement.class, OpenConfigHashedValueEffectiveStatement.class),
+    OPENCONFIG_VERSION(QName.create(OpenConfigConstants.MODULE_NAMESPACE, "openconfig-version"), "semver",
+        OpenConfigVersionStatement.class, OpenConfigVersionEffectiveStatement.class);
 
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
     private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final QName statementName;
     private final QName argumentName;
 
-    OpenConfigStatements(final QName statementName, final String argumentName,
+    OpenConfigStatements(final QName statementName, @Nullable final String argumentName,
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
             final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentName = QName.create(statementName, argumentName);
+        this.argumentName = argumentName != null ? QName.create(statementName, argumentName) : null;
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
     }

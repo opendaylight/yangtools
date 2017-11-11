@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OpenconfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer>
-        implements OpenconfigVersionStatement {
-    OpenconfigVersionStatementImpl(final StmtContext<SemVer, OpenconfigVersionStatement, ?> context) {
+final class OpenConfigVersionStatementImpl extends AbstractDeclaredStatement<SemVer>
+        implements OpenConfigVersionStatement {
+    OpenConfigVersionStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> context) {
         super(context);
     }
 
