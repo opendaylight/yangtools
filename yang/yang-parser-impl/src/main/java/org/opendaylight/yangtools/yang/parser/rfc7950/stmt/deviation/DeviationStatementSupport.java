@@ -12,12 +12,12 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class DeviationStatementSupport extends AbstractStatementSupport<SchemaNodeIdentifier, DeviationStatement,
         EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> {
@@ -34,7 +34,7 @@ public final class DeviationStatementSupport extends AbstractStatementSupport<Sc
 
     @Override
     public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Utils.nodeIdentifierFromPath(ctx, value);
+        return PathUtils.nodeIdentifierFromPath(ctx, value);
     }
 
     @Override

@@ -7,129 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE;
-import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
-
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableBiMap;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import javax.annotation.RegEx;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class Utils {
-    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
-    private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
-    @RegEx
-    private static final String YANG_XPATH_FUNCTIONS_STRING =
-            "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)([ \t\r\n]*)(\\()";
-    private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
     private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
     private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
     private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
     private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
-    private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
-        @Override
-        protected XPathFactory initialValue() {
-            return XPathFactory.newInstance();
-        }
-    };
-
     private Utils() {
         throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Cleanup any resources attached to the current thread. Threads interacting with this class can cause thread-local
-     * caches to them. Invoke this method if you want to detach those resources.
-     */
-    public static void detachFromCurrentThread() {
-        XPATH_FACTORY.remove();
-    }
-
-    private static String trimSingleLastSlashFromXPath(final String path) {
-        return path.endsWith("/") ? path.substring(0, path.length() - 1) : path;
-    }
-
-    public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        final XPath xPath = XPATH_FACTORY.get().newXPath();
-        xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
-                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE.toString(), YANG_XPATH_FUNCTIONS_PREFIX)));
-
-        final String trimmed = trimSingleLastSlashFromXPath(path);
-        try {
-            // XPath extension functions have to be prefixed
-            // yang-specific XPath functions are in fact extended functions, therefore we have to add
-            // "yang" prefix to them so that they can be properly validated with the XPath.compile() method
-            // the "yang" prefix is bound to RFC6020 YANG namespace
-            final String prefixedXPath = addPrefixToYangXPathFunctions(trimmed, ctx);
-            // TODO: we could capture the result and expose its 'evaluate' method
-            xPath.compile(prefixedXPath);
-        } catch (final XPathExpressionException e) {
-            LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
-        }
-
-        return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
-    }
-
-    private static String addPrefixToYangXPathFunctions(final String path, final StmtContext<?, ?, ?> ctx) {
-        if (ctx.getRootVersion() == YangVersion.VERSION_1_1) {
-            // FIXME once Java 9 is available, change this to StringBuilder as Matcher.appendReplacement() and
-            // Matcher.appendTail() will accept StringBuilder parameter in Java 9
-            final StringBuffer result = new StringBuffer();
-            final String prefix = YANG_XPATH_FUNCTIONS_PREFIX + ":";
-            final Matcher matcher = YANG_XPATH_FUNCTIONS_PATTERN.matcher(path);
-            while (matcher.find()) {
-                matcher.appendReplacement(result, prefix + matcher.group());
-            }
-
-            matcher.appendTail(result);
-            return result.toString();
-        }
-
-        return path;
-    }
-
-    @SuppressWarnings("checkstyle:illegalCatch")
-    public static SchemaNodeIdentifier nodeIdentifierFromPath(final StmtContext<?, ?, ?> ctx, final String path) {
-        // FIXME: is the path trimming really necessary??
-        final List<QName> qNames = new ArrayList<>();
-        for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
-            try {
-                final QName qName = StmtContextUtils.qnameFromArgument(ctx, nodeName);
-                qNames.add(qName);
-            } catch (final RuntimeException e) {
-                throw new SourceException(ctx.getStatementSourceReference(), e,
-                        "Failed to parse node '%s' in path '%s'", nodeName, path);
-            }
-        }
-
-        return SchemaNodeIdentifier.create(qNames, PATH_ABS.matcher(path).matches());
     }
 
     public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,

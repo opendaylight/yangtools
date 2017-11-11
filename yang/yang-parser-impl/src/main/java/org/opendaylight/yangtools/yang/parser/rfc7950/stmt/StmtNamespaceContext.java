@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verifyNotNull;
@@ -19,11 +19,12 @@ import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.URIStringToImpPrefix;
 
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.
  */
-// TODO: this is a useful utility, so should probably move to yang.parser.spi.meta.
+// TODO: this is a useful utility, so it may be useful to expose it either in this package, or yang.parser.spi.source.
 final class StmtNamespaceContext implements NamespaceContext {
     private final StmtContext<?, ?, ?> ctx;
     private final BiMap<String, String> uriToPrefix;

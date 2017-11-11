@@ -11,10 +11,10 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class PathStatementSupport extends AbstractStatementSupport<RevisionAwareXPath, PathStatement,
         EffectiveStatement<RevisionAwareXPath, PathStatement>> {
@@ -28,7 +28,7 @@ public final class PathStatementSupport extends AbstractStatementSupport<Revisio
 
     @Override
     public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Utils.parseXPath(ctx, value);
+        return PathUtils.parseXPath(ctx, value);
     }
 
     @Override
