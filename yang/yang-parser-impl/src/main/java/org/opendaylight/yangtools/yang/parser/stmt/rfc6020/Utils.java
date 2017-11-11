@@ -14,11 +14,8 @@ import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
@@ -46,7 +43,6 @@ public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     @RegEx
@@ -75,24 +71,6 @@ public final class Utils {
      */
     public static void detachFromCurrentThread() {
         XPATH_FACTORY.remove();
-    }
-
-    public static Collection<SchemaNodeIdentifier.Relative> transformKeysStringToKeyNodes(
-            final StmtContext<?, ?, ?> ctx, final String value) {
-        final List<String> keyTokens = SPACE_SPLITTER.splitToList(value);
-
-        // to detect if key contains duplicates
-        if (new HashSet<>(keyTokens).size() < keyTokens.size()) {
-            // FIXME: report all duplicate keys
-            throw new SourceException(ctx.getStatementSourceReference(), "Duplicate value in list key: %s", value);
-        }
-
-        final Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
-        for (final String keyToken : keyTokens) {
-            keyNodes.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.qnameFromArgument(ctx, keyToken)));
-        }
-
-        return keyNodes;
     }
 
     private static String trimSingleLastSlashFromXPath(final String path) {
