@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length.LengthEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
@@ -32,7 +31,7 @@ final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveStatementB
         super(ctx);
 
         final LengthRestrictedTypeBuilder<BinaryTypeDefinition> builder =
-                RestrictedTypes.newBinaryBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newBinaryBuilder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof LengthEffectiveStatementImpl) {

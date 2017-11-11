@@ -12,12 +12,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class UnionTypeEffectiveStatementImpl extends AbstractTypeEffectiveStatement<UnionTypeDefinition> {
     UnionTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final UnionTypeDefinition baseType) {
-        super(ctx, RestrictedTypes.newUnionBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx)));
+        super(ctx, RestrictedTypes.newUnionBuilder(baseType,
+            AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
     }
 }

@@ -12,12 +12,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class BooleanTypeEffectiveStatementImpl extends AbstractTypeEffectiveStatement<BooleanTypeDefinition> {
     BooleanTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
             final BooleanTypeDefinition baseType) {
-        super(ctx, RestrictedTypes.newBooleanBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx)));
+        super(ctx, RestrictedTypes.newBooleanBuilder(baseType,
+            AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
     }
 }

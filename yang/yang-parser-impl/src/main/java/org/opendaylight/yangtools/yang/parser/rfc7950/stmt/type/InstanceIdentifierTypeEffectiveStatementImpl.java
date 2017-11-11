@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.util.type.InstanceIdentifierTypeBui
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class InstanceIdentifierTypeEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
@@ -30,7 +29,8 @@ final class InstanceIdentifierTypeEffectiveStatementImpl
         super(ctx);
 
         final InstanceIdentifierTypeBuilder builder =
-                RestrictedTypes.newInstanceIdentifierBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newInstanceIdentifierBuilder(baseType,
+                    AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
