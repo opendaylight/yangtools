@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationSupport;
-import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenconfigVersionSupport;
+import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
@@ -213,7 +213,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
-            .addSupport(OpenconfigVersionSupport.getInstance())
+            .addSupport(OpenConfigVersionSupport.getInstance())
             .addSupport(global(SemanticVersionNamespace.class))
             .addSupport(global(SemanticVersionModuleNamespace.class))
             .addSupport(sourceLocal(ImportPrefixToSemVerSourceIdentifier.class))
