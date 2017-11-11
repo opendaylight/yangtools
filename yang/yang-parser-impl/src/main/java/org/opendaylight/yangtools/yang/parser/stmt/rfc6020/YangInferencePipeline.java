@@ -20,6 +20,9 @@ import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata.AnydataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
@@ -206,7 +209,7 @@ public final class YangInferencePipeline {
             .addSupport(sourceLocal(IncludedSubmoduleNameToModuleCtx.class))
             .addSupport(sourceLocal(ImportPrefixToModuleCtx.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleCtx.class))
-            .addSupport(sourceLocal(URIStringToImpPrefix.class))
+            .addSupport(sourceLocal(URIStringToImportPrefix.class))
             .addSupport(sourceLocal(BelongsToModuleContext.class))
             .addSupport(sourceLocal(QNameToStatementDefinition.class))
             .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
@@ -221,7 +224,7 @@ public final class YangInferencePipeline {
             .addSupport(new YinElementStatementSupport())
             .addSupport(new ArgumentStatementSupport())
             .addSupport(new ExtensionStatementSupport())
-            .addSupport(new ChildSchemaNodes<>())
+            .addSupport(new ChildSchemaNodeNamespace<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
             .addSupport(global(ExtensionNamespace.class))
             .addSupport(new TypedefStatementSupport())
