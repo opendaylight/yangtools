@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
@@ -13,6 +13,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import java.util.Collection;
@@ -158,6 +159,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
+@Beta
 public final class YangInferencePipeline {
     public static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
