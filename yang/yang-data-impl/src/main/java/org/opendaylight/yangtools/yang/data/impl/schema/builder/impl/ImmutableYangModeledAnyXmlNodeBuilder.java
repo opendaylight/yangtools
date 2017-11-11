@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import com.google.common.base.Preconditions;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -18,7 +19,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 public final class ImmutableYangModeledAnyXmlNodeBuilder extends
         AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> {

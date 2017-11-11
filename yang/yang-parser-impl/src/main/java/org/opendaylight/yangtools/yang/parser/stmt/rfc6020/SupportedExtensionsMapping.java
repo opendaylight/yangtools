@@ -16,16 +16,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionStatement;
 
 @Beta
 public enum SupportedExtensionsMapping implements StatementDefinition {
-    ANYXML_SCHEMA_LOCATION("urn:opendaylight:yang:extension:yang-ext", "2013-07-09",
-        AnyxmlSchemaLocationStatement.class, AnyxmlSchemaLocationEffectiveStatement.class,
-        "anyxml-schema-location", "target-node", false),
     OPENCONFIG_VERSION("http://openconfig.net/yang/openconfig-ext",
         OpenconfigVersionStatement.class, OpenconfigVersionEffectiveStatement.class,
         "openconfig-version", "semver", false);
