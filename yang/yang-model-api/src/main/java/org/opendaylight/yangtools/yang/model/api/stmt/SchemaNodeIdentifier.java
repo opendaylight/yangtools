@@ -208,6 +208,16 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     }
 
     /**
+     * Create a child path based on concatenation of this path and an additional path element.
+     *
+     * @param element Next SchemaPath element
+     * @return A new child path
+     */
+    public SchemaNodeIdentifier createChild(final QName element) {
+        return createInstance(this, qname);
+    }
+
+    /**
      * Create a child path based on concatenation of this path and additional
      * path elements.
      *
