@@ -17,9 +17,9 @@ import com.google.common.collect.Iterators;
 import java.util.Iterator;
 import javax.xml.namespace.NamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.URIStringToImpPrefix;
 
 /**
  * A {@link NamespaceContext} implementation based on the set of imports and local module namespace.
@@ -87,14 +87,14 @@ final class StmtNamespaceContext implements NamespaceContext {
         if (localNamespaceURI().equals(namespaceURI)) {
             return "";
         }
-        return ctx.getFromNamespace(URIStringToImpPrefix.class, namespaceURI);
+        return ctx.getFromNamespace(URIStringToImportPrefix.class, namespaceURI);
     }
 
     @Override
     public Iterator<String> getPrefixes(final String namespaceURI) {
         // Ensures underlying map remains constant
         return Iterators.unmodifiableIterator(Iterators.concat(
-                ctx.getAllFromNamespace(URIStringToImpPrefix.class).values().iterator(),
+                ctx.getAllFromNamespace(URIStringToImportPrefix.class).values().iterator(),
                 uriToPrefix.values().iterator()));
     }
 }
