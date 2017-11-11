@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -22,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 
 abstract class AbstractRpcStatementSupport
         extends AbstractQNameStatementSupport<RpcStatement, EffectiveStatement<QName, RpcStatement>> {
@@ -50,7 +50,7 @@ abstract class AbstractRpcStatementSupport
     @Override
     public final void onStatementAdded(
             final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
+        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override
