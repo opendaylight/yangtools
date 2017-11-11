@@ -11,11 +11,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ChildSchemaNodes;
 
 abstract class AbstractLeafListStatementSupport
         extends AbstractQNameStatementSupport<LeafListStatement, EffectiveStatement<QName, LeafListStatement>> {
@@ -27,7 +27,7 @@ abstract class AbstractLeafListStatementSupport
     @Override
     public final void onStatementAdded(
             final Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodes.class, stmt.getStatementArgument(), stmt);
+        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override
