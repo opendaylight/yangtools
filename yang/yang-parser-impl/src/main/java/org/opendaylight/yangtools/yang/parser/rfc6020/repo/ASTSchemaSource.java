@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
 import static java.util.Objects.requireNonNull;
 
@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
 
 /**
  * Abstract Syntax Tree representation of a schema source. This representation is internal to the YANG parser
@@ -52,39 +51,17 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
      * Create a new instance of AST representation for a abstract syntax tree, performing minimal semantic analysis
      * to acquire dependency information.
      *
-     * @param identifier
-     *            SourceIdentifier of yang schema source.
-     * @param tree
-     *            ANTLR abstract syntax tree
-     * @return A new representation instance.
-     * @throws YangSyntaxErrorException
-     *             if we fail to extract dependency information.
-     */
-    public static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
-            @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
-        return create(identifier, null, tree);
-    }
-
-    /**
-     * Create a new instance of AST representation for a abstract syntax tree, performing minimal semantic analysis
-     * to acquire dependency information.
-     *
      * @param symbolicName
      *            Symbolic name
      * @param identifier
-     *            SourceIdentifier of yang schema source.
+     *            SourceIdentifier of YANG schema source.
      * @param tree
      *            ANTLR abstract syntax tree
      * @return A new representation instance.
      * @throws YangSyntaxErrorException
      *             if we fail to extract dependency information.
      */
-    public static ASTSchemaSource create(@Nonnull final String symbolicName, @Nonnull final SourceIdentifier identifier,
-            @Nonnull final ParserRuleContext tree) throws YangSyntaxErrorException {
-        return create(identifier, symbolicName, tree);
-    }
-
-    private static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
+    static ASTSchemaSource create(@Nonnull final SourceIdentifier identifier,
             @Nullable final String symbolicName, @Nonnull final ParserRuleContext tree)
                     throws YangSyntaxErrorException {
         final YangModelDependencyInfo depInfo = YangModelDependencyInfo.fromAST(identifier, tree);
