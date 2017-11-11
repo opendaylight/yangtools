@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
 
 public class OpenconfigVerSharedSchemaRepositoryTest {
 
