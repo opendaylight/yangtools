@@ -30,9 +30,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.DerivedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,11 +50,11 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         final TypeEffectiveStatement<?> typeEffectiveStmt = firstSubstatementOfType(TypeEffectiveStatement.class);
         final DerivedTypeBuilder<?> builder = DerivedTypes.derivedTypeBuilder(typeEffectiveStmt.getTypeDefinition(),
             ctx.getSchemaPath().get());
-        String defaultValue = null;
+        String dflt = null;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
-                defaultValue = ((DefaultEffectiveStatement) stmt).argument();
-                builder.setDefaultValue(defaultValue);
+                dflt = ((DefaultEffectiveStatement) stmt).argument();
+                builder.setDefaultValue(dflt);
             } else if (stmt instanceof DescriptionEffectiveStatement) {
                 builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatement) {
@@ -74,10 +74,10 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         }
 
         SourceException.throwIf(
-                TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, defaultValue),
-                ctx.getStatementSourceReference(),
-                "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
-                defaultValue);
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeEffectiveStmt, dflt),
+            ctx.getStatementSourceReference(),
+            "Typedef '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
+            dflt);
 
         typeDefinition = builder.build();
     }
