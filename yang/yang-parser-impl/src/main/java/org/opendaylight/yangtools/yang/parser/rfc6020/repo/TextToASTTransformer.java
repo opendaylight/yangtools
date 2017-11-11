@@ -6,12 +6,11 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.util;
+package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;
 import java.io.IOException;
-import java.util.Optional;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -19,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.SchemaSourceTransformer;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,10 +46,6 @@ public final class TextToASTTransformer extends SchemaSourceTransformer<YangText
 
         // TODO: missing validation (YangModelBasicValidationListener should be re-implemented to new parser)
 
-        final Optional<String> opt = text.getSymbolicName();
-        final ASTSchemaSource result = opt.isPresent() ? ASTSchemaSource.create(opt.get(), text.getIdentifier(), ctx)
-                : ASTSchemaSource.create(text.getIdentifier(), ctx);
-
-        return result;
+        return ASTSchemaSource.create(text.getIdentifier(), text.getSymbolicName().orElse(null), ctx);
     }
 }

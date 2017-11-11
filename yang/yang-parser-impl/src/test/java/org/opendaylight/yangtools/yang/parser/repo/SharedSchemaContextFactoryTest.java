@@ -24,8 +24,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
-import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.ASTSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.TextToASTTransformer;
 
 public class SharedSchemaContextFactoryTest {
 
