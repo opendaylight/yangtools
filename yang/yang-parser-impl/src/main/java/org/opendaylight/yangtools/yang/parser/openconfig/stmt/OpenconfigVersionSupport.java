@@ -5,25 +5,26 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.openconfig;
+package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
+import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 public final class OpenconfigVersionSupport extends AbstractStatementSupport<SemVer, OpenconfigVersionStatement,
         EffectiveStatement<SemVer, OpenconfigVersionStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        SupportedExtensionsMapping.OPENCONFIG_VERSION).build();
+        OpenConfigStatements.OPENCONFIG_VERSION).build();
     private static final OpenconfigVersionSupport INSTANCE = new OpenconfigVersionSupport();
 
     private OpenconfigVersionSupport() {
-        super(SupportedExtensionsMapping.OPENCONFIG_VERSION);
+        super(OpenConfigStatements.OPENCONFIG_VERSION);
     }
 
     public static OpenconfigVersionSupport getInstance() {
