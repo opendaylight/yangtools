@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionEffectiveStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -119,7 +119,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.prefix = prefixStmt.get().argument();
         this.yangVersion = findFirstEffectiveSubstatementArgument(YangVersionEffectiveStatement.class)
                 .orElse(YangVersion.VERSION_1);
-        this.semanticVersion = findFirstEffectiveSubstatementArgument(OpenconfigVersionEffectiveStatement.class)
+        this.semanticVersion = findFirstEffectiveSubstatementArgument(OpenConfigVersionEffectiveStatement.class)
                 .orElse(null);
         this.organization = findFirstEffectiveSubstatementArgument(OrganizationEffectiveStatement.class)
                 .orElse(null);
