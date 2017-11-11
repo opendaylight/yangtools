@@ -43,7 +43,6 @@ public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
     private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
-    private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
     private static final Pattern PATH_ABS = Pattern.compile("/[^/].*");
     @RegEx
     private static final String YANG_XPATH_FUNCTIONS_STRING =
@@ -114,14 +113,6 @@ public final class Utils {
         }
 
         return path;
-    }
-
-    public static String trimPrefix(final String identifier) {
-        final List<String> namesParts = COLON_SPLITTER.splitToList(identifier);
-        if (namesParts.size() == 2) {
-            return namesParts.get(1);
-        }
-        return identifier;
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
