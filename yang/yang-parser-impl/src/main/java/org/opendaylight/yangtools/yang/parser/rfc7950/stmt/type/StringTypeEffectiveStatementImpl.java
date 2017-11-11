@@ -22,7 +22,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.length.LengthEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +36,7 @@ final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementB
         super(ctx);
 
         final StringTypeBuilder builder = RestrictedTypes.newStringBuilder(baseType,
-            TypeUtils.typeEffectiveSchemaPath(ctx));
+            AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof LengthEffectiveStatementImpl) {
