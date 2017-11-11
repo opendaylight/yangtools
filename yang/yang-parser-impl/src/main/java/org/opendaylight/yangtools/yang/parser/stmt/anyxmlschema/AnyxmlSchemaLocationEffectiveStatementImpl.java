@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema;
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
+import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;

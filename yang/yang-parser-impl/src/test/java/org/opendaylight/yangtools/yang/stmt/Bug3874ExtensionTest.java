@@ -13,6 +13,8 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 import java.util.List;
 import org.junit.Test;
+import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -21,10 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema.AnyxmlSchemaLocationEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 public class Bug3874ExtensionTest {
 
@@ -52,9 +52,9 @@ public class Bug3874ExtensionTest {
         assertTrue(next instanceof AnyxmlSchemaLocationEffectiveStatementImpl);
         AnyxmlSchemaLocationEffectiveStatementImpl anyxmlSchemaLocationUnknownNode =
                 (AnyxmlSchemaLocationEffectiveStatementImpl) next;
-        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+        assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),
             anyxmlSchemaLocationUnknownNode.getNodeType());
-        assertEquals(SupportedExtensionsMapping.ANYXML_SCHEMA_LOCATION.getStatementName(),
+        assertEquals(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION.getStatementName(),
             anyxmlSchemaLocationUnknownNode.getQName());
     }
 }
