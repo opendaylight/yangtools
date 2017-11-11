@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerEffectiveStatementImpl;
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListEffectiveSta
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
 final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {

@@ -29,10 +29,10 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice.ImplicitChoiceCaseNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 
 public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> implements DataNodeContainer {

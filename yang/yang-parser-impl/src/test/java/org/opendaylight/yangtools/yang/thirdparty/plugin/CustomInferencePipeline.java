@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
 
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomStatementParserBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext.CustomStatementParserBuilder;
 
 public final class CustomInferencePipeline {
     public static final CrossSourceStatementReactor CUSTOM_REACTOR = new CustomStatementParserBuilder()
