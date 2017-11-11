@@ -15,7 +15,7 @@ import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangModelDependencyInfo;
 
 @Deprecated
 public class DependencyResolverTest {
