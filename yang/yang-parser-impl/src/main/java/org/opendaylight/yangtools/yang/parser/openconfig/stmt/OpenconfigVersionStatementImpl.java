@@ -5,9 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.openconfig;
+package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
