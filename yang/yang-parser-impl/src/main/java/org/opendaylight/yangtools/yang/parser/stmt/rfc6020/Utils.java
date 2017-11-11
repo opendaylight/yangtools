@@ -96,7 +96,7 @@ public final class Utils {
 
         for (final String keyToken : keyTokens) {
 
-            final SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative.create(false,
+            final SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.SAME.createChild(
                     StmtContextUtils.qnameFromArgument(ctx, keyToken));
             keyNodes.add(keyNode);
         }

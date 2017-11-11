@@ -221,6 +221,16 @@ public abstract class SchemaPath implements Immutable {
     }
 
     /**
+     * Create a child path based on concatenation of this path and an additional path element.
+     *
+     * @param element Relative SchemaPath elements
+     * @return A new child path
+     */
+    public SchemaPath createChild(final QName element) {
+        return createInstance(this, element);
+    }
+
+    /**
      * Create a child path based on concatenation of this path and additional
      * path elements.
      *

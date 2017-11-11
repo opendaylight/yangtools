@@ -39,7 +39,7 @@ public final class KeyStatementSupport
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         int tokens = 0;
         for (String keyToken : StmtContextUtils.LIST_KEY_SPLITTER.split(value)) {
-            builder.add(SchemaNodeIdentifier.create(false, StmtContextUtils.qnameFromArgument(ctx, keyToken)));
+            builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.qnameFromArgument(ctx, keyToken)));
             tokens++;
         }
 
@@ -62,7 +62,7 @@ public final class KeyStatementSupport
             if (!targetModule.equals(qname.getModule())) {
                 final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class,
                         QName.create(targetModule, qname.getLocalName()));
-                builder.add(SchemaNodeIdentifier.create(false, newQname));
+                builder.add(SchemaNodeIdentifier.SAME.createChild(newQname));
                 replaced = true;
             } else {
                 builder.add(arg);
