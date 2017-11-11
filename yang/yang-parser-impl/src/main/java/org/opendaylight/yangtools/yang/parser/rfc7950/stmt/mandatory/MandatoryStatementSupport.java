@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public class MandatoryStatementSupport extends
         AbstractStatementSupport<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> {
@@ -26,7 +26,7 @@ public class MandatoryStatementSupport extends
 
     @Override
     public Boolean parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return Utils.parseBoolean(ctx, value);
+        return ArgumentUtils.parseBoolean(ctx, value);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class MandatoryStatementSupport extends
 
     @Override
     public String internArgument(final String rawArgument) {
-        return Utils.internBoolean(rawArgument);
+        return ArgumentUtils.internBoolean(rawArgument);
     }
 
     @Override

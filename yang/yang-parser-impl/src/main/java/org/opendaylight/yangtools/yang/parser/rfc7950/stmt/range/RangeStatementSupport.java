@@ -18,12 +18,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RangeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.api.stmt.ValueRange;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 public final class RangeStatementSupport extends AbstractStatementSupport<List<ValueRange>, RangeStatement,
         EffectiveStatement<List<ValueRange>, RangeStatement>> {
@@ -43,8 +43,8 @@ public final class RangeStatementSupport extends AbstractStatementSupport<List<V
     public List<ValueRange> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String rangeArgument) {
         final List<ValueRange> ranges = new ArrayList<>();
 
-        for (final String singleRange : TypeUtils.PIPE_SPLITTER.split(rangeArgument)) {
-            final Iterator<String> boundaries = TypeUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
+        for (final String singleRange : ArgumentUtils.PIPE_SPLITTER.split(rangeArgument)) {
+            final Iterator<String> boundaries = ArgumentUtils.TWO_DOTS_SPLITTER.split(singleRange).iterator();
             final Number min = parseDecimalConstraintValue(ctx, boundaries.next());
 
             final Number max;
@@ -52,7 +52,7 @@ public final class RangeStatementSupport extends AbstractStatementSupport<List<V
                 max = parseDecimalConstraintValue(ctx, boundaries.next());
 
                 // if min larger than max then error
-                SourceException.throwIf(TypeUtils.compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
+                SourceException.throwIf(ArgumentUtils.compareNumbers(min, max) == 1, ctx.getStatementSourceReference(),
                         "Range constraint %s has descending order of boundaries; should be ascending", singleRange);
                 SourceException.throwIf(boundaries.hasNext(), ctx.getStatementSourceReference(),
                     "Wrong number of boundaries in range constraint %s", singleRange);
@@ -62,9 +62,8 @@ public final class RangeStatementSupport extends AbstractStatementSupport<List<V
 
             // some of intervals overlapping
             InferenceException.throwIf(ranges.size() > 1
-                && TypeUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
-                ctx.getStatementSourceReference(),  "Some of the value ranges in %s are not disjoint",
-                rangeArgument);
+                && ArgumentUtils.compareNumbers(min, Iterables.getLast(ranges).upperBound()) != 1,
+                ctx.getStatementSourceReference(),  "Some of the value ranges in %s are not disjoint", rangeArgument);
             ranges.add(ValueRange.of(min, max));
         }
 
