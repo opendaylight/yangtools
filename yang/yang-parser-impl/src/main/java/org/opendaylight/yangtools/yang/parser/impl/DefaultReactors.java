@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.impl;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangInferencePipeline;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
