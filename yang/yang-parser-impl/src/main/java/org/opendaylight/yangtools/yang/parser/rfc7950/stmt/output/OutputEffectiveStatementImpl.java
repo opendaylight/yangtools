@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveContainerSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class OutputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<OutputStatement>
+final class OutputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<OutputStatement>
         implements OutputEffectiveStatement {
 
     OutputEffectiveStatementImpl(

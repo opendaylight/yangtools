@@ -19,8 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveContainerSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class InputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<InputStatement>
+final class InputEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<InputStatement>
         implements InputEffectiveStatement {
 
     InputEffectiveStatementImpl(

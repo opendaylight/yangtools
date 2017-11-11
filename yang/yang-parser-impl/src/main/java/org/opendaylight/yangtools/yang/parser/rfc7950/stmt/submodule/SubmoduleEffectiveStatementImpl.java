@@ -22,8 +22,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModu
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName;
 
-// FIXME: hide this class
-public final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<SubmoduleStatement>
+final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<SubmoduleStatement>
         implements SubmoduleEffectiveStatement {
 
     private final QNameModule qnameModule;
