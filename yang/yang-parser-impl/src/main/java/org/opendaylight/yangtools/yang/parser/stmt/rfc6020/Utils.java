@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
@@ -93,12 +92,8 @@ public final class Utils {
         }
 
         final Set<SchemaNodeIdentifier.Relative> keyNodes = new HashSet<>();
-
         for (final String keyToken : keyTokens) {
-
-            final SchemaNodeIdentifier.Relative keyNode = (Relative) SchemaNodeIdentifier.Relative.create(false,
-                    StmtContextUtils.qnameFromArgument(ctx, keyToken));
-            keyNodes.add(keyNode);
+            keyNodes.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.qnameFromArgument(ctx, keyToken)));
         }
 
         return keyNodes;

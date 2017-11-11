@@ -42,7 +42,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parent, final QName qname) {
+        public Absolute createChild(final QName element) {
+            return createInstance(this, element);
+        }
+
+        @Override
+        protected Absolute createInstance(final SchemaNodeIdentifier parent, final QName qname) {
             return new Absolute(parent, requireNonNull(qname));
         }
     }
@@ -61,7 +66,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         @Override
-        protected SchemaNodeIdentifier createInstance(final SchemaNodeIdentifier parent, final QName qname) {
+        public Relative createChild(final QName element) {
+            return createInstance(this, element);
+        }
+
+        @Override
+        protected Relative createInstance(final SchemaNodeIdentifier parent, final QName qname) {
             return new Relative(parent, requireNonNull(qname));
         }
     }
@@ -74,12 +84,12 @@ public abstract class SchemaNodeIdentifier implements Immutable {
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaNodeIdentifier ROOT = new Absolute(null, null);
+    public static final Absolute ROOT = new Absolute(null, null);
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaNodeIdentifier SAME = new Relative(null, null);
+    public static final Relative SAME = new Relative(null, null);
 
     /**
      * Parent path.
@@ -206,6 +216,14 @@ public abstract class SchemaNodeIdentifier implements Immutable {
 
         return parentNode;
     }
+
+    /**
+     * Create a child path based on concatenation of this path and an additional path element.
+     *
+     * @param element Next SchemaPath element
+     * @return A new child path
+     */
+    public abstract SchemaNodeIdentifier createChild(QName element);
 
     /**
      * Create a child path based on concatenation of this path and additional
