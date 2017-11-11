@@ -12,6 +12,6 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
-public interface OpenconfigVersionEffectiveStatement extends EffectiveStatement<SemVer, OpenconfigVersionStatement> {
+public interface OpenConfigVersionEffectiveStatement extends EffectiveStatement<SemVer, OpenConfigVersionStatement> {
 
 }
