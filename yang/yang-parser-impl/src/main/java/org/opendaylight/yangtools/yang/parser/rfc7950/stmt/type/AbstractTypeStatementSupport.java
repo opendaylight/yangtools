@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -46,13 +48,13 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Infere
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.QNameCacheNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 abstract class AbstractTypeStatementSupport
         extends AbstractStatementSupport<String, TypeStatement, EffectiveStatement<String, TypeStatement>> {
@@ -217,19 +219,19 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof Int8TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt8Builder((Int8TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int16TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt16Builder((Int16TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int32TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt32Builder((Int32TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Int64TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newInt64Builder((Int64TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof LeafrefTypeDefinition) {
             return new LeafrefTypeEffectiveStatementImpl(ctx, (LeafrefTypeDefinition) baseType);
         } else if (baseType instanceof StringTypeDefinition) {
@@ -237,19 +239,19 @@ abstract class AbstractTypeStatementSupport
         } else if (baseType instanceof Uint8TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint8Builder((Uint8TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint16TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint16Builder((Uint16TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint32TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint32Builder((Uint32TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof Uint64TypeDefinition) {
             return new IntegralTypeEffectiveStatementImpl<>(ctx,
                     RestrictedTypes.newUint64Builder((Uint64TypeDefinition) baseType,
-                        TypeUtils.typeEffectiveSchemaPath(ctx)));
+                        AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx)));
         } else if (baseType instanceof UnionTypeDefinition) {
             return new UnionTypeEffectiveStatementImpl(ctx, (UnionTypeDefinition) baseType);
         } else {
@@ -310,5 +312,16 @@ abstract class AbstractTypeStatementSupport
     @Override
     public StatementSupport<?, ?, ?> getSupportSpecificForArgument(final String argument) {
         return ARGUMENT_SPECIFIC_SUPPORTS.get(argument);
+    }
+
+    static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
+        final SchemaPath path = stmtCtx.getSchemaPath().get();
+        final SchemaPath parent = path.getParent();
+        final QName parentQName = parent.getLastComponent();
+        Preconditions.checkArgument(parentQName != null, "Path %s has an empty parent", path);
+
+        final QName qname = stmtCtx.getFromNamespace(QNameCacheNamespace.class,
+            QName.create(parentQName, path.getLastComponent().getLocalName()));
+        return parent.createChild(qname);
     }
 }

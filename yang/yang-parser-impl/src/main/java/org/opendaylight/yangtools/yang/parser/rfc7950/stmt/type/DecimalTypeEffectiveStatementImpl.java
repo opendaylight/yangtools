@@ -21,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStat
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.range.RangeEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
@@ -33,7 +32,7 @@ final class DecimalTypeEffectiveStatementImpl extends DeclaredEffectiveStatement
         super(ctx);
 
         final RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> builder =
-                RestrictedTypes.newDecima64Builder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newDecima64Builder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RangeEffectiveStatementImpl) {

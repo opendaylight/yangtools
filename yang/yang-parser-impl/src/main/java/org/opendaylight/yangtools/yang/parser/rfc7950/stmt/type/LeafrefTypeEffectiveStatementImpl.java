@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestricted
 import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 final class LeafrefTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
@@ -31,7 +30,7 @@ final class LeafrefTypeEffectiveStatementImpl extends DeclaredEffectiveStatement
         super(ctx);
 
         final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> builder =
-                RestrictedTypes.newLeafrefBuilder(baseType, TypeUtils.typeEffectiveSchemaPath(ctx));
+                RestrictedTypes.newLeafrefBuilder(baseType, AbstractTypeStatementSupport.typeEffectiveSchemaPath(ctx));
 
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof RequireInstanceEffectiveStatement) {
