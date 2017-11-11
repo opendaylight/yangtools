@@ -297,8 +297,4 @@ public final class Utils {
 
         return string;
     }
-
-    public static boolean belongsToTheSameModule(final QName targetStmtQName, final QName sourceStmtQName) {
-        return targetStmtQName.getModule().equals(sourceStmtQName.getModule());
-    }
 }

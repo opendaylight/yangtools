@@ -290,10 +290,9 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                     "Argument of augment target statement must be QName.");
             final QName targetStmtQName = (QName) targetCtx.getStatementArgument();
             /*
-             * If target is from another module, return true and perform
-             * mandatory nodes validation
+             * If target is from another module, return true and perform mandatory nodes validation
              */
-            if (!Utils.belongsToTheSameModule(targetStmtQName, sourceStmtQName)) {
+            if (!targetStmtQName.getModule().equals(sourceStmtQName.getModule())) {
                 return true;
             }
 
