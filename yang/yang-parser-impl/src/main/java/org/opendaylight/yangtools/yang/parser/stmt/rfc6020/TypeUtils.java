@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -85,8 +84,6 @@ public final class TypeUtils {
         .put(UNION, UNION)
         .build();
 
-    private static final Set<String> TYPE_BODY_STMTS = ImmutableSet.of(
-        DECIMAL64, ENUMERATION, LEAF_REF, IDENTITY_REF, BITS, UNION);
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
 
@@ -212,16 +209,9 @@ public final class TypeUtils {
         return ranges;
     }
 
-    // Not used anywhere
-    @Deprecated
-    public static boolean isYangTypeBodyStmtString(final String typeName) {
-        return TYPE_BODY_STMTS.contains(typeName);
-    }
-
     public static boolean isYangBuiltInTypeString(final String typeName) {
         return BUILT_IN_TYPES.containsKey(typeName);
     }
-
 
     public static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
         final SchemaPath path = stmtCtx.getSchemaPath().get();
