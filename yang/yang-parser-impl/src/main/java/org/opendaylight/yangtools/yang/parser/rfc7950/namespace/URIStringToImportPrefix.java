@@ -5,14 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 /**
  * Implementation-internal cache for looking up URI to import prefix. URIs are taken in as Strings to save ourselves
  * some quality parsing time.
  */
-public interface URIStringToImpPrefix extends IdentifierNamespace<String, String> {
+@Beta
+public interface URIStringToImportPrefix extends IdentifierNamespace<String, String> {
 
 }
