@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Deque;
 import javax.annotation.Nonnull;
 import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -52,7 +53,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYa
 import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
