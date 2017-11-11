@@ -22,7 +22,9 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  */
 public final class OpenConfigConstants {
     private static final String MODULE_NAME = "yang-ext";
-    private static final URI MODULE_NAMESPACE = URI.create("http://openconfig.net/yang/openconfig-ext");
+
+    // Package-visible, because openconfig-version applies across all known revisions and needs to bind to all of them
+    static final URI MODULE_NAMESPACE = URI.create("http://openconfig.net/yang/openconfig-ext");
 
     // Initial revision, defining semantic-version
     private static final Revision SEMVER_REVISION = Revision.of("2015-10-09");
