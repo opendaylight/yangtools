@@ -70,15 +70,57 @@ abstract class AbstractTypeStatementSupport
         .addAny(YangStmtMapping.TYPE)
         .build();
 
+    static final String BINARY = "binary";
+    static final String BITS = "bits";
+    static final String BOOLEAN = "boolean";
+    static final String DECIMAL64 = "decimal64";
+    static final String EMPTY = "empty";
+    static final String ENUMERATION = "enumeration";
+    static final String IDENTITY_REF = "identityref";
+    static final String INSTANCE_IDENTIFIER = "instance-identifier";
+    static final String INT8 = "int8";
+    static final String INT16 = "int16";
+    static final String INT32 = "int32";
+    static final String INT64 = "int64";
+    static final String LEAF_REF = "leafref";
+    static final String STRING = "string";
+    static final String UINT8 = "uint8";
+    static final String UINT16 = "uint16";
+    static final String UINT32 = "uint32";
+    static final String UINT64 = "uint64";
+    static final String UNION = "union";
+
+    private static final Map<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
+        .put(BINARY, BINARY)
+        .put(BITS, BITS)
+        .put(BOOLEAN, BOOLEAN)
+        .put(DECIMAL64, DECIMAL64)
+        .put(EMPTY, EMPTY)
+        .put(ENUMERATION, ENUMERATION)
+        .put(IDENTITY_REF,IDENTITY_REF)
+        .put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER)
+        .put(INT8, INT8)
+        .put(INT16, INT16)
+        .put(INT32, INT32)
+        .put(INT64, INT64)
+        .put(LEAF_REF, LEAF_REF)
+        .put(STRING, STRING)
+        .put(UINT8, UINT8)
+        .put(UINT16, UINT16)
+        .put(UINT32, UINT32)
+        .put(UINT64, UINT64)
+        .put(UNION, UNION)
+        .build();
+
     private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS =
             ImmutableMap.<String, StatementSupport<?, ?, ?>>builder()
-            .put(TypeUtils.BITS, new BitsSpecificationSupport())
-            .put(TypeUtils.DECIMAL64, new Decimal64SpecificationSupport())
-            .put(TypeUtils.ENUMERATION, new EnumSpecificationSupport())
-            .put(TypeUtils.IDENTITY_REF, new IdentityRefSpecificationRFC6020Support())
-            .put(TypeUtils.INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationSupport())
-            .put(TypeUtils.LEAF_REF, new LeafrefSpecificationRFC6020Support())
-            .put(TypeUtils.UNION, new UnionSpecificationSupport())
+            .put(BITS, new BitsSpecificationSupport())
+            .put(DECIMAL64, new Decimal64SpecificationSupport())
+            .put(ENUMERATION, new EnumSpecificationSupport())
+            .put(IDENTITY_REF, new IdentityRefSpecificationRFC6020Support())
+            .put(INSTANCE_IDENTIFIER, new InstanceIdentifierSpecificationSupport())
+            .put(LEAF_REF, new LeafrefSpecificationRFC6020Support())
+            .put(UNION, new UnionSpecificationSupport())
             .build();
 
     AbstractTypeStatementSupport() {
@@ -102,43 +144,43 @@ abstract class AbstractTypeStatementSupport
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt;
         switch (ctx.getStatementArgument()) {
-            case TypeUtils.BINARY:
+            case BINARY:
                 typeStmt = BuiltinEffectiveStatement.BINARY;
                 break;
-            case TypeUtils.BOOLEAN:
+            case BOOLEAN:
                 typeStmt = BuiltinEffectiveStatement.BOOLEAN;
                 break;
-            case TypeUtils.EMPTY:
+            case EMPTY:
                 typeStmt = BuiltinEffectiveStatement.EMPTY;
                 break;
-            case TypeUtils.INSTANCE_IDENTIFIER:
+            case INSTANCE_IDENTIFIER:
                 typeStmt = BuiltinEffectiveStatement.INSTANCE_IDENTIFIER;
                 break;
-            case TypeUtils.INT8:
+            case INT8:
                 typeStmt = BuiltinEffectiveStatement.INT8;
                 break;
-            case TypeUtils.INT16:
+            case INT16:
                 typeStmt = BuiltinEffectiveStatement.INT16;
                 break;
-            case TypeUtils.INT32:
+            case INT32:
                 typeStmt = BuiltinEffectiveStatement.INT32;
                 break;
-            case TypeUtils.INT64:
+            case INT64:
                 typeStmt = BuiltinEffectiveStatement.INT64;
                 break;
-            case TypeUtils.STRING:
+            case STRING:
                 typeStmt = BuiltinEffectiveStatement.STRING;
                 break;
-            case TypeUtils.UINT8:
+            case UINT8:
                 typeStmt = BuiltinEffectiveStatement.UINT8;
                 break;
-            case TypeUtils.UINT16:
+            case UINT16:
                 typeStmt = BuiltinEffectiveStatement.UINT16;
                 break;
-            case TypeUtils.UINT32:
+            case UINT32:
                 typeStmt = BuiltinEffectiveStatement.UINT32;
                 break;
-            case TypeUtils.UINT64:
+            case UINT64:
                 typeStmt = BuiltinEffectiveStatement.UINT64;
                 break;
             default:
@@ -221,7 +263,7 @@ abstract class AbstractTypeStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         // if it is yang built-in type, no prerequisite is needed, so simply return
-        if (TypeUtils.isYangBuiltInTypeString(stmt.getStatementArgument())) {
+        if (BUILT_IN_TYPES.containsKey(stmt.getStatementArgument())) {
             return;
         }
 
@@ -256,7 +298,7 @@ abstract class AbstractTypeStatementSupport
 
     @Override
     public final String internArgument(final String rawArgument) {
-        final String found = TypeUtils.findBuiltinString(rawArgument);
+        final String found = BUILT_IN_TYPES.get(rawArgument);
         return found != null ? found : rawArgument;
     }
 

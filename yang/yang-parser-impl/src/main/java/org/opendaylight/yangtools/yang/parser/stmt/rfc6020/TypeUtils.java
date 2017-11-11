@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -18,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -41,48 +39,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 * Utility class for manipulating YANG base and extended types implementation.
 */
 public final class TypeUtils {
-
-    public static final String BINARY = "binary";
-    public static final String BITS = "bits";
-    public static final String BOOLEAN = "boolean";
-    public static final String DECIMAL64 = "decimal64";
-    public static final String EMPTY = "empty";
-    public static final String ENUMERATION = "enumeration";
-    public static final String IDENTITY_REF = "identityref";
-    public static final String INSTANCE_IDENTIFIER = "instance-identifier";
-    public static final String INT8 = "int8";
-    public static final String INT16 = "int16";
-    public static final String INT32 = "int32";
-    public static final String INT64 = "int64";
-    public static final String LEAF_REF = "leafref";
-    public static final String STRING = "string";
-    public static final String UINT8 = "uint8";
-    public static final String UINT16 = "uint16";
-    public static final String UINT32 = "uint32";
-    public static final String UINT64 = "uint64";
-    public static final String UNION = "union";
-
-    private static final Map<String, String> BUILT_IN_TYPES = ImmutableMap.<String, String>builder()
-        .put(BINARY, BINARY)
-        .put(BITS, BITS)
-        .put(BOOLEAN, BOOLEAN)
-        .put(DECIMAL64, DECIMAL64)
-        .put(EMPTY, EMPTY)
-        .put(ENUMERATION, ENUMERATION)
-        .put(IDENTITY_REF,IDENTITY_REF)
-        .put(INSTANCE_IDENTIFIER, INSTANCE_IDENTIFIER)
-        .put(INT8, INT8)
-        .put(INT16, INT16)
-        .put(INT32, INT32)
-        .put(INT64, INT64)
-        .put(LEAF_REF, LEAF_REF)
-        .put(STRING, STRING)
-        .put(UINT8, UINT8)
-        .put(UINT16, UINT16)
-        .put(UINT32, UINT32)
-        .put(UINT64, UINT64)
-        .put(UNION, UNION)
-        .build();
 
     private static final Splitter PIPE_SPLITTER = Splitter.on('|').trimResults();
     private static final Splitter TWO_DOTS_SPLITTER = Splitter.on("..").trimResults();
@@ -209,10 +165,6 @@ public final class TypeUtils {
         return ranges;
     }
 
-    public static boolean isYangBuiltInTypeString(final String typeName) {
-        return BUILT_IN_TYPES.containsKey(typeName);
-    }
-
     public static SchemaPath typeEffectiveSchemaPath(final StmtContext<?, ?, ?> stmtCtx) {
         final SchemaPath path = stmtCtx.getSchemaPath().get();
         final SchemaPath parent = path.getParent();
@@ -268,10 +220,6 @@ public final class TypeUtils {
         return !Strings.isNullOrEmpty(defaultValue) && yangVersion == YangVersion.VERSION_1_1
                 && isRelevantForIfFeatureCheck(typeStmt)
                 && isAnyDefaultValueMarkedWithIfFeature(typeStmt, defaultValues);
-    }
-
-    public static String findBuiltinString(final String rawArgument) {
-        return BUILT_IN_TYPES.get(rawArgument);
     }
 
     private static boolean isRelevantForIfFeatureCheck(final TypeEffectiveStatement<?> typeStmt) {
