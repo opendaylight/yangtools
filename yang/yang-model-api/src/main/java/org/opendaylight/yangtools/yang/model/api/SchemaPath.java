@@ -44,8 +44,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new AbsoluteSchemaPath(parent, requireNonNull(qname));
+        public AbsoluteSchemaPath createChild(final QName qname) {
+            return new AbsoluteSchemaPath(this, requireNonNull(qname));
         }
     }
 
@@ -63,8 +63,8 @@ public abstract class SchemaPath implements Immutable {
         }
 
         @Override
-        protected SchemaPath createInstance(final SchemaPath parent, final QName qname) {
-            return new RelativeSchemaPath(parent, requireNonNull(qname));
+        public RelativeSchemaPath createChild(final QName qname) {
+            return new RelativeSchemaPath(this, requireNonNull(qname));
         }
     }
 
@@ -176,15 +176,6 @@ public abstract class SchemaPath implements Immutable {
     }
 
     /**
-     * Create a new instance.
-     *
-     * @param parent Parent SchemaPath
-     * @param qname next path element
-     * @return A new SchemaPath instance
-     */
-    protected abstract SchemaPath createInstance(SchemaPath parent, QName qname);
-
-    /**
      * Create a child path based on concatenation of this path and a relative path.
      *
      * @param relative Relative path
@@ -197,7 +188,7 @@ public abstract class SchemaPath implements Immutable {
 
         SchemaPath parentPath = this;
         for (QName qname : relative) {
-            parentPath = parentPath.createInstance(parentPath, qname);
+            parentPath = parentPath.createChild(qname);
         }
 
         return parentPath;
@@ -211,14 +202,16 @@ public abstract class SchemaPath implements Immutable {
      */
     public SchemaPath createChild(final SchemaPath relative) {
         checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
-
-        SchemaPath parentPath = this;
-        for (QName qname : relative.getPathFromRoot()) {
-            parentPath = parentPath.createInstance(parentPath, qname);
-        }
-
-        return parentPath;
+        return createChild(relative.getPathFromRoot());
     }
+
+    /**
+     * Create a child path based on concatenation of this path and an additional path element.
+     *
+     * @param element Relative SchemaPath elements
+     * @return A new child path
+     */
+    public abstract SchemaPath createChild(QName element);
 
     /**
      * Create a child path based on concatenation of this path and additional

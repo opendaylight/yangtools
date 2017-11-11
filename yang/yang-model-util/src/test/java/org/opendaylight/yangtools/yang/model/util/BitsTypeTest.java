@@ -35,7 +35,7 @@ public class BitsTypeTest {
         doReturn("test").when(bit).getName();
 
         QName qname = QName.create("namespace", "localname");
-        SchemaPath schemaPath = SchemaPath.create(Collections.singletonList(qname), true);
+        SchemaPath schemaPath = SchemaPath.create(true, qname);
 
         BitsTypeDefinition bitsType = BaseTypes.bitsTypeBuilder(schemaPath).addBit(bit).build();
 
