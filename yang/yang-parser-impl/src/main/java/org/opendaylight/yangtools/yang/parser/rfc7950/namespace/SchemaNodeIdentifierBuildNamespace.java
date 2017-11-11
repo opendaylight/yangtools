@@ -5,8 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Iterator;
 import javax.annotation.Nonnull;
@@ -21,18 +22,19 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
-public class SchemaNodeIdentifierBuildNamespace extends DerivedNamespaceBehaviour<SchemaNodeIdentifier, Mutable<?, ?,
-        EffectiveStatement<?, ?>>, QName, SchemaNodeIdentifierBuildNamespace, ChildSchemaNodes<?, ?>>
-        implements IdentifierNamespace<SchemaNodeIdentifier, StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>>> {
+@Beta
+public final class SchemaNodeIdentifierBuildNamespace
+        extends DerivedNamespaceBehaviour<SchemaNodeIdentifier, Mutable<?, ?, EffectiveStatement<?, ?>>, QName,
+                SchemaNodeIdentifierBuildNamespace, ChildSchemaNodeNamespace<?, ?>>
+        implements IdentifierNamespace<SchemaNodeIdentifier, Mutable<?, ?, EffectiveStatement<?, ?>>> {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public SchemaNodeIdentifierBuildNamespace() {
-        super(SchemaNodeIdentifierBuildNamespace.class, (Class) ChildSchemaNodes.class);
+        super(SchemaNodeIdentifierBuildNamespace.class, (Class) ChildSchemaNodeNamespace.class);
     }
 
     @Override
-    public StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> get(
-            @Nonnull final SchemaNodeIdentifier key) {
+    public Mutable<?, ?, EffectiveStatement<?, ?>> get(@Nonnull final SchemaNodeIdentifier key) {
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 
@@ -54,16 +56,16 @@ public class SchemaNodeIdentifierBuildNamespace extends DerivedNamespaceBehaviou
             return null;
         }
         QName nextPath = iterator.next();
-        Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage.getFromLocalStorage(ChildSchemaNodes.class,
-            nextPath);
+        Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage.getFromLocalStorage(
+            ChildSchemaNodeNamespace.class,nextPath);
         if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
             return tryToFindUnknownStatement(nextPath.getLocalName(),
                 (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final StmtContext.Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current
-                    .getFromNamespace(ChildSchemaNodes.class, nextPath);
+            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current.getFromNamespace(
+                ChildSchemaNodeNamespace.class,nextPath);
             if (nextNodeCtx == null) {
                 return tryToFindUnknownStatement(nextPath.getLocalName(), current);
             }
@@ -72,10 +74,10 @@ public class SchemaNodeIdentifierBuildNamespace extends DerivedNamespaceBehaviou
         return current;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
+    @SuppressWarnings("unchecked")
     private static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
             final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = (Collection)StmtContextUtils.findAllSubstatements(
+        final Collection<StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
             current, UnknownStatement.class);
         for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
             if (localName.equals(unknownSubstatement.rawStatementArgument())) {
