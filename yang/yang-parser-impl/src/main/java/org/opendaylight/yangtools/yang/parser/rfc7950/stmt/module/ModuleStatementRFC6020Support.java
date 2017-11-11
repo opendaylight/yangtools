@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 public final class ModuleStatementRFC6020Support extends AbstractModuleStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
@@ -40,7 +40,7 @@ public final class ModuleStatementRFC6020Support extends AbstractModuleStatement
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
 
     @Override
