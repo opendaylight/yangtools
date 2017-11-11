@@ -7,16 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 public final class ImportStatementRFC6020Support extends AbstractImportStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator
             .builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
 
     @Override
