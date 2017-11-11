@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020.ext;
+package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
 
 public class CustomStatementParserBuilder {
     private final Map<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
