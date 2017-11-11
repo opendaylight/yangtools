@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -30,7 +30,7 @@ public final class WhenStatementSupport extends AbstractStatementSupport<Revisio
 
     @Override
     public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return PathUtils.parseXPath(ctx, value);
+        return ArgumentUtils.parseXPath(ctx, value);
     }
 
     @Override

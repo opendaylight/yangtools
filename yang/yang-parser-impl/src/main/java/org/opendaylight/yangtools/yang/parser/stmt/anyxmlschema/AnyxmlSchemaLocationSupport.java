@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.anyxmlschema;
 
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -33,7 +33,7 @@ public final class AnyxmlSchemaLocationSupport
 
     @Override
     public SchemaNodeIdentifier parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return PathUtils.nodeIdentifierFromPath(ctx, value);
+        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
     }
 
     @Override
