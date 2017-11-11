@@ -12,13 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -56,11 +56,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToEffectiveStatemen
 import org.opendaylight.yangtools.yang.model.api.stmt.ContactEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule.SubmoduleEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
@@ -142,13 +141,13 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
              * for modules. In case of submodules it does not make sense because
              * of possible circular chains of includes between submodules.
              */
-            final Collection<StmtContext<?, ?, ?>> includedSubmodules = includedSubmodulesMap.values();
             final Set<Module> submodulesInit = new HashSet<>();
             final List<EffectiveStatement<?, ?>> substatementsOfSubmodulesInit = new ArrayList<>();
-            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodules) {
-                final SubmoduleEffectiveStatementImpl submodule = (SubmoduleEffectiveStatementImpl) submoduleCtx
-                        .buildEffective();
-                submodulesInit.add(submodule);
+            for (final StmtContext<?, ?, ?> submoduleCtx : includedSubmodulesMap.values()) {
+                final EffectiveStatement<?, ?> submodule = submoduleCtx.buildEffective();
+                Verify.verify(submodule instanceof SubmoduleEffectiveStatement);
+                Verify.verify(submodule instanceof Module, "Submodule statement %s is not a Module", submodule);
+                submodulesInit.add((Module) submodule);
                 substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements().stream()
                         .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer)
                         .collect(Collectors.toList()));
@@ -227,8 +226,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
             if (effectiveStatement instanceof FeatureDefinition) {
                 featuresInit.add((FeatureDefinition) effectiveStatement);
             }
-            if (effectiveStatement instanceof ExtensionEffectiveStatementImpl) {
-                extensionNodesInit.add((ExtensionEffectiveStatementImpl) effectiveStatement);
+            if (effectiveStatement instanceof ExtensionDefinition) {
+                extensionNodesInit.add((ExtensionDefinition) effectiveStatement);
             }
             if (effectiveStatement instanceof DataSchemaNode) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;

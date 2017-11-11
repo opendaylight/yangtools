@@ -29,8 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementEffectiveStateme
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
+final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, ExtensionStatement>
         implements ExtensionDefinition, ExtensionEffectiveStatement {
     private static final class RecursionDetector extends ThreadLocal<Deque<ExtensionEffectiveStatementImpl>> {
         boolean check(final ExtensionEffectiveStatementImpl current) {

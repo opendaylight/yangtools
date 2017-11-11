@@ -56,8 +56,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     /**
      * Create a set of substatements. This method is split out so it can be overridden in
-     * {@link org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension.ExtensionEffectiveStatementImpl} to leak
-     * a not-fully-initialized instance.
+     * ExtensionEffectiveStatementImpl to leak a not-fully-initialized instance.
      *
      * @param substatementsInit proposed substatements
      * @return Filtered substatements

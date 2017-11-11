@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -21,11 +22,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -42,8 +43,9 @@ final class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Act
     ActionEffectiveStatementImpl(
             final StmtContext<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> ctx) {
         super(ctx);
-        this.input = firstEffective(InputEffectiveStatementImpl.class);
-        this.output = firstEffective(OutputEffectiveStatementImpl.class);
+
+        input = findAsContainer(this, InputEffectiveStatement.class);
+        output = findAsContainer(this, OutputEffectiveStatement.class);
 
         // initSubstatements
         final Set<GroupingDefinition> groupingsInit = new HashSet<>();
@@ -74,6 +76,13 @@ final class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Act
             this.augmenting = copyTypesFromOriginal.contains(CopyType.ADDED_BY_AUGMENTATION);
             this.addedByUses = copyTypesFromOriginal.contains(CopyType.ADDED_BY_USES);
         }
+    }
+
+    private static ContainerSchemaNode findAsContainer(final EffectiveStatement<?, ?> parent,
+            final Class<? extends EffectiveStatement<QName, ?>> statementType) {
+        final EffectiveStatement<?, ?> statement = parent.findFirstEffectiveSubstatement(statementType).get();
+        Verify.verify(statement instanceof ContainerSchemaNode, "Child statement %s is not a ContainerSchemaNode");
+        return (ContainerSchemaNode) statement;
     }
 
     @Override
