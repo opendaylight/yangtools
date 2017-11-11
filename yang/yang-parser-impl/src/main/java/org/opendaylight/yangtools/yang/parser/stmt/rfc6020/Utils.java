@@ -138,18 +138,6 @@ public final class Utils {
         return path;
     }
 
-    public static QName trimPrefix(final QName identifier) {
-        final String prefixedLocalName = identifier.getLocalName();
-        final String[] namesParts = prefixedLocalName.split(":");
-
-        if (namesParts.length == 2) {
-            final String localName = namesParts[1];
-            return QName.create(identifier.getModule(), localName);
-        }
-
-        return identifier;
-    }
-
     public static String trimPrefix(final String identifier) {
         final List<String> namesParts = COLON_SPLITTER.splitToList(identifier);
         if (namesParts.size() == 2) {
