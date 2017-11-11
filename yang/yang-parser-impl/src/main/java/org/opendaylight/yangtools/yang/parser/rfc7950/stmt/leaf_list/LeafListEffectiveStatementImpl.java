@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveData
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 // FIXME: hide this class
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
@@ -83,10 +82,10 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
         // FIXME: We need to interpret the default value in terms of supplied element type
         defaultValues = defaultValuesBuilder.build();
         SourceException.throwIf(
-                TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
-                ctx.getStatementSourceReference(),
-                "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
-                ctx.getStatementArgument(), defaultValues);
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, defaultValues),
+            ctx.getStatementSourceReference(),
+            "Leaf-list '%s' has one of its default values '%s' marked with an if-feature statement.",
+            ctx.getStatementArgument(), defaultValues);
 
         // FIXME: RFC7950 section 7.7.4: we need to check for min-elements and defaultValues conflict
 
