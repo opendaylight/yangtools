@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
     AbstractBaseType(final QName qname) {
-        this(SchemaPath.create(true, qname), ImmutableList.of());
+        this(SchemaPath.ROOT.createChild(qname), ImmutableList.of());
     }
 
     AbstractBaseType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes) {
