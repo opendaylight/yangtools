@@ -5,11 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.openconfig;
+package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionEffectiveStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;

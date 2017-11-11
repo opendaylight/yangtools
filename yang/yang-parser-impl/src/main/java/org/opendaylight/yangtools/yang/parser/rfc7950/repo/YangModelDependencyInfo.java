@@ -24,6 +24,7 @@ import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -33,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 /**
@@ -59,7 +59,7 @@ public abstract class YangModelDependencyInfo {
     private static final String REVISION_DATE = YangStmtMapping.REVISION_DATE.getStatementName().getLocalName();
     private static final String SUBMODULE = YangStmtMapping.SUBMODULE.getStatementName().getLocalName();
 
-    private static final String OPENCONFIG_VERSION = SupportedExtensionsMapping.OPENCONFIG_VERSION.getStatementName()
+    private static final String OPENCONFIG_VERSION = OpenConfigStatements.OPENCONFIG_VERSION.getStatementName()
             .getLocalName();
     private static final Splitter COLON_SPLITTER = Splitter.on(":").omitEmptyStrings().trimResults();
 
