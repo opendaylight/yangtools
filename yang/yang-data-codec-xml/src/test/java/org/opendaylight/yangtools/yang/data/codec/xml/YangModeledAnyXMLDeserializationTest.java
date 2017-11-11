@@ -22,6 +22,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -43,7 +44,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YangModeledAnyXMLDeserializationTest {
