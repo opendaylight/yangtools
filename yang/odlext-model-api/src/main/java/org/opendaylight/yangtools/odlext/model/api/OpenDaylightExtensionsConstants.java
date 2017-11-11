@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.rfc7952.model.api;
+package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
@@ -16,32 +16,27 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 /**
- * Constants associated with RFC7952.
+ * Constants associated with OpenDaylight extension in yang-ext.yang.
  *
  * @author Robert Varga
  */
-public final class MetadataConstants {
-    private static final String MODULE_NAME = "ietf-yang-metadata";
-    private static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-metadata");
-    private static final Revision RFC7952_REVISION = Revision.of("2016-08-05");
+public final class OpenDaylightExtensionsConstants {
+    private static final String MODULE_NAME = "yang-ext";
+    private static final URI MODULE_NAMESPACE = URI.create("urn:opendaylight:yang:extension:yang-ext");
+    private static final Revision ORIGINAL_REVISION = Revision.of("2013-07-09");
 
     /**
-     * Runtime RFC7952 identity.
+     * Runtime baseline identity.
      */
-    public static final QNameModule RFC7952_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC7952_REVISION).intern();
+    public static final QNameModule ORIGINAL_MODULE = QNameModule.create(MODULE_NAMESPACE, ORIGINAL_REVISION).intern();
 
     /**
-     * RFC7952 model source name.
+     * Baseline model source name.
      */
-    public static final SourceIdentifier RFC7952_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
-        RFC7952_REVISION);
+    public static final SourceIdentifier ORIGINAL_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
+        ORIGINAL_REVISION);
 
-    /**
-     * Normative prefix to use when importing {@link #RFC7952_SOURCE}.
-     */
-    public static final String MODULE_PREFIX = "md";
-
-    private MetadataConstants() {
+    private OpenDaylightExtensionsConstants() {
         throw new UnsupportedOperationException();
     }
 
@@ -51,6 +46,6 @@ public final class MetadataConstants {
      * @return Collection of identifiers.
      */
     public static Collection<SourceIdentifier> knownModelSources() {
-        return ImmutableList.of(RFC7952_SOURCE);
+        return ImmutableList.of(ORIGINAL_SOURCE);
     }
 }

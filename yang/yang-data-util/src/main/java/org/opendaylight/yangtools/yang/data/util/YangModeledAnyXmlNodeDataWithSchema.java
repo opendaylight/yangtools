@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * Utility class used for tracking parser state as needed by a StAX-like parser.

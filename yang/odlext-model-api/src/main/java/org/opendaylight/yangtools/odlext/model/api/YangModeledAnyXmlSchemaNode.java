@@ -5,10 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.api;
+package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 /**
  * The "YangModeledAnyXml" interface defines an interior node in the schema tree. It takes
