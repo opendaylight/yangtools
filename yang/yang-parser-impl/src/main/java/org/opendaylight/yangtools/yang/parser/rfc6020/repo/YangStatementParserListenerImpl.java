@@ -5,14 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl;
+package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
 import com.google.common.base.Verify;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
@@ -31,8 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
-@Immutable
-public class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
+final class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
     private static final class Counter {
         private int value = 0;
 
@@ -49,7 +47,7 @@ public class YangStatementParserListenerImpl extends YangStatementParserBaseList
     private StatementWriter writer;
     private YangVersion yangVersion;
 
-    public YangStatementParserListenerImpl(final String sourceName) {
+    YangStatementParserListenerImpl(final String sourceName) {
         this.sourceName = sourceName;
     }
 
