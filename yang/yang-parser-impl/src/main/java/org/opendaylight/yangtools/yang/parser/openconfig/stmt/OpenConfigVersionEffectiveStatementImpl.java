@@ -10,20 +10,20 @@ package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 import java.util.Objects;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionEffectiveStatement;
-import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OpenconfigVersionEffectiveStatementImpl extends
-        UnknownEffectiveStatementBase<SemVer, OpenconfigVersionStatement>
-        implements OpenconfigVersionEffectiveStatement {
+final class OpenConfigVersionEffectiveStatementImpl extends
+        UnknownEffectiveStatementBase<SemVer, OpenConfigVersionStatement>
+        implements OpenConfigVersionEffectiveStatement {
 
     private final SchemaPath path;
 
-    OpenconfigVersionEffectiveStatementImpl(final StmtContext<SemVer, OpenconfigVersionStatement, ?> ctx) {
+    OpenConfigVersionEffectiveStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
@@ -61,7 +61,7 @@ final class OpenconfigVersionEffectiveStatementImpl extends
         if (getClass() != obj.getClass()) {
             return false;
         }
-        OpenconfigVersionEffectiveStatementImpl other = (OpenconfigVersionEffectiveStatementImpl) obj;
+        OpenConfigVersionEffectiveStatementImpl other = (OpenConfigVersionEffectiveStatementImpl) obj;
         if (!Objects.equals(path, other.path)) {
             return false;
         }
