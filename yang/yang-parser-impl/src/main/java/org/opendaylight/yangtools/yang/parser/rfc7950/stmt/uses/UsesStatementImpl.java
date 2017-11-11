@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
+import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,6 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -38,7 +41,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangValidationBundles;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,17 +191,17 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
     }
 
     private static void performRefine(final Mutable<?, ?, ?> subStmtCtx, final StmtContext<?, ?, ?> usesParentCtx) {
-
         final Object refineArgument = subStmtCtx.getStatementArgument();
         InferenceException.throwIf(!(refineArgument instanceof SchemaNodeIdentifier),
             subStmtCtx.getStatementSourceReference(),
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
-        final SchemaNodeIdentifier refineTargetNodeIdentifier = (SchemaNodeIdentifier) refineArgument;
-        final StatementContextBase<?, ?, ?> refineTargetNodeCtx = InferenceException.throwIfNull(
-            Utils.findNode(usesParentCtx, refineTargetNodeIdentifier), subStmtCtx.getStatementSourceReference(),
-            "Refine target node %s not found.", refineTargetNodeIdentifier);
+        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaNodeIdentifierBuildNamespace.findNode(
+            usesParentCtx, (SchemaNodeIdentifier) refineArgument);
+        InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx.getStatementSourceReference(),
+            "Refine target node %s not found.", refineArgument);
 
+        final StmtContext<?, ?, ?> refineTargetNodeCtx = optRefineTargetCtx.get();
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.debug("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", subStmtCtx.getStatementArgument(),
@@ -209,7 +211,8 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
             return;
         }
 
-        addOrReplaceNodes(subStmtCtx, refineTargetNodeCtx);
+        Verify.verify(refineTargetNodeCtx instanceof StatementContextBase);
+        addOrReplaceNodes(subStmtCtx, (StatementContextBase<?, ?, ?>) refineTargetNodeCtx);
         subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
     }
 

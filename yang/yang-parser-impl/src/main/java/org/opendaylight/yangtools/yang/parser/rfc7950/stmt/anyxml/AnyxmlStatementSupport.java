@@ -20,12 +20,12 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 public final class AnyxmlStatementSupport extends
         AbstractQNameStatementSupport<AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> {
@@ -82,14 +82,9 @@ public final class AnyxmlStatementSupport extends
     private static Optional<ContainerSchemaNode> getAnyXmlSchema(
             final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx,
             final SchemaNodeIdentifier contentSchemaPath) {
-        final StmtContext<?, ?, ?> findNode = Utils.findNode(ctx.getRoot(), contentSchemaPath);
-        if (findNode != null) {
-            final EffectiveStatement<?, ?> anyXmlSchemaNode = findNode.buildEffective();
-            if (anyXmlSchemaNode instanceof ContainerSchemaNode) {
-                return Optional.of((ContainerSchemaNode) anyXmlSchemaNode);
-            }
-        }
-        return Optional.empty();
+        return SchemaNodeIdentifierBuildNamespace.findNode(ctx.getRoot(), contentSchemaPath)
+                .map(StmtContext::buildEffective)
+                .filter(ContainerSchemaNode.class::isInstance).map(ContainerSchemaNode.class::cast);
     }
 
     @Override
