@@ -11,7 +11,6 @@ import com.google.common.base.CharMatcher;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
@@ -113,27 +112,5 @@ public final class Utils {
             final SchemaNodeIdentifier node) {
         return (StatementContextBase<?, ?, ?>) rootStmtCtx.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
             node);
-    }
-
-    public static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
-        if ("true".equals(input)) {
-            return Boolean.TRUE;
-        } else if ("false".equals(input)) {
-            return Boolean.FALSE;
-        } else {
-            throw new SourceException(ctx.getStatementSourceReference(),
-                "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
-                ctx.getPublicDefinition().getStatementName(), ctx.getPublicDefinition().getArgumentName(), input);
-        }
-    }
-
-    public static String internBoolean(final String input) {
-        if ("true".equals(input)) {
-            return "true";
-        } else if ("false".equals(input)) {
-            return "false";
-        } else {
-            return input;
-        }
     }
 }
