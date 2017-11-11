@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class KeyStatementSupport
         extends AbstractStatementSupport<Collection<SchemaNodeIdentifier>, KeyStatement,
                 EffectiveStatement<Collection<SchemaNodeIdentifier>, KeyStatement>> {
+    private static final Splitter LIST_KEY_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.KEY)
         .build();
@@ -38,7 +40,7 @@ public final class KeyStatementSupport
     public Collection<SchemaNodeIdentifier> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         int tokens = 0;
-        for (String keyToken : StmtContextUtils.LIST_KEY_SPLITTER.split(value)) {
+        for (String keyToken : LIST_KEY_SPLITTER.split(value)) {
             builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.qnameFromArgument(ctx, keyToken)));
             tokens++;
         }
