@@ -44,10 +44,6 @@ import org.slf4j.LoggerFactory;
 
 public final class Utils {
     private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
-    private static final CharMatcher LEFT_PARENTHESIS_MATCHER = CharMatcher.is('(');
-    private static final CharMatcher RIGHT_PARENTHESIS_MATCHER = CharMatcher.is(')');
-    private static final CharMatcher AMPERSAND_MATCHER = CharMatcher.is('&');
-    private static final CharMatcher QUESTION_MARK_MATCHER = CharMatcher.is('?');
     private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
     private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
@@ -280,21 +276,5 @@ public final class Utils {
         } else {
             return input;
         }
-    }
-
-    /**
-     * Replaces illegal characters of QName by the name of the character (e.g. '?' is replaced by "QuestionMark" etc.).
-     *
-     * @param string
-     *            input String
-     * @return result String
-     */
-    public static String replaceIllegalCharsForQName(String string) {
-        string = LEFT_PARENTHESIS_MATCHER.replaceFrom(string, "LeftParenthesis");
-        string = RIGHT_PARENTHESIS_MATCHER.replaceFrom(string, "RightParenthesis");
-        string = AMPERSAND_MATCHER.replaceFrom(string, "Ampersand");
-        string = QUESTION_MARK_MATCHER.replaceFrom(string, "QuestionMark");
-
-        return string;
     }
 }
