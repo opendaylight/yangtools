@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -31,6 +34,21 @@ public final class SchemaNodeIdentifierBuildNamespace
     @SuppressWarnings({"unchecked", "rawtypes"})
     public SchemaNodeIdentifierBuildNamespace() {
         super(SchemaNodeIdentifierBuildNamespace.class, (Class) ChildSchemaNodeNamespace.class);
+    }
+
+    /**
+     * Find statement context identified by interpreting specified {@link SchemaNodeIdentifier} starting at specified
+     * {@link StmtContext}.
+     *
+     * @param root Search root context
+     * @param identifier {@link SchemaNodeIdentifier} relative to search root
+     * @return Matching statement context, if present.
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static Optional<StmtContext<?, ?, ?>> findNode(final StmtContext<?, ?, ?> root,
+            final SchemaNodeIdentifier identifier) {
+        return Optional.ofNullable(root.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
+            requireNonNull(identifier)));
     }
 
     @Override
