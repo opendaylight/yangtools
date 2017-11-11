@@ -49,8 +49,8 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceProvider;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistry;
 import org.opendaylight.yangtools.yang.model.repo.util.InMemorySchemaSourceCache;
-import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
-import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.ASTSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.TextToASTTransformer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

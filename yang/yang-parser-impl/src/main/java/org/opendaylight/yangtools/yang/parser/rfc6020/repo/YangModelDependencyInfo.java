@@ -5,11 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.impl.util;
+package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableSet;
@@ -30,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.DeclarationInTextSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
@@ -169,7 +169,7 @@ public abstract class YangModelDependencyInfo {
      * @return {@link YangModelDependencyInfo}
      * @throws YangSyntaxErrorException If the AST is not a valid YANG module/submodule
      */
-    public static YangModelDependencyInfo fromAST(final SourceIdentifier source, final ParserRuleContext tree)
+    static YangModelDependencyInfo fromAST(final SourceIdentifier source, final ParserRuleContext tree)
             throws YangSyntaxErrorException {
 
         if (tree instanceof StatementContext) {
@@ -204,6 +204,7 @@ public abstract class YangModelDependencyInfo {
      * @throws IllegalArgumentException
      *             If input stream is not valid YANG stream
      */
+    @VisibleForTesting
     public static YangModelDependencyInfo forResource(final Class<?> refClass, final String resourceName)
             throws IOException, YangSyntaxErrorException {
         final YangStatementStreamSource source = YangStatementStreamSource.create(
