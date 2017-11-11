@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.Utils;
 
 final class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
     private static final class Counter {
@@ -93,8 +92,8 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
         }
 
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-        final String argument = argumentCtx != null ? Utils.stringFromStringContext(argumentCtx, yangVersion, ref)
-                : null;
+        final String argument = argumentCtx != null
+                ? ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref) : null;
         writer.startStatement(childId, validStatementDefinition, argument, ref);
     }
 

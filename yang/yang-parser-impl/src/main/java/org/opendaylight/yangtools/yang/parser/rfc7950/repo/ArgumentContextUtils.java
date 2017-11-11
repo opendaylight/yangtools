@@ -5,36 +5,35 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
+package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.base.CharMatcher;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
-public final class Utils {
+final class ArgumentContextUtils {
     private static final CharMatcher ANYQUOTE_MATCHER = CharMatcher.anyOf("'\"");
     private static final Pattern ESCAPED_DQUOT = Pattern.compile("\\\"", Pattern.LITERAL);
     private static final Pattern ESCAPED_BACKSLASH = Pattern.compile("\\\\", Pattern.LITERAL);
     private static final Pattern ESCAPED_LF = Pattern.compile("\\n", Pattern.LITERAL);
     private static final Pattern ESCAPED_TAB = Pattern.compile("\\t", Pattern.LITERAL);
 
-    private Utils() {
+    private ArgumentContextUtils() {
         throw new UnsupportedOperationException();
     }
 
-    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
-            final StatementSourceReference ref) {
+    static String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
         return stringFromStringContext(context, YangVersion.VERSION_1, ref);
     }
 
-    public static String stringFromStringContext(final YangStatementParser.ArgumentContext context,
-            final YangVersion yangVersion, final StatementSourceReference ref) {
+    static String stringFromStringContext(final ArgumentContext context, final YangVersion yangVersion,
+            final StatementSourceReference ref) {
         final StringBuilder sb = new StringBuilder();
         List<TerminalNode> strings = context.STRING();
         if (strings.isEmpty()) {
