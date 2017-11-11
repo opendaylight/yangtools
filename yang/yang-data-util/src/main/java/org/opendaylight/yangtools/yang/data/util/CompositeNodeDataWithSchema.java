@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
+import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -31,7 +32,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.YangModeledAnyXmlSchemaNode;
 
 /**
  * Utility class used for tracking parser state as needed by a StAX-like parser.
