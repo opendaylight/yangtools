@@ -29,9 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypeBuilder;
 import org.opendaylight.yangtools.yang.model.util.type.ConcreteTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.TypeUtils;
 
 // FIXME: hide this class
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
@@ -71,10 +71,10 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
             }
         }
 
-        SourceException.throwIf(TypeUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
-                ctx.getStatementSourceReference(),
-                "Leaf '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(),
-                dflt);
+        SourceException.throwIf(
+            EffectiveStmtUtils.hasDefaultValueMarkedWithIfFeature(ctx.getRootVersion(), typeStmt, dflt),
+            ctx.getStatementSourceReference(),
+            "Leaf '%s' has default value '%s' marked with an if-feature statement.", ctx.getStatementArgument(), dflt);
 
         defaultStr = dflt;
         unitsStr = units;
