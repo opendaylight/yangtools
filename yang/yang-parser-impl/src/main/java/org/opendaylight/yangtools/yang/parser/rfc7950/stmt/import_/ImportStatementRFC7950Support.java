@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 /**
  * Implementation of import statement definition for Yang 1.1 (RFC 7950) to
@@ -22,7 +22,7 @@ public final class ImportStatementRFC7950Support extends AbstractImportStatement
             .builder(YangStmtMapping.IMPORT)
             .addMandatory(YangStmtMapping.PREFIX)
             .addOptional(YangStmtMapping.REVISION_DATE)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
