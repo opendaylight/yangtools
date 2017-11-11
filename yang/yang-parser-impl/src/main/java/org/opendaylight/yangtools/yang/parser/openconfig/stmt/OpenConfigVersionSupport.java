@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
-import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionStatement;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
@@ -17,17 +17,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class OpenconfigVersionSupport extends AbstractStatementSupport<SemVer, OpenconfigVersionStatement,
-        EffectiveStatement<SemVer, OpenconfigVersionStatement>> {
+public final class OpenConfigVersionSupport extends AbstractStatementSupport<SemVer, OpenConfigVersionStatement,
+        EffectiveStatement<SemVer, OpenConfigVersionStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         OpenConfigStatements.OPENCONFIG_VERSION).build();
-    private static final OpenconfigVersionSupport INSTANCE = new OpenconfigVersionSupport();
+    private static final OpenConfigVersionSupport INSTANCE = new OpenConfigVersionSupport();
 
-    private OpenconfigVersionSupport() {
+    private OpenConfigVersionSupport() {
         super(OpenConfigStatements.OPENCONFIG_VERSION);
     }
 
-    public static OpenconfigVersionSupport getInstance() {
+    public static OpenConfigVersionSupport getInstance() {
         return INSTANCE;
     }
 
@@ -37,21 +37,21 @@ public final class OpenconfigVersionSupport extends AbstractStatementSupport<Sem
     }
 
     @Override
-    public void onLinkageDeclared(final Mutable<SemVer, OpenconfigVersionStatement,
-            EffectiveStatement<SemVer, OpenconfigVersionStatement>> stmt) {
+    public void onLinkageDeclared(final Mutable<SemVer, OpenConfigVersionStatement,
+            EffectiveStatement<SemVer, OpenConfigVersionStatement>> stmt) {
         stmt.addToNs(SemanticVersionNamespace.class, stmt.getParentContext(), stmt.getStatementArgument());
     }
 
     @Override
-    public OpenconfigVersionStatement createDeclared(final StmtContext<SemVer, OpenconfigVersionStatement, ?> ctx) {
-        return new OpenconfigVersionStatementImpl(ctx);
+    public OpenConfigVersionStatement createDeclared(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
+        return new OpenConfigVersionStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<SemVer, OpenconfigVersionStatement> createEffective(
-            final StmtContext<SemVer, OpenconfigVersionStatement,
-            EffectiveStatement<SemVer, OpenconfigVersionStatement>> ctx) {
-        return new OpenconfigVersionEffectiveStatementImpl(ctx);
+    public EffectiveStatement<SemVer, OpenConfigVersionStatement> createEffective(
+            final StmtContext<SemVer, OpenConfigVersionStatement,
+            EffectiveStatement<SemVer, OpenConfigVersionStatement>> ctx) {
+        return new OpenConfigVersionEffectiveStatementImpl(ctx);
     }
 
     @Override
