@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
@@ -61,7 +61,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
             "Augment argument \'%s\' is not valid, it can be only absolute path; or descendant if used in uses",
             value);
 
-        return PathUtils.nodeIdentifierFromPath(ctx, value);
+        return ArgumentUtils.nodeIdentifierFromPath(ctx, value);
     }
 
     @Override

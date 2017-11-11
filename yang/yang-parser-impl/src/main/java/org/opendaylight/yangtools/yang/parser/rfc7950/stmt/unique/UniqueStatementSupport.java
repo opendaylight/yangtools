@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.PathUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
@@ -66,7 +66,7 @@ public final class UniqueStatementSupport
             final StmtContext<?, ?, ?> ctx, final String argumentValue) {
         final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
         for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
-            final SchemaNodeIdentifier nodeIdentifier = PathUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
+            final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
                             + "which is not in the descendant node identifier form.", argumentValue, uniqueArgToken);
