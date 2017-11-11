@@ -30,6 +30,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.openconfig.model.api.OpenconfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -65,7 +66,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.opendaylight.yangtools.yang.parser.stmt.openconfig.OpenconfigVersionEffectiveStatement;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends

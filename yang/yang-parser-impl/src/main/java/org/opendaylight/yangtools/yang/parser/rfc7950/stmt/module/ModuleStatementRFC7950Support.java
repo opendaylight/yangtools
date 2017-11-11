@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.SupportedExtensionsMapping;
 
 @Beta
 public final class ModuleStatementRFC7950Support extends AbstractModuleStatementSupport {
@@ -43,7 +43,7 @@ public final class ModuleStatementRFC7950Support extends AbstractModuleStatement
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .addMandatory(YangStmtMapping.YANG_VERSION)
-            .addOptional(SupportedExtensionsMapping.OPENCONFIG_VERSION)
+            .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
 
     @Override
