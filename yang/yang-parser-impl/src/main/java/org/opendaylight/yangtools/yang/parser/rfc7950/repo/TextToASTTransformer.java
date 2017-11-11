@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.rfc6020.repo;
+package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.Futures;

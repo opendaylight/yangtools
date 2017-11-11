@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YinStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
