@@ -39,11 +39,11 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.ASTSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangModelDependencyInfo;
 import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.util.ASTSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

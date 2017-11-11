@@ -12,7 +12,7 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.parser.impl.util.YangModelDependencyInfo;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangModelDependencyInfo;
 
 final class RevisionDependencyResolver extends DependencyResolver {
 

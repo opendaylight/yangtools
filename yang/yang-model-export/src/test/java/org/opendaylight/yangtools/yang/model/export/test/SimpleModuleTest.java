@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.repo.spi.SchemaListenerRegistration
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceListener;
 import org.opendaylight.yangtools.yang.model.repo.util.FilesystemSchemaSourceCache;
 import org.opendaylight.yangtools.yang.parser.repo.SharedSchemaRepository;
-import org.opendaylight.yangtools.yang.parser.util.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.parser.rfc6020.repo.TextToASTTransformer;
 
 public class SimpleModuleTest {
 
