@@ -12,6 +12,7 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.openconfig.parser.OpenConfig;
 import org.opendaylight.yangtools.rfc7952.parser.Metadata;
+import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
@@ -20,7 +21,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.

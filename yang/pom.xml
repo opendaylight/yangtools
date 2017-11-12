@@ -25,6 +25,7 @@
     <modules>
         <module>yang-common</module>
         <module>yang-data-api</module>
+        <module>yang-data-jaxen</module>
         <module>yang-data-util</module>
         <module>yang-data-impl</module>
         <module>yang-data-transform</module>
@@ -37,17 +38,28 @@
         <module>yang-model-export</module>
         <module>yang-model-immutable</module>
         <module>yang-model-util</module>
+
+        <!-- End-user utility for validating YANG models -->
+        <module>yang-model-validator</module>
+
+        <!-- YANG parser end-user API -->
         <module>yang-parser-api</module>
+        <module>yang-test-util</module>
+
+        <!-- YANG parser reference implementation -->
+        <module>yang-parser-impl</module>
+
+        <!-- Metamodel statement reactor -->
         <module>yang-parser-spi</module>
         <module>yang-parser-reactor</module>
+
+        <!-- Combined RFC6020/RFC7960 metamodel implementation -->
         <module>yang-parser-rfc7950</module>
-        <module>yang-parser-impl</module>
-        <module>yang-data-jaxen</module>
-        <module>yang-model-validator</module>
-        <module>yang-test-util</module>
 
         <!-- OpenConfig (semantic version, hashed value) metamodel support -->
         <module>openconfig-model-api</module>
+        <!-- OpenConfig hashed value parser support. Semantic version support
+             is integrated in yang-parser-rfc7950. -->
         <module>openconfig-parser-support</module>
 
         <!-- OpenDaylight messy extensions -->
@@ -57,10 +69,9 @@
         <module>rfc7952-model-api</module>
         <module>rfc7952-parser-support</module>
 
+        <!-- RFC8040 (yang-data) metamodel support -->
         <module>rfc8040-model-api</module>
-        <!-- FIXME: solve circular dependency with rfc6020 and activate this
-            <module>rfc8040-parser</module>
-        -->
+        <module>rfc8040-parser-support</module>
     </modules>
 
     <!--
