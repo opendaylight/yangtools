@@ -1,0 +1,12 @@
+module imported {
+
+    yang-version 1;
+    namespace "urn:simple.demo.test1";
+    prefix "imp";
+
+    revision 2012-12-12 {}
+
+    //organization "opendaylight";
+    //contact "WILL-BE-DEFINED-LATER";
+
+}
