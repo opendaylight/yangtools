@@ -90,8 +90,8 @@ public class YangDataExtensionTest {
         assertNotNull(myYangDataANode);
         assertNotNull(myYangDataBNode);
 
-        assertNotNull(myYangDataANode.getContainer());
-        assertNotNull(myYangDataBNode.getContainer());
+        assertNotNull(myYangDataANode.getContainerSchemaNode());
+        assertNotNull(myYangDataBNode.getContainerSchemaNode());
     }
 
     @Test
@@ -110,7 +110,7 @@ public class YangDataExtensionTest {
         final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final ContainerSchemaNode contInYangData = myYangDataNode.getContainer();
+        final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
         assertNotNull(contInYangData);
         assertTrue(contInYangData.isConfiguration());
         final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
@@ -140,7 +140,7 @@ public class YangDataExtensionTest {
         final YangDataSchemaNode myYangDataNode = (YangDataSchemaNode) unknownSchemaNode;
         assertNotNull(myYangDataNode);
 
-        final ContainerSchemaNode contInYangData = myYangDataNode.getContainer();
+        final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
         assertNotNull(contInYangData);
         final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
                 QName.create(foobar.getQNameModule(), "inner-cont"));
