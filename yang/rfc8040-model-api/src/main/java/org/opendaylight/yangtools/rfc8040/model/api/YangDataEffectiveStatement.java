@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 
 /**
  * Effective statement representation of 'yang-data' extension defined in
@@ -17,4 +18,10 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 @Beta
 public interface YangDataEffectiveStatement extends EffectiveStatement<String, YangDataStatement>, YangDataSchemaNode {
 
+    /**
+     * Return the container statement defined in this yang-data statement instance.
+     *
+     * @return container statement
+     */
+    ContainerEffectiveStatement getContainer();
 }
