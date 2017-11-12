@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.stmt.rfc8040;
+package org.opendaylight.yangtools.rfc8040.parser;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
