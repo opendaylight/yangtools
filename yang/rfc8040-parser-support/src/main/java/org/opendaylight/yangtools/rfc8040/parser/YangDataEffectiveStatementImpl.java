@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.parser.stmt.rfc8040;
+package org.opendaylight.yangtools.rfc8040.parser;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
