@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -75,7 +75,7 @@ public class Bug8307Test {
         final Map<QNameModule, Set<QNameModule>> modulesWithSupportedDeviations = ImmutableMap.of(
                 foo, ImmutableSet.of(bar, baz), bar, ImmutableSet.of(baz));
 
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .setModulesWithSupportedDeviations(modulesWithSupportedDeviations)
                 .buildEffective();
@@ -90,7 +90,7 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
@@ -104,7 +104,7 @@ public class Bug8307Test {
 
     @Test
     public void testDeviationsSupportedInNoModule() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE, BAZ_MODULE, FOOBAR_MODULE)
                 .setModulesWithSupportedDeviations(ImmutableMap.of())
                 .buildEffective();
@@ -119,7 +119,7 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule() {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_MODULE);
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(FOO_INVALID_MODULE);
 
         try {
             reactor.buildEffective();
@@ -134,7 +134,7 @@ public class Bug8307Test {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule2() {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(BAR_INVALID_MODULE, BAZ_INVALID_MODULE);
 
         try {

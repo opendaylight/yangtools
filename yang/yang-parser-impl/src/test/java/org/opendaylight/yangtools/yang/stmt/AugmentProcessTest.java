@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -86,7 +86,7 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentsAndMultipleModulesTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(MULTIPLE_AUGMENT_ROOT, MULTIPLE_AUGMENT_IMPORTED, MULTIPLE_AUGMENT_SUBMODULE)
                 .buildEffective();
         assertNotNull(result);
@@ -94,7 +94,7 @@ public class AugmentProcessTest {
 
     @Test
     public void multipleAugmentTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT)
                 .buildEffective();
         assertNotNull(result);
@@ -102,7 +102,7 @@ public class AugmentProcessTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathTest() throws  ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT_INCORRECT)
                 .buildEffective();
         assertNull(result);
@@ -110,7 +110,7 @@ public class AugmentProcessTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void multipleAugmentIncorrectPathAndGrpTest() throws  ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(MULTIPLE_AUGMENT_INCORRECT2)
                 .buildEffective();
         assertNull(result);
@@ -118,7 +118,7 @@ public class AugmentProcessTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        final SchemaContext root = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext root = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(AUGMENTED, ROOT)
                 .buildEffective();
         assertNotNull(root);

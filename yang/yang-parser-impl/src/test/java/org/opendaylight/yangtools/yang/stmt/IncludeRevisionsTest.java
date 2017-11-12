@@ -15,7 +15,7 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -38,7 +38,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revsEqualTest() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(EQUAL_REV, EQUAL_ROOT)
                 .build();
         assertNotNull(result);
@@ -46,7 +46,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revsUnequalTest() throws ReactorException {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(UNEQUAL_REV, UNEQUAL_ROOT);
         try {
             reactor.build();
             fail("reactor.process should fail due to unequal revisions in include and submodule");
@@ -58,7 +58,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revIncludeOnly() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT)
                 .build();
         assertNotNull(result);
@@ -66,7 +66,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revInModuleOnly() throws ReactorException {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(MOD_ONLY_REV, MOD_ONLY_ROOT);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing revision in included submodule");
@@ -78,7 +78,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revNowhereTest() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(NOWHERE_REV, NOWHERE_ROOT)
                 .build();
         assertNotNull(result);

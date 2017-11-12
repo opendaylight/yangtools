@@ -12,7 +12,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -24,7 +24,7 @@ public class Bug6150Test {
 
     @Test
     public void effectiveAugmentFirstTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TARGET, AUGMENT_FIRST)
                 .buildEffective();
         assertNotNull(result);
@@ -32,7 +32,7 @@ public class Bug6150Test {
 
     @Test
     public void effectiveAugmentSecondTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TARGET, AUGMENT_SECOND)
                 .buildEffective();
         assertNotNull(result);
@@ -40,7 +40,7 @@ public class Bug6150Test {
 
     @Test
     public void effectiveAugmentBothTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TARGET, AUGMENT_FIRST, AUGMENT_SECOND)
                 .buildEffective();
         assertNotNull(result);

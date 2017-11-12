@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.text.ParseException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -25,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.Deviation;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -37,8 +36,8 @@ public class DeviationStmtTest {
     private static final StatementStreamSource BAR_IMP_MODULE = sourceForResource("/deviation-stmt-test/bar-imp.yang");
 
     @Test
-    public void testDeviationAndDeviate() throws ReactorException, ParseException {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+    public void testDeviationAndDeviate() throws ReactorException {
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, FOO_IMP_MODULE, BAR_MODULE, BAR_IMP_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);

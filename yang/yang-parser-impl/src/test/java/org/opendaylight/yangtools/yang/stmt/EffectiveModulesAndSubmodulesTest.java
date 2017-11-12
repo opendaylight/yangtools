@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -44,7 +44,7 @@ public class EffectiveModulesAndSubmodulesTest {
 
     @Test
     public void modulesAndSubmodulesSimpleReferencesTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_MODULE, IMPORTED_MODULE, SUBMODULE_1, SUBMODULE_2, SUBMODULE_TO_SUBMODULE_1)
                 .buildEffective();
 
