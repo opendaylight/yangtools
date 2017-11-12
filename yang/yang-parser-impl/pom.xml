@@ -66,11 +66,13 @@
             <artifactId>yang-data-util</artifactId>
         </dependency>
 
+        <!-- Base RFC6020/RFC7950 reactor support -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-parser-rfc7950</artifactId>
         </dependency>
 
+        <!-- Various extension reactor supports -->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>odlext-model-api</artifactId>
@@ -78,6 +80,18 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>openconfig-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>openconfig-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rfc7952-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rfc7952-parser-support</artifactId>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
