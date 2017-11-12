@@ -1,0 +1,14 @@
+module bar {
+    namespace bar;
+    prefix bar;
+
+    revision 2017-02-06;
+
+    container root {
+    }
+
+    grouping grp {
+        container my-container-2 {
+        }
+    }
+}
