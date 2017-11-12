@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
@@ -32,7 +32,7 @@ public class ElementCountConstraintsTest {
     @Test
     public void testElementCountConstraints() throws ParseException, ReactorException, URISyntaxException, IOException,
             YangSyntaxErrorException {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/constraint-definitions-test/foo.yang")))
                 .buildEffective();

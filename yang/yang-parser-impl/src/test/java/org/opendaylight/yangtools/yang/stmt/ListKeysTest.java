@@ -14,7 +14,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 
@@ -22,7 +22,7 @@ public class ListKeysTest {
 
     @Test
     public void correctListKeysTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-keys-test/correct-list-keys-test.yang"))
                 .buildEffective();
         assertNotNull(result);
@@ -30,7 +30,7 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest1() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test.yang"));
         try {
             reactor.buildEffective();
@@ -42,7 +42,7 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest2() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test2.yang"));
         try {
             reactor.buildEffective();
@@ -54,7 +54,7 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest3() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test3.yang"));
         try {
             reactor.buildEffective();
@@ -66,7 +66,7 @@ public class ListKeysTest {
 
     @Test
     public void incorrectListKeysTest4()  {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/list-keys-test/incorrect-list-keys-test4.yang"));
         try {
             reactor.buildEffective();

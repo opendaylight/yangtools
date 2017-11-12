@@ -15,7 +15,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -43,7 +43,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void validAugAbsTest() throws ReactorException {
-        final EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        final EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IMPORTED, VALID_ARGS)
                 .build();
         assertNotNull(result);
@@ -51,7 +51,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugRel1Test() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_REL1);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_REL1);
 
         try {
             reactor.build();
@@ -63,7 +63,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugRel2Test() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_REL2);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_REL2);
 
         try {
             reactor.build();
@@ -75,7 +75,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugAbs() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_ABS);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_ABS);
 
         try {
             reactor.build();
@@ -87,7 +87,7 @@ public class AugmentArgumentParsingTest {
 
     @Test
     public void invalidAugAbsPrefixedNoImp() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSources(INVALID_ABS_PREFIXED_NO_IMP);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_ABS_PREFIXED_NO_IMP);
 
         try {
             reactor.build();
@@ -100,14 +100,14 @@ public class AugmentArgumentParsingTest {
     @Test(expected = IllegalArgumentException.class)
     @Ignore
     public void invalidAugEmptyTest() throws ReactorException {
-        DefaultReactors.defaultReactor().newBuild().addSources(INVALID_EMPTY).build();
+        RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_EMPTY).build();
         fail("reactor.process should fail due to empty path");
     }
 
     @Test(expected = IllegalArgumentException.class)
     @Ignore
     public void invalidAugXPathTest() throws ReactorException {
-        DefaultReactors.defaultReactor().newBuild().addSources(INVALID_XPATH).build();
+        RFC7950Reactors.defaultReactor().newBuild().addSources(INVALID_XPATH).build();
         fail("reactor.process should fail due to invalid XPath");
     }
 

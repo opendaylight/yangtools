@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -46,7 +46,7 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void groupingTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(MODULE, GROUPING_MODULE)
                 .buildEffective();
         assertNotNull(result);
@@ -92,7 +92,7 @@ public class GroupingAndUsesStmtTest {
 
     @Test
     public void usesAndRefinesTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(MODULE, SUBMODULE, GROUPING_MODULE, USES_MODULE)
                 .buildEffective();
         assertNotNull(result);

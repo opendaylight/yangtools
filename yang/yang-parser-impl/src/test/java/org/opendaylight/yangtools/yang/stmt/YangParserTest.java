@@ -64,7 +64,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -725,7 +725,7 @@ public class YangParserTest {
 
     @Test
     public void unknownStatementBetweenRevisionsTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/yang-grammar-test/revisions-extension.yang"))
                 .addSource(sourceForResource("/yang-grammar-test/submodule-header-extension.yang"))
                 .buildEffective();
@@ -742,7 +742,7 @@ public class YangParserTest {
         final StatementStreamSource yangFile3 = sourceForResource(
                 "/yang-grammar-test/stmtsep-in-statements-sub.yang");
 
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(yangFile1, yangFile2, yangFile3);
         // TODO: change test or create new module in order to respect new statement parser validations
         try {
