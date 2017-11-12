@@ -97,6 +97,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>rfc8040-model-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>rfc8040-parser-support</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.mockito</groupId>
