@@ -12,7 +12,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -32,7 +32,7 @@ public class YangTypesStmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, FILE1, FILE2, FILE3, FILE4)
                 .buildEffective();
         assertNotNull(result);

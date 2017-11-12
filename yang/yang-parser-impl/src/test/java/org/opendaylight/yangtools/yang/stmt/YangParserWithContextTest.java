@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.type.Uint16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -71,7 +71,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testTypeFromContext() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IETF)
                 .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
                 .addSource(sourceForResource("/context-test/test1.yang"))
@@ -105,7 +105,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesFromContext() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
                 .buildEffective();
 
@@ -209,7 +209,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUsesRefineFromContext() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(BAZ, FOO, BAR, SUBFOO, sourceForResource("/context-test/test2.yang"))
                 .buildEffective();
 
@@ -280,7 +280,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testIdentity() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IETF)
                 .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
                 .addSource(sourceForResource("/context-test/test3.yang"))
@@ -305,7 +305,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testUnknownNodes() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IETF)
                 .addSource(sourceForResource("/types/custom-types-test@2012-04-04.yang"))
                 .addSource(sourceForResource("/context-test/test3.yang"))
@@ -364,7 +364,7 @@ public class YangParserWithContextTest {
 
     @Test
     public void testDeviation() throws ReactorException {
-        final SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext context = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/bar.yang"))
                 .addSource(sourceForResource("/context-test/deviation-test.yang"))
                 .buildEffective();

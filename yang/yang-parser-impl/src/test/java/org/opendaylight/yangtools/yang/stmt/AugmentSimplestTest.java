@@ -12,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -26,7 +26,7 @@ public class AugmentSimplestTest {
 
     @Test
     public void readAndParseYangFileTest() throws SourceException, ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(AUGMENTED, ROOT)
                 .build();
         assertNotNull(result);
