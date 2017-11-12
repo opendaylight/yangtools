@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -54,7 +54,7 @@ public final class TestUtils {
 
     public static SchemaContext loadModules(final URI resourceDirectory)
             throws ReactorException, IOException, YangSyntaxErrorException {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild();
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
         File[] files = new File(resourceDirectory).listFiles();
 
         for (File file : files) {
@@ -70,7 +70,7 @@ public final class TestUtils {
 
     public static SchemaContext loadModuleResources(final Class<?> refClass, final String... resourceNames)
             throws IOException, ReactorException, YangSyntaxErrorException {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild();
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         for (String resourceName : resourceNames) {
             reactor.addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(refClass,
@@ -82,7 +82,7 @@ public final class TestUtils {
 
     public static SchemaContext loadYinModules(final URI resourceDirectory) throws ReactorException, SAXException,
             IOException {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild();
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild();
 
         for (File file : new File(resourceDirectory).listFiles()) {
             reactor.addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
@@ -94,7 +94,7 @@ public final class TestUtils {
 
     public static Module loadYinModule(final YinTextSchemaSource source) throws ReactorException, SAXException,
             IOException {
-        final SchemaContext ctx = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext ctx = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(source)))
                 .buildEffective();
         return ctx.getModules().iterator().next();
@@ -198,7 +198,7 @@ public final class TestUtils {
     }
 
     public static SchemaContext parseYangSources(final StatementStreamSource... sources) throws ReactorException {
-        return DefaultReactors.defaultReactor().newBuild().addSources(sources).buildEffective();
+        return RFC7950Reactors.defaultReactor().newBuild().addSources(sources).buildEffective();
     }
 
     public static SchemaContext parseYangSources(final File... files)

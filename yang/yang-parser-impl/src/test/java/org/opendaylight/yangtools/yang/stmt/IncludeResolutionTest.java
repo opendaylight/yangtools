@@ -16,7 +16,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.logging.Logger;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
@@ -45,7 +45,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void includeTest() throws SourceException, ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT, SUBMODULE1, SUBMODULE2)
                 .build();
         assertNotNull(result);
@@ -53,7 +53,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest() throws SourceException {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(ERROR_MODULE);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(ERROR_MODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing included source");
@@ -67,7 +67,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest2() throws SourceException {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(ERROR_SUBMODULE);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(ERROR_SUBMODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing included source");
@@ -81,7 +81,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void missingIncludedSourceTest3() throws SourceException, ReactorException {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(MISSING_PARENT_MODULE);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(MISSING_PARENT_MODULE);
         try {
             reactor.build();
             fail("reactor.process should fail due to missing belongsTo source");

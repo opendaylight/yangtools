@@ -12,7 +12,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
@@ -43,7 +43,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTestModel() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(BAZ, FOO, BAR, SUBFOO)
                 .build();
         assertNotNull(result);
@@ -51,7 +51,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTestModel2() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(BAZ2, FOO2, BAR2, SUBFOO2)
                 .build();
         assertNotNull(result);
@@ -59,7 +59,7 @@ public class YangFileStmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(YANGFILE, SIMPLENODES, IMPORTEDYANGFILE, FOOBAR, EXTFILE, EXTUSE)
                 .buildEffective();
         assertNotNull(result);

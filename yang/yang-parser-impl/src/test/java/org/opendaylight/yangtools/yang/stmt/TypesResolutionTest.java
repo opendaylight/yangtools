@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -351,7 +351,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testUnionWithExt() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/types/union-with-ext/extdef.yang"))
                 .addSource(sourceForResource("/types/union-with-ext/unionbug.yang"))
                 .addSource(sourceForResource("/ietf/ietf-inet-types@2010-09-24.yang"))
@@ -361,7 +361,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testUnionWithBits() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/types/union-with-bits/union-bits-model.yang"))
                 .buildEffective();
         assertNotNull(result);
@@ -369,7 +369,7 @@ public class TypesResolutionTest {
 
     @Test
     public void testUnionInList() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/types/union-in-list/unioninlisttest.yang"));
 
         try {

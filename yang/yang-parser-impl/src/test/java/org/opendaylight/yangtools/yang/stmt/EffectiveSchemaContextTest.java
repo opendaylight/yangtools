@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveSchemaContext;
@@ -46,7 +46,7 @@ public class EffectiveSchemaContextTest {
     @Test
     public void testEffectiveSchemaContext() throws ReactorException, ParseException, URISyntaxException, IOException,
             YangSyntaxErrorException {
-        final EffectiveSchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final EffectiveSchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(
                         "/effective-schema-context-test/foo.yang")))
                 .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource(

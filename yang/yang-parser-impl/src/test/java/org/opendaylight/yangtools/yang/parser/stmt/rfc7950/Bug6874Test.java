@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -84,7 +84,7 @@ public class Bug6874Test {
 
     @Test
     public void descriptionAndReferenceTest11() throws ReactorException {
-        DefaultReactors.defaultReactor().newBuild()
+        RFC7950Reactors.defaultReactor().newBuild()
             .addSources(ROOT_MODULE, CHILD_MODULE, CHILD_MODULE_1, IMPORTED_MODULE)
             .build().getRootStatements().forEach(declaredStmt -> {
                 if (declaredStmt instanceof ModuleStatement) {

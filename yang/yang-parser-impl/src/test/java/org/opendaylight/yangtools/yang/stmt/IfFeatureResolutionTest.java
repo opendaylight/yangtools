@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -39,7 +39,7 @@ public class IfFeatureResolutionTest {
                 QName.create("foo-namespace", "test-feature-3"),
                 QName.create("bar-namespace", "imp-feature"));
 
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE)
                 .setSupportedFeatures(supportedFeatures)
                 .buildEffective();
@@ -143,7 +143,7 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testAllFeaturesSupported() throws ReactorException {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
@@ -269,7 +269,7 @@ public class IfFeatureResolutionTest {
 
     @Test
     public void testNoFeaturesSupported() throws ReactorException {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(FOO_MODULE, BAR_MODULE)
                 .setSupportedFeatures(ImmutableSet.of())
                 .buildEffective();
