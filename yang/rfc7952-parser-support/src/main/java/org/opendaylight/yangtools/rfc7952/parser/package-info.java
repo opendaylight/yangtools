@@ -6,9 +6,9 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 /**
- * YANG parser support for metamodel extensions defined in <a href="https://tools.ietf.org/html/rfc6536">RFC6536</a>.
- * Use {@link org.opendaylight.yangtools.rfc7952.parser.Metadata#getStatements()} to acquire
- * {@link org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport} instances for use with parser reactor.
+ * YANG parser support for metamodel extensions defined in <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>.
+ * Add {@link org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport} to your reactor to add support
+ * for this extension.
  *
  * @author Robert Varga
  */
