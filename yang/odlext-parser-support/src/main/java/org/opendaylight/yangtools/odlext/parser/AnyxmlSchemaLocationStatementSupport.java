@@ -5,32 +5,34 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.parser.odlext.stmt;
+package org.opendaylight.yangtools.odlext.parser;
 
 import static org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION;
 
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class AnyxmlSchemaLocationSupport
+public final class AnyxmlSchemaLocationStatementSupport
         extends AbstractStatementSupport<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
             EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>> {
-    private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
-        ANYXML_SCHEMA_LOCATION).build();
-    private static final AnyxmlSchemaLocationSupport INSTANCE = new AnyxmlSchemaLocationSupport();
+    private static final AnyxmlSchemaLocationStatementSupport INSTANCE =
+            new AnyxmlSchemaLocationStatementSupport(ANYXML_SCHEMA_LOCATION);
 
-    private AnyxmlSchemaLocationSupport() {
-        super(ANYXML_SCHEMA_LOCATION);
+    private final SubstatementValidator validator;
+
+    private AnyxmlSchemaLocationStatementSupport(final StatementDefinition definition) {
+        super(definition);
+        validator = SubstatementValidator.builder(definition).build();
     }
 
-    public static AnyxmlSchemaLocationSupport getInstance() {
+    public static AnyxmlSchemaLocationStatementSupport getInstance() {
         return INSTANCE;
     }
 
@@ -61,6 +63,6 @@ public final class AnyxmlSchemaLocationSupport
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
-        return SUBSTATEMENT_VALIDATOR;
+        return validator;
     }
 }
