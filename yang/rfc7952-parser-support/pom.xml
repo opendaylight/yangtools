@@ -53,9 +53,7 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <!-- FIXME: this needs to be trimmed down to the point of requiring only yang-parser-spi
-                        and yang-parser-reactor -->
-            <artifactId>yang-parser-impl</artifactId>
+            <artifactId>yang-parser-rfc7950</artifactId>
         </dependency>
     </dependencies>
 
