@@ -68,6 +68,11 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>yang-parser-rfc7950</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>odlext-model-api</artifactId>
         </dependency>
         <dependency>
@@ -79,10 +84,6 @@
             <artifactId>rfc8040-model-api</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -110,23 +111,6 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.antlr</groupId>
-                <artifactId>antlr4-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>antlr4</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <sourceDirectory>src/main/antlr</sourceDirectory>
-                    <outputDirectory>target/generated-sources/parser/org/opendaylight/yangtools/antlrv4/code/gen</outputDirectory>
-                    <visitor>true</visitor>
-                    <listener>true</listener>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
@@ -135,15 +119,6 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>
-                        *.opendaylight.yangtools.antlrv4.code.gen
-                    </excludePackageNames>
                 </configuration>
             </plugin>
             <plugin>
