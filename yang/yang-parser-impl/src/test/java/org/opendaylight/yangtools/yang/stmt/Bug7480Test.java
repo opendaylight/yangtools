@@ -18,7 +18,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 
 public class Bug7480Test {
@@ -61,7 +61,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource() throws Exception {
         // parent module as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid module namespace collision
-        final SchemaContext schemaContext =  DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext =  RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(StmtTestUtils.sourceForResource(
                         "/bugs/bug7480/main-source-lib-source-conflict-test/parent-module.yang"))
                 .addLibSources(
@@ -77,7 +77,7 @@ public class Bug7480Test {
     public void testHandlingOfMainSourceConflictingWithLibSource2() throws Exception {
         // submodule as main source and as lib source at the same time
         // parser should remove it from the required lib sources and thus avoid submodule name collision
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(StmtTestUtils.sourceForResource(
                         "/bugs/bug7480/main-source-lib-source-conflict-test/child-module.yang"))
                 .addLibSources(

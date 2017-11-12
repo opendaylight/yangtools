@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -118,7 +118,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .setSupportedFeatures(ImmutableSet.of())
                 .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
