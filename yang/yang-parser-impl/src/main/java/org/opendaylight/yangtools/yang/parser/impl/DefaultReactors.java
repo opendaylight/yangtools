@@ -7,10 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
+
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
+import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationSupport;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
+import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
@@ -19,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
  */
 @Beta
 public final class DefaultReactors {
-    private static final CrossSourceStatementReactor DEFAULT_REACTOR = createDefaultReactorBuilder().build();
+    private static final CrossSourceStatementReactor DEFAULT_REACTOR = defaultReactorBuilder().build();
 
     private DefaultReactors() {
         throw new UnsupportedOperationException();
@@ -41,8 +48,13 @@ public final class DefaultReactors {
      *
      * @return A populated CrossSourceStatementReactor builder.
      */
-    public static Builder createDefaultReactorBuilder() {
-        // FIXME: customize with extensions
-        return YangInferencePipeline.newReactorBuilder();
+    public static CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
+        return RFC7950Reactors.defaultReactorBuilder()
+                // AnyxmlSchemaLocation support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationSupport.getInstance())
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    treeScoped(AnyxmlSchemaLocationNamespace.class))
+                // RFC8040 yang-data support.
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance());
     }
 }
