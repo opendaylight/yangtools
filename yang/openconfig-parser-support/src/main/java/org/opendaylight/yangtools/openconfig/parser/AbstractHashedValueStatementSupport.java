@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.openconfig.parser;
 
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigHashedValueStatement;
-import org.opendaylight.yangtools.openconfig.model.api.OpenConfigStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,8 +18,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-final class HashedValue extends AbstractStatementSupport<Void, OpenConfigHashedValueStatement,
-        OpenConfigHashedValueEffectiveStatement> {
+abstract class AbstractHashedValueStatementSupport
+        extends AbstractStatementSupport<Void, OpenConfigHashedValueStatement,
+            OpenConfigHashedValueEffectiveStatement> {
 
     private static final class Declared extends AbstractDeclaredStatement<Void>
         implements OpenConfigHashedValueStatement {
@@ -57,39 +57,27 @@ final class HashedValue extends AbstractStatementSupport<Void, OpenConfigHashedV
         }
     }
 
-    private static final HashedValue ENCRYPTED_INSTANCE =
-            new HashedValue(OpenConfigStatements.OPENCONFIG_ENCRYPTED_VALUE);
-    private static final HashedValue HASHED_INSTANCE = new HashedValue(OpenConfigStatements.OPENCONFIG_HASHED_VALUE);
-
     private final SubstatementValidator validator;
 
-    HashedValue(final StatementDefinition definition) {
+    AbstractHashedValueStatementSupport(final StatementDefinition definition) {
         super(definition);
         this.validator = SubstatementValidator.builder(definition).build();
     }
 
-    static HashedValue getEncryptedInstance() {
-        return ENCRYPTED_INSTANCE;
-    }
-
-    static HashedValue getHashedInstance() {
-        return HASHED_INSTANCE;
-    }
-
     @Override
-    public OpenConfigHashedValueStatement createDeclared(
+    public final OpenConfigHashedValueStatement createDeclared(
             final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
         return new Declared(ctx);
     }
 
     @Override
-    public OpenConfigHashedValueEffectiveStatement createEffective(
+    public final OpenConfigHashedValueEffectiveStatement createEffective(
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx) {
         return new Effective(ctx);
     }
 
     @Override
-    public Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public final Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         return null;
     }
 

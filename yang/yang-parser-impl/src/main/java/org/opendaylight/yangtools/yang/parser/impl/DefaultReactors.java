@@ -10,17 +10,17 @@ package org.opendaylight.yangtools.yang.parser.impl;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.openconfig.parser.OpenConfig;
-import org.opendaylight.yangtools.rfc7952.parser.Metadata;
+import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
+import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
+import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
 import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc8040.YangDataStatementSupport;
 
 /**
  * Utility class for instantiating default-configured {@link CrossSourceStatementReactor}s.
@@ -52,25 +52,22 @@ public final class DefaultReactors {
      * @return A populated CrossSourceStatementReactor builder.
      */
     public static CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
-        final CustomCrossSourceStatementReactorBuilder ret =  RFC7950Reactors.defaultReactorBuilder();
+        return RFC7950Reactors.defaultReactorBuilder()
+                // AnyxmlSchemaLocation support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationSupport.getInstance())
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    treeScoped(AnyxmlSchemaLocationNamespace.class))
 
-        // AnyxmlSchemaLocation support
-        ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationSupport.getInstance());
-        ret.addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, treeScoped(AnyxmlSchemaLocationNamespace.class));
+                // RFC7952 annotation support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
 
-        // RFC7952 annotation support
-        for (StatementSupport<?, ?, ?> support : Metadata.getStatements()) {
-            ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, support);
-        }
+                // RFC8040 yang-data support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
 
-        // RFC8040 yang-data support
-        ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance());
-
-        // OpenConfig extensions support (except openconfig-version)
-        for (StatementSupport<?, ?, ?> support : OpenConfig.getStatements()) {
-            ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, support);
-        }
-
-        return ret;
+                // OpenConfig extensions support (except openconfig-version)
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    EncryptedValueStatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    HashedValueStatementSupport.getInstance());
     }
 }

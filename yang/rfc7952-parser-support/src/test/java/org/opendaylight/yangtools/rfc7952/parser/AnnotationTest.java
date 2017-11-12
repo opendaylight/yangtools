@@ -38,7 +38,7 @@ public class AnnotationTest {
     @BeforeClass
     public static void createReactor() {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addAllCommonStatementSupports(ModelProcessingPhase.FULL_DECLARATION, Metadata.getStatements())
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
                 .build();
     }
 
