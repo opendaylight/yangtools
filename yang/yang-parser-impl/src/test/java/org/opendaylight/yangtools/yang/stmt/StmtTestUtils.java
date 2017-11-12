@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -132,7 +132,7 @@ public class StmtTestUtils {
     public static SchemaContext parseYangSources(final StatementParserMode statementParserMode,
             final Set<QName> supportedFeatures, final Collection<? extends StatementStreamSource> sources)
             throws ReactorException {
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild(statementParserMode)
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild(statementParserMode)
                 .addSources(sources);
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(supportedFeatures);
@@ -224,7 +224,7 @@ public class StmtTestUtils {
     private static SchemaContext parseYangSources(final StatementStreamSource[] yangSources,
             final StatementStreamSource[] libSources, final Set<QName> supportedFeatures) throws ReactorException {
 
-        final BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        final BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(yangSources).addLibSources(libSources);
         if (supportedFeatures != null) {
             reactor.setSupportedFeatures(supportedFeatures);
@@ -251,7 +251,7 @@ public class StmtTestUtils {
 
     public static SchemaContext parseYinSources(final StatementParserMode statementParserMode,
             final StatementStreamSource... sources) throws ReactorException {
-        return DefaultReactors.defaultReactor().newBuild(statementParserMode).addSources(sources).buildEffective();
+        return RFC7950Reactors.defaultReactor().newBuild(statementParserMode).addSources(sources).buildEffective();
     }
 
     public static Module findImportedModule(final SchemaContext context, final Module rootModule,

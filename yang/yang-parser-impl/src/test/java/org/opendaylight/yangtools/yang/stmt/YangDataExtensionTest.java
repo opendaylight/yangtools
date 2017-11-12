@@ -60,7 +60,9 @@ public class YangDataExtensionTest {
 
     @Test
     public void testYangData() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(FOO_MODULE, IETF_RESTCONF_MODULE);
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
@@ -91,7 +93,9 @@ public class YangDataExtensionTest {
 
     @Test
     public void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(BAZ_MODULE, IETF_RESTCONF_MODULE);
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module baz = schemaContext.findModule("baz", REVISION).get();
@@ -147,7 +151,9 @@ public class YangDataExtensionTest {
     public void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
-        final SchemaContext schemaContext = StmtTestUtils.parseYangSources(BAR_MODULE, IETF_RESTCONF_MODULE);
+        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
+                .addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
+                .buildEffective();
         assertNotNull(schemaContext);
 
         final Module bar = schemaContext.findModule("bar", REVISION).get();
@@ -165,7 +171,8 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithMissingTopLevelContainer() {
         try {
-            StmtTestUtils.parseYangSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE);
+            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE)
+            .buildEffective();
             fail("Exception should have been thrown because of missing top-level container in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -177,7 +184,8 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithTwoTopLevelContainers() {
         try {
-            StmtTestUtils.parseYangSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE);
+            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE)
+            .buildEffective();
             fail("Exception should have been thrown because of two top-level containers in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -189,7 +197,8 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithInvalidToplevelNode() {
         try {
-            StmtTestUtils.parseYangSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE);
+            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE)
+            .buildEffective();
             fail("Exception should have been thrown because of invalid top-level node in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();

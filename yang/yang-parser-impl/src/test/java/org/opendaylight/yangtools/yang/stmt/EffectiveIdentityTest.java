@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -39,7 +39,7 @@ public class EffectiveIdentityTest {
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void cyclicefineTest() throws SourceException, ReactorException, URISyntaxException {
 
-        CrossSourceStatementReactor.BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
+        CrossSourceStatementReactor.BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(CYCLIC_IDENTITY_TEST);
         try {
             reactor.buildEffective();
@@ -52,7 +52,7 @@ public class EffectiveIdentityTest {
     @Test
     public void identityTest() throws SourceException, ReactorException,
             URISyntaxException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IDENTITY_TEST)
                 .buildEffective();
 

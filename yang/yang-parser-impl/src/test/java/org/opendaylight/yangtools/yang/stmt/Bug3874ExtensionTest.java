@@ -23,14 +23,21 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
+import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
 import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 
 public class Bug3874ExtensionTest {
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug3874");
+        SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+                .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/bugs/bug3874/foo.yang")))
+                .addSource(YangStatementStreamSource.create(
+                    YangTextSchemaSource.forResource("/bugs/bug3874/yang-ext.yang")))
+                .buildEffective();
 
         QNameModule foo = QNameModule.create(URI.create("foo"));
         QName myContainer2QName = QName.create(foo, "my-container-2");
