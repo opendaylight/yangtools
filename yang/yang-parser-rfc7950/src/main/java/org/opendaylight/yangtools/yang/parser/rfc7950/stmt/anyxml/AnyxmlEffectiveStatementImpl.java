@@ -15,7 +15,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
@@ -30,8 +29,7 @@ public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNod
     private final AnyXmlSchemaNode original;
     private final boolean mandatory;
 
-    AnyxmlEffectiveStatementImpl(
-            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
+    AnyxmlEffectiveStatementImpl(final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
         super(ctx);
         this.original = (AnyXmlSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
