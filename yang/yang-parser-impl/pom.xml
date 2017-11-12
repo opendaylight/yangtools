@@ -79,6 +79,10 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>odlext-parser-support</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>openconfig-model-api</artifactId>
         </dependency>
         <dependency>
