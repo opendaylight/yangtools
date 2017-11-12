@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Table;
 import com.google.common.collect.Table.Cell;
@@ -15,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -24,31 +26,20 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
 
-public class CustomStatementParserBuilder {
+@Beta
+public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSourceStatementReactor> {
     private final Map<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
     private final Map<ValidationBundleType, Collection<StatementDefinition>> reactorValidationBundles = new HashMap<>();
 
     /**
-     * Creates a new CustomStatementParserBuilder object initialized by
-     * YangInferencePipeline.SUPPORTED_VERSION_BUNDLE. Statement parser will
-     * support the same versions as defined in
-     * YangInferencePipeline.SUPPORTED_VERSION_BUNDLE.
-     */
-    public CustomStatementParserBuilder() {
-        this(YangInferencePipeline.SUPPORTED_VERSIONS);
-    }
-
-    /**
-     * Creates a new CustomStatementParserBuilder object initialized by specific
-     * version bundle. Statement parser will support all versions defined in
-     * given version bundle.
+     * Creates a new CustomCrossSourceStatementReactorBuilder object initialized by specific version bundle. Statement
+     * parser will support all versions defined in given version bundle.
      *
      * @param supportedVersions
      *            bundle of supported verions
      */
-    public CustomStatementParserBuilder(final Set<YangVersion> supportedVersions) {
+    CustomCrossSourceStatementReactorBuilder(final Set<YangVersion> supportedVersions) {
         reactorSupportBundles = ImmutableMap.<ModelProcessingPhase, StatementSupportBundle.Builder>builder()
                 .put(ModelProcessingPhase.INIT, StatementSupportBundle.builder(supportedVersions))
                 .put(ModelProcessingPhase.SOURCE_PRE_LINKAGE, StatementSupportBundle.builder(supportedVersions))
@@ -58,42 +49,25 @@ public class CustomStatementParserBuilder {
                 .put(ModelProcessingPhase.EFFECTIVE_MODEL, StatementSupportBundle.builder(supportedVersions)).build();
     }
 
-    public CustomStatementParserBuilder addStatementSupport(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addStatementSupport(final ModelProcessingPhase phase,
             final StatementSupport<?, ?, ?> stmtSupport) {
         reactorSupportBundles.get(phase).addSupport(stmtSupport);
         return this;
     }
 
-    public CustomStatementParserBuilder addNamespaceSupport(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
             final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
         reactorSupportBundles.get(phase).addSupport(namespaceSupport);
         return this;
     }
 
-    public CustomStatementParserBuilder addDefaultRFC6020Bundles() {
-        addRFC6020SupportBundles();
-        addRFC6020ValidationBundles();
-        return this;
-    }
-
-    private void addRFC6020ValidationBundles() {
-        reactorValidationBundles.putAll(YangInferencePipeline.RFC6020_VALIDATION_BUNDLE);
-    }
-
-    private void addRFC6020SupportBundles() {
-        for (final Entry<ModelProcessingPhase, StatementSupportBundle> entry : YangInferencePipeline.RFC6020_BUNDLES
-                .entrySet()) {
-            addAllSupports(entry.getKey(), entry.getValue());
-        }
-    }
-
-    public CustomStatementParserBuilder addValidationBundle(final ValidationBundleType validationBundleType,
+    public CustomCrossSourceStatementReactorBuilder addValidationBundle(final ValidationBundleType validationBundleType,
             final Collection<StatementDefinition> validationBundle) {
         reactorValidationBundles.put(validationBundleType, validationBundle);
         return this;
     }
 
-    public CustomStatementParserBuilder addAllSupports(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addAllSupports(final ModelProcessingPhase phase,
             final StatementSupportBundle stmtSupportBundle) {
         addAllCommonStatementSupports(phase, stmtSupportBundle.getCommonDefinitions().values());
         addAllVersionSpecificSupports(phase, stmtSupportBundle.getAllVersionSpecificDefinitions());
@@ -101,7 +75,7 @@ public class CustomStatementParserBuilder {
         return this;
     }
 
-    public CustomStatementParserBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addAllNamespaceSupports(final ModelProcessingPhase phase,
             final Collection<NamespaceBehaviour<?, ?, ?>> namespaceSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final NamespaceBehaviour<?, ?, ?> namespaceSupport : namespaceSupports) {
@@ -110,18 +84,7 @@ public class CustomStatementParserBuilder {
         return this;
     }
 
-    /**
-     * Use
-     * {@link #addAllCommonStatementSupports(ModelProcessingPhase, Collection)
-     * addAllCommonStatementSupports} method instead.
-     */
-    @Deprecated
-    public CustomStatementParserBuilder addAllStatementSupports(final ModelProcessingPhase phase,
-            final Collection<StatementSupport<?, ?, ?>> statementSupports) {
-        return addAllCommonStatementSupports(phase, statementSupports);
-    }
-
-    public CustomStatementParserBuilder addAllCommonStatementSupports(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addAllCommonStatementSupports(final ModelProcessingPhase phase,
             final Collection<StatementSupport<?, ?, ?>> statementSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final StatementSupport<?, ?, ?> statementSupport : statementSupports) {
@@ -130,7 +93,7 @@ public class CustomStatementParserBuilder {
         return this;
     }
 
-    public CustomStatementParserBuilder addAllVersionSpecificSupports(final ModelProcessingPhase phase,
+    public CustomCrossSourceStatementReactorBuilder addAllVersionSpecificSupports(final ModelProcessingPhase phase,
             final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificSupports) {
         final StatementSupportBundle.Builder stmtBundleBuilder = reactorSupportBundles.get(phase);
         for (final Cell<YangVersion, QName, StatementSupport<?, ?, ?>> cell : versionSpecificSupports.cellSet()) {
@@ -139,6 +102,7 @@ public class CustomStatementParserBuilder {
         return this;
     }
 
+    @Override
     public CrossSourceStatementReactor build() {
         final StatementSupportBundle initBundle = reactorSupportBundles.get(ModelProcessingPhase.INIT).build();
         final StatementSupportBundle preLinkageBundle = reactorSupportBundles
@@ -152,7 +116,7 @@ public class CustomStatementParserBuilder {
         final StatementSupportBundle effectiveBundle = reactorSupportBundles.get(ModelProcessingPhase.EFFECTIVE_MODEL)
                 .setParent(fullDeclBundle).build();
 
-        final Builder reactorBuilder = CrossSourceStatementReactor.builder()
+        final CrossSourceStatementReactor.Builder reactorBuilder = CrossSourceStatementReactor.builder()
                 .setBundle(ModelProcessingPhase.INIT, initBundle)
                 .setBundle(ModelProcessingPhase.SOURCE_PRE_LINKAGE, preLinkageBundle)
                 .setBundle(ModelProcessingPhase.SOURCE_LINKAGE, linkageBundle)
