@@ -15,6 +15,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 
 public class Bug3874ExtensionTest {
