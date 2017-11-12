@@ -25,7 +25,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
@@ -37,9 +36,7 @@ public class AnnotationTest {
 
     @BeforeClass
     public static void createReactor() {
-        reactor = RFC7950Reactors.vanillaReactorBuilder()
-                .addAllCommonStatementSupports(ModelProcessingPhase.FULL_DECLARATION, Metadata.getStatements())
-                .build();
+        reactor = Metadata.addToReactorBuilder(RFC7950Reactors.vanillaReactorBuilder()).build();
     }
 
     @Test

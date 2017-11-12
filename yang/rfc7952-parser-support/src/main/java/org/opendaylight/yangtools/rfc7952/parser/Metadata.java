@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.rfc7952.parser;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableList;
-import java.util.Collection;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 /**
@@ -26,11 +26,13 @@ public final class Metadata {
     }
 
     /**
-     * Return a collection of statements which need to be added into parser reactor to enable support for YANG metadata.
+     * Configure specified {@link CustomCrossSourceStatementReactorBuilder} with support for YANG metadata extensions.
      *
-     * @return Collection of statements to be added.
+     * @param builder Builder to configure
+     * @return Specified builder
      */
-    public static Collection<StatementSupport<?, ?, ?>> getStatements() {
-        return ImmutableList.of(Annotation.getInstance());
+    public static CustomCrossSourceStatementReactorBuilder addToReactorBuilder(
+            final CustomCrossSourceStatementReactorBuilder builder) {
+        return builder.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, Annotation.getInstance());
     }
 }

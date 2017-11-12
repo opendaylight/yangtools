@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.openconfig.parser;
+package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
@@ -19,14 +19,14 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
  * @author Robert Varga
  */
 @Beta
-public final class OpenConfig {
+public final class OpenDaylightExtensions {
 
-    private OpenConfig() {
+    private OpenDaylightExtensions() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Configure specified {@link CustomCrossSourceStatementReactorBuilder} with support for OpenConfig extensions.
+     * Configure specified {@link CustomCrossSourceStatementReactorBuilder} with support for OpenDaylight extensions.
      *
      * @param builder Builder to configure
      * @return Specified builder
@@ -34,7 +34,8 @@ public final class OpenConfig {
     public static CustomCrossSourceStatementReactorBuilder addToReactorBuilder(
             final CustomCrossSourceStatementReactorBuilder builder) {
         return builder
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, HashedValue.getEncryptedInstance())
-                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, HashedValue.getHashedInstance());
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationSupport.getInstance())
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOR)
+                .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangModeledAnyxml.getInstance());
     }
 }

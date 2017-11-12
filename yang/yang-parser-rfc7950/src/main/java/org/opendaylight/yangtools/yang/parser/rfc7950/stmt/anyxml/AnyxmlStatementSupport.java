@@ -7,28 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
-import java.util.Map;
-import java.util.Optional;
-import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class AnyxmlStatementSupport extends
-        AbstractQNameStatementSupport<AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> {
+public final class AnyxmlStatementSupport
+        extends AbstractQNameStatementSupport<AnyxmlStatement, AnyxmlEffectiveStatement> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .ANYXML)
         .addOptional(YangStmtMapping.CONFIG)
@@ -52,8 +44,7 @@ public final class AnyxmlStatementSupport extends
     }
 
     @Override
-    public void onStatementAdded(final Mutable<QName, AnyxmlStatement,
-            EffectiveStatement<QName, AnyxmlStatement>> stmt) {
+    public void onStatementAdded(final Mutable<QName, AnyxmlStatement, AnyxmlEffectiveStatement> stmt) {
         stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
@@ -63,28 +54,9 @@ public final class AnyxmlStatementSupport extends
     }
 
     @Override
-    public EffectiveStatement<QName, AnyxmlStatement> createEffective(
-            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx) {
-        final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
-            EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>> schemaLocations =
-            ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);
-        if (schemaLocations != null && !schemaLocations.isEmpty()) {
-            final SchemaNodeIdentifier anyXmlSchemaNodeIdentifier = schemaLocations.values().iterator().next()
-                    .getStatementArgument();
-            final Optional<ContainerSchemaNode> anyXmlSchema = getAnyXmlSchema(ctx, anyXmlSchemaNodeIdentifier);
-            if (anyXmlSchema.isPresent()) {
-                return new YangModeledAnyXmlEffectiveStatementImpl(ctx, anyXmlSchema.get());
-            }
-        }
+    public AnyxmlEffectiveStatement createEffective(
+            final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
         return new AnyxmlEffectiveStatementImpl(ctx);
-    }
-
-    private static Optional<ContainerSchemaNode> getAnyXmlSchema(
-            final StmtContext<QName, AnyxmlStatement, EffectiveStatement<QName, AnyxmlStatement>> ctx,
-            final SchemaNodeIdentifier contentSchemaPath) {
-        return SchemaNodeIdentifierBuildNamespace.findNode(ctx.getRoot(), contentSchemaPath)
-                .map(StmtContext::buildEffective)
-                .filter(ContainerSchemaNode.class::isInstance).map(ContainerSchemaNode.class::cast);
     }
 
     @Override
