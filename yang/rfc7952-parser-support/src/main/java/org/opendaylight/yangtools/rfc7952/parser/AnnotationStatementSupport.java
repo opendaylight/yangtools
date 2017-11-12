@@ -28,7 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-final class Annotation extends AbstractStatementSupport<String, AnnotationStatement, AnnotationEffectiveStatement> {
+public final class AnnotationStatementSupport
+        extends AbstractStatementSupport<String, AnnotationStatement, AnnotationEffectiveStatement> {
 
     private static final class Declared extends AbstractDeclaredStatement<String> implements AnnotationStatement {
         Declared(final StmtContext<String, ?, ?> context) {
@@ -54,7 +55,7 @@ final class Annotation extends AbstractStatementSupport<String, AnnotationStatem
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
-                "Annotation %s is missing a 'type' statement", argument());
+                "AnnotationStatementSupport %s is missing a 'type' statement", argument());
 
             final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
                 path);
@@ -82,11 +83,11 @@ final class Annotation extends AbstractStatementSupport<String, AnnotationStatem
         }
     }
 
-    private static final Annotation INSTANCE = new Annotation(MetadataStatements.ANNOTATION);
+    private static final AnnotationStatementSupport INSTANCE = new AnnotationStatementSupport(MetadataStatements.ANNOTATION);
 
     private final SubstatementValidator validator;
 
-    Annotation(final StatementDefinition definition) {
+    AnnotationStatementSupport(final StatementDefinition definition) {
         super(definition);
         this.validator = SubstatementValidator.builder(definition)
                 .addMandatory(YangStmtMapping.TYPE)
@@ -98,7 +99,7 @@ final class Annotation extends AbstractStatementSupport<String, AnnotationStatem
                 .build();
     }
 
-    static Annotation getInstance() {
+    public static AnnotationStatementSupport getInstance() {
         return INSTANCE;
     }
 
