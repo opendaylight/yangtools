@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class NotificationStmtTest {
 
     @Test
     public void notificationTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(sourceForResource("/model/baz.yang"), sourceForResource("/model/bar.yang"))
                 .buildEffective();
         assertNotNull(result);

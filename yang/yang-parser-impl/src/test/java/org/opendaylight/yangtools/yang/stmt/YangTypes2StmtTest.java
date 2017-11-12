@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -49,7 +49,7 @@ public class YangTypes2StmtTest {
 
     @Test
     public void readAndParseYangFileTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(TYPEFILE1, TYPEFILE2, TYPEFILE3, TYPEFILE4)
                 .buildEffective();
         assertNotNull(result);

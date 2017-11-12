@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -45,17 +45,17 @@ public class IdentityStmtTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityTest() throws ReactorException {
-        DefaultReactors.defaultReactor().newBuild().addSource(ILLEGAL_IDENTITY_MODULE).buildEffective();
+        RFC7950Reactors.defaultReactor().newBuild().addSource(ILLEGAL_IDENTITY_MODULE).buildEffective();
     }
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityWithPrefixTest() throws ReactorException {
-        DefaultReactors.defaultReactor().newBuild().addSource(ILLEGAL_IDENTITY_MODULE2).buildEffective();
+        RFC7950Reactors.defaultReactor().newBuild().addSource(ILLEGAL_IDENTITY_MODULE2).buildEffective();
     }
 
     @Test
     public void importedIdentityTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(LEGAL_IDENTITY_MODULE, LEGAL_IDENTITY_MODULE2)
                 .buildEffective();
         assertNotNull(result);
@@ -63,7 +63,7 @@ public class IdentityStmtTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void selfReferencingIdentityThroughChaining() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(ILLEGAL_IDENTITY_MODULE3)
                 .buildEffective();
         assertNotNull(result);
@@ -71,7 +71,7 @@ public class IdentityStmtTest {
 
     @Test
     public void chainedIdentityTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(LEGAL_IDENTITY_MODULE3)
                 .buildEffective();
         assertNotNull(result);
@@ -102,7 +102,7 @@ public class IdentityStmtTest {
 
     @Test
     public void duplicateIdentityTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(DUPLICATE_IDENTITY_MODULE)
                 .buildEffective();
         assertNotNull(result);

@@ -18,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -55,7 +55,7 @@ public class YinFileStmtTest {
 
     @Test
     public void readAndParseYinFileTestModel() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(YIN_FILE, EXT_FILE, EXT_USE_FILE)
                 .buildEffective();
         assertNotNull(result);
@@ -64,7 +64,7 @@ public class YinFileStmtTest {
     // parsing yin file whose import statement references a module which does not exist
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void readAndParseInvalidYinFileTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(INVALID_YIN_FILE)
                 .buildEffective();
         assertNotNull(result);
@@ -72,8 +72,7 @@ public class YinFileStmtTest {
 
     // parsing yin file with duplicate key name in a list statement
     public void readAndParseInvalidYinFileTest2() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild()
-                .addSource(INVALID_YIN_FILE_2);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE_2);
 
         try {
             reactor.buildEffective();

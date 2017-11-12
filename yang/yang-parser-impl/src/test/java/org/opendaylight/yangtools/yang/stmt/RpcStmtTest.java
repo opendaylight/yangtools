@@ -26,14 +26,14 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class RpcStmtTest {
 
     @Test
     public void rpcTest() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/baz.yang"))
                 .addSource(sourceForResource("/model/bar.yang"))
                 .addSource(sourceForResource("/rpc-stmt-test/foo.yang"))
