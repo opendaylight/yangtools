@@ -10,16 +10,17 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc8040;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import java.util.Objects;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
@@ -29,7 +30,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
 
     private final SchemaPath path;
     private final QName maybeQNameArgument;
-    private final ContainerSchemaNode containerSchemaNode;
+    private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final StmtContext<String, YangDataStatement, ?> ctx) {
         super(ctx);
@@ -43,7 +44,11 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         this.maybeQNameArgument = maybeQNameArgumentInit;
 
         path = ctx.getParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
-        containerSchemaNode = Preconditions.checkNotNull(firstEffective(ContainerEffectiveStatementImpl.class));
+        container = findFirstEffectiveSubstatement(ContainerEffectiveStatement.class).get();
+
+        // TODO: this is strong binding of two API contracts. Unfortunately ContainerEffectiveStatement design is
+        //       incomplete.
+        Verify.verify(container instanceof ContainerSchemaNode);
     }
 
     @Nonnull
@@ -58,10 +63,16 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         return path;
     }
 
+    @Override
+    public ContainerEffectiveStatement getContainer() {
+        return container;
+    }
+
     @Nonnull
     @Override
-    public ContainerSchemaNode getContainer() {
-        return containerSchemaNode;
+    public ContainerSchemaNode getContainerSchemaNode() {
+        // Verified in the constructor
+        return (ContainerSchemaNode) container;
     }
 
     @Override
@@ -85,6 +96,9 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("qname", maybeQNameArgument).add("path", path).toString();
+        return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("qname", maybeQNameArgument)
+                .add("path", path)
+                .add("container", container).toString();
     }
 }

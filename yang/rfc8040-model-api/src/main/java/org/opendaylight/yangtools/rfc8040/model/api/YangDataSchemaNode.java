@@ -20,9 +20,9 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 @Beta
 public interface YangDataSchemaNode extends UnknownSchemaNode {
     /**
-     * Returns container schema node.
+     * Returns container schema node container within this yang-data definition.
      *
      * @return container schema node
      */
-    ContainerSchemaNode getContainer();
+    ContainerSchemaNode getContainerSchemaNode();
 }
