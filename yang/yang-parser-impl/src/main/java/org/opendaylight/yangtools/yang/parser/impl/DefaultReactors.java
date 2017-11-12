@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
-
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.odlext.parser.OpenDaylightExtensions;
 import org.opendaylight.yangtools.openconfig.parser.OpenConfig;
 import org.opendaylight.yangtools.rfc7952.parser.Metadata;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
-import org.opendaylight.yangtools.yang.parser.odlext.namespace.AnyxmlSchemaLocationNamespace;
-import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.Builder;
@@ -54,9 +52,13 @@ public final class DefaultReactors {
     public static CustomCrossSourceStatementReactorBuilder defaultReactorBuilder() {
         final CustomCrossSourceStatementReactorBuilder ret =  RFC7950Reactors.defaultReactorBuilder();
 
-        // AnyxmlSchemaLocation support
-        ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationSupport.getInstance());
-        ret.addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, treeScoped(AnyxmlSchemaLocationNamespace.class));
+       // OpenDaylight (AnyxmlSchemaLocation) support
+        for (StatementSupport<?, ?, ?> support : OpenDaylightExtensions.getStatements()) {
+            ret.addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, support);
+        }
+        for (NamespaceBehaviour<?, ?, ?> support : OpenDaylightExtensions.getNamespaceSupports()) {
+            ret.addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, support);
+        }
 
         // RFC7952 annotation support
         for (StatementSupport<?, ?, ?> support : Metadata.getStatements()) {
