@@ -12,9 +12,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import com.google.common.collect.ImmutableSet;
+import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +28,10 @@ import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -204,6 +207,14 @@ public class YangDataExtensionTest {
             final Throwable cause = ex.getCause();
             assertTrue(cause instanceof InvalidSubstatementException);
             assertTrue(cause.getMessage().startsWith("LEAF is not valid for YANG_DATA."));
+        }
+    }
+
+    private static StatementStreamSource sourceForResource(final String resourceName) {
+        try {
+            return YangStatementStreamSource.create(YangTextSchemaSource.forResource(resourceName));
+        } catch (IOException | YangSyntaxErrorException e) {
+            throw new IllegalArgumentException("Failed to create source", e);
         }
     }
 }
