@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.rfc8040.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,12 +31,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InvalidSubstatementException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.MissingSubstatementException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class YangDataExtensionTest {
 
@@ -61,10 +64,18 @@ public class YangDataExtensionTest {
     private static final QName MY_YANG_DATA_A = QName.create(FOO_QNAMEMODULE, "my-yang-data-a");
     private static final QName MY_YANG_DATA_B = QName.create(FOO_QNAMEMODULE, "my-yang-data-b");
 
+    private static CrossSourceStatementReactor reactor;
+
+    @BeforeClass
+    public static void createReactor() {
+        reactor = RFC7950Reactors.vanillaReactorBuilder()
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
+                .build();
+    }
+
     @Test
     public void testYangData() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
-                .addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = reactor.newBuild().addSources(FOO_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -96,8 +107,7 @@ public class YangDataExtensionTest {
 
     @Test
     public void testConfigStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
-                .addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = reactor.newBuild().addSources(BAZ_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -125,10 +135,8 @@ public class YangDataExtensionTest {
 
     @Test
     public void testIfFeatureStatementBeingIgnoredInYangDataBody() throws Exception {
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
-                .setSupportedFeatures(ImmutableSet.of())
-                .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE)
-                .buildEffective();
+        final SchemaContext schemaContext = reactor.newBuild().setSupportedFeatures(ImmutableSet.of())
+                .addSources(FOOBAR_MODULE, IETF_RESTCONF_MODULE).buildEffective();
         assertNotNull(schemaContext);
 
         final Module foobar = schemaContext.findModule("foobar", REVISION).get();
@@ -154,8 +162,7 @@ public class YangDataExtensionTest {
     public void testYangDataBeingIgnored() throws Exception {
         // yang-data statement is ignored if it does not appear as a top-level statement
         // i.e., it will not appear in the final SchemaContext
-        final SchemaContext schemaContext = DefaultReactors.defaultReactor().newBuild()
-                .addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
+        final SchemaContext schemaContext = reactor.newBuild().addSources(BAR_MODULE, IETF_RESTCONF_MODULE)
                 .buildEffective();
         assertNotNull(schemaContext);
 
@@ -174,8 +181,7 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithMissingTopLevelContainer() {
         try {
-            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE)
-            .buildEffective();
+            reactor.newBuild().addSources(FOO_INVALID_1_MODULE, IETF_RESTCONF_MODULE).buildEffective();
             fail("Exception should have been thrown because of missing top-level container in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -187,8 +193,7 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithTwoTopLevelContainers() {
         try {
-            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE)
-            .buildEffective();
+            reactor.newBuild().addSources(FOO_INVALID_2_MODULE, IETF_RESTCONF_MODULE).buildEffective();
             fail("Exception should have been thrown because of two top-level containers in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
@@ -200,8 +205,7 @@ public class YangDataExtensionTest {
     @Test
     public void testYangDataWithInvalidToplevelNode() {
         try {
-            DefaultReactors.defaultReactor().newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE)
-            .buildEffective();
+            reactor.newBuild().addSources(FOO_INVALID_3_MODULE, IETF_RESTCONF_MODULE).buildEffective();
             fail("Exception should have been thrown because of invalid top-level node in yang-data statement.");
         } catch (final ReactorException ex) {
             final Throwable cause = ex.getCause();
