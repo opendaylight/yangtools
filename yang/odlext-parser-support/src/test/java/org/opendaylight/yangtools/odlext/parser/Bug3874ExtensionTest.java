@@ -5,13 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.odlext.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
@@ -25,15 +26,28 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
-import org.opendaylight.yangtools.yang.parser.odlext.stmt.AnyxmlSchemaLocationEffectiveStatementImpl;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
 
 public class Bug3874ExtensionTest {
+    private static CrossSourceStatementReactor reactor;
+
+    @BeforeClass
+    public static void createReactor() {
+        reactor = RFC7950Reactors.vanillaReactorBuilder()
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    AnyxmlSchemaLocationStatementSupport.getInstance())
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOR)
+                .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    AnyxmlStatementSupportOverride.getInstance())
+                .build();
+    }
 
     @Test
     public void test() throws Exception {
-        SchemaContext context = DefaultReactors.defaultReactor().newBuild()
+        SchemaContext context = reactor.newBuild()
                 .addSource(YangStatementStreamSource.create(YangTextSchemaSource.forResource("/bugs/bug3874/foo.yang")))
                 .addSource(YangStatementStreamSource.create(
                     YangTextSchemaSource.forResource("/bugs/bug3874/yang-ext.yang")))
