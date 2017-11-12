@@ -14,7 +14,7 @@ import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
@@ -30,7 +30,7 @@ public class KeyTest {
 
     @Test
     public void keySimpleTest() throws ReactorException {
-        EffectiveModelContext result = DefaultReactors.defaultReactor().newBuild()
+        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(KEY_SIMPLE_AND_COMP)
                 .build();
         assertNotNull(result);
@@ -38,7 +38,7 @@ public class KeyTest {
 
     @Test
     public void keyCompositeInvalid() {
-        BuildAction reactor = DefaultReactors.defaultReactor().newBuild().addSource(KEY_COMP_DUPLICATE);
+        BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(KEY_COMP_DUPLICATE);
         try {
             reactor.build();
             fail("reactor.process should fail due to duplicate name in key");

@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 
@@ -41,7 +41,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void effectiveBuildTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSources(SIMPLE_MODULE)
                 .buildEffective();
 
         assertNotNull(result);
@@ -92,7 +92,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void extensionsTest() throws ReactorException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
 
         Set<GroupingDefinition> groupings = result.getGroupings();
@@ -112,7 +112,7 @@ public class EffectiveBuildTest {
 
     @Test
     public void mockTest() throws ReactorException, FileNotFoundException, URISyntaxException {
-        SchemaContext result = DefaultReactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
+        SchemaContext result = RFC7950Reactors.defaultReactor().newBuild().addSource(YANG_EXT).buildEffective();
         assertNotNull(result);
     }
 }

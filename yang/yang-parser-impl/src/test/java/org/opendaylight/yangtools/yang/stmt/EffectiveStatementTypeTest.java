@@ -42,7 +42,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.BitsSpecificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.Decimal64SpecificationEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type.EnumSpecificationEffectiveStatement;
@@ -59,7 +59,7 @@ public class EffectiveStatementTypeTest {
 
     @BeforeClass
     public static void setup() throws ReactorException {
-        effectiveSchemaContext = DefaultReactors.defaultReactor().newBuild()
+        effectiveSchemaContext = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/type-tests/types.yang"))
                 .buildEffective();
         types = effectiveSchemaContext.findModules("types").iterator().next();

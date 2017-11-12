@@ -21,13 +21,13 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
-import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
+import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class ExtensionStmtTest {
     @Test
     public void testExtensionDefinition() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/model/bar.yang"))
                 .buildEffective();
         assertNotNull(result);
@@ -46,7 +46,7 @@ public class ExtensionStmtTest {
 
     @Test
     public void testExtensionUsage() throws ReactorException {
-        final SchemaContext result = DefaultReactors.defaultReactor().newBuild()
+        final SchemaContext result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSource(sourceForResource("/semantic-statement-parser/ext-typedef.yang"))
                 .addSource(sourceForResource("/semantic-statement-parser/ext-use.yang"))
                 .buildEffective();
