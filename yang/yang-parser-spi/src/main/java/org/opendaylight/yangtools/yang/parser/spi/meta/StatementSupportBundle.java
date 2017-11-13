@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class StatementSupportBundle implements Immutable, NamespaceBehaviour.Registry {
 
@@ -157,6 +159,8 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<StatementSupportBundle> {
+        private static final Logger LOG = LoggerFactory.getLogger(Builder.class);
+
         private final Map<QName, StatementSupport<?, ?, ?>> commonStatements = new HashMap<>();
         private final Table<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements = HashBasedTable
                 .create();
@@ -170,13 +174,13 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             this.supportedVersions = ImmutableSet.copyOf(supportedVersions);
         }
 
-        public Builder addSupport(final StatementSupport<?, ?, ?> definition) {
-            final QName identifier = definition.getStatementName();
+        public Builder addSupport(final StatementSupport<?, ?, ?> support) {
+            final QName identifier = support.getStatementName();
+            checkNoParentDefinition(identifier);
+
             checkState(!commonStatements.containsKey(identifier),
                     "Statement %s already defined in common statement bundle.", identifier);
-            checkState(parent.getCommonStatementDefinition(identifier) == null,
-                    "Statement %s already defined.", identifier);
-            commonStatements.put(identifier, definition);
+            commonStatements.put(identifier, support);
             return this;
         }
 
@@ -198,8 +202,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
                     "Statement %s already defined in common statement bundle.", identifier);
             checkState(!versionSpecificStatements.contains(version, identifier),
                     "Statement %s already defined for version %s.", identifier, version);
-            checkState(parent.getCommonStatementDefinition(identifier) == null,
-                    "Statement %s already defined in parent's common statement bundle.", identifier);
+            checkNoParentDefinition(identifier);
             checkState(parent.getVersionSpecificStatementDefinition(version, identifier) == null,
                     "Statement %s already defined for version %s in parent's statement bundle.", identifier, version);
             versionSpecificStatements.put(version, identifier, definition);
@@ -215,11 +218,26 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
             return this;
         }
 
+        public Builder overrideSupport(final StatementSupport<?, ?, ?> support) {
+            final QName identifier = support.getStatementName();
+            checkNoParentDefinition(identifier);
+
+            final StatementSupport<?, ?, ?> previousSupport = commonStatements.replace(identifier, support);
+            checkState(previousSupport != null, "Statement %s was not previously defined", identifier);
+            LOG.debug("Changed statement {} support from {} to {}", identifier, previousSupport, support);
+            return this;
+        }
+
         @Override
         public StatementSupportBundle build() {
             Preconditions.checkState(parent != null, "Parent must not be null");
             return new StatementSupportBundle(parent, supportedVersions, ImmutableMap.copyOf(commonStatements),
                     ImmutableMap.copyOf(namespaces), ImmutableTable.copyOf(versionSpecificStatements));
+        }
+
+        private void checkNoParentDefinition(final QName identifier) {
+            checkState(parent.getCommonStatementDefinition(identifier) == null,
+                    "Statement %s is defined in parent's common statement bundle", identifier);
         }
     }
 }
