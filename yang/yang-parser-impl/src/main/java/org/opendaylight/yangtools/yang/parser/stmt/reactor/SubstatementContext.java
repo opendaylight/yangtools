@@ -188,13 +188,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
             final Mutable<?, ?, ?> copy = stmtContext.createCopy(newQNameModule, this, typeOfCopy);
-            LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
+            LOG.trace("Copying substatement {} for {} as", stmtContext, this, copy);
             buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
-            LOG.debug("Reusing substatement {} for {}", stmtContext, this);
+            LOG.trace("Reusing substatement {} for {}", stmtContext, this);
             buffer.add(stmtContext);
         } else {
-            LOG.debug("Skipping statement {}", stmtContext);
+            LOG.trace("Skipping statement {}", stmtContext);
         }
     }
 
@@ -211,14 +211,14 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     private static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
         if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
+            LOG.trace("Will reuse {} statement {}", def, stmtContext);
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
             return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
         }
 
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
+        LOG.trace("Will copy {} statement {}", def, stmtContext);
         return true;
     }
 

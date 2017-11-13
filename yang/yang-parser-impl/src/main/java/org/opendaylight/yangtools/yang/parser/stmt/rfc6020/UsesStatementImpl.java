@@ -247,14 +247,14 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
     public static boolean needToCopyByUses(final StmtContext<?, ?, ?> stmtContext) {
         final StatementDefinition def = stmtContext.getPublicDefinition();
         if (REUSED_DEF_SET.contains(def)) {
-            LOG.debug("Will reuse {} statement {}", def, stmtContext);
+            LOG.trace("Will reuse {} statement {}", def, stmtContext);
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
             return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
         }
 
-        LOG.debug("Will copy {} statement {}", def, stmtContext);
+        LOG.trace("Will copy {} statement {}", def, stmtContext);
         return true;
     }
 
@@ -292,7 +292,7 @@ public class UsesStatementImpl extends AbstractDeclaredStatement<QName> implemen
             "Refine target node %s not found.", refineTargetNodeIdentifier);
 
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
-            LOG.debug(
+            LOG.trace(
                     "Refine node '{}' in uses '{}' has target node unknown statement '{}'. Refine has been skipped. At line: {}",
                     subStmtCtx.getStatementArgument(), subStmtCtx.getParentContext().getStatementArgument(),
                     refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
