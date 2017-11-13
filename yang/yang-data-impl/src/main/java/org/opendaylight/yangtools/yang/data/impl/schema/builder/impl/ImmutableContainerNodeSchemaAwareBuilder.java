@@ -44,7 +44,7 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
 
     @Override
     public DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> withNodeIdentifier(
-            final NodeIdentifier nodeIdentifier) {
+            final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }
 

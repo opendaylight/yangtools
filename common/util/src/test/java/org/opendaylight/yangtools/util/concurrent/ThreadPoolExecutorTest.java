@@ -71,10 +71,10 @@ public class ThreadPoolExecutorTest {
 
     @Test(expected = RejectedExecutionException.class)
     public void testCachedThreadRejectingTask() throws InterruptedException {
-        ExecutorService executor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool");
+        ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool");
 
         for (int i = 0; i < 5; i++) {
-            executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
+            localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
         }
     }
 
@@ -83,12 +83,12 @@ public class ThreadPoolExecutorTest {
         testThreadPoolExecution(SpecialExecutors.newBlockingBoundedCachedThreadPool(2, 1, "TestPool"), 1000, null, 10);
     }
 
-    void testThreadPoolExecution(final ExecutorService executor, final int numTasksToRun, final String expThreadPrefix,
-            final long taskDelay) throws InterruptedException {
+    void testThreadPoolExecution(final ExecutorService executorToTest, final int numTasksToRun,
+            final String expThreadPrefix, final long taskDelay) throws InterruptedException {
 
-        this.executor = executor;
+        this.executor = executorToTest;
 
-        LOG.debug("Testing {} with {} tasks.", executor.getClass().getSimpleName(), numTasksToRun);
+        LOG.debug("Testing {} with {} tasks.", executorToTest.getClass().getSimpleName(), numTasksToRun);
 
         final CountDownLatch tasksRunLatch = new CountDownLatch(numTasksToRun);
         final ConcurrentMap<Thread, AtomicLong> taskCountPerThread = new ConcurrentHashMap<>();
@@ -104,7 +104,7 @@ public class ThreadPoolExecutorTest {
 //                        Uninterruptibles.sleepUninterruptibly(20, TimeUnit.MICROSECONDS);
 //                    }
 
-                    executor.execute(new Task(tasksRunLatch, taskCountPerThread, threadError, expThreadPrefix,
+                    executorToTest.execute(new Task(tasksRunLatch, taskCountPerThread, threadError, expThreadPrefix,
                         taskDelay));
                 }
             }
@@ -127,7 +127,7 @@ public class ThreadPoolExecutorTest {
             LOG.debug("  {} - {} tasks", e.getKey().getName(), e.getValue());
         }
 
-        LOG.debug("{}", executor);
+        LOG.debug("{}", executorToTest);
         LOG.debug("Elapsed time: {}", stopWatch);
     }
 

@@ -343,11 +343,11 @@ public class Bug4454Test {
 
     @Test
     public void minMaxListNoMinMaxDeleteTest() throws DataValidationFailedException {
-        final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME,
-            "foo");
+        final MapEntryNode fooEntryNoMinMaxNode =
+                ImmutableNodes.mapEntry(MIN_MAX_LIST_QNAME_NO_MINMAX, MIN_MAX_KEY_LEAF_QNAME, "foo");
         final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
                 .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME_NO_MINMAX))
-                .withChild(fooEntryNode).build();
+                .withChild(fooEntryNoMinMaxNode).build();
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 

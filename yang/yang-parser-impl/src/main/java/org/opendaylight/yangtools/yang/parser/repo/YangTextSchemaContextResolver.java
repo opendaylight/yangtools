@@ -293,6 +293,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Beta
+    @SuppressWarnings("checkstyle:avoidHidingCauseException")
     public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
         final ListenableFuture<SchemaContext> future = repository

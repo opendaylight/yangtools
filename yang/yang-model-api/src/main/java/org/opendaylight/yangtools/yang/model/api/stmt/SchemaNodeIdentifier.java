@@ -174,8 +174,8 @@ public abstract class SchemaNodeIdentifier implements Immutable {
         }
 
         SchemaNodeIdentifier parentNode = this;
-        for (QName qname : relative) {
-            parentNode = parentNode.createChild(qname);
+        for (QName item : relative) {
+            parentNode = parentNode.createChild(item);
         }
 
         return parentNode;

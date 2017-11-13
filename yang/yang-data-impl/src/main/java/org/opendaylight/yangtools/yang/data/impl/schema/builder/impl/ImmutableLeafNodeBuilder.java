@@ -47,8 +47,8 @@ public class ImmutableLeafNodeBuilder<T>
         }
 
         @Override
-        protected byte[] wrapValue(final byte[] value) {
-            return value.clone();
+        protected byte[] wrapValue(final byte[] valueToWrap) {
+            return valueToWrap.clone();
         }
     }
 }

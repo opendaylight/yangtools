@@ -248,6 +248,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:hiddenField")
     public void apply(final InferenceAction action) {
         Preconditions.checkState(this.action == null, "Action already defined to %s", this.action);
         this.action = Preconditions.checkNotNull(action);
@@ -258,6 +259,7 @@ final class ModifierImpl implements ModelActionBuilder {
         private T value;
 
         @Override
+        @SuppressWarnings("checkstyle:hiddenField")
         public final T resolve(final InferenceContext ctx) {
             Preconditions.checkState(done);
             Preconditions.checkArgument(ctx == ModifierImpl.this.ctx);
@@ -268,6 +270,7 @@ final class ModifierImpl implements ModelActionBuilder {
             return done;
         }
 
+        @SuppressWarnings("checkstyle:hiddenField")
         final boolean resolvePrereq(final T value) {
             this.value = value;
             this.done = true;
@@ -275,7 +278,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
 
         final <O> Prerequisite<O> transform(final Function<? super T, O> transformation) {
-            return ctx -> transformation.apply(resolve(ctx));
+            return context -> transformation.apply(resolve(context));
         }
 
         @Override
@@ -305,7 +308,8 @@ final class ModifierImpl implements ModelActionBuilder {
             implements OnPhaseFinished {
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
+                final ModelProcessingPhase finishedPhase) {
             return resolvePrereq((C) context);
         }
     }
@@ -333,7 +337,8 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         @Override
-        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
+        public boolean phaseFinished(final StatementContextBase<?, ?, ?> context,
+                final ModelProcessingPhase finishedPhase) {
             return resolvePrereq((C) context);
         }
 

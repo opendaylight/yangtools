@@ -104,8 +104,8 @@ public class GenerateSourcesTest {
         }
 
         @Override
-        public void setMavenProject(final MavenProject project) {
-            GeneratorMock.project = project;
+        public void setMavenProject(final MavenProject mavenProject) {
+            GeneratorMock.project = mavenProject;
         }
 
         @Override
