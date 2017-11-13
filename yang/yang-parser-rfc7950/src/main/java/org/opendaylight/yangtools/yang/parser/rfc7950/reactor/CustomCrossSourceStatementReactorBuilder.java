@@ -55,6 +55,12 @@ public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSo
         return this;
     }
 
+    public CustomCrossSourceStatementReactorBuilder overrideStatementSupport(final ModelProcessingPhase phase,
+            final StatementSupport<?, ?, ?> stmtSupport) {
+        reactorSupportBundles.get(phase).overrideSupport(stmtSupport);
+        return this;
+    }
+
     public CustomCrossSourceStatementReactorBuilder addNamespaceSupport(final ModelProcessingPhase phase,
             final NamespaceBehaviour<?, ?, ?> namespaceSupport) {
         reactorSupportBundles.get(phase).addSupport(namespaceSupport);
