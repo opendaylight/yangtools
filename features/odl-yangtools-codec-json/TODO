@@ -1,0 +1,6 @@
+depend on yang-data-impl
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-gson/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:com.google.code.gson/gson/2.7</bundle>
+
+

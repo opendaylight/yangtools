@@ -1,0 +1,4 @@
+depend on odl-yangtools-parser-api
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-export/2.0.0-SNAPSHOT</bundle>
+

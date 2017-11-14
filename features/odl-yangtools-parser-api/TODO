@@ -1,0 +1,13 @@
+depend on yangtools-common
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-api/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/odlext-model-api/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/openconfig-model-api/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc7952-model-api/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/rfc8040-model-api/2.0.0-SNAPSHOT</bundle>
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-model-util/2.0.0-SNAPSHOT</bundle>
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-api/2.0.0-SNAPSHOT</bundle>
+
+
