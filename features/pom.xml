@@ -24,11 +24,27 @@
     <packaging>pom</packaging>
 
     <modules>
-        <!-- Karaf 4 features -->
+        <!-- Stable features -->
+        <module>odl-triemap</module>
+        <module>odl-yangtools-codec-json</module>
+        <module>odl-yangtools-codec-xml</module>
         <module>odl-yangtools-common</module>
-        <module>odl-yangtools-yang-data</module>
-        <module>odl-yangtools-yang-parser</module>
+        <module>odl-yangtools-data-api</module>
+        <module>odl-yangtools-data</module>
+        <module>odl-yangtools-export</module>
+        <module>odl-yangtools-parser-api</module>
+        <module>odl-yangtools-parser</module>
+        <module>odl-yangtools-util</module>
+        <module>odl-yangtools-xpath</module>
+
+        <!-- Stable feature repository -->
         <module>features-yangtools</module>
+
+        <!-- Experimental features -->
+        <module>odl-exp-objcache</module>
+
+        <!-- Experimental feature repostitory -->
+        <module>features-yangtools-experimental</module>
     </modules>
 
     <!--
