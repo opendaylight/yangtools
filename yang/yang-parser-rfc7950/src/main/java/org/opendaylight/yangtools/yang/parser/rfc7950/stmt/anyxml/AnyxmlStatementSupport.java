@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
-import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
@@ -31,7 +30,6 @@ public final class AnyxmlStatementSupport
         .addOptional(YangStmtMapping.REFERENCE)
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
-        .addOptional(OpenDaylightExtensionsStatements.ANYXML_SCHEMA_LOCATION)
         .build();
 
     public AnyxmlStatementSupport() {
