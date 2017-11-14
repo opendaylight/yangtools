@@ -61,10 +61,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-util</artifactId>
         </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>yang-data-util</artifactId>
-        </dependency>
 
         <!-- Base RFC6020/RFC7950 reactor support -->
         <dependency>
