@@ -198,14 +198,6 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>features-yangtools</artifactId>
-                <classifier>features</classifier>
-                <type>xml</type>
-                <version>2.0.0-SNAPSHOT</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>mockito-configuration</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
                 <scope>test</scope>
@@ -219,7 +211,29 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-yangtools-yang-data</artifactId>
+                <artifactId>features-yangtools</artifactId>
+                <classifier>features</classifier>
+                <type>xml</type>
+                <version>2.0.0-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>features-yangtools-experimental</artifactId>
+                <classifier>features</classifier>
+                <type>xml</type>
+                <version>2.0.0-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-triemap</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <type>xml</type>
+                <classifier>features</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-yangtools-util</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
@@ -231,9 +245,18 @@
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
+
+
+
+
+
+
+
+
+
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-yangtools-yang-parser</artifactId>
+                <artifactId>odl-yangtools-yang-data</artifactId>
                 <version>2.0.0-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>

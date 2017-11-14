@@ -1,0 +1,4 @@
+depend on yang-data-api
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-impl/2.0.0-SNAPSHOT</bundle>
+

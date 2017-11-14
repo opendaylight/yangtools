@@ -1,0 +1,6 @@
+depend on yang-data-impl
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-data-codec-xml/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.codehaus.woodstox/stax2-api/3.1.4</bundle>
+
+
