@@ -19,11 +19,10 @@
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>odl-yangtools-common</artifactId>
+    <artifactId>odl-exp-objcache</artifactId>
     <version>2.0.0-SNAPSHOT</version>
     <packaging>feature</packaging>
-    <name>OpenDaylight :: Yangtools :: Common definitions</name>
-    <description>Common YANG-related definitions</description>
+    <name>OpenDaylight :: Yangtools :: Experimental :: Object Cache</name>
 
     <dependencyManagement>
         <dependencies>
@@ -46,7 +45,7 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-common</artifactId>
+            <artifactId>object-cache-guava</artifactId>
         </dependency>
     </dependencies>
 </project>

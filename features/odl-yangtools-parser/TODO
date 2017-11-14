@@ -1,0 +1,9 @@
+depend on yangtools-parser-api
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-reactor/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-spi/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-rfc7950/2.0.0-SNAPSHOT</bundle>
+        <bundle>mvn:org.antlr/antlr4-runtime/4.7</bundle>
+
+        <bundle>mvn:org.opendaylight.yangtools/yang-parser-impl/2.0.0-SNAPSHOT</bundle>
+
