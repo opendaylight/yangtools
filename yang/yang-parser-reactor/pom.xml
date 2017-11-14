@@ -61,10 +61,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-util</artifactId>
         </dependency>
-        <dependency>
+        <!--dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-data-util</artifactId>
-        </dependency>
+        </dependency-->
         <dependency>
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
