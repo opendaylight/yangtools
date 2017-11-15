@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.reactor;
 
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1;
 import static org.opendaylight.yangtools.yang.common.YangVersion.VERSION_1_1;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.global;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.sourceLocal;
-import static org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.treeScoped;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
@@ -165,9 +162,9 @@ public final class RFC7950Reactors {
     private static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
     private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
-            .addSupport(global(ValidationBundlesNamespace.class))
-            .addSupport(global(SupportedFeaturesNamespace.class))
-            .addSupport(global(ModulesDeviatedByModules.class))
+            .addSupport(ValidationBundlesNamespace.BEHAVIOUR)
+            .addSupport(SupportedFeaturesNamespace.BEHAVIOUR)
+            .addSupport(ModulesDeviatedByModules.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle.derivedFrom(INIT_BUNDLE)
@@ -185,10 +182,10 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport())
             .addSupport(new RevisionStatementSupport())
             .addSupport(new RevisionDateStatementSupport())
-            .addSupport(global(ModuleNameToNamespace.class))
-            .addSupport(global(PreLinkageModuleNamespace.class))
-            .addSupport(sourceLocal(ImpPrefixToNamespace.class))
-            .addSupport(global(ModuleCtxToModuleQName.class))
+            .addSupport(ModuleNameToNamespace.BEHAVIOUR)
+            .addSupport(PreLinkageModuleNamespace.BEHAVIOUR)
+            .addSupport(ImpPrefixToNamespace.BEHAVIOUR)
+            .addSupport(ModuleCtxToModuleQName.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
@@ -197,24 +194,24 @@ public final class RFC7950Reactors {
             .addSupport(new ReferenceStatementSupport())
             .addSupport(new ContactStatementSupport())
             .addSupport(new OrganizationStatementSupport())
-            .addSupport(global(ModuleNamespace.class))
-            .addSupport(global(ModuleNamespaceForBelongsTo.class))
-            .addSupport(global(SubmoduleNamespace.class))
-            .addSupport(global(NamespaceToModule.class))
-            .addSupport(global(ModuleNameToModuleQName.class))
-            .addSupport(global(ModuleCtxToSourceIdentifier.class))
-            .addSupport(global(ModuleQNameToModuleName.class))
-            .addSupport(global(PrefixToModule.class))
+            .addSupport(ModuleNamespace.BEHAVIOUR)
+            .addSupport(ModuleNamespaceForBelongsTo.BEHAVIOUR)
+            .addSupport(SubmoduleNamespace.BEHAVIOUR)
+            .addSupport(NamespaceToModule.BEHAVIOUR)
+            .addSupport(ModuleNameToModuleQName.BEHAVIOUR)
+            .addSupport(ModuleCtxToSourceIdentifier.BEHAVIOUR)
+            .addSupport(ModuleQNameToModuleName.BEHAVIOUR)
+            .addSupport(PrefixToModule.BEHAVIOUR)
             .addSupport(QNameCacheNamespace.getInstance())
-            .addSupport(sourceLocal(ImportedModuleContext.class))
-            .addSupport(sourceLocal(IncludedModuleContext.class))
-            .addSupport(sourceLocal(IncludedSubmoduleNameToModuleCtx.class))
-            .addSupport(sourceLocal(ImportPrefixToModuleCtx.class))
-            .addSupport(sourceLocal(BelongsToPrefixToModuleCtx.class))
-            .addSupport(sourceLocal(URIStringToImportPrefix.class))
-            .addSupport(sourceLocal(BelongsToModuleContext.class))
-            .addSupport(sourceLocal(QNameToStatementDefinition.class))
-            .addSupport(sourceLocal(BelongsToPrefixToModuleName.class))
+            .addSupport(ImportedModuleContext.BEHAVIOUR)
+            .addSupport(IncludedModuleContext.BEHAVIOUR)
+            .addSupport(IncludedSubmoduleNameToModuleCtx.BEHAVIOUR)
+            .addSupport(ImportPrefixToModuleCtx.BEHAVIOUR)
+            .addSupport(BelongsToPrefixToModuleCtx.BEHAVIOUR)
+            .addSupport(URIStringToImportPrefix.BEHAVIOUR)
+            .addSupport(BelongsToModuleContext.BEHAVIOUR)
+            .addSupport(QNameToStatementDefinition.BEHAVIOUR)
+            .addSupport(BelongsToPrefixToModuleName.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle STMT_DEF_BUNDLE = StatementSupportBundle
@@ -224,12 +221,12 @@ public final class RFC7950Reactors {
             .addSupport(new ExtensionStatementSupport())
             .addSupport(new ChildSchemaNodeNamespace<>())
             .addSupport(new SchemaNodeIdentifierBuildNamespace())
-            .addSupport(global(ExtensionNamespace.class))
+            .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(new TypedefStatementSupport())
-            .addSupport(treeScoped(TypeNamespace.class))
+            .addSupport(TypeNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, new IdentityStatementRFC6020Support())
             .addVersionSpecificSupport(VERSION_1_1, new IdentityStatementRFC7950Support())
-            .addSupport(global(IdentityNamespace.class))
+            .addSupport(IdentityNamespace.BEHAVIOUR)
             .addSupport(new DefaultStatementSupport())
             .addSupport(new StatusStatementSupport())
             .addVersionSpecificSupport(VERSION_1, new TypeStatementRFC6020Support())
@@ -265,8 +262,8 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, new NotificationStatementRFC7950Support())
             .addSupport(new FractionDigitsStatementSupport())
             .addSupport(new BaseStatementSupport())
-            .addSupport(global(DerivedIdentitiesNamespace.class))
-            .addSupport(global(StatementDefinitionNamespace.class))
+            .addSupport(DerivedIdentitiesNamespace.BEHAVIOUR)
+            .addSupport(StatementDefinitionNamespace.BEHAVIOUR)
             .build();
 
     private static final StatementSupportBundle FULL_DECL_BUNDLE = StatementSupportBundle
@@ -286,7 +283,7 @@ public final class RFC7950Reactors {
             .addVersionSpecificSupport(VERSION_1_1, new AnydataStatementSupport())
             .addSupport(new IfFeatureStatementSupport())
             .addSupport(new UsesStatementSupport())
-            .addSupport(treeScoped(GroupingNamespace.class)) //treeScoped
+            .addSupport(GroupingNamespace.BEHAVIOUR)
             .addSupport(new ErrorMessageStatementSupport())
             .addSupport(new ErrorAppTagStatementSupport())
             .addVersionSpecificSupport(VERSION_1, new LeafListStatementRFC6020Support())
@@ -298,13 +295,13 @@ public final class RFC7950Reactors {
             .addSupport(new WhenStatementSupport())
             .addVersionSpecificSupport(VERSION_1, new AugmentStatementRFC6020Support())
             .addVersionSpecificSupport(VERSION_1_1, new AugmentStatementRFC7950Support())
-            .addSupport(treeScoped(AugmentToChoiceNamespace.class))
+            .addSupport(AugmentToChoiceNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, new RefineStatementRFC6020Support())
             .addVersionSpecificSupport(VERSION_1_1, new RefineStatementRFC7950Support())
             .addSupport(new FeatureStatementSupport())
             .addSupport(new PositionStatementSupport())
             .addSupport(new ValueStatementSupport())
-            .addSupport(global(StmtOrderingNamespace.class))
+            .addSupport(StmtOrderingNamespace.BEHAVIOUR)
             .build();
 
     private static final Map<ModelProcessingPhase, StatementSupportBundle> RFC7950_BUNDLES =
@@ -354,10 +351,10 @@ public final class RFC7950Reactors {
         return vanillaReactorBuilder()
                 // Semantic version support
                 .addStatementSupport(ModelProcessingPhase.SOURCE_LINKAGE, OpenConfigVersionSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, global(SemanticVersionNamespace.class))
-                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, global(SemanticVersionModuleNamespace.class))
+                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionNamespace.BEHAVIOUR)
+                .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE, SemanticVersionModuleNamespace.BEHAVIOUR)
                 .addNamespaceSupport(ModelProcessingPhase.SOURCE_LINKAGE,
-                    sourceLocal(ImportPrefixToSemVerSourceIdentifier.class));
+                    ImportPrefixToSemVerSourceIdentifier.BEHAVIOUR);
     }
 
     /**

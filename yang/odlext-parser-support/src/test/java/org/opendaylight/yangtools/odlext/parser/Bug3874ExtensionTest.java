@@ -39,7 +39,7 @@ public class Bug3874ExtensionTest {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOR)
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
                 .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlStatementSupportOverride.getInstance())
                 .build();

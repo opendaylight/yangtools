@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
@@ -19,5 +20,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SemVerSourceIdentifier;
 @Beta
 public interface SemanticVersionModuleNamespace
     extends StatementNamespace<SemVerSourceIdentifier, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+    NamespaceBehaviour<SemVerSourceIdentifier, StmtContext<?, ModuleStatement,
+            EffectiveStatement<String, ModuleStatement>>, @NonNull SemanticVersionModuleNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(SemanticVersionModuleNamespace.class);
 
 }

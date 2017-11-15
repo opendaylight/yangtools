@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Implementation-internal cache for looking up URI to import prefix. URIs are taken in as Strings to save ourselves
@@ -16,5 +18,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 @Beta
 public interface URIStringToImportPrefix extends IdentifierNamespace<String, String> {
-
+    NamespaceBehaviour<String, String, @NonNull URIStringToImportPrefix> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(URIStringToImportPrefix.class);
 }

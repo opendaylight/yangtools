@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -17,5 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 // FIXME: describe scoping and value
 public interface DerivedIdentitiesNamespace extends IdentifierNamespace<QName, List<StmtContext<?, ?, ?>>> {
+    NamespaceBehaviour<QName, List<StmtContext<?, ?, ?>>, @NonNull DerivedIdentitiesNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(DerivedIdentitiesNamespace.class);
 
 }

@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -20,5 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  */
 @Beta
 public interface StatementDefinitionNamespace extends IdentifierNamespace<QName, StatementSupport<?, ?, ?>> {
+    NamespaceBehaviour<QName, StatementSupport<?, ?, ?>, @NonNull StatementDefinitionNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(StatementDefinitionNamespace.class);
 
 }
