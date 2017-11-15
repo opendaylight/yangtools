@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableIt
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 
-public class DataObjectReadingUtil {
+public final class DataObjectReadingUtil {
 
     private static final DataObjectReadingStrategy REAUSABLE_AUGMENTATION_READING_STRATEGY =
             new AugmentationReadingStrategy();
@@ -52,7 +52,7 @@ public class DataObjectReadingUtil {
      *            Path, which is nested to parent, and should be read.
      * @return Value of object.
      */
-    public static final <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(
+    public static <T extends DataObject, P extends DataObject> Map<InstanceIdentifier<T>, T> readData(
             final P parent, final InstanceIdentifier<P> parentPath, final InstanceIdentifier<T> childPath) {
         checkArgument(parent != null, "Parent must not be null.");
         checkArgument(parentPath != null, "Parent path must not be null");
@@ -84,7 +84,7 @@ public class DataObjectReadingUtil {
         return readData(entry.getValue(), entry.getKey(), pathArgument);
     }
 
-    public static final <T extends DataObject> Optional<T> readData(final DataObject source, final Class<T> child) {
+    public static <T extends DataObject> Optional<T> readData(final DataObject source, final Class<T> child) {
         checkArgument(source != null, "Object should not be null.");
         checkArgument(child != null, "Child type should not be null");
         Class<? extends DataContainer> parentClass = source.getImplementedInterface();
@@ -169,7 +169,7 @@ public class DataObjectReadingUtil {
         public abstract Map<InstanceIdentifier, DataContainer> readUsingPathArgument(DataContainer parent,
                 PathArgument childArgument, InstanceIdentifier targetBuilder);
 
-        public abstract DataContainer read(DataContainer parent, Class<?> childType);
+        public abstract DataContainer read(DataContainer parent, Class<?> child);
 
         private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
             String methodName = "get" + child.getSimpleName();
@@ -185,7 +185,7 @@ public class DataObjectReadingUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static class ContainerReadingStrategy extends DataObjectReadingStrategy {
+    private static final class ContainerReadingStrategy extends DataObjectReadingStrategy {
         ContainerReadingStrategy(final Class<? extends DataContainer> parent,
                 final Class<? extends DataContainer> child) {
             super(parent, child);
@@ -205,7 +205,7 @@ public class DataObjectReadingUtil {
         }
 
         @Override
-        public DataContainer read(final DataContainer parent, final Class<?> childType) {
+        public DataContainer read(final DataContainer parent, final Class<?> child) {
             try {
                 Object potentialData = getGetterMethod().invoke(parent);
                 checkState(potentialData instanceof DataContainer);
@@ -218,14 +218,14 @@ public class DataObjectReadingUtil {
     }
 
     @SuppressWarnings("rawtypes")
-    private static class ListItemReadingStrategy extends DataObjectReadingStrategy {
+    private static final class ListItemReadingStrategy extends DataObjectReadingStrategy {
         ListItemReadingStrategy(final Class<? extends DataContainer> parent, final Class child) {
             super(parent, child);
             checkArgument(Iterable.class.isAssignableFrom(getGetterMethod().getReturnType()));
         }
 
         @Override
-        public DataContainer read(final DataContainer parent, final Class<?> childType) {
+        public DataContainer read(final DataContainer parent, final Class<?> child) {
             // This will always fail since we do not have key.
             return null;
         }
@@ -302,12 +302,12 @@ public class DataObjectReadingUtil {
         }
 
         @Override
-        public DataContainer read(final DataContainer parent, final Class<?> childType) {
-            checkArgument(Augmentation.class.isAssignableFrom(childType), "Parent must be Augmentable.");
+        public DataContainer read(final DataContainer parent, final Class<?> child) {
+            checkArgument(Augmentation.class.isAssignableFrom(child), "Child must be Augmentation.");
             checkArgument(parent instanceof Augmentable<?>, "Parent must be Augmentable.");
 
             @SuppressWarnings({ "rawtypes", "unchecked" })
-            Augmentation potential = ((Augmentable) parent).getAugmentation(childType);
+            Augmentation potential = ((Augmentable) parent).getAugmentation(child);
             checkState(potential instanceof DataContainer, "Readed augmention must be data object");
             return (DataContainer) potential;
         }

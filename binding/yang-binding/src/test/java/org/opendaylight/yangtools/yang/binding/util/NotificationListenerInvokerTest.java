@@ -29,7 +29,7 @@ public class NotificationListenerInvokerTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    @SuppressWarnings("checkstyle:illegalThrows")
+    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
     public void fromWithExceptionTest() throws Throwable {
         try {
             NotificationListenerInvoker.from(TestPrivateInterface.class);

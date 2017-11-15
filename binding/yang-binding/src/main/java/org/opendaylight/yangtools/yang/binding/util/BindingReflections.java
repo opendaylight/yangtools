@@ -50,7 +50,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BindingReflections {
+public final class BindingReflections {
 
     private static final long EXPIRATION_TIME = 60;
 
@@ -118,7 +118,7 @@ public class BindingReflections {
      *         QName, but QName with correct namespace revision, but virtual local name, since augmentations do not
      *         have name. May return null if QName is not present.
      */
-    public static final QName findQName(final Class<?> dataType) {
+    public static QName findQName(final Class<?> dataType) {
         return CLASS_TO_QNAME.getUnchecked(dataType).orNull();
     }
 
@@ -228,7 +228,7 @@ public class BindingReflections {
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    public static final QNameModule getQNameModule(final Class<?> clz) {
+    public static QNameModule getQNameModule(final Class<?> clz) {
         if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)) {
             return findQName(clz).getModule();
         }
@@ -240,7 +240,7 @@ public class BindingReflections {
         }
     }
 
-    public static final QNameModule getQNameModule(final YangModuleInfo modInfo) {
+    public static QNameModule getQNameModule(final YangModuleInfo modInfo) {
         return QNameModule.create(URI.create(modInfo.getNamespace()), QName.parseRevision(modInfo.getRevision()));
     }
 

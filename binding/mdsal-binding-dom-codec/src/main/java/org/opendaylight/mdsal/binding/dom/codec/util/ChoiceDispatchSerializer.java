@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ChoiceDispatchSerializer implements DataObjectSerializerImplementation {
+public final class ChoiceDispatchSerializer implements DataObjectSerializerImplementation {
 
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceDispatchSerializer.class);
 
@@ -30,7 +30,7 @@ public class ChoiceDispatchSerializer implements DataObjectSerializerImplementat
         this.choiceClass = Preconditions.checkNotNull(choiceClass);
     }
 
-    public static final ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {
+    public static ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {
         return new ChoiceDispatchSerializer(choiceClass);
     }
 

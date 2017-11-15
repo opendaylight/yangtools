@@ -124,7 +124,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             proxyConstructor = MethodHandles.publicLookup().findConstructor(proxyClass, CONSTRUCTOR_TYPE)
                     .asType(DATAOBJECT_TYPE);
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to find contructor for class " + proxyClass);
+            throw new IllegalStateException("Failed to find contructor for class " + proxyClass, e);
         }
     }
 

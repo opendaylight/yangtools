@@ -62,7 +62,7 @@ public class BindingReflectionsTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    @SuppressWarnings("checkstyle:illegalThrows")
+    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
     public void testPrivateConstructor() throws Throwable {
         assertFalse(BindingReflections.class.getDeclaredConstructor().isAccessible());
         final Constructor<?> constructor = BindingReflections.class.getDeclaredConstructor();

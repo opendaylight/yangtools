@@ -44,7 +44,7 @@ public class BindingMappingTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    @SuppressWarnings("checkstyle:illegalThrows")
+    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
     public void privateConstructTest() throws Throwable {
         final Constructor<BindingMapping> bindingMappingConstructor = BindingMapping.class.getDeclaredConstructor();
         assertFalse(bindingMappingConstructor.isAccessible());

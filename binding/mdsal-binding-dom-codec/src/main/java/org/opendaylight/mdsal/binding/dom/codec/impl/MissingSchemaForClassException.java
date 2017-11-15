@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
  * <p>
  * By serialization /  deserialization of this exception {@link #getBindingClass()} will return null.
  */
-public class MissingSchemaForClassException extends MissingSchemaException {
+public final class MissingSchemaForClassException extends MissingSchemaException {
 
     private static final long serialVersionUID = 1L;
 

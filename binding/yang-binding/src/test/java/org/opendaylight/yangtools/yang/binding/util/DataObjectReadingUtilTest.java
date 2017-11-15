@@ -102,7 +102,7 @@ public class DataObjectReadingUtilTest {
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    @SuppressWarnings("checkstyle:illegalThrows")
+    @SuppressWarnings({ "checkstyle:illegalThrows", "checkstyle:avoidHidingCauseException" })
     public void testPrivateConstructor() throws Throwable {
         assertFalse(DataObjectReadingUtil.class.getDeclaredConstructor().isAccessible());
         final Constructor<?> constructor = DataObjectReadingUtil.class.getDeclaredConstructor();
