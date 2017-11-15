@@ -26,6 +26,15 @@ public final class GroupingStatementRFC6020Support extends AbstractGroupingState
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .build();
+    private static final GroupingStatementRFC6020Support INSTANCE = new GroupingStatementRFC6020Support();
+
+    private GroupingStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static GroupingStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

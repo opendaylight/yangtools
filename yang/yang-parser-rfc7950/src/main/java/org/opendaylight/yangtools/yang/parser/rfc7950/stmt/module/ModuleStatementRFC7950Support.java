@@ -45,6 +45,15 @@ public final class ModuleStatementRFC7950Support extends AbstractModuleStatement
             .addMandatory(YangStmtMapping.YANG_VERSION)
             .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
+    private static final ModuleStatementRFC7950Support INSTANCE = new ModuleStatementRFC7950Support();
+
+    private ModuleStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static ModuleStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

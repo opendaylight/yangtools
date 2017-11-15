@@ -20,9 +20,14 @@ public final class NamespaceStatementSupport extends AbstractStatementSupport<UR
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .NAMESPACE)
         .build();
+    private static final NamespaceStatementSupport INSTANCE = new NamespaceStatementSupport();
 
-    public NamespaceStatementSupport() {
-        super(org.opendaylight.yangtools.yang.model.api.YangStmtMapping.NAMESPACE);
+    private NamespaceStatementSupport() {
+        super(YangStmtMapping.NAMESPACE);
+    }
+
+    public static NamespaceStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

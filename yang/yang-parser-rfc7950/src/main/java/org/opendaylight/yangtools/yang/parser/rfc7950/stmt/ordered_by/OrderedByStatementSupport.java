@@ -19,9 +19,14 @@ public final class OrderedByStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ORDERED_BY)
         .build();
+    private static final OrderedByStatementSupport INSTANCE = new OrderedByStatementSupport();
 
-    public OrderedByStatementSupport() {
+    private OrderedByStatementSupport() {
         super(YangStmtMapping.ORDERED_BY);
+    }
+
+    public static OrderedByStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

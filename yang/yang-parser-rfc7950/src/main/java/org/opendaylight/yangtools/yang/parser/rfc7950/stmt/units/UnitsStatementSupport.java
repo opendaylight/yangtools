@@ -19,9 +19,14 @@ public final class UnitsStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.UNITS)
         .build();
+    private static final UnitsStatementSupport INSTANCE = new UnitsStatementSupport();
 
-    public UnitsStatementSupport() {
+    private UnitsStatementSupport() {
         super(YangStmtMapping.UNITS);
+    }
+
+    public static UnitsStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

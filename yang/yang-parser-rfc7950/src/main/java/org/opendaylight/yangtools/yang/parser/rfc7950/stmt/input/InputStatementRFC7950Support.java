@@ -30,6 +30,15 @@ public final class InputStatementRFC7950Support extends AbstractInputStatementSu
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();
+    private static final InputStatementRFC7950Support INSTANCE = new InputStatementRFC7950Support();
+
+    private InputStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static InputStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

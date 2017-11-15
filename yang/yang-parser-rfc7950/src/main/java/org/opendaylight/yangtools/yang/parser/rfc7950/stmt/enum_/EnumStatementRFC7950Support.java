@@ -24,6 +24,15 @@ public final class EnumStatementRFC7950Support extends AbstractEnumStatementSupp
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.VALUE)
             .build();
+    private static final EnumStatementRFC7950Support INSTANCE = new EnumStatementRFC7950Support();
+
+    private EnumStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static EnumStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

@@ -28,9 +28,6 @@ public final class AnyxmlStatementSupportOverride
         extends ForwardingStatementSupport<QName, AnyxmlStatement, AnyxmlEffectiveStatement> {
     private static final AnyxmlStatementSupportOverride INSTANCE = new AnyxmlStatementSupportOverride();
 
-    private final StatementSupport<QName, AnyxmlStatement, AnyxmlEffectiveStatement> delegate =
-            new AnyxmlStatementSupport();
-
     private AnyxmlStatementSupportOverride() {
 
     }
@@ -41,19 +38,19 @@ public final class AnyxmlStatementSupportOverride
 
     @Override
     protected StatementSupport<QName, AnyxmlStatement, AnyxmlEffectiveStatement> delegate() {
-        return delegate;
+        return AnyxmlStatementSupport.getInstance();
     }
 
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         // FIXME: this is not entirely accurate?
-        return delegate.getEffectiveRepresentationClass();
+        return delegate().getEffectiveRepresentationClass();
     }
 
     @Override
     public AnyxmlEffectiveStatement createEffective(
             final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx) {
-        final AnyxmlEffectiveStatement delegateStatement = delegate.createEffective(ctx);
+        final AnyxmlEffectiveStatement delegateStatement = delegate().createEffective(ctx);
         final Map<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
             EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>> schemaLocations =
                 ctx.getAllFromCurrentStmtCtxNamespace(AnyxmlSchemaLocationNamespace.class);

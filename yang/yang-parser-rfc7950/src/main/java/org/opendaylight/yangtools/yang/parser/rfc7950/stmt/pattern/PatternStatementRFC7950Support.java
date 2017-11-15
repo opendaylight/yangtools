@@ -24,6 +24,15 @@ public final class PatternStatementRFC7950Support extends AbstractPatternStateme
             .addOptional(YangStmtMapping.MODIFIER)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
+    private static final PatternStatementRFC7950Support INSTANCE = new PatternStatementRFC7950Support();
+
+    private PatternStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static PatternStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

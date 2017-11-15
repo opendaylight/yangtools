@@ -30,9 +30,14 @@ public final class UniqueStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.UNIQUE)
         .build();
+    private static final UniqueStatementSupport INSTANCE = new UniqueStatementSupport();
 
-    public UniqueStatementSupport() {
+    private UniqueStatementSupport() {
         super(YangStmtMapping.UNIQUE);
+    }
+
+    public static UniqueStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

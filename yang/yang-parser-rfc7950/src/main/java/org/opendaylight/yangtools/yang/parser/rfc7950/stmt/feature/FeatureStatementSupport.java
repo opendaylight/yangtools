@@ -25,9 +25,14 @@ public final class FeatureStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final FeatureStatementSupport INSTANCE = new FeatureStatementSupport();
 
-    public FeatureStatementSupport() {
+    private FeatureStatementSupport() {
         super(YangStmtMapping.FEATURE);
+    }
+
+    public static FeatureStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

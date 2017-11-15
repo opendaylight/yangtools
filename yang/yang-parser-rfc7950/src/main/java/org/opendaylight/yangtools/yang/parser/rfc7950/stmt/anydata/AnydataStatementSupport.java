@@ -31,9 +31,14 @@ public final class AnydataStatementSupport extends
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final AnydataStatementSupport INSTANCE = new AnydataStatementSupport();
 
-    public AnydataStatementSupport() {
+    private AnydataStatementSupport() {
         super(YangStmtMapping.ANYDATA);
+    }
+
+    public static AnydataStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

@@ -19,9 +19,14 @@ public final class RequireInstanceStatementSupport extends AbstractStatementSupp
         EffectiveStatement<Boolean, RequireInstanceStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.REQUIRE_INSTANCE).build();
+    private static final RequireInstanceStatementSupport INSTANCE = new RequireInstanceStatementSupport();
 
-    public RequireInstanceStatementSupport() {
+    private RequireInstanceStatementSupport() {
         super(YangStmtMapping.REQUIRE_INSTANCE);
+    }
+
+    public static RequireInstanceStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

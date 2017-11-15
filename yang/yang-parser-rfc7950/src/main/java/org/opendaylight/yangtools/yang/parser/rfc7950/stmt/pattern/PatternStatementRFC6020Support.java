@@ -18,6 +18,15 @@ public final class PatternStatementRFC6020Support extends AbstractPatternStateme
         .addOptional(YangStmtMapping.ERROR_MESSAGE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final PatternStatementRFC6020Support INSTANCE = new PatternStatementRFC6020Support();
+
+    private PatternStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static PatternStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

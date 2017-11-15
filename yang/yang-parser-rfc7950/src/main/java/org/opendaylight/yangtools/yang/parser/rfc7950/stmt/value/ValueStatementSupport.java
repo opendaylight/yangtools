@@ -19,9 +19,14 @@ public final class ValueStatementSupport extends
         AbstractStatementSupport<Integer, ValueStatement, EffectiveStatement<Integer, ValueStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.VALUE).build();
+    private static final ValueStatementSupport INSTANCE = new ValueStatementSupport();
 
-    public ValueStatementSupport() {
+    private ValueStatementSupport() {
         super(YangStmtMapping.VALUE);
+    }
+
+    public static ValueStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

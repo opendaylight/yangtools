@@ -22,9 +22,14 @@ public final class FractionDigitsStatementSupport extends AbstractStatementSuppo
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.FRACTION_DIGITS)
         .build();
+    private static final FractionDigitsStatementSupport INSTANCE = new FractionDigitsStatementSupport();
 
-    public FractionDigitsStatementSupport() {
+    private FractionDigitsStatementSupport() {
         super(YangStmtMapping.FRACTION_DIGITS);
+    }
+
+    public static FractionDigitsStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

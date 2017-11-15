@@ -18,9 +18,14 @@ public final class ContactStatementSupport
         extends AbstractStatementSupport<String, ContactStatement,EffectiveStatement<String, ContactStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.CONTACT).build();
+    private static final ContactStatementSupport INSTANCE = new ContactStatementSupport();
 
-    public ContactStatementSupport() {
+    private ContactStatementSupport() {
         super(YangStmtMapping.CONTACT);
+    }
+
+    public static ContactStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

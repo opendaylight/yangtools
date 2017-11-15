@@ -24,9 +24,14 @@ public final class RevisionStatementSupport extends
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
+    private static final RevisionStatementSupport INSTANCE = new RevisionStatementSupport();
 
-    public RevisionStatementSupport() {
+    private RevisionStatementSupport() {
         super(YangStmtMapping.REVISION);
+    }
+
+    public static RevisionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

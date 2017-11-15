@@ -19,9 +19,14 @@ public final class MinElementsStatementSupport extends
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MIN_ELEMENTS)
         .build();
+    private static final MinElementsStatementSupport INSTANCE = new MinElementsStatementSupport();
 
-    public MinElementsStatementSupport() {
+    private MinElementsStatementSupport() {
         super(YangStmtMapping.MIN_ELEMENTS);
+    }
+
+    public static MinElementsStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

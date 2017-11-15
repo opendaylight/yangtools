@@ -21,9 +21,14 @@ public final class RevisionDateStatementSupport extends AbstractStatementSupport
         EffectiveStatement<Revision, RevisionDateStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.REVISION_DATE).build();
+    private static final RevisionDateStatementSupport INSTANCE = new RevisionDateStatementSupport();
 
-    public RevisionDateStatementSupport() {
+    private RevisionDateStatementSupport() {
         super(YangStmtMapping.REVISION_DATE);
+    }
+
+    public static RevisionDateStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

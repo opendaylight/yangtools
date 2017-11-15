@@ -45,6 +45,15 @@ public final class SubmoduleStatementRFC7950Support extends AbstractSubmoduleSta
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.YANG_VERSION)
             .build();
+    private static final SubmoduleStatementRFC7950Support INSTANCE = new SubmoduleStatementRFC7950Support();
+
+    private SubmoduleStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static SubmoduleStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

@@ -37,12 +37,18 @@ public final class ChoiceStatementRFC7950Support extends AbstractChoiceStatement
             .addOptional(YangStmtMapping.WHEN)
             .build();
 
-    // FIXME: share instance
-    private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementRFC7950Support();
+    private static final ChoiceStatementRFC7950Support INSTANCE = new ChoiceStatementRFC7950Support();
 
+    private ChoiceStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static ChoiceStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
     @Override
     StatementSupport<?, ?, ?> implictCase() {
-        return IMPLICIT_CASE;
+        return CaseStatementRFC7950Support.getInstance();
     }
 
     @Override

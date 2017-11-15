@@ -26,6 +26,15 @@ public final class CaseStatementRFC6020Support extends AbstractCaseStatementSupp
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final CaseStatementRFC6020Support INSTANCE = new CaseStatementRFC6020Support();
+
+    private CaseStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static CaseStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

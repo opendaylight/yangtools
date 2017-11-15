@@ -18,6 +18,15 @@ public final class ImportStatementRFC6020Support extends AbstractImportStatement
             .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
+    private static final ImportStatementRFC6020Support INSTANCE = new ImportStatementRFC6020Support();
+
+    private ImportStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static ImportStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

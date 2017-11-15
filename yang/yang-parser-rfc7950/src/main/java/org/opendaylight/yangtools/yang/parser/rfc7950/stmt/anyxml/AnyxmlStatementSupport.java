@@ -31,9 +31,14 @@ public final class AnyxmlStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final AnyxmlStatementSupport INSTANCE = new AnyxmlStatementSupport();
 
-    public AnyxmlStatementSupport() {
+    private AnyxmlStatementSupport() {
         super(YangStmtMapping.ANYXML);
+    }
+
+    public static AnyxmlStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

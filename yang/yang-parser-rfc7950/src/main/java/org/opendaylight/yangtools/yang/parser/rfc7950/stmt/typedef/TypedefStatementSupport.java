@@ -30,9 +30,14 @@ public final class TypedefStatementSupport extends
         .addMandatory(YangStmtMapping.TYPE)
         .addOptional(YangStmtMapping.UNITS)
         .build();
+    private static final TypedefStatementSupport INSTANCE = new TypedefStatementSupport();
 
-    public TypedefStatementSupport() {
+    private TypedefStatementSupport() {
         super(YangStmtMapping.TYPEDEF);
+    }
+
+    public static TypedefStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

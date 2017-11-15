@@ -30,14 +30,18 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNamespaceForBelongsTo;
 
-public class BelongsToStatementSupport
-        extends
+public class BelongsToStatementSupport extends
         AbstractStatementSupport<String, BelongsToStatement, EffectiveStatement<String, BelongsToStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BELONGS_TO).addMandatory(YangStmtMapping.PREFIX).build();
+    private static final BelongsToStatementSupport INSTANCE = new BelongsToStatementSupport();
 
-    public BelongsToStatementSupport() {
+    private BelongsToStatementSupport() {
         super(YangStmtMapping.BELONGS_TO);
+    }
+
+    public static BelongsToStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

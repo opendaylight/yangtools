@@ -39,6 +39,15 @@ public final class ContainerStatementRFC7950Support extends AbstractContainerSta
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+    private static final ContainerStatementRFC7950Support INSTANCE = new ContainerStatementRFC7950Support();
+
+    private ContainerStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static ContainerStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

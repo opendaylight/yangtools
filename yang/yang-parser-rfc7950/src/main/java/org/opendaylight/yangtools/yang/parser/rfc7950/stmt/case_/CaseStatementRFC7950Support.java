@@ -32,6 +32,15 @@ public final class CaseStatementRFC7950Support extends AbstractCaseStatementSupp
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+    private static final CaseStatementRFC7950Support INSTANCE = new CaseStatementRFC7950Support();
+
+    private CaseStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static CaseStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

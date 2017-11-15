@@ -34,9 +34,14 @@ public final class LeafStatementSupport
         .addOptional(YangStmtMapping.UNITS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final LeafStatementSupport INSTANCE = new LeafStatementSupport();
 
-    public LeafStatementSupport() {
+    private LeafStatementSupport() {
         super(YangStmtMapping.LEAF);
+    }
+
+    public static LeafStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

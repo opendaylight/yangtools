@@ -30,6 +30,15 @@ public final class OutputStatementRFC7950Support extends AbstractOutputStatement
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();
+    private static final OutputStatementRFC7950Support INSTANCE = new OutputStatementRFC7950Support();
+
+    private OutputStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static OutputStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

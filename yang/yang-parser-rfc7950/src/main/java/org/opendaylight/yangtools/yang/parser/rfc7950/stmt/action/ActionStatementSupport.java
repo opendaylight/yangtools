@@ -33,8 +33,6 @@ public final class ActionStatementSupport
         extends AbstractQNameStatementSupport<ActionStatement, EffectiveStatement<QName, ActionStatement>> {
     private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
             YangStmtMapping.RPC, YangStmtMapping.ACTION);
-    private static final StatementSupport<?, ?, ?> IMPLICIT_INPUT = new InputStatementRFC7950Support();
-    private static final StatementSupport<?, ?, ?> IMPLICIT_OUTPUT = new OutputStatementRFC7950Support();
 
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ACTION)
@@ -47,9 +45,14 @@ public final class ActionStatementSupport
         .addOptional(YangStmtMapping.STATUS)
         .addAny(YangStmtMapping.TYPEDEF)
         .build();
+    private static final ActionStatementSupport INSTANCE = new ActionStatementSupport();
 
-    public ActionStatementSupport() {
+    private ActionStatementSupport() {
         super(YangStmtMapping.ACTION);
+    }
+
+    public static ActionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override
@@ -93,11 +96,11 @@ public final class ActionStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, IMPLICIT_INPUT);
+            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, InputStatementRFC7950Support.getInstance());
         }
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, IMPLICIT_OUTPUT);
+            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, OutputStatementRFC7950Support.getInstance());
         }
     }
 

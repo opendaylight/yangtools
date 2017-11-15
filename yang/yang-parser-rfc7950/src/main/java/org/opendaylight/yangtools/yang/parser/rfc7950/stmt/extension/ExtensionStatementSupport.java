@@ -31,9 +31,14 @@ public final class ExtensionStatementSupport
         .addOptional(YangStmtMapping.REFERENCE)
         .addOptional(YangStmtMapping.STATUS)
         .build();
+    private static final ExtensionStatementSupport INSTANCE = new ExtensionStatementSupport();
 
-    public ExtensionStatementSupport() {
+    private ExtensionStatementSupport() {
         super(YangStmtMapping.EXTENSION);
+    }
+
+    public static ExtensionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

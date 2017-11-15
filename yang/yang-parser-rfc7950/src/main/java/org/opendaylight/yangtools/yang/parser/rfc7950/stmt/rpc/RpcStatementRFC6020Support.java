@@ -12,17 +12,23 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatemen
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 
 public final class RpcStatementRFC6020Support extends AbstractRpcStatementSupport {
-    // TODO: share instances
-    private static final StatementSupport<?, ?, ?> IMPLICIT_INPUT = new InputStatementRFC6020Support();
-    private static final StatementSupport<?, ?, ?> IMPLICIT_OUTPUT = new OutputStatementRFC6020Support();
+    private static final RpcStatementRFC6020Support INSTANCE = new RpcStatementRFC6020Support();
+
+    private RpcStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static RpcStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     StatementSupport<?, ?, ?> implictInput() {
-        return IMPLICIT_INPUT;
+        return InputStatementRFC6020Support.getInstance();
     }
 
     @Override
     StatementSupport<?, ?, ?> implictOutput() {
-        return IMPLICIT_OUTPUT;
+        return OutputStatementRFC6020Support.getInstance();
     }
 }

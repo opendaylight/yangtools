@@ -25,9 +25,14 @@ public final class MustStatementSupport extends AbstractStatementSupport<Revisio
         .addOptional(YangStmtMapping.ERROR_MESSAGE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final MustStatementSupport INSTANCE = new MustStatementSupport();
 
-    public MustStatementSupport() {
+    private MustStatementSupport() {
         super(YangStmtMapping.MUST);
+    }
+
+    public static MustStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

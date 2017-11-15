@@ -18,6 +18,15 @@ public class BitStatementRFC6020Support extends AbstractBitStatementSupport {
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.POSITION)
         .build();
+    private static final BitStatementRFC6020Support INSTANCE = new BitStatementRFC6020Support();
+
+    private BitStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static BitStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

@@ -23,9 +23,14 @@ public final class WhenStatementSupport extends AbstractStatementSupport<Revisio
         .addOptional(YangStmtMapping.DESCRIPTION)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final WhenStatementSupport INSTANCE = new WhenStatementSupport();
 
-    public WhenStatementSupport() {
+    private WhenStatementSupport() {
         super(YangStmtMapping.WHEN);
+    }
+
+    public static WhenStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

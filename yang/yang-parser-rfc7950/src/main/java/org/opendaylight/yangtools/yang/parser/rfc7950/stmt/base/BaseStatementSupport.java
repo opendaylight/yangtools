@@ -33,9 +33,14 @@ public final class BaseStatementSupport
         extends AbstractQNameStatementSupport<BaseStatement, EffectiveStatement<QName, BaseStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.BASE).build();
+    private static final BaseStatementSupport INSTANCE = new BaseStatementSupport();
 
-    public BaseStatementSupport() {
+    private BaseStatementSupport() {
         super(YangStmtMapping.BASE);
+    }
+
+    public static BaseStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

@@ -11,6 +11,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization.OrganizationStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -31,6 +32,15 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .build();
+    private static final NotificationStatementRFC6020Support INSTANCE = new NotificationStatementRFC6020Support();
+
+    private NotificationStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static NotificationStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public EffectiveStatement<QName, NotificationStatement> createEffective(

@@ -18,9 +18,14 @@ public final class DescriptionStatementSupport extends AbstractStatementSupport<
         EffectiveStatement<String, DescriptionStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.DESCRIPTION).build();
+    private static final DescriptionStatementSupport INSTANCE = new DescriptionStatementSupport();
 
-    public DescriptionStatementSupport() {
+    private DescriptionStatementSupport() {
         super(YangStmtMapping.DESCRIPTION);
+    }
+
+    public static DescriptionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

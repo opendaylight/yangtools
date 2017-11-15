@@ -19,17 +19,23 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
  */
 @Beta
 public final class RpcStatementRFC7950Support extends AbstractRpcStatementSupport {
-    // TODO: share instances
-    private static final StatementSupport<?, ?, ?> IMPLICIT_INPUT = new InputStatementRFC7950Support();
-    private static final StatementSupport<?, ?, ?> IMPLICIT_OUTPUT = new OutputStatementRFC7950Support();
+    private static final RpcStatementRFC7950Support INSTANCE = new RpcStatementRFC7950Support();
+
+    private RpcStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static RpcStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     StatementSupport<?, ?, ?> implictInput() {
-        return IMPLICIT_INPUT;
+        return InputStatementRFC7950Support.getInstance();
     }
 
     @Override
     StatementSupport<?, ?, ?> implictOutput() {
-        return IMPLICIT_OUTPUT;
+        return OutputStatementRFC7950Support.getInstance();
     }
 }
