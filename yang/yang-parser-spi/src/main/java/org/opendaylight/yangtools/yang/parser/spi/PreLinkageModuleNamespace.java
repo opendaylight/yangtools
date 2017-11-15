@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Intermediate-stage namespace equivalent to ModuleNamespace except it is keyed by module names. This namespace is
@@ -17,4 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  */
 public interface PreLinkageModuleNamespace extends
         StatementNamespace<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+    NamespaceBehaviour<String, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>,
+            @NonNull PreLinkageModuleNamespace> BEHAVIOR = NamespaceBehaviour.global(PreLinkageModuleNamespace.class);
+
 }

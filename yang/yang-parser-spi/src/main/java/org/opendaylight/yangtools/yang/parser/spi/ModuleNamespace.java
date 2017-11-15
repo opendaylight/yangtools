@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Module namespace. All modules known to the reactor are populated to this namespace. Each module is identified
@@ -18,4 +21,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  */
 public interface ModuleNamespace extends
         StatementNamespace<SourceIdentifier, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+    NamespaceBehaviour<SourceIdentifier, StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>>,
+            @NonNull ModuleNamespace> BEHAVIOR = NamespaceBehaviour.global(ModuleNamespace.class);
 }

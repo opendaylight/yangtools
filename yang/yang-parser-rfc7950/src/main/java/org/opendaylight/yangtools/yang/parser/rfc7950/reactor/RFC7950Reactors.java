@@ -165,9 +165,9 @@ public final class RFC7950Reactors {
     private static final Set<YangVersion> SUPPORTED_VERSIONS = Sets.immutableEnumSet(VERSION_1, VERSION_1_1);
 
     private static final StatementSupportBundle INIT_BUNDLE = StatementSupportBundle.builder(SUPPORTED_VERSIONS)
-            .addSupport(global(ValidationBundlesNamespace.class))
-            .addSupport(global(SupportedFeaturesNamespace.class))
-            .addSupport(global(ModulesDeviatedByModules.class))
+            .addSupport(ValidationBundlesNamespace.BEHAVIOR)
+            .addSupport(SupportedFeaturesNamespace.BEHAVIOR)
+            .addSupport(ModulesDeviatedByModules.BEHAVIOR)
             .build();
 
     private static final StatementSupportBundle PRE_LINKAGE_BUNDLE = StatementSupportBundle.derivedFrom(INIT_BUNDLE)
@@ -185,10 +185,10 @@ public final class RFC7950Reactors {
             .addSupport(new YangVersionStatementSupport())
             .addSupport(new RevisionStatementSupport())
             .addSupport(new RevisionDateStatementSupport())
-            .addSupport(global(ModuleNameToNamespace.class))
-            .addSupport(global(PreLinkageModuleNamespace.class))
-            .addSupport(sourceLocal(ImpPrefixToNamespace.class))
-            .addSupport(global(ModuleCtxToModuleQName.class))
+            .addSupport(ModuleNameToNamespace.BEHAVIOR)
+            .addSupport(PreLinkageModuleNamespace.BEHAVIOR)
+            .addSupport(ImpPrefixToNamespace.BEHAVIOR)
+            .addSupport(ModuleCtxToModuleQName.BEHAVIOR)
             .build();
 
     private static final StatementSupportBundle LINKAGE_BUNDLE = StatementSupportBundle
@@ -197,8 +197,8 @@ public final class RFC7950Reactors {
             .addSupport(new ReferenceStatementSupport())
             .addSupport(new ContactStatementSupport())
             .addSupport(new OrganizationStatementSupport())
-            .addSupport(global(ModuleNamespace.class))
-            .addSupport(global(ModuleNamespaceForBelongsTo.class))
+            .addSupport(ModuleNamespace.BEHAVIOR)
+            .addSupport(ModuleNamespaceForBelongsTo.BEHAVIOR)
             .addSupport(global(SubmoduleNamespace.class))
             .addSupport(global(NamespaceToModule.class))
             .addSupport(global(ModuleNameToModuleQName.class))
