@@ -57,7 +57,7 @@ public final class DefaultReactors {
                 // AnyxmlSchemaLocation support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlSchemaLocationStatementSupport.getInstance())
-                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOR)
+                .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
                 .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlStatementSupportOverride.getInstance())
 

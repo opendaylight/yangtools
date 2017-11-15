@@ -10,14 +10,19 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import java.net.URI;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Map of fully qualified statement name to statement definition.
  */
 public interface QNameToStatementDefinition extends IdentifierNamespace<QName, StatementDefinition> {
+    NamespaceBehaviour<QName, StatementDefinition, @NonNull QNameToStatementDefinition> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(QNameToStatementDefinition.class);
+
     /**
      * Returns StatementDefinition with specified QName.
      *
@@ -25,6 +30,7 @@ public interface QNameToStatementDefinition extends IdentifierNamespace<QName, S
      *            QName of requested statement
      * @return StatementDefinition
      */
+    @Override
     @Nullable
     StatementDefinition get(@Nonnull QName identifier);
 

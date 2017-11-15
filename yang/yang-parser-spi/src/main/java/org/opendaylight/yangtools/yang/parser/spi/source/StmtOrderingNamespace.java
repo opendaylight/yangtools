@@ -7,12 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Map of statement order.
  */
-public interface StmtOrderingNamespace extends
-        IdentifierNamespace<YangStmtMapping, Integer> {
+public interface StmtOrderingNamespace extends IdentifierNamespace<YangStmtMapping, Integer> {
+    NamespaceBehaviour<YangStmtMapping, Integer, @NonNull StmtOrderingNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(StmtOrderingNamespace.class);
+
 }

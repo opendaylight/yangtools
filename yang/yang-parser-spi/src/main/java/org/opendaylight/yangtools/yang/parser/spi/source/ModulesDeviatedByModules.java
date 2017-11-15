@@ -11,8 +11,10 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import com.google.common.annotations.Beta;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Namespace used for storing information about modules that support deviation resolution.
@@ -21,6 +23,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 @Beta
 public interface ModulesDeviatedByModules
         extends IdentifierNamespace<ModulesDeviatedByModules.SupportedModules, Map<QNameModule, Set<QNameModule>>> {
+    NamespaceBehaviour<SupportedModules, Map<QNameModule, Set<QNameModule>>, @NonNull ModulesDeviatedByModules>
+        BEHAVIOUR = NamespaceBehaviour.global(ModulesDeviatedByModules.class);
 
     enum SupportedModules {
         SUPPORTED_MODULES

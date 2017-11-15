@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Submodule equivalent of ModuleNamespace.
@@ -18,5 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 // FIXME: describe scoping of this namespace
 public interface SubmoduleNamespace
     extends StatementNamespace<SourceIdentifier, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
-
+    NamespaceBehaviour<SourceIdentifier, StmtContext<?, SubmoduleStatement,
+            EffectiveStatement<String, SubmoduleStatement>>, @NonNull SubmoduleNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(SubmoduleNamespace.class);
 }

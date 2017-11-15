@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
 public interface IncludedSubmoduleNameToModuleCtx extends IdentifierNamespace<String, StmtContext<?, ?, ?>> {
-
+    NamespaceBehaviour<String, StmtContext<?, ?, ?>, @NonNull IncludedSubmoduleNameToModuleCtx> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(IncludedSubmoduleNameToModuleCtx.class);
 }

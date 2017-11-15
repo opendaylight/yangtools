@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ImportedNamespaceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public interface ImportedModuleContext extends ImportedNamespaceContext<SourceIdentifier> {
-
+    NamespaceBehaviour<SourceIdentifier, StmtContext<?, ?, ?>, @NonNull ImportedModuleContext> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(ImportedModuleContext.class);
 }

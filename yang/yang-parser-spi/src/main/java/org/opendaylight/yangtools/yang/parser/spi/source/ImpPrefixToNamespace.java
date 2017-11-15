@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.net.URI;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Pre-linkage source-specific mapping of prefixes to module namespaces.
  */
 public interface ImpPrefixToNamespace extends IdentifierNamespace<String, URI> {
-
+    NamespaceBehaviour<String, URI, @NonNull ImpPrefixToNamespace> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(ImpPrefixToNamespace.class);
 }

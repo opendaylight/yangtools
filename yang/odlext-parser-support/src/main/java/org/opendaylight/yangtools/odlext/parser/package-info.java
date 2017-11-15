@@ -11,7 +11,7 @@
  * <p>
  * To access this extension, add {@link org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSupport},
  * {@link org.opendaylight.yangtools.odlext.parser.AnyxmlStatementSupportOverride} and
- * {@link org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace#BEHAVIOR} to the reactor.
+ * {@link org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationNamespace#BEHAVIOUR} to the reactor.
  *
  * @author Robert Varga
  */

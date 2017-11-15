@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Extension namespace. All extension names defined in a module and its submodules share the same
@@ -19,5 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  */
 public interface ExtensionNamespace
     extends StatementNamespace<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> {
+    NamespaceBehaviour<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>,
+            @NonNull ExtensionNamespace> BEHAVIOUR = NamespaceBehaviour.global(ExtensionNamespace.class);
 
 }

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.odlext.parser;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -21,5 +22,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 public interface AnyxmlSchemaLocationNamespace extends IdentifierNamespace<StatementDefinition,
     Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
         EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>> {
-    NamespaceBehaviour<?, ?, ?> BEHAVIOR = NamespaceBehaviour.treeScoped(AnyxmlSchemaLocationNamespace.class);
+    NamespaceBehaviour<StatementDefinition, Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
+        EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>>,
+        @NonNull AnyxmlSchemaLocationNamespace> BEHAVIOUR =
+            NamespaceBehaviour.treeScoped(AnyxmlSchemaLocationNamespace.class);
 }

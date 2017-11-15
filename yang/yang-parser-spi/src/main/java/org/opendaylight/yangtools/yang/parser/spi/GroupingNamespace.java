@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Grouping namespace. * All grouping names defined within a parent node or at the top level of the module
@@ -22,5 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeSc
  */
 public interface GroupingNamespace
     extends TreeScoped<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
+    NamespaceBehaviour<QName, StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>>,
+            @NonNull GroupingNamespace> BEHAVIOUR = NamespaceBehaviour.treeScoped(GroupingNamespace.class);
 
 }
