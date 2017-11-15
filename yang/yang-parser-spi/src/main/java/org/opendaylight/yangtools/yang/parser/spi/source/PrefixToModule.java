@@ -10,14 +10,17 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 import java.net.URISyntaxException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
 public interface PrefixToModule extends IdentifierNamespace<String, QNameModule> {
-
+    NamespaceBehaviour<String, QNameModule, @NonNull PrefixToModule> BEHAVIOUR =
+            NamespaceBehaviour.global(PrefixToModule.class);
     String DEFAULT_PREFIX = "";
 
     /**

@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
 /**
  * Source-specific mapping of prefixes to namespaces.
  */
 public interface BelongsToPrefixToModuleName extends IdentifierNamespace<String, String> {
-
+    NamespaceBehaviour<String, String, @NonNull BelongsToPrefixToModuleName> BEHAVIOUR =
+            NamespaceBehaviour.sourceLocal(BelongsToPrefixToModuleName.class);
 }

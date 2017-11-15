@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -16,4 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
  */
 @Beta
 public interface SemanticVersionNamespace extends IdentifierNamespace<StmtContext<?, ?, ?>, SemVer> {
+    NamespaceBehaviour<StmtContext<?, ?, ?>, SemVer, @NonNull SemanticVersionNamespace> BEHAVIOUR =
+            NamespaceBehaviour.global(SemanticVersionNamespace.class);
+
 }
