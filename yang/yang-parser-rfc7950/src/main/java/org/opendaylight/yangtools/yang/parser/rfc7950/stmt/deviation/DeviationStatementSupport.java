@@ -27,9 +27,14 @@ public final class DeviationStatementSupport extends AbstractStatementSupport<Sc
         .addAny(YangStmtMapping.DEVIATE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final DeviationStatementSupport INSTANCE = new DeviationStatementSupport();
 
-    public DeviationStatementSupport() {
+    private DeviationStatementSupport() {
         super(YangStmtMapping.DEVIATION);
+    }
+
+    public static DeviationStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

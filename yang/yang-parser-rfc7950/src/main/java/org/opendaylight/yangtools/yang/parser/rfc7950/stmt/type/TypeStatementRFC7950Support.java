@@ -20,6 +20,15 @@ public final class TypeStatementRFC7950Support extends AbstractTypeStatementSupp
     private static final Map<String, StatementSupport<?, ?, ?>> ARGUMENT_SPECIFIC_SUPPORTS = ImmutableMap.of(
         LEAF_REF, new LeafrefSpecificationRFC7950Support(),
         IDENTITY_REF, new IdentityrefSpecificationRFC7950Support());
+    private static final TypeStatementRFC7950Support INSTANCE = new TypeStatementRFC7950Support();
+
+    private TypeStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static TypeStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public boolean hasArgumentSpecificSupports() {

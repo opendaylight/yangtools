@@ -21,9 +21,14 @@ public final class StatusStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .STATUS)
         .build();
+    private static final StatusStatementSupport INSTANCE = new StatusStatementSupport();
 
-    public StatusStatementSupport() {
+    private StatusStatementSupport() {
         super(YangStmtMapping.STATUS);
+    }
+
+    public static StatusStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

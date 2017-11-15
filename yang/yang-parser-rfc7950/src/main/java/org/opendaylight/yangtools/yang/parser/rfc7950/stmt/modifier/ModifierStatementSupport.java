@@ -20,9 +20,14 @@ public final class ModifierStatementSupport extends AbstractStatementSupport<Mod
         EffectiveStatement<ModifierKind, ModifierStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MODIFIER).build();
+    private static final ModifierStatementSupport INSTANCE = new ModifierStatementSupport();
 
-    public ModifierStatementSupport() {
+    private ModifierStatementSupport() {
         super(YangStmtMapping.MODIFIER);
+    }
+
+    public static ModifierStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

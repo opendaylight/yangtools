@@ -42,6 +42,15 @@ public final class ModuleStatementRFC6020Support extends AbstractModuleStatement
             .addOptional(YangStmtMapping.YANG_VERSION)
             .addOptional(OpenConfigStatements.OPENCONFIG_VERSION)
             .build();
+    private static final ModuleStatementRFC6020Support INSTANCE = new ModuleStatementRFC6020Support();
+
+    private ModuleStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static ModuleStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

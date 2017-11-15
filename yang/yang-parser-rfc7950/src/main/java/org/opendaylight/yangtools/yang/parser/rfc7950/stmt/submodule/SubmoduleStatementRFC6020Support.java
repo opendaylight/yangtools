@@ -39,6 +39,15 @@ public final class SubmoduleStatementRFC6020Support extends AbstractSubmoduleSta
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.YANG_VERSION)
         .build();
+    private static final SubmoduleStatementRFC6020Support INSTANCE = new SubmoduleStatementRFC6020Support();
+
+    private SubmoduleStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static SubmoduleStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

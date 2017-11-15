@@ -21,9 +21,14 @@ public final class PathStatementSupport extends AbstractStatementSupport<Revisio
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .PATH)
         .build();
+    private static final PathStatementSupport INSTANCE = new PathStatementSupport();
 
-    public PathStatementSupport() {
+    private PathStatementSupport() {
         super(YangStmtMapping.PATH);
+    }
+
+    public static PathStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

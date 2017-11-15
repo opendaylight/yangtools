@@ -22,9 +22,14 @@ public final class YangVersionStatementSupport extends AbstractStatementSupport<
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .YANG_VERSION)
         .build();
+    private static final YangVersionStatementSupport INSTANCE = new YangVersionStatementSupport();
 
-    public YangVersionStatementSupport() {
+    private YangVersionStatementSupport() {
         super(YangStmtMapping.YANG_VERSION);
+    }
+
+    public static YangVersionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

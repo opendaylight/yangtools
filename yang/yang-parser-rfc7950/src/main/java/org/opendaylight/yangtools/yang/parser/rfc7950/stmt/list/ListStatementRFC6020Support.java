@@ -35,7 +35,15 @@ public final class ListStatementRFC6020Support extends AbstractListStatementSupp
         .addAny(YangStmtMapping.USES)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final ListStatementRFC6020Support INSTANCE = new ListStatementRFC6020Support();
 
+    private ListStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static ListStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

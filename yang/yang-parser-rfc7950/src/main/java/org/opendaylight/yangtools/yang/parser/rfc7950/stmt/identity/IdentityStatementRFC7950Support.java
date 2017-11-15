@@ -24,6 +24,15 @@ public final class IdentityStatementRFC7950Support extends AbstractIdentityState
             .addOptional(YangStmtMapping.REFERENCE)
             .addOptional(YangStmtMapping.STATUS)
             .build();
+    private static final IdentityStatementRFC7950Support INSTANCE = new IdentityStatementRFC7950Support();
+
+    private IdentityStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static IdentityStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

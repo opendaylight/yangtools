@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public class BitStatementRFC6020Support extends AbstractBitStatementSupport {
+public final class BitStatementRFC6020Support extends AbstractBitStatementSupport {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.BIT)
         .addOptional(YangStmtMapping.DESCRIPTION)
@@ -18,6 +18,15 @@ public class BitStatementRFC6020Support extends AbstractBitStatementSupport {
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.POSITION)
         .build();
+    private static final BitStatementRFC6020Support INSTANCE = new BitStatementRFC6020Support();
+
+    private BitStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static BitStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

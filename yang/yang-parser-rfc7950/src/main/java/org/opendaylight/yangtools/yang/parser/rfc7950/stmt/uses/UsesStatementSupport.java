@@ -42,9 +42,14 @@ public final class UsesStatementSupport extends
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final UsesStatementSupport INSTANCE = new UsesStatementSupport();
 
-    public UsesStatementSupport() {
+    private UsesStatementSupport() {
         super(YangStmtMapping.USES);
+    }
+
+    public static UsesStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

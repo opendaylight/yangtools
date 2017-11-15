@@ -19,9 +19,14 @@ public final class ReferenceStatementSupport extends AbstractStatementSupport<St
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.REFERENCE)
         .build();
+    private static final ReferenceStatementSupport INSTANCE = new ReferenceStatementSupport();
 
-    public ReferenceStatementSupport() {
+    private ReferenceStatementSupport() {
         super(YangStmtMapping.REFERENCE);
+    }
+
+    public static ReferenceStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

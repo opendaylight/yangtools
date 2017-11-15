@@ -8,5 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 public final class TypeStatementRFC6020Support extends AbstractTypeStatementSupport {
+    private static final TypeStatementRFC6020Support INSTANCE = new TypeStatementRFC6020Support();
 
+    private TypeStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static TypeStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 }

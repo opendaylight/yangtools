@@ -18,6 +18,15 @@ public final class IdentityStatementRFC6020Support extends AbstractIdentityState
         .addOptional(YangStmtMapping.REFERENCE)
         .addOptional(YangStmtMapping.STATUS)
         .build();
+    private static final IdentityStatementRFC6020Support INSTANCE = new IdentityStatementRFC6020Support();
+
+    private IdentityStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static IdentityStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

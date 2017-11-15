@@ -19,9 +19,14 @@ public final class YinElementStatementSupport extends
         AbstractStatementSupport<Boolean, YinElementStatement, EffectiveStatement<Boolean, YinElementStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.YIN_ELEMENT).build();
+    private static final YinElementStatementSupport INSTANCE = new YinElementStatementSupport();
 
-    public YinElementStatementSupport() {
+    private YinElementStatementSupport() {
         super(YangStmtMapping.YIN_ELEMENT);
+    }
+
+    public static YinElementStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

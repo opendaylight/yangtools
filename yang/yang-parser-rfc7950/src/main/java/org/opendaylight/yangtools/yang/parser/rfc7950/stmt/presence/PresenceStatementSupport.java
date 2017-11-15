@@ -19,9 +19,14 @@ public final class PresenceStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .PRESENCE)
         .build();
+    private static final PresenceStatementSupport INSTANCE = new PresenceStatementSupport();
 
-    public PresenceStatementSupport() {
+    private PresenceStatementSupport() {
         super(YangStmtMapping.PRESENCE);
+    }
+
+    public static PresenceStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

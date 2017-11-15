@@ -22,9 +22,14 @@ public final class ArgumentStatementSupport
         .ARGUMENT)
         .addOptional(YangStmtMapping.YIN_ELEMENT)
         .build();
+    private static final ArgumentStatementSupport INSTANCE = new ArgumentStatementSupport();
 
-    public ArgumentStatementSupport() {
+    private ArgumentStatementSupport() {
         super(YangStmtMapping.ARGUMENT);
+    }
+
+    public static ArgumentStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

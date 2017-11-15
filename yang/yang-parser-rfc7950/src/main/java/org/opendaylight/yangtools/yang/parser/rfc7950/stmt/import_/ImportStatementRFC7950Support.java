@@ -26,6 +26,15 @@ public final class ImportStatementRFC7950Support extends AbstractImportStatement
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE)
             .build();
+    private static final ImportStatementRFC7950Support INSTANCE = new ImportStatementRFC7950Support();
+
+    private ImportStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static ImportStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

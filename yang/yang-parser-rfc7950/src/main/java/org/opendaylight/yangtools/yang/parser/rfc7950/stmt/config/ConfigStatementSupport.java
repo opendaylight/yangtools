@@ -15,13 +15,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public class ConfigStatementSupport extends
+public final class ConfigStatementSupport extends
     AbstractStatementSupport<Boolean, ConfigStatement, EffectiveStatement<Boolean, ConfigStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.CONFIG).build();
+    private static final ConfigStatementSupport INSTANCE = new ConfigStatementSupport();
 
-    public ConfigStatementSupport() {
+    private ConfigStatementSupport() {
         super(YangStmtMapping.CONFIG);
+    }
+
+    public static ConfigStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

@@ -24,9 +24,14 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
         .build();
+    private static final IfFeatureStatementSupport INSTANCE = new IfFeatureStatementSupport();
 
-    public IfFeatureStatementSupport() {
+    private IfFeatureStatementSupport() {
         super(YangStmtMapping.IF_FEATURE);
+    }
+
+    public static IfFeatureStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

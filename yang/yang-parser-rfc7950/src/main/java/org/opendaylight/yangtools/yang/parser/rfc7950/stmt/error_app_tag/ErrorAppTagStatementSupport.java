@@ -14,13 +14,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public class ErrorAppTagStatementSupport extends
+public final class ErrorAppTagStatementSupport extends
         AbstractStatementSupport<String, ErrorAppTagStatement, EffectiveStatement<String, ErrorAppTagStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ERROR_APP_TAG).build();
+    private static final ErrorAppTagStatementSupport INSTANCE = new ErrorAppTagStatementSupport();
 
-    public ErrorAppTagStatementSupport() {
+    private ErrorAppTagStatementSupport() {
         super(YangStmtMapping.ERROR_APP_TAG);
+    }
+
+    public static ErrorAppTagStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

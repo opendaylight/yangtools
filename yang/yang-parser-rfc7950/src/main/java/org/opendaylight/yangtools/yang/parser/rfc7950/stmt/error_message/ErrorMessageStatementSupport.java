@@ -19,9 +19,14 @@ public final class ErrorMessageStatementSupport extends
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .ERROR_MESSAGE)
         .build();
+    private static final ErrorMessageStatementSupport INSTANCE = new ErrorMessageStatementSupport();
 
-    public ErrorMessageStatementSupport() {
+    private ErrorMessageStatementSupport() {
         super(YangStmtMapping.ERROR_MESSAGE);
+    }
+
+    public static ErrorMessageStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

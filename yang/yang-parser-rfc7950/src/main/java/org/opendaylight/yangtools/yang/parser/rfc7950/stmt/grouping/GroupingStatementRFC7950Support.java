@@ -34,6 +34,15 @@ public final class GroupingStatementRFC7950Support extends AbstractGroupingState
             .addAny(YangStmtMapping.TYPEDEF)
             .addAny(YangStmtMapping.USES)
             .build();
+    private static final GroupingStatementRFC7950Support INSTANCE = new GroupingStatementRFC7950Support();
+
+    private GroupingStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static GroupingStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

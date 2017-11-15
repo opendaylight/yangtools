@@ -24,6 +24,15 @@ public final class BitStatementRFC7950Support extends AbstractBitStatementSuppor
             .addOptional(YangStmtMapping.STATUS)
             .addOptional(YangStmtMapping.POSITION)
             .build();
+    private static final BitStatementRFC7950Support INSTANCE = new BitStatementRFC7950Support();
+
+    private BitStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static BitStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

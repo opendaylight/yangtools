@@ -15,13 +15,18 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public class MandatoryStatementSupport extends
+public final class MandatoryStatementSupport extends
         AbstractStatementSupport<Boolean, MandatoryStatement, EffectiveStatement<Boolean, MandatoryStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MANDATORY).build();
+    private static final MandatoryStatementSupport INSTANCE = new MandatoryStatementSupport();
 
-    public MandatoryStatementSupport() {
+    private MandatoryStatementSupport() {
         super(YangStmtMapping.MANDATORY);
+    }
+
+    public static MandatoryStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

@@ -19,9 +19,14 @@ public final class MaxElementsStatementSupport extends
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.MAX_ELEMENTS)
         .build();
+    private static final MaxElementsStatementSupport INSTANCE = new MaxElementsStatementSupport();
 
-    public MaxElementsStatementSupport() {
+    private MaxElementsStatementSupport() {
         super(YangStmtMapping.MAX_ELEMENTS);
+    }
+
+    public static MaxElementsStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

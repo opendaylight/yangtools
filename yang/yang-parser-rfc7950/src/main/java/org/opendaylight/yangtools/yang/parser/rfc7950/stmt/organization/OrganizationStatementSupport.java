@@ -19,9 +19,14 @@ public final class OrganizationStatementSupport extends
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.ORGANIZATION)
         .build();
+    private static final OrganizationStatementSupport INSTANCE = new OrganizationStatementSupport();
 
-    public OrganizationStatementSupport() {
+    private OrganizationStatementSupport() {
         super(YangStmtMapping.ORGANIZATION);
+    }
+
+    public static OrganizationStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

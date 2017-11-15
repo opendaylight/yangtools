@@ -35,6 +35,15 @@ public final class AugmentStatementRFC7950Support extends AbstractAugmentStateme
             .addAny(YangStmtMapping.USES)
             .addOptional(YangStmtMapping.WHEN)
             .build();
+    private static final AugmentStatementRFC7950Support INSTANCE = new AugmentStatementRFC7950Support();
+
+    private AugmentStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static AugmentStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

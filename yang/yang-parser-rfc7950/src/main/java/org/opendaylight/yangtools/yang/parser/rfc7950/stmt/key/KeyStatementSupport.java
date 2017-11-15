@@ -31,9 +31,14 @@ public final class KeyStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.KEY)
         .build();
+    private static final KeyStatementSupport INSTANCE = new KeyStatementSupport();
 
-    public KeyStatementSupport() {
+    private KeyStatementSupport() {
         super(YangStmtMapping.KEY);
+    }
+
+    public static KeyStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

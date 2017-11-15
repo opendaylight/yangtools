@@ -18,9 +18,14 @@ public final class DefaultStatementSupport
         extends AbstractStatementSupport<String, DefaultStatement, EffectiveStatement<String, DefaultStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.DEFAULT).build();
+    private static final DefaultStatementSupport INSTANCE = new DefaultStatementSupport();
 
-    public DefaultStatementSupport() {
+    private DefaultStatementSupport() {
         super(YangStmtMapping.DEFAULT);
+    }
+
+    public static DefaultStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

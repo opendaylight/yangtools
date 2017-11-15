@@ -30,6 +30,15 @@ public final class RefineStatementRFC7950Support extends AbstractRefineStatement
             .addOptional(YangStmtMapping.MIN_ELEMENTS)
             .addOptional(YangStmtMapping.MAX_ELEMENTS)
             .build();
+    private static final RefineStatementRFC7950Support INSTANCE = new RefineStatementRFC7950Support();
+
+    private RefineStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static RefineStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

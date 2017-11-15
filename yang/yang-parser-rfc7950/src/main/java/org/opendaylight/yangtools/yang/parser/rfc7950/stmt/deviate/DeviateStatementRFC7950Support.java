@@ -37,6 +37,15 @@ public final class DeviateStatementRFC7950Support extends AbstractDeviateStateme
                 .addAny(YangStmtMapping.UNIQUE)
                 .addOptional(YangStmtMapping.UNITS)
                 .build();
+    private static final DeviateStatementRFC7950Support INSTANCE = new DeviateStatementRFC7950Support();
+
+    private DeviateStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static DeviateStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidatorForDeviate(final DeviateKind deviateKind) {

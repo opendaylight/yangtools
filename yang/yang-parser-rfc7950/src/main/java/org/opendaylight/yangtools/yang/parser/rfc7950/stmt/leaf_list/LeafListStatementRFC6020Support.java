@@ -26,6 +26,15 @@ public final class LeafListStatementRFC6020Support extends AbstractLeafListState
         .addOptional(YangStmtMapping.UNITS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final LeafListStatementRFC6020Support INSTANCE = new LeafListStatementRFC6020Support();
+
+    private LeafListStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static LeafListStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

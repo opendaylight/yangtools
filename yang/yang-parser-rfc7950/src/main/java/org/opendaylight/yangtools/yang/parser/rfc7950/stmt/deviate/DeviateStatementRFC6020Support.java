@@ -8,5 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
 public final class DeviateStatementRFC6020Support extends AbstractDeviateStatementSupport {
+    private static final DeviateStatementRFC6020Support INSTANCE = new DeviateStatementRFC6020Support();
 
+    private DeviateStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static DeviateStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 }

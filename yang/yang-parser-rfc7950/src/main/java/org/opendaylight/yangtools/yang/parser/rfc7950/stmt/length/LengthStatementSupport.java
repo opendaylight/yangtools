@@ -33,9 +33,14 @@ public final class LengthStatementSupport extends AbstractStatementSupport<List<
         .addOptional(YangStmtMapping.ERROR_MESSAGE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final LengthStatementSupport INSTANCE = new LengthStatementSupport();
 
-    public LengthStatementSupport() {
+    private LengthStatementSupport() {
         super(YangStmtMapping.LENGTH);
+    }
+
+    public static LengthStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

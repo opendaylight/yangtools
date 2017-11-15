@@ -18,6 +18,15 @@ public final class EnumStatementRFC6020Support extends AbstractEnumStatementSupp
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.VALUE)
         .build();
+    private static final EnumStatementRFC6020Support INSTANCE = new EnumStatementRFC6020Support();
+
+    private EnumStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static EnumStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

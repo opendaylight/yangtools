@@ -13,8 +13,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class ChoiceStatementRFC6020Support extends AbstractChoiceStatementSupport {
-    // FIXME: share instance
-    private static final StatementSupport<?, ?, ?> IMPLICIT_CASE = new CaseStatementRFC6020Support();
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .CHOICE)
         .addAny(YangStmtMapping.ANYXML)
@@ -32,10 +30,19 @@ public final class ChoiceStatementRFC6020Support extends AbstractChoiceStatement
         .addOptional(YangStmtMapping.STATUS)
         .addOptional(YangStmtMapping.WHEN)
         .build();
+    private static final ChoiceStatementRFC6020Support INSTANCE = new ChoiceStatementRFC6020Support();
+
+    private ChoiceStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static ChoiceStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     StatementSupport<?, ?, ?> implictCase() {
-        return IMPLICIT_CASE;
+        return CaseStatementRFC6020Support.getInstance();
     }
 
     @Override

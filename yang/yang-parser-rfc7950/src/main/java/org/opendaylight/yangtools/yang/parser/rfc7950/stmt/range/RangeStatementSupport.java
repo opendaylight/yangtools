@@ -34,9 +34,14 @@ public final class RangeStatementSupport extends AbstractStatementSupport<List<V
         .addOptional(YangStmtMapping.ERROR_MESSAGE)
         .addOptional(YangStmtMapping.REFERENCE)
         .build();
+    private static final RangeStatementSupport INSTANCE = new RangeStatementSupport();
 
-    public RangeStatementSupport() {
+    private RangeStatementSupport() {
         super(YangStmtMapping.RANGE);
+    }
+
+    public static RangeStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

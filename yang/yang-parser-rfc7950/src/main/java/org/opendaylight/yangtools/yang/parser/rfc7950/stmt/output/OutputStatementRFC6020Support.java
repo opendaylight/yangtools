@@ -23,6 +23,15 @@ public final class OutputStatementRFC6020Support extends AbstractOutputStatement
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .build();
+    private static final OutputStatementRFC6020Support INSTANCE = new OutputStatementRFC6020Support();
+
+    private OutputStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static OutputStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

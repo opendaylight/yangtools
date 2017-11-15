@@ -31,6 +31,15 @@ public final class NotificationStatementRFC6020Support extends AbstractNotificat
         .addAny(YangStmtMapping.TYPEDEF)
         .addAny(YangStmtMapping.USES)
         .build();
+    private static final NotificationStatementRFC6020Support INSTANCE = new NotificationStatementRFC6020Support();
+
+    private NotificationStatementRFC6020Support() {
+        // Hidden
+    }
+
+    public static NotificationStatementRFC6020Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public EffectiveStatement<QName, NotificationStatement> createEffective(

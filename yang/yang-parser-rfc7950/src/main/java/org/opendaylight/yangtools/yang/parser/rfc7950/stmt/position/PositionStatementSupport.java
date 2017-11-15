@@ -19,9 +19,14 @@ public final class PositionStatementSupport
         extends AbstractStatementSupport<Long, PositionStatement, EffectiveStatement<Long, PositionStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.POSITION).build();
+    private static final PositionStatementSupport INSTANCE = new PositionStatementSupport();
 
-    public PositionStatementSupport() {
+    private PositionStatementSupport() {
         super(YangStmtMapping.POSITION);
+    }
+
+    public static PositionStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override

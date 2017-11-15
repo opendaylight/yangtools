@@ -22,6 +22,15 @@ public final class IncludeStatementRFC7950Support extends AbstractIncludeStateme
             .addOptional(YangStmtMapping.REVISION_DATE)
             .addOptional(YangStmtMapping.DESCRIPTION)
             .addOptional(YangStmtMapping.REFERENCE).build();
+    private static final IncludeStatementRFC7950Support INSTANCE = new IncludeStatementRFC7950Support();
+
+    private IncludeStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static IncludeStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {

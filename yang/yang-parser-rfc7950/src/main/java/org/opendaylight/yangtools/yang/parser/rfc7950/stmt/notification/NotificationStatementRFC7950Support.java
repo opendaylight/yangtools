@@ -47,6 +47,15 @@ public final class NotificationStatementRFC7950Support extends AbstractNotificat
 
     private static final Set<StatementDefinition> ILLEGAL_PARENTS = ImmutableSet.of(YangStmtMapping.NOTIFICATION,
             YangStmtMapping.RPC, YangStmtMapping.ACTION);
+    private static final NotificationStatementRFC7950Support INSTANCE = new NotificationStatementRFC7950Support();
+
+    private NotificationStatementRFC7950Support() {
+        // Hidden
+    }
+
+    public static NotificationStatementRFC7950Support getInstance() {
+        return INSTANCE;
+    }
 
     @Override
     public EffectiveStatement<QName, NotificationStatement> createEffective(

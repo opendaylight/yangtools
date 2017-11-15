@@ -19,9 +19,14 @@ public final class PrefixStatementSupport
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .PREFIX)
         .build();
+    private static final PrefixStatementSupport INSTANCE = new PrefixStatementSupport();
 
-    public PrefixStatementSupport() {
+    private PrefixStatementSupport() {
         super(YangStmtMapping.PREFIX);
+    }
+
+    public static PrefixStatementSupport getInstance() {
+        return INSTANCE;
     }
 
     @Override
