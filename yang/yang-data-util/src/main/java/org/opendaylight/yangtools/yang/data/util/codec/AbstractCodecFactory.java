@@ -221,7 +221,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
             final T ret = getSimpleCodecFor(target);
             return ret != null ? ret : createComplexCodecFor(schema, target);
         } else if (type instanceof IdentityrefTypeDefinition) {
-            return identityRefCodec((IdentityrefTypeDefinition) type, schema.getQName().getModule());
+            return identityRefCodec((IdentityrefTypeDefinition) type,
+                                    ((IdentityrefTypeDefinition) type).getQName().getModule());
         } else {
             throw new IllegalArgumentException("Unsupported type " + type);
         }
