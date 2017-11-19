@@ -126,6 +126,24 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_656b6a1e",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/MutableOffsetMap.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 236,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-19T21:32:57Z",
+      "side": 1,
+      "message": "Yes, there would. I do not see how performance is not an argument here, can you please elaborate?\n\nCompare the complexity of Arrays.equals() with Object.equals().",
+      "parentUuid": "9a245df4_c3323cf1",
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_46d02c1f",
         "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/AsyncNotifyingListenableFutureTask.java",
         "patchSetId": 1
