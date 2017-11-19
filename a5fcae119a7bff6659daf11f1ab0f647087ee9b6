@@ -22,6 +22,30 @@
       "revId": "a5fcae119a7bff6659daf11f1ab0f647087ee9b6",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_455aa683",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 4
+      },
+      "lineNbr": 306,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-19T21:38:51Z",
+      "side": 1,
+      "message": "I see the previous comment -- then obviously the correct fix is to change offer() to add().",
+      "parentUuid": "9a245df4_a571e20d",
+      "range": {
+        "startLine": 306,
+        "startChar": 22,
+        "endLine": 306,
+        "endChar": 35
+      },
+      "revId": "a5fcae119a7bff6659daf11f1ab0f647087ee9b6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
