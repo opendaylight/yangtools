@@ -192,6 +192,29 @@
       "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_e5663a50",
+        "filename": "common/util/src/main/java/org/opendaylight/yangtools/util/concurrent/QueuedNotificationManager.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 313,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-19T21:38:51Z",
+      "side": 1,
+      "message": "change to add() then",
+      "range": {
+        "startLine": 313,
+        "startChar": 22,
+        "endLine": 313,
+        "endChar": 27
+      },
+      "revId": "c5889dcd7aa650a416dd9644a82052a362ec77c3",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
