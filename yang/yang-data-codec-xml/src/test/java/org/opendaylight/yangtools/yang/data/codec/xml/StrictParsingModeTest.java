@@ -8,8 +8,8 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
@@ -78,8 +78,8 @@ public class StrictParsingModeTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unknown child node.");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Schema for node with name unknown-container-a and namespace "
-                    + "foo doesn't exist."));
+            assertEquals("Schema for node with name unknown-container-a and namespace foo doesn't exist at "
+                    + "AbsoluteSchemaPath{path=[(foo)top-level-container]}", ex.getMessage());
         }
     }
 }

@@ -304,8 +304,9 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unknown child node.");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Schema for node with name my-container-1 and namespace baz-namespace"
-                        + " doesn't exist."));
+            assertEquals("Schema for node with name my-container-1 and namespace baz-namespace doesn't exist at "
+                    + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}",
+                    ex.getMessage());
         }
     }
 
