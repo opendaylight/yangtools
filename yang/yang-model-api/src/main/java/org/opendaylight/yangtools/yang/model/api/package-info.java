@@ -50,7 +50,7 @@
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition#getBits()}
  *
  * <dt>case
- *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}
+ *   <dd>{@link org.opendaylight.yangtools.yang.model.api.CaseSchemaNode}
  *
  * <dt>choice
  *   <dd>{@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode}

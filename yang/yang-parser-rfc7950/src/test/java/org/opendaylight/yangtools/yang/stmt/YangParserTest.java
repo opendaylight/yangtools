@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -524,11 +524,11 @@ public class YangParserTest {
             QName.create(foo.getQNameModule(), "transfer"));
         final ChoiceSchemaNode how = (ChoiceSchemaNode) transfer.getDataChildByName(
             QName.create(foo.getQNameModule(), "how"));
-        final SortedMap<QName, ChoiceCaseNode> cases = how.getCases();
+        final SortedMap<QName, CaseSchemaNode> cases = how.getCases();
         assertEquals(5, cases.size());
-        ChoiceCaseNode input = null;
-        ChoiceCaseNode output = null;
-        for (final ChoiceCaseNode caseNode : cases.values()) {
+        CaseSchemaNode input = null;
+        CaseSchemaNode output = null;
+        for (final CaseSchemaNode caseNode : cases.values()) {
             if ("input".equals(caseNode.getQName().getLocalName())) {
                 input = caseNode;
             } else if ("output".equals(caseNode.getQName().getLocalName())) {

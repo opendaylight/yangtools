@@ -46,7 +46,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -330,7 +330,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             super(NodeIdentifier.create(schema.getQName()));
             final ImmutableMap.Builder<PathArgument, InstanceIdToNodes<?>> byArgBuilder = ImmutableMap.builder();
 
-            for (final ChoiceCaseNode caze : schema.getCases().values()) {
+            for (final CaseSchemaNode caze : schema.getCases().values()) {
                 for (final DataSchemaNode cazeChild : caze.getChildNodes()) {
                     final InstanceIdToNodes<?> childOp = fromDataSchemaNode(cazeChild);
                     byArgBuilder.put(childOp.getIdentifier(), childOp);

@@ -11,7 +11,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -72,7 +72,7 @@ public final class LeafRefUtils {
                     .getDataChildByName(qname);
 
             if (child instanceof DataNodeContainer) {
-                if (!(child instanceof ChoiceCaseNode)) {
+                if (!(child instanceof CaseSchemaNode)) {
                     final QNameWithPredicate newQName = new QNameWithPredicateBuilder(
                             qname.getModule(), qname.getLocalName()).build();
                     xpath.add(newQName);

@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -49,7 +49,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
-        for (final ChoiceCaseNode caze : schemaNode.getCases().values()) {
+        for (final CaseSchemaNode caze : schemaNode.getCases().values()) {
             final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
                 for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {

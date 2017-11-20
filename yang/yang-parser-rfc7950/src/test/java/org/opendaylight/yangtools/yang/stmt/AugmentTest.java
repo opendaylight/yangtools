@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -155,7 +155,7 @@ public class AugmentTest {
         assertNotNull(augmentHolder2);
 
         assertEquals(1, augment3.getChildNodes().size());
-        final ChoiceCaseNode pause = (ChoiceCaseNode) augment3.getDataChildByName(QName.create(
+        final CaseSchemaNode pause = (CaseSchemaNode) augment3.getDataChildByName(QName.create(
                 module3.getQNameModule(), "pause"));
         assertNotNull(pause);
     }
@@ -240,15 +240,15 @@ public class AugmentTest {
         // augment "/br:interfaces/br:ifEntry/bz:augment-holder"
         final ChoiceSchemaNode odl = (ChoiceSchemaNode) augmentedHolder.getDataChildByName(QName.create(FOO, "odl"));
         assertNotNull(odl);
-        final SortedMap<QName, ChoiceCaseNode> cases = odl.getCases();
+        final SortedMap<QName, CaseSchemaNode> cases = odl.getCases();
         assertEquals(4, cases.size());
 
-        ChoiceCaseNode id = null;
-        ChoiceCaseNode node1 = null;
-        ChoiceCaseNode node2 = null;
-        ChoiceCaseNode node3 = null;
+        CaseSchemaNode id = null;
+        CaseSchemaNode node1 = null;
+        CaseSchemaNode node2 = null;
+        CaseSchemaNode node3 = null;
 
-        for (final ChoiceCaseNode ccn : cases.values()) {
+        for (final CaseSchemaNode ccn : cases.values()) {
             if ("id".equals(ccn.getQName().getLocalName())) {
                 id = ccn;
             } else if ("node1".equals(ccn.getQName().getLocalName())) {
@@ -354,13 +354,13 @@ public class AugmentTest {
         final QName argumentsQName = QName.create(NS_BAR, revision, "arguments");
         assertEquals(argumentsQName, arguments.getQName());
         assertFalse(arguments.isAugmenting());
-        final SortedMap<QName, ChoiceCaseNode> cases = arguments.getCases();
+        final SortedMap<QName, CaseSchemaNode> cases = arguments.getCases();
         assertEquals(3, cases.size());
 
-        ChoiceCaseNode attach = null;
-        ChoiceCaseNode create = null;
-        ChoiceCaseNode destroy = null;
-        for (final ChoiceCaseNode child : cases.values()) {
+        CaseSchemaNode attach = null;
+        CaseSchemaNode create = null;
+        CaseSchemaNode destroy = null;
+        for (final CaseSchemaNode child : cases.values()) {
             if ("attach".equals(child.getQName().getLocalName())) {
                 attach = child;
             } else if ("create".equals(child.getQName().getLocalName())) {

@@ -19,7 +19,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice.ImplicitChoiceCaseNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice.ImplicitCaseSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 
@@ -60,10 +60,10 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
                      * Add case short hand when augmenting choice with short hand
                      **/
                     if (this instanceof AugmentationSchemaNode
-                            && !(stmt instanceof ChoiceCaseNode || stmt instanceof ChoiceSchemaNode)
+                            && !(stmt instanceof CaseSchemaNode || stmt instanceof ChoiceSchemaNode)
                             && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
                             && Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
-                        final ImplicitChoiceCaseNode caseShorthand = new ImplicitChoiceCaseNode(dataSchemaNode);
+                        final ImplicitCaseSchemaNode caseShorthand = new ImplicitCaseSchemaNode(dataSchemaNode);
                         mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
                         mutablePublicChildNodes.add(caseShorthand);
                     } else {

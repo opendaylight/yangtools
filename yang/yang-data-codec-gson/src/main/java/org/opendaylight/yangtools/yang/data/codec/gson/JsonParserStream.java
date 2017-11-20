@@ -45,7 +45,7 @@ import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
 import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -353,7 +353,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             }
 
             for (final ChoiceSchemaNode choiceNode : choices) {
-                for (final ChoiceCaseNode concreteCase : choiceNode.getCases().values()) {
+                for (final CaseSchemaNode concreteCase : choiceNode.getCases().values()) {
                     potentialUris.addAll(resolveAllPotentialNamespaces(elementName, concreteCase));
                 }
             }

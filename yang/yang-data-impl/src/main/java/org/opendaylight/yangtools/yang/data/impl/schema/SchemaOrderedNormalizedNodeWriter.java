@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -146,7 +146,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
                 }
             }
         } else if (parentSchemaNode instanceof ChoiceSchemaNode) {
-            for (final ChoiceCaseNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases().values()) {
+            for (final CaseSchemaNode ccNode : ((ChoiceSchemaNode) parentSchemaNode).getCases().values()) {
                 for (final DataSchemaNode dsn : ccNode.getChildNodes()) {
                     if (qNameToNodes.containsKey(dsn.getQName())) {
                         write(qNameToNodes.get(dsn.getQName()), dsn);

@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.immutable;
 
 import org.immutables.value.Value;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 
 @Value.Immutable
-abstract class AbstractChoiceCaseNode extends AbstractDataNodeContainer implements ChoiceCaseNode {
+abstract class AbstractChoiceCaseNode extends AbstractDataNodeContainer implements CaseSchemaNode {
 
 }

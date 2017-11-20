@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -50,13 +50,13 @@ public class Bug6183Test {
 
         assertEquals(4, myChoice.getCases().size());
 
-        final ChoiceCaseNode implCase = myChoice.getCaseNodeByName(foo("implicit-case-container"));
+        final CaseSchemaNode implCase = myChoice.getCaseNodeByName(foo("implicit-case-container"));
         assertNotNull(implCase);
-        final ChoiceCaseNode declCaseOne = myChoice.getCaseNodeByName(foo("declared-case-one"));
+        final CaseSchemaNode declCaseOne = myChoice.getCaseNodeByName(foo("declared-case-one"));
         assertNotNull(declCaseOne);
-        final ChoiceCaseNode secondImplCase = myChoice.getCaseNodeByName(foo("second-implicit-case-container"));
+        final CaseSchemaNode secondImplCase = myChoice.getCaseNodeByName(foo("second-implicit-case-container"));
         assertNotNull(secondImplCase);
-        final ChoiceCaseNode declCaseTwo = myChoice.getCaseNodeByName(foo("declared-case-two"));
+        final CaseSchemaNode declCaseTwo = myChoice.getCaseNodeByName(foo("declared-case-two"));
         assertNotNull(declCaseTwo);
 
         assertEquals(1, declCaseOne.getChildNodes().size());

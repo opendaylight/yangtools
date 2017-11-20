@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -49,8 +49,8 @@ public class ControllerStmtParserTest {
         for (final AugmentationSchemaNode augmentationSchema : augmentations) {
             final DataSchemaNode dataNode = augmentationSchema
                     .getDataChildByName(QName.create(module.getQNameModule(), "dom-broker-impl"));
-            if (dataNode instanceof ChoiceCaseNode) {
-                final ChoiceCaseNode caseNode = (ChoiceCaseNode) dataNode;
+            if (dataNode instanceof CaseSchemaNode) {
+                final CaseSchemaNode caseNode = (CaseSchemaNode) dataNode;
                 final DataSchemaNode dataNode2 = caseNode
                         .getDataChildByName(QName.create(module.getQNameModule(), "async-data-broker"));
                 if (dataNode2 instanceof ContainerSchemaNode) {
@@ -92,7 +92,7 @@ public class ControllerStmtParserTest {
         assertTrue(dataChildChoice instanceof ChoiceSchemaNode);
 
         final ChoiceSchemaNode confChoice = (ChoiceSchemaNode) dataChildChoice;
-        final ChoiceCaseNode caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
+        final CaseSchemaNode caseNodeByName = confChoice.findCaseNodes("dom-broker-impl").iterator().next();
 
         assertNotNull(caseNodeByName);
         final DataSchemaNode dataNode2 = caseNodeByName
@@ -110,7 +110,7 @@ public class ControllerStmtParserTest {
         assertEquals(unknownSchemaNode.getQName(), unknownSchemaNode.getPath().getLastComponent());
         assertEquals("dom-async-data-broker", unknownSchemaNode.getQName().getLocalName());
 
-        final ChoiceCaseNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
+        final CaseSchemaNode domInmemoryDataBroker = confChoice.findCaseNodes("dom-inmemory-data-broker").iterator()
                 .next();
 
         assertNotNull(domInmemoryDataBroker);

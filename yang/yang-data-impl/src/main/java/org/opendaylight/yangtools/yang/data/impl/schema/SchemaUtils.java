@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -65,7 +65,7 @@ public final class SchemaUtils {
                         schema = dsn;
                     }
                 } else if (dsn instanceof ChoiceSchemaNode) {
-                    for (final ChoiceCaseNode choiceCase : ((ChoiceSchemaNode) dsn).getCases().values()) {
+                    for (final CaseSchemaNode choiceCase : ((ChoiceSchemaNode) dsn).getCases().values()) {
 
                         final DataSchemaNode dataChildByName = choiceCase.getDataChildByName(qname);
                         if (dataChildByName != null) {
@@ -120,7 +120,7 @@ public final class SchemaUtils {
     }
 
     public static DataSchemaNode findSchemaForChild(final ChoiceSchemaNode schema, final QName childPartialQName) {
-        for (final ChoiceCaseNode choiceCaseNode : schema.getCases().values()) {
+        for (final CaseSchemaNode choiceCaseNode : schema.getCases().values()) {
             final Optional<DataSchemaNode> childSchema = findFirstSchema(childPartialQName,
                 choiceCaseNode.getChildNodes());
             if (childSchema.isPresent()) {
@@ -142,7 +142,7 @@ public final class SchemaUtils {
     }
 
     public static AugmentationSchemaNode findSchemaForAugment(final ChoiceSchemaNode schema, final Set<QName> qnames) {
-        for (final ChoiceCaseNode choiceCaseNode : schema.getCases().values()) {
+        for (final CaseSchemaNode choiceCaseNode : schema.getCases().values()) {
             final Optional<AugmentationSchemaNode> schemaForAugment = findAugment(choiceCaseNode, qnames);
             if (schemaForAugment.isPresent()) {
                 return schemaForAugment.get();
@@ -188,7 +188,7 @@ public final class SchemaUtils {
                     continue;
                 }
 
-                for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases().values()) {
+                for (final CaseSchemaNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases().values()) {
                     for (final QName qname : getChildNodesRecursive(choiceCaseNode)) {
                         mappedChoices.put(qname, (ChoiceSchemaNode) childSchema);
                     }
@@ -244,12 +244,12 @@ public final class SchemaUtils {
                 final AugmentationSchemaNode mostTopAugmentation = augments.get(child.getQName());
 
                 // recursively add all child nodes in case of augment, case and choice
-                if (child instanceof AugmentationSchemaNode || child instanceof ChoiceCaseNode) {
+                if (child instanceof AugmentationSchemaNode || child instanceof CaseSchemaNode) {
                     for (final QName qname : getChildNodesRecursive((DataNodeContainer) child)) {
                         childNodesToAugmentation.put(qname, mostTopAugmentation);
                     }
                 } else if (child instanceof ChoiceSchemaNode) {
-                    for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) child).getCases().values()) {
+                    for (final CaseSchemaNode choiceCaseNode : ((ChoiceSchemaNode) child).getCases().values()) {
                         for (final QName qname : getChildNodesRecursive(choiceCaseNode)) {
                             childNodesToAugmentation.put(qname, mostTopAugmentation);
                         }
@@ -262,7 +262,7 @@ public final class SchemaUtils {
 
         // Choice Node has to map child nodes from all its cases
         if (schema instanceof ChoiceSchemaNode) {
-            for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) schema).getCases().values()) {
+            for (final CaseSchemaNode choiceCaseNode : ((ChoiceSchemaNode) schema).getCases().values()) {
                 if (!augments.containsKey(choiceCaseNode.getQName())) {
                     continue;
                 }
@@ -287,10 +287,10 @@ public final class SchemaUtils {
 
         for (final DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
             if (childSchema instanceof ChoiceSchemaNode) {
-                for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases().values()) {
+                for (final CaseSchemaNode choiceCaseNode : ((ChoiceSchemaNode) childSchema).getCases().values()) {
                     allChildNodes.addAll(getChildNodesRecursive(choiceCaseNode));
                 }
-            } else if (childSchema instanceof AugmentationSchemaNode || childSchema instanceof ChoiceCaseNode) {
+            } else if (childSchema instanceof AugmentationSchemaNode || childSchema instanceof CaseSchemaNode) {
                 allChildNodes.addAll(getChildNodesRecursive((DataNodeContainer) childSchema));
             } else {
                 allChildNodes.add(childSchema.getQName());
@@ -322,7 +322,7 @@ public final class SchemaUtils {
         final Set<DataSchemaNode> realChildNodes = new HashSet<>();
         if (targetSchema instanceof ChoiceSchemaNode) {
             for (final DataSchemaNode dataSchemaNode : augmentSchema.getChildNodes()) {
-                for (final ChoiceCaseNode choiceCaseNode : ((ChoiceSchemaNode) targetSchema).getCases().values()) {
+                for (final CaseSchemaNode choiceCaseNode : ((ChoiceSchemaNode) targetSchema).getCases().values()) {
                     if (getChildNodesRecursive(choiceCaseNode).contains(dataSchemaNode.getQName())) {
                         realChildNodes.add(choiceCaseNode.getDataChildByName(dataSchemaNode.getQName()));
                     }
@@ -343,9 +343,9 @@ public final class SchemaUtils {
         return realChildNodes;
     }
 
-    public static Optional<ChoiceCaseNode> detectCase(final ChoiceSchemaNode schema,
+    public static Optional<CaseSchemaNode> detectCase(final ChoiceSchemaNode schema,
             final DataContainerChild<?, ?> child) {
-        for (final ChoiceCaseNode choiceCaseNode : schema.getCases().values()) {
+        for (final CaseSchemaNode choiceCaseNode : schema.getCases().values()) {
             if (child instanceof AugmentationNode
                     && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) {
                 return Optional.of(choiceCaseNode);
@@ -357,7 +357,7 @@ public final class SchemaUtils {
         return Optional.empty();
     }
 
-    public static boolean belongsToCaseAugment(final ChoiceCaseNode caseNode,
+    public static boolean belongsToCaseAugment(final CaseSchemaNode caseNode,
             final AugmentationIdentifier childToProcess) {
         for (final AugmentationSchemaNode augmentationSchema : caseNode.getAvailableAugmentations()) {
 

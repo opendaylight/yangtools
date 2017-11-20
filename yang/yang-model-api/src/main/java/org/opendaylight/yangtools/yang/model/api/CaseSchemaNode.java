@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * The ChoiceCaseNode interface is used to define branches of the ChoiceNode.
+ * The CaseSchemaNode interface is used to define branches of the ChoiceSchemaNode.
  */
-public interface ChoiceCaseNode extends DataSchemaNode, DataNodeContainer, AugmentationTarget {
+public interface CaseSchemaNode extends DataSchemaNode, DataNodeContainer, AugmentationTarget {
 
 }

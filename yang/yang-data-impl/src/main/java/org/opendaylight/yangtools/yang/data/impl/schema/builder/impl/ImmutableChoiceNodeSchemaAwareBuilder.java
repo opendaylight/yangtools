@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 
 public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBuilder {
@@ -39,7 +39,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
     @Override
     public DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> withChild(final DataContainerChild<?, ?> child) {
         if (validator == null) {
-            Optional<ChoiceCaseNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
+            Optional<CaseSchemaNode> detectedCaseOpt = SchemaUtils.detectCase(schema, child);
             DataValidationException.checkLegalChild(detectedCaseOpt.isPresent(), child.getIdentifier(), schema);
             validator = new DataNodeContainerValidator(detectedCaseOpt.get());
         }

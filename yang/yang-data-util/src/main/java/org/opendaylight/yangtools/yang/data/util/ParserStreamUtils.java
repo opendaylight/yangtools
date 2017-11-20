@@ -15,7 +15,7 @@ import java.util.Deque;
 import java.util.List;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -62,7 +62,7 @@ public final class ParserStreamUtils {
 
         // try to find data schema node in choice (looking for first match)
         for (final ChoiceSchemaNode choiceNode : childChoices) {
-            for (final ChoiceCaseNode concreteCase : choiceNode.getCases().values()) {
+            for (final CaseSchemaNode concreteCase : choiceNode.getCases().values()) {
                 final Deque<DataSchemaNode> resultFromRecursion = findSchemaNodeByNameAndNamespace(concreteCase,
                         childName, namespace);
                 if (!resultFromRecursion.isEmpty()) {

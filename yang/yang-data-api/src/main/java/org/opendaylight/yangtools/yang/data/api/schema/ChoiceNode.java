@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *
  * <p>
  * Valid alternatives of subtree are described by instances of
- * {@link org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode}, which are retrieved via
+ * {@link org.opendaylight.yangtools.yang.model.api.CaseSchemaNode}, which are retrieved via
  * {@link org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode#getCases()}.
  */
 public interface ChoiceNode extends MixinNode, DataContainerNode<NodeIdentifier>,

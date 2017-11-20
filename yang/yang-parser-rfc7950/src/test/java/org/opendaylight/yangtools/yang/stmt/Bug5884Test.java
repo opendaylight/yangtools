@@ -16,7 +16,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -53,7 +53,7 @@ public class Bug5884Test {
         while (iterator.hasNext()) {
             AugmentationSchemaNode allAugments = iterator.next();
             final DataSchemaNode currentChoice = allAugments.getChildNodes().iterator().next();
-            assertTrue(currentChoice instanceof ChoiceCaseNode);
+            assertTrue(currentChoice instanceof CaseSchemaNode);
         }
     }
 }

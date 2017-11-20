@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -26,7 +26,7 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
     @Override
     protected CompositeNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
-        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((ChoiceCaseNode) schema);
+        CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((CaseSchemaNode) schema);
         caseNodeDataWithSchema = newChild;
         addCompositeChild(newChild);
         return newChild;

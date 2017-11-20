@@ -13,7 +13,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -48,7 +48,7 @@ public class ChoiceStmtTest {
         assertNotNull(choice);
         assertEquals(5, choice.getCases().size());
 
-        ChoiceCaseNode caseNode = choice.findCaseNodes("input").iterator().next();
+        CaseSchemaNode caseNode = choice.findCaseNodes("input").iterator().next();
         assertNotNull(caseNode);
         caseNode = choice.findCaseNodes("output").iterator().next();
         assertNotNull(caseNode);

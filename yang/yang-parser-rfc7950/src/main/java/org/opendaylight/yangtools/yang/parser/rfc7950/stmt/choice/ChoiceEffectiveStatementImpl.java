@@ -17,7 +17,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -41,8 +41,8 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
 
     private final Set<AugmentationSchemaNode> augmentations;
-    private final SortedMap<QName, ChoiceCaseNode> cases;
-    private final ChoiceCaseNode defaultCase;
+    private final SortedMap<QName, CaseSchemaNode> cases;
+    private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
     private final boolean mandatory;
 
@@ -53,21 +53,21 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
 
         // initSubstatementCollectionsAndFields
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final SortedMap<QName, ChoiceCaseNode> casesInit = new TreeMap<>();
+        final SortedMap<QName, CaseSchemaNode> casesInit = new TreeMap<>();
 
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 final AugmentationSchemaNode augmentationSchema = (AugmentationSchemaNode) effectiveStatement;
                 augmentationsInit.add(augmentationSchema);
             }
-            if (effectiveStatement instanceof ChoiceCaseNode) {
-                final ChoiceCaseNode choiceCaseNode = (ChoiceCaseNode) effectiveStatement;
+            if (effectiveStatement instanceof CaseSchemaNode) {
+                final CaseSchemaNode choiceCaseNode = (CaseSchemaNode) effectiveStatement;
                 // FIXME: we may be overwriting a previous entry, is that really okay?
                 casesInit.put(choiceCaseNode.getQName(), choiceCaseNode);
             }
             if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                final ChoiceCaseNode shorthandCase = new ImplicitChoiceCaseNode(dataSchemaNode);
+                final CaseSchemaNode shorthandCase = new ImplicitCaseSchemaNode(dataSchemaNode);
                 // FIXME: we may be overwriting a previous entry, is that really okay?
                 casesInit.put(shorthandCase.getQName(), shorthandCase);
                 if (dataSchemaNode.isAugmenting() && !isAugmenting()) {
@@ -131,12 +131,12 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
     }
 
     @Override
-    public SortedMap<QName, ChoiceCaseNode> getCases() {
+    public SortedMap<QName, CaseSchemaNode> getCases() {
         return cases;
     }
 
     @Override
-    public Optional<ChoiceCaseNode> getDefaultCase() {
+    public Optional<CaseSchemaNode> getDefaultCase() {
         return Optional.ofNullable(defaultCase);
     }
 

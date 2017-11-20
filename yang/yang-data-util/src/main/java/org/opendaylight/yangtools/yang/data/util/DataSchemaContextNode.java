@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -107,7 +107,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     private static ChoiceSchemaNode findChoice(final Iterable<ChoiceSchemaNode> choices, final QName child) {
         for (ChoiceSchemaNode choice : choices) {
             // FIXME: this looks weird: what are we looking for again?
-            for (ChoiceCaseNode caze : choice.getCases().values()) {
+            for (CaseSchemaNode caze : choice.getCases().values()) {
                 if (findChildSchemaNode(caze, child) != null) {
                     return choice;
                 }

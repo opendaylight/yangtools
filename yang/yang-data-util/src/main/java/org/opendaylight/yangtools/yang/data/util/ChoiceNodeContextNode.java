@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -25,7 +25,7 @@ class ChoiceNodeContextNode extends AbstractMixinContextNode<NodeIdentifier> {
         ImmutableMap.Builder<QName, DataSchemaContextNode<?>> byQNameBuilder = ImmutableMap.builder();
         ImmutableMap.Builder<PathArgument, DataSchemaContextNode<?>> byArgBuilder = ImmutableMap.builder();
 
-        for (ChoiceCaseNode caze : schema.getCases().values()) {
+        for (CaseSchemaNode caze : schema.getCases().values()) {
             for (DataSchemaNode cazeChild : caze.getChildNodes()) {
                 DataSchemaContextNode<?> childOp = fromDataSchemaNode(cazeChild);
                 byArgBuilder.put(childOp.getIdentifier(), childOp);
