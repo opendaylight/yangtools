@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import javax.annotation.Nonnull;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+@MetaInfServices
 public final class JaxenSchemaContextFactory implements XPathSchemaContextFactory {
     @Nonnull
     @Override
