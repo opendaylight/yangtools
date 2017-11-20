@@ -12,7 +12,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -125,7 +125,7 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
                 } else if (childNode instanceof ChoiceSchemaNode) {
                     final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) childNode;
                     allChoices.add(choiceNode);
-                    for (final ChoiceCaseNode caseNode : choiceNode.getCases().values()) {
+                    for (final CaseSchemaNode caseNode : choiceNode.getCases().values()) {
                         traverse(caseNode);
                     }
                 }

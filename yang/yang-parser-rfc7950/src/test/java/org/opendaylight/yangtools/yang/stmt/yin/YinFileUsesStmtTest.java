@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -49,7 +49,7 @@ public class YinFileUsesStmtTest {
         final Iterator<AugmentationSchemaNode> augmentIterator = augmentations.iterator();
         final AugmentationSchemaNode augment = augmentIterator.next();
 
-        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(
+        final CaseSchemaNode caseNode = (CaseSchemaNode) augment.getDataChildByName(
             QName.create(testModule.getQNameModule(), "main-impl"));
         assertNotNull(caseNode);
 

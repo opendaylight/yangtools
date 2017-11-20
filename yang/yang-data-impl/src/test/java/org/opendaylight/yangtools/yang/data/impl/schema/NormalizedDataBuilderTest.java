@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -212,7 +212,7 @@ public class NormalizedDataBuilderTest {
                     return retVal;
                 }
             } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
+                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
                     DataSchemaNode retVal = findChildNode(caseNode, name);
                     if (retVal != null) {
                         return retVal;

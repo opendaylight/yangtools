@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -1846,7 +1846,7 @@ abstract class SchemaContextEmitter {
             emitConfigNode(choice.isConfiguration());
             emitMandatoryNode(choice.isMandatory());
             emitDocumentedNode(choice);
-            for (final ChoiceCaseNode caze : choice.getCases().values()) {
+            for (final CaseSchemaNode caze : choice.getCases().values()) {
                 // TODO: emit short case?
                 emitCaseNode(caze);
             }
@@ -1854,7 +1854,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitCaseNode(final ChoiceCaseNode caze) {
+        private void emitCaseNode(final CaseSchemaNode caze) {
             if (!super.emitInstantiated && caze.isAugmenting()) {
                 return;
             }
@@ -1922,8 +1922,8 @@ abstract class SchemaContextEmitter {
                 emitRefineListNodes((ListSchemaNode) value);
             } else if (value instanceof ChoiceSchemaNode) {
                 emitRefineChoiceNodes((ChoiceSchemaNode) value);
-            } else if (value instanceof ChoiceCaseNode) {
-                emitRefineCaseNodes((ChoiceCaseNode) value);
+            } else if (value instanceof CaseSchemaNode) {
+                emitRefineCaseNodes((CaseSchemaNode) value);
             } else if (value instanceof ContainerSchemaNode) {
                 emitRefineContainerNodes((ContainerSchemaNode) value);
             } else if (value instanceof AnyXmlSchemaNode) {
@@ -2034,8 +2034,8 @@ abstract class SchemaContextEmitter {
 
         }
 
-        private void emitRefineCaseNodes(final ChoiceCaseNode value) {
-            final ChoiceCaseNode original = getOriginalChecked(value);
+        private void emitRefineCaseNodes(final CaseSchemaNode value) {
+            final CaseSchemaNode original = getOriginalChecked(value);
             emitDocumentedNodeRefine(original, value);
 
         }
@@ -2074,8 +2074,8 @@ abstract class SchemaContextEmitter {
             }
 
             for (final DataSchemaNode childNode : augmentation.getChildNodes()) {
-                if (childNode instanceof ChoiceCaseNode) {
-                    emitCaseNode((ChoiceCaseNode) childNode);
+                if (childNode instanceof CaseSchemaNode) {
+                    emitCaseNode((CaseSchemaNode) childNode);
                 } else {
                     emitDataSchemaNode(childNode);
                 }

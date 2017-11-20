@@ -22,7 +22,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -151,7 +151,7 @@ public final class TestUtils {
                 checkIsAugmenting(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
                 checkIsAugmenting(caseNode, expected);
             }
         }
@@ -174,7 +174,7 @@ public final class TestUtils {
                 checkIsAddedByUses(child, expected);
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+            for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
                 checkIsAddedByUses(caseNode, expected);
             }
         }

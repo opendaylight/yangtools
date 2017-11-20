@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -53,7 +53,7 @@ public class YinFileAugmentStmtTest {
                         + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
-        final ChoiceCaseNode caseNode = (ChoiceCaseNode) augment.getDataChildByName(QName.create(
+        final CaseSchemaNode caseNode = (CaseSchemaNode) augment.getDataChildByName(QName.create(
                 testModule.getQNameModule(), "main-impl"));
         assertNotNull(caseNode);
     }

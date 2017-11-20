@@ -68,7 +68,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -371,7 +371,7 @@ public class NormalizedNodeXmlTranslationTest {
                     return retVal;
                 }
             } else if (dataSchemaNode instanceof ChoiceSchemaNode) {
-                for (ChoiceCaseNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
+                for (CaseSchemaNode caseNode : ((ChoiceSchemaNode) dataSchemaNode).getCases().values()) {
                     DataSchemaNode retVal = findChildNode(caseNode, name);
                     if (retVal != null) {
                         return retVal;

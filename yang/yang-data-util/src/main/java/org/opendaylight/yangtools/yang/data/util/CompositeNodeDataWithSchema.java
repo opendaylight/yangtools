@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -83,9 +83,9 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) choiceCandidate;
 
         final DataSchemaNode caseCandidate = schemas.pop();
-        Preconditions.checkArgument(caseCandidate instanceof ChoiceCaseNode,
+        Preconditions.checkArgument(caseCandidate instanceof CaseSchemaNode,
             "Expected node of type ChoiceCaseNode but was %s", caseCandidate.getClass().getSimpleName());
-        final ChoiceCaseNode caseNode = (ChoiceCaseNode) caseCandidate;
+        final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
         AugmentationSchemaNode augSchema = null;
         if (choiceCandidate.isAugmenting()) {

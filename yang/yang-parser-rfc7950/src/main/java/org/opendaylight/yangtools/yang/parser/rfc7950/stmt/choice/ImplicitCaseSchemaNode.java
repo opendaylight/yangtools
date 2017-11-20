@@ -19,7 +19,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -32,14 +32,14 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 // FIXME: hide this somewhere
-public final class ImplicitChoiceCaseNode implements ChoiceCaseNode, DerivableSchemaNode {
+public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSchemaNode {
 
     private final DataSchemaNode caseShorthandNode;
-    private final ChoiceCaseNode original;
+    private final CaseSchemaNode original;
     private final SchemaPath path;
     private final boolean augmenting;
 
-    public ImplicitChoiceCaseNode(final DataSchemaNode caseShorthandNode) {
+    public ImplicitCaseSchemaNode(final DataSchemaNode caseShorthandNode) {
         this.caseShorthandNode = requireNonNull(caseShorthandNode);
         this.path = requireNonNull(caseShorthandNode.getPath().getParent());
         this.original = getOriginalIfPresent(caseShorthandNode);
@@ -157,20 +157,20 @@ public final class ImplicitChoiceCaseNode implements ChoiceCaseNode, DerivableSc
         if (getClass() != obj.getClass()) {
             return false;
         }
-        ImplicitChoiceCaseNode other = (ImplicitChoiceCaseNode) obj;
+        ImplicitCaseSchemaNode other = (ImplicitCaseSchemaNode) obj;
         return Objects.equals(getQName(), other.getQName()) && Objects.equals(path, other.path);
     }
 
     @Override
     public String toString() {
-        return ImplicitChoiceCaseNode.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
+        return ImplicitCaseSchemaNode.class.getSimpleName() + "[" + "qname=" + getQName() + "]";
     }
 
-    private static ChoiceCaseNode getOriginalIfPresent(final SchemaNode caseShorthandNode) {
+    private static CaseSchemaNode getOriginalIfPresent(final SchemaNode caseShorthandNode) {
         if (caseShorthandNode instanceof DerivableSchemaNode) {
             final Optional<? extends SchemaNode> original = ((DerivableSchemaNode) caseShorthandNode).getOriginal();
             if (original.isPresent()) {
-                return new ImplicitChoiceCaseNode((DataSchemaNode) original.get());
+                return new ImplicitCaseSchemaNode((DataSchemaNode) original.get());
             }
         }
         return null;

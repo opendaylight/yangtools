@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -65,7 +65,7 @@ public class DataNodeContainerValidator {
         Set<QName> allChildNodes = new HashSet<>();
 
         for (DataSchemaNode childSchema : nodeContainer.getChildNodes()) {
-            if (childSchema instanceof ChoiceCaseNode) {
+            if (childSchema instanceof CaseSchemaNode) {
                 allChildNodes.addAll(getChildNodes((DataNodeContainer) childSchema));
             } else if (!(childSchema instanceof AugmentationSchemaNode)) {
                 allChildNodes.add(childSchema.getQName());

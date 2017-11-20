@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -295,9 +295,9 @@ public class GroupingTest {
         assertNotNull(how_u);
         TestUtils.checkIsAddedByUses(how_u, true);
         assertFalse(how_u.isAugmenting());
-        final SortedMap<QName, ChoiceCaseNode> cases_u = how_u.getCases();
+        final SortedMap<QName, CaseSchemaNode> cases_u = how_u.getCases();
         assertEquals(2, cases_u.size());
-        final ChoiceCaseNode interval = how_u.findCaseNodes("interval").iterator().next();
+        final CaseSchemaNode interval = how_u.findCaseNodes("interval").iterator().next();
         assertFalse(interval.isAugmenting());
         final LeafSchemaNode name = (LeafSchemaNode) interval.getDataChildByName(QName.create(foo.getQNameModule(),
                 "name"));

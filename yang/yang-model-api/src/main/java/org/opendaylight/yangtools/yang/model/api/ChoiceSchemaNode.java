@@ -28,7 +28,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return set of ChoiceCaseNode objects defined in this node which represents set of arguments of the YANG
      *         <code>case</code> substatement of the <code>choice</code> statement.
      */
-    SortedMap<QName, ChoiceCaseNode> getCases();
+    SortedMap<QName, CaseSchemaNode> getCases();
 
     /**
      * Returns the concrete case according to specified Q name.
@@ -38,7 +38,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return child case node of this Choice if child with given name is present, empty otherwise.
      * @throws NullPointerException if qname is null
      */
-    default Optional<ChoiceCaseNode> findCase(final QName qname) {
+    default Optional<CaseSchemaNode> findCase(final QName qname) {
         return Optional.ofNullable(getCases().get(requireNonNull(qname)));
     }
 
@@ -51,13 +51,13 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @throws NullPointerException if localname is null
      */
     @Beta
-    default List<ChoiceCaseNode> findCaseNodes(final String localname) {
+    default List<CaseSchemaNode> findCaseNodes(final String localname) {
         return getCases().values().stream().filter(node -> localname.equals(node.getQName().getLocalName()))
                 .collect(ImmutableList.toImmutableList());
     }
 
     /**
-     * Find a specific data schema child, if present. This method searches among its {@link ChoiceCaseNode}s,
+     * Find a specific data schema child, if present. This method searches among its {@link CaseSchemaNode}s,
      * potentially recursing to nested choices.
      *
      * @param qname
@@ -68,7 +68,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
     @Beta
     default Optional<DataSchemaNode> findDataSchemaChild(final QName qname) {
         requireNonNull(qname);
-        for (ChoiceCaseNode caseNode : getCases().values()) {
+        for (CaseSchemaNode caseNode : getCases().values()) {
             final Optional<DataSchemaNode> child = caseNode.findDataChildByName(qname);
             if (child.isPresent()) {
                 return child;
@@ -88,7 +88,7 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @deprecated Use either {@code getCases().get(name)} or #findCase(QName)
      */
     @Deprecated
-    default ChoiceCaseNode getCaseNodeByName(final QName qname) {
+    default CaseSchemaNode getCaseNodeByName(final QName qname) {
         return getCases().get(qname);
     }
 
@@ -98,5 +98,5 @@ public interface ChoiceSchemaNode extends DataSchemaNode, AugmentationTarget, Ma
      * @return string with the name of case which is specified in the argument of the YANG <code>default</code>
      *         substatement of <code>choice</code> statement.
      */
-    Optional<ChoiceCaseNode> getDefaultCase();
+    Optional<CaseSchemaNode> getDefaultCase();
 }

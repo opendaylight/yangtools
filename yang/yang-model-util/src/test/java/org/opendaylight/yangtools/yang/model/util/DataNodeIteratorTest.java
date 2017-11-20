@@ -22,7 +22,7 @@ import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -80,11 +80,11 @@ public class DataNodeIteratorTest {
         final ListSchemaNode mockedList = mock(ListSchemaNode.class);
 
         final ChoiceSchemaNode mockedChoice = mock(ChoiceSchemaNode.class);
-        final ChoiceCaseNode mockedCase1 = mock(ChoiceCaseNode.class);
+        final CaseSchemaNode mockedCase1 = mock(CaseSchemaNode.class);
         final QName mockedCase1QName = QName.create("", "case1");
-        final ChoiceCaseNode mockedCase2 = mock(ChoiceCaseNode.class);
+        final CaseSchemaNode mockedCase2 = mock(CaseSchemaNode.class);
         final QName mockedCase2QName = QName.create("", "case2");
-        final SortedMap<QName, ChoiceCaseNode> cases = ImmutableSortedMap.of(mockedCase1QName, mockedCase1,
+        final SortedMap<QName, CaseSchemaNode> cases = ImmutableSortedMap.of(mockedCase1QName, mockedCase1,
             mockedCase2QName, mockedCase2);
         doReturn(cases).when(mockedChoice).getCases();
 

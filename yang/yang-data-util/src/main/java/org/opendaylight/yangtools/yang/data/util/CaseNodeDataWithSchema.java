@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 
 class CaseNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    CaseNodeDataWithSchema(final ChoiceCaseNode schema) {
+    CaseNodeDataWithSchema(final CaseSchemaNode schema) {
         super(schema);
     }
 

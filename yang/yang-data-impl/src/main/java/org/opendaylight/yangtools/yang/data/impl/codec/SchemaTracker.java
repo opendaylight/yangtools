@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -121,7 +121,7 @@ public final class SchemaTracker {
 
     private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
-        for (final ChoiceCaseNode caze : parent.getCases().values()) {
+        for (final CaseSchemaNode caze : parent.getCases().values()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
             if (potential != null) {
                 schema = potential;
@@ -133,7 +133,7 @@ public final class SchemaTracker {
 
     private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
         DataSchemaNode schema = null;
-        for (final ChoiceCaseNode caze : parent.getCases().values()) {
+        for (final CaseSchemaNode caze : parent.getCases().values()) {
             final DataSchemaNode potential = caze.getDataChildByName(qname);
             if (potential != null) {
                 schema = caze;

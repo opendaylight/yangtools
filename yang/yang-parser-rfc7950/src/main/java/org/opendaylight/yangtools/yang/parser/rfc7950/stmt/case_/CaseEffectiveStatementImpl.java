@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseEffectiveStatement;
@@ -19,14 +19,14 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSimp
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<CaseStatement>
-        implements CaseEffectiveStatement, ChoiceCaseNode, DerivableSchemaNode {
+        implements CaseEffectiveStatement, CaseSchemaNode, DerivableSchemaNode {
 
-    private final ChoiceCaseNode original;
+    private final CaseSchemaNode original;
     private final boolean configuration;
 
     CaseEffectiveStatementImpl(final StmtContext<QName, CaseStatement, EffectiveStatement<QName, CaseStatement>> ctx) {
         super(ctx);
-        this.original = (ChoiceCaseNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
+        this.original = (CaseSchemaNode) ctx.getOriginalCtx().map(StmtContext::buildEffective).orElse(null);
 
         if (ctx.isConfiguration()) {
             configuration = ctx.allSubstatementsStream().anyMatch(StmtContext::isConfiguration);
@@ -36,7 +36,7 @@ final class CaseEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeCo
     }
 
     @Override
-    public Optional<ChoiceCaseNode> getOriginal() {
+    public Optional<CaseSchemaNode> getOriginal() {
         return Optional.ofNullable(original);
     }
 

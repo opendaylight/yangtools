@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -179,7 +179,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         ChoiceSchemaNode foundChoice = null;
         choiceLoop:
         for (final ChoiceSchemaNode choice : choices) {
-            for (final ChoiceCaseNode caze : choice.getCases().values()) {
+            for (final CaseSchemaNode caze : choice.getCases().values()) {
                 if (findChildSchemaNode(caze, child).isPresent()) {
                     foundChoice = choice;
                     break choiceLoop;

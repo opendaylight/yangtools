@@ -20,7 +20,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -182,7 +182,7 @@ public class AugmentProcessTest {
         final ChoiceSchemaNode lockType = (ChoiceSchemaNode) locks.getDataChildByName(QName
                 .create(ns, rev, "lock-type"));
 
-        final ChoiceCaseNode leafAugCase = lockType.findCaseNodes("leaf-aug-case").iterator().next();
+        final CaseSchemaNode leafAugCase = lockType.findCaseNodes("leaf-aug-case").iterator().next();
         assertTrue(leafAugCase.isAugmenting());
         final DataSchemaNode leafAug = leafAugCase.getDataChildByName(QName.create(nsAug, rev, "leaf-aug-case"));
         assertFalse(leafAug.isAugmenting());

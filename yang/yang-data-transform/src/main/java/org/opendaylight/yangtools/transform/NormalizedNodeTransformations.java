@@ -27,7 +27,8 @@ public final class NormalizedNodeTransformations {
         throw new UnsupportedOperationException("Utility class.");
     }
 
-    public static NormalizedNode<?, ?> transformQNames(final NormalizedNode<?, ?> original, final Function<QName, QName> mapping) {
+    public static NormalizedNode<?, ?> transformQNames(final NormalizedNode<?, ?> original,
+            final Function<QName, QName> mapping) {
         NormalizedNodeResult result = new NormalizedNodeResult();
         NormalizedNodeStreamWriter nodeWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         NormalizedNodeStreamWriter transformWriter = QNameTransformingStreamWriter.fromFunction(nodeWriter, mapping);

@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class CaseEnforcer implements Immutable {
@@ -41,7 +41,7 @@ final class CaseEnforcer implements Immutable {
         this.enforcer = Preconditions.checkNotNull(enforcer);
     }
 
-    static CaseEnforcer forTree(final ChoiceCaseNode schema, final DataTreeConfiguration treeConfig) {
+    static CaseEnforcer forTree(final CaseSchemaNode schema, final DataTreeConfiguration treeConfig) {
         final TreeType type = treeConfig.getTreeType();
         final Builder<NodeIdentifier, DataSchemaNode> childrenBuilder = ImmutableMap.builder();
         final Builder<AugmentationIdentifier, AugmentationSchemaNode> augmentationsBuilder = ImmutableMap.builder();

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -425,7 +425,7 @@ public final class SchemaContextUtil {
 
             if (foundNode == null) {
                 // fallback that tries to map into one of the child cases
-                for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) parent).getCases().values()) {
+                for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) parent).getCases().values()) {
                     final DataSchemaNode maybeChild = caseNode.getDataChildByName(current);
                     if (maybeChild != null) {
                         foundNode = findNodeIn(maybeChild, nextPath);

@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-import org.opendaylight.yangtools.yang.model.api.ChoiceCaseNode;
+import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -103,7 +103,7 @@ class LeafRefContextTreeBuilder {
 
             final ChoiceSchemaNode choice = (ChoiceSchemaNode) node;
             // :FIXME choice without case
-            for (final ChoiceCaseNode caseNode : choice.getCases().values()) {
+            for (final CaseSchemaNode caseNode : choice.getCases().values()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencingTree(
                         caseNode, currentModule);
 
@@ -180,7 +180,7 @@ class LeafRefContextTreeBuilder {
                 }
             }
         } else if (node instanceof ChoiceSchemaNode) {
-            for (final ChoiceCaseNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
+            for (final CaseSchemaNode caseNode : ((ChoiceSchemaNode) node).getCases().values()) {
                 final LeafRefContext childLeafRefContext = buildLeafRefContextReferencedByTree(caseNode, currentModule);
 
                 if (childLeafRefContext.hasReferencedChild() || childLeafRefContext.isReferenced()) {
