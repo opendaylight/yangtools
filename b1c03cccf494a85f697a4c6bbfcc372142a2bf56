@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_b3a768a6",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_668279c9",
+      "range": {
+        "startLine": 40,
+        "startChar": 4,
+        "endLine": 40,
+        "endChar": 10
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_061a9dcb",
         "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
         "patchSetId": 15
@@ -36,6 +60,30 @@
       "writtenOn": "2017-11-10T01:26:20Z",
       "side": 1,
       "message": "do not store optionals in fields -- instantiate them in getters instead.",
+      "range": {
+        "startLine": 44,
+        "startChar": 18,
+        "endLine": 45,
+        "endChar": 88
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_13bab4c0",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 45,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_061a9dcb",
       "range": {
         "startLine": 44,
         "startChar": 18,
@@ -71,6 +119,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_93cd0469",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 72,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "err, default is a keyword, sorry.",
+      "parentUuid": "9a245df4_e61e69ba",
+      "range": {
+        "startLine": 72,
+        "startChar": 52,
+        "endLine": 72,
+        "endChar": 62
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_0681fdc3",
         "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
         "patchSetId": 15
@@ -94,6 +166,30 @@
     },
     {
       "key": {
+        "uuid": "9a245df4_33ea58ac",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 94,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_0681fdc3",
+      "range": {
+        "startLine": 94,
+        "startChar": 55,
+        "endLine": 94,
+        "endChar": 117
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9a245df4_a628f1e2",
         "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
         "patchSetId": 15
@@ -105,6 +201,30 @@
       "writtenOn": "2017-11-10T01:26:20Z",
       "side": 1,
       "message": "Looks like a Multimap.",
+      "range": {
+        "startLine": 167,
+        "startChar": 57,
+        "endLine": 167,
+        "endChar": 91
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_733df02a",
+        "filename": "yang/yang-model-api/src/main/java/org/opendaylight/yangtools/yang/model/repo/api/SchemaContextFactoryConfiguration.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 167,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_a628f1e2",
       "range": {
         "startLine": 167,
         "startChar": 57,
@@ -151,6 +271,30 @@
       "writtenOn": "2017-11-10T01:26:20Z",
       "side": 1,
       "message": "@Deprecate also all implementation methods",
+      "range": {
+        "startLine": 144,
+        "startChar": 0,
+        "endLine": 147,
+        "endChar": 9
+      },
+      "revId": "b1c03cccf494a85f697a4c6bbfcc372142a2bf56",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9a245df4_f3cd6032",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/repo/util/SchemaSourceTransformerTest.java",
+        "patchSetId": 15
+      },
+      "lineNbr": 147,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-20T12:44:41Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "9a245df4_c61b65c8",
       "range": {
         "startLine": 144,
         "startChar": 0,
