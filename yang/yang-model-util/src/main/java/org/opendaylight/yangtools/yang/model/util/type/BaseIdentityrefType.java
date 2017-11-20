@@ -10,11 +10,13 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefinition>
@@ -30,6 +32,11 @@ final class BaseIdentityrefType extends AbstractBaseType<IdentityrefTypeDefiniti
     @Override
     public Set<IdentitySchemaNode> getIdentities() {
         return identities;
+    }
+
+    @Override
+    public Optional<? extends IdentityTypeDefinition> getDefaultValue() {
+        return Optional.empty();
     }
 
     @Override
