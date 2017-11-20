@@ -26,6 +26,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.Context;
@@ -92,9 +93,12 @@ public class JaxenTest {
         assertNotNull(resultExpressionEvaluate);
         assertTrue(resultExpressionEvaluate.isPresent());
         XPathResult<?> xpathResult = resultExpressionEvaluate.get();
-        Object value = ((XPathNodesetResult) xpathResult).getValue().iterator().next().getValue();
-        assertNotNull(value);
-        assertEquals("three", value);
+        assertTrue(xpathResult instanceof XPathNodesetResult);
+        XPathNodesetResult nodeset = (XPathNodesetResult) xpathResult;
+
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = nodeset.getValue().iterator().next();
+        assertNotNull(entry);
+        assertEquals("three", entry.getValue().getValue());
 
         convertNctx = new ConverterNamespaceContext(createPrefixes());
         navigator = new NormalizedNodeNavigator(convertNctx, (JaxenDocument) xpathDocument);
@@ -136,8 +140,12 @@ public class JaxenTest {
                 .evaluate(xpathDocument, createYangInstanceIdentifier(true));
         assertTrue(resultExpressionEvaluate.isPresent());
         XPathResult<?> xpathResult = resultExpressionEvaluate.get();
-        Object value = ((XPathNodesetResult) xpathResult).getValue().iterator().next().getValue();
-        assertEquals("two", value);
+        assertTrue(xpathResult instanceof XPathNodesetResult);
+        XPathNodesetResult nodeset = (XPathNodesetResult) xpathResult;
+
+        Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = nodeset.getValue().iterator().next();
+        assertNotNull(entry);
+        assertEquals("two", entry.getValue().getValue());
     }
 
     @Test(expected = VerifyException.class)

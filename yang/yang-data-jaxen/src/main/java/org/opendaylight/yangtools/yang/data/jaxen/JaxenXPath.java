@@ -11,7 +11,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Converter;
+import com.google.common.base.Verify;
 import com.google.common.collect.Lists;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -84,19 +86,23 @@ final class JaxenXPath implements XPathExpression {
         }
 
         if (result instanceof String) {
-            return Optional.of((XPathStringResult) () -> (String)result);
+            return Optional.of((XPathStringResult) () -> (String) result);
         } else if (result instanceof Number) {
             return Optional.of((XPathNumberResult) () -> (Number) result);
         } else if (result instanceof Boolean) {
             return Optional.of((XPathBooleanResult) () -> (Boolean) result);
-        } else if (result != null) {
-            return Optional.of((XPathNodesetResult) () -> {
-                // XXX: Will this really work, or do we need to perform deep transformation?
-                return Lists.transform((List<NormalizedNodeContext>) result, NormalizedNodeContext::getNode);
-            });
-        } else {
+        } else if (result == null) {
             return Optional.empty();
         }
+
+        Verify.verify(result instanceof List, "Unhandled result %s", result);
+        @SuppressWarnings("unchecked")
+        final List<NormalizedNodeContext> resultList = (List<NormalizedNodeContext>) result;
+        return Optional.of((XPathNodesetResult) () -> {
+            // XXX: Will this really work, or do we need to perform deep transformation?
+            return Lists.transform(resultList,
+                context -> new SimpleImmutableEntry<>(context.getPath(), context.getNode()));
+        });
     }
 
     @Nonnull
