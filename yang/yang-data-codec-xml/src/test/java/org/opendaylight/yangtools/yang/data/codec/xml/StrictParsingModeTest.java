@@ -79,7 +79,7 @@ public class StrictParsingModeTest {
             fail("IllegalStateException should have been thrown because of an unknown child node.");
         } catch (IllegalStateException ex) {
             assertTrue(ex.getMessage().contains("Schema for node with name unknown-container-a and namespace "
-                    + "foo doesn't exist."));
+                    + "foo doesn't exist at "));
         }
     }
 }
