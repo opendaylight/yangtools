@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 
+@Beta
 public interface UniqueEffectiveStatement extends EffectiveStatement<Collection<Relative>, UniqueStatement> {
 
 }
