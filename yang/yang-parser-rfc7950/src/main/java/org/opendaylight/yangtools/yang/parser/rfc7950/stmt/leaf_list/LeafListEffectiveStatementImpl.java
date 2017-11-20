@@ -54,8 +54,9 @@ final class LeafListEffectiveStatementImpl extends AbstractEffectiveMustConstrai
             firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
             "Leaf-list is missing a 'type' statement");
 
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            ctx.getSchemaPath().get());
+        final ConcreteTypeBuilder<?, Object> builder =
+                (ConcreteTypeBuilder<?, Object>) ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+                    ctx.getSchemaPath().get());
         final ImmutableSet.Builder<String> defaultValuesBuilder = ImmutableSet.builder();
         boolean isUserOrdered = false;
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
