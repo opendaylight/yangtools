@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Resulting {@link TypeDefinition}
  */
-public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
+public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>, N> extends TypeBuilder<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DecimalTypeBuilder.class);
-    private Object defaultValue;
+    private N defaultValue;
     private String description;
     private String reference;
     private Status status = Status.CURRENT;
@@ -39,13 +39,13 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
             "Derived type can be built only from a base, derived, or restricted type, not %s", baseType);
 
         // http://tools.ietf.org/html/rfc6020#section-7.3.4
-        defaultValue = baseType.getDefaultValue().orElse(null);
+        defaultValue = (N)baseType.getDefaultValue().orElse(null);
 
         // In similar vein, it makes sense to propagate units
         units = baseType.getUnits().orElse(null);
     }
 
-    public void setDefaultValue(@Nonnull final Object defaultValue) {
+    public void setDefaultValue(@Nonnull final N defaultValue) {
         this.defaultValue = requireNonNull(defaultValue);
     }
 
@@ -72,7 +72,7 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
         this.units = units;
     }
 
-    final Object getDefaultValue() {
+    final N getDefaultValue() {
         return defaultValue;
     }
 

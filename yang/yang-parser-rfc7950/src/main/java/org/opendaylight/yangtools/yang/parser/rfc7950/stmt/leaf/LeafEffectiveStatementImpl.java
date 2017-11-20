@@ -53,8 +53,9 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
 
         String dflt = null;
         String units = null;
-        final ConcreteTypeBuilder<?> builder = ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
-            ctx.getSchemaPath().get());
+        final ConcreteTypeBuilder<?, Object> builder =
+                (ConcreteTypeBuilder<?, Object>) ConcreteTypes.concreteTypeBuilder(typeStmt.getTypeDefinition(),
+                    ctx.getSchemaPath().get());
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
                 dflt = ((DefaultEffectiveStatement)stmt).argument();

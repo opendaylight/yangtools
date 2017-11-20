@@ -249,8 +249,8 @@ public class TypeTest {
         concreteBuilderTest(integerTypeDefinition8, derivedIntegerType1);
         concreteBuilderTest(integerTypeDefinitionu8, derivedUnsignedType2);
 
-        final DerivedTypeBuilder<?> derivedTypeBuilder = DerivedTypes.derivedTypeBuilder(integerTypeDefinition8,
-                SCHEMA_PATH);
+        final DerivedTypeBuilder<?, Object> derivedTypeBuilder =
+                (DerivedTypeBuilder<?, Object>) DerivedTypes.derivedTypeBuilder(integerTypeDefinition8, SCHEMA_PATH);
         derivedTypeBuilder.setDefaultValue(1);
         derivedTypeBuilder.setDescription("test-description");
         derivedTypeBuilder.setReference("test-reference");
@@ -401,7 +401,7 @@ public class TypeTest {
     public void concreteTypeBuilderBuildTest() {
         final BaseEnumerationType baseEnumerationType1 = (BaseEnumerationType)
             BaseTypes.enumerationTypeBuilder(SCHEMA_PATH).build();
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
+        final ConcreteTypeBuilder<?, ?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(
                 baseEnumerationType1, SCHEMA_PATH);
         final TypeDefinition<?> typeDefinition = concreteTypeBuilder.build();
         assertNotNull(typeDefinition);
@@ -494,7 +494,8 @@ public class TypeTest {
 
     private static void concreteBuilderTest(final TypeDefinition<?> baseTypeDef,
             final TypeDefinition<?> derivedTypeDef) {
-        final ConcreteTypeBuilder<?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef, SCHEMA_PATH);
+        final ConcreteTypeBuilder<?, ?> concreteTypeBuilder = ConcreteTypes.concreteTypeBuilder(baseTypeDef,
+            SCHEMA_PATH);
         final TypeDefinition<?> typeDefinition = concreteTypeBuilder.buildType();
         assertEquals(typeDefinition.getBaseType(), derivedTypeDef.getBaseType());
     }

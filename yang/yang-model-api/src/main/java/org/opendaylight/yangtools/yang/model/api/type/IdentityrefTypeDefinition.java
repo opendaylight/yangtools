@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
@@ -24,6 +25,9 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      *         just one identity (in YANG 1.0 models)
      */
     @Nonnull Set<IdentitySchemaNode> getIdentities();
+
+    @Override
+    Optional<? extends TypeDefinition<?>> getDefaultValue();
 
     static int hashCode(final IdentityrefTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),

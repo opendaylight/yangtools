@@ -37,7 +37,8 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
     }
 
     @Override
-    public final Optional<? extends Object> getDefaultValue() {
+    // FIXME: once all default values use specialized types, this method needs to be turned generic.
+    public Optional<? extends Object> getDefaultValue() {
         return Optional.empty();
     }
 

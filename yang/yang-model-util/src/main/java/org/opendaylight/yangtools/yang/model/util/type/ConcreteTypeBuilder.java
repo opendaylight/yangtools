@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  * @param <T> Resulting {@link TypeDefinition}
  */
 @Beta
-public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends DerivedTypeBuilder<T> {
+public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>, N> extends DerivedTypeBuilder<T, N> {
     ConcreteTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
 

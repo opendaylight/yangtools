@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.type.IdentityTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
 final class RestrictedIdentityrefType extends AbstractRestrictedType<IdentityrefTypeDefinition>
@@ -24,6 +26,11 @@ final class RestrictedIdentityrefType extends AbstractRestrictedType<Identityref
     @Override
     public Set<IdentitySchemaNode> getIdentities() {
         return getBaseType().getIdentities();
+    }
+
+    @Override
+    public Optional<? extends IdentityTypeDefinition> getDefaultValue() {
+        return super.getDefaultValue().map(IdentityTypeDefinition.class::cast);
     }
 
     @Override
