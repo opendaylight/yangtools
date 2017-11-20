@@ -8,12 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
-
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface UnknownTypeDefinition extends TypeDefinition<UnknownTypeDefinition> {
 
-    List<RangeConstraint> getRangeConstraints();
+    List<RangeConstraint<?>> getRangeConstraints();
 
     List<LengthConstraint> getLengthConstraints();
 
