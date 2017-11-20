@@ -310,7 +310,7 @@ public class XmlToNormalizedNodesTest {
         }
     }
 
-    private NormalizedNode<?, ?> buildOuterContainerNode() {
+    private static NormalizedNode<?, ?> buildOuterContainerNode() {
         // my-container-1
         MapNode myKeyedListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myKeyedList))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(

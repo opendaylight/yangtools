@@ -258,9 +258,9 @@ public abstract class SchemaPath implements Immutable {
                     final QName ret = current.qname;
                     current = current.parent;
                     return ret;
-                } else {
-                    throw new NoSuchElementException("No more elements available");
                 }
+
+                throw new NoSuchElementException("No more elements available");
             }
         };
     }
