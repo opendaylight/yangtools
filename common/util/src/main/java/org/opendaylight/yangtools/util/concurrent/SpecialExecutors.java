@@ -56,16 +56,6 @@ public final class SpecialExecutors {
     }
 
     /**
-     * Deprecated variant.
-     * @deprecated Please use {@link #newBoundedFastThreadPool(int, int, String, Class)} instead.
-     */
-    @Deprecated
-    public static ExecutorService newBoundedFastThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
-        return newBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix, SpecialExecutors.class);
-    }
-
-    /**
      * Creates an ExecutorService similar to {@link #newBoundedFastThreadPool } except that it
      * handles rejected tasks by running them in the same thread as the caller. Therefore if the
      * queue is full, the caller submitting the task will be blocked until the task completes. In
@@ -89,17 +79,6 @@ public final class SpecialExecutors {
                 loggerIdentity);
         executor.setRejectedExecutionHandler(CountingRejectedExecutionHandler.newCallerRunsPolicy());
         return executor;
-    }
-
-    /**
-     * Deprecated variant.
-     * @deprecated Please use {@link #newBlockingBoundedFastThreadPool(int, int, String, Class)} instead.
-     */
-    @Deprecated
-    public static ExecutorService newBlockingBoundedFastThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
-        return newBlockingBoundedFastThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix,
-                SpecialExecutors.class);
     }
 
     /**
@@ -135,16 +114,6 @@ public final class SpecialExecutors {
     }
 
     /**
-     * Deprecated variant.
-     * @deprecated Please use {@link #newBoundedCachedThreadPool(int, int, String, Class)} instead.
-     */
-    @Deprecated
-    public static ExecutorService newBoundedCachedThreadPool(int maximumPoolSize,
-            int maximumQueueSize, String threadPrefix) {
-        return new CachedThreadPoolExecutor(maximumPoolSize, maximumQueueSize, threadPrefix, SpecialExecutors.class);
-    }
-
-    /**
      * Creates an ExecutorService similar to {@link #newBoundedCachedThreadPool } except that it
      * handles rejected tasks by running them in the same thread as the caller. Therefore if the
      * queue is full, the caller submitting the task will be blocked until the task completes. In
@@ -169,17 +138,6 @@ public final class SpecialExecutors {
     }
 
     /**
-     * Deprecated variant.
-     * @deprecated Please use {@link #newBlockingBoundedCachedThreadPool(int, int, String, Class)} instead.
-     */
-    @Deprecated
-    public static ExecutorService newBlockingBoundedCachedThreadPool(int maximumPoolSize, int maximumQueueSize,
-            String threadPrefix) {
-        return newBlockingBoundedCachedThreadPool(maximumPoolSize, maximumQueueSize, threadPrefix,
-                SpecialExecutors.class);
-    }
-
-    /**
      * Creates an ExecutorService that uses a single worker thread operating off a bounded queue
      * with the specified capacity. Tasks are guaranteed to execute sequentially, and no more than
      * one task will be active at any given time. If the maximum queue capacity is reached,
@@ -199,12 +157,4 @@ public final class SpecialExecutors {
                 threadPrefix, loggerIdentity);
     }
 
-    /**
-     * Deprecated variant.
-     * @deprecated Please use {@link #newBoundedSingleThreadExecutor(int, String, Class)} instead.
-     */
-    @Deprecated
-    public static ExecutorService newBoundedSingleThreadExecutor(int maximumQueueSize, String threadPrefix) {
-        return newBoundedSingleThreadExecutor(maximumQueueSize, threadPrefix, SpecialExecutors.class);
-    }
 }
