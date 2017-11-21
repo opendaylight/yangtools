@@ -10,8 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref.context;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.io.FileNotFoundException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -31,10 +29,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -50,7 +48,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +58,7 @@ public class DataTreeCandidateValidatorTest {
     private static Module valModule;
     private static QNameModule valModuleQname;
     private static LeafRefContext rootLeafRefContext;
-    public static TipProducingDataTree inMemoryDataTree;
+    public static DataTree inMemoryDataTree;
 
     private static QName odl;
     private static QName project;
@@ -102,8 +99,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     @BeforeClass
-    public static void init() throws FileNotFoundException, ReactorException,
-            URISyntaxException {
+    public static void init()  {
         initSchemaContext();
 
         initLeafRefContext();
@@ -170,8 +166,7 @@ public class DataTreeCandidateValidatorTest {
     }
 
     private static void initDataTree() {
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(context);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree
                 .takeSnapshot().newModification();

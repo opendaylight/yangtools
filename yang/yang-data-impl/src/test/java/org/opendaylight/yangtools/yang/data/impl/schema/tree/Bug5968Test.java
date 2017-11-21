@@ -21,14 +21,15 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug5968Test {
     private static final String NS = "foo";
@@ -41,20 +42,19 @@ public class Bug5968Test {
     private SchemaContext schemaContext;
 
     @Before
-    public void init() throws ReactorException {
+    public void init() {
         this.schemaContext = TestModel.createTestContext("/bug5968/foo.yang");
         assertNotNull("Schema context must not be null.", this.schemaContext);
     }
 
-    private static InMemoryDataTree initDataTree(final SchemaContext schemaContext, final boolean withMapNode)
+    private static DataTree initDataTree(final SchemaContext schemaContext, final boolean withMapNode)
             throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(ROOT),
                 withMapNode ? root.withChild(
@@ -69,24 +69,20 @@ public class Bug5968Test {
         return inMemoryDataTree;
     }
 
-    private static InMemoryDataTree emptyDataTree(final SchemaContext schemaContext)
+    private static DataTree emptyDataTree(final SchemaContext schemaContext)
             throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setSchemaContext(schemaContext);
-
-        return inMemoryDataTree;
+        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
 
     @Test
-    public void writeInvalidContainerTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
+    public void writeInvalidContainerTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
 
         final MapNode myList = createMap(true);
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(ROOT), root.build());
 
         try {
@@ -103,9 +99,9 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeInvalidMapTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    public void writeInvalidMapTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, true);
 
         try {
@@ -122,9 +118,9 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeInvalidMapEntryTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext, true);
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    public void writeInvalidMapEntryTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = initDataTree(schemaContext, true);
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", null, "common-value");
 
@@ -141,8 +137,7 @@ public class Bug5968Test {
         }
     }
 
-    private static void writeMap(final InMemoryDataTreeModification modificationTree,
-            final boolean mandatoryDataMissing) {
+    private static void writeMap(final DataTreeModification modificationTree, final boolean mandatoryDataMissing) {
         final MapNode myList = createMap(mandatoryDataMissing);
         modificationTree.write(YangInstanceIdentifier.of(ROOT).node(MY_LIST), myList);
     }
@@ -156,7 +151,7 @@ public class Bug5968Test {
                                 "mandatory-value", "common-value")).build();
     }
 
-    private static void writeMapEntry(final InMemoryDataTreeModification modificationTree, final Object listIdValue,
+    private static void writeMapEntry(final DataTreeModification modificationTree, final Object listIdValue,
             final Object mandatoryLeafValue, final Object commonLeafValue) throws DataValidationFailedException {
         final MapEntryNode taskEntryNode = mandatoryLeafValue == null ? createMapEntry(listIdValue, commonLeafValue)
                 : createMapEntry(listIdValue, mandatoryLeafValue, commonLeafValue);
@@ -184,14 +179,14 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidContainerTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
+    public void writeValidContainerTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
 
         final MapNode myList = createMap(false);
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(ROOT), root.build());
         modificationTree.ready();
         inMemoryDataTree.validate(modificationTree);
@@ -200,9 +195,9 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidMapTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = emptyDataTree(schemaContext);
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    public void writeValidMapTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, false);
 
         modificationTree.ready();
@@ -212,9 +207,9 @@ public class Bug5968Test {
     }
 
     @Test
-    public void writeValidMapEntryTest() throws ReactorException, DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext, true);
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    public void writeValidMapEntryTest() throws DataValidationFailedException {
+        final DataTree inMemoryDataTree = initDataTree(schemaContext, true);
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", "mandatory-value", "common-value");
 

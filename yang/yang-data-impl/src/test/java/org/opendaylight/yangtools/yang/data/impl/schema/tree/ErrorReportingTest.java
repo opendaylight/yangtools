@@ -13,26 +13,26 @@ import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class ErrorReportingTest {
 
-    private InMemoryDataTree tree;
+    private DataTree tree;
 
     @Before
-    public void setup() throws ReactorException {
-        tree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-            DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        tree.setSchemaContext(TestModel.createTestContext());
+    public void setup() {
+        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            TestModel.createTestContext());
     }
 
     @Test
     public void writeWithoutParentExisting() {
-        InMemoryDataTreeModification modification = tree.takeSnapshot().newModification();
+        DataTreeModification modification = tree.takeSnapshot().newModification();
         // We write node without creating parent
         modification.write(TestModel.OUTER_LIST_PATH, ImmutableNodes.mapNodeBuilder(TestModel.OUTER_LIST_QNAME)
             .build());
@@ -49,15 +49,15 @@ public class ErrorReportingTest {
 
     @Test
     public void parentConcurrentlyDeletedExisting() {
-        InMemoryDataTreeModification initial = tree.takeSnapshot().newModification();
+        DataTreeModification initial = tree.takeSnapshot().newModification();
         // We write node without creating parent
         initial.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initial.ready();
         // We commit transaction
         tree.commit(tree.prepare(initial));
 
-        final InMemoryDataTreeModification writeTx = tree.takeSnapshot().newModification();
-        final InMemoryDataTreeModification deleteTx = tree.takeSnapshot().newModification();
+        final DataTreeModification writeTx = tree.takeSnapshot().newModification();
+        final DataTreeModification deleteTx = tree.takeSnapshot().newModification();
         deleteTx.delete(TestModel.TEST_PATH);
         deleteTx.ready();
         // We commit delete modification

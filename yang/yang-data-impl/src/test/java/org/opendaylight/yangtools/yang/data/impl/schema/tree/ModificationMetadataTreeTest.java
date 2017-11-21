@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 /*
  * Schema structure of document is
@@ -95,7 +94,7 @@ public class ModificationMetadataTreeTest {
     private RootModificationApplyOperation rootOper;
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,
@@ -166,8 +165,8 @@ public class ModificationMetadataTreeTest {
         /**
          * Creates empty Snapshot with associated schema context.
          */
-        final DataTree t = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        t.setSchemaContext(schemaContext);
+        final DataTree t = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            schemaContext);
 
         /**
          *

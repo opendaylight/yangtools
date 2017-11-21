@@ -19,10 +19,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Maps;
-import java.io.IOException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +30,6 @@ import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
 import org.jaxen.UnresolvableException;
-import org.jaxen.UnsupportedAxisException;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -48,7 +44,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathResult;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class JaxenTest {
@@ -69,9 +64,8 @@ public class JaxenTest {
     private QName containerBQName;
 
     @Before
-    public void setup() throws URISyntaxException, IOException, ParseException, XPathExpressionException,
-            UnsupportedAxisException, ReactorException {
-        final SchemaContext schemaContext = createSchemaContext();
+    public void setup() throws XPathExpressionException {
+        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/test/documentTest");
         assertNotNull(schemaContext);
 
         initQNames();
@@ -82,7 +76,7 @@ public class JaxenTest {
                     false));
         assertNotNull(xpathExpression);
 
-        xpathDocument = xpathSchemaContext.createDocument(createNormalizedNodes());
+        xpathDocument = xpathSchemaContext.createDocument(TestUtils.createNormalizedNodes());
         assertNotNull(xpathDocument);
         String rootNodeName = xpathDocument.getRootNode().getNodeType().getLocalName();
         assertNotNull(rootNodeName);
@@ -219,16 +213,8 @@ public class JaxenTest {
         return SchemaPath.create(true, rootQName, listAQName, leafAQName);
     }
 
-    private static SchemaContext createSchemaContext() throws IOException, URISyntaxException, ReactorException {
-        return YangParserTestUtils.parseYangResourceDirectory("/test/documentTest");
-    }
-
-    private static NormalizedNode<?, ?> createNormalizedNodes() {
-        return TestUtils.createNormalizedNodes();
-    }
-
-    private void initQNames() throws URISyntaxException, ParseException {
-        this.moduleQName = QNameModule.create(new URI("urn:opendaylight.test2"), Revision.of("2015-08-08"));
+    private void initQNames() {
+        this.moduleQName = QNameModule.create(URI.create("urn:opendaylight.test2"), Revision.of("2015-08-08"));
         this.rootQName = QName.create(moduleQName, "root");
         this.listAQName = QName.create(moduleQName, "list-a");
         this.listBQName = QName.create(moduleQName, "list-b");

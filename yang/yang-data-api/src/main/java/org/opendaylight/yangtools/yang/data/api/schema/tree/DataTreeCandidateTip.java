@@ -17,6 +17,6 @@ import com.google.common.annotations.Beta;
  * a candidate commit needs to be coordinated across distributed parties.
  */
 @Beta
-public interface DataTreeCandidateTip extends DataTreeCandidate, TipProducingDataTreeTip {
+public interface DataTreeCandidateTip extends DataTreeCandidate, DataTreeTip {
 
 }

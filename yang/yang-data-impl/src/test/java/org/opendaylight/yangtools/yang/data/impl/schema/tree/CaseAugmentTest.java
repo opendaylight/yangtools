@@ -19,12 +19,13 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.Augmentat
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class CaseAugmentTest {
 
@@ -39,21 +40,20 @@ public class CaseAugmentTest {
         ImmutableSet.of(C1L2_QNAME, C1L3_QNAME));
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext("/case-augment-test.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 
-    private InMemoryDataTree initDataTree() {
-        InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+    private DataTree initDataTree() {
+        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
         return inMemoryDataTree;
     }
 
     @Test
     public void testWriteAugment() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
 
         AugmentationNode augmentationNode = Builders.augmentationBuilder()
                 .withNodeIdentifier(AUGMENT_ID)
@@ -66,7 +66,7 @@ public class CaseAugmentTest {
                         Builders.choiceBuilder().withNodeIdentifier(CHOICE_ID)
                                 .withChild(augmentationNode)
                                 .build()).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
@@ -77,7 +77,7 @@ public class CaseAugmentTest {
 
     @Test
     public void testWriteCase1All() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
 
         AugmentationNode augmentationNode = Builders.augmentationBuilder()
                 .withNodeIdentifier(AUGMENT_ID)
@@ -93,7 +93,7 @@ public class CaseAugmentTest {
                                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
                                 .withChild(augmentationNode)
                                 .build()).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
@@ -104,7 +104,7 @@ public class CaseAugmentTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWriteConflict() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
 
         AugmentationNode augmentationNode = Builders.augmentationBuilder()
                 .withNodeIdentifier(AUGMENT_ID)
@@ -120,7 +120,7 @@ public class CaseAugmentTest {
                                 .build()).build();
 
         try {
-            final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(TestModel.TEST_PATH, container);
             modificationTree.ready();
 
@@ -132,5 +132,4 @@ public class CaseAugmentTest {
             throw e;
         }
     }
-
 }

@@ -8,18 +8,19 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Preconditions;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -35,30 +36,25 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 /**
  * A factory for creating in-memory data trees.
  */
+@MetaInfServices
 public final class InMemoryDataTreeFactory implements DataTreeFactory {
-    private static final InMemoryDataTreeFactory INSTANCE = new InMemoryDataTreeFactory();
     private static final NormalizedNode<?, ?> ROOT_CONTAINER = ImmutableNodes.containerNode(SchemaContext.NAME);
 
-    private InMemoryDataTreeFactory() {
-        // Never instantiated externally
-    }
-
     @Override
-    public TipProducingDataTree create(final DataTreeConfiguration treeConfig) {
+    public DataTree create(final DataTreeConfiguration treeConfig) {
         return new InMemoryDataTree(TreeNodeFactory.createTreeNode(createRoot(treeConfig.getRootPath()),
             Version.initial()), treeConfig, null);
     }
 
     @Override
-    public TipProducingDataTree create(final DataTreeConfiguration treeConfig,
-            final SchemaContext initialSchemaContext) {
+    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext) {
         return create(treeConfig, initialSchemaContext, true);
     }
 
     @Override
-    public TipProducingDataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
+    public DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
             final NormalizedNodeContainer<?, ?, ?> initialRoot) throws DataValidationFailedException {
-        final TipProducingDataTree ret = create(treeConfig, initialSchemaContext, false);
+        final DataTree ret = create(treeConfig, initialSchemaContext, false);
 
         final DataTreeModification mod = ret.takeSnapshot().newModification();
         mod.write(YangInstanceIdentifier.EMPTY, initialRoot);
@@ -70,8 +66,8 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
         return ret;
     }
 
-    private static TipProducingDataTree create(final DataTreeConfiguration treeConfig,
-            final SchemaContext initialSchemaContext, final boolean maskMandatory) {
+    private static DataTree create(final DataTreeConfiguration treeConfig, final SchemaContext initialSchemaContext,
+            final boolean maskMandatory) {
         final DataSchemaNode rootSchemaNode = getRootSchemaNode(initialSchemaContext, treeConfig.getRootPath());
         final NormalizedNode<?, ?> rootDataNode = createRoot((DataNodeContainer)rootSchemaNode,
             treeConfig.getRootPath());
@@ -131,14 +127,5 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
 
         // FIXME: implement augmentations and leaf-lists
         throw new IllegalArgumentException("Unsupported root node " + arg);
-    }
-
-    /**
-     * Get an instance of this factory. This method cannot fail.
-     *
-     * @return Data tree factory instance.
-     */
-    public static InMemoryDataTreeFactory getInstance() {
-        return INSTANCE;
     }
 }

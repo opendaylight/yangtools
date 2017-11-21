@@ -16,7 +16,6 @@ import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URISyntaxException;
 import javax.xml.stream.XMLStreamException;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.ElementNameAndAttributeQualifier;
@@ -26,7 +25,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
@@ -34,8 +32,7 @@ import org.xml.sax.SAXException;
 public class SchemaContextEmitterTest {
 
     @Test
-    public void testSchemaContextEmitter() throws ReactorException, IOException, URISyntaxException,
-            XMLStreamException, SAXException {
+    public void testSchemaContextEmitter() throws IOException, XMLStreamException, SAXException {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory(
             "/schema-context-emitter-test");
         assertNotNull(schemaContext);

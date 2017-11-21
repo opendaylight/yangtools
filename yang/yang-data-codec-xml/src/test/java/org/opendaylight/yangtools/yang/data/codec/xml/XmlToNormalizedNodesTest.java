@@ -47,7 +47,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
@@ -121,8 +120,8 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void testComplexXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
-            ParserConfigurationException, SAXException {
+    public void testComplexXmlParsing() throws IOException, SAXException, URISyntaxException, XMLStreamException,
+            ParserConfigurationException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
 
         final XMLInputFactory factory = XMLInputFactory.newInstance();
@@ -147,7 +146,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void testSimpleXmlParsing() throws IOException, URISyntaxException, ReactorException, XMLStreamException,
+    public void testSimpleXmlParsing() throws IOException, URISyntaxException, XMLStreamException,
             ParserConfigurationException, SAXException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
 
@@ -165,7 +164,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnDuplicateLeaf() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnDuplicateLeaf() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
 
@@ -186,7 +185,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnDuplicateAnyXml() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnDuplicateAnyXml() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
 
@@ -206,7 +205,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnDuplicateContainer() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnDuplicateContainer() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
 
@@ -226,7 +225,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedLeafElement() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnUnterminatedLeafElement() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
 
@@ -247,7 +246,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedLeafElement2() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnUnterminatedLeafElement2() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
 
@@ -268,7 +267,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnterminatedContainerElement() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnUnterminatedContainerElement() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
 
@@ -289,7 +288,7 @@ public class XmlToNormalizedNodesTest {
     }
 
     @Test
-    public void shouldFailOnUnknownChildNode() throws ReactorException, XMLStreamException, IOException,
+    public void shouldFailOnUnknownChildNode() throws XMLStreamException, IOException,
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 

@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
@@ -31,8 +32,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaOrderedNormalizedNodeWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+import org.xml.sax.SAXException;
 
 public class SchemaOrderedNormalizedNodeWriterTest {
 
@@ -75,12 +76,12 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         XMLUnit.setIgnoreWhitespace(true);
     }
 
     @Test
-    public void testWrite() throws Exception {
+    public void testWrite() throws XMLStreamException, FactoryConfigurationError, IOException, SAXException {
         final StringWriter stringWriter = new StringWriter();
         final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(stringWriter);
 
@@ -166,8 +167,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
         XMLAssert.assertXMLIdentical(new Diff(EXPECTED_2, stringWriter.toString()), true);
     }
 
-    private static SchemaContext getSchemaContext(final String filePath) throws URISyntaxException,
-            ReactorException, FileNotFoundException {
+    private static SchemaContext getSchemaContext(final String filePath) {
         return YangParserTestUtils.parseYangResource(filePath);
     }
 
