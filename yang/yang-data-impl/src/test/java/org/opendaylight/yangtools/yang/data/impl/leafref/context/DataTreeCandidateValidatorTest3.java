@@ -23,10 +23,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
@@ -49,7 +49,7 @@ public class DataTreeCandidateValidatorTest3 {
     private static Module mainModule;
     private static QNameModule rootModuleQname;
     private static LeafRefContext rootLeafRefContext;
-    public static TipProducingDataTree inMemoryDataTree;
+    public static DataTree inMemoryDataTree;
 
     private static QName chips;
     private static QName chip;
@@ -210,8 +210,7 @@ public class DataTreeCandidateValidatorTest3 {
 
     private static void initDataTree() {
 
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(context);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
 

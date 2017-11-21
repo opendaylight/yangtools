@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +68,7 @@ public class StoreTreeNodesTest {
     private RootModificationApplyOperation rootOper;
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
         rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,

@@ -41,8 +41,7 @@ public class DataTreeCandidatesTest {
 
     @Before
     public void setUp() throws Exception {
-        dataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        dataTree.setSchemaContext(SCHEMA_CONTEXT);
+        dataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
         final ContainerNode testContainer = ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
@@ -64,7 +63,7 @@ public class DataTreeCandidatesTest {
 
     @Test
     public void testRootedCandidate() throws DataValidationFailedException {
-        final DataTree innerDataTree = InMemoryDataTreeFactory.getInstance().create(
+        final DataTree innerDataTree = new InMemoryDataTreeFactory().create(
             new DataTreeConfiguration.Builder(TreeType.OPERATIONAL)
             .setMandatoryNodesValidation(true)
             .setRootPath(TestModel.INNER_CONTAINER_PATH)

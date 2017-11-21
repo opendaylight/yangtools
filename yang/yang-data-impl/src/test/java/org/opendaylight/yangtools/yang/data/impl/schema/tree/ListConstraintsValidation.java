@@ -75,8 +75,8 @@ public class ListConstraintsValidation {
     public void prepare() {
         schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            schemaContext);
         final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
 

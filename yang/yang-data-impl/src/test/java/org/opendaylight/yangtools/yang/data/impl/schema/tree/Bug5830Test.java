@@ -22,14 +22,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class Bug5830Test {
     private static final String NS = "foo";
@@ -46,14 +47,13 @@ public class Bug5830Test {
     private static final QName PRESENCE_CONTAINER_2 = QName.create(NS, REV, "presence-container-2");
     private static final QName MANDATORY_LEAF_2 = QName.create(NS, REV, "mandatory-leaf-2");
 
-    private static InMemoryDataTree initDataTree(final SchemaContext schemaContext)
+    private static DataTree initDataTree(final SchemaContext schemaContext)
             throws DataValidationFailedException {
-        InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+                DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
         final MapNode taskNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(TASK)).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK), taskNode);
         modificationTree.ready();
 
@@ -64,13 +64,13 @@ public class Bug5830Test {
     }
 
     @Test
-    public void testMandatoryNodes() throws ReactorException, DataValidationFailedException {
+    public void testMandatoryNodes() throws DataValidationFailedException {
         testPresenceContainer();
         testNonPresenceContainer();
         testMultipleContainers();
     }
 
-    private static void testPresenceContainer() throws ReactorException, DataValidationFailedException {
+    private static void testPresenceContainer() throws DataValidationFailedException {
         final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
@@ -86,7 +86,7 @@ public class Bug5830Test {
         testMandatoryDataLeafIsPresent(schemaContext);
     }
 
-    private static void testNonPresenceContainer() throws ReactorException, DataValidationFailedException {
+    private static void testNonPresenceContainer() throws DataValidationFailedException {
         final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-non-presence.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
@@ -110,7 +110,7 @@ public class Bug5830Test {
         testMandatoryDataLeafIsPresent(schemaContext);
     }
 
-    private static void testMultipleContainers() throws ReactorException, DataValidationFailedException {
+    private static void testMultipleContainers() throws DataValidationFailedException {
         final SchemaContext schemaContext = TestModel.createTestContext("/bug5830/foo-multiple.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
 
@@ -147,13 +147,13 @@ public class Bug5830Test {
 
     private static void testContainerIsNotPresent(final SchemaContext schemaContext)
             throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
+        final DataTree inMemoryDataTree = initDataTree(schemaContext);
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
                 .withChild(ImmutableNodes.leafNode(TASK_ID, "123"))
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data")).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
                         .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
@@ -165,7 +165,7 @@ public class Bug5830Test {
     }
 
     private static void testContainerIsPresent(final SchemaContext schemaContext) throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
+        final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
@@ -173,7 +173,7 @@ public class Bug5830Test {
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(false)).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
                         .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
@@ -186,7 +186,7 @@ public class Bug5830Test {
 
     private static void testMandatoryDataLeafIsPresent(final SchemaContext schemaContext)
             throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
+        final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
@@ -194,7 +194,7 @@ public class Bug5830Test {
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataContainer(true)).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
                         .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);
@@ -207,7 +207,7 @@ public class Bug5830Test {
 
     private static void testMandatoryLeaf2IsPresent(final SchemaContext schemaContext,
             final boolean withPresenceContianer) throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
+        final DataTree inMemoryDataTree = initDataTree(schemaContext);
 
         final MapEntryNode taskEntryNode = Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123")))
@@ -215,7 +215,7 @@ public class Bug5830Test {
                 .withChild(ImmutableNodes.leafNode(TASK_MANDATORY_LEAF, "mandatory data"))
                 .withChild(createTaskDataMultipleContainer(withPresenceContianer)).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.of(TASK_CONTAINER).node(TASK)
                         .node(new NodeIdentifierWithPredicates(TASK, ImmutableMap.of(TASK_ID, "123"))), taskEntryNode);

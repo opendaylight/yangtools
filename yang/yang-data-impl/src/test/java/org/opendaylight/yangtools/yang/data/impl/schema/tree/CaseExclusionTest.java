@@ -17,34 +17,32 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class CaseExclusionTest {
 
     private SchemaContext schemaContext;
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext("/case-exclusion-test.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 
-    private InMemoryDataTree initDataTree() {
-        InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION);
-        inMemoryDataTree.setSchemaContext(schemaContext);
-        return inMemoryDataTree;
+    private DataTree initDataTree() {
+        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
     }
 
     @Test
     public void testCorrectCaseWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -54,7 +52,7 @@ public class CaseExclusionTest {
                         Builders.choiceBuilder().withNodeIdentifier(choice1Id)
                                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case1-leaf1"), "leaf-value"))
                                 .build()).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
@@ -65,7 +63,7 @@ public class CaseExclusionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCaseExclusion() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -79,7 +77,7 @@ public class CaseExclusionTest {
                                         ImmutableNodes.containerNode(QName.create(TestModel.TEST_QNAME, "case2-cont")))
                                 .build()).build();
         try {
-            final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(TestModel.TEST_PATH, container);
             modificationTree.ready();
 
@@ -94,12 +92,12 @@ public class CaseExclusionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCaseExclusionOnChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree();
+        final DataTree inMemoryDataTree = initDataTree();
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
-        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree1.write(TestModel.TEST_PATH, container);
         modificationTree1.ready();
 
@@ -114,7 +112,7 @@ public class CaseExclusionTest {
                 .withChild(ImmutableNodes.containerNode(QName.create(TestModel.TEST_QNAME, "case2-cont"))).build();
 
         try {
-            final InMemoryDataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+            final DataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
             modificationTree2.ready();
 

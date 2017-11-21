@@ -12,10 +12,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -33,9 +33,8 @@ public class Bug8713Test {
     public void dataTreeCanditateValidationTest() throws Exception {
         final SchemaContext context = YangParserTestUtils.parseYangResourceDirectory("/bug8713/");
         final LeafRefContext rootLeafRefContext = LeafRefContext.create(context);
-        final TipProducingDataTree inMemoryDataTree = InMemoryDataTreeFactory.getInstance()
-                .create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(context);
+        final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
+            DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final ContainerNode root = createRootContainer();
         final YangInstanceIdentifier rootPath = YangInstanceIdentifier.of(foo("root"));

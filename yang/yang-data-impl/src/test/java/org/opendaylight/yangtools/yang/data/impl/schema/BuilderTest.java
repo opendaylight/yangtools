@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -63,7 +62,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BuilderTest {
@@ -92,7 +90,7 @@ public class BuilderTest {
     private LeafListSchemaNode leafList;
 
     @Before
-    public void setup() throws FileNotFoundException, ReactorException, URISyntaxException {
+    public void setup() throws URISyntaxException {
         final File leafRefTestYang = new File(getClass().getResource("/builder-test/immutable-ordered-map-node.yang")
                 .toURI());
         final SchemaContext schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
