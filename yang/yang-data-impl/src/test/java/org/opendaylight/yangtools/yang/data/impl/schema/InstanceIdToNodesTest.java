@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collections;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -26,8 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class InstanceIdToNodesTest {
@@ -54,19 +50,17 @@ public class InstanceIdToNodesTest {
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
             leafList.getNodeType(), "abcd");
 
-    static SchemaContext createTestContext() throws URISyntaxException, ReactorException, IOException,
-            YangSyntaxErrorException {
+    static SchemaContext createTestContext() {
         return YangParserTestUtils.parseYangResources(InstanceIdToNodesTest.class, "/filter-test.yang");
     }
 
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() {
         ctx = createTestContext();
-
     }
 
     @Test
-    public void testInAugment() throws Exception {
+    public void testInAugment() {
         final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf).withValue("").build();
         final ContainerNode expectedFilter = Builders
                 .containerBuilder()
@@ -86,7 +80,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    public void testInAugmentLeafOverride() throws Exception {
+    public void testInAugmentLeafOverride() {
         final LeafNode<Object> lastLeaf = Builders.leafBuilder().withNodeIdentifier(augmentedLeaf)
                 .withValue("randomValue").build();
 
@@ -106,7 +100,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    public void testListChoice() throws Exception {
+    public void testListChoice() {
         final LeafNode<?> leaf = Builders.leafBuilder().withNodeIdentifier(leafFromCase).withValue("").build();
         final ContainerNode expectedFilter = Builders
                 .containerBuilder()
@@ -137,7 +131,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    public void testTopContainerLastChildOverride() throws Exception {
+    public void testTopContainerLastChildOverride() {
         final ContainerNode expectedStructure = Builders
                 .containerBuilder()
                 .withNodeIdentifier(rootContainer)
@@ -168,7 +162,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    public void testListLastChildOverride() throws Exception {
+    public void testListLastChildOverride() {
         final MapEntryNode outerListEntry = Builders
                 .mapEntryBuilder()
                 .withNodeIdentifier(outerListWithKey)
@@ -189,7 +183,7 @@ public class InstanceIdToNodesTest {
     }
 
     @Test
-    public void testLeafList() throws Exception {
+    public void testLeafList() {
         final ContainerNode expectedFilter = Builders
                 .containerBuilder()
                 .withNodeIdentifier(rootContainer)

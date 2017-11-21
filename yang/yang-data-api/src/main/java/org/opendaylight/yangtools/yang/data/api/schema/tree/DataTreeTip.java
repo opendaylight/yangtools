@@ -31,7 +31,7 @@ public interface DataTreeTip {
      *                  Data tree modification.
      * @return candidate data tree
      */
-    DataTreeCandidate prepare(DataTreeModification modification);
+    DataTreeCandidateTip prepare(DataTreeModification modification);
 
     /**
      * {@inheritDoc}

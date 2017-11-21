@@ -17,8 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
@@ -39,24 +41,22 @@ public class Bug8291Test {
         assertNotNull("Schema context must not be null.", this.schemaContext);
     }
 
-    private static InMemoryDataTree initDataTree(final SchemaContext schemaContext)
+    private static DataTree initDataTree(final SchemaContext schemaContext)
             throws DataValidationFailedException {
         final DataTreeConfiguration config = new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setRootPath(
                 YangInstanceIdentifier.of(ROOT).node(OUTER_LIST)).build();
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-                config, schemaContext);
-        return inMemoryDataTree;
+        return new InMemoryDataTreeFactory().create(config, schemaContext);
     }
 
     @Test
     public void test() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(schemaContext);
+        final DataTree inMemoryDataTree = initDataTree(schemaContext);
         writeOuterListMapEntry(inMemoryDataTree);
         writeInnerList(inMemoryDataTree);
     }
 
-    private static void writeInnerList(final InMemoryDataTree inMemoryDataTree) throws DataValidationFailedException {
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+    private static void writeInnerList(final DataTree inMemoryDataTree) throws DataValidationFailedException {
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
                 YangInstanceIdentifier.create(
                         new NodeIdentifierWithPredicates(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1))).node(
@@ -68,9 +68,9 @@ public class Bug8291Test {
         inMemoryDataTree.commit(prepare);
     }
 
-    private static void writeOuterListMapEntry(final InMemoryDataTree inMemoryDataTree)
+    private static void writeOuterListMapEntry(final DataTree inMemoryDataTree)
             throws DataValidationFailedException {
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final MapEntryNode outerListMapEntry = Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(OUTER_LIST, ImmutableMap.of(OUTER_LIST_ID, 1)))

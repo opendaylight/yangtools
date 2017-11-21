@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collections;
@@ -42,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class NormalizedDataBuilderTest {
@@ -51,10 +49,8 @@ public class NormalizedDataBuilderTest {
     private SchemaContext schema;
 
     @Before
-    public void setUp() throws URISyntaxException, FileNotFoundException, ReactorException {
-        final File resourceFile = new File(getClass().getResource(
-                "test.yang").toURI());
-        schema = YangParserTestUtils.parseYangFiles(resourceFile);
+    public void setUp() throws URISyntaxException {
+        schema = YangParserTestUtils.parseYangFiles(new File(getClass().getResource("test.yang").toURI()));
         containerNode = (ContainerSchemaNode) getSchemaNode(schema, "test", "container");
     }
 

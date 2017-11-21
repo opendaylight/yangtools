@@ -13,9 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.data.impl.codecs.TypeDefinitionAwareCodecTestHelper.getCodec;
 
-import java.io.FileNotFoundException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -24,7 +22,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +31,7 @@ public class StringPatternCheckingCodecTest {
     private static final Logger LOG = LoggerFactory.getLogger(StringPatternCheckingCodecTest.class);
 
     @Test
-    public void testStringPatternCheckingCodec() throws ReactorException, URISyntaxException,
-            FileNotFoundException {
+    public void testStringPatternCheckingCodec() {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
             "/string-pattern-checking-codec-test.yang");
         assertNotNull(schemaContext);

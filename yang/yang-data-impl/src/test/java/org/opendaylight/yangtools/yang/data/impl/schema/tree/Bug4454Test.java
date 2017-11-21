@@ -12,8 +12,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -43,8 +41,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLe
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4454Test {
@@ -103,11 +99,11 @@ public class Bug4454Test {
     private DataTree inMemoryDataTree;
 
     @Before
-    public void prepare() throws IOException, YangSyntaxErrorException, ReactorException, URISyntaxException {
+    public void prepare() {
         SchemaContext schemaContext = createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree =  InMemoryDataTreeFactory.getInstance().create(
-            DataTreeConfiguration.DEFAULT_OPERATIONAL, schemaContext);
+        inMemoryDataTree =  new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            schemaContext);
         final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationTree = initialDataTreeSnapshot.newModification();
 
@@ -116,8 +112,7 @@ public class Bug4454Test {
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
     }
 
-    public static SchemaContext createTestContext() throws IOException, YangSyntaxErrorException, ReactorException,
-            URISyntaxException {
+    public static SchemaContext createTestContext() {
         return YangParserTestUtils.parseYangResource("/bug-4454-test.yang");
     }
 

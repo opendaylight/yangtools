@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertFalse;
@@ -27,11 +26,11 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.TipProducingDataTree;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class OrderedListTest {
     private static final Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
 
-    private TipProducingDataTree inMemoryDataTree;
+    private DataTree inMemoryDataTree;
     private SchemaContext context;
 
     private QNameModule testModule;
@@ -66,8 +65,7 @@ public class OrderedListTest {
         childKeyLeaf = QName.create(testModule, "child-key-leaf");
         parentOrdinaryLeaf = QName.create(testModule, "parent-ordinary-leaf");
         childOrdinaryLeaf = QName.create(testModule, "child-ordinary-leaf");
-        inMemoryDataTree = InMemoryDataTreeFactory.getInstance().create(DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(context);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
     }
 
     @Test

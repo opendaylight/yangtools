@@ -17,35 +17,34 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 
 public class MandatoryLeafTest {
 
     private SchemaContext schemaContext;
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext("/mandatory-leaf-test.yang");
         assertNotNull("Schema context must not be null.", schemaContext);
     }
 
-    private InMemoryDataTree initDataTree(final boolean enableValidation) {
-        final InMemoryDataTree inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
+    private DataTree initDataTree(final boolean enableValidation) {
+        return new InMemoryDataTreeFactory().create(
                 new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setMandatoryNodesValidation(enableValidation)
-                        .build());
-        inMemoryDataTree.setSchemaContext(schemaContext);
-        return inMemoryDataTree;
+                        .build(), schemaContext);
     }
 
     @Test
     public void testCorrectMandatoryLeafWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
+        final DataTree inMemoryDataTree = initDataTree(true);
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -66,7 +65,7 @@ public class MandatoryLeafTest {
                                                         leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"),
                                                                 "leaf-value2")).build()).build()).build();
 
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
@@ -77,12 +76,12 @@ public class MandatoryLeafTest {
 
     @Test
     public void testCorrectMandatoryLeafChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
+        final DataTree inMemoryDataTree = initDataTree(true);
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
-        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree1.write(TestModel.TEST_PATH, container);
         modificationTree1.ready();
 
@@ -103,7 +102,7 @@ public class MandatoryLeafTest {
                                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                                 .build()).build();
 
-        final InMemoryDataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
         modificationTree2.ready();
 
@@ -114,7 +113,7 @@ public class MandatoryLeafTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMandatoryLeafViolation() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
+        final DataTree inMemoryDataTree = initDataTree(true);
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -132,7 +131,7 @@ public class MandatoryLeafTest {
                                                         leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"),
                                                                 "leaf-value2")).build()).build()).build();
         try {
-            final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+            final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree.write(TestModel.TEST_PATH, container);
             modificationTree.ready();
 
@@ -150,7 +149,7 @@ public class MandatoryLeafTest {
 
     @Test
     public void testDisabledValidation() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(false);
+        final DataTree inMemoryDataTree = initDataTree(false);
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -167,7 +166,7 @@ public class MandatoryLeafTest {
                                                 .withChild(
                                                         leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"),
                                                                 "leaf-value2")).build()).build()).build();
-        final InMemoryDataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, container);
         modificationTree.ready();
 
@@ -178,12 +177,12 @@ public class MandatoryLeafTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testMandatoryLeafViolationChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(true);
+        final DataTree inMemoryDataTree = initDataTree(true);
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
-        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree1.write(TestModel.TEST_PATH, container);
         modificationTree1.ready();
 
@@ -204,7 +203,7 @@ public class MandatoryLeafTest {
                                 .build()).build();
 
         try {
-            final InMemoryDataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+            final DataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
             modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
             modificationTree2.ready();
             inMemoryDataTree.validate(modificationTree2);
@@ -221,12 +220,12 @@ public class MandatoryLeafTest {
 
     @Test
     public void testDisabledValidationChoiceWrite() throws DataValidationFailedException {
-        final InMemoryDataTree inMemoryDataTree = initDataTree(false);
+        final DataTree inMemoryDataTree = initDataTree(false);
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();
 
-        final InMemoryDataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree1 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree1.write(TestModel.TEST_PATH, container);
         modificationTree1.ready();
 
@@ -246,7 +245,7 @@ public class MandatoryLeafTest {
                                 .withChild(leafNode(QName.create(TestModel.TEST_QNAME, "case2-leaf2"), "leaf-value2"))
                                 .build()).build();
 
-        final InMemoryDataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
+        final DataTreeModification modificationTree2 = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree2.write(TestModel.TEST_PATH.node(choice1Id), choice);
         modificationTree2.ready();
         inMemoryDataTree.validate(modificationTree2);

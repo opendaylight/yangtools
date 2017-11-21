@@ -23,14 +23,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,15 +60,14 @@ public class ConcurrentTreeModificationTest {
             .build();
 
     private SchemaContext schemaContext;
-    private InMemoryDataTree inMemoryDataTree;
+    private DataTree inMemoryDataTree;
 
     @Before
-    public void prepare() throws ReactorException {
+    public void prepare() {
         schemaContext = TestModel.createTestContext();
         assertNotNull("Schema context must not be null.", schemaContext);
-        inMemoryDataTree = (InMemoryDataTree) InMemoryDataTreeFactory.getInstance().create(
-            DataTreeConfiguration.DEFAULT_OPERATIONAL);
-        inMemoryDataTree.setSchemaContext(schemaContext);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            schemaContext);
     }
 
     private static ContainerNode createFooTestContainerNode() {
@@ -96,7 +96,7 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWrite1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -125,7 +125,7 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeMerge1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -150,7 +150,7 @@ public class ConcurrentTreeModificationTest {
 
     @Test
     public void writeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -173,14 +173,14 @@ public class ConcurrentTreeModificationTest {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void writeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -198,14 +198,14 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
     @Test
     public void mergeWriteFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -228,14 +228,14 @@ public class ConcurrentTreeModificationTest {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
 
     @Test
     public void mergeMergeFooBar1stLevelEmptyTreeTest() throws DataValidationFailedException {
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -253,7 +253,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -264,7 +264,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -287,7 +287,7 @@ public class ConcurrentTreeModificationTest {
             LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
         }
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
@@ -298,7 +298,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -316,7 +316,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -327,7 +327,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -351,7 +351,7 @@ public class ConcurrentTreeModificationTest {
         }
 
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertFalse(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH).isPresent());
     }
@@ -362,7 +362,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -380,7 +380,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -391,7 +391,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -415,7 +415,7 @@ public class ConcurrentTreeModificationTest {
         }
 
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 
@@ -425,7 +425,7 @@ public class ConcurrentTreeModificationTest {
         initialDataTreeModification.write(TestModel.TEST_PATH, ImmutableNodes.containerNode(TestModel.TEST_QNAME));
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -443,7 +443,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
 
@@ -455,7 +455,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -473,7 +473,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -486,7 +486,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -504,7 +504,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -517,7 +517,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -535,7 +535,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -548,7 +548,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -566,7 +566,7 @@ public class ConcurrentTreeModificationTest {
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_1_PATH), MapEntryNode.class);
         assertPresentAndType(snapshotAfterCommits.readNode(OUTER_LIST_2_PATH), MapEntryNode.class);
     }
@@ -579,7 +579,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -602,7 +602,7 @@ public class ConcurrentTreeModificationTest {
             LOG.debug("Exception was thrown because path no longer exist in tree", e);
         }
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 
@@ -614,7 +614,7 @@ public class ConcurrentTreeModificationTest {
             .build());
         initialDataTreeModification.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(initialDataTreeModification));
-        final InMemoryDataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
 
         final DataTreeModification modificationTree1 = initialDataTreeSnapshot.newModification();
         final DataTreeModification modificationTree2 = initialDataTreeSnapshot.newModification();
@@ -637,7 +637,7 @@ public class ConcurrentTreeModificationTest {
             LOG.debug("Exception was thrown because path no longer exist in tree", e);
         }
 
-        final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
+        final DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
         assertFalse(snapshotAfterCommits.readNode(TestModel.TEST_PATH).isPresent());
     }
 }

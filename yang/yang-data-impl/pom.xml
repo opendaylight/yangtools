@@ -73,6 +73,8 @@
                             org.opendaylight.yangtools.yang.data.impl.*,
                             ;-split-package:=error
                         </Export-Package>
+                        <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
+                        <Bundle-Activator>org.opendaylight.yangtools.yang.data.impl.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
@@ -144,6 +146,20 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <scope>test</scope>
@@ -176,10 +192,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.antlr</groupId>
-            <artifactId>antlr4-runtime</artifactId>
         </dependency>
     </dependencies>
 
