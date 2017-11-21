@@ -14,9 +14,11 @@ import static org.junit.Assert.assertTrue;
 import com.google.common.collect.Lists;
 import com.puppycrawl.tools.checkstyle.Checker;
 import com.puppycrawl.tools.checkstyle.ConfigurationLoader;
+import com.puppycrawl.tools.checkstyle.ConfigurationLoader.IgnoredModulesOptions;
 import com.puppycrawl.tools.checkstyle.DefaultLogger;
 import com.puppycrawl.tools.checkstyle.PropertiesExpander;
 import com.puppycrawl.tools.checkstyle.api.AuditListener;
+import com.puppycrawl.tools.checkstyle.api.AutomaticBean.OutputStreamOptions;
 import com.puppycrawl.tools.checkstyle.api.CheckstyleException;
 import com.puppycrawl.tools.checkstyle.api.Configuration;
 import java.io.ByteArrayOutputStream;
@@ -37,12 +39,12 @@ public class CheckstyleTest {
     @Before
     public void setup() throws CheckstyleException {
         baos = new ByteArrayOutputStream();
-        final AuditListener listener = new DefaultLogger(baos, false);
+        final AuditListener listener = new DefaultLogger(baos, OutputStreamOptions.NONE);
 
         final InputSource inputSource = new InputSource(CheckstyleTest.class.getClassLoader().getResourceAsStream(
                 "checkstyle-logging.xml"));
         final Configuration configuration = ConfigurationLoader.loadConfiguration(inputSource,
-                new PropertiesExpander(System.getProperties()), false);
+                new PropertiesExpander(System.getProperties()), IgnoredModulesOptions.EXECUTE);
 
         checker = new Checker();
         checker.setModuleClassLoader(Checker.class.getClassLoader());
