@@ -44,13 +44,13 @@ public class ThreadPoolExecutorTest {
 
     @Test
     public void testFastThreadPoolExecution() throws InterruptedException {
-        testThreadPoolExecution(SpecialExecutors.newBoundedFastThreadPool(50, 100000, "TestPool"), 100000, "TestPool",
-            0);
+        testThreadPoolExecution(
+                SpecialExecutors.newBoundedFastThreadPool(50, 100000, "TestPool", getClass()), 100000, "TestPool", 0);
     }
 
     @Test(expected = RejectedExecutionException.class)
     public void testFastThreadPoolRejectingTask() throws InterruptedException {
-        executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool");
+        executor = SpecialExecutors.newBoundedFastThreadPool(1, 1, "TestPool", getClass());
 
         for (int i = 0; i < 5; i++) {
             executor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
@@ -60,18 +60,19 @@ public class ThreadPoolExecutorTest {
     @Test
     public void testBlockingFastThreadPoolExecution() throws InterruptedException {
         // With a queue capacity of 1, it should block at some point.
-        testThreadPoolExecution(SpecialExecutors.newBlockingBoundedFastThreadPool(2, 1, "TestPool"), 1000, null, 10);
+        testThreadPoolExecution(
+                SpecialExecutors.newBlockingBoundedFastThreadPool(2, 1, "TestPool", getClass()), 1000, null, 10);
     }
 
     @Test
     public void testCachedThreadPoolExecution() throws InterruptedException {
-        testThreadPoolExecution(SpecialExecutors.newBoundedCachedThreadPool(10, 100000, "TestPool"),
+        testThreadPoolExecution(SpecialExecutors.newBoundedCachedThreadPool(10, 100000, "TestPool", getClass()),
                 100000, "TestPool", 0);
     }
 
     @Test(expected = RejectedExecutionException.class)
     public void testCachedThreadRejectingTask() throws InterruptedException {
-        ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool");
+        ExecutorService localExecutor = SpecialExecutors.newBoundedCachedThreadPool(1, 1, "TestPool", getClass());
 
         for (int i = 0; i < 5; i++) {
             localExecutor.execute(new Task(null, null, null, null, TimeUnit.MICROSECONDS.convert(5, TimeUnit.SECONDS)));
@@ -80,7 +81,8 @@ public class ThreadPoolExecutorTest {
 
     @Test
     public void testBlockingCachedThreadPoolExecution() throws InterruptedException {
-        testThreadPoolExecution(SpecialExecutors.newBlockingBoundedCachedThreadPool(2, 1, "TestPool"), 1000, null, 10);
+        testThreadPoolExecution(
+                SpecialExecutors.newBlockingBoundedCachedThreadPool(2, 1, "TestPool", getClass()), 1000, null, 10);
     }
 
     void testThreadPoolExecution(final ExecutorService executorToTest, final int numTasksToRun,
