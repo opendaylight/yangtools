@@ -18,11 +18,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -60,6 +62,13 @@ public abstract class AbstractSchemaContext implements SchemaContext {
      */
     protected abstract SetMultimap<String, Module> getNameToModules();
 
+    /**
+     * Returns the namespace+revision-to-module mapping.
+     *
+     * @return Map of modules where key is Module's QNameModule.
+     */
+    protected abstract Map<QNameModule, Module> getModuleMap();
+
     @Override
     public Set<DataSchemaNode> getDataDefinitions() {
         final Set<DataSchemaNode> dataDefs = new HashSet<>();
@@ -96,7 +105,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return extensions;
     }
 
-
     @Override
     public Optional<Module> findModule(final String name, final Optional<Revision> revision) {
         for (final Module module : getNameToModules().get(name)) {
@@ -109,9 +117,18 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
+    public Optional<Module> findModule(final QNameModule qnameModule) {
+        return Optional.ofNullable(getModuleMap().get(qnameModule));
+    }
+
+    @Override
     public Set<Module> findModules(final URI namespace) {
-        final Set<Module> ret = getNamespaceToModules().get(namespace);
-        return ret == null ? Collections.emptySet() : ret;
+        return getNamespaceToModules().get(namespace);
+    }
+
+    @Override
+    public Set<Module> findModules(final String name) {
+        return getNameToModules().get(name);
     }
 
     @Override

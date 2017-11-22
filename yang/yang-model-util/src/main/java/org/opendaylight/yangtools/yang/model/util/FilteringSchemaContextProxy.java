@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Lists;
@@ -29,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
 import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -36,6 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 @Immutable
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
+    private final Map<QNameModule, Module> moduleMap;
 
     //collection to be filled with filtered modules
     private final Set<Module> filteredModules;
@@ -58,10 +61,6 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         Preconditions.checkNotNull(additionalModuleIds, "Additional modules cannot be null.");
 
         final Builder<Module> filteredModulesBuilder = new Builder<>();
-        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
-            AbstractSchemaContext::createModuleSet);
-        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
-            AbstractSchemaContext::createModuleSet);
 
         // preparing map to get all modules with one name but difference in revision
         final TreeMultimap<String, Module> nameToModulesAll = getStringModuleTreeMultimap();
@@ -85,13 +84,20 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
          */
         this.filteredModules = filteredModulesBuilder.build();
 
+        final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
+        final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
+            AbstractSchemaContext::createModuleSet);
+        final ImmutableMap.Builder<QNameModule, Module> moduleMapBuilder = ImmutableMap.builder();
         for (final Module module : filteredModules) {
             nameMap.put(module.getName(), module);
             nsMap.put(module.getNamespace(), module);
+            moduleMapBuilder.put(module.getQNameModule(), module);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        moduleMap = moduleMapBuilder.build();
     }
 
     private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
@@ -147,6 +153,11 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     @Override
     public Set<Module> getModules() {
         return filteredModules;
+    }
+
+    @Override
+    protected Map<QNameModule, Module> getModuleMap() {
+        return moduleMap;
     }
 
     @Override
