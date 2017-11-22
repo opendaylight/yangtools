@@ -44,7 +44,9 @@ public interface SchemaContext extends ContainerSchemaNode {
     Set<DataSchemaNode> getDataDefinitions();
 
     /**
-     * Returns modules which are part of the schema context.
+     * Returns modules which are part of the schema context. Returned set is required to have its iteration ordered
+     * by module revision, so that if modules are filtered by {@link Module#getName()} or {@link Module#getNamespace()},
+     * modules having the same attribute are encountered newest revision first.
      *
      * @return set of the modules which belong to the schema context
      */
@@ -60,7 +62,7 @@ public interface SchemaContext extends ContainerSchemaNode {
     Set<RpcDefinition> getOperations();
 
     /**
-     * Returns extencion definition instances which are defined as the direct
+     * Returns extension definition instances which are defined as the direct
      * subelements in all YANG modules in the context.
      *
      * @return set of <code>ExtensionDefinition</code> instances which
@@ -69,31 +71,70 @@ public interface SchemaContext extends ContainerSchemaNode {
     Set<ExtensionDefinition> getExtensions();
 
     /**
-     * Returns module instance (from the context) with concrete name and revision date.
+     * Returns the module matching specified {@link QNameModule}, if present.
+     *
+     * @param qnameModule requested QNameModule
+     * @return Module, if present.
+     * @throws NullPointerException if qnameModule is null
+     */
+    Optional<Module> findModule(final QNameModule qnameModule);
+
+    /**
+     * Returns module instance (from the context) with specified namespace and no revision.
+     *
+     * @param namespace
+     *            module namespace
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>namespace</code> and no revision.
+     */
+    default Optional<Module> findModule(final URI namespace) {
+        return findModule(QNameModule.create(namespace));
+    }
+
+    /**
+     * Returns module instance (from the context) with specified namespace and revision.
+     *
+     * @param namespace
+     *            module namespace
+     * @param revision
+     *            module revision, may be null
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>namespace</code> and <code>revision</code>.
+     */
+    default Optional<Module> findModule(final URI namespace, @Nullable final Revision revision) {
+        return findModule(QNameModule.create(namespace, revision));
+    }
+
+    /**
+     * Returns module instance (from the context) with specified namespace and revision.
+     *
+     * @param namespace
+     *            module namespace
+     * @param revision
+     *            module revision, may be null
+     * @return module instance which has name and revision the same as are the values specified in parameters
+     *         <code>namespace</code> and <code>revision</code>.
+     */
+    default Optional<Module> findModule(final URI namespace, final Optional<Revision> revision) {
+        return findModule(QNameModule.create(namespace, revision));
+    }
+
+    /**
+     * Returns module instance (from the context) with specified name and an optional revision.
      *
      * @param name
      *            string with the module name
      * @param revision
      *            date of the module revision
      * @return module instance which has name and revision the same as are the values specified in parameters
-     *         <code>name</code> and <code>revision</code>.
+     *                <code>name</code> and <code>revision</code>.
      */
-    Optional<Module> findModule(String name, Optional<Revision> revision);
-
-    /**
-     * Returns module instance (from the context) with concrete name and revision date.
-     *
-     * @param name
-     *            string with the module name
-     * @return module instance which has name and revision the same as are the values specified in parameters
-     *         <code>name</code> and <code>revision</code>.
-     */
-    default Optional<Module> findModule(final String name) {
-        return findModule(name, Optional.empty());
+    default Optional<Module> findModule(final String name, final Optional<Revision> revision) {
+        return findModules(name).stream().filter(module -> revision.equals(module.getRevision())).findAny();
     }
 
     /**
-     * Returns module instance (from the context) with concrete name and revision date.
+     * Returns module instance (from the context) with specified name and revision.
      *
      * @param name
      *            string with the module name
@@ -106,24 +147,20 @@ public interface SchemaContext extends ContainerSchemaNode {
         return findModule(name, Optional.ofNullable(revision));
     }
 
-    default Optional<Module> findModule(final URI namespace) {
-        return findModule(QNameModule.create(namespace));
-    }
-
-    default Optional<Module> findModule(final URI namespace, @Nullable final Revision revision) {
-        return findModule(QNameModule.create(namespace, revision));
-    }
-
-    default Optional<Module> findModule(final URI namespace, final Optional<Revision> revision) {
-        return findModule(QNameModule.create(namespace, revision));
-    }
-
-    default Optional<Module> findModule(final QNameModule qnameModule) {
-        return getModules().stream().filter(m -> qnameModule.equals(m.getQNameModule())).findAny();
-    }
-
     /**
-     * Returns module instances (from the context) with a concrete name.
+     * Returns module instance (from the context) with specified name and no revision.
+     *
+     * @param name string with the module name
+     * @return module instance which has name and revision the same as are the values specified in <code>name</code>
+     *                and no revision.
+     * @throws NullPointerException if name is null
+     */
+    default Optional<Module> findModule(final String name) {
+        return findModule(name, Optional.empty());
+    }
+    /**
+     * Returns module instances (from the context) with a concrete name. Returned Set is required to have its iteration
+     * order guarantee that the latest revision is encountered first.
      *
      * @param name
      *            string with the module name
@@ -134,7 +171,8 @@ public interface SchemaContext extends ContainerSchemaNode {
     }
 
     /**
-     * Returns module instance (from the context) with concrete namespace.
+     * Returns module instance (from the context) with concrete namespace. Returned Set is required to have its
+     * iteration order guarantee that the latest revision is encountered first.
      *
      * @param namespace
      *            URI instance with specified namespace
