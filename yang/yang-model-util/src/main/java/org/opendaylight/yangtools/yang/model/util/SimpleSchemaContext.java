@@ -10,13 +10,17 @@ package org.opendaylight.yangtools.yang.model.util;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
@@ -28,6 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 public class SimpleSchemaContext extends AbstractSchemaContext {
     private final SetMultimap<URI, Module> namespaceToModules;
     private final SetMultimap<String, Module> nameToModules;
+    private final Map<QNameModule, Module> moduleMap;
     private final Set<Module> modules;
 
     protected SimpleSchemaContext(final Set<Module> modules) {
@@ -49,13 +54,16 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
             AbstractSchemaContext::createModuleSet);
         final SetMultimap<String, Module> nameMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
+        final Builder<QNameModule, Module> moduleMapBuilder = ImmutableMap.builder();
         for (Module m : modules) {
             nameMap.put(m.getName(), m);
             nsMap.put(m.getNamespace(), m);
+            moduleMapBuilder.put(m.getQNameModule(), m);
         }
 
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
+        moduleMap = moduleMapBuilder.build();
     }
 
     /**
@@ -69,6 +77,11 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
     @Override
     public final Set<Module> getModules() {
         return modules;
+    }
+
+    @Override
+    protected Map<QNameModule, Module> getModuleMap() {
+        return moduleMap;
     }
 
     @Override
