@@ -10,12 +10,12 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-system-test</artifactId>
-    <version>1.2.1-SNAPSHOT</version>
+    <version>1.2.2-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>YANG system test</description>
 
     <properties>
-        <yang.codegen.version>0.11.1-SNAPSHOT</yang.codegen.version>
+        <yang.codegen.version>0.11.2-SNAPSHOT</yang.codegen.version>
     </properties>
 
     <dependencies>
