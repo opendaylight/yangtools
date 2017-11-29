@@ -2,7 +2,7 @@
   "bug8927:foo": {
     "alarm-information": {
       "alarm-summary": {
-        "active-alarm-count": 16
+        "active-alarm-count": null
       },
       "alarm-detail": {
         "alarm-time": "2017-08-02 19:03:44 UTC",
