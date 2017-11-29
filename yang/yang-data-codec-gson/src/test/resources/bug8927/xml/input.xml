@@ -3,7 +3,7 @@
 <foo xmlns="bug8927.test">
     <alarm-information xmlns="bug8927.test">
         <alarm-summary>
-            <active-alarm-count>16</active-alarm-count>
+            <active-alarm-count/>
         </alarm-summary>
         <alarm-detail>
             <alarm-time>
