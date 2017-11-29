@@ -274,10 +274,9 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
 
     private void writeXmlValue(final Node node) throws IOException {
         Text firstChild = getFirstChildText(node);
+        String childNodeText = firstChild != null ? firstChild.getWholeText() : "";
+        childNodeText = childNodeText != null ? childNodeText.trim() : "";
 
-        final String childNodeText = firstChild!=null
-                ? (firstChild.getWholeText()!=null ? firstChild.getWholeText().trim() : null)
-                : "null";
         if (NUMBER_PATTERN.matcher(childNodeText).matches()) {
             writer.value(parseNumber(childNodeText));
             return;
