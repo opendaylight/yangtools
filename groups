@@ -1,5 +1,5 @@
 # UUID                                                             	Group Name
 #
-global:Anonymous-Users                                             	Anonymous Users
+c9025ab9ddc1e3171919e085449f22c54f8f7b54                           	GitHub Replication
 global:Project-Owners                                              	Project Owners
 ldap:cn=gerrit-yangtools-commiters,ou=Groups,dc=opendaylight,dc=org	ldap/gerrit-yangtools-commiters
