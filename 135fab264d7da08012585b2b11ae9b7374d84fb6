@@ -1,0 +1,50 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7a1969be_e15d3d4a",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 318,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-29T12:25:33Z",
+      "side": 1,
+      "message": "This requires some explanation. Also please do not use nested trigraphs, as they render the code unreadable.",
+      "range": {
+        "startLine": 315,
+        "startChar": 0,
+        "endLine": 318,
+        "endChar": 25
+      },
+      "revId": "135fab264d7da08012585b2b11ae9b7374d84fb6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7a1969be_4136d104",
+        "filename": "yang/yang-data-codec-gson/src/test/resources/bug8927/json/expected.json",
+        "patchSetId": 2
+      },
+      "lineNbr": 5,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2017-11-29T12:25:33Z",
+      "side": 1,
+      "message": "I am not sure this actually is correct.\n\u003cactive-alarm-count\u003e\u003c/active-alarm-count\u003e\nand\n\u003cactive-alarm-count/\u003e\nshould be handled the same -- resulting in empty string -- unless the spec says otherwise.",
+      "range": {
+        "startLine": 5,
+        "startChar": 8,
+        "endLine": 5,
+        "endChar": 34
+      },
+      "revId": "135fab264d7da08012585b2b11ae9b7374d84fb6",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
