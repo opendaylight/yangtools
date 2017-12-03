@@ -17,7 +17,6 @@ public interface ListenerRegistration<T extends EventListener> extends ObjectReg
     /**
      * Unregister the listener. Note that invocations enqueued to the listener are not subject to synchronization
      * rules, and events may be delivered to the listener after this method completes.
-     * Unregister the listener.
      *
      * <p>
      * While the interface contract allows an implementation to ignore the occurrence of RuntimeExceptions,
