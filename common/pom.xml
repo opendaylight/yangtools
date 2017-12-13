@@ -24,7 +24,6 @@
 
     <modules>
         <module>artifacts</module>
-        <module>checkstyle-logging</module>
         <module>concepts</module>
         <module>mockito-configuration</module>
         <module>object-cache-api</module>
