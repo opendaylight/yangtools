@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class YangProvider {
     private static final class Default extends YangProvider {
-        private static final Logger LOG = LoggerFactory.getLogger(YangProvider.class);
+        private static final Logger LOG = LoggerFactory.getLogger(Default.class);
 
         @Override
         void addYangsToMetaInf(final MavenProject project, final Collection<YangTextSchemaSource> modelsInProject)

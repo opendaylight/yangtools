@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> Resulting {@link TypeDefinition}
  */
 public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends TypeBuilder<T> {
-    private static final Logger LOG = LoggerFactory.getLogger(DecimalTypeBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DerivedTypeBuilder.class);
     private Object defaultValue;
     private String description;
     private String reference;

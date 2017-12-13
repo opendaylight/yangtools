@@ -117,7 +117,7 @@ public class DataTreeCandidateValidatorTest3 {
         try {
             LeafRefValidatation.validate(writeDevicesCandidate, rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(6, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -155,7 +155,7 @@ public class DataTreeCandidateValidatorTest3 {
         try {
             LeafRefValidatation.validate(mergeDevicesCandidate, rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             // :TODO verify errors count gz
             assertEquals(6, e.getValidationsErrorsCount());
             exception = true;

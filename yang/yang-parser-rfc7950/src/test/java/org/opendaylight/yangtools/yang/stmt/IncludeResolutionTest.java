@@ -14,7 +14,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResource;
 
-import java.util.logging.Logger;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -24,10 +23,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IncludeResolutionTest {
 
-    private static final Logger LOG = Logger.getLogger(IncludeResolutionTest.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(IncludeResolutionTest.class);
 
     private static final StatementStreamSource ROOT = sourceForResource(
             "/semantic-statement-parser/include-arg-parsing/root-module.yang");

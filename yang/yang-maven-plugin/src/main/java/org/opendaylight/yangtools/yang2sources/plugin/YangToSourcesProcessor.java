@@ -255,7 +255,7 @@ class YangToSourcesProcessor {
 
         if (!thrown.isEmpty()) {
             String message = " One or more code generators failed, including failed list(generatorClass=exception) ";
-            LOG.error("{}" + message + "{}", LOG_PREFIX, thrown.toString());
+            LOG.error("{}{}{}", LOG_PREFIX, message, thrown.toString());
             throw new MojoFailureException(LOG_PREFIX + message + thrown.toString());
         }
     }

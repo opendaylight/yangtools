@@ -54,6 +54,7 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * @param loggerIdentity
      *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
+    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter") // due to loggerIdentity argument usage
     public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix,
             Class<?> loggerIdentity) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.

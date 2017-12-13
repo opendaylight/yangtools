@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<DeviateKind, DeviateStatement,
         EffectiveStatement<DeviateKind, DeviateStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(DeviateStatementImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractDeviateStatementSupport.class);
 
     private static final SubstatementValidator DEVIATE_NOT_SUPPORTED_SUBSTATEMENT_VALIDATOR =
             SubstatementValidator.builder(YangStmtMapping.DEVIATE).build();
