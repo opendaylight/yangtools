@@ -48,6 +48,7 @@ import org.slf4j.LoggerFactory;
  *  -o, --output          path to output file for logs. Output file will be overwritten.
  *  -m, --module-name     validate yang by module name.
  */
+@SuppressWarnings({"checkstyle:LoggerMustBeSlf4j", "checkstyle:LoggerFactoryClassParameter"})
 public final class Main {
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final ch.qos.logback.classic.Logger LOG_ROOT =

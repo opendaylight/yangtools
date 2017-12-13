@@ -112,7 +112,7 @@ public class DataTreeCandidateValidatorTest2 {
         try {
             LeafRefValidatation.validate(writeDevicesCandidate, rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
 
             assertEquals(4, e.getValidationsErrorsCount());
             exception = true;

@@ -57,7 +57,7 @@ public final class StmtTestUtils {
     }
 
     public static void log(final Throwable exception, final String indent) {
-        LOG.debug(indent + exception.getMessage());
+        LOG.debug("{}{}", indent, exception.getMessage());
 
         final Throwable[] suppressed = exception.getSuppressed();
         for (final Throwable throwable : suppressed) {
@@ -84,7 +84,7 @@ public final class StmtTestUtils {
     }
 
     public static void printReferences(final Module module, final boolean isSubmodule, final String indent) {
-        LOG.debug(indent + (isSubmodule ? "Submodule " : "Module ") + module.getName());
+        LOG.debug("{}{} {}", indent, (isSubmodule ? "Submodule" : "Module"), module.getName());
         final Set<Module> submodules = module.getSubmodules();
         for (final Module submodule : submodules) {
             printReferences(submodule, true, indent + "      ");
@@ -95,7 +95,7 @@ public final class StmtTestUtils {
     public static void printChilds(final Collection<DataSchemaNode> childNodes, final String indent) {
 
         for (final DataSchemaNode child : childNodes) {
-            LOG.debug(indent + "Child " + child.getQName().getLocalName());
+            LOG.debug("{}{} {}", indent, "Child", child.getQName().getLocalName());
             if (child instanceof DataNodeContainer) {
                 printChilds(((DataNodeContainer) child).getChildNodes(), indent + "      ");
             }

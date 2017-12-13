@@ -227,7 +227,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(writeContributorsCandidate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(3, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -274,7 +274,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(writeContributorsCandidate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(1, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -327,7 +327,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(writeContributorsCandidate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(2, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -376,7 +376,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(writeContributorsCandidate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(12, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -438,7 +438,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(writeContributorsCandidate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(6, e.getValidationsErrorsCount());
             exception = true;
         }
@@ -591,7 +591,7 @@ public class DataTreeCandidateValidatorTest {
             LeafRefValidatation.validate(deleteContributorsCanditate,
                     rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
-            LOG.debug("All validation errors:" + NEW_LINE + e.getMessage());
+            LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
             assertEquals(6, e.getValidationsErrorsCount());
             exception = true;
         }

@@ -186,7 +186,7 @@ public class OrderedListTest {
             inMemoryDataTree.validate(treeModification);
             inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
         } catch (final IllegalArgumentException ex) {
-            LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
+            LOG.debug("IllegalArgumentException was thrown as expected", ex);
             assertTrue(ex.getMessage().contains("Metadata not available for modification NodeModification"));
         }
 
@@ -235,7 +235,7 @@ public class OrderedListTest {
             fail("Exception should have been thrown.");
             inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification2));
         } catch (ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException was thrown as expected: {}", ex);
+            LOG.debug("ConflictingModificationAppliedException was thrown as expected", ex);
             assertTrue(ex.getMessage().contains("Node was replaced by other transaction"));
         }
 

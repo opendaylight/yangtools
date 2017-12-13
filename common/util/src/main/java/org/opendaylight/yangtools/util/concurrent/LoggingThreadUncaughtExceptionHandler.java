@@ -16,6 +16,7 @@ import org.slf4j.Logger;
  *
  * @author Michael Vorburger.ch
  */
+@SuppressWarnings({"checkstyle:LoggerVariableName", "LoggerVariableModifiers"})
 public final class LoggingThreadUncaughtExceptionHandler implements UncaughtExceptionHandler {
 
     // This class is also available in infrautils (but yangtools cannot depend on infrautils)

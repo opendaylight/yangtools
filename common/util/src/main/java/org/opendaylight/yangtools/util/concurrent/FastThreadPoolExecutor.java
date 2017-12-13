@@ -90,6 +90,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param loggerIdentity
      *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
+    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter") // due to loggerIdentity argument usage
     public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
             final TimeUnit unit, final String threadPrefix, Class<?> loggerIdentity) {
         // We use all core threads (the first 2 parameters below equal) so, when a task is submitted,
