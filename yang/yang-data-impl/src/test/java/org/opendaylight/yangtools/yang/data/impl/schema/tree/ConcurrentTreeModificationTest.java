@@ -113,7 +113,7 @@ public class ConcurrentTreeModificationTest {
             inMemoryDataTree.validate(modificationTree2);
             fail("Exception should have been thrown.");
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException - was thrown as expected", ex);
         }
         final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
         inMemoryDataTree.commit(prepare2);
@@ -169,7 +169,7 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException - was thrown as expected", ex);
         }
 
         final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
@@ -224,7 +224,7 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException - was thrown as expected", ex);
         }
 
         final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
@@ -283,7 +283,7 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException was thrown as expected", ex);
         }
 
         final InMemoryDataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
@@ -346,7 +346,7 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException was thrown as expected", ex);
         }
 
 
@@ -410,7 +410,7 @@ public class ConcurrentTreeModificationTest {
             final DataTreeCandidate prepare2 = inMemoryDataTree.prepare(modificationTree2);
             inMemoryDataTree.commit(prepare2);
         } catch (final ConflictingModificationAppliedException ex) {
-            LOG.debug("ConflictingModificationAppliedException - '{}' was thrown as expected.");
+            LOG.debug("ConflictingModificationAppliedException was thrown as expected", ex);
         }
 
 
