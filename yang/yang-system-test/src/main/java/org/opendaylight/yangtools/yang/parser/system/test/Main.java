@@ -43,7 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *
  */
 public class Main {
-    private static final Logger LOG = Logger.getLogger(Main.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
     private static final int MB = 1024 * 1024;
 
     private static Options createOptions() {

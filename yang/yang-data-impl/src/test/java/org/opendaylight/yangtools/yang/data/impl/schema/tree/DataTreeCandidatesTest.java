@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 
 public class DataTreeCandidatesTest {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidates.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidatesTest.class);
 
     private static final SchemaContext SCHEMA_CONTEXT;
 
