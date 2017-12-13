@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @param <V> Value type
  */
 final class ReadWriteTrieMap<K, V> extends ForwardingMap<K, V> {
-    private static final Logger LOG = LoggerFactory.getLogger(ReadOnlyTrieMap.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ReadWriteTrieMap.class);
 
     private final MutableTrieMap<K, V> delegate;
 

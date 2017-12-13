@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<SchemaNodeIdentifier, AugmentStatement,
         EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(AugmentStatementImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractAugmentStatementSupport.class);
     private static final Pattern PATH_REL_PATTERN1 = Pattern.compile("\\.\\.?\\s*/(.+)");
     private static final Pattern PATH_REL_PATTERN2 = Pattern.compile("//.*");
 
