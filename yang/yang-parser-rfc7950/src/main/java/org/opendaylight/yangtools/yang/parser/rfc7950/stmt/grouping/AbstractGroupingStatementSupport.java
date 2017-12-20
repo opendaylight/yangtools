@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractGroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
@@ -31,6 +32,16 @@ abstract class AbstractGroupingStatementSupport
 
     @Override
     public final GroupingStatement createDeclared(final StmtContext<QName, GroupingStatement, ?> ctx) {
+        // Shadowing check: make sure grandparent does not see a conflicting definition. This is required to ensure
+        // that a grouping in child scope does not shadow a grouping in parent scope which occurs later in the text.
+        final StmtContext<?, ?, ?> parent = ctx.getParentContext();
+        if (parent != null) {
+            final StmtContext<?, ?, ?> grandParent = parent.getParentContext();
+            if (grandParent != null) {
+                checkConflict(grandParent, ctx);
+            }
+        }
+
         return new GroupingStatementImpl(ctx);
     }
 
@@ -45,8 +56,21 @@ abstract class AbstractGroupingStatementSupport
             EffectiveStatement<QName, GroupingStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        if (stmt != null && stmt.getParentContext() != null) {
-            stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
+        if (stmt != null) {
+            final Mutable<?, ?, ?> parent = stmt.getParentContext();
+            if (parent != null) {
+                // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
+                // declarations and parent declarations which have already been declared.
+                checkConflict(parent, stmt);
+                parent.addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
+            }
         }
+    }
+
+    private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
+        final QName arg = stmt.getStatementArgument();
+        final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
+        SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), "Duplicate name for grouping %s",
+                arg);
     }
 }

@@ -20,20 +20,20 @@ module foo {
     }
 
     notification my-name {
-        grouping my-name {
+        grouping my-name-a {
         }
-        container my-name {
+        container my-name-a {
         }
     }
 
     container my-name-2 {
-        grouping my-name {
+        grouping my-name-b {
         }
-        notification my-name {
+        notification my-name-b {
         }
-        grouping my-name-2 {
+        grouping my-name-2-b {
         }
-        action my-name-2 {
+        action my-name-2-b {
         }
     }
 }

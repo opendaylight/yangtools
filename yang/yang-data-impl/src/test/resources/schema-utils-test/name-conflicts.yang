@@ -3,61 +3,61 @@ module name-conflicts {
     prefix nc;
 
     grouping my-name {
-        grouping my-name {
-            grouping my-name {
+        grouping my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name {
+            container my-name-nested2 {
             }
         }
-        container my-name {
-            grouping my-name {
+        container my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name {
+            container my-name-nested2 {
             }
         }
     }
 
     container my-name {
-        grouping my-name {
-            grouping my-name {
+        grouping my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name {
+            container my-name-nested2 {
             }
         }
-        container my-name {
-            grouping my-name {
+        container my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name {
+            container my-name-nested2 {
             }
         }
     }
 
     grouping my-name-2 {
-        grouping my-name-2 {
-            grouping my-name-2 {
+        grouping my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name-2 {
+            container my-name-nested2 {
             }
         }
         container my-name-2 {
-            grouping my-name-2 {
+            grouping my-name-nested2 {
             }
-            container my-name-2 {
+            container my-name-nested2 {
             }
         }
     }
 
     container my-name-2 {
-        grouping my-name-2 {
-            grouping my-name-2 {
+        grouping my-name-nested {
+            grouping my-name-nested2 {
             }
             container target {
             }
         }
-        container my-name-2 {
-            grouping my-name-2 {
+        container my-name-nested {
+            grouping my-name-nested2 {
             }
-            container my-name-2 {
+            container my-name-nested2 {
             }
         }
     }

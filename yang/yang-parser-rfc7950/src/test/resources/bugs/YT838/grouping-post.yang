@@ -1,0 +1,18 @@
+module grouping {
+    namespace grouping;
+    prefix grp;
+
+    revision "2017-12-20";
+
+    container top {
+        container nested {
+            grouping foo {
+
+            }
+        }
+
+        grouping foo {
+
+        }
+    }
+}

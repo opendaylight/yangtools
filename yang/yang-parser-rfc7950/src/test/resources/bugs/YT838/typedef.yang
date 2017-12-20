@@ -1,0 +1,18 @@
+module typedef {
+    namespace typedef;
+    prefix tdef;
+
+    revision "2017-12-20";
+
+    container top {
+        typedef foo {
+            type string;
+        }
+
+        container nested {
+            typedef foo {
+                type string;
+            }
+        }
+    }
+}

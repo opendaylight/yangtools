@@ -29,11 +29,11 @@ public class SchemaUtilsTest {
     public void test() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/schema-utils-test/foo.yang");
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name"), qN("my-name"))) instanceof ContainerSchemaNode);
+                SchemaPath.create(true, qN("my-name"), qN("my-name-a"))) instanceof ContainerSchemaNode);
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name-2"), qN("my-name"))) instanceof NotificationDefinition);
+                SchemaPath.create(true, qN("my-name-2"), qN("my-name-b"))) instanceof NotificationDefinition);
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name-2"), qN("my-name-2"))) instanceof ActionDefinition);
+                SchemaPath.create(true, qN("my-name-2"), qN("my-name-2-b"))) instanceof ActionDefinition);
     }
 
     @Test
@@ -42,11 +42,11 @@ public class SchemaUtilsTest {
                 .parseYangResource("/schema-utils-test/name-conflicts.yang");
         // test my-name conflicts
         assertEquals(8, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name"), qN("my-name"), qN("my-name"))).size());
+                SchemaPath.create(true, qN("my-name"), qN("my-name-nested"), qN("my-name-nested2"))).size());
 
         // test target container
         final Collection<SchemaNode> target = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name-2"), qN("my-name-2"), qN("target")));
+                SchemaPath.create(true, qN("my-name-2"), qN("my-name-nested"), qN("target")));
         assertEquals(1, target.size());
         assertTrue(target.iterator().next() instanceof ContainerSchemaNode);
 
