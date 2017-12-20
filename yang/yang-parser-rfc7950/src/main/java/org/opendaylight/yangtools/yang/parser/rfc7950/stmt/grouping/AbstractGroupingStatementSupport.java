@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSup
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractGroupingStatementSupport
         extends AbstractQNameStatementSupport<GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
@@ -45,8 +46,19 @@ abstract class AbstractGroupingStatementSupport
             EffectiveStatement<QName, GroupingStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        if (stmt != null && stmt.getParentContext() != null) {
-            stmt.getParentContext().addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
+        if (stmt != null) {
+            final Mutable<?, ?, ?> parent = stmt.getParentContext();
+            if (parent != null) {
+                final QName arg = stmt.getStatementArgument();
+                final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
+                if (existing != null) {
+                    // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
+                    throw new SourceException(stmt.getStatementSourceReference(),
+                        "Grouping name %s shadows existing grouping defined at %s", arg,
+                        existing.getStatementSourceReference());
+                }
+                parent.addContext(GroupingNamespace.class, arg, stmt);
+            }
         }
     }
 }

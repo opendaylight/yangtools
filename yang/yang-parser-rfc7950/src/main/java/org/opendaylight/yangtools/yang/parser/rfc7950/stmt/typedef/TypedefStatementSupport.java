@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.TypeNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -61,13 +61,16 @@ public final class TypedefStatementSupport extends
             EffectiveStatement<QName, TypedefStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
 
-        if (stmt != null && stmt.getParentContext() != null) {
-            final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> existing = stmt.getParentContext()
-                    .getFromNamespace(TypeNamespace.class, stmt.getStatementArgument());
-            SourceException.throwIf(existing != null, stmt.getStatementSourceReference(),
-                    "Duplicate name for typedef %s", stmt.getStatementArgument());
-
-            stmt.getParentContext().addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
+        if (stmt != null) {
+            final Mutable<?, ?, ?> parent = stmt.getParentContext();
+            if (parent != null) {
+                final QName arg = stmt.getStatementArgument();
+                final StmtContext<?, ?, ?> existing = parent.getFromNamespace(TypeNamespace.class, arg);
+                // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
+                SourceException.throwIf(existing != null, stmt.getStatementSourceReference(),
+                    "Duplicate name for typedef %s", arg);
+                parent.addContext(TypeNamespace.class, arg, stmt);
+            }
         }
     }
 
