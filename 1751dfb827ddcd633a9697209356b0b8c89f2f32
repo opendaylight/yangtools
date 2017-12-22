@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "6f1991c4_d3f88a10",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/grouping/AbstractGroupingStatementSupport.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 61,
+      "author": {
+        "id": 7228
+      },
+      "writtenOn": "2017-12-22T08:26:43Z",
+      "side": 1,
+      "message": "The codes here seems doesn\u0027t work as I have tried, since it\u0027s deep first, when the deepest grouping was added to grouping namespace but the ancestor groupings has not been walked then, so here it would always return null by getFromNamespace,  I have been considering to add another check phase after full declare phase to resolve it by then all groupings are in the grouping namespace.",
+      "range": {
+        "startLine": 49,
+        "startChar": 8,
+        "endLine": 61,
+        "endChar": 13
+      },
+      "revId": "1751dfb827ddcd633a9697209356b0b8c89f2f32",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
