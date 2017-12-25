@@ -49,6 +49,12 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>mockito-configuration</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
