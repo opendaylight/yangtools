@@ -213,6 +213,69 @@ public class Decimal64Test {
         assertEquals("-1.0", Decimal64.valueOf(BigDecimal.ONE.negate()).toString());
     }
 
+    @Test
+    public void testBoundaries() {
+        assertEquals(-128L, Decimal64.valueOf(Byte.MIN_VALUE).longValue());
+        assertEquals(127L, Decimal64.valueOf(Byte.MAX_VALUE).longValue());
+        assertEquals(-32768L, Decimal64.valueOf(Short.MIN_VALUE).longValue());
+        assertEquals(32767L, Decimal64.valueOf(Short.MAX_VALUE).longValue());
+        assertEquals(-2147483648L, Decimal64.valueOf(Integer.MIN_VALUE).longValue());
+        assertEquals(2147483647L, Decimal64.valueOf(Integer.MAX_VALUE).longValue());
+    }
+
+    @Test
+    public void testByteValueExact() {
+        assertEquals(Byte.MIN_VALUE, Decimal64.valueOf(Byte.MIN_VALUE).byteValueExact());
+        assertEquals(Byte.MAX_VALUE, Decimal64.valueOf(Byte.MAX_VALUE).byteValueExact());
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testByteValueExactFrac() {
+        Decimal64.valueOf("1.1").byteValueExact();
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testByteValueExactRange() {
+        Decimal64.valueOf(Byte.MAX_VALUE + 1).byteValueExact();
+    }
+
+    @Test
+    public void testShortValueExact() {
+        assertEquals(Short.MIN_VALUE, Decimal64.valueOf(Short.MIN_VALUE).shortValueExact());
+        assertEquals(Short.MAX_VALUE, Decimal64.valueOf(Short.MAX_VALUE).shortValueExact());
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testShortValueExactFrac() {
+        Decimal64.valueOf("1.1").shortValueExact();
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testShortValueExactRange() {
+        Decimal64.valueOf(Short.MAX_VALUE + 1).shortValueExact();
+    }
+
+    @Test
+    public void testIntValueExact() {
+        assertEquals(Integer.MIN_VALUE, Decimal64.valueOf(Integer.MIN_VALUE).intValueExact());
+        assertEquals(Integer.MAX_VALUE, Decimal64.valueOf(Integer.MAX_VALUE).intValueExact());
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testIntValueExactFrac() {
+        Decimal64.valueOf("1.1").intValueExact();
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testIntValueExactRange() {
+        Decimal64.valueOf(Integer.MAX_VALUE + 1L).intValueExact();
+    }
+
+    @Test(expected = ArithmeticException.class)
+    public void testLongValueExactFrac() {
+        Decimal64.valueOf("1.1").longValueExact();
+    }
+
     private static void assertCanonicalVariants(final String str, final long intPart, final long fracPart,
             final int digits) {
         assertCanonicalString(str, intPart, fracPart, digits, false);

@@ -75,7 +75,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
     }
 
     public static Decimal64 valueOf(final int intVal) {
-        return intVal < 0 ? new Decimal64(1, -intVal, 0, true) : new Decimal64(1, intVal, 0, false);
+        return intVal < 0 ? new Decimal64(1, - (long)intVal, 0, true) : new Decimal64(1, intVal, 0, false);
     }
 
     public static Decimal64 valueOf(final long longVal) {
@@ -216,6 +216,71 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
     @Override
     public double doubleValue() {
         return 1.0 * value / SCALE[scaleOffset];
+    }
+
+    /**
+     * Converts this {@code BigDecimal} to a {@code byte}, checking for lost information. If this {@code Decimal64} has
+     * a nonzero fractional part or is out of the possible range for a {@code byte} result then
+     * an {@code ArithmeticException} is thrown.
+     *
+     * @return this {@code Decimal64} converted to a {@code byte}.
+     * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in a {@code byte}.
+     */
+    public byte byteValueExact() {
+        final long val = longValueExact();
+        final byte ret = (byte) val;
+        if (val != ret) {
+            throw new ArithmeticException("Value " + val + " is outside of byte range");
+        }
+        return ret;
+    }
+
+    /**
+     * Converts this {@code BigDecimal} to a {@code short}, checking for lost information. If this {@code Decimal64} has
+     * a nonzero fractional part or is out of the possible range for a {@code short} result then
+     * an {@code ArithmeticException} is thrown.
+     *
+     * @return this {@code Decimal64} converted to a {@code short}.
+     * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in a {@code short}.
+     */
+    public short shortValueExact() {
+        final long val = longValueExact();
+        final short ret = (short) val;
+        if (val != ret) {
+            throw new ArithmeticException("Value " + val + " is outside of short range");
+        }
+        return ret;
+    }
+
+    /**
+     * Converts this {@code BigDecimal} to an {@code int}, checking for lost information. If this {@code Decimal64} has
+     * a nonzero fractional part or is out of the possible range for an {@code int} result then
+     * an {@code ArithmeticException} is thrown.
+     *
+     * @return this {@code Decimal64} converted to an {@code int}.
+     * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in an {@code int}.
+     */
+    public int intValueExact() {
+        final long val = longValueExact();
+        final int ret = (int) val;
+        if (val != ret) {
+            throw new ArithmeticException("Value " + val + " is outside of integer range");
+        }
+        return ret;
+    }
+
+    /**
+     * Converts this {@code BigDecimal} to a {@code long}, checking for lost information.  If this {@code Decimal64} has
+     * a nonzero fractional part then an {@code ArithmeticException} is thrown.
+     *
+     * @return this {@code Decimal64} converted to a {@code long}.
+     * @throws ArithmeticException if {@code this} has a nonzero fractional part.
+     */
+    public long longValueExact() {
+        if (fracPart() != 0) {
+            throw new ArithmeticException("Conversion of " + this + " would lose fraction");
+        }
+        return intPart();
     }
 
     @Override
