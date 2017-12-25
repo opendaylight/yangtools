@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -68,13 +69,14 @@ public final class Uint64 extends Number implements Comparable<Uint64>, Immutabl
 
     private final long value;
 
-    private Uint64(final long value) {
+    @VisibleForTesting
+    Uint64(final long value) {
         this.value = value;
     }
 
     private static Uint64 instanceFor(final long value) {
         final int slot = (int)value;
-        if (value < 0 || slot >= CACHE.length) {
+        if (slot < 0 || slot >= CACHE.length) {
             for (Uint64 c : COMMON) {
                 if (c.value == value) {
                     return c;

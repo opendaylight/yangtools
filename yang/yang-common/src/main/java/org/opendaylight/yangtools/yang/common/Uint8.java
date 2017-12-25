@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -27,7 +28,8 @@ public final class Uint8 extends Number implements Comparable<Uint8>, Immutable 
 
     private final byte value;
 
-    private Uint8(final byte value) {
+    @VisibleForTesting
+    Uint8(final byte value) {
         this.value = value;
     }
 
@@ -76,13 +78,20 @@ public final class Uint8 extends Number implements Comparable<Uint8>, Immutable 
         return valueOf(uint.intValue());
     }
 
+    public static Uint8 valueOf(final Uint32 uint) {
+        return valueOf(uint.longValue());
+    }
+
+    public static Uint8 valueOf(final Uint64 uint) {
+        return valueOf(uint.longValue());
+    }
+
     public static Uint8 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
     public static Uint8 valueOf(final String string, final int radix) {
-        // FIXME: implement this
-        throw new UnsupportedOperationException();
+        return valueOf(Short.parseShort(string, radix));
     }
 
     @Override

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -66,7 +67,8 @@ public final class Uint32 extends Number implements Comparable<Uint32>, Immutabl
 
     private final int value;
 
-    private Uint32(final int value) {
+    @VisibleForTesting
+    Uint32(final int value) {
         this.value = value;
     }
 
@@ -131,6 +133,10 @@ public final class Uint32 extends Number implements Comparable<Uint32>, Immutabl
 
     public static Uint32 valueOf(final Uint16 uint) {
         return instanceFor(uint.intValue());
+    }
+
+    public static Uint32 valueOf(final Uint64 uint) {
+        return valueOf(uint.longValue());
     }
 
     public static Uint32 valueOf(final String string) {
