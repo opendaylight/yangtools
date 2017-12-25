@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -64,7 +65,8 @@ public final class Uint16 extends Number implements Comparable<Uint16>, Immutabl
 
     private final short value;
 
-    private Uint16(final short value) {
+    @VisibleForTesting
+    Uint16(final short value) {
         this.value = value;
     }
 
@@ -126,13 +128,16 @@ public final class Uint16 extends Number implements Comparable<Uint16>, Immutabl
         return valueOf(uint.longValue());
     }
 
+    public static Uint16 valueOf(final Uint64 uint) {
+        return valueOf(uint.longValue());
+    }
+
     public static Uint16 valueOf(final String string) {
         return valueOf(string, 10);
     }
 
     public static Uint16 valueOf(final String string, final int radix) {
-        // FIXME: implement this
-        throw new UnsupportedOperationException();
+        return valueOf(Integer.parseInt(string, radix));
     }
 
     @Override
