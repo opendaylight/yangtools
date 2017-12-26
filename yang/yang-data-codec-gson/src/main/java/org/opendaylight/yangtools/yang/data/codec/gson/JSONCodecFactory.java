@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Stopwatch;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
@@ -24,14 +23,7 @@ import org.opendaylight.yangtools.yang.data.impl.codec.EnumStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.StringStringCodec;
 import org.opendaylight.yangtools.yang.data.util.codec.AbstractCodecFactory;
 import org.opendaylight.yangtools.yang.data.util.codec.CodecCache;
-import org.opendaylight.yangtools.yang.data.util.codec.LazyCodecCache;
-import org.opendaylight.yangtools.yang.data.util.codec.NoopCodecCache;
-import org.opendaylight.yangtools.yang.data.util.codec.PrecomputedCodecCache;
-import org.opendaylight.yangtools.yang.data.util.codec.SharedCodecCache;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -51,8 +43,6 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Factory for creating JSON equivalents of codecs. Each instance of this object is bound to
@@ -65,56 +55,12 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
-    private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
-        @Override
-        public JSONCodecFactory load(final SchemaContext key) {
-            final Stopwatch sw = Stopwatch.createStarted();
-            final LazyCodecCache<JSONCodec<?>> lazyCache = new LazyCodecCache<>();
-            final JSONCodecFactory lazy = new JSONCodecFactory(key, lazyCache);
-            final int visitedLeaves = requestCodecsForChildren(lazy, key);
-            sw.stop();
-
-            final PrecomputedCodecCache<JSONCodec<?>> cache = lazyCache.toPrecomputed();
-            LOG.debug("{} leaf nodes resulted in {} simple and {} complex codecs in {}", visitedLeaves,
-                cache.simpleSize(), cache.complexSize(), sw);
-            return new JSONCodecFactory(key, cache);
-        }
-
-        private static int requestCodecsForChildren(final JSONCodecFactory lazy, final DataNodeContainer parent) {
-            int ret = 0;
-            for (DataSchemaNode child : parent.getChildNodes()) {
-                if (child instanceof TypedDataSchemaNode) {
-                    lazy.codecFor((TypedDataSchemaNode) child);
-                    ++ret;
-                } else if (child instanceof DataNodeContainer) {
-                    ret += requestCodecsForChildren(lazy, (DataNodeContainer) child);
-                }
-            }
-
-            return ret;
-        }
-    }
-
-    private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactory.class);
-
-    // Weak keys to retire the entry when SchemaContext goes away
-    private static final LoadingCache<SchemaContext, JSONCodecFactory> PRECOMPUTED = CacheBuilder.newBuilder()
-            .weakKeys().build(new EagerCacheLoader());
-
-    // Weak keys to retire the entry when SchemaContext goes away and to force identity-based lookup
-    private static final LoadingCache<SchemaContext, JSONCodecFactory> SHARED = CacheBuilder.newBuilder()
-            .weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
-                @Override
-                public JSONCodecFactory load(final SchemaContext key) {
-                    return new JSONCodecFactory(key, new SharedCodecCache<>());
-                }
-            });
-
     private final JSONCodec<?> iidCodec;
 
-    JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache) {
+    JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache,
+            final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec> iidCodecSupplier) {
         super(context, cache);
-        iidCodec = new JSONStringInstanceIdentifierCodec(context, this);
+        iidCodec = verifyNotNull(iidCodecSupplier.apply(context, this));
     }
 
     /**
@@ -137,9 +83,12 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @param context SchemaContext instance
      * @return A sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
+     *
+     * @deprecated Use {@link JSONCodecFactories#getPrecomputed(SchemaContext)} instead.
      */
+    @Deprecated
     public static JSONCodecFactory getPrecomputed(final SchemaContext context) {
-        return PRECOMPUTED.getUnchecked(context);
+        return JSONCodecFactories.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getPrecomputed(context);
     }
 
     /**
@@ -152,9 +101,12 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @param context SchemaContext instance
      * @return A sharable {@link JSONCodecFactory}, or absent if such an implementation is not available.
      * @throws NullPointerException if context is null
+     *
+     * @deprecated Use {@link JSONCodecFactories#getPrecomputedIfAvailable(SchemaContext)} instead.
      */
+    @Deprecated
     public static Optional<JSONCodecFactory> getPrecomputedIfAvailable(final SchemaContext context) {
-        return Optional.ofNullable(PRECOMPUTED.getIfPresent(context));
+        return JSONCodecFactories.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getPrecomputedIfAvailable(context);
     }
 
     /**
@@ -169,9 +121,12 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @param context SchemaContext instance
      * @return A sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
+     *
+     * @deprecated Use {@link JSONCodecFactories#getShared(SchemaContext)} instead.
      */
+    @Deprecated
     public static JSONCodecFactory getShared(final SchemaContext context) {
-        return SHARED.getUnchecked(context);
+        return JSONCodecFactories.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(context);
     }
 
     /**
@@ -186,9 +141,12 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @param context SchemaContext instance
      * @return A non-sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null
+     *
+     * @deprecated Use {@link JSONCodecFactories#createLazy(SchemaContext)} instead.
      */
+    @Deprecated
     public static JSONCodecFactory createLazy(final SchemaContext context) {
-        return new JSONCodecFactory(context, new LazyCodecCache<>());
+        return JSONCodecFactories.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.createLazy(context);
     }
 
     /**
@@ -203,9 +161,12 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
      * @param context SchemaContext instance
      * @return A non-sharable {@link JSONCodecFactory}
      * @throws NullPointerException if context is null.
+     *
+     * @deprecated Use {@link JSONCodecFactories#createSimple(SchemaContext)} instead.
      */
+    @Deprecated
     public static JSONCodecFactory createSimple(final SchemaContext context) {
-        return new JSONCodecFactory(context, NoopCodecCache.getInstance());
+        return JSONCodecFactories.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.createSimple(context);
     }
 
     @Override
@@ -245,8 +206,6 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
 
     @Override
     protected JSONCodec<?> instanceIdentifierCodec(final InstanceIdentifierTypeDefinition type) {
-        // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
-        //        with that, though, we need access to the current data store.
         return iidCodec;
     }
 
@@ -304,5 +263,4 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     protected JSONCodec<?> unknownCodec(final UnknownTypeDefinition type) {
         return NullJSONCodec.INSTANCE;
     }
-
 }
