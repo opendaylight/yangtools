@@ -16,7 +16,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.net.URISyntaxException;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -56,7 +55,8 @@ public class StreamToNormalizedNodeTest {
         final LoggingNormalizedNodeStreamWriter logWriter = new LoggingNormalizedNodeStreamWriter();
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter, schemaContext)) {
+        try (JsonParserStream jsonHandler = JsonParserStream.create(logWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext))) {
             // Process multiple readers, flush()/close() as needed
             jsonHandler.parse(reader);
         }
@@ -66,7 +66,6 @@ public class StreamToNormalizedNodeTest {
      * Demonstrates how to create an immutable NormalizedNode tree from a {@link JsonReader} and
      * then writes the data back into string representation.
      */
-    @Ignore
     @Test
     public void immutableNormalizedNodeStreamWriterDemonstration() throws IOException {
         /*
@@ -79,7 +78,8 @@ public class StreamToNormalizedNodeTest {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
         // JSON -> StreamWriter parser
-        try (JsonParserStream handler = JsonParserStream.create(streamWriter, schemaContext)) {
+        try (JsonParserStream handler = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext))) {
             handler.parse(new JsonReader(new StringReader(streamAsString)));
         }
 
@@ -101,7 +101,7 @@ public class StreamToNormalizedNodeTest {
         // StreamWriter which outputs JSON strings
         // StreamWriter which outputs JSON strings
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-            JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
             JsonWriterFactory.createJsonWriter(writer, 2));
 
         // NormalizedNode -> StreamWriter

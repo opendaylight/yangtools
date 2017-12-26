@@ -35,7 +35,8 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.RFC7951.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -49,7 +50,8 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -63,7 +65,8 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -77,7 +80,8 @@ public class Bug8083Test {
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);

@@ -31,6 +31,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -69,33 +70,84 @@ public final class JsonParserStream implements Closeable, Flushable {
     private final Deque<URI> namespaces = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter writer;
     private final JSONCodecFactory codecs;
-    private final SchemaContext schema;
     private final DataSchemaNode parentNode;
 
-    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final JSONCodecFactory codecs, final DataSchemaNode parentNode) {
-        this.schema = requireNonNull(schemaContext);
+    private JsonParserStream(final NormalizedNodeStreamWriter writer, final JSONCodecFactory codecs,
+            final DataSchemaNode parentNode) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecs);
         this.parentNode = parentNode;
     }
 
-    private JsonParserStream(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final DataSchemaNode parentNode) {
-        this(writer, schemaContext, JSONCodecFactory.getShared(schemaContext), parentNode);
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the top of the SchemaContext associated
+     * with the specified codec factory.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory) {
+        return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext());
     }
 
-    public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
-            final SchemaNode parentNode) {
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link JSONCodecFactory}. The stream will be logically rooted at the specified parent node.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param codecFactory {@link JSONCodecFactory} to use for parsing leaves
+     * @param parentNode Logical root node
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     */
+    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
         if (parentNode instanceof RpcDefinition) {
-            return new JsonParserStream(writer, schemaContext, new RpcAsContainer((RpcDefinition) parentNode));
+            return new JsonParserStream(writer, codecFactory, new RpcAsContainer((RpcDefinition) parentNode));
         }
-        checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
-        return new JsonParserStream(writer, schemaContext, (DataSchemaNode) parentNode);
+        checkArgument(parentNode instanceof DataSchemaNode, "An instance of DataSchemaNode is expected, %s supplied",
+            parentNode);
+        return new JsonParserStream(writer, codecFactory, (DataSchemaNode) parentNode);
     }
 
-    public static JsonParserStream create(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext) {
-        return new JsonParserStream(writer, schemaContext, schemaContext);
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link SchemaContext}. The stream will be logically rooted at the top of the supplied SchemaContext.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param schemaContext {@link SchemaContext} to use
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     *
+     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory)} instead.
+     */
+    @Deprecated
+    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull SchemaContext schemaContext) {
+        return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
+    }
+
+    /**
+     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
+     * and {@link SchemaContext}. The stream will be logically rooted at the specified parent node.
+     *
+     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
+     * @param schemaContext {@link SchemaContext} to use
+     * @param parentNode Logical root node
+     * @return A new {@link JsonParserStream}
+     * @throws NullPointerException if any of the arguments are null
+     *
+     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory, SchemaNode)} instead.
+     */
+    @Deprecated
+    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+            final @NonNull SchemaContext schemaContext, final @NonNull SchemaNode parentNode) {
+        return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext),
+            parentNode);
     }
 
     public JsonParserStream parse(final JsonReader reader) {
@@ -305,7 +357,7 @@ public final class JsonParserStream implements Closeable, Flushable {
             moduleNamePart = childName.substring(0, lastIndexOfColon);
             nodeNamePart = childName.substring(lastIndexOfColon + 1);
 
-            final Iterator<Module> m = schema.findModules(moduleNamePart).iterator();
+            final Iterator<Module> m = codecs.getSchemaContext().findModules(moduleNamePart).iterator();
             namespace = m.hasNext() ? m.next().getNamespace() : null;
         } else {
             nodeNamePart = childName;
@@ -335,7 +387,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         for (final URI potentialUri : potentialUris) {
             builder.append('\n');
             //FIXME how to get information about revision from JSON input? currently first available is used.
-            builder.append(schema.findModules(potentialUri).iterator().next().getName());
+            builder.append(codecs.getSchemaContext().findModules(potentialUri).iterator().next().getName());
         }
         return builder.toString();
     }

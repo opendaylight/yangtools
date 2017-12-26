@@ -69,7 +69,7 @@ public final class TestUtils {
             final SchemaPath rootPath) throws IOException {
         final Writer writer = new StringWriter();
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactory.getShared(schemaContext), rootPath, null,
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), rootPath, null,
                 JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(data);
