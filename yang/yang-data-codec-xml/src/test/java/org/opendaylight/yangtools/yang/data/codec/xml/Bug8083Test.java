@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
 
-    @Ignore("XMLEmptyCodec needs to be fixed first.")
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");

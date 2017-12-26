@@ -41,7 +41,6 @@ public class Bug8083Test {
         assertNotNull(transformedInput);
     }
 
-    @Ignore("JSONEmptyCodec needs to be fixed first.")
     @Test
     public void testInstanceIdentifierPathWithEmptyListKey() throws IOException, URISyntaxException {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
