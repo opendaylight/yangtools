@@ -116,6 +116,8 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
 
     protected abstract T identityRefCodec(IdentityrefTypeDefinition type, QNameModule module);
 
+    // FIXME: there really are two favors, as 'require-instance true' needs to be validated. In order to deal
+    //        with that, though, we need access to the current data store.
     protected abstract T instanceIdentifierCodec(InstanceIdentifierTypeDefinition type);
 
     protected abstract T int8Codec(Int8TypeDefinition type);
