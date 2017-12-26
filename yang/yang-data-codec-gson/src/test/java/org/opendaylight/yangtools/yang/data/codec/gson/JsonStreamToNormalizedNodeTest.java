@@ -197,7 +197,8 @@ public class JsonStreamToNormalizedNodeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext, parentNode);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -210,7 +211,8 @@ public class JsonStreamToNormalizedNodeTest {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext, parentNode);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -254,7 +256,8 @@ public class JsonStreamToNormalizedNodeTest {
                                         .build())
                                 .build()).build();
 
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -265,7 +268,8 @@ public class JsonStreamToNormalizedNodeTest {
             final NormalizedNode<?, ?> awaitedStructure) {
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, schemaContext);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertEquals("Transformation of json input to normalized node wasn't successful.", awaitedStructure,
