@@ -64,8 +64,8 @@ public class Bug7246Test {
             throws IOException, URISyntaxException {
 
         final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
-                JSONCodecFactory.getShared(schemaContext), path, new URI(NS),
-                JsonWriterFactory.createJsonWriter(writer, 2));
+                JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), path,
+                URI.create(NS), JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 

@@ -349,9 +349,9 @@ public class NormalizedNodeToJsonStreamTest {
     private static String normalizedNodeToJsonStreamTransformation(final Writer writer,
             final NormalizedNode<?, ?> inputStructure) throws IOException {
 
-        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.
-                createExclusiveWriter(JSONCodecFactory.getShared(schemaContext), SchemaPath.ROOT, null,
-                    JsonWriterFactory.createJsonWriter(writer, 2));
+        final NormalizedNodeStreamWriter jsonStream = JSONNormalizedNodeStreamWriter.createExclusiveWriter(
+            JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), SchemaPath.ROOT, null,
+            JsonWriterFactory.createJsonWriter(writer, 2));
         final NormalizedNodeWriter nodeWriter = NormalizedNodeWriter.forStreamWriter(jsonStream);
         nodeWriter.write(inputStructure);
 
