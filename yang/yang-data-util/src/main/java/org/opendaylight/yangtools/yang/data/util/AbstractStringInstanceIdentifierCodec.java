@@ -9,9 +9,12 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
-import java.util.Map;
+import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import javax.xml.XMLConstants;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -29,8 +32,9 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
 
     @Override
     public final String serialize(final YangInstanceIdentifier data) {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         DataSchemaContextNode<?> current = getDataContextTree().getRoot();
+        QNameModule lastModule = null;
         for (PathArgument arg : data.getPathArguments()) {
             current = current.getChild(arg);
             Preconditions.checkArgument(current != null,
@@ -47,13 +51,15 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
                 continue;
             }
 
+            final QName qname = arg.getNodeType();
             sb.append('/');
-            appendQName(sb, arg.getNodeType());
+            appendQName(sb, qname, lastModule);
+            lastModule = qname.getModule();
 
             if (arg instanceof NodeIdentifierWithPredicates) {
-                for (Map.Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).getKeyValues().entrySet()) {
+                for (Entry<QName, Object> entry : ((NodeIdentifierWithPredicates) arg).getKeyValues().entrySet()) {
                     sb.append('[');
-                    appendQName(sb, entry.getKey());
+                    appendQName(sb, entry.getKey(), lastModule);
                     sb.append("='");
                     sb.append(String.valueOf(entry.getValue()));
                     sb.append("']");
@@ -98,4 +104,16 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         return YangInstanceIdentifier.create(builder.build());
     }
 
+    /**
+     * Create QName from unprefixed name, potentially taking last QNameModule encountered into account.
+     *
+     * @param lastModule last QNameModule encountered, potentially null
+     * @param localName Local name string
+     * @return A newly-created QName
+     */
+    protected QName createQName(final @Nullable QNameModule lastModule, final String localName) {
+        // This implementation handles both XML encoding, where we follow XML namespace rules and old JSON encoding,
+        // which is the same thing: always encode prefixes
+        return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);
+    }
 }
