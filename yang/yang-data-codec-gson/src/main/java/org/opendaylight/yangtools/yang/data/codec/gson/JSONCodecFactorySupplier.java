@@ -40,19 +40,19 @@ public enum JSONCodecFactorySupplier {
      * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
      */
     // FIXME: YANGTOOLS-766: use a different codec
-    RFC7951(JSONStringInstanceIdentifierCodec::new),
+    RFC7951(RFC7951JSONInstanceIdentifierCodec::new),
     /**
      * Source of {@link JSONCodecFactory} instances compliant with RFC7951.
      */
-    DRAFT_LHOTKA_NETMOD_YANG_JSON_02(JSONStringInstanceIdentifierCodec::new);
+    DRAFT_LHOTKA_NETMOD_YANG_JSON_02(JSONInstanceIdentifierCodec::new);
 
     private static final Logger LOG = LoggerFactory.getLogger(JSONCodecFactorySupplier.class);
 
     private static final class EagerCacheLoader extends CacheLoader<SchemaContext, JSONCodecFactory> {
-        private final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec>
+        private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec>
             iidCodecSupplier;
 
-        EagerCacheLoader(final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec>
+        EagerCacheLoader(final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec>
                 iidCodecSupplier) {
             this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
         }
@@ -86,7 +86,7 @@ public enum JSONCodecFactorySupplier {
         }
     }
 
-    private final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec> iidCodecSupplier;
+    private final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier;
 
     // Weak keys to retire the entry when SchemaContext goes away
     private final LoadingCache<SchemaContext, JSONCodecFactory> precomputed;
@@ -95,7 +95,7 @@ public enum JSONCodecFactorySupplier {
     private final LoadingCache<SchemaContext, JSONCodecFactory> shared;
 
     JSONCodecFactorySupplier(
-            final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec> iidCodecSupplier) {
+            final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier) {
         this.iidCodecSupplier = requireNonNull(iidCodecSupplier);
         precomputed = CacheBuilder.newBuilder().weakKeys().build(new EagerCacheLoader(iidCodecSupplier));
         shared = CacheBuilder.newBuilder().weakKeys().build(new CacheLoader<SchemaContext, JSONCodecFactory>() {
