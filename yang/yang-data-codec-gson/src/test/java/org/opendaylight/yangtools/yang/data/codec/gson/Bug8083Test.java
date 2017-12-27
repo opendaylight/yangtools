@@ -15,7 +15,6 @@ import com.google.gson.stream.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
 
-    @Ignore("Instance-identifier codec has to be modified according to the RFC7951 to correctly parse this.")
     @Test
     public void testRFC7951InstanceIdentifierPath() throws IOException, URISyntaxException {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");

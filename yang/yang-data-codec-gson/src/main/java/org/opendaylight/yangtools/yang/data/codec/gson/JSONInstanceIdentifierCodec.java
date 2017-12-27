@@ -23,13 +23,13 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class JSONStringInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
+class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifierCodec
         implements JSONCodec<YangInstanceIdentifier> {
     private final DataSchemaContextTree dataContextTree;
     private final JSONCodecFactory codecFactory;
     private final SchemaContext context;
 
-    JSONStringInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
+    JSONInstanceIdentifierCodec(final SchemaContext context, final JSONCodecFactory jsonCodecFactory) {
         this.context = requireNonNull(context);
         this.dataContextTree = DataSchemaContextTree.from(context);
         this.codecFactory = requireNonNull(jsonCodecFactory);

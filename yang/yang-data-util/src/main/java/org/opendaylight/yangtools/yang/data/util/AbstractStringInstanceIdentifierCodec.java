@@ -13,7 +13,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import javax.xml.XMLConstants;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -98,5 +100,11 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
         XpathStringParsingPathArgumentBuilder builder = new XpathStringParsingPathArgumentBuilder(this,
             requireNonNull(data));
         return YangInstanceIdentifier.create(builder.build());
+    }
+
+    protected QName createQName(final QNameModule lastModule, final String maybePrefix) {
+        // This case handles both XML encoding, where we follow XML namespace rules and old JSON encoding, which is
+        // the same thing: always encode prefixes
+        return createQName(XMLConstants.DEFAULT_NS_PREFIX, maybePrefix);
     }
 }

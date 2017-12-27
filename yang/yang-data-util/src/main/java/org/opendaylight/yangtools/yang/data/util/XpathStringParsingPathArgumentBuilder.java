@@ -13,10 +13,10 @@ import com.google.common.base.CharMatcher;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * is not correctly serialized or does not represent instance identifier valid
  * for associated schema context.
  */
-class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathArgument>> {
+final class XpathStringParsingPathArgumentBuilder implements Builder<List<PathArgument>> {
 
     /**
      * Matcher matching WSP YANG ABNF token.
@@ -58,12 +58,12 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     private static final char PRECONDITION_START = '[';
     private static final char PRECONDITION_END = ']';
 
+    private final List<PathArgument> product = new ArrayList<>();
     private final AbstractStringInstanceIdentifierCodec codec;
     private final String data;
 
-    private final List<PathArgument> product = new ArrayList<>();
-
     private DataSchemaContextNode<?> current;
+    private QNameModule lastModule;
     private int offset;
 
     XpathStringParsingPathArgumentBuilder(final AbstractStringInstanceIdentifierCodec codec, final String data) {
@@ -74,7 +74,7 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     }
 
     @Override
-    public Collection<PathArgument> build() {
+    public List<PathArgument> build() {
         while (!allCharactersConsumed()) {
             product.add(computeNextArgument());
         }
@@ -85,7 +85,9 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
         checkValid(SLASH == currentChar(), "Identifier must start with '/'.");
         skipCurrentChar();
         checkValid(!allCharactersConsumed(), "Identifier cannot end with '/'.");
-        QName name = nextQName();
+        final QName name = nextQName();
+        // Memoize module
+        lastModule = name.getModule();
         if (allCharactersConsumed() || SLASH == currentChar()) {
             return computeIdentifier(name);
         }
@@ -169,18 +171,13 @@ class XpathStringParsingPathArgumentBuilder implements Builder<Collection<PathAr
     private QName nextQName() {
         // Consume prefix or identifier
         final String maybePrefix = nextIdentifier();
-        final String prefix;
-        final String localName;
-        if (COLON == currentChar()) {
-            // previous token is prefix;
-            prefix = maybePrefix;
+        if (!allCharactersConsumed() && COLON == currentChar()) {
+            // previous token is prefix
             skipCurrentChar();
-            localName = nextIdentifier();
-        } else {
-            prefix = "";
-            localName = maybePrefix;
+            return codec.createQName(maybePrefix, nextIdentifier());
         }
-        return codec.createQName(prefix, localName);
+
+        return codec.createQName(lastModule, maybePrefix);
     }
 
     /**
