@@ -58,7 +58,7 @@ public final class JSONCodecFactory extends AbstractCodecFactory<JSONCodec<?>> {
     private final JSONCodec<?> iidCodec;
 
     JSONCodecFactory(final SchemaContext context, final CodecCache<JSONCodec<?>> cache,
-            final BiFunction<SchemaContext, JSONCodecFactory, JSONStringInstanceIdentifierCodec> iidCodecSupplier) {
+            final BiFunction<SchemaContext, JSONCodecFactory, JSONInstanceIdentifierCodec> iidCodecSupplier) {
         super(context, cache);
         iidCodec = verifyNotNull(iidCodecSupplier.apply(context, this));
     }
