@@ -14,6 +14,7 @@ import java.util.Iterator;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 
 abstract class AbstractNamespaceCodec {
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
@@ -48,6 +49,20 @@ abstract class AbstractNamespaceCodec {
         sb.append(':');
         sb.append(qname.getLocalName());
         return sb;
+    }
+
+    /**
+     * Append a QName, potentially taking into account last QNameModule encountered in the serialized path.
+     *
+     * @param sb target StringBuilder
+     * @param qname QName to append
+     * @param lastModule last QNameModule encountered, may be null
+     * @return target StringBuilder
+     */
+    protected StringBuilder appendQName(final StringBuilder sb, final QName qname,
+            final @Nullable QNameModule lastModule) {
+        // Covers XML and uncompressed JSON codec
+        return appendQName(sb, qname);
     }
 
     protected final QName parseQName(final String str) {
