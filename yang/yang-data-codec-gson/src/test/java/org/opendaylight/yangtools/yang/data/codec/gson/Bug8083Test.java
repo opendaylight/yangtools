@@ -11,16 +11,23 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.loadTextFile;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -33,7 +40,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug8083Test {
@@ -44,20 +56,46 @@ public class Bug8083Test {
     private static final QName FOOLIST_QNAME = QName.create(FOOMOD, "foo-list");
     private static final QName NAME_QNAME = QName.create(FOOMOD, "name");
     private static final QName TOP_QNAME = QName.create(FOOMOD, "top");
-
     private static final QName BARCONTAINER_QNAME = QName.create(BARMOD, "bar-container");
-    private static final QName BARLEAF_QNAME = QName.create(BARMOD, "bar-leaf");
+
+    private static final YangInstanceIdentifier TEST_IID = YangInstanceIdentifier.builder()
+            .node(TOP_QNAME)
+            .node(FOOLIST_QNAME)
+            .node(new NodeIdentifierWithPredicates(FOOLIST_QNAME, ImmutableMap.of(NAME_QNAME, "key-value")))
+            .node(new AugmentationIdentifier(ImmutableSet.of(BARCONTAINER_QNAME)))
+            .node(BARCONTAINER_QNAME)
+            .node(QName.create(BARMOD, "bar-leaf"))
+            .build();
+
+    private static SchemaContext FULL_SCHEMA_CONTEXT;
+
+    @BeforeClass
+    public static void init() {
+        FULL_SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");
+    }
+
+    @Test
+    public void testInstanceIdentifierSerializeNew() throws IOException {
+        assertEquals("/example-foomod:top/foo-list[name='key-value']/example-barmod:bar-container/bar-leaf",
+            writeInstanceIdentifier(JSONCodecFactorySupplier.RFC7951));
+    }
+
+    @Test
+    public void testInstanceIdentifierSerializeOld() throws IOException {
+        assertEquals("/example-foomod:top/example-foomod:foo-list[example-foomod:name='key-value']"
+                + "/example-barmod:bar-container/example-barmod:bar-leaf",
+            writeInstanceIdentifier(JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02));
+    }
 
     @Test
     public void testRFC7951InstanceIdentifierPath() throws IOException, URISyntaxException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");
         final String inputJson = loadTextFile("/bug8083/json/foo.json");
 
         // deserialization
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
-            JSONCodecFactorySupplier.RFC7951.getShared(schemaContext));
+            JSONCodecFactorySupplier.RFC7951.getShared(FULL_SCHEMA_CONTEXT));
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
 
@@ -65,15 +103,7 @@ public class Bug8083Test {
         final ContainerNode container = (ContainerNode) transformedInput;
         final NormalizedNode<?, ?> child = container.getChild(new NodeIdentifier(FOO_QNAME)).get();
         assertTrue(child instanceof LeafNode);
-        final YangInstanceIdentifier expected = YangInstanceIdentifier.builder()
-                .node(TOP_QNAME)
-                .node(FOOLIST_QNAME)
-                .node(new NodeIdentifierWithPredicates(FOOLIST_QNAME, ImmutableMap.of(NAME_QNAME, "key-value")))
-                .node(new AugmentationIdentifier(ImmutableSet.of(BARCONTAINER_QNAME)))
-                .node(BARCONTAINER_QNAME)
-                .node(BARLEAF_QNAME)
-                .build();
-        assertEquals(expected, child.getValue());
+        assertEquals(TEST_IID, child.getValue());
     }
 
     @Test
@@ -119,5 +149,26 @@ public class Bug8083Test {
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
+    }
+
+    private static JSONCodec<YangInstanceIdentifier> getCodec(final JSONCodecFactorySupplier supplier) {
+        final DataSchemaNode top = FULL_SCHEMA_CONTEXT.findDataChildByName(TOP_QNAME).get();
+        assertTrue(top instanceof ContainerSchemaNode);
+        final DataSchemaNode foo = ((ContainerSchemaNode) top).findDataChildByName(FOO_QNAME).get();
+        assertTrue(foo instanceof LeafSchemaNode);
+        final TypeDefinition<? extends TypeDefinition<?>> type = ((LeafSchemaNode) foo).getType();
+        assertTrue(type instanceof InstanceIdentifierTypeDefinition);
+        return (JSONCodec<YangInstanceIdentifier>) supplier.createSimple(FULL_SCHEMA_CONTEXT)
+                .instanceIdentifierCodec((InstanceIdentifierTypeDefinition) type);
+    }
+
+    private static String writeInstanceIdentifier(final JSONCodecFactorySupplier supplier) throws IOException {
+        final JsonWriter writer = mock(JsonWriter.class);
+        ArgumentCaptor<String> captor = ArgumentCaptor.forClass(String.class);
+        doReturn(writer).when(writer).value(captor.capture());
+
+        getCodec(supplier).writeValue(writer, TEST_IID);
+        verify(writer).value(any(String.class));
+        return captor.getValue();
     }
 }
