@@ -22,6 +22,8 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -34,6 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
+import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -391,8 +395,24 @@ public final class SchemaContextUtil {
             }
         }
 
-        if (foundNode == null && parent instanceof RpcDefinition) {
-            final RpcDefinition parentRpcDefinition = (RpcDefinition) parent;
+        if (foundNode == null && parent instanceof ActionNodeContainer) {
+            foundNode = ((ActionNodeContainer) parent).getActions().stream()
+                    .filter(act -> current.equals(act.getQName())).findFirst().orElse(null);
+            if (foundNode != null && nextPath.iterator().hasNext()) {
+                foundNode = findNodeIn(foundNode, nextPath);
+            }
+        }
+
+        if (foundNode == null && parent instanceof NotificationNodeContainer) {
+            foundNode = ((NotificationNodeContainer) parent).getNotifications().stream()
+                    .filter(notif -> current.equals(notif.getQName())).findFirst().orElse(null);
+            if (foundNode != null && nextPath.iterator().hasNext()) {
+                foundNode = findNodeIn(foundNode, nextPath);
+            }
+        }
+
+        if (foundNode == null && parent instanceof OperationDefinition) {
+            final OperationDefinition parentRpcDefinition = (OperationDefinition) parent;
 
             if (current.getLocalName().equals("input")) {
                 foundNode = parentRpcDefinition.getInput();
@@ -474,7 +494,7 @@ public final class SchemaContextUtil {
         return null;
     }
 
-    private static GroupingDefinition getGroupingByName(final RpcDefinition rpc, final QName name) {
+    private static GroupingDefinition getGroupingByName(final OperationDefinition rpc, final QName name) {
         for (final GroupingDefinition grouping : rpc.getGroupings()) {
             if (grouping.getQName().equals(name)) {
                 return grouping;
