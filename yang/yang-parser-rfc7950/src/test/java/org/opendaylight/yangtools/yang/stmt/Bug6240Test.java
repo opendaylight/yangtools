@@ -61,7 +61,7 @@ public class Bug6240Test {
             StmtTestUtils.parseYangSources("/bugs/bug6240/incorrect");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getCause().getMessage().startsWith(
-                "Grouping '(bar?revision=2016-07-19)foo-imp-grp' was not resolved."));
+                "Grouping '(bar?revision=2016-07-19?idns=ns_grouping)foo-imp-grp' was not resolved."));
         }
     }
 }
