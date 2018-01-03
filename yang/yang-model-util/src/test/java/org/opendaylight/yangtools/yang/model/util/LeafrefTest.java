@@ -89,7 +89,8 @@ public class LeafrefTest {
             fail("An IllegalArgumentException should have been thrown.");
         } catch (IllegalArgumentException ex) {
             assertEquals(
-                "Cannot switch off require-instance in type AbsoluteSchemaPath{path=[(test)my-cont, (test)my-leafref]}",
+                "Cannot switch off require-instance in type "
+                + "AbsoluteSchemaPath{path=[(test?idns=ns_default)my-cont, (test?idns=ns_default)my-leafref]}",
                 ex.getMessage());
         }
 
