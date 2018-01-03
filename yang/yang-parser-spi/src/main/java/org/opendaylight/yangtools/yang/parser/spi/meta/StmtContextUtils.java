@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.QNameNamespace;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
@@ -496,7 +497,8 @@ public final class StmtContextUtils {
 
         qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
             "Cannot resolve QNameModule for '%s'", value);
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName));
+        return ctx.getFromNamespace(QNameCacheNamespace.class,
+            QName.create(qnameModule, localName, QNameNamespace.NS_GROUPING));
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

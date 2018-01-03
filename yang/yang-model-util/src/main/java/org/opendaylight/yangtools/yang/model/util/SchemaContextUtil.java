@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameNamespace;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -325,29 +326,29 @@ public final class SchemaContextUtil {
         SchemaNode foundNode = null;
         final Iterable<QName> nextPath = nextLevel(path);
 
-        foundNode = module.getDataChildByName(current);
-        if (foundNode != null && nextPath.iterator().hasNext()) {
-            foundNode = findNodeIn(foundNode, nextPath);
-        }
-
-        if (foundNode == null) {
+        if (current.getQNameNamespace() == QNameNamespace.NS_GROUPING) {
             foundNode = getGroupingByName(module, current);
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
             }
-        }
-
-        if (foundNode == null) {
-            foundNode = getRpcByName(module, current);
+        } else {
+            foundNode = module.getDataChildByName(current);
             if (foundNode != null && nextPath.iterator().hasNext()) {
                 foundNode = findNodeIn(foundNode, nextPath);
             }
-        }
 
-        if (foundNode == null) {
-            foundNode = getNotificationByName(module, current);
-            if (foundNode != null && nextPath.iterator().hasNext()) {
-                foundNode = findNodeIn(foundNode, nextPath);
+            if (foundNode == null) {
+                foundNode = getRpcByName(module, current);
+                if (foundNode != null && nextPath.iterator().hasNext()) {
+                    foundNode = findNodeIn(foundNode, nextPath);
+                }
+            }
+
+            if (foundNode == null) {
+                foundNode = getNotificationByName(module, current);
+                if (foundNode != null && nextPath.iterator().hasNext()) {
+                    foundNode = findNodeIn(foundNode, nextPath);
+                }
             }
         }
 
