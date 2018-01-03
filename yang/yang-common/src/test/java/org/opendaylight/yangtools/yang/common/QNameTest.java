@@ -19,6 +19,7 @@ import org.junit.Test;
 public class QNameTest {
     private static final String NAMESPACE = "urn:foo";
     private static final String REVISION = "2013-12-24";
+    private static final String IDNS = "ns_default";
     private static final String LOCALNAME = "bar";
     private static final URI NS = URI.create(NAMESPACE);
 
@@ -27,15 +28,16 @@ public class QNameTest {
         {
             QName qname = QName.create(NAMESPACE, REVISION, LOCALNAME);
             assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_REVISION_DELIMITER
-                    + REVISION + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
+                + REVISION + QName.QNAME_IDNS_DELIMITER + IDNS + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME,
+                qname.toString());
             QName copied = QName.create(qname.toString());
             assertEquals(qname, copied);
         }
         // no revision
         {
             QName qname = QName.create(NS, LOCALNAME);
-            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_RIGHT_PARENTHESIS
-                    + LOCALNAME, qname.toString());
+            assertEquals(QName.QNAME_LEFT_PARENTHESIS + NAMESPACE + QName.QNAME_IDNS_DELIMITER + IDNS
+                + QName.QNAME_RIGHT_PARENTHESIS + LOCALNAME, qname.toString());
             QName copied = QName.create(qname.toString());
             assertEquals(qname, copied);
         }
