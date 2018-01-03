@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -48,7 +49,7 @@ public class EffectiveUsesRefineAndConstraintsTest {
 
         final QNameModule qnameModule = module.getQNameModule();
         final QName rootContainer = QName.create(qnameModule, "root-container");
-        final QName grp1 = QName.create(qnameModule, "grp-1");
+        final QName grp1 = QName.create(qnameModule, "grp-1", IDNamespace.NS_GROUPING);
 
         final QName containerFromGrouping = QName.create(qnameModule, "container-from-grouping");
         final QName listInContainer = QName.create(qnameModule, "list-in-container");

@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -463,7 +464,7 @@ public final class StmtContextUtils {
         });
     }
 
-    public static QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
+    public static QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value, final IDNamespace idNamespace) {
         if (Strings.isNullOrEmpty(value)) {
             return ctx.getPublicDefinition().getStatementName();
         }
@@ -496,7 +497,11 @@ public final class StmtContextUtils {
 
         qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
             "Cannot resolve QNameModule for '%s'", value);
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName));
+        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName, idNamespace));
+    }
+
+    public static QName qnameFromArgument(StmtContext<?, ?, ?> ctx, final String value) {
+        return qnameFromArgument(ctx, value, IDNamespace.NS_DEFAULT);
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

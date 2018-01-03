@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -123,7 +124,7 @@ public class ControllerStmtParserTest {
         assertEquals(1, schemaServiceContainer.getUses().size());
         final UsesNode uses = schemaServiceContainer.getUses().iterator().next();
         final QName groupingQName = QName.create("urn:opendaylight:params:xml:ns:yang:controller:config", "2013-04-05",
-            "service-ref");
+            "service-ref", IDNamespace.NS_GROUPING);
         final QName usesGroupingPathLastComponent = uses.getGroupingPath().getLastComponent();
         assertEquals(groupingQName, usesGroupingPathLastComponent);
         assertEquals(0, getChildNodeSizeWithoutUses(schemaServiceContainer));

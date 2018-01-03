@@ -134,6 +134,14 @@ public final class TestUtils {
         return SchemaPath.create(path, absolute);
     }
 
+    public static SchemaPath createPath(final boolean absolute, final QName... names) {
+        List<QName> path = new ArrayList<>(names.length);
+        for (QName name : names) {
+            path.add(name);
+        }
+        return SchemaPath.create(path, absolute);
+    }
+
     /**
      * Test if node has augmenting flag set to expected value. In case this is
      * DataNodeContainer/ChoiceNode, check its child nodes/case nodes too.
