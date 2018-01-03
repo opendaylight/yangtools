@@ -72,10 +72,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     // Non-null
     private final String localName;
     private transient int hash;
+    
+    private final QNameNamespace qnameNS;
 
     private QName(final QNameModule module, final String localName) {
         this.localName = checkLocalName(localName);
         this.module = module;
+        this.qnameNS = QNameNamespace.NS_DEFAULT;
+    }
+
+    private QName(final QNameModule module, final String localName, QNameNamespace qnameNS) {
+        this.localName = checkLocalName(localName);
+        this.module = module;
+        this.qnameNS = qnameNS;
     }
 
     /**
@@ -88,6 +97,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     private QName(final URI namespace, final String localName) {
         this(QNameModule.create(namespace), localName);
+    }
+
+    public QNameNamespace getQNameNamespace() {
+        return qnameNS;
     }
 
     private static String checkLocalName(final String localName) {
@@ -135,6 +148,21 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
         return new QName(requireNonNull(qnameModule, "module may not be null"), localName);
+    }
+
+    /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param qnameModule
+     *            Namespace and revision enclosed as a QNameModule
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param qnameNS
+     *            Identifier namespace of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
+    public static QName create(final QNameModule qnameModule, final String localName, final QNameNamespace qnameNS) {
+        return new QName(requireNonNull(qnameModule, "module may not be null"), localName, qnameNS);
     }
 
     /**
@@ -323,7 +351,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return false;
         }
         final QName other = (QName) obj;
-        return Objects.equals(localName, other.localName) && module.equals(other.module);
+        return qnameNS.equals(((QName) obj).qnameNS) &&
+            Objects.equals(localName, other.localName) && module.equals(other.module);
     }
 
     private static URI parseNamespace(final String namespace) {
@@ -405,6 +434,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (result != 0) {
             return result;
         }
+
+        if (qnameNS != o.qnameNS) {
+            return qnameNS.compareTo(o.qnameNS);
+        }
+
         return module.compareTo(o.module);
     }
 }
