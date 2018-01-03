@@ -54,15 +54,24 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final long serialVersionUID = 5398411242927766414L;
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
+    static final String QNAME_IDNS_DELIMITER = "?idns=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
 
     @RegEx
-    private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\)(.+)$";
+    private static final String QNAME_STRING_NO_IDNS = "^\\((.+)\\?revision=(.+)\\)(.+)$";
+    private static final Pattern QNAME_PATTERN_NO_IDNS = Pattern.compile(QNAME_STRING_NO_IDNS);
+
+    @RegEx
+    private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\?idns=(.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(QNAME_STRING_FULL);
 
     @RegEx
-    private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
+    private static final String QNAME_STRING_NO_REVISION_NO_IDNS = "^\\((.+)\\)(.+)$";
+    private static final Pattern QNAME_PATTERN_NO_REVISION_NO_IDNS = Pattern.compile(QNAME_STRING_NO_REVISION_NO_IDNS);
+
+    @RegEx
+    private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\?idns=(.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
@@ -73,9 +82,16 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private final String localName;
     private transient int hash;
 
+    private final IDNamespace idNamespace;
+
     private QName(final QNameModule module, final String localName) {
+        this(module, localName, IDNamespace.NS_DEFAULT);
+    }
+
+    private QName(final QNameModule module, final String localName, IDNamespace idNamespace) {
         this.localName = checkLocalName(localName);
         this.module = module;
+        this.idNamespace = idNamespace;
     }
 
     /**
@@ -88,6 +104,20 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     private QName(final URI namespace, final String localName) {
         this(QNameModule.create(namespace), localName);
+    }
+
+    /**
+     * QName Constructor.
+     *
+     * @param namespace
+     *            the namespace assigned to the YANG module
+     * @param localName
+     *            YANG schema identifier
+     * @param idNamespace
+     *            Identifier namespace to which schema node belongs
+     */
+    private QName(final URI namespace, final String localName, final IDNamespace idNamespace) {
+        this(QNameModule.create(namespace), localName, idNamespace);
     }
 
     private static String checkLocalName(final String localName) {
@@ -104,19 +134,39 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     public static QName create(final String input) {
+        //Take care the order of matchers, it SHOULD be longest first.
         Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
+        if (matcher.matches()) {
+            final String namespace = matcher.group(1);
+            final String revision = matcher.group(2);
+            final String idns = matcher.group(3);
+            final String localName = matcher.group(4);
+            return create(namespace, revision, localName, IDNamespace.fromString(idns));
+        }
+
+        matcher = QNAME_PATTERN_NO_REVISION.matcher(input);
+        if (matcher.matches()) {
+            final URI namespace = URI.create(matcher.group(1));
+            final String idns = matcher.group(2);
+            final String localName = matcher.group(3);
+            return new QName(namespace, localName, IDNamespace.fromString(idns));
+        }
+
+        matcher = QNAME_PATTERN_NO_IDNS.matcher(input);
         if (matcher.matches()) {
             final String namespace = matcher.group(1);
             final String revision = matcher.group(2);
             final String localName = matcher.group(3);
             return create(namespace, revision, localName);
         }
-        matcher = QNAME_PATTERN_NO_REVISION.matcher(input);
+
+        matcher = QNAME_PATTERN_NO_REVISION_NO_IDNS.matcher(input);
         if (matcher.matches()) {
             final URI namespace = URI.create(matcher.group(1));
             final String localName = matcher.group(2);
             return new QName(namespace, localName);
         }
+
         throw new IllegalArgumentException("Invalid input: " + input);
     }
 
@@ -138,6 +188,21 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param qnameModule
+     *            Namespace and revision enclosed as a QNameModule
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            Identifier namespace of QName. MUST NOT BE null.
+     * @return Instance of QName
+     */
+    public static QName create(final QNameModule qnameModule, final String localName, final IDNamespace idNamespace) {
+        return new QName(requireNonNull(qnameModule, "module may not be null"), localName, idNamespace);
+    }
+
+    /**
      * Creates new QName.
      *
      * @param namespace
@@ -150,6 +215,24 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final URI namespace, @Nullable final Revision revision, final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
+    }
+
+    /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName or null if namespace is undefined.
+     * @param revision
+     *            Revision of namespace or null if revision is unspecified.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            Identifier namespace to which the schema node belongs.
+     * @return Instance of QName
+     */
+    public static QName create(final URI namespace, @Nullable final Revision revision, final String localName,
+            final IDNamespace idNamespace) {
+        return create(QNameModule.create(namespace, revision), localName, idNamespace);
     }
 
     /**
@@ -208,6 +291,33 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param revision
+     *            Revision of namespace / YANG module. MUST NOT BE null, MUST BE
+     *            in format <code>YYYY-mm-dd</code>.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            Identifier namespace to which the schema node belongs.
+     * @return A new QName
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI or
+     *             <code>revision</code> is not according to format
+     *             <code>YYYY-mm-dd</code>.
+     */
+    public static QName create(final String namespace, final String revision, final String localName,
+            final IDNamespace idNamespace) {
+        final URI namespaceUri = parseNamespace(namespace);
+        final Revision revisionDate = Revision.of(revision);
+        return create(namespaceUri, revisionDate, localName, idNamespace);
+    }
+
+    /**
      * Creates new QName.
      *
      * @param namespace
@@ -225,6 +335,25 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            Identifier namespace to which the schema node belongs.
+     * @return A new QName
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI.
+     */
+    public static QName create(final String namespace, final String localName, final IDNamespace idNamespace) {
+        return create(parseNamespace(namespace), localName, idNamespace);
+    }
+
+    /**
      * Creates new QName.
      *
      * @param namespace
@@ -239,6 +368,25 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      */
     public static QName create(final URI namespace, final String localName) {
         return new QName(namespace, localName);
+    }
+
+    /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE null.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            Identifier namespace to which the schema node belongs.
+     * @return A new QName
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI.
+     */
+    public static QName create(final URI namespace, final String localName, final IDNamespace idNamespace) {
+        return new QName(namespace, localName, idNamespace);
     }
 
     /**
@@ -271,6 +419,15 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Returns namespace which YANG schema identifier belongs to.
+     *
+     * @return namespace which YANG schema identifier belongs to
+     */
+    public IDNamespace getIDNamespace() {
+        return idNamespace;
+    }
+
+    /**
      * Returns revision of the YANG module if the module has defined revision.
      *
      * @return revision of the YANG module if the module has defined revision.
@@ -299,7 +456,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = Objects.hash(module, localName);
+            hash = Objects.hash(module, localName, idNamespace);
         }
         return hash;
     }
@@ -323,7 +480,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             return false;
         }
         final QName other = (QName) obj;
-        return Objects.equals(localName, other.localName) && module.equals(other.module);
+        return idNamespace.equals(((QName) obj).idNamespace) && Objects.equals(localName, other.localName)
+            && module.equals(other.module);
     }
 
     private static URI parseNamespace(final String namespace) {
@@ -344,6 +502,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
             if (rev.isPresent()) {
                 sb.append(QNAME_REVISION_DELIMITER).append(rev.get());
             }
+
+            if (!idNamespace.equals(IDNamespace.NS_DEFAULT)) {
+                sb.append(QNAME_IDNS_DELIMITER).append(idNamespace);
+            }
+
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
         sb.append(localName);
@@ -391,7 +554,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *             if <code>other</code> is null.
      */
     public boolean isEqualWithoutRevision(final QName other) {
-        return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
+        return idNamespace.equals(other.idNamespace) && localName.equals(other.getLocalName())
+            && Objects.equals(getNamespace(), other.getNamespace());
     }
 
     // FIXME: this comparison function looks odd. We are sorting first by local name and then by module? What is
@@ -405,6 +569,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         if (result != 0) {
             return result;
         }
+
+        if (idNamespace != o.idNamespace) {
+            return idNamespace.compareTo(o.idNamespace);
+        }
+
         return module.compareTo(o.module);
     }
 }
