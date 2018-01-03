@@ -20,6 +20,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -167,7 +168,7 @@ public class YangParserSimpleTest {
         final Set<GroupingDefinition> groupings = nodes.getGroupings();
         assertEquals(1, groupings.size());
         final GroupingDefinition nodeGroup = groupings.iterator().next();
-        final QName groupQName = QName.create(SN, "node-group");
+        final QName groupQName = QName.create(SN, "node-group", IDNamespace.NS_GROUPING);
         assertEquals(groupQName, nodeGroup.getQName());
         final SchemaPath nodeGroupPath = SN_NODES_PATH.createChild(groupQName);
         assertEquals(nodeGroupPath, nodeGroup.getPath());

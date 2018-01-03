@@ -61,7 +61,8 @@ public class YinFileUsesStmtTest {
         final UsesNode usesNode = container.getUses().iterator().next();
         assertNotNull(usesNode);
         assertTrue(usesNode.getGroupingPath().toString()
-                .contains("[(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)service-ref]"));
+                .contains("[(urn:opendaylight:params:xml:ns:yang:controller:config"
+                    + "?revision=2013-04-05?idns=ns_grouping)service-ref]"));
         assertEquals(1, usesNode.getRefines().size());
     }
 }

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -29,7 +30,7 @@ public class Bug5101Test {
         SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5101");
         assertNotNull(context);
 
-        QName grp = QName.create(NS, REV, "my-grouping");
+        QName grp = QName.create(NS, REV, "my-grouping", IDNamespace.NS_GROUPING);
         QName myContainer = QName.create(NS, REV, "my-container");
         QName root = QName.create(NS, REV, "root");
 

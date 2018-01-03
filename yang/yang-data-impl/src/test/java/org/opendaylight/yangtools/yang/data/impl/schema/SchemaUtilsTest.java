@@ -41,7 +41,7 @@ public class SchemaUtilsTest {
         final SchemaContext schemaContext = YangParserTestUtils
                 .parseYangResource("/schema-utils-test/name-conflicts.yang");
         // test my-name conflicts
-        assertEquals(8, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+        assertEquals(1, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name"), qN("my-name-nested"), qN("my-name-nested2"))).size());
 
         // test target container
