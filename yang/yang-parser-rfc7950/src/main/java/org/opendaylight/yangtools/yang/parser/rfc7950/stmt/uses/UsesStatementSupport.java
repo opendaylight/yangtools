@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.uses;
 
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -66,8 +67,8 @@ public final class UsesStatementSupport extends
         super.onFullDefinitionDeclared(usesNode);
 
         final ModelActionBuilder usesAction = usesNode.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
-        final QName groupingName = usesNode.getStatementArgument();
-
+        final QName usesName = usesNode.getStatementArgument();
+        final QName groupingName = QName.create(usesName.getModule(), usesName.getLocalName(), IDNamespace.NS_GROUPING);
         final Prerequisite<StmtContext<?, ?, ?>> sourceGroupingPre = usesAction.requiresCtx(usesNode,
                 GroupingNamespace.class, groupingName, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<? extends StmtContext.Mutable<?, ?, ?>> targetNodePre = usesAction.mutatesEffectiveCtx(
