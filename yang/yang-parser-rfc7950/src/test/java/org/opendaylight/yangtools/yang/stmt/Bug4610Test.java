@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -32,12 +33,12 @@ public class Bug4610Test {
         QNameModule foo = QNameModule.create(URI.create("foo"), revision);
         QNameModule bar = QNameModule.create(URI.create("bar"), revision);
 
-        QName g1 = QName.create(bar, "g1");
-        QName g2 = QName.create(bar, "g2");
+        QName g1 = QName.create(bar, "g1", IDNamespace.NS_GROUPING);
+        QName g2 = QName.create(bar, "g2", IDNamespace.NS_GROUPING);
         QName c1Bar = QName.create(bar, "c1");
 
         QName c1Foo = QName.create(foo, "c1");
-        QName g3 = QName.create(foo, "g3");
+        QName g3 = QName.create(foo, "g3", IDNamespace.NS_GROUPING);
         QName root = QName.create(foo, "root");
 
         ContainerEffectiveStatement effectiveContainerStatementG1 = findContainer(context, g1, c1Bar);

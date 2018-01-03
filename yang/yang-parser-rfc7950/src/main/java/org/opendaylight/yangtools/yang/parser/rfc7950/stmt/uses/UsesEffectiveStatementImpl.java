@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -50,9 +51,11 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
 
+        final QName groupingQName = QName.create(ctx.getStatementArgument().getModule(),
+            ctx.getStatementArgument().getLocalName(), IDNamespace.NS_GROUPING);
         // initGroupingPath
         final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx =
-                ctx.getFromNamespace(GroupingNamespace.class, ctx.getStatementArgument());
+                ctx.getFromNamespace(GroupingNamespace.class, groupingQName);
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType

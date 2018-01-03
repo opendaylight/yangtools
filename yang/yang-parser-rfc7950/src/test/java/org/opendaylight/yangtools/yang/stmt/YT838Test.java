@@ -43,7 +43,7 @@ public class YT838Test {
             final Throwable cause = e.getCause();
             assertTrue(cause instanceof SourceException);
             assertTrue(cause.getMessage().startsWith(
-                "Duplicate name for grouping (grouping?revision=2017-12-20)foo [at "));
+                "Duplicate name for grouping (grouping?revision=2017-12-20?idns=ns_grouping)foo [at "));
         }
     }
 

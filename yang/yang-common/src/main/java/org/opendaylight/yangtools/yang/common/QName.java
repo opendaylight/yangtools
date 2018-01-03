@@ -221,6 +221,24 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     }
 
     /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName or null if namespace is undefined.
+     * @param revision
+     *            Revision of namespace or null if revision is unspecified.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            identifier namespace to which the schema node belongs.
+     * @return Instance of QName
+     */
+    public static QName create(final URI namespace, @Nullable final Revision revision, final String localName,
+            final IDNamespace idNamespace) {
+        return create(QNameModule.create(namespace, revision), localName, idNamespace);
+    }
+
+    /**
      * Creates new QName.
      *
      * @param namespace
@@ -273,6 +291,33 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         final URI namespaceUri = parseNamespace(namespace);
         final Revision revisionDate = Revision.of(revision);
         return create(namespaceUri, revisionDate, localName);
+    }
+
+    /**
+     * Creates new QName with identifier namespace.
+     *
+     * @param namespace
+     *            Namespace of QName, MUST NOT BE Null.
+     * @param revision
+     *            Revision of namespace / YANG module. MUST NOT BE null, MUST BE
+     *            in format <code>YYYY-mm-dd</code>.
+     * @param localName
+     *            Local name part of QName. MUST NOT BE null.
+     * @param idNamespace
+     *            identifier namespace to which the schema node belongs.
+     * @return A new QName
+     * @throws NullPointerException
+     *             If any of parameters is null.
+     * @throws IllegalArgumentException
+     *             If <code>namespace</code> is not valid URI or
+     *             <code>revision</code> is not according to format
+     *             <code>YYYY-mm-dd</code>.
+     */
+    public static QName create(final String namespace, final String revision, final String localName,
+            final IDNamespace idNamespace) {
+        final URI namespaceUri = parseNamespace(namespace);
+        final Revision revisionDate = Revision.of(revision);
+        return create(namespaceUri, revisionDate, localName, idNamespace);
     }
 
     /**
