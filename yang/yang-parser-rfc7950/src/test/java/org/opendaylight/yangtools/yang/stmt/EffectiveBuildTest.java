@@ -18,6 +18,7 @@ import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -55,7 +56,7 @@ public class EffectiveBuildTest {
         final QName q4 = QName.create(SIMPLE_MODULE_QNAME, "root-container2");
         final QName q5 = QName.create(SIMPLE_MODULE_QNAME, "sub-container2");
         final QName q6 = QName.create(SIMPLE_MODULE_QNAME, "sub-sub-container2");
-        final QName q7 = QName.create(SIMPLE_MODULE_QNAME, "grp");
+        final QName q7 = QName.create(SIMPLE_MODULE_QNAME, "grp", IDNamespace.NS_GROUPING);
 
         ContainerSchemaNode rootCon = (ContainerSchemaNode) simpleModule.getDataChildByName(q1);
         assertNotNull(rootCon);

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collection;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -41,18 +42,21 @@ public class SchemaUtilsTest {
         final SchemaContext schemaContext = YangParserTestUtils
                 .parseYangResource("/schema-utils-test/name-conflicts.yang");
         // test my-name conflicts
-        assertEquals(8, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name"), qN("my-name-nested"), qN("my-name-nested2"))).size());
+        assertEquals(1, SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
+                SchemaPath.create(true, qN("my-name"), qN("my-name-nested"),
+                    qN("my-name-nested2"))).size());
 
         // test target container
         final Collection<SchemaNode> target = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name-2"), qN("my-name-nested"), qN("target")));
+                SchemaPath.create(true, qN("my-name-2"),
+                    qN("my-name-nested", IDNamespace.NS_GROUPING), qN("target")));
         assertEquals(1, target.size());
         assertTrue(target.iterator().next() instanceof ContainerSchemaNode);
 
         // test l schema nodes (i.e. container and two leafs)
         Collection<SchemaNode> schema = SchemaUtils.findParentSchemaNodesOnPath(schemaContext,
-                SchemaPath.create(true, qN("my-name-3"), qN("input"), qN("con-3"), qN("l")));
+                SchemaPath.create(true, qN("my-name-3", IDNamespace.NS_GROUPING),
+                    qN("input"), qN("con-3"), qN("l")));
         assertEquals(1, schema.size());
         assertTrue(schema.iterator().next() instanceof ContainerSchemaNode);
 
@@ -73,5 +77,9 @@ public class SchemaUtilsTest {
 
     private static QName qN(final String localName) {
         return QName.create(NS, localName);
+    }
+
+    private static QName qN(final String localName, final IDNamespace idNamespace) {
+        return QName.create(NS, localName, idNamespace);
     }
 }

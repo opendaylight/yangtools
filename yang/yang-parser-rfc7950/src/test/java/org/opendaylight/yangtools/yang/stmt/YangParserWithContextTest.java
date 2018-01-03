@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.IDNamespace;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -224,7 +225,8 @@ public class YangParserWithContextTest {
 
         // test grouping path
         final List<QName> path = new ArrayList<>();
-        final QName qname = QName.create(URI.create("urn:opendaylight.baz"), Revision.of("2013-02-27"), "target");
+        final QName qname = QName.create(URI.create("urn:opendaylight.baz"), Revision.of("2013-02-27"),
+            "target", IDNamespace.NS_GROUPING);
         path.add(qname);
         final SchemaPath expectedPath = SchemaPath.create(path, true);
         assertEquals(expectedPath, usesNode.getGroupingPath());
