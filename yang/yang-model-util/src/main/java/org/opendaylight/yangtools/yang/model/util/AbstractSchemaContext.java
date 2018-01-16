@@ -41,9 +41,20 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public abstract class AbstractSchemaContext implements SchemaContext {
+    /**
+     * A {@link Module} comparator based on {@link Module#getRevision()}, placing latest revision first. Note this
+     * comparator does not take into account module name and so two modules with different names but same revisions
+     * compare as equal.
+     */
     protected static final Comparator<Module> REVISION_COMPARATOR =
-        (first, second) -> Revision.compare(first.getRevision(), second.getRevision());
+            (first, second) -> Revision.compare(second.getRevision(), first.getRevision());
 
+    /**
+     * Create a TreeSet for containing Modules with the same name, such that the set is ordered
+     * by {@link #REVISION_COMPARATOR}.
+     *
+     * @return A fresh TreeSet instance.
+     */
     protected static final TreeSet<Module> createModuleSet() {
         return new TreeSet<>(REVISION_COMPARATOR);
     }

@@ -53,9 +53,11 @@ public class SchemaContextProxyTest {
     private static final String MODULE41_NAME = "module41";
     private static final String MODULE5_NAME = "module5";
 
-    private static SchemaContext mockSchema(final Module... module) {
+    private static SchemaContext mockSchema(final Module... modules) {
+        final List<Module> sortedModules = Arrays.asList(modules);
+        sortedModules.sort(AbstractSchemaContext.REVISION_COMPARATOR);
         SchemaContext mock = mock(SchemaContext.class);
-        doReturn(ImmutableSet.copyOf(module)).when(mock).getModules();
+        doReturn(ImmutableSet.copyOf(sortedModules)).when(mock).getModules();
         return mock;
     }
 
