@@ -12,6 +12,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Lists;
@@ -21,6 +22,7 @@ import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import com.google.common.collect.TreeMultimap;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -63,11 +65,12 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         final Builder<Module> filteredModulesBuilder = new Builder<>();
 
         // preparing map to get all modules with one name but difference in revision
-        final TreeMultimap<String, Module> nameToModulesAll = getStringModuleTreeMultimap();
+        final TreeMultimap<String, Module> nameToModulesAll = TreeMultimap.create(String::compareTo,
+            REVISION_COMPARATOR);
 
         nameToModulesAll.putAll(getStringModuleMap(delegate));
 
-        // in case there is a particular dependancy to view filteredModules/yang models dependancy is checked
+        // in case there is a particular dependency to view filteredModules/YANG models dependency is checked
         // for module name and imports
         processForRootModules(delegate, rootModules, filteredModulesBuilder);
 
@@ -79,10 +82,11 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
                 filteredModulesBuilder.build(), nameToModulesAll));
 
         /**
-         * Instead of doing this on each invocation of getModules(), pre-compute
-         * it once and keep it around -- better than the set we got in.
+         * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around.
          */
-        this.filteredModules = filteredModulesBuilder.build();
+        final List<Module> sortedModules = new ArrayList<>(filteredModulesBuilder.build());
+        sortedModules.sort(NAME_REVISION_COMPARATOR);
+        this.filteredModules = ImmutableSet.copyOf(sortedModules);
 
         final SetMultimap<URI, Module> nsMap = Multimaps.newSetMultimap(new TreeMap<>(),
             AbstractSchemaContext::createModuleSet);
@@ -98,10 +102,6 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
         moduleMap = moduleMapBuilder.build();
-    }
-
-    private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
-        return TreeMultimap.create(String::compareTo, REVISION_COMPARATOR);
     }
 
     private static void processForAdditionalModules(final SchemaContext delegate,
@@ -130,7 +130,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             for (ModuleImport moduleImport : module.getImports()) {
                 Optional<Revision> revisionDate = moduleImport.getRevision();
                 if (!revisionDate.isPresent()) {
-                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).last().getRevision();
+                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision();
                 }
 
                 ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
