@@ -130,7 +130,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             for (ModuleImport moduleImport : module.getImports()) {
                 Optional<Revision> revisionDate = moduleImport.getRevision();
                 if (!revisionDate.isPresent()) {
-                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).last().getRevision();
+                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision();
                 }
 
                 ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
