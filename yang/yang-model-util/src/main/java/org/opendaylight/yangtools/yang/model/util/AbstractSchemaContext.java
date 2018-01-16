@@ -122,16 +122,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     }
 
     @Override
-    public Set<Module> findModules(final URI namespace) {
-        return getNamespaceToModules().get(namespace);
-    }
-
-    @Override
-    public Set<Module> findModules(final String name) {
-        return getNameToModules().get(name);
-    }
-
-    @Override
     public boolean isAugmenting() {
         return false;
     }
