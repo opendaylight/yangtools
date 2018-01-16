@@ -63,11 +63,12 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         final Builder<Module> filteredModulesBuilder = new Builder<>();
 
         // preparing map to get all modules with one name but difference in revision
-        final TreeMultimap<String, Module> nameToModulesAll = getStringModuleTreeMultimap();
+        final TreeMultimap<String, Module> nameToModulesAll = TreeMultimap.create(String::compareTo,
+            REVISION_COMPARATOR);
 
         nameToModulesAll.putAll(getStringModuleMap(delegate));
 
-        // in case there is a particular dependancy to view filteredModules/yang models dependancy is checked
+        // in case there is a particular dependency to view filteredModules/YANG models dependency is checked
         // for module name and imports
         processForRootModules(delegate, rootModules, filteredModulesBuilder);
 
@@ -100,10 +101,6 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
         moduleMap = moduleMapBuilder.build();
     }
 
-    private static TreeMultimap<String, Module> getStringModuleTreeMultimap() {
-        return TreeMultimap.create(String::compareTo, REVISION_COMPARATOR);
-    }
-
     private static void processForAdditionalModules(final SchemaContext delegate,
             final Set<ModuleId> additionalModuleIds, final Builder<Module> filteredModulesBuilder) {
         filteredModulesBuilder.addAll(Collections2.filter(delegate.getModules(),
@@ -130,7 +127,7 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
             for (ModuleImport moduleImport : module.getImports()) {
                 Optional<Revision> revisionDate = moduleImport.getRevision();
                 if (!revisionDate.isPresent()) {
-                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).last().getRevision();
+                    revisionDate = nameToModulesAll.get(moduleImport.getModuleName()).first().getRevision();
                 }
 
                 ModuleId key = new ModuleId(moduleImport.getModuleName(), revisionDate);
