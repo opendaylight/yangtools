@@ -17,10 +17,13 @@ import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.Multimaps;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 /**
@@ -37,10 +40,15 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
 
     protected SimpleSchemaContext(final Set<Module> modules) {
         /*
-         * Instead of doing this on each invocation of getModules(), pre-compute
-         * it once and keep it around -- better than the set we got in.
+         * Instead of doing this on each invocation of getModules(), pre-compute it once and keep it around -- better
+         * than the set we got in.
+         *
+         * Note we are performing two sort operations: the dependency sort takes care of detecting multiple imports,
+         * performing sorting as a side-effect, but we really want the modules sorted to comply with getModules().
          */
-        this.modules = ImmutableSet.copyOf(ModuleDependencySort.sort(modules));
+        final List<Module> sortedModules = new ArrayList<>(ModuleDependencySort.sort(modules));
+        sortedModules.sort(SimpleSchemaContext::compareModules);
+        this.modules = ImmutableSet.copyOf(sortedModules);
 
         /*
          * The most common lookup is from Namespace->Module.
@@ -64,6 +72,13 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
         moduleMap = moduleMapBuilder.build();
+    }
+
+    private static int compareModules(final Module m1, final Module m2) {
+        // Compare by module name first and then in *inverse* order of Revision ordering (latest revision first,
+        // no revision last). Note inversion of arguments.
+        final int cmp = m1.getName().compareTo(m2.getName());
+        return cmp != 0 ? cmp : Revision.compare(m2.getRevision(), m1.getRevision());
     }
 
     /**
