@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "c8256ca6_8ffaac02",
+        "filename": "yang/yang-model-util/src/test/java/org/opendaylight/yangtools/yang/model/util/SimpleSchemaContextTest.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 54,
+      "author": {
+        "id": 1842
+      },
+      "writtenOn": "2018-01-17T16:41:12Z",
+      "side": 1,
+      "message": "What about test for findModules(URI)?",
+      "revId": "c003f0a5049d0dee865d255270ddb5c1431d833c",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
