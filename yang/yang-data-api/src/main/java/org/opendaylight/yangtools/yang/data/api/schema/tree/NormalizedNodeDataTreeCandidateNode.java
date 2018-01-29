@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 
 /**
  * Utility implementation of {@link DataTreeCandidateNode} which acts as if
@@ -43,11 +44,17 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
     @Nonnull
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
+        final Collection<? extends NormalizedNode<?, ?>> children;
         if (data instanceof NormalizedNodeContainer) {
-            return Collections2.transform(((NormalizedNodeContainer<?, ?, ?>) data).getValue(),
-                input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
+            children = ((NormalizedNodeContainer<?, ?, ?>) data).getValue();
+        } else if (data instanceof OrderedNodeContainer) {
+            children = ((OrderedNodeContainer<?>) data).getValue();
+        } else {
+            return ImmutableList.of();
         }
-        return ImmutableList.of();
+
+        return Collections2.transform(children,
+            input -> input == null ? null : new NormalizedNodeDataTreeCandidateNode(input));
     }
 
     @Override
