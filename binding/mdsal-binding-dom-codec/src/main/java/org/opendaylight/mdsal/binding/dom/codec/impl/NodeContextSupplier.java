@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Supplier;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 
 /**
