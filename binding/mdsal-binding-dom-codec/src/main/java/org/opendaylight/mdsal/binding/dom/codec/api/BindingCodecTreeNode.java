@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 /**
  * Subtree codec specific to model subtree between Java Binding and NormalizedNode.
@@ -133,5 +134,10 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
     @Nullable InstanceIdentifier.PathArgument deserializePathArgument(
             @Nullable YangInstanceIdentifier.PathArgument arg);
 
-    Object getSchema();
+    /**
+     * Return the schema node associated with this node.
+     *
+     * @return A schema node.
+     */
+    @Nonnull WithStatus getSchema();
 }

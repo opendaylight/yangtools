@@ -26,8 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
-abstract class DataContainerCodecContext<D extends DataObject,T> extends NodeCodecContext<D>  {
+abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext<D>  {
 
     private final DataContainerCodecPrototype<T> prototype;
     private volatile DataObjectSerializer eventStreamSerializer;

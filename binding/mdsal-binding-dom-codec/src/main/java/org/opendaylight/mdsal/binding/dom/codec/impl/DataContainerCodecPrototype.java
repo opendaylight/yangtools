@@ -23,11 +23,12 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
+final class DataContainerCodecPrototype<T extends WithStatus> implements NodeContextSupplier {
 
     private final T schema;
     private final QNameModule namespace;
@@ -35,7 +36,7 @@ final class DataContainerCodecPrototype<T> implements NodeContextSupplier {
     private final Class<?> bindingClass;
     private final InstanceIdentifier.Item<?> bindingArg;
     private final YangInstanceIdentifier.PathArgument yangArg;
-    private volatile DataContainerCodecContext<?,T> instance = null;
+    private volatile DataContainerCodecContext<?, T> instance = null;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     private DataContainerCodecPrototype(final Class<?> cls, final YangInstanceIdentifier.PathArgument arg,
