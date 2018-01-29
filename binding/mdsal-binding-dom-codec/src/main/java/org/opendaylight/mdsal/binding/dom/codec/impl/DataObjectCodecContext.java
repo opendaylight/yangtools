@@ -73,8 +73,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, DataContainerCodecPrototype<?>> byStreamAugmented = new ConcurrentHashMap<>();
 
-
-    protected DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
+    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
 
         this.leafChild = factory().getLeafNodes(getBindingClass(), getSchema());
@@ -342,7 +341,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     }
 
     @SuppressWarnings("unchecked")
-    public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
+    Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAllAugmentationsFrom(
             final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
 
         @SuppressWarnings("rawtypes")
@@ -367,7 +366,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return map;
     }
 
-    public Collection<Method> getHashCodeAndEqualsMethods() {
+    Collection<Method> getHashCodeAndEqualsMethods() {
         return byMethod.keySet();
     }
 
