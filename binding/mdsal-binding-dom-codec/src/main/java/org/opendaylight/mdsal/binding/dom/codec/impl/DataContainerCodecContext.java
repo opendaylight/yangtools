@@ -42,6 +42,11 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         return prototype.getSchema();
     }
 
+    @Override
+    public final ChildAddressabilitySummary getChildAddressabilitySummary() {
+        return prototype.getChildAddressabilitySummary();
+    }
+
     protected final QNameModule namespace() {
         return prototype.getNamespace();
     }

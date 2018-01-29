@@ -140,4 +140,33 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @return A schema node.
      */
     @Nonnull WithStatus getSchema();
+
+    /**
+     * Return a summary of addressability of potential children. Binding specification does not allow all DOM tree
+     * elements to be directly addressed, which means some recursive tree operations, like data tree changes do not
+     * have a one-to-one mapping from DOM to binding in all cases. This method provides an optimization hint to guide
+     * translation of data structures, allowing for fast paths when all children are known to either be addressable
+     * or non-addressable.
+     *
+     * @return Summary children addressability.
+     */
+    @Nonnull ChildAddressabilitySummary getChildAddressabilitySummary();
+
+    /**
+     * Enumeration of possible addressability attribute of all children.
+     */
+    enum ChildAddressabilitySummary {
+        /**
+         * All children are addressable.
+         */
+        ADDRESSABLE,
+        /**
+         * All children are non-addressable, including the case when this node does not have any children.
+         */
+        UNADDRESSABLE,
+        /**
+         * Mixed children, some are addressable and some are not.
+         */
+        MIXED
+    }
 }

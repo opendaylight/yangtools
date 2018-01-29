@@ -1,0 +1,59 @@
+module opendaylight-mdsal298 {
+    namespace "urn:test:opendaylight-mdsal298";
+    prefix mdsal298;
+
+    revision 2018-01-29;
+
+    container container {
+        presence "for persistence";
+
+        list unkeyed {
+            ordered-by user;
+            leaf foo {
+                type string;
+            }
+        }
+
+        list keyed {
+            ordered-by user;
+            key foo;
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container with-choice {
+        presence "for persistence";
+
+        choice foo {
+            case addressable-case {
+                container addressable {
+                    presence "for persistence";
+                }
+            }
+            case unaddressable-case {
+                leaf-list unaddressable {
+                    type string;
+                }
+            }
+        }
+    }
+
+    container addressable-cont {
+        presence "for persistence";
+
+        container addressable-child {
+            presence "for persistence";
+        }
+    }
+
+    container unaddressable-cont {
+        presence "for persistence";
+
+        leaf baz {
+            type string;
+        }
+    }
+}
+

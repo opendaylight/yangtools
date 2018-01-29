@@ -223,6 +223,11 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
         return schema;
     }
 
+    @Override
+    public ChildAddressabilitySummary getChildAddressabilitySummary() {
+        return ChildAddressabilitySummary.UNADDRESSABLE;
+    }
+
     /**
      * Return the default value object.
      *

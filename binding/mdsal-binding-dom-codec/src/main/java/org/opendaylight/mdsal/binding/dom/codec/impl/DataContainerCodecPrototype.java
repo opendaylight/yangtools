@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.Iterables;
 import javax.annotation.concurrent.GuardedBy;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -18,17 +19,24 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class DataContainerCodecPrototype<T extends WithStatus> implements NodeContextSupplier {
+    private static final Logger LOG = LoggerFactory.getLogger(DataContainerCodecPrototype.class);
 
     private final T schema;
     private final QNameModule namespace;
@@ -36,6 +44,8 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final Class<?> bindingClass;
     private final InstanceIdentifier.Item<?> bindingArg;
     private final YangInstanceIdentifier.PathArgument yangArg;
+    private final ChildAddressabilitySummary childAddressabilitySummary;
+
     private volatile DataContainerCodecContext<?, T> instance = null;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
@@ -53,6 +63,81 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         } else {
             this.namespace = arg.getNodeType().getModule();
         }
+
+        this.childAddressabilitySummary = computeChildAddressabilitySummary(nodeSchema);
+    }
+
+    private static ChildAddressabilitySummary computeChildAddressabilitySummary(final WithStatus nodeSchema) {
+        if (nodeSchema instanceof DataNodeContainer) {
+            boolean haveAddressable = false;
+            boolean haveUnaddressable = false;
+            for (DataSchemaNode child : ((DataNodeContainer) nodeSchema).getChildNodes()) {
+                if (child instanceof ContainerSchemaNode || child instanceof AugmentationSchemaNode) {
+                    haveAddressable = true;
+                } else if (child instanceof ListSchemaNode) {
+                    if (((ListSchemaNode) child).getKeyDefinition().isEmpty()) {
+                        haveUnaddressable = true;
+                    } else {
+                        haveAddressable = true;
+                    }
+                } else if (child instanceof AnyDataSchemaNode || child instanceof AnyXmlSchemaNode
+                        || child instanceof TypedDataSchemaNode) {
+                    haveUnaddressable = true;
+                } else if (child instanceof ChoiceSchemaNode) {
+                    switch (computeChildAddressabilitySummary(child)) {
+                        case ADDRESSABLE:
+                            haveAddressable = true;
+                            break;
+                        case MIXED:
+                            haveAddressable = true;
+                            haveUnaddressable = true;
+                            break;
+                        case UNADDRESSABLE:
+                            haveUnaddressable = true;
+                            break;
+                        default:
+                            throw new IllegalStateException("Unhandled accessibility summary for " + child);
+                    }
+                } else {
+                    LOG.warn("Unhandled child node {}", child);
+                }
+            }
+
+            if (!haveAddressable) {
+                // Empty or all are unaddressable
+                return ChildAddressabilitySummary.UNADDRESSABLE;
+            }
+
+            return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
+        } else if (nodeSchema instanceof ChoiceSchemaNode) {
+            boolean haveAddressable = false;
+            boolean haveUnaddressable = false;
+            for (CaseSchemaNode child : ((ChoiceSchemaNode) nodeSchema).getCases().values()) {
+                switch (computeChildAddressabilitySummary(child)) {
+                    case ADDRESSABLE:
+                        haveAddressable = true;
+                        break;
+                    case UNADDRESSABLE:
+                        haveUnaddressable = true;
+                        break;
+                    case MIXED:
+                        // A child is mixed, which means we are mixed, too
+                        return ChildAddressabilitySummary.MIXED;
+                    default:
+                        throw new IllegalStateException("Unhandled accessibility summary for " + child);
+                }
+            }
+
+            if (!haveAddressable) {
+                // Empty or all are unaddressable
+                return ChildAddressabilitySummary.UNADDRESSABLE;
+            }
+
+            return haveUnaddressable ? ChildAddressabilitySummary.MIXED : ChildAddressabilitySummary.ADDRESSABLE;
+        }
+
+        // No child nodes possible: return unaddressable
+        return ChildAddressabilitySummary.UNADDRESSABLE;
     }
 
     static DataContainerCodecPrototype<SchemaContext> rootPrototype(final CodecContextFactory factory) {
@@ -81,6 +166,10 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
 
     protected T getSchema() {
         return schema;
+    }
+
+    ChildAddressabilitySummary getChildAddressabilitySummary() {
+        return childAddressabilitySummary;
     }
 
     protected QNameModule getNamespace() {
