@@ -90,11 +90,13 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         return path;
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return augmenting;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
