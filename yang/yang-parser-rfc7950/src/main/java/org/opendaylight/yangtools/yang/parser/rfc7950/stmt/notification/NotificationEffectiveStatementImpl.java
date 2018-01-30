@@ -103,11 +103,13 @@ final class NotificationEffectiveStatementImpl
         return unknownNodes;
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return augmenting;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return addedByUses;

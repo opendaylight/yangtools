@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 /**
  * Contains the methods for getting data and checking properties of the YANG <code>uses</code> substatement.
  */
-public interface UsesNode extends WhenConditionAware, WithStatus {
+public interface UsesNode extends WhenConditionAware, WithStatus, CopyableNode {
 
     /**
      * Returns the schema path to used grouping.
@@ -30,24 +30,6 @@ public interface UsesNode extends WhenConditionAware, WithStatus {
      * @return Set of augment statements defined under this uses node
      */
     @Nonnull Set<AugmentationSchemaNode> getAugmentations();
-
-    /**
-     * Returns <code>true</code> if the data node was added by augmentation,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the data node was added by augmentation,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAugmenting();
-
-    /**
-     * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the data node was added by uses statement,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAddedByUses();
 
     /**
      * Some of the properties of each node in the grouping can be refined with

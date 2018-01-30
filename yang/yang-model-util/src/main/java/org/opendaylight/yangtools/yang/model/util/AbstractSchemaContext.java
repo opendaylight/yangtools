@@ -152,11 +152,13 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return getNameToModules().get(name);
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return false;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return false;

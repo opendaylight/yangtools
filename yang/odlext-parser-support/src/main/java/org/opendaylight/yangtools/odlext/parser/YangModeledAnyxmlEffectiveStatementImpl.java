@@ -84,11 +84,13 @@ final class YangModeledAnyxmlEffectiveStatementImpl
         return delegateSchemaNode().getReference();
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return delegateSchemaNode().isAugmenting();
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return delegateSchemaNode().isAddedByUses();

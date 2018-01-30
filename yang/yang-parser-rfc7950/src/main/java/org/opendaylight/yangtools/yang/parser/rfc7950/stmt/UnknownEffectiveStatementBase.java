@@ -74,6 +74,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         unknownNodes = builder.build();
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByAugmentation() {
         return addedByAugmentation;
@@ -89,6 +90,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
         return nodeParameter;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return addedByUses;

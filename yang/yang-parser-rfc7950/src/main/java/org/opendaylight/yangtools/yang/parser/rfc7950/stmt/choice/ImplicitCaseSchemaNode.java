@@ -48,11 +48,13 @@ public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSc
         this.augmenting = caseShorthandNode.isAugmenting();
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return augmenting;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return caseShorthandNode.isAddedByUses();

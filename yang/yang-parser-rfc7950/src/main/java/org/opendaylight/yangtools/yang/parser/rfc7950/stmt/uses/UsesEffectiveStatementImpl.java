@@ -96,11 +96,13 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         return augmentations;
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return false;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return addedByUses;

@@ -13,15 +13,13 @@ package org.opendaylight.yangtools.yang.model.api;
  * <p>
  * It is used to define a reusable block of nodes, which may be used locally in
  * the module, in modules that include it, and by other modules that import from it.
+ *
+ * <p>
+ * Note: this interface extends {@link AddedByUsesAware}, but this contradicts the javadoc of {@link #isAddedByUses()},
+ *       as groupings can never be encountered in 'data schema node' context. It is their children, which are data
+ *       schema node, but those really are instantiated and typically differ in {@link #getQName()}'s namespace.
  */
 public interface GroupingDefinition extends DataNodeContainer, SchemaNode, NotificationNodeContainer,
-       ActionNodeContainer {
-    /**
-     * Returns <code>true</code> if the data node was added by uses statement,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if the data node was added by uses statement,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAddedByUses();
+       ActionNodeContainer, AddedByUsesAware {
+
 }
