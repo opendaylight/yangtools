@@ -133,11 +133,13 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         return ret;
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return false;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return false;

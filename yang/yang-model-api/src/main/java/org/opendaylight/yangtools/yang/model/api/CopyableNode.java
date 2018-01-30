@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Represents a node that can be added by uses or by augmentation.
+ *
+ * @deprecated Aside from the deprecated {@link AddedByUsesAware} contract, this interface adds only a trait related
+ *             to now how we arrived at this effective node. Users who need to know this information should really be
+ *             looking at the {@link DeclaredStatement} world, which holds the original node definition.
  */
-@Beta
-public interface CopyableNode {
+@Deprecated
+public interface CopyableNode extends AddedByUsesAware {
     /**
      * Returns <code>true</code> if this node was added by augmentation,
      * otherwise returns <code>false</code>.
@@ -22,13 +26,4 @@ public interface CopyableNode {
      *         otherwise returns <code>false</code>
      */
     boolean isAugmenting();
-
-    /**
-     * Returns <code>true</code> if this node was added by uses statement,
-     * otherwise returns <code>false</code>.
-     *
-     * @return <code>true</code> if this node was added by uses statement,
-     *         otherwise returns <code>false</code>
-     */
-    boolean isAddedByUses();
 }

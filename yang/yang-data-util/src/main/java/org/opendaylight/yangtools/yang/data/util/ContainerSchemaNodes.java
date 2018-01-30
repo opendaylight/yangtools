@@ -181,6 +181,7 @@ public final class ContainerSchemaNodes {
             }
         }
 
+        @Deprecated
         @Override
         public boolean isAddedByUses() {
             return false;
@@ -239,6 +240,7 @@ public final class ContainerSchemaNodes {
         }
 
         @Override
+        @Deprecated
         public boolean isAddedByUses() {
             //FIXME: reference to https://bugs.opendaylight.org/show_bug.cgi?id=6897
             return false;

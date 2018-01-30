@@ -28,6 +28,8 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * environment is safe.
  */
 @Immutable
+// FIXME: 3.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
+//               and possibly DataSchemaNode would reflect SchemaContext traits better.
 public interface SchemaContext extends ContainerSchemaNode {
     /**
      * QName of NETCONF top-level data node.

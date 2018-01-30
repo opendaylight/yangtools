@@ -43,11 +43,13 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
         }
     }
 
+    @Deprecated
     @Override
     public final boolean isAugmenting() {
         return augmenting;
     }
 
+    @Deprecated
     @Override
     public final boolean isAddedByUses() {
         return addedByUses;

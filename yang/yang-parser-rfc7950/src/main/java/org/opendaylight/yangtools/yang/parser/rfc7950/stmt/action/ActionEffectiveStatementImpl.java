@@ -106,11 +106,13 @@ final class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Act
         return groupings;
     }
 
+    @Deprecated
     @Override
     public boolean isAugmenting() {
         return augmenting;
     }
 
+    @Deprecated
     @Override
     public boolean isAddedByUses() {
         return addedByUses;
