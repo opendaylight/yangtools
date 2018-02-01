@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -25,19 +26,23 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
@@ -49,6 +54,13 @@ import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 class YangToSourcesProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(YangToSourcesProcessor.class);
+    private static final YangParserFactory DEFAULT_PARSER_FACTORY;
+
+    static {
+        final Iterator<YangParserFactory> it = ServiceLoader.load(YangParserFactory.class).iterator();
+        checkState(it.hasNext(), "Failed to find a YangParserFactory implementation");
+        DEFAULT_PARSER_FACTORY = it.next();
+    }
 
     static final String LOG_PREFIX = "yang-to-sources:";
     private static final String META_INF_STR = "META-INF";
@@ -58,6 +70,7 @@ class YangToSourcesProcessor {
     static final String META_INF_YANG_STRING_JAR = META_INF_STR + "/" + YANG_STR;
     static final String META_INF_YANG_SERVICES_STRING_JAR = META_INF_STR + "/" + "services";
 
+    private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
     private final List<CodeGeneratorArg> codeGenerators;
@@ -76,6 +89,7 @@ class YangToSourcesProcessor {
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
+        this.parserFactory = DEFAULT_PARSER_FACTORY;
     }
 
     @VisibleForTesting
@@ -108,7 +122,7 @@ class YangToSourcesProcessor {
 
             try {
                 holder = createContextHolder(reactor);
-            } catch (SchemaSourceException | YangSyntaxErrorException e) {
+            } catch (YangParserException e) {
                 throw new MojoFailureException("Failed to process reactor " + reactor, e);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read reactor " + reactor, e);
@@ -164,15 +178,28 @@ class YangToSourcesProcessor {
                 return Optional.empty();
             }
 
-            final YangTextSchemaContextResolver resolver = YangTextSchemaContextResolver.create("maven-plugin");
+            // FIXME: add correct mode
+            final YangParser parser = parserFactory.createParser();
+            final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             for (final File f : yangFilesInProject) {
-                resolver.registerSource(YangTextSchemaSource.forFile(f));
+                final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(f);
+                final ASTSchemaSource astSource = TextToASTTransformer.transformText(textSource);
+
+                parser.addSource(astSource);
+
+                if (!astSource.getIdentifier().equals(textSource.getIdentifier())) {
+                    // AST indicates a different source identifier, make sure we use that
+                    sourcesInProject.add(YangTextSchemaSource.delegateForByteSource(astSource.getIdentifier(),
+                        textSource));
+                } else {
+                    sourcesInProject.add(textSource);
+                }
             }
 
             LOG.debug("Processed project files: {}", yangFilesInProject);
             LOG.info("{} Project model files parsed: {}", LOG_PREFIX, yangFilesInProject.size());
 
-            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(resolver);
+            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject);
             LOG.debug("Initialized reactor {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
         } catch (Exception e) {
@@ -185,7 +212,7 @@ class YangToSourcesProcessor {
     }
 
     private ContextHolder createContextHolder(final ProcessorModuleReactor reactor) throws MojoFailureException,
-            IOException, SchemaSourceException, YangSyntaxErrorException {
+            IOException, YangParserException {
         /**
          * Set contains all modules generated from input sources. Number of
          * modules may differ from number of sources due to submodules
@@ -196,7 +223,7 @@ class YangToSourcesProcessor {
             final List<YangTextSchemaSource> sourcesInDependencies = Util.findYangFilesInDependenciesAsStream(
                 project);
             for (YangTextSchemaSource s : toUniqueSources(sourcesInDependencies)) {
-                reactor.registerSource(s);
+                reactor.registerSourceFromDependency(s);
             }
         }
 
@@ -236,7 +263,7 @@ class YangToSourcesProcessor {
      */
     @SuppressWarnings("checkstyle:illegalCatch")
     private void generateSources(final ContextHolder context) throws MojoFailureException {
-        if (codeGenerators.size() == 0) {
+        if (codeGenerators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
             return;
         }
@@ -311,9 +338,7 @@ class YangToSourcesProcessor {
     private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType) throws
             ClassNotFoundException, InstantiationException, IllegalAccessException {
         final Class<?> clazz = Class.forName(codeGeneratorClass);
-
-        Preconditions.checkArgument(baseType.isAssignableFrom(clazz), "Code generator %s has to implement %s", clazz,
-            baseType);
+        checkArgument(baseType.isAssignableFrom(clazz), "Code generator %s has to implement %s", clazz, baseType);
         return baseType.cast(clazz.newInstance());
     }
 }

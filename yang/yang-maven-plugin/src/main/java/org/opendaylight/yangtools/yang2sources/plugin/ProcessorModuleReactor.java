@@ -10,21 +10,20 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
+import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.repo.YangTextSchemaContextResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,48 +36,51 @@ import org.slf4j.LoggerFactory;
 final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 
-    private final YangTextSchemaContextResolver resolver;
-    private final Set<SourceIdentifier> sourcesInProject;
+    private final Map<SourceIdentifier, YangTextSchemaSource> modelsInProject;
+    private final YangParser parser;
 
-    ProcessorModuleReactor(final YangTextSchemaContextResolver resolver) {
-        this.resolver = Preconditions.checkNotNull(resolver);
-        sourcesInProject = ImmutableSet.copyOf(resolver.getAvailableSources());
+    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject) {
+        this.parser = Preconditions.checkNotNull(parser);
+        this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
     }
 
-    void registerSource(final YangTextSchemaSource source) throws SchemaSourceException, IOException,
-            YangSyntaxErrorException {
-        resolver.registerSource(source);
+    void registerSourceFromDependency(final YangTextSchemaSource source) throws YangSyntaxErrorException, IOException {
+        // This source is coming from a dependency:
+        // - its identifier should be accurate, as it should have been processed into a file with accurate name
+        // - it is not required to be parsed, hence we add it just as a library source
+        parser.addLibSource(source);
     }
 
-    ContextHolder toContext() throws SchemaResolutionException {
-        final SchemaContext schemaContext = Verify.verifyNotNull(resolver.trySchemaContext());
+    ContextHolder toContext() throws YangParserException {
+        final SchemaContext schemaContext = Verify.verifyNotNull(parser.buildSchemaContext());
 
         final Set<Module> modules = new HashSet<>();
         for (Module module : schemaContext.getModules()) {
             final SourceIdentifier modId = Util.moduleToIdentifier(module);
             LOG.debug("Looking for source {}", modId);
-            if (sourcesInProject.contains(modId)) {
+            if (modelsInProject.containsKey(modId)) {
                 LOG.debug("Module {} belongs to current project", module);
                 modules.add(module);
 
                 for (Module sub : module.getSubmodules()) {
                     final SourceIdentifier subId = Util.moduleToIdentifier(sub);
-                    if (sourcesInProject.contains(subId)) {
+                    if (modelsInProject.containsKey(subId)) {
                         LOG.warn("Submodule {} not found in input files", sub);
                     }
                 }
             }
         }
 
-        return new ContextHolder(schemaContext, modules, sourcesInProject);
+        return new ContextHolder(schemaContext, modules, modelsInProject.keySet());
     }
 
     Collection<YangTextSchemaSource> getModelsInProject() {
-        return Collections2.transform(sourcesInProject, id -> resolver.getSourceTexts(id).iterator().next());
+        return modelsInProject.values();
     }
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("sources", sourcesInProject).add("resolver", resolver).toString();
+        return MoreObjects.toStringHelper(this).add("sources", modelsInProject.keySet()).add("parser", parser)
+                .toString();
     }
 }
