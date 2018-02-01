@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -33,16 +34,16 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 public final class ASTSchemaSource implements SchemaSourceRepresentation {
     private final YangModelDependencyInfo depInfo;
     private final SemVerSourceIdentifier semVerId;
+    private final SourceIdentifier identifier;
     private final ParserRuleContext tree;
-    private final SourceIdentifier id;
     private final String symbolicName;
 
-    private ASTSchemaSource(@Nonnull final SourceIdentifier id, @Nonnull final SemVerSourceIdentifier semVerId,
+    private ASTSchemaSource(@Nonnull final SourceIdentifier identifier, @Nonnull final SemVerSourceIdentifier semVerId,
             @Nonnull final ParserRuleContext tree, @Nonnull final YangModelDependencyInfo depInfo,
             @Nullable final String symbolicName) {
         this.depInfo = requireNonNull(depInfo);
         this.tree = requireNonNull(tree);
-        this.id = requireNonNull(id);
+        this.identifier = requireNonNull(identifier);
         this.semVerId = requireNonNull(semVerId);
         this.symbolicName = symbolicName;
     }
@@ -80,7 +81,7 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
 
     @Override
     public SourceIdentifier getIdentifier() {
-        return id;
+        return identifier;
     }
 
     @Override
@@ -116,6 +117,11 @@ public final class ASTSchemaSource implements SchemaSourceRepresentation {
     //        on model.api types.
     @Nonnull public YangModelDependencyInfo getDependencyInformation() {
         return depInfo;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("identifier", identifier).toString();
     }
 
     private static SourceIdentifier getSourceId(final YangModelDependencyInfo depInfo) {
