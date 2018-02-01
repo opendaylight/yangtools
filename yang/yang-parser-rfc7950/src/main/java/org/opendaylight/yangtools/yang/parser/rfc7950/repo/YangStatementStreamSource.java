@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
@@ -73,6 +75,14 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         this.context = Preconditions.checkNotNull(context);
     }
 
+    /**
+     * Create a {@link YangStatementStreamSource} for a {@link YangTextSchemaSource}.
+     *
+     * @param source YangTextSchemaSource, must not be null
+     * @return A new {@link YangStatementStreamSource}
+     * @throws IOException When we fail to read the source
+     * @throws YangSyntaxErrorException If the source fails basic parsing
+     */
     public static YangStatementStreamSource create(final YangTextSchemaSource source) throws IOException,
             YangSyntaxErrorException {
         final StatementContext context;
@@ -83,6 +93,19 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         final String sourceName = source.getSymbolicName().orElse(null);
         final YangStatementParserListenerImpl parser = new YangStatementParserListenerImpl(sourceName);
         return new YangStatementStreamSource(source.getIdentifier(), parser, context);
+    }
+
+    /**
+     * Create a {@link YangStatementStreamSource} for a {@link ASTSchemaSource}.
+     *
+     * @param source YangTextSchemaSource, must not be null
+     * @return A new {@link YangStatementStreamSource}
+     */
+    public static YangStatementStreamSource create(final ASTSchemaSource source) {
+        final ParserRuleContext ast = source.getAST();
+        checkArgument(ast instanceof StatementContext,
+                "Unsupported context class %s for source %s", ast.getClass(), source.getIdentifier());
+        return create(source.getIdentifier(), (StatementContext) ast, source.getSymbolicName().orElse(null));
     }
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final StatementContext context,

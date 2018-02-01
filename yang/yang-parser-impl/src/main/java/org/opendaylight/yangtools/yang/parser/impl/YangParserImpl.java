@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.api.YinXmlSchemaSource;
+import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YangStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinStatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.YinTextToDomTransformer;
@@ -38,7 +39,8 @@ import org.xml.sax.SAXException;
 
 final class YangParserImpl implements YangParser {
     private static final Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS = ImmutableList.of(
-        YangTextSchemaSource.class, YinDomSchemaSource.class, YinXmlSchemaSource.class, YinTextSchemaSource.class);
+        ASTSchemaSource.class, YangTextSchemaSource.class, YinDomSchemaSource.class, YinXmlSchemaSource.class,
+        YinTextSchemaSource.class);
 
     private final BuildAction buildAction;
 
@@ -109,7 +111,9 @@ final class YangParserImpl implements YangParser {
     private static StatementStreamSource sourceToStatementStream(final SchemaSourceRepresentation source)
             throws IOException, YangSyntaxErrorException {
         requireNonNull(source);
-        if (source instanceof YangTextSchemaSource) {
+        if (source instanceof ASTSchemaSource) {
+            return YangStatementStreamSource.create((ASTSchemaSource) source);
+        } else if (source instanceof YangTextSchemaSource) {
             return YangStatementStreamSource.create((YangTextSchemaSource) source);
         } else if (source instanceof YinDomSchemaSource) {
             return YinStatementStreamSource.create((YinDomSchemaSource) source);

@@ -32,7 +32,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
 public interface YangParser {
     /**
      * Return enumeration of concrete types of {@link SchemaSourceRepresentation} parsers created from this factory
-     * support. Users can use this
+     * support. Users can use this information prepare the source they have to a representation which will be accepted
+     * by this parser.
      *
      * @return Enumeration of supported schema source representations.
      */
