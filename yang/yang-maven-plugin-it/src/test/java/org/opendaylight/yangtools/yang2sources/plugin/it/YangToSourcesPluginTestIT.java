@@ -62,10 +62,7 @@ public class YangToSourcesPluginTestIT {
             setUp("test-parent/MissingYangInDep/", false);
             fail("Verification exception should have been thrown");
         } catch (VerificationException e) {
-            assertVerificationException(e,
-                    "SchemaResolutionException{unsatisfiedImports={RevisionSourceIdentifier"
-                    + " [name=private@2013-02-27]=[ModuleImportImpl"
-                    + " [name=unknownDep, revision=2013-02-27, semanticVersion=null]]}");
+            assertVerificationException(e, "Imported module [unknownDep] was not found.");
             return;
         }
     }
