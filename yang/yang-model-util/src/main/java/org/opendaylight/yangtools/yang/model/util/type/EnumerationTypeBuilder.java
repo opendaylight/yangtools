@@ -66,7 +66,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
         for (EnumPair p : map.values()) {
             final EnumPair conflict = positionMap.put(p.getValue(), p);
             if (conflict != null) {
-                throw new InvalidEnumDefinitionException(p, "Bit %s conflicts on position with bit ", conflict);
+                throw new InvalidEnumDefinitionException(p, "Enum '%s' conflicts on value with enum ", conflict);
             }
         }
 
