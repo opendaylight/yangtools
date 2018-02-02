@@ -18,8 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * Maven 3.1.x and newer uses SLF4J internally, which means we do not need to pass
- * a logger instance around.
+ * Maven 3.1.x and newer uses SLF4J internally, which means we do not need to pass a logger instance around.
  */
 public interface BasicCodeGenerator {
     enum ImportResolutionMode {
@@ -69,8 +68,13 @@ public interface BasicCodeGenerator {
      * Indicate import resolution mode this code generator requires. Default implementation indicates
      * {@link ImportResolutionMode#REVISION_EXACT_OR_LATEST}.
      *
-     * @return Import resolution mode.
+     * @return Required import resolution mode, null if the code generator does not care.
      */
+    // FIXME: This is not really extensible, we should be returning a collection of acceptable modes, or have some sort
+    //        of two-step negotiation protocol:
+    //        - Optional<ImportResolutionMode> suggestImportResolutionMode();
+    //        - boolean isImportResolutionModeAcceptable(ImportResolutionMode);
+    //        Let's go with something hacky until we figure out exact requirements.
     default ImportResolutionMode getImportResolutionMode() {
         return ImportResolutionMode.REVISION_EXACT_OR_LATEST;
     }
