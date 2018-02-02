@@ -115,7 +115,7 @@ public class TestMultiThreadMapIterator {
 
     protected static boolean accepts(final int threadNo, final int nrThreads, final Object key) {
         final int val = getKeyValue(key);
-        return val >= 0 ? val % nrThreads == threadNo : false;
+        return val >= 0 && val % nrThreads == threadNo;
     }
 
     private static int getKeyValue(final Object key) {

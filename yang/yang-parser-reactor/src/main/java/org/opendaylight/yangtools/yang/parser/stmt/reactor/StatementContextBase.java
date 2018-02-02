@@ -183,8 +183,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         // If the set of supported features has not been provided, all features are supported by default.
         final Set<QName> supportedFeatures = getFromNamespace(SupportedFeaturesNamespace.class,
                 SupportedFeatures.SUPPORTED_FEATURES);
-        final boolean ret = supportedFeatures == null ? true
-                : StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
+        final boolean ret = StmtContextUtils.checkFeatureSupport(this, supportedFeatures);
 
         supportedByFeatures = OptionalBoolean.of(ret);
         return ret;

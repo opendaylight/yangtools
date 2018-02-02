@@ -401,7 +401,7 @@ public final class StmtContextUtils {
     public static boolean hasParentOfType(final StmtContext<?, ?, ?> ctx, final StatementDefinition parentType) {
         requireNonNull(parentType);
         final StmtContext<?, ?, ?> parentContext = ctx.getParentContext();
-        return parentContext != null ? parentType.equals(parentContext.getPublicDefinition()) : false;
+        return parentContext != null && parentType.equals(parentContext.getPublicDefinition());
     }
 
     /**
