@@ -160,7 +160,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateConstants() '''
         «IF !consts.empty»
             «FOR c : consts»
-                «IF c.name != TypeConstants.PATTERN_CONSTANT_NAME»
+                «IF !c.name.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
                     «emitConstant(c)»
                 «ENDIF»
             «ENDFOR»

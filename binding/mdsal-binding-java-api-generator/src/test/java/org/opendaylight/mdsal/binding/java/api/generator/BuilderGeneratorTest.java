@@ -69,7 +69,7 @@ public class BuilderGeneratorTest {
         assertEquals("@Override\n" +
                 "public java.lang.String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
                 "    return helper.toString();\n" +
                 "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
     }
@@ -80,7 +80,7 @@ public class BuilderGeneratorTest {
                 "public java.lang.String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
                 "    return helper.toString();\n" +
                 "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
     }
@@ -92,7 +92,7 @@ public class BuilderGeneratorTest {
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
                 "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
                 "    return helper.toString();\n" +
                 "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }

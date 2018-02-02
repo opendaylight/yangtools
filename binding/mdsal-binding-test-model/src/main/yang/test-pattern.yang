@@ -1,0 +1,37 @@
+module test-pattern {
+    yang-version 1.1;
+    namespace "urn:test:pattern";
+    prefix pattern;
+    revision 2017-01-01;
+
+    container cont {
+        leaf test {
+            type string {
+              pattern '[a-zA-Z_][a-zA-Z0-9\-_.]*';
+              pattern '[xX][mM][lL].*';
+            }
+        }
+
+        leaf test2 {
+            type string {
+              pattern '[0-9]*';
+            }
+        }
+
+
+        leaf-list test3 {
+            type string {
+              pattern '[a-zA-Z_]*';
+              pattern '[xX][mM][lL].*' {
+                modifier invert-match;
+              }
+            }
+        }
+
+        leaf-list test4 {
+            type string {
+              pattern '[a-z]*';
+            }
+        }
+    }
+}

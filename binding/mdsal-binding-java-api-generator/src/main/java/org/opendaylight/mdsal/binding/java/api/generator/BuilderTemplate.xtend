@@ -7,9 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static extension org.apache.commons.text.StringEscapeUtils.escapeJava;
+
 import com.google.common.base.MoreObjects
 import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSortedSet
+import com.google.common.collect.ImmutableList
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collection
@@ -21,15 +24,19 @@ import java.util.List
 import java.util.Map
 import java.util.Objects
 import java.util.Set
+import java.util.regex.Pattern
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType
+import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder
+import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
@@ -228,6 +235,8 @@ class BuilderTemplate extends BaseTemplate {
         public class «type.name»«BUILDER» implements «BUILDERFOR»<«type.importedName»> {
 
             «generateFields(false)»
+
+            «constantsDeclarations()»
 
             «generateAugmentField(false)»
 
@@ -428,54 +437,125 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    def private constantsDeclarations() '''
+        «FOR c : type.getConstantDefinitions»
+            «IF c.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
+                «val cValue = c.value as Map<String, String>»
+                «val String fieldSuffix = c.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length).toLowerCase»
+                public static final «List.importedName»<String> «c.getName» = «ImmutableList.importedName».of(
+                «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
+                «IF cValue.size == 1»
+                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile(«c.getName».get(0));
+                   private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«cValue.values.get(0).escapeJava»";
+                «ELSE»
+                   private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CodeHelpers.importedName».compilePatterns(«c.getName»);
+                   private static final String[] «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = { «
+                   FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
+                «ENDIF»
+            «ELSE»
+                «emitConstant(c)»
+            «ENDIF»
+        «ENDFOR»
+    '''
+
+    def private generateCheckers(GeneratedProperty field, Restrictions restrictions, Type actualType) '''
+       «IF restrictions.rangeConstraint.present»
+           «AbstractRangeGenerator.forType(actualType).generateRangeChecker(field.name.toFirstUpper,
+               restrictions.rangeConstraint.get, this)»
+       «ENDIF»
+       «IF restrictions.lengthConstraint.present»
+           «LengthGenerator.generateLengthChecker(field.fieldName.toString, actualType, restrictions.lengthConstraint.get, this)»
+       «ENDIF»
+    '''
+
+    def private checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType) '''
+       «IF restrictions.getRangeConstraint.isPresent»
+           «IF actualType instanceof ConcreteType»
+               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, "value")»
+           «ELSE»
+               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, "value.getValue()")»
+           «ENDIF»
+       «ENDIF»
+       «IF restrictions.getLengthConstraint.isPresent»
+           «IF actualType instanceof ConcreteType»
+               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, "value")»
+           «ELSE»
+               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, "value.getValue()")»
+           «ENDIF»
+       «ENDIF»
+
+       «val fieldUpperCase = property.fieldName.toString.toUpperCase()»
+       «FOR currentConstant : type.getConstantDefinitions»
+           «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
+               && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
+           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«property.fieldName», «Constants.MEMBER_REGEX_LIST»«property.fieldName»);
+           «ENDIF»
+       «ENDFOR»
+    '''
+
+    def private Restrictions restrictionsForSetter(Type actualType) {
+        if (actualType instanceof GeneratedType) {
+            return null;
+        }
+        return actualType.restrictions;
+    }
+
+    def private generateListSetter(GeneratedProperty field, Type actualType) '''
+        «val restrictions = restrictionsForSetter(actualType)»
+        «IF restrictions !== null»
+            «generateCheckers(field, restrictions, actualType)»
+        «ENDIF»
+        public «type.getName»Builder set«field.getName.toFirstUpper»(final «field.returnType.importedName» values) {
+        «IF restrictions !== null»
+            if (values != null) {
+               for («actualType.getFullyQualifiedName» value : values) {
+                   «checkArgument(field, restrictions, actualType)»
+               }
+            }
+        «ENDIF»
+            this.«field.fieldName.toString» = values;
+            return this;
+        }
+
+    '''
+
+    def private generateSetter(GeneratedProperty field, Type actualType) '''
+        «val restrictions = restrictionsForSetter(actualType)»
+        «IF restrictions !== null»
+            «generateCheckers(field, restrictions, actualType)»
+        «ENDIF»
+
+        public «type.getName»Builder set«field.getName.toFirstUpper»(final «field.returnType.importedName» value) {
+        «IF restrictions !== null»
+            if (value != null) {
+                «checkArgument(field, restrictions, actualType)»
+            }
+        «ENDIF»
+            this.«field.fieldName.toString» = value;
+            return this;
+        }
+    '''
+
+    private def Type getActualType(ParameterizedType ptype) {
+        return ptype.getActualTypeArguments.get(0)
+    }
+
     /**
      * Template method which generates setter methods
      *
      * @return string with the setter methods
      */
     def private generateSetters() '''
-        «FOR field : properties SEPARATOR '\n'»
-             «/* FIXME: generate checkers as simple blocks and embed them directly in setters  */»
-             «val restrictions = field.returnType.restrictions»
-             «IF !(field.returnType instanceof GeneratedType) && restrictions !== null»
-                    «IF restrictions.rangeConstraint.present»
-                        «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
-                        «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraint.get, this)»
-
-                    «ENDIF»
-                    «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthChecker(field.fieldName.toString, field.returnType, restrictions.lengthConstraint.get, this)»
-
-                    «ENDIF»
+        «FOR property : properties»
+            «IF property.returnType instanceof ParameterizedType
+                    && (property.returnType as ParameterizedType).rawType.equals(Types.LIST_TYPE)»
+                «generateListSetter(property, getActualType(property.returnType as ParameterizedType))»
+            «ELSE»
+                «generateSetter(property, property.returnType)»
             «ENDIF»
-            public «type.name»«BUILDER» set«field.name.toFirstUpper»(final «field.returnType.importedName» value) {
-            «IF !(field.returnType instanceof GeneratedType) && restrictions !== null»
-                «IF restrictions !== null && (restrictions.rangeConstraint.present || restrictions.lengthConstraint.present)»
-                if (value != null) {
-                    «IF restrictions.rangeConstraint.present»
-                        «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
-                        «IF field.returnType instanceof ConcreteType»
-                            «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value")»
-                        «ELSE»
-                            «rangeGenerator.generateRangeCheckerCall(field.name.toFirstUpper, "value.getValue()")»
-                        «ENDIF»
-                    «ENDIF»
-                    «IF restrictions.lengthConstraint.present»
-                        «IF field.returnType instanceof ConcreteType»
-                            «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, "value")»
-                         «ELSE»
-                            «LengthGenerator.generateLengthCheckerCall(field.fieldName.toString, "value.getValue()")»
-                        «ENDIF»
-                    «ENDIF»
-                }
-                «ENDIF»
-            «ENDIF»
-                this.«field.fieldName» = value;
-                return this;
-            }
         «ENDFOR»
-        «IF augmentField !== null»
 
+        «IF augmentField !== null»
             public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentationValue) {
                 if (augmentationValue == null) {
                     return remove«augmentField.name.toFirstUpper»(augmentationType);
@@ -706,7 +786,7 @@ class BuilderTemplate extends BaseTemplate {
                     «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
                 «IF augmentField !== null»
-                    «CodeHelpers.importedName».appendValue(helper, "«augmentField.name»", «augmentField.name».values()); 
+                    «CodeHelpers.importedName».appendValue(helper, "«augmentField.name»", «augmentField.name».values());
                 «ENDIF»
                 return helper.toString();
             }

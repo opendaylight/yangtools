@@ -280,7 +280,7 @@ class ClassTemplate extends BaseTemplate {
     }
 
     def private generateRestrictions(Type type, String paramName, Type returnType) '''
-        «val restrictions = type.getRestrictions»
+        «val restrictions = type.restrictions»
         «IF restrictions !== null»
             «IF restrictions.lengthConstraint.present || restrictions.rangeConstraint.present»
             if («paramName» != null) {
