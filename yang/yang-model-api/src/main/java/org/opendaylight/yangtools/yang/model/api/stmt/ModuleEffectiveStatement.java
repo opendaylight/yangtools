@@ -8,9 +8,33 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
 @Beta
 public interface ModuleEffectiveStatement extends EffectiveStatement<String, ModuleStatement> {
+    /**
+     * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
+     * in which it is instantiated.
+     */
+    abstract class PrefixToEffectiveModuleNamespace implements IdentifierNamespace<String, ModuleEffectiveStatement> {
+        private PrefixToEffectiveModuleNamespace() {
+            // This class should never be subclassed
+        }
+    }
 
+    /**
+     * Namespace mapping all known {@link QNameModule}s to their encoding prefixes. This includes the declaration
+     * from prefix/namespace/revision and all imports as they were resolved.
+     */
+    abstract class QNameModuleToPrefixNamespace implements IdentifierNamespace<QNameModule, String> {
+        private QNameModuleToPrefixNamespace() {
+            // This class should never be subclassed
+        }
+    }
+
+    // FIXME: is this still needed? Should we make it a default+unimplemented?
+    @NonNull QNameModule localNamespace();
 }
