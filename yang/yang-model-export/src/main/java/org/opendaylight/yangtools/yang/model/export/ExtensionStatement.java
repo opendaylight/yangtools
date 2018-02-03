@@ -17,11 +17,12 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
+@Deprecated
 final class ExtensionStatement implements StatementDefinition {
 
-    private QName argumentName;
-    private QName statementName;
-    private boolean yinElement;
+    private final QName argumentName;
+    private final QName statementName;
+    private final boolean yinElement;
 
     private ExtensionStatement(final ExtensionDefinition def) {
         statementName = def.getQName();

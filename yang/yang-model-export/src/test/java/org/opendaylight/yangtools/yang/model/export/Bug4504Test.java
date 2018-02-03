@@ -7,35 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import static org.junit.Assert.assertNotNull;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
+import javax.xml.stream.XMLStreamException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
+import org.xml.sax.SAXException;
 
-public class Bug4504Test {
+public class Bug4504Test extends AbstractYinExportTest {
     @Test
-    public void test() throws Exception {
-        SchemaContext schema = YangParserTestUtils.parseYangResourceDirectory("/bugs/bug4504");
-        assertNotNull(schema);
-        final File outDir = new File("target/bug4504-export");
-        outDir.mkdirs();
-        for (final Module module : schema.getModules()) {
-            exportModule(schema, module, outDir);
-        }
-    }
-
-    private static File exportModule(final SchemaContext schemaContext, final Module module, final File outDir)
-            throws Exception {
-        final File outFile = new File(outDir, YinExportUtils.wellFormedYinName(module.getName(), module.getRevision()));
-        try (OutputStream output = new FileOutputStream(outFile)) {
-            YinExportUtils.writeModuleToOutputStream(schemaContext, module, output);
-        }
-        return outFile;
+    public void test() throws IOException, SAXException, XMLStreamException {
+        exportYinModules("/bugs/bug4504", null);
     }
 }
