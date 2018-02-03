@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -40,11 +42,13 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator.ImportResolutionMode;
 import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
 import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.slf4j.Logger;
@@ -73,7 +77,7 @@ class YangToSourcesProcessor {
     private final YangParserFactory parserFactory;
     private final File yangFilesRootDir;
     private final Set<File> excludedFiles;
-    private final List<CodeGeneratorArg> codeGenerators;
+    private final List<CodeGeneratorArg> codeGeneratorArgs;
     private final MavenProject project;
     private final boolean inspectDependencies;
     private final BuildContext buildContext;
@@ -85,7 +89,7 @@ class YangToSourcesProcessor {
         this.buildContext = requireNonNull(buildContext, "buildContext");
         this.yangFilesRootDir = requireNonNull(yangFilesRootDir, "yangFilesRootDir");
         this.excludedFiles = ImmutableSet.copyOf(excludedFiles);
-        this.codeGenerators = ImmutableList.copyOf(codeGenerators);
+        this.codeGeneratorArgs = ImmutableList.copyOf(codeGenerators);
         this.project = requireNonNull(project);
         this.inspectDependencies = inspectDependencies;
         this.yangProvider = requireNonNull(yangProvider);
@@ -111,7 +115,10 @@ class YangToSourcesProcessor {
     }
 
     void conditionalExecute(final boolean skip) throws MojoExecutionException, MojoFailureException {
-        final Optional<ProcessorModuleReactor> optReactor = createReactor();
+        // We need to instantiate all code generators to determine required import resolution mode
+        final List<Entry<CodeGeneratorArg, BasicCodeGenerator>> codeGenerators = instantiateGenerators();
+        final StatementParserMode importMode = determineRequiredImportMode(codeGenerators);
+        final Optional<ProcessorModuleReactor> optReactor = createReactor(importMode);
         if (!optReactor.isPresent()) {
             return;
         }
@@ -128,7 +135,7 @@ class YangToSourcesProcessor {
                 throw new MojoExecutionException("Failed to read reactor " + reactor, e);
             }
 
-            generateSources(holder);
+            generateSources(holder, codeGenerators);
         } else {
             LOG.info("Skipping YANG code generation because property yang.skip is true");
         }
@@ -148,8 +155,69 @@ class YangToSourcesProcessor {
             META_INF_YANG_SERVICES_STRING_JAR);
     }
 
+    private static StatementParserMode determineRequiredImportMode(
+            final Collection<Entry<CodeGeneratorArg, BasicCodeGenerator>> codeGenerators) throws MojoFailureException {
+        ImportResolutionMode requestedMode = null;
+        BasicCodeGenerator requestingGenerator = null;
+
+        for (Entry<CodeGeneratorArg, BasicCodeGenerator> entry : codeGenerators) {
+            final BasicCodeGenerator generator = entry.getValue();
+            final ImportResolutionMode mode = generator.getImportResolutionMode();
+            if (mode == null) {
+                // the generator does not care about the mode
+                continue;
+            }
+
+            if (requestedMode == null) {
+                // No mode yet, we have just determined it
+                requestedMode = mode;
+                requestingGenerator = generator;
+                continue;
+            }
+
+            if (mode != requestedMode) {
+                throw new MojoFailureException(String.format(
+                    "Import resolution mode conflict between %s (%s) and %s (%s)", requestingGenerator, requestedMode,
+                    generator, mode));
+            }
+        }
+
+        if (requestedMode == null) {
+            return StatementParserMode.DEFAULT_MODE;
+        }
+        switch (requestedMode) {
+            case REVISION_EXACT_OR_LATEST:
+                return StatementParserMode.DEFAULT_MODE;
+            case SEMVER_LATEST:
+                return StatementParserMode.SEMVER_MODE;
+            default:
+                throw new IllegalStateException("Unhandled import resolution mode " + requestedMode);
+        }
+    }
+
+    private List<Entry<CodeGeneratorArg, BasicCodeGenerator>> instantiateGenerators() throws MojoExecutionException {
+        final List<Entry<CodeGeneratorArg, BasicCodeGenerator>> generators = new ArrayList<>(codeGeneratorArgs.size());
+        for (CodeGeneratorArg arg : codeGeneratorArgs) {
+            arg.check();
+
+            final BasicCodeGenerator generator;
+            try {
+                generator = getInstance(arg.getCodeGeneratorClass(), BasicCodeGenerator.class);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                throw new MojoExecutionException("Failed to instantiate code generator "
+                        + arg.getCodeGeneratorClass(), e);
+            }
+
+            LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, arg.getCodeGeneratorClass());
+            generators.add(new SimpleImmutableEntry<>(arg, generator));
+        }
+
+        return generators;
+    }
+
     @SuppressWarnings("checkstyle:illegalCatch")
-    private Optional<ProcessorModuleReactor> createReactor() throws MojoExecutionException {
+    private Optional<ProcessorModuleReactor> createReactor(final StatementParserMode parserMode)
+            throws MojoExecutionException {
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
         try {
             /*
@@ -178,8 +246,7 @@ class YangToSourcesProcessor {
                 return Optional.empty();
             }
 
-            // FIXME: add correct mode
-            final YangParser parser = parserFactory.createParser();
+            final YangParser parser = parserFactory.createParser(parserMode);
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             for (final File f : yangFilesInProject) {
                 final YangTextSchemaSource textSource = YangTextSchemaSource.forFile(f);
@@ -262,21 +329,23 @@ class YangToSourcesProcessor {
      * Call generate on every generator from plugin configuration.
      */
     @SuppressWarnings("checkstyle:illegalCatch")
-    private void generateSources(final ContextHolder context) throws MojoFailureException {
-        if (codeGenerators.isEmpty()) {
+    private void generateSources(final ContextHolder context,
+            final Collection<Entry<CodeGeneratorArg, BasicCodeGenerator>> generators) throws MojoFailureException {
+        if (generators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
             return;
         }
 
         final Map<String, String> thrown = new HashMap<>();
-        for (CodeGeneratorArg codeGenerator : codeGenerators) {
+        for (Entry<CodeGeneratorArg, BasicCodeGenerator> entry : generators) {
+            final String codeGeneratorClass = entry.getKey().getCodeGeneratorClass();
+
             try {
-                generateSourcesWithOneGenerator(context, codeGenerator);
+                generateSourcesWithOneGenerator(context, entry.getKey(), entry.getValue());
             } catch (Exception e) {
                 // try other generators, exception will be thrown after
-                LOG.error("{} Unable to generate sources with {} generator", LOG_PREFIX, codeGenerator
-                        .getCodeGeneratorClass(), e);
-                thrown.put(codeGenerator.getCodeGeneratorClass(), e.getClass().getCanonicalName());
+                LOG.error("{} Unable to generate sources with {} generator", LOG_PREFIX, codeGeneratorClass, e);
+                thrown.put(codeGeneratorClass, e.getClass().getCanonicalName());
             }
         }
 
@@ -288,15 +357,10 @@ class YangToSourcesProcessor {
     }
 
     /**
-     * Instantiate generator from class and call required method.
+     * Complete initialization of a code generator and invoke it.
      */
-    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg)
-            throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
-
-        codeGeneratorCfg.check();
-
-        final BasicCodeGenerator g = getInstance(codeGeneratorCfg.getCodeGeneratorClass(), BasicCodeGenerator.class);
-        LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass());
+    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg,
+            final BasicCodeGenerator codeGenerator) throws IOException {
 
         final File outputDir = requireNonNull(codeGeneratorCfg.getOutputBaseDir(project),
             "outputBaseDir is null. Please provide a valid outputBaseDir value in pom.xml");
@@ -308,17 +372,17 @@ class YangToSourcesProcessor {
         LOG.debug("{} Additional configuration picked up for : {}: {}", LOG_PREFIX, codeGeneratorCfg
                         .getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration());
 
-        if (g instanceof BuildContextAware) {
-            ((BuildContextAware)g).setBuildContext(buildContext);
+        if (codeGenerator instanceof BuildContextAware) {
+            ((BuildContextAware)codeGenerator).setBuildContext(buildContext);
         }
-        if (g instanceof MavenProjectAware) {
-            ((MavenProjectAware)g).setMavenProject(project);
+        if (codeGenerator instanceof MavenProjectAware) {
+            ((MavenProjectAware)codeGenerator).setMavenProject(project);
         }
-        g.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
+        codeGenerator.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
         File resourceBaseDir = codeGeneratorCfg.getResourceBaseDir(project);
 
         YangProvider.setResource(resourceBaseDir, project);
-        g.setResourceBaseDir(resourceBaseDir);
+        codeGenerator.setResourceBaseDir(resourceBaseDir);
         LOG.debug("{} Folder: {} marked as resources for generator: {}", LOG_PREFIX, resourceBaseDir,
                 codeGeneratorCfg.getCodeGeneratorClass());
 
@@ -326,8 +390,8 @@ class YangToSourcesProcessor {
             Files.walk(outputDir.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
             LOG.info("{} Succesfully deleted output directory {}", LOG_PREFIX, outputDir);
         }
-        Collection<File> generated = g.generateSources(context.getContext(), outputDir, context.getYangModules(),
-            context::moduleToResourcePath);
+        Collection<File> generated = codeGenerator.generateSources(context.getContext(), outputDir,
+            context.getYangModules(), context::moduleToResourcePath);
 
         LOG.info("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(), generated);
     }
