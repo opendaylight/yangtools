@@ -13,17 +13,15 @@ import javax.annotation.Nullable;
 /**
  * Model specific namespace which allows access to specific
  *
- * {@link IdentifierNamespace} serves as common superclass for YANG model
- * namespaces, which are type-captured subclasses. This type capture
- * of namespace allows for handy type-safe reading methods
- * such as {@link EffectiveStatement#get(Class, Object)} and still
- * allows introduction of new namespaces without need to change
+ * {@link IdentifierNamespace} serves as common superclass for YANG model namespaces, which are type-captured
+ * subclasses. This type capture of namespace allows for handy type-safe reading methods such as
+ * {@link EffectiveStatement#get(Class, Object)} and still allows introduction of new namespaces without need to change
  * model APIs.
  *
  * @param <K> Identifier type
  * @param <V> Value type
  */
-public interface IdentifierNamespace<K,V> {
+public interface IdentifierNamespace<K, V> {
     /**
      * Returns value associated with supplied identifier.
      *

@@ -7,15 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -70,12 +75,24 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
             @Nonnull final K identifier) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return findAll(namespace).get(requireNonNull(identifier));
     }
 
     @Override
     public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
-        throw new UnsupportedOperationException("Not implemented yet.");
+        return getNamespaceContents(requireNonNull(namespace)).orElse(null);
+    }
+
+    /**
+     * Return the statement-specific contents of specified namespace, if available.
+     *
+     * @param namespace Requested namespace
+     * @return Namespace contents, if available.
+     */
+    @Beta
+    protected <K, V, N extends IdentifierNamespace<K, V>> Optional<? extends Map<K, V>> getNamespaceContents(
+            final @NonNull Class<N> namespace) {
+        return Optional.empty();
     }
 
     @Nonnull

@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Effective model statement which should be used to derive application behaviour.
@@ -58,18 +62,28 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
     /**
      * Returns all local values from supplied namespace.
      *
-     * @param <K>
-     *            Identifier type
-     * @param <V>
-     *            Value type
-     * @param <N>
-     *            Namespace identifier type
-     * @param namespace
-     *            Namespace type
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> Namespace identifier type
+     * @param namespace Namespace type
      * @return Value if present, null otherwise.
      */
     @Nullable
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull Class<N> namespace);
+
+    /**
+     * Returns all local values from supplied namespace.
+     *
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> Namespace identifier type
+     * @param namespace Namespace type
+     * @return Key-value mappings, empty if the namespace does not exist.
+     */
+    default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(@NonNull final Class<N> namespace) {
+        final Map<K, V> map = getAll(requireNonNull(namespace));
+        return map == null ? ImmutableMap.of() : map;
+    }
 
     /**
      * Returns a collection of all effective substatements.
