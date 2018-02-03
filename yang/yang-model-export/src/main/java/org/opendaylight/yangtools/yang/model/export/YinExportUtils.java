@@ -7,36 +7,47 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.io.OutputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
+import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stax.StAXSource;
+import javax.xml.transform.stream.StreamResult;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 
 public final class YinExportUtils {
+    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
+    private static final XMLOutputFactory OUTPUT_FACTORY = XMLOutputFactory.newFactory();
 
     private YinExportUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
 
     /**
-     *
      * Returns well-formed file name of YIN file as defined in RFC6020.
      *
-     * @param name
-     *            Module or submodule name
-     * @param revision
-     *            Revision of module or submodule
+     * @param name Module or submodule name
+     * @param revision Revision of module or submodule
      * @return well-formed file name of YIN file as defined in RFC6020.
      */
     public static String wellFormedYinName(final String name, final Optional<Revision> revision) {
@@ -44,35 +55,73 @@ public final class YinExportUtils {
     }
 
     /**
-     *
      * Returns well-formed file name of YIN file as defined in RFC6020.
      *
-     * @param name
-     *            name Module or submodule name
-     * @param revision
-     *            Revision of module or submodule
+     * @param name name Module or submodule name
+     * @param revision Revision of module or submodule
      * @return well-formed file name of YIN file as defined in RFC6020.
      */
     public static String wellFormedYinName(final String name, final String revision) {
         if (revision == null) {
             return name + YangConstants.RFC6020_YIN_FILE_EXTENSION;
         }
-        return Preconditions.checkNotNull(name) + '@' + revision +  YangConstants.RFC6020_YIN_FILE_EXTENSION;
+        return requireNonNull(name) + '@' + revision +  YangConstants.RFC6020_YIN_FILE_EXTENSION;
+    }
+
+    /**
+     * Write a module as a YIN text into specified {@link OutputStream}. Supplied module must have the
+     * {@link ModuleEffectiveStatement} trait.
+     *
+     * @param module Module to be exported
+     * @throws IllegalArgumentException if the module is not an ModuleEffectiveStatement or if it declared
+     *                                  representation is not available.
+     * @throws NullPointerException if any of of the parameters is null
+     * @throws XMLStreamException if an input-output error occurs
+     */
+    @Beta
+    public static void writeModuleAsYinText(final Module module, final OutputStream output) throws XMLStreamException {
+        requireNonNull(module);
+        checkArgument(module instanceof ModuleEffectiveStatement, "Module %s is not a ModuleEffectiveStatement",
+            module);
+        final ModuleEffectiveStatement effective = (ModuleEffectiveStatement) module;
+        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(effective), output);
+    }
+
+    /**
+     * Write a submodule as a YIN text into specified {@link OutputStream}. Supplied submodule must have the
+     * {@link SubmoduleEffectiveStatement} trait.
+     *
+     * @param parentModule Parent module
+     * @param submodule Submodule to be exported
+     * @throws IllegalArgumentException if the parent module is not a ModuleEffectiveStatement, if the submodule is not
+     *                                  a SubmoduleEffectiveStatement or if its declared representation is not available
+     * @throws NullPointerException if any of of the parameters is null
+     * @throws XMLStreamException if an input-output error occurs
+     */
+    @Beta
+    public static void writeSubmoduleAsYinText(final Module parentModule, final Module submodule,
+            final OutputStream output) throws XMLStreamException {
+        requireNonNull(parentModule);
+        checkArgument(parentModule instanceof ModuleEffectiveStatement, "Parent %s is not a ModuleEffectiveStatement",
+            parentModule);
+        requireNonNull(submodule);
+        checkArgument(submodule instanceof SubmoduleEffectiveStatement,
+            "Submodule %s is not a SubmoduleEffectiveStatement", submodule);
+        writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(
+            (ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule), output);
     }
 
     /**
      * Writes YIN representation of supplied module to specified output stream.
      *
-     * @param ctx
-     *            Schema Context which contains module and extension definitions
-     *            to be used during export of model.
-     * @param module
-     *            Module to be exported.
-     * @param str
-     *            Output stream to which YIN representation of model will be
-     *            written.
-     * @throws XMLStreamException
+     * @param ctx Schema Context which contains module and extension definitions to be used during export of model.
+     * @param module Module to be exported.
+     * @param str Output stream to which YIN representation of model will be written.
+     * @throws XMLStreamException when a streaming problem occurs
+     * @deprecated Use {@link #writeModuleAsYinText(Module, OutputStream)}
+     *             or {@link #writeSubmoduleAsYinText(Module, Module, OutputStream)} instead.
      */
+    @Deprecated
     public static void writeModuleToOutputStream(final SchemaContext ctx, final Module module, final OutputStream str)
             throws XMLStreamException {
         writeModuleToOutputStream(ctx, module, str, false);
@@ -81,23 +130,18 @@ public final class YinExportUtils {
     /**
      * Writes YIN representation of supplied module to specified output stream.
      *
-     * @param ctx
-     *            Schema Context which contains module and extension definitions
-     *            to be used during export of model.
-     * @param module
-     *            Module to be exported.
-     * @param str
-     *            Output stream to which YIN representation of model will be
-     *            written.
-     * @param emitInstantiated
-     *            Option to emit also instantiated statements (e.g. statements
-     *            added by uses or augment)
-     * @throws XMLStreamException
+     * @param ctx Schema Context which contains module and extension definitions to be used during export of model.
+     * @param module Module to be exported.
+     * @param str Output stream to which YIN representation of model will be written.
+     * @param emitInstantiated Option to emit also instantiated statements (e.g. statements added by uses or augment)
+     * @throws XMLStreamException when a streaming problem occurs
+     * @deprecated Use {@link #writeModuleAsYinText(Module, OutputStream)}
+     *             or {@link #writeSubmoduleAsYinText(Module, Module, OutputStream)} instead.
      */
+    @Deprecated
     public static void writeModuleToOutputStream(final SchemaContext ctx, final Module module, final OutputStream str,
             final boolean emitInstantiated) throws XMLStreamException {
-        final XMLOutputFactory factory = XMLOutputFactory.newFactory();
-        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(str);
+        final XMLStreamWriter xmlStreamWriter = OUTPUT_FACTORY.createXMLStreamWriter(str);
         writeModuleToOutputStream(ctx, module, xmlStreamWriter, emitInstantiated);
         xmlStreamWriter.flush();
     }
@@ -131,4 +175,15 @@ public final class YinExportUtils {
         throw new IllegalArgumentException("Module " + moduleName + "does not exists in provided schema context");
     }
 
+    private static void writeReaderToOutput(final XMLEventReader reader, final OutputStream output)
+            throws XMLStreamException {
+        try {
+            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+            transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+            transformer.transform(new StAXSource(reader), new StreamResult(output));
+        } catch (TransformerException e) {
+            throw new XMLStreamException("Failed to stream XML events", e);
+        }
+    }
 }

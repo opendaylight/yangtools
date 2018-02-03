@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
+@Deprecated
 @Beta
 @NotThreadSafe
 final class SchemaToStatementWriterAdaptor implements YangModuleWriter {

@@ -49,9 +49,9 @@ public class EffectiveSchemaContextEmitterTest {
 
         for (final Module module : schema.getModules()) {
             exportModule(schema, module, outDir);
-            final OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
-            try {
+
+            try (OutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+                try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream)) {
                 writeModuleToOutputStream(schema, module, bufferedOutputStream, false);
                 final String output = byteArrayOutputStream.toString();
                 assertNotNull(output);
@@ -59,9 +59,7 @@ public class EffectiveSchemaContextEmitterTest {
 
                 final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin-effective-emitter", module);
                 assertXMLEquals(module.getName(), doc, output);
-            } finally {
-                byteArrayOutputStream.close();
-                bufferedOutputStream.close();
+                }
             }
         }
     }
