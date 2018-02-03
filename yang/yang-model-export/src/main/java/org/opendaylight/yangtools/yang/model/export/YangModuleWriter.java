@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
+@Deprecated
 interface YangModuleWriter {
 
     void endNode();

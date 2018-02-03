@@ -165,6 +165,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
+@Deprecated
 @Beta
 @NotThreadSafe
 abstract class SchemaContextEmitter {
