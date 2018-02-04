@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE;
 import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableBiMap;
@@ -57,6 +58,7 @@ public final class Utils {
     private static final String YANG_XPATH_FUNCTIONS_STRING =
             "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)(\\()";
     private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
+    private static final CharMatcher WHITESPACE = CharMatcher.whitespace();
 
     private static final ThreadLocal<XPathFactory> XPATH_FACTORY = new ThreadLocal<XPathFactory>() {
         @Override
@@ -214,8 +216,11 @@ public final class Utils {
                  * in the inner string and trim the result.
                  */
                 checkDoubleQuotedString(innerStr, yangVersion, ref);
-                sb.append(innerStr.replace("\\\"", "\"").replace("\\\\", "\\").replace("\\n", "\n")
-                        .replace("\\t", "\t"));
+                sb.append(trimWhitespace(innerStr, stringNode.getSymbol().getCharPositionInLine())
+                    .replace("\\\"", "\"")
+                    .replace("\\\\", "\\")
+                    .replace("\\n", "\n")
+                    .replace("\\t", "\t"));
             } else if (firstChar == '\'' && lastChar == '\'') {
                 /*
                  * According to RFC6020 a single quote character cannot occur in
@@ -264,6 +269,83 @@ public final class Utils {
                 }
             }
         }
+    }
+
+    @VisibleForTesting
+    static String trimWhitespace(final String str, final int dquot) {
+        int brk = str.indexOf('\n');
+        if (brk == -1) {
+            // No need to trim whitespace
+            return str;
+        }
+
+        // Okay, we may need to do some trimming, set up a builder and append the first segment
+        final int length = str.length();
+        final StringBuilder sb = new StringBuilder(length);
+
+        // Append first segment, which needs only tail-trimming
+        sb.append(str, 0, trimTrailing(str, 0, brk)).append('\n');
+
+        // With that out of the way, setup our iteration state. The string segment we are looking at is
+        // str.substring(start, end), which is guaranteed not to include any line breaks, i.e. end <= brk unless we are
+        // at the last segment.
+        int start = brk + 1;
+        brk = str.indexOf('\n', start);
+
+        // Loop over inner strings
+        while (brk != -1) {
+            final int end = brk != -1 ? brk : length;
+            trimLeadingAndAppend(sb, dquot, str, start, trimTrailing(str, start, end)).append('\n');
+            start = end + 1;
+            brk = str.indexOf('\n', start);
+        }
+
+        return trimLeadingAndAppend(sb, dquot, str, start, length).toString();
+    }
+
+    private static StringBuilder trimLeadingAndAppend(final StringBuilder sb, final int dquot, final String str,
+            final int start, final int end) {
+        int offset = start;
+        int pos = 0;
+
+        while (pos <= dquot) {
+            if (offset == end) {
+                // We ran out of data, nothing to append
+                return sb;
+            }
+
+            final char ch = str.charAt(offset);
+            if (ch == '\t') {
+                // tabs are to be treated as 8 spaces
+                pos += 8;
+            } else if (CharMatcher.whitespace().matches(ch)) {
+                pos++;
+            } else {
+                break;
+            }
+
+            offset++;
+        }
+
+        // We have expanded beyond double quotes, push equivalent spaces
+        while (pos - 1 > dquot) {
+            sb.append(' ');
+            pos--;
+        }
+
+        return sb.append(str, offset, end);
+    }
+
+    private static int trimTrailing(final String str, final int start, final int end) {
+        int ret = end;
+        while (ret > start) {
+            final int prev = ret - 1;
+            if (!WHITESPACE.matches(str.charAt(prev))) {
+                break;
+            }
+            ret = prev;
+        }
+        return ret;
     }
 
     @Nullable
