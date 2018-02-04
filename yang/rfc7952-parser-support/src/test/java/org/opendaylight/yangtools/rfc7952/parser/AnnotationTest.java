@@ -63,6 +63,6 @@ public class AnnotationTest {
         assertEquals(BaseTypes.stringType(), annotation.getType());
         assertEquals(Optional.empty(), annotation.getReference());
         assertEquals(Optional.of("This annotation contains the date and time when the\n"
-                + "           annotated instance was last modified (or created)."), annotation.getDescription());
+                + "annotated instance was last modified (or created)."), annotation.getDescription());
     }
 }
