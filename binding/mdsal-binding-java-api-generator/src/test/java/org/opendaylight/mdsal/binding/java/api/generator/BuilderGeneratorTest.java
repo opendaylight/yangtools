@@ -17,13 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.BuilderGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
-@SuppressWarnings("deprecation")
 public class BuilderGeneratorTest {
 
     private static final String PROPERTIES_FIELD_NAME = "properties";
@@ -108,7 +106,7 @@ public class BuilderGeneratorTest {
         assertEquals(expected, generateToString);
     }
 
-    private void mockAugment(final GeneratedType genType) {
+    private static void mockAugment(final GeneratedType genType) {
         final List<Type> impls = new ArrayList<>();
         final Type impl = mock(Type.class);
         doReturn("org.opendaylight.yangtools.yang.binding.Augmentable").when(impl).getFullyQualifiedName();
@@ -116,7 +114,7 @@ public class BuilderGeneratorTest {
         doReturn(impls).when(genType).getImplements();
     }
 
-    private GeneratedType mockGenTypeMoreMeth(final String methodeName) {
+    private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TEST).when(genType).getName();
         doReturn(TEST).when(genType).getPackageName();
@@ -134,7 +132,7 @@ public class BuilderGeneratorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private CharSequence genToString(final GeneratedType genType)
+    private static CharSequence genToString(final GeneratedType genType)
             throws NoSuchFieldException, IllegalAccessException {
         final BuilderTemplate bt = new BuilderTemplate(genType);
         final Field propertiesField = bt.getClass().getDeclaredField(PROPERTIES_FIELD_NAME);
@@ -142,7 +140,7 @@ public class BuilderGeneratorTest {
         return bt.generateToString((Collection<GeneratedProperty>) propertiesField.get(bt));
     }
 
-    private GeneratedType mockGenType(final String methodeName) {
+    private static GeneratedType mockGenType(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
         doReturn(TEST).when(genType).getName();
         doReturn(TEST).when(genType).getPackageName();
@@ -157,7 +155,7 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    private MethodSignature mockMethSign(final String methodeName) {
+    private static MethodSignature mockMethSign(final String methodeName) {
         final MethodSignature methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final Type methType = mock(Type.class);
