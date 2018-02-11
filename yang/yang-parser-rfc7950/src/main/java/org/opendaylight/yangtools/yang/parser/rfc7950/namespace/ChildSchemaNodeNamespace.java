@@ -11,12 +11,14 @@ import com.google.common.annotations.Beta;
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 /**
  * Statement local namespace, which holds direct schema node descendants.
@@ -50,9 +52,22 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     @SuppressWarnings("unchecked")
     @Override
     public void addTo(final NamespaceStorageNode storage, final QName key, final StmtContext<?, D, E> value) {
-        final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
-            ChildSchemaNodeNamespace.class, key, value);
 
+        // If storage is case which is not under augment then also put nodes into closest ancestor storage node
+        // to detect collision, after that continue to add node to case to ensure that augment can find the target.
+        if (isCaseStorageNode(storage) && !isAugmentStorageNode(getCaseClosestAncestor(storage))) {
+            final StmtContext<?, D, E> prev1 = getCaseClosestAncestor(storage).putToLocalStorageIfAbsent(
+                ChildSchemaNodeNamespace.class, key, value);
+            if (prev1 != null) {
+                throw new SourceException(value.getStatementSourceReference(),
+                    "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
+                    value.getRoot().getStatementArgument(), key, prev1.getStatementArgument(),
+                    prev1.getStatementSourceReference());
+            }
+        }
+
+        final StmtContext<?, D, E> prev = globalOrStatementSpecific(storage).putToLocalStorageIfAbsent(
+                ChildSchemaNodeNamespace.class, key, value);
         if (prev != null) {
             throw new SourceException(value.getStatementSourceReference(),
                 "Error in module '%s': cannot add '%s'. Node name collision: '%s' already declared at %s",
@@ -70,6 +85,38 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     }
 
     private static boolean isLocalOrGlobal(final StorageNodeType type) {
-        return type == StorageNodeType.STATEMENT_LOCAL || type == StorageNodeType.GLOBAL;
+        return type == StorageNodeType.STATEMENT_LOCAL
+                || type == StorageNodeType.GLOBAL;
+    }
+
+    private static NamespaceStorageNode getCaseClosestAncestor(final NamespaceStorageNode storage) {
+        NamespaceStorageNode current = storage;
+
+        while (!isLocalOrRootStmtLocal(current.getStorageNodeType())
+                || isCaseStorageNode(current)
+                || isChoiceStorageNode(current)) {
+            current = current.getParentNamespaceStorage();
+        }
+        return current;
+    }
+
+    private static boolean isLocalOrRootStmtLocal(final StorageNodeType type) {
+        return type == StorageNodeType.STATEMENT_LOCAL
+                || type == StorageNodeType.ROOT_STATEMENT_LOCAL;
+    }
+
+    private static boolean isCaseStorageNode(final NamespaceStorageNode storage) {
+        return (storage instanceof StatementContextBase)
+            && (((StatementContextBase) storage).getPublicDefinition() == YangStmtMapping.CASE);
+    }
+
+    private static boolean isChoiceStorageNode(final NamespaceStorageNode storage) {
+        return (storage instanceof StatementContextBase)
+                && (((StatementContextBase) storage).getPublicDefinition() == YangStmtMapping.CHOICE);
+    }
+
+    private static boolean isAugmentStorageNode(final NamespaceStorageNode storage) {
+        return ((storage instanceof StatementContextBase)
+            && (((StatementContextBase) storage).getPublicDefinition() == YangStmtMapping.AUGMENT));
     }
 }
