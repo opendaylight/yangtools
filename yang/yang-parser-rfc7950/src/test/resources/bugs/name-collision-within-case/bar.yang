@@ -1,0 +1,27 @@
+module bar {
+    yang-version 1.1;
+    namespace bar;
+    prefix bar;
+
+    revision "2018-02-11";
+
+    grouping foo {
+      container bar {
+
+      }
+    }
+
+    container cont {
+      choice bar {
+        case bar {
+          uses foo;
+        }
+      }
+
+      choice foo {
+        case foo {
+          uses foo;
+        }
+      }
+    }
+}
