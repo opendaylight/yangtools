@@ -17,6 +17,7 @@ import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.BindingGeneratorImpl;
 import org.opendaylight.mdsal.binding.java.api.generator.TOGenerator;
+import org.opendaylight.mdsal.binding.java.api.generator.YangTemplate;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -35,7 +36,7 @@ public class ClassCodeGeneratorTest {
         final SchemaContext context = YangParserTestUtils.parseYangResource("/list-composite-key.yang");
 
         assertNotNull(context);
-        final BindingGenerator bindingGen = new BindingGeneratorImpl(true);
+        final BindingGenerator bindingGen = new BindingGeneratorImpl(YangTemplate.getInstance());
         final List<Type> genTypes = bindingGen.generateTypes(context);
 
         assertTrue(genTypes != null);
