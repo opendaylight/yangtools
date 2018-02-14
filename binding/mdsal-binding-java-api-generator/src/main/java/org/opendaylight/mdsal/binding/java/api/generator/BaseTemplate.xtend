@@ -28,11 +28,15 @@ import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
-import org.opendaylight.yangtools.yang.model.api.DocumentedNode
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.SchemaNode
+import org.opendaylight.yangtools.yang.model.api.YangStmtMapping
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement
+import org.opendaylight.yangtools.yang.model.export.DeclaredStatementFormatter
 
 abstract class BaseTemplate extends JavaFileTemplate {
     private static final char NEW_LINE = '\n'
@@ -42,6 +46,12 @@ abstract class BaseTemplate extends JavaFileTemplate {
     private static val SPACES_PATTERN = Pattern.compile(" +")
     private static val NL_SPLITTER = Splitter.on(NL_MATCHER)
     private static val TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
+    private static val YANG_FORMATTER = DeclaredStatementFormatter.builder()
+        .addIgnoredStatement(YangStmtMapping.CONTACT)
+        .addIgnoredStatement(YangStmtMapping.DESCRIPTION)
+        .addIgnoredStatement(YangStmtMapping.REFERENCE)
+        .addIgnoredStatement(YangStmtMapping.ORGANIZATION)
+        .build();
 
     new(GeneratedType type) {
         super(type)
@@ -224,19 +234,19 @@ abstract class BaseTemplate extends JavaFileTemplate {
             val def = optDef.get
             sb.append(NEW_LINE)
 
-	        if (def instanceof Single) {
+            if (def instanceof Single) {
                 val node = def.node
                 sb.append("<p>\n")
                 .append("This class represents the following YANG schema fragment defined in module <b>")
-                .append(def.module.name).append("</b>\n")
+                .append(def.module.argument).append("</b>\n")
                 .append("<pre>\n")
-                .append(encodeAngleBrackets(encodeJavadocSymbols(YangTemplate.generateYangSnippet(node))))
-                .append("</pre>")
+                appendYangSnippet(sb, def.module, (node as EffectiveStatement<?, ?>).declared)
+                sb.append("</pre>")
 
                 if (node instanceof SchemaNode) {
                     sb.append("The schema path to identify an instance is\n")
                     .append("<i>")
-                    .append(formatSchemaPath(def.module.name, node.path.pathFromRoot))
+                    .append(formatSchemaPath(def.module.argument, node.path.pathFromRoot))
                     .append("</i>\n")
 
                     if (hasBuilderClass(node)) {
@@ -254,13 +264,20 @@ abstract class BaseTemplate extends JavaFileTemplate {
                         }
                     }
                 }
-	        } else if (def instanceof Multiple) {
+            } else if (def instanceof Multiple) {
                 sb.append("<pre>\n")
-                for (DocumentedNode schemaNode : def.nodes) {
-                    sb.append(encodeAngleBrackets(encodeJavadocSymbols(YangTemplate.generateYangSnippet(schemaNode))))
+                for (SchemaNode node : def.nodes) {
+                    appendYangSnippet(sb, def.module, (node as EffectiveStatement<?, ?>).declared)
                 }
                 sb.append("</pre>\n")
             }
+        }
+    }
+
+    def private static void appendYangSnippet(StringBuilder sb, ModuleEffectiveStatement module,
+            DeclaredStatement<?> stmt) {
+        for (String str : YANG_FORMATTER.toYangTextSnippet(module, stmt)) {
+            sb.append(encodeAngleBrackets(encodeJavadocSymbols(str)))
         }
     }
 
