@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "00e73def_b6d20f97",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/namespace/ChildSchemaNodeNamespace.java",
+        "patchSetId": 6
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-02-14T19:56:06Z",
+      "side": 1,
+      "message": "This is worrysome, as it fuses the concept of namespace storage and StmtContext.\n\nWe either need a new StorageNodeType, or handle this closer to the statements?",
+      "range": {
+        "startLine": 21,
+        "startChar": 46,
+        "endLine": 21,
+        "endChar": 79
+      },
+      "revId": "909d2ffa8202635bdfe32ccad53106120621ae16",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
