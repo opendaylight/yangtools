@@ -7,8 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
+
 import com.google.common.base.CharMatcher
 import com.google.common.base.Splitter
+import com.google.common.collect.Iterables
 import java.util.Arrays
 import java.util.Collection
 import java.util.HashMap
@@ -16,7 +19,6 @@ import java.util.List
 import java.util.Map
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
@@ -26,7 +28,16 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
+import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
 import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode
+import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
+import org.opendaylight.yangtools.yang.model.api.RpcDefinition
+import org.opendaylight.yangtools.yang.model.api.SchemaNode
 
 abstract class BaseTemplate {
     protected val GeneratedType type;
@@ -209,40 +220,117 @@ abstract class BaseTemplate {
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type) {
-        val typeDescription = type.getDescription().encodeJavadocSymbols;
+        val sb = new StringBuilder()
+        val comment = type.comment
+        if (comment !== null) {
+            sb.append(comment.javadoc)
+        }
+
+        appendSnippet(sb, type)
 
         return '''
-            «IF !typeDescription.nullOrEmpty»
-            «typeDescription»
+            «IF sb.length != 0»
+            «sb.toString»
             «ENDIF»
         '''.toString
     }
 
-    private static final CharMatcher AMP_MATCHER = CharMatcher.is('&');
+    private static val AMP_MATCHER = CharMatcher.is('&')
 
-    def encodeJavadocSymbols(String description) {
+    def static encodeJavadocSymbols(String description) {
         if (description.nullOrEmpty) {
             return description;
         }
 
-        return AMP_MATCHER.replaceFrom(TAIL_COMMENT_PATTERN.matcher(description).replaceAll("&#42;&#47;"), "&amp;");
+        return TAIL_COMMENT_PATTERN.matcher(AMP_MATCHER.replaceFrom(description, "&amp;")).replaceAll("&#42;&#47;")
     }
 
     def protected String formatDataForJavaDoc(GeneratedType type, String additionalComment) {
-        val StringBuilder typeDescription = new StringBuilder();
-        if (!type.description.nullOrEmpty) {
-            typeDescription.append(type.description)
-            typeDescription.append(NEW_LINE)
-            typeDescription.append(NEW_LINE)
-            typeDescription.append(NEW_LINE)
-            typeDescription.append(additionalComment)
-        } else {
-            typeDescription.append(additionalComment)
+        val comment = type.comment
+        if (comment === null) {
+            return '''
+                «additionalComment»
+            '''
         }
 
+        val sb = new StringBuilder().append(comment.javadoc)
+        appendSnippet(sb, type)
+
+        sb.append(NEW_LINE)
+        .append(NEW_LINE)
+        .append(NEW_LINE)
+        .append(additionalComment)
+
         return '''
-            «typeDescription.toString»
-        '''.toString
+            «sb.toString»
+        '''
+    }
+
+    def private static void appendSnippet(StringBuilder sb, GeneratedType type) {
+        val optDef = type.yangSourceDefinition
+        if (optDef.present) {
+            val def = optDef.get
+            sb.append(NEW_LINE)
+
+	        if (def instanceof Single) {
+                val node = def.node
+                sb.append("<p>\n")
+                .append("This class represents the following YANG schema fragment defined in module <b>")
+                .append(def.module.name).append("</b>\n")
+                .append("<pre>\n")
+                .append(encodeAngleBrackets(encodeJavadocSymbols(YangTemplate.generateYangSnippet(node))))
+                .append("</pre>")
+
+                if (node instanceof SchemaNode) {
+                    sb.append("The schema path to identify an instance is\n")
+                    .append("<i>")
+                    .append(formatSchemaPath(def.module.name, node.path.pathFromRoot))
+                    .append("</i>\n")
+
+                    if (hasBuilderClass(node)) {
+                        val builderName = type.name + "Builder";
+
+                        sb.append("\n<p>To create instances of this class use {@link ").append(builderName)
+                        .append("}.\n")
+                        .append("@see ").append(builderName).append('\n')
+                        if (node instanceof ListSchemaNode) {
+                            val keyDef = node.keyDefinition
+                            if (keyDef !== null && !keyDef.empty) {
+                                sb.append("@see ").append(type.name).append("Key")
+                            }
+                            sb.append('\n');
+                        }
+                    }
+                }
+	        } else if (def instanceof Multiple) {
+                sb.append("<pre>\n")
+                for (DocumentedNode schemaNode : def.nodes) {
+                    sb.append(encodeAngleBrackets(encodeJavadocSymbols(YangTemplate.generateYangSnippet(schemaNode))))
+                }
+                sb.append("</pre>\n")
+            }
+        }
+    }
+
+    def private static boolean hasBuilderClass(SchemaNode schemaNode) {
+        return schemaNode instanceof ContainerSchemaNode || schemaNode instanceof ListSchemaNode
+                || schemaNode instanceof RpcDefinition || schemaNode instanceof NotificationDefinition;
+    }
+
+    def private static String formatSchemaPath(String moduleName, Iterable<QName> schemaPath) {
+        val sb = new StringBuilder().append(moduleName);
+
+        var currentElement = Iterables.getFirst(schemaPath, null);
+        for (QName pathElement : schemaPath) {
+            sb.append('/')
+            if (!currentElement.namespace.equals(pathElement.namespace)) {
+                currentElement = pathElement
+                sb.append(pathElement)
+            } else {
+                sb.append(pathElement.getLocalName())
+            }
+        }
+        return sb.toString();
     }
 
     def protected String formatDataForJavaDoc(TypeMember type, String additionalComment) {

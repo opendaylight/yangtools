@@ -13,7 +13,6 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
 import org.opendaylight.mdsal.binding.generator.impl.BindingGeneratorImpl;
-import org.opendaylight.mdsal.binding.java.api.generator.YangTemplate;
 
 public abstract class BaseCompilationTest {
 
@@ -30,7 +29,7 @@ public abstract class BaseCompilationTest {
 
     @Before
     public void init() {
-        bindingGenerator = new BindingGeneratorImpl(YangTemplate.getInstance());
+        bindingGenerator = new BindingGeneratorImpl();
     }
 
 }

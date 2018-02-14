@@ -11,7 +11,6 @@ import java.util.Collection
 import java.util.List
 import java.util.Map
 import java.util.Set
-import org.opendaylight.mdsal.binding.generator.spi.YangTextSnippetProvider
 import org.opendaylight.mdsal.binding.model.util.FormattingUtils
 import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode
@@ -21,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode
 import org.opendaylight.yangtools.yang.model.api.Deviation
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition
 import org.opendaylight.yangtools.yang.model.api.FeatureDefinition
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition
@@ -41,7 +41,7 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair
 
-final class YangTemplate implements YangTextSnippetProvider {
+final class YangTemplate {
 
     private static val String SKIP_PROPERTY_NAME = "mdsal.skip.verbose"
 
@@ -49,13 +49,7 @@ final class YangTemplate implements YangTextSnippetProvider {
 
     private static val SKIPPED_EMPTY = '''(Empty due to «SKIP_PROPERTY_NAME» property = true)'''
 
-    private static val INSTANCE = new YangTemplate();
-
-    def static YangTemplate getInstance() {
-        return INSTANCE;
-    }
-
-    override String generateYangSnippet(Module module) {
+    def static String generateYangSnippet(Module module) {
         if (SKIP)
             return SKIPPED_EMPTY
         '''
@@ -118,9 +112,11 @@ final class YangTemplate implements YangTextSnippetProvider {
         '''
     }
 
-    override String generateYangSnippet(SchemaNode schemaNode) {
+    def static String generateYangSnippet(DocumentedNode schemaNode) {
         if (schemaNode === null)
             return ''
+        if (schemaNode instanceof Module)
+            return generateYangSnippet(schemaNode)
         if (SKIP)
             return SKIPPED_EMPTY
         '''
