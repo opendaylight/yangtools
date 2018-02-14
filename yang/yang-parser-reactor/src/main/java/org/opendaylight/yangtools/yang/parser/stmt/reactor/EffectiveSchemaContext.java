@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
@@ -49,7 +50,7 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext {
         return rootDeclaredStatements;
     }
 
-    @VisibleForTesting
+    @Beta
     public List<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
         return rootEffectiveStatements;
     }

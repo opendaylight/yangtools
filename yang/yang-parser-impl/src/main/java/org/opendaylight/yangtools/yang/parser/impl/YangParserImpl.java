@@ -7,19 +7,24 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
+import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -92,6 +97,20 @@ final class YangParserImpl implements YangParser {
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         }
+    }
+
+    @Override
+    public Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException {
+        final List<EffectiveStatement<?, ?>> effectiveStatements;
+        try {
+            effectiveStatements = buildAction.buildEffective().getRootEffectiveStatements();
+        } catch (ReactorException e) {
+            throw decodeReactorException(e);
+        }
+
+        return effectiveStatements.stream()
+                .filter(ModuleEffectiveStatement.class::isInstance).map(ModuleEffectiveStatement.class::cast)
+                .collect(toImmutableMap(ModuleEffectiveStatement::localQNameModule, identity()));
     }
 
     @Override

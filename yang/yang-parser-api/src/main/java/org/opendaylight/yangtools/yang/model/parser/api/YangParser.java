@@ -12,6 +12,7 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -19,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
@@ -138,8 +140,22 @@ public interface YangParser {
      * Build the declared view of a combined view of declared statements.
      *
      * @return Ordered collection of declared statements from requested sources.
+     * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
     List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
+
+    /**
+     * Build the effective view of a combined view of effective statements. Note that this representation, unlike
+     * {@link #buildDeclaredModel()} does not expose submodules as top-level contracts. These are available from their
+     * respective parent modules.
+     *
+     * @return Effective module statements indexed by their QNameModule.
+     * @throws YangSyntaxErrorException When a syntactic error is encountered.
+     */
+    // FIXME: 3.0.0: Make this method non-default
+    default Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException {
+        throw new UnsupportedOperationException(getClass() + " does not implement buildEffectiveModel()");
+    }
 
     /**
      * Build effective {@link SchemaContext}
