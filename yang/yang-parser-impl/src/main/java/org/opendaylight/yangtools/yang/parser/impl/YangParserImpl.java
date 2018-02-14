@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveModel;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -89,6 +90,15 @@ final class YangParserImpl implements YangParser {
     public List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
         try {
             return buildAction.build().getRootStatements();
+        } catch (ReactorException e) {
+            throw decodeReactorException(e);
+        }
+    }
+
+    @Override
+    public EffectiveModel buildEffectiveModel() throws YangParserException {
+        try {
+            return buildAction.buildEffective();
         } catch (ReactorException e) {
             throw decodeReactorException(e);
         }

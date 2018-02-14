@@ -12,15 +12,22 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveModel;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 
+@NonNullByDefault
 @VisibleForTesting
-public final class EffectiveSchemaContext extends SimpleSchemaContext {
+public final class EffectiveSchemaContext extends SimpleSchemaContext implements EffectiveModel {
     private final List<DeclaredStatement<?>> rootDeclaredStatements;
     private final List<EffectiveStatement<?, ?>> rootEffectiveStatements;
 
@@ -53,4 +60,16 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext {
     public List<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
         return rootEffectiveStatements;
     }
+
+    @Override
+    public Optional<List<DeclaredStatement<?>>> getDeclaredStatements() {
+        return Optional.of(rootDeclaredStatements);
+    }
+
+    @Override
+    public Map<QNameModule, ModuleEffectiveStatement> getEffectiveStatements() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

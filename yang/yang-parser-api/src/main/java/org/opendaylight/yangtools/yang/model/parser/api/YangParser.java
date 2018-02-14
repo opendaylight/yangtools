@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveModel;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
@@ -140,6 +141,13 @@ public interface YangParser {
      * @return Ordered collection of declared statements from requested sources.
      */
     List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
+
+    /**
+     * Build the effective view of a combined view of declared statements.
+     *
+     * @return Ordered collection of effective statements from requested sources.
+     */
+    EffectiveModel buildEffectiveModel() throws YangParserException;
 
     /**
      * Build effective {@link SchemaContext}
