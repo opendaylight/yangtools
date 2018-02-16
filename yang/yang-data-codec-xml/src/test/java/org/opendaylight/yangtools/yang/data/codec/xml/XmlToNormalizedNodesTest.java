@@ -374,23 +374,15 @@ public class XmlToNormalizedNodesTest {
                                 new NodeIdentifier(myLeafInList3)).withValue("listleafvalue1").build()).build())
                 .build();
 
-        AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myDoublyKeyedList)))
-                .withChild(myDoublyKeyedListNode).build();
-
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(myContainer3))
-                .withChild(myDoublyKeyedListAugNode).build();
-
-        AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
-                new AugmentationIdentifier(Sets.newHashSet(myContainer3)))
-                .withChild(myContainer3Node).build();
+                .withChild(myDoublyKeyedListNode).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(outerContainer))
                 .withChild(myContainer1Node)
                 .withChild(myContainer2Node)
-                .withChild(myContainer3AugNode).build();
+                .withChild(myContainer3Node).build();
 
         return outerContainerNode;
     }
