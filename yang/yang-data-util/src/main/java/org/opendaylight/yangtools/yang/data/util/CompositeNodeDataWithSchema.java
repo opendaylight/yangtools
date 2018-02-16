@@ -173,12 +173,7 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
     }
 
     void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
-        AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
-        if (augSchema != null) {
-            augmentationsToChild.put(augSchema, newChild);
-        } else {
-            addChild(newChild);
-        }
+        addChild(newChild);
     }
 
     /**
