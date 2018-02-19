@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
+import static org.opendaylight.yangtools.yang.common.YangNames.parseFilename;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
@@ -21,8 +23,6 @@ import java.net.URL;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.common.YangConstants;
-import org.opendaylight.yangtools.yang.common.YangNames;
 
 /**
  * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation
@@ -37,11 +37,11 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
     }
 
     public static SourceIdentifier identifierFromFilename(final String name) {
-        checkArgument(name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION),
-            "Filename %s does not have a .yang extension", name);
+        checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename %s does not end with '%s'",
+            RFC6020_YANG_FILE_EXTENSION, name);
 
-        final String baseName = name.substring(0, name.length() - YangConstants.RFC6020_YANG_FILE_EXTENSION.length());
-        final Entry<String, String> parsed = YangNames.parseFilename(baseName);
+        final String baseName = name.substring(0, name.length() - RFC6020_YANG_FILE_EXTENSION.length());
+        final Entry<String, String> parsed = parseFilename(baseName);
         return RevisionSourceIdentifier.create(parsed.getKey(), Revision.ofNullable(parsed.getValue()));
     }
 
@@ -81,7 +81,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws NullPointerException if file is null
      */
     public static YangTextSchemaSource forFile(final File file) {
-        checkArgument(file.isFile(), "Supplied file %s is not a file");
+        checkArgument(file.isFile(), "Supplied file %s is not a file", file);
         return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
 
@@ -93,6 +93,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
+    // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
     public static ResourceYangTextSchemaSource forResource(final String resourceName) {
         return forResource(YangTextSchemaSource.class, resourceName);
     }
@@ -106,6 +107,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
+    // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
     public static ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
         final SourceIdentifier identifier = identifierFromFilename(fileName);

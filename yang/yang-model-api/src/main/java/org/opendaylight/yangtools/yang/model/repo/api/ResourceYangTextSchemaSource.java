@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,7 +20,9 @@ import org.opendaylight.yangtools.concepts.Delegator;
 /**
  * A resource-backed {@link YinTextSchemaSource}.
  */
-final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
+@Beta
+// FIXME: YANGTOOLS-849: 3.0.0: hide this class
+public final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
     private final URL url;
 
     ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
