@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.model.export.test;
+package org.opendaylight.yangtools.yang.model.export;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;

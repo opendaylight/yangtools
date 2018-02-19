@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.export.SchemaContextEmitter.EffectiveSchemaContextEmitter;
-import org.opendaylight.yangtools.yang.model.export.test.YinExportTestUtils;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
