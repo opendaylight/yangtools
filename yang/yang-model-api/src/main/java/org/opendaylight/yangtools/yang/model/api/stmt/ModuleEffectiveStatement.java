@@ -37,6 +37,16 @@ public interface ModuleEffectiveStatement extends EffectiveStatement<String, Mod
     }
 
     /**
+     * Namespace mapping all included submodules. The namespaces is keyed by submodule name.
+     */
+    abstract class NameToEffectiveSubmoduleNamespace
+            implements IdentifierNamespace<String, @NonNull SubmoduleEffectiveStatement> {
+        private NameToEffectiveSubmoduleNamespace() {
+            // This class should never be subclassed
+        }
+    }
+
+    /**
      * Get the local QNameModule of this module. All implementations need to override this default method.
      *
      * @return Local QNameModule

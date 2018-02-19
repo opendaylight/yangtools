@@ -24,13 +24,16 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
+import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement>
         implements ModuleEffectiveStatement {
+    private final Map<String, SubmoduleEffectiveStatement> nameToSubmodule;
     private final Map<String, ModuleEffectiveStatement> prefixToModule;
     private final Map<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
@@ -60,6 +63,12 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
             tmp.putIfAbsent(e.getValue().localQNameModule(), e.getKey());
         }
         namespaceToPrefix = ImmutableMap.copyOf(tmp);
+
+        final Map<String, StmtContext<?, ?, ?>> submodules =
+                ctx.getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
+        nameToSubmodule = submodules == null ? ImmutableMap.of() :
+            ImmutableMap.copyOf(Maps.transformValues(submodules,
+                submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
     }
 
     @Override
@@ -81,6 +90,9 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         }
         if (QNameModuleToPrefixNamespace.class.equals(namespace)) {
             return Optional.of((Map<K, V>) namespaceToPrefix);
+        }
+        if (NameToEffectiveSubmoduleNamespace.class.equals(namespace)) {
+            return Optional.of((Map<K, V>) nameToSubmodule);
         }
         return super.getNamespaceContents(namespace);
     }
