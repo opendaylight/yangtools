@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "f73d58ec_3887043b",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/uses/UsesEffectiveStatementImpl.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 58,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-02-19T22:25:26Z",
+      "side": 1,
+      "message": "This is where this approach gets ugly: I know I am looking up in GroupingNamespace, so I definitely should not need to massage the key.",
+      "range": {
+        "startLine": 58,
+        "startChar": 37,
+        "endLine": 58,
+        "endChar": 76
+      },
+      "revId": "2533731c28e6e399cdf302d65c42c90ca9692aa2",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
