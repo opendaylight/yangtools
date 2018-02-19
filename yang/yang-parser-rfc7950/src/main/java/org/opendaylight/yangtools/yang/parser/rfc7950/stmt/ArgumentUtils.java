@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE;
+import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_NAMESPACE_STRING;
 import static org.opendaylight.yangtools.yang.common.YangConstants.YANG_XPATH_FUNCTIONS_PREFIX;
 
 import com.google.common.annotations.Beta;
@@ -105,7 +105,7 @@ public final class ArgumentUtils {
     public static RevisionAwareXPath parseXPath(final StmtContext<?, ?, ?> ctx, final String path) {
         final XPath xPath = XPATH_FACTORY.get().newXPath();
         xPath.setNamespaceContext(StmtNamespaceContext.create(ctx,
-                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE.toString(), YANG_XPATH_FUNCTIONS_PREFIX)));
+                ImmutableBiMap.of(RFC6020_YANG_NAMESPACE_STRING, YANG_XPATH_FUNCTIONS_PREFIX)));
 
         final String trimmed = trimSingleLastSlashFromXPath(path);
         try {
