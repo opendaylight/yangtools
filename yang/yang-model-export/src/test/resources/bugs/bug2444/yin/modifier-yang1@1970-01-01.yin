@@ -16,7 +16,7 @@
             <pattern value=".*">
                 <error-message>
                     <value>Supplied value does not match the regular
-                        expression ^.*$.</value>
+                        expression ^(?:.*)$.</value>
                 </error-message>
                 <error-app-tag value="invalid-regular-expression"></error-app-tag>
             </pattern>

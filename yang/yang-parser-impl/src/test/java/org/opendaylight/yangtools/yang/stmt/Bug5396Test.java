@@ -82,10 +82,10 @@ public class Bug5396Test {
         PatternConstraint patternConstraint2 = patternConstraints2.get(0);
         PatternConstraint patternConstraint3 = patternConstraints3.get(0);
 
-        assertEquals("^dp[0-9]+o[0-9]+(d[0-9]+)?$", patternConstraint0.getRegularExpression());
-        assertEquals("^dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?$", patternConstraint1.getRegularExpression());
-        assertEquals("^dp[0-9]+(P[0-9]+)?p[0-9]{1,3}s[0-9]{1,3}(f[0-9]+)?(d[0-9]+)?$",
+        assertEquals("^(?:dp[0-9]+o[0-9]+(d[0-9]+)?)$", patternConstraint0.getRegularExpression());
+        assertEquals("^(?:dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?)$", patternConstraint1.getRegularExpression());
+        assertEquals("^(?:dp[0-9]+(P[0-9]+)?p[0-9]{1,3}s[0-9]{1,3}(f[0-9]+)?(d[0-9]+)?)$",
                 patternConstraint2.getRegularExpression());
-        assertEquals("^dp[0-9]+p[0-9]+p[0-9]+$", patternConstraint3.getRegularExpression());
+        assertEquals("^(?:dp[0-9]+p[0-9]+p[0-9]+)$", patternConstraint3.getRegularExpression());
     }
 }
