@@ -40,7 +40,9 @@ public class Bug5410Test {
         assertEquals(expectedYangRegex, rawRegex);
 
         final String javaRegexFromYang = pattern.getRegularExpression();
-        final String expectedJavaRegex = "^\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86}$";
+        final String expectedJavaRegex = "^(?:\\$0\\$.*|\\$1\\$[a-zA-Z0-9./]{1,8}\\$[a-zA-Z0-9./]{22}|\\$5\\$"
+                + "(rounds=\\d+\\$)?[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{43}|\\$6\\$(rounds=\\d+\\$)?"
+                + "[a-zA-Z0-9./]{1,16}\\$[a-zA-Z0-9./]{86})$";
         assertEquals(expectedJavaRegex, javaRegexFromYang);
 
         final String value = "$6$AnrKGc0V$B/0/A.pWg4HrrA6YiEJOtFGibQ9Fmm5.4rI/00gEz3QeB7joSxBU3YtbHDm6NSkS1dKTQy3BWhwKKDS8nB5S//";

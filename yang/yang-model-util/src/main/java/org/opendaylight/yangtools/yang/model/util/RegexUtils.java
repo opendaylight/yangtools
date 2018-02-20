@@ -246,7 +246,8 @@ public final class RegexUtils {
      * @return Java-compatible regex
      */
     public static String getJavaRegexFromXSD(final String xsdRegex) {
-        return "^" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + '$';
+        // Note: we are using a non-capturing group to deal with internal structure issues, like branches and similar.
+        return "^(?:" + fixUnicodeScriptPattern(escapeChars(xsdRegex)) + ")$";
     }
 
     /*

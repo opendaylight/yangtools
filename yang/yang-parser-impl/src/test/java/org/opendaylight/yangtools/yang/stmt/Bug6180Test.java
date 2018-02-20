@@ -80,7 +80,7 @@ public class Bug6180Test {
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
         final PatternConstraint pattern = patternConstraints.iterator().next();
-        assertEquals("^\".*\"$", pattern.getRegularExpression());
+        assertEquals("^(?:\".*\")$", pattern.getRegularExpression());
         assertTrue(Pattern.compile(pattern.getRegularExpression()).matcher("\"enclosed string in quotes\"").matches());
     }
 
@@ -98,7 +98,7 @@ public class Bug6180Test {
         final List<PatternConstraint> patternConstraints = ((StringTypeDefinition) type).getPatternConstraints();
         assertEquals(1, patternConstraints.size());
         final PatternConstraint pattern = patternConstraints.iterator().next();
-        assertEquals("^'.*'$", pattern.getRegularExpression());
+        assertEquals("^(?:'.*')$", pattern.getRegularExpression());
         assertTrue(Pattern.compile(pattern.getRegularExpression()).matcher("'enclosed string in quotes'").matches());
     }
 }
