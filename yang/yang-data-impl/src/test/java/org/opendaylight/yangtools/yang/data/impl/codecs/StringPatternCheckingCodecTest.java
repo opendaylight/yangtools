@@ -65,8 +65,8 @@ public class StringPatternCheckingCodecTest {
             codec.deserialize("abcd");
             fail("Exception should have been thrown.");
         } catch (final IllegalArgumentException ex) {
-            LOG.debug("IllegalArgumentException was thrown as expected: {}", ex);
-            assertTrue(ex.getMessage().contains("Supplied value does not match the regular expression ^[A-Z]+$. [abcd]"));
+            LOG.debug("IllegalArgumentException was thrown as expected", ex);
+            assertEquals("Supplied value does not match the regular expression ^(?:[A-Z]+)$. [abcd]", ex.getMessage());
         }
     }
 }
