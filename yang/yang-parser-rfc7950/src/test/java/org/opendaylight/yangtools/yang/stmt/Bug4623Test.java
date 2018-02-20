@@ -65,7 +65,7 @@ public class Bug4623Test {
         Assert.assertEquals(Integer.valueOf(10), span.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getJavaPatternString(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }
 
     @Test
@@ -107,7 +107,7 @@ public class Bug4623Test {
         Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getJavaPatternString(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }
 
     @Test
@@ -150,7 +150,7 @@ public class Bug4623Test {
         Assert.assertEquals(Integer.valueOf(10), lengthConstraint.upperEndpoint());
 
         final PatternConstraint patternConstraint = patternConstraints.get(0);
-        Assert.assertEquals(patternConstraint.getJavaPatternString(), "^[0-9a-fA-F]$");
+        Assert.assertEquals(patternConstraint.getRegularExpressionString(), "[0-9a-fA-F]");
     }
 
     private static Module typesModule(final SchemaContext context) {

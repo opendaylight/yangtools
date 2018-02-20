@@ -233,7 +233,7 @@ public class YangParserTest {
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("^[e-z]*$", pattern.getJavaPatternString());
+        assertEquals("^(?:[e-z]*)$", pattern.getJavaPatternString());
         assertEquals(1, type.getLengthConstraint().get().getAllowedRanges().asRanges().size());
 
         final StringTypeDefinition baseType1 = type.getBaseType();
@@ -245,7 +245,7 @@ public class YangParserTest {
         patterns = baseType1.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
-        assertEquals("^[b-u]*$", pattern.getJavaPatternString());
+        assertEquals("^(?:[b-u]*)$", pattern.getJavaPatternString());
         assertEquals(1, baseType1.getLengthConstraint().get().getAllowedRanges().asRanges().size());
 
         final StringTypeDefinition baseType2 = baseType1.getBaseType();
@@ -268,7 +268,7 @@ public class YangParserTest {
         patterns = baseType3.getPatternConstraints();
         assertEquals(1, patterns.size());
         pattern = patterns.iterator().next();
-        assertEquals("^[a-k]*$", pattern.getJavaPatternString());
+        assertEquals("^(?:[a-k]*)$", pattern.getJavaPatternString());
         final RangeSet<Integer> baseType3Lengths = baseType3.getLengthConstraint().get().getAllowedRanges();
         assertEquals(1, baseType3Lengths.asRanges().size());
         length = baseType3Lengths.span();
@@ -309,7 +309,7 @@ public class YangParserTest {
         assertTrue(!patterns.isEmpty());
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("^[e-z]*$", pattern.getJavaPatternString());
+        assertEquals("^(?:[e-z]*)$", pattern.getJavaPatternString());
         assertEquals(1, type.getLengthConstraint().get().getAllowedRanges().asRanges().size());
 
         final LeafSchemaNode multiplePatternDirectStringDefLeaf = (LeafSchemaNode) foo
@@ -325,9 +325,9 @@ public class YangParserTest {
         boolean isEZPattern = false;
         boolean isADPattern = false;
         for (final PatternConstraint patternConstraint : patterns) {
-            if (patternConstraint.getJavaPatternString().equals("^[e-z]*$")) {
+            if (patternConstraint.getJavaPatternString().equals("^(?:[e-z]*)$")) {
                 isEZPattern = true;
-            } else if (patternConstraint.getJavaPatternString().equals("^[a-d]*$")) {
+            } else if (patternConstraint.getJavaPatternString().equals("^(?:[a-d]*)$")) {
                 isADPattern = true;
             }
         }
@@ -369,7 +369,7 @@ public class YangParserTest {
         final List<PatternConstraint> patterns = baseType2.getPatternConstraints();
         assertEquals(1, patterns.size());
         final PatternConstraint pattern = patterns.iterator().next();
-        assertEquals("^[a-k]*$", pattern.getJavaPatternString());
+        assertEquals("^(?:[a-k]*)$", pattern.getJavaPatternString());
         final RangeSet<Integer> baseType3Lengths = baseType2.getLengthConstraint().get().getAllowedRanges();
         assertEquals(1, baseType3Lengths.asRanges().size());
         length = baseType3Lengths.span();

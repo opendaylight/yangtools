@@ -118,26 +118,29 @@ public class Bug5410Test {
 
     @Test
     public void testJavaRegexFromXSD() {
-        testPattern("^[^:]+$", "^\\^[^:]+\\$$", ImmutableList.of("^a$", "^abc$"),
+        testPattern("^[^:]+$", "^(?:\\^[^:]+\\$)$", ImmutableList.of("^a$", "^abc$"),
                 ImmutableList.of("abc$", "^abc", "^a:bc$"));
-        testPattern("^[$^]$", "^\\^[$^]\\$$", ImmutableList.of("^^$", "^$$"), ImmutableList.of("^^", "^$", "$^", "$$"));
-        testPattern("[$-%]+", "^[$-%]+$", ImmutableList.of("$", "%", "%$"), ImmutableList.of("$-", "$-%", "-", "^"));
-        testPattern("[$-&]+", "^[$-&]+$", ImmutableList.of("$", "%&", "%$", "$%&"), ImmutableList.of("#", "$-&", "'"));
+        testPattern("^[$^]$", "^(?:\\^[$^]\\$)$", ImmutableList.of("^^$", "^$$"),
+            ImmutableList.of("^^", "^$", "$^", "$$"));
+        testPattern("[$-%]+", "^(?:[$-%]+)$", ImmutableList.of("$", "%", "%$"),
+            ImmutableList.of("$-", "$-%", "-", "^"));
+        testPattern("[$-&]+", "^(?:[$-&]+)$", ImmutableList.of("$", "%&", "%$", "$%&"),
+            ImmutableList.of("#", "$-&", "'"));
 
-        testPattern("[a-z&&[^m-p]]+", "^[a-z&&[^m-p]]+$", ImmutableList.of("a", "z", "az"),
+        testPattern("[a-z&&[^m-p]]+", "^(?:[a-z&&[^m-p]]+)$", ImmutableList.of("a", "z", "az"),
                 ImmutableList.of("m", "anz", "o"));
-        testPattern("^[\\[-b&&[^^-a]]+$", "^\\^[\\[-b&&[^^-a]]+\\$$", ImmutableList.of("^[$", "^\\$", "^]$", "^b$"),
+        testPattern("^[\\[-b&&[^^-a]]+$", "^(?:\\^[\\[-b&&[^^-a]]+\\$)$", ImmutableList.of("^[$", "^\\$", "^]$", "^b$"),
                 ImmutableList.of("^a$", "^^$", "^_$"));
 
-        testPattern("[^^-~&&[^$-^]]", "^[^^-~&&[^$-^]]$", ImmutableList.of("!", "\"", "#"),
+        testPattern("[^^-~&&[^$-^]]", "^(?:[^^-~&&[^$-^]])$", ImmutableList.of("!", "\"", "#"),
                 ImmutableList.of("a", "A", "z", "Z", "$", "%", "^", "}"));
-        testPattern("\\\\\\[^[^^-~&&[^$-^]]", "^\\\\\\[\\^[^^-~&&[^$-^]]$",
+        testPattern("\\\\\\[^[^^-~&&[^$-^]]", "^(?:\\\\\\[\\^[^^-~&&[^$-^]])$",
                 ImmutableList.of("\\[^ ", "\\[^!", "\\[^\"", "\\[^#"),
                 ImmutableList.of("\\[^a", "\\[^A", "\\[^z", "\\[^Z", "\\[^$", "\\[^%", "\\[^^", "\\[^}"));
-        testPattern("^\\[^\\\\[^^-b&&[^\\[-\\]]]\\]^", "^\\^\\[\\^\\\\[^^-b&&[^\\[-\\]]]\\]\\^$",
+        testPattern("^\\[^\\\\[^^-b&&[^\\[-\\]]]\\]^", "^(?:\\^\\[\\^\\\\[^^-b&&[^\\[-\\]]]\\]\\^)$",
                 ImmutableList.of("^[^\\c]^", "^[^\\Z]^"),
                 ImmutableList.of("^[^\\[]^", "^[^\\\\]^", "^[^\\]]^", "^[^\\^]^", "^[^\\_]^", "^[^\\b]^"));
-        testPattern("[\\^]$", "^[\\^]\\$$", ImmutableList.of("^$"),
+        testPattern("[\\^]$", "^(?:[\\^]\\$)$", ImmutableList.of("^$"),
                 ImmutableList.of("^", "$", "$^", "\\", "\\^", "\\^\\", "\\^\\$"));
     }
 
@@ -160,7 +163,7 @@ public class Bug5410Test {
     }
 
     private static void testPattern(final String xsdRegex, final String unanchoredJavaRegex) {
-        testPattern(xsdRegex, '^' + unanchoredJavaRegex + '$', ImmutableList.of(), ImmutableList.of());
+        testPattern(xsdRegex, "^(?:" + unanchoredJavaRegex + ")$", ImmutableList.of(), ImmutableList.of());
     }
 
     private static void testPattern(final String javaRegex, final List<String> positiveMatches,

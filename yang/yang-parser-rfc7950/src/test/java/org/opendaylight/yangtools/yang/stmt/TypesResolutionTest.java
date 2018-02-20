@@ -133,20 +133,20 @@ public class TypesResolutionTest {
 
         StringTypeDefinition ipv4 = (StringTypeDefinition) unionTypes.get(0);
         assertNotNull(ipv4.getBaseType());
-        String expectedPattern = "^(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
-                + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?$";
+        String expectedPattern = "^(?:(([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\\.){3}"
+                + "([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])" + "(%[\\p{N}\\p{L}]+)?)$";
         assertEquals(expectedPattern, ipv4.getPatternConstraints().get(0).getJavaPatternString());
 
         StringTypeDefinition ipv6 = (StringTypeDefinition) unionTypes.get(1);
         assertNotNull(ipv6.getBaseType());
         List<PatternConstraint> ipv6Patterns = ipv6.getPatternConstraints();
-        expectedPattern = "^((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
+        expectedPattern = "^(?:((:|[0-9a-fA-F]{0,4}):)([0-9a-fA-F]{0,4}:){0,5}"
                 + "((([0-9a-fA-F]{0,4}:)?(:|[0-9a-fA-F]{0,4}))|" + "(((25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])\\.){3}"
-                + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?$";
+                + "(25[0-5]|2[0-4][0-9]|[01]?[0-9]?[0-9])))" + "(%[\\p{N}\\p{L}]+)?)$";
         assertEquals(expectedPattern, ipv6Patterns.get(0).getJavaPatternString());
 
-        expectedPattern = "^(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
-                + "(%.+)?$";
+        expectedPattern = "^(?:(([^:]+:){6}(([^:]+:[^:]+)|(.*\\..*)))|" + "((([^:]+:)*[^:]+)?::(([^:]+:)*[^:]+)?)"
+                + "(%.+)?)$";
         assertEquals(expectedPattern, ipv6Patterns.get(1).getJavaPatternString());
     }
 
@@ -158,8 +158,8 @@ public class TypesResolutionTest {
         assertNotNull(type.getBaseType());
         List<PatternConstraint> patterns = type.getPatternConstraints();
         assertEquals(1, patterns.size());
-        String expectedPattern = "^((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
-                + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.$";
+        String expectedPattern = "^(?:((([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.)*"
+                + "([a-zA-Z0-9_]([a-zA-Z0-9\\-_]){0,61})?[a-zA-Z0-9]\\.?)" + "|\\.)$";
         assertEquals(expectedPattern, patterns.get(0).getJavaPatternString());
 
         LengthConstraint lengths = type.getLengthConstraint().get();
@@ -314,7 +314,7 @@ public class TypesResolutionTest {
         List<PatternConstraint> patterns = testedType.getPatternConstraints();
         assertEquals(1, patterns.size());
         PatternConstraint pattern = patterns.get(0);
-        assertEquals("^\\d*(\\.\\d*){1,127}$", pattern.getJavaPatternString());
+        assertEquals("^(?:\\d*(\\.\\d*){1,127})$", pattern.getJavaPatternString());
 
         QName testedTypeQName = testedType.getQName();
         assertEquals(URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-types"), testedTypeQName.getNamespace());
@@ -326,7 +326,7 @@ public class TypesResolutionTest {
         assertEquals(1, patterns.size());
 
         pattern = patterns.get(0);
-        assertEquals("^(([0-1](\\.[1-3]?[0-9]))|(2\\.(0|([1-9]\\d*))))(\\.(0|([1-9]\\d*)))*$",
+        assertEquals("^(?:(([0-1](\\.[1-3]?[0-9]))|(2\\.(0|([1-9]\\d*))))(\\.(0|([1-9]\\d*)))*)$",
                 pattern.getJavaPatternString());
 
         QName testedTypeBaseQName = testedTypeBase.getQName();

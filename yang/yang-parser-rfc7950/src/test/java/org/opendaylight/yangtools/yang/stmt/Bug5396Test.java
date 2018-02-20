@@ -82,10 +82,10 @@ public class Bug5396Test {
         final PatternConstraint patternConstraint2 = patternConstraints2.get(0);
         final PatternConstraint patternConstraint3 = patternConstraints3.get(0);
 
-        assertEquals("^dp[0-9]+o[0-9]+(d[0-9]+)?$", patternConstraint0.getJavaPatternString());
-        assertEquals("^dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?$", patternConstraint1.getJavaPatternString());
-        assertEquals("^dp[0-9]+(P[0-9]+)?p[0-9]{1,3}s[0-9]{1,3}(f[0-9]+)?(d[0-9]+)?$",
+        assertEquals("^(?:dp[0-9]+o[0-9]+(d[0-9]+)?)$", patternConstraint0.getJavaPatternString());
+        assertEquals("^(?:dp[0-9]+s[0-9]+(f[0-9]+)?(d[0-9]+)?)$", patternConstraint1.getJavaPatternString());
+        assertEquals("^(?:dp[0-9]+(P[0-9]+)?p[0-9]{1,3}s[0-9]{1,3}(f[0-9]+)?(d[0-9]+)?)$",
                 patternConstraint2.getJavaPatternString());
-        assertEquals("^dp[0-9]+p[0-9]+p[0-9]+$", patternConstraint3.getJavaPatternString());
+        assertEquals("^(?:dp[0-9]+p[0-9]+p[0-9]+)$", patternConstraint3.getJavaPatternString());
     }
 }
