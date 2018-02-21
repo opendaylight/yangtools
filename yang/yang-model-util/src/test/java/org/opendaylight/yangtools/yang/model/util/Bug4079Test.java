@@ -6,7 +6,7 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 
 public class Bug4079Test {
 
