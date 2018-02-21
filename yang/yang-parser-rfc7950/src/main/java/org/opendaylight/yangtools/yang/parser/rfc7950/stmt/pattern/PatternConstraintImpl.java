@@ -12,10 +12,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import java.util.Optional;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-final class PatternConstraintImpl implements PatternConstraint {
+final class PatternConstraintImpl implements PatternConstraint, Immutable {
 
     private final String regEx;
     private final String rawRegEx;
@@ -37,8 +38,7 @@ final class PatternConstraintImpl implements PatternConstraint {
         this.description = description;
         this.reference = reference;
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
-        this.errorMessage = errorMessage != null ? errorMessage : String.format(
-                "Supplied value does not match the regular expression %s.", regex);
+        this.errorMessage = errorMessage;
         this.modifier = modifier;
     }
 
@@ -101,7 +101,7 @@ final class PatternConstraintImpl implements PatternConstraint {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("regex", regEx).add("description", description)
+        return MoreObjects.toStringHelper(this).omitNullValues().add("regex", regEx).add("description", description)
                 .add("reference", reference).add("errorAppTag", errorAppTag).add("errorMessage", errorMessage)
                 .add("modifier", modifier).toString();
     }

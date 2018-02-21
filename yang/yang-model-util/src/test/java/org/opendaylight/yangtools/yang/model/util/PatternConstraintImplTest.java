@@ -36,7 +36,7 @@ public class PatternConstraintImplTest {
         assertEquals("Description should be 'test description'.", Optional.of("test description"),
                 patternConstraint.getDescription());
         assertEquals(Optional.of("invalid-regular-expression"), patternConstraint.getErrorAppTag());
-        assertTrue(patternConstraint.getErrorMessage().isPresent());
+        assertFalse(patternConstraint.getErrorMessage().isPresent());
         assertEquals(Optional.of("RFC 6020"), patternConstraint.getReference());
         assertEquals("Regular expression should be equls '\\D'.", "\\D", patternConstraint.getJavaPatternString());
         assertNotEquals("Hash codes shouldn't be equals.", patternConstraint.hashCode(), patternConstraint2.hashCode());

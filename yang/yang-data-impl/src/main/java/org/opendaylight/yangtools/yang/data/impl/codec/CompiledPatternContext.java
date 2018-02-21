@@ -45,7 +45,7 @@ class CompiledPatternContext {
                 throw new IllegalArgumentException(errorMessage);
             }
 
-            throw new IllegalArgumentException("Value " + str + " " + (invert ? "matches" : "does not match")
+            throw new IllegalArgumentException("Value '" + str + "' " + (invert ? "matches" : "does not match")
                     + " regular expression '" + regEx + "'");
         }
     }
