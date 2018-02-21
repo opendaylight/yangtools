@@ -46,8 +46,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
         this.description = description.orElse(null);
         this.reference = reference.orElse(null);
         this.errorAppTag = errorAppTag != null ? errorAppTag : "invalid-regular-expression";
-        this.errorMessage = errorMessage != null ? errorMessage : String.format(
-                "Supplied value does not match the regular expression %s.", regex);
+        this.errorMessage = errorMessage;
         this.modifier = modifier.orElse(null);
     }
 
@@ -107,7 +106,7 @@ final class PatternConstraintImpl implements PatternConstraint, Immutable {
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(this).add("regex", regex).add("description", description)
+        return MoreObjects.toStringHelper(this).omitNullValues().add("regex", regex).add("description", description)
                 .add("reference", reference).add("errorAppTag", errorAppTag).add("errorMessage", errorMessage)
                 .add("modifier", modifier).toString();
     }
