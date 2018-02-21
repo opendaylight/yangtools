@@ -5,17 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
-package org.opendaylight.yangtools.yang.stmt;
+package org.opendaylight.yangtools.yang.model.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.util.RegexUtils;
 
 public class Bug4079Test {
 
@@ -109,7 +106,7 @@ public class Bug4079Test {
     }
 
     @Test(expected = PatternSyntaxException.class)
-    public void testInvalidPattern() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testInvalidPattern() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD("(\\\\p{IsBasicLatin})*+");
         assertEquals("^(\\\\p{IsBasicLatin})*+$", fixedUnicodeScriptPattern);
         // should throw exception
@@ -117,7 +114,7 @@ public class Bug4079Test {
     }
 
     @Test(expected = PatternSyntaxException.class)
-    public void testInvalidPattern2() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testInvalidPattern2() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\p{IsSpecials}|\\\\\\\\p{IsBasicLatin})*+");
         assertEquals("^(\\p{InSpecials}|\\\\\\\\p{IsBasicLatin})*+$", fixedUnicodeScriptPattern);
@@ -126,7 +123,7 @@ public class Bug4079Test {
     }
 
     @Test(expected = PatternSyntaxException.class)
-    public void testInvalidPattern3() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void testInvalidPattern3() {
         String fixedUnicodeScriptPattern = RegexUtils.getJavaRegexFromXSD(
             "(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+");
         assertEquals("^(\\\\\\\\\\\\p{IsBasicLatin}|\\p{IsTags})*+$", fixedUnicodeScriptPattern);
