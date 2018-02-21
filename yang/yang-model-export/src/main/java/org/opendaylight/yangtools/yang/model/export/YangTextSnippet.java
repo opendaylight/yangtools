@@ -12,10 +12,7 @@ import static org.eclipse.jdt.annotation.DefaultLocation.PARAMETER;
 import static org.eclipse.jdt.annotation.DefaultLocation.RETURN_TYPE;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
@@ -30,8 +27,6 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.QNameModuleToPrefixNamespace;
 
 /**
  * A YANG text snippet generated from a {@link DeclaredStatement}. Generated {@link #stream()} or {@link #iterator()}
@@ -53,17 +48,12 @@ public final class YangTextSnippet implements Immutable, Iterable<@NonNull Strin
     private final DeclaredStatement<?> statement;
     private final boolean omitDefaultStatements;
 
-    private YangTextSnippet(final DeclaredStatement<?> statement,
-            final Map<QNameModule, @NonNull String> namespaces,
+    YangTextSnippet(final DeclaredStatement<?> statement, final Map<QNameModule, @NonNull String> namespaces,
             final Set<@NonNull StatementDefinition> ignoredStatements, final boolean omitDefaultStatements) {
         this.statement = requireNonNull(statement);
         this.mapper = requireNonNull(namespaces);
         this.ignoredStatements = requireNonNull(ignoredStatements);
         this.omitDefaultStatements = omitDefaultStatements;
-    }
-
-    public static Builder builder(final ModuleEffectiveStatement module, final DeclaredStatement<?> statement) {
-        return new Builder(module, statement);
     }
 
     @Override
@@ -88,58 +78,15 @@ public final class YangTextSnippet implements Immutable, Iterable<@NonNull Strin
      *
      * @param str String to be checked
      * @return True if the string contains end of line.
+     * @throws NullPointerException if str is null
      */
     public static boolean isEolString(final String str) {
-        return str.charAt(str.length() - 1) == '\n';
+        return !str.isEmpty() && str.charAt(str.length() - 1) == '\n';
     }
 
     @Override
     @SuppressWarnings("null")
     public String toString() {
         return stream().collect(Collectors.joining());
-    }
-
-    /**
-     * Builder class for instantiation of a customized {@link YangTextSnippet}.
-     */
-    @Beta
-    public static final class Builder implements org.opendaylight.yangtools.concepts.Builder<@NonNull YangTextSnippet> {
-        private final List<@NonNull StatementDefinition> ignoredStatements = new ArrayList<>();
-        private final @NonNull DeclaredStatement<?> statement;
-        private final @NonNull ModuleEffectiveStatement module;
-        private boolean retainDefaultStatements;
-
-        Builder(final ModuleEffectiveStatement module, final DeclaredStatement<?> statement) {
-            this.module = requireNonNull(module);
-            this.statement = requireNonNull(statement);
-        }
-
-        /**
-         * Add a statement which should be skipped along with any of its children.
-         *
-         * @param statementDef Statement to be ignored
-         * @return This builder
-         */
-        public Builder addIgnoredStatement(final StatementDefinition statementDef) {
-            ignoredStatements.add(requireNonNull(statementDef));
-            return this;
-        }
-
-        /**
-         * Retain common known statements whose argument matches semantics of not being present. By default these
-         * statements are omitted from output.
-         *
-         * @return This builder
-         */
-        public Builder retainDefaultStatements() {
-            retainDefaultStatements = true;
-            return this;
-        }
-
-        @Override
-        public YangTextSnippet build() {
-            return new YangTextSnippet(statement, module.getAll(QNameModuleToPrefixNamespace.class),
-                ImmutableSet.copyOf(ignoredStatements), !retainDefaultStatements);
-        }
     }
 }

@@ -25,7 +25,8 @@ public class YangTextSnippetTest {
             assertTrue(module instanceof ModuleEffectiveStatement);
             final ModuleEffectiveStatement stmt = (ModuleEffectiveStatement) module;
 
-            final String str = YangTextSnippet.builder(stmt, stmt.getDeclared()).build().toString();
+            final String str = DeclaredStatementFormatter.defaultInstance().toYangTextSnippet(stmt, stmt.getDeclared())
+                    .toString();
             assertNotNull(str);
         }
     }
