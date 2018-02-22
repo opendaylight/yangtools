@@ -29,7 +29,7 @@
         "complexjson-augmentation:lf15_11" : "lf15_11 value from augmentation",
         "complexjson-augmentation:lf15_12" : "lf15_12 value from augmentation",
         "lf15_11" : "one two",
-        "lf15_12" : "complexjson:lf11",
+        "lf15_12" : "complexjson:ident",
         "lf15_21" : "lf15_21 value",
         "lf17" : "lf17 value",
 
