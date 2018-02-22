@@ -206,7 +206,7 @@ public class NormalizedNodeToJsonStreamTest {
         assertEquals("lf15_21 value", lf15_21.getAsString());
         assertEquals("lf13 value", lf13.getAsString());
         assertTrue("one two".equals(lf15_11.getAsString()) || "two one".equals(lf15_11.getAsString()));
-        assertEquals("complexjson:lf11", lf15_12.getAsString());
+        assertEquals("complexjson:ident", lf15_12.getAsString());
     }
 
     /**
@@ -243,7 +243,7 @@ public class NormalizedNodeToJsonStreamTest {
         assertEquals("lf15_12 value from augmentation", lf15_12Augment.getAsString());
         assertEquals("lf13 value", lf13.getAsString());
         assertTrue("one two".equals(lf15_11.getAsString()) || "two one".equals(lf15_11.getAsString()));
-        assertEquals("complexjson:lf11", lf15_12.getAsString());
+        assertEquals("complexjson:ident", lf15_12.getAsString());
     }
 
     /**
