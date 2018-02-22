@@ -12,9 +12,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Iterator;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -59,13 +60,11 @@ abstract class JSONStreamWriterContext {
 
         final StringBuilder sb = new StringBuilder();
         // Prepend module name if namespaces do not match
-        final URI ns = qname.getNamespace();
-        if (!ns.equals(getNamespace())) {
-            final Iterator<Module> modules = schema.findModules(ns).iterator();
-            checkArgument(modules.hasNext(), "Could not find module for namespace {}", ns);
-
-            sb.append(modules.next().getName());
-            sb.append(':');
+        final QNameModule module = qname.getModule();
+        if (!module.getNamespace().equals(getNamespace())) {
+            final Optional<String> modules = schema.findModule(module).map(Module::getName);
+            checkArgument(modules.isPresent(), "Could not find module for namespace {}", module);
+            sb.append(modules.get()).append(':');
         }
         sb.append(qname.getLocalName());
 
