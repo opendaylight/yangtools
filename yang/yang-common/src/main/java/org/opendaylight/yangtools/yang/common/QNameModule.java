@@ -18,20 +18,21 @@ import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
-    private final URI namespace;
+    private final @NonNull URI namespace;
 
     //Nullable
     private final Revision revision;
 
     private transient int hash;
 
-    private QNameModule(final URI namespace, final Revision revision) {
+    private QNameModule(final @NonNull URI namespace, final Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -124,7 +125,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
             return false;
         }
         final QNameModule other = (QNameModule) obj;
-        return Objects.equals(revision, other.revision) && Objects.equals(namespace, other.namespace);
+        return Objects.equals(revision, other.revision) && namespace.equals(other.namespace);
     }
 
     /**
@@ -144,7 +145,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
 
     @Override
     public String toString() {
-        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", getNamespace())
+        return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", namespace)
             .add("rev", revision).toString();
     }
 }
