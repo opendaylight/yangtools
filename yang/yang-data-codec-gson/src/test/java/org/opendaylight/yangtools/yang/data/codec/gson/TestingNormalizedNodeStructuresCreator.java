@@ -154,7 +154,7 @@ public class TestingNormalizedNodeStructuresCreator {
     private static LeafNode<Object> lf15_12Node() {
         return Builders.leafBuilder()
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lf15_12")))
-                .withValue(QName.create("ns:complex:json", "2014-08-11", "lf11")).build();
+                .withValue(QName.create("ns:complex:json", "2014-08-11", "ident")).build();
     }
 
     private static LeafNode<Object> lf15_11Node() {

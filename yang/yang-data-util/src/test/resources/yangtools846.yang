@@ -1,0 +1,7 @@
+module yangtools846 {
+    namespace "yangtools846";
+    prefix yt846;
+
+    identity foo;
+}
+

@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.base.Preconditions;
@@ -16,6 +15,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -36,7 +36,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
 
     @Override
     public QName parseValue(final NamespaceContext ctx, final String str) {
-        return QNameCodecUtil.decodeQName(str, prefix -> {
+        return IdentityCodecUtil.parseIdentity(str, schemaContext, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
@@ -45,7 +45,7 @@ final class IdentityrefXmlCodec implements XmlCodec<QName> {
             final Module module = schemaContext.findModuleByNamespaceAndRevision(URI.create(prefixedNS), null);
             Preconditions.checkArgument(module != null, "Could not find module for namespace %s", prefixedNS);
             return module.getQNameModule();
-        });
+        }).getQName();
     }
 
     @Override
