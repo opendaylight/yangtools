@@ -12,6 +12,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.data.util.codec.IdentityCodecUtil;
 import org.opendaylight.yangtools.yang.data.util.codec.QNameCodecUtil;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -32,7 +33,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
 
     @Override
     public QName parseValue(final Object ctx, final String value) {
-        return QNameCodecUtil.decodeQName(value, prefix -> {
+        return IdentityCodecUtil.parseIdentity(value, schemaContext, prefix -> {
             if (prefix.isEmpty()) {
                 return parentModule;
             }
@@ -40,7 +41,7 @@ final class IdentityrefJSONCodec implements JSONCodec<QName> {
             final Module module = schemaContext.findModuleByName(prefix, null);
             Preconditions.checkArgument(module != null, "Could not find module %s", prefix);
             return module.getQNameModule();
-        });
+        }).getQName();
     }
 
     /**
