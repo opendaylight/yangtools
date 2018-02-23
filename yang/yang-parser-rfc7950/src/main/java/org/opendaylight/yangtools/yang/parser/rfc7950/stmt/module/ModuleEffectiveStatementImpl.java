@@ -17,15 +17,19 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
@@ -34,6 +38,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement>
         implements ModuleEffectiveStatement {
     private final Map<String, SubmoduleEffectiveStatement> nameToSubmodule;
+    private final Map<QName, IdentityEffectiveStatement> qnameToIdentity;
     private final Map<String, ModuleEffectiveStatement> prefixToModule;
     private final Map<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
@@ -66,9 +71,15 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
 
         final Map<String, StmtContext<?, ?, ?>> submodules =
                 ctx.getAllFromCurrentStmtCtxNamespace(IncludedSubmoduleNameToModuleCtx.class);
-        nameToSubmodule = submodules == null ? ImmutableMap.of() :
-            ImmutableMap.copyOf(Maps.transformValues(submodules,
-                submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
+        nameToSubmodule = submodules == null ? ImmutableMap.of()
+                : ImmutableMap.copyOf(Maps.transformValues(submodules,
+                    submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
+
+        final Map<QName, StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> identities =
+                ctx.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
+        qnameToIdentity = identities == null ? ImmutableMap.of()
+                : ImmutableMap.copyOf(Maps.transformValues(identities,
+                    stmt -> (IdentityEffectiveStatement) stmt.buildEffective()));
     }
 
     @Override
@@ -93,6 +104,9 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         }
         if (NameToEffectiveSubmoduleNamespace.class.equals(namespace)) {
             return Optional.of((Map<K, V>) nameToSubmodule);
+        }
+        if (QNameToEffectiveIdentityNamespace.class.equals(namespace)) {
+            return Optional.of((Map<K, V>) qnameToIdentity);
         }
         return super.getNamespaceContents(namespace);
     }
