@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Collections;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Empty;
@@ -49,6 +50,11 @@ public class JsonStreamToNormalizedNodeTest {
     @BeforeClass
     public static void initialization() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
     }
 
     @Test

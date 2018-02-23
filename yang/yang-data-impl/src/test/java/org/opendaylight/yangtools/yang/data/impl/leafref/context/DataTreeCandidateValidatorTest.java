@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -100,17 +101,6 @@ public class DataTreeCandidateValidatorTest {
 
     @BeforeClass
     public static void init()  {
-        initSchemaContext();
-
-        initLeafRefContext();
-
-        initQnames();
-
-        initDataTree();
-
-    }
-
-    private static void initSchemaContext() {
         context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
 
         final Set<Module> modules = context.getModules();
@@ -121,13 +111,8 @@ public class DataTreeCandidateValidatorTest {
         }
 
         valModuleQname = valModule.getQNameModule();
-    }
-
-    private static void initLeafRefContext() {
         rootLeafRefContext = LeafRefContext.create(context);
-    }
 
-    private static void initQnames() {
         odl = QName.create(valModuleQname, "odl-project");
         project = QName.create(valModuleQname, "project");
         name = QName.create(valModuleQname, "name");
@@ -163,9 +148,6 @@ public class DataTreeCandidateValidatorTest {
 
         leafrefLeafList = QName.create(valModuleQname, "leafref-leaf-list");
 
-    }
-
-    private static void initDataTree() {
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
 
         final DataTreeModification initialDataTreeModification = inMemoryDataTree
@@ -183,6 +165,14 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeCandidate writeContributorsCandidate = inMemoryDataTree
                 .prepare(initialDataTreeModification);
         inMemoryDataTree.commit(writeContributorsCandidate);
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        inMemoryDataTree = null;
+        rootLeafRefContext = null;
+        valModule = null;
+        context = null;
     }
 
     @Test

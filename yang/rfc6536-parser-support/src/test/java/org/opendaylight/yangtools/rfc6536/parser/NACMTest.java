@@ -11,6 +11,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
@@ -40,6 +41,11 @@ public class NACMTest {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     DefaultDenyWriteStatementSupport.getInstance())
                 .build();
+    }
+
+    @AfterClass
+    public static void freeReactor() {
+        reactor = null;
     }
 
     @Test

@@ -13,6 +13,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Set;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -26,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class LeafRefContextTest {
-
     private static SchemaContext context;
     private static Module rootMod;
     private static QNameModule root;
@@ -45,6 +45,14 @@ public class LeafRefContextTest {
 
         root = rootMod.getQNameModule();
         rootLeafRefContext = LeafRefContext.create(context);
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        context = null;
+        root = null;
+        rootMod = null;
+        rootLeafRefContext = null;
     }
 
     @Test

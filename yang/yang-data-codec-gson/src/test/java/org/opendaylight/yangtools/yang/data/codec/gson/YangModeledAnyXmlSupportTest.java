@@ -27,6 +27,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -76,6 +77,12 @@ public class YangModeledAnyXmlSupportTest {
         assertNotNull(result.getResult());
         assertTrue(result.getResult() instanceof ContainerNode);
         data = (ContainerNode) result.getResult();
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
+        data = null;
     }
 
     @Test
