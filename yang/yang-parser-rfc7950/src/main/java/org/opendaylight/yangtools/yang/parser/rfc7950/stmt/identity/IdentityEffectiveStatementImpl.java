@@ -19,7 +19,6 @@ import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
@@ -33,8 +32,7 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
     private @NonNull Set<IdentitySchemaNode> baseIdentities;
     private boolean sealed;
 
-    IdentityEffectiveStatementImpl(
-            final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+    IdentityEffectiveStatementImpl(final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
         super(ctx);
 
         this.baseIdentities = new HashSet<>();
