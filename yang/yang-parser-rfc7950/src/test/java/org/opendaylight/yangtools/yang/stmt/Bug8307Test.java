@@ -16,7 +16,6 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
 import java.net.URI;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -45,36 +44,23 @@ public class Bug8307Test {
     private static final URI BAZ_NS = URI.create("baz-ns");
 
     private static final Revision REVISION = Revision.of("2017-05-16");
-    private static QNameModule foo;
-    private static QName myFooContA;
-    private static QName myFooContB;
-    private static QName myFooContC;
-    private static QNameModule bar;
-    private static QName myBarContA;
-    private static QName myBarContB;
-    private static QNameModule baz;
-    private static QName myBazCont;
-
-    @BeforeClass
-    public static void setup() {
-        foo = QNameModule.create(FOO_NS, REVISION);
-        myFooContA = QName.create(foo, "my-foo-cont-a");
-        myFooContB = QName.create(foo, "my-foo-cont-b");
-        myFooContC = QName.create(foo, "my-foo-cont-c");
-        bar = QNameModule.create(BAR_NS, REVISION);
-        myBarContA = QName.create(bar, "my-bar-cont-a");
-        myBarContB = QName.create(bar, "my-bar-cont-b");
-        baz = QNameModule.create(BAZ_NS, REVISION);
-        myBazCont = QName.create(baz, "my-baz-cont");
-    }
+    private static final QNameModule FOO = QNameModule.create(FOO_NS, REVISION);
+    private static final QName MY_FOO_CONT_A = QName.create(FOO, "my-foo-cont-a");
+    private static final QName MY_FOO_CONT_B = QName.create(FOO, "my-foo-cont-b");
+    private static final QName MY_FOO_CONT_C = QName.create(FOO, "my-foo-cont-c");
+    private static final QNameModule BAR = QNameModule.create(BAR_NS, REVISION);
+    private static final QName MY_BAR_CONT_A = QName.create(BAR, "my-bar-cont-a");
+    private static final QName MY_BAR_CONT_B = QName.create(BAR, "my-bar-cont-b");
+    private static final QNameModule BAZ = QNameModule.create(BAZ_NS, REVISION);
+    private static final QName MY_BAZ_CONT = QName.create(BAZ, "my-baz-cont");
 
     @Test
     public void testDeviationsSupportedInSomeModules() throws Exception {
         final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations =
                 ImmutableSetMultimap.<QNameModule, QNameModule>builder()
-                .put(foo, bar)
-                .put(foo, baz)
-                .put(bar, baz)
+                .put(FOO, BAR)
+                .put(FOO, BAZ)
+                .put(BAR, BAZ)
                 .build();
 
         final SchemaContext schemaContext = RFC7950Reactors.defaultReactor().newBuild()
@@ -83,11 +69,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContB)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContC)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContA)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContB)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
     }
 
     @Test
@@ -97,11 +83,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContB)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContC)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContA)));
-        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContB)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
+        assertNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
     }
 
     @Test
@@ -112,11 +98,11 @@ public class Bug8307Test {
                 .buildEffective();
         assertNotNull(schemaContext);
 
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContA)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContB)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myFooContC)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContA)));
-        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, myBarContB)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_A)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_B)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_FOO_CONT_C)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_A)));
+        assertNotNull(SchemaContextUtil.findDataSchemaNode(schemaContext, SchemaPath.create(true, MY_BAR_CONT_B)));
     }
 
     @Test
