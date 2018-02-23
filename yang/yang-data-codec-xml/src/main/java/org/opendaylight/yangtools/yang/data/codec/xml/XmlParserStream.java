@@ -356,7 +356,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                                     new URI(xmlElementNamespace));
 
                     if (childDataSchemaNodes.isEmpty()) {
-                        checkState(!strictParsing, "Schema for node with name %s and namespace %s doesn't exist at %s",
+                        checkState(!strictParsing, "Schema for node with name %s and namespace %s does not exist at %s",
                             xmlElementName, xmlElementNamespace, parentSchema.getPath());
                         skipUnknownNode(in);
                         continue;

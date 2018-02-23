@@ -78,7 +78,7 @@ public class StrictParsingModeTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of an unknown child node.");
         } catch (IllegalStateException ex) {
-            assertEquals("Schema for node with name unknown-container-a and namespace foo doesn't exist at "
+            assertEquals("Schema for node with name unknown-container-a and namespace foo does not exist at "
                     + "AbsoluteSchemaPath{path=[(foo)top-level-container]}", ex.getMessage());
         }
     }
