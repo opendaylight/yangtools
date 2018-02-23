@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
@@ -40,6 +41,11 @@ public class AnnotationTest {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, AnnotationStatementSupport.getInstance())
                 .build();
+    }
+
+    @AfterClass
+    public static void freeReactor() {
+        reactor = null;
     }
 
     @Test

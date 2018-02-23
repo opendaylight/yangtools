@@ -26,6 +26,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,6 +60,12 @@ public class XmlStreamUtilsTest {
         assertEquals(1, schemaContext.getModules().size());
         leafRefModule = schemaContext.getModules().iterator().next();
         assertNotNull(leafRefModule);
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        leafRefModule = null;
+        schemaContext = null;
     }
 
     @Test

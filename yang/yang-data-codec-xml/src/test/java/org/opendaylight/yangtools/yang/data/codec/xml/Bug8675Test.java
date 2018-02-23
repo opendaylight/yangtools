@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.InputStream;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,9 +36,15 @@ public class Bug8675Test {
     private static Module fooModule;
 
     @BeforeClass
-    public static void setup() throws Exception {
+    public static void setup() {
         schemaContext = YangParserTestUtils.parseYangResource("/bug8675/foo.yang");
         fooModule = schemaContext.getModules().iterator().next();
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        fooModule = null;
+        schemaContext = null;
     }
 
     @Test

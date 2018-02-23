@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
@@ -72,6 +73,11 @@ public class Bug8083Test {
     @BeforeClass
     public static void init() {
         FULL_SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/bug8083/yang/");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        FULL_SCHEMA_CONTEXT = null;
     }
 
     @Test
