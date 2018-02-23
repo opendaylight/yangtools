@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Set;
 import org.apache.log4j.BasicConfigurator;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -78,10 +79,61 @@ public class DataTreeCandidateValidatorTest2 {
 
     @BeforeClass
     public static void init() {
-        initSchemaContext();
-        initLeafRefContext();
-        initQnames();
-        initDataTree();
+        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
+
+        final Set<Module> modules = context.getModules();
+        for (final Module module : modules) {
+            if (module.getName().equals("leafref-validation2")) {
+                mainModule = module;
+            }
+        }
+
+        rootModuleQname = mainModule.getQNameModule();
+        rootLeafRefContext = LeafRefContext.create(context);
+
+        chips = QName.create(rootModuleQname, "chips");
+        chip = QName.create(rootModuleQname, "chip");
+        devType = QName.create(rootModuleQname, "dev_type");
+        chipDesc = QName.create(rootModuleQname, "chip_desc");
+
+        devices = QName.create(rootModuleQname, "devices");
+        device = QName.create(rootModuleQname, "device");
+        typeText = QName.create(rootModuleQname, "type_text");
+        devDesc = QName.create(rootModuleQname, "dev_desc");
+        sn = QName.create(rootModuleQname, "sn");
+        defaultIp = QName.create(rootModuleQname, "default_ip");
+
+        deviceTypeStr = QName.create(rootModuleQname, "device_types");
+        deviceType = QName.create(rootModuleQname, "device_type");
+        type = QName.create(rootModuleQname, "type");
+        desc = QName.create(rootModuleQname, "desc");
+
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
+        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
+        final ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule.getDataChildByName(chips);
+        final ContainerNode chipsContainer = createChipsContainer(chipsListContSchemaNode);
+        final YangInstanceIdentifier path1 = YangInstanceIdentifier.of(chips);
+        initialDataTreeModification.write(path1, chipsContainer);
+
+        final ContainerSchemaNode devTypesListContSchemaNode = (ContainerSchemaNode) mainModule
+                .getDataChildByName(deviceTypeStr);
+        final ContainerNode deviceTypesContainer = createDevTypeStrContainer(devTypesListContSchemaNode);
+        final YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
+        initialDataTreeModification.write(path2, deviceTypesContainer);
+
+        initialDataTreeModification.ready();
+        final DataTreeCandidate writeChipsCandidate = inMemoryDataTree.prepare(initialDataTreeModification);
+
+        inMemoryDataTree.commit(writeChipsCandidate);
+        LOG.debug("{}", inMemoryDataTree);
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        inMemoryDataTree = null;
+        rootLeafRefContext = null;
+        mainModule = null;
+        context = null;
     }
 
     @Test
@@ -126,68 +178,6 @@ public class DataTreeCandidateValidatorTest2 {
         LOG.debug("After write: ");
         LOG.debug("*************************");
         LOG.debug("{}", inMemoryDataTree);
-    }
-
-    private static void initQnames() {
-
-        chips = QName.create(rootModuleQname, "chips");
-        chip = QName.create(rootModuleQname, "chip");
-        devType = QName.create(rootModuleQname, "dev_type");
-        chipDesc = QName.create(rootModuleQname, "chip_desc");
-
-        devices = QName.create(rootModuleQname, "devices");
-        device = QName.create(rootModuleQname, "device");
-        typeText = QName.create(rootModuleQname, "type_text");
-        devDesc = QName.create(rootModuleQname, "dev_desc");
-        sn = QName.create(rootModuleQname, "sn");
-        defaultIp = QName.create(rootModuleQname, "default_ip");
-
-        deviceTypeStr = QName.create(rootModuleQname, "device_types");
-        deviceType = QName.create(rootModuleQname, "device_type");
-        type = QName.create(rootModuleQname, "type");
-        desc = QName.create(rootModuleQname, "desc");
-    }
-
-    private static void initSchemaContext() {
-        context = YangParserTestUtils.parseYangResourceDirectory("/leafref-validation");
-
-        final Set<Module> modules = context.getModules();
-        for (final Module module : modules) {
-            if (module.getName().equals("leafref-validation2")) {
-                mainModule = module;
-            }
-        }
-
-        rootModuleQname = mainModule.getQNameModule();
-    }
-
-    private static void initDataTree() {
-
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
-
-        final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-
-        final ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule.getDataChildByName(chips);
-        final ContainerNode chipsContainer = createChipsContainer(chipsListContSchemaNode);
-        final YangInstanceIdentifier path1 = YangInstanceIdentifier.of(chips);
-        initialDataTreeModification.write(path1, chipsContainer);
-
-        final ContainerSchemaNode devTypesListContSchemaNode = (ContainerSchemaNode) mainModule
-                .getDataChildByName(deviceTypeStr);
-        final ContainerNode deviceTypesContainer = createDevTypeStrContainer(devTypesListContSchemaNode);
-        final YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
-        initialDataTreeModification.write(path2, deviceTypesContainer);
-
-        initialDataTreeModification.ready();
-        final DataTreeCandidate writeChipsCandidate = inMemoryDataTree.prepare(initialDataTreeModification);
-
-        inMemoryDataTree.commit(writeChipsCandidate);
-
-        LOG.debug("{}", inMemoryDataTree);
-    }
-
-    private static void initLeafRefContext() {
-        rootLeafRefContext = LeafRefContext.create(context);
     }
 
     private static ContainerNode createDevTypeStrContainer(final ContainerSchemaNode container) {

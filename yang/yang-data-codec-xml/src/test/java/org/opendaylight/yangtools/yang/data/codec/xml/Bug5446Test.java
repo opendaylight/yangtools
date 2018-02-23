@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
@@ -29,6 +28,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -58,16 +58,14 @@ public class Bug5446Test extends XMLTestCase {
         XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
     }
 
-    private final QNameModule fooModuleQName;
-    private final QName rootQName;
-    private final QName ipAddressQName;
-    private final SchemaContext schemaContext;
+    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
+    private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
+    private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
 
-    public Bug5446Test() throws Exception {
-        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
-        rootQName = QName.create(fooModuleQName, "root");
-        ipAddressQName = QName.create(fooModuleQName, "ip-address");
+    private SchemaContext schemaContext;
 
+    @Before
+    public void init() {
         schemaContext = YangParserTestUtils.parseYangResource("/bug5446/yang/foo.yang");
     }
 
@@ -77,11 +75,11 @@ public class Bug5446Test extends XMLTestCase {
 
         final ContainerNode docNode = createDocNode();
 
-        Optional<DataContainerChild<? extends PathArgument, ?>> root = docNode.getChild(new NodeIdentifier(rootQName));
+        Optional<DataContainerChild<? extends PathArgument, ?>> root = docNode.getChild(new NodeIdentifier(ROOT_QNAME));
         assertTrue(root.orElse(null) instanceof ContainerNode);
 
         Optional<DataContainerChild<? extends PathArgument, ?>> child = ((ContainerNode) root.orElse(null))
-                .getChild(new NodeIdentifier(ipAddressQName));
+                .getChild(new NodeIdentifier(IP_ADDRESS_QNAME));
         assertTrue(child.orElse(null) instanceof LeafNode);
         LeafNode<?> ipAdress = (LeafNode<?>) child.get();
 
@@ -103,11 +101,12 @@ public class Bug5446Test extends XMLTestCase {
         assertXMLEqual(expectedXMLString, serializationResultXMLString);
     }
 
-    private ContainerNode createDocNode() {
-        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(ipAddressQName, BaseEncoding.base64().decode("fwAAAQ=="));
-        ContainerNode root = ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(rootQName))
+    private static ContainerNode createDocNode() {
+        LeafNode<byte[]> ipAddress = ImmutableNodes.leafNode(IP_ADDRESS_QNAME, BaseEncoding.base64()
+                .decode("fwAAAQ=="));
+        ContainerNode root = ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME))
                 .withChild(ipAddress).build();
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(rootQName)).withChild(root)
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(new NodeIdentifier(ROOT_QNAME)).withChild(root)
                 .build();
     }
 
