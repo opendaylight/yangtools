@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import static org.junit.Assert.assertEquals;
@@ -24,7 +23,6 @@ import java.net.URI;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -43,26 +41,13 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class DerivedFromXPathFunctionTest {
 
-    private static JaxenSchemaContextFactory jaxenSchemaContextFactory;
-
-    private static QNameModule barModule;
-    private static QName myContainer;
-    private static QName myList;
-    private static QName keyLeaf;
-    private static QName idrefLeaf;
-    private static QName idC2Identity;
-
-    @BeforeClass
-    public static void setup() {
-        jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
-
-        barModule = QNameModule.create(URI.create("bar-ns"), Revision.of("2017-04-03"));
-        myContainer = QName.create(barModule, "my-container");
-        myList = QName.create(barModule, "my-list");
-        keyLeaf = QName.create(barModule, "key-leaf");
-        idrefLeaf = QName.create(barModule, "idref-leaf");
-        idC2Identity = QName.create(barModule, "id-c2");
-    }
+    private static final JaxenSchemaContextFactory SCHEMA_CONTEXT_FACTORY = new JaxenSchemaContextFactory();
+    private static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar-ns"), Revision.of("2017-04-03"));
+    private static final QName MY_CONTAINER = QName.create(BAR_MODULE, "my-container");
+    private static final QName MY_LIST = QName.create(BAR_MODULE, "my-list");
+    private static final QName KEY_LEAF = QName.create(BAR_MODULE, "key-leaf");
+    private static final QName IDREF_LEAF = QName.create(BAR_MODULE, "idref-leaf");
+    private static final QName ID_C2_IDENTITY = QName.create(BAR_MODULE, "id-c2");
 
     @Test
     public void testDerivedFromFunction() throws Exception {
@@ -72,11 +57,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(idC2Identity));
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(ID_C2_IDENTITY));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -110,11 +95,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar-invalid.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(idC2Identity));
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(ID_C2_IDENTITY));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -135,11 +120,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode("should be QName"));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -160,11 +145,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(idC2Identity));
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(ID_C2_IDENTITY));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -191,11 +176,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(idC2Identity));
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(ID_C2_IDENTITY));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -221,11 +206,11 @@ public class DerivedFromXPathFunctionTest {
                 "/yang-xpath-functions-test/derived-from-function/bar.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
-        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(idC2Identity));
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
+        final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(ID_C2_IDENTITY));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("bar-prefix", barModule);
+        converterBiMap.put("bar-prefix", BAR_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -282,25 +267,25 @@ public class DerivedFromXPathFunctionTest {
     }
 
     private static ContainerNode buildMyContainerNode(final Object idrefLeafValue) {
-        final LeafNode<?> idrefLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(idrefLeaf))
+        final LeafNode<?> idrefLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(IDREF_LEAF))
                 .withValue(idrefLeafValue).build();
 
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myList))
+        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(myList, keyLeaf, "key-value"))
+                        new NodeIdentifierWithPredicates(MY_LIST, KEY_LEAF, "key-value"))
                         .withChild(idrefLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
-                new NodeIdentifier(myContainer)).withChild(myListNode).build();
+                new NodeIdentifier(MY_CONTAINER)).withChild(myListNode).build();
         return myContainerNode;
     }
 
     private static YangInstanceIdentifier buildPathToIdrefLeafNode() {
         final ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
-        final ImmutableMap<QName, Object> keys = builder.put(keyLeaf, "key-value").build();
+        final ImmutableMap<QName, Object> keys = builder.put(KEY_LEAF, "key-value").build();
 
-        final YangInstanceIdentifier path = YangInstanceIdentifier.of(myList)
-                .node(new NodeIdentifierWithPredicates(myList, keys)).node(idrefLeaf);
+        final YangInstanceIdentifier path = YangInstanceIdentifier.of(MY_LIST)
+                .node(new NodeIdentifierWithPredicates(MY_LIST, keys)).node(IDREF_LEAF);
         return path;
     }
 }
