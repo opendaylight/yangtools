@@ -26,6 +26,7 @@ import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -58,6 +59,11 @@ public class AnyXmlSupportTest {
     @BeforeClass
     public static void setup() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/complexjson/yang");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
     }
 
     @Test

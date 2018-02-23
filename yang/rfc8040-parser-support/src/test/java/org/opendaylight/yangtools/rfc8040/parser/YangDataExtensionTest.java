@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.List;
 import java.util.Set;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataSchemaNode;
@@ -71,6 +72,11 @@ public class YangDataExtensionTest {
         reactor = RFC7950Reactors.vanillaReactorBuilder()
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
                 .build();
+    }
+
+    @AfterClass
+    public static void freeReactor() {
+        reactor = null;
     }
 
     @Test
