@@ -17,6 +17,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 
 import java.util.Iterator;
 import java.util.Set;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -38,6 +39,11 @@ public class IncludedStmtsTest {
                 .addSource(sourceForResource("/included-statements-test/root-module.yang"))
                 .addSource(sourceForResource("/included-statements-test/child-module.yang"))
                 .buildEffective();
+    }
+
+    @AfterClass
+    public static void teardown() {
+        result = null;
     }
 
     @Test
