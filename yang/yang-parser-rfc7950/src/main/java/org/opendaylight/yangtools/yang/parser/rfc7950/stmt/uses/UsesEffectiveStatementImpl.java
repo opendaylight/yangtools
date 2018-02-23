@@ -28,6 +28,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesEffectiveStatement;
@@ -52,7 +53,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         super(ctx);
 
         // initGroupingPath
-        final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx =
+        final StmtContext<?, GroupingStatement, GroupingEffectiveStatement> grpCtx =
                 ctx.getFromNamespace(GroupingNamespace.class, ctx.coerceStatementArgument());
         this.groupingPath = grpCtx.getSchemaPath().get();
 
