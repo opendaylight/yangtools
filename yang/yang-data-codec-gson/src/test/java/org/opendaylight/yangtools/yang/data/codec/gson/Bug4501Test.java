@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
 import java.util.Optional;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -39,6 +40,11 @@ public class Bug4501Test {
     @BeforeClass
     public static void initialization() {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/bug-4501/yang");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
     }
 
     @Test

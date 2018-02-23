@@ -18,6 +18,7 @@ import static org.opendaylight.yangtools.yang.stmt.StmtTestUtils.sourceForResour
 import com.google.common.collect.Range;
 import java.util.List;
 import java.util.Optional;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -64,6 +65,12 @@ public class EffectiveStatementTypeTest {
                 .buildEffective();
         types = effectiveSchemaContext.findModules("types").iterator().next();
         assertNotNull(types);
+    }
+
+    @AfterClass
+    public static void teardown() {
+        effectiveSchemaContext = null;
+        types = null;
     }
 
     @Test
