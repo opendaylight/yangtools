@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import static org.junit.Assert.assertEquals;
@@ -20,11 +19,9 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.net.URI;
-import java.text.ParseException;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -43,24 +40,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class EnumValueXPathFunctionTest {
 
-    private static JaxenSchemaContextFactory jaxenSchemaContextFactory;
-
-    private static QNameModule fooModule;
-    private static QName myContainer;
-    private static QName alarm;
-    private static QName severity;
-    private static QName ordinaryLeaf;
-
-    @BeforeClass
-    public static void setup() throws ParseException {
-        jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
-
-        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
-        myContainer = QName.create(fooModule, "my-container");
-        alarm = QName.create(fooModule, "alarm");
-        severity = QName.create(fooModule, "severity");
-        ordinaryLeaf = QName.create(fooModule, "ordinary-leaf");
-    }
+    private static final JaxenSchemaContextFactory SCHEMA_CONTEXT_FACTORY = new JaxenSchemaContextFactory();
+    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
+    private static final QName MY_CONTAINER = QName.create(FOO_MODULE, "my-container");
+    private static final QName ALARM = QName.create(FOO_MODULE, "alarm");
+    private static final QName SEVERITY = QName.create(FOO_MODULE, "severity");
+    private static final QName ORDINARY_LEAF = QName.create(FOO_MODULE, "ordinary-leaf");
 
     @Test
     public void testEnumValueFunction() throws Exception {
@@ -68,11 +53,11 @@ public class EnumValueXPathFunctionTest {
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode("major"));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -92,11 +77,11 @@ public class EnumValueXPathFunctionTest {
                 "/yang-xpath-functions-test/enum-value-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode("major"));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -116,11 +101,11 @@ public class EnumValueXPathFunctionTest {
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(100));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -140,11 +125,11 @@ public class EnumValueXPathFunctionTest {
                 "/yang-xpath-functions-test/enum-value-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode("unknown"));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -178,25 +163,25 @@ public class EnumValueXPathFunctionTest {
     }
 
     private static ContainerNode buildMyContainerNode(final Object keyLeafValue) {
-        final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(ordinaryLeaf))
-                .withValue("test-value").build();
+        final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder()
+                .withNodeIdentifier(new NodeIdentifier(ORDINARY_LEAF)).withValue("test-value").build();
 
-        final MapNode alarmListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(alarm))
+        final MapNode alarmListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(ALARM))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(alarm, severity, keyLeafValue))
+                        new NodeIdentifierWithPredicates(ALARM, SEVERITY, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
-                new NodeIdentifier(myContainer)).withChild(alarmListNode).build();
+                new NodeIdentifier(MY_CONTAINER)).withChild(alarmListNode).build();
         return myContainerNode;
     }
 
     private static YangInstanceIdentifier buildPathToSeverityLeafNode(final Object keyLeafValue) {
         final ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
-        final ImmutableMap<QName, Object> keys = builder.put(severity, keyLeafValue).build();
+        final ImmutableMap<QName, Object> keys = builder.put(SEVERITY, keyLeafValue).build();
 
-        final YangInstanceIdentifier path = YangInstanceIdentifier.of(alarm)
-                .node(new NodeIdentifierWithPredicates(alarm, keys)).node(severity);
+        final YangInstanceIdentifier path = YangInstanceIdentifier.of(ALARM)
+                .node(new NodeIdentifierWithPredicates(ALARM, keys)).node(SEVERITY);
         return path;
     }
 }

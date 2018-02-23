@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.jaxen;
 
 import static org.junit.Assert.assertEquals;
@@ -22,12 +21,10 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.net.URI;
-import java.text.ParseException;
 import java.util.Set;
 import org.jaxen.Context;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -46,24 +43,12 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class BitIsSetXPathFunctionTest {
 
-    private static JaxenSchemaContextFactory jaxenSchemaContextFactory;
-
-    private static QNameModule fooModule;
-    private static QName myContainer;
-    private static QName myList;
-    private static QName flags;
-    private static QName ordinaryLeaf;
-
-    @BeforeClass
-    public static void setup() throws ParseException {
-        jaxenSchemaContextFactory = new JaxenSchemaContextFactory();
-
-        fooModule = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
-        myContainer = QName.create(fooModule, "my-container");
-        myList = QName.create(fooModule, "my-list");
-        flags = QName.create(fooModule, "flags");
-        ordinaryLeaf = QName.create(fooModule, "ordinary-leaf");
-    }
+    private static final JaxenSchemaContextFactory SCHEMA_CONTEXT_FACTORY = new JaxenSchemaContextFactory();
+    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo-ns"), Revision.of("2017-04-03"));
+    private static final QName MY_CONTAINER = QName.create(FOO_MODULE, "my-container");
+    private static final QName MY_LIST = QName.create(FOO_MODULE, "my-list");
+    private static final QName FLAGS = QName.create(FOO_MODULE, "flags");
+    private static final QName ORDINARY_LEAF = QName.create(FOO_MODULE, "ordinary-leaf");
 
     @Test
     public void testBitIsSetFunction() throws Exception {
@@ -73,11 +58,11 @@ public class BitIsSetXPathFunctionTest {
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(setOfBits));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -103,11 +88,11 @@ public class BitIsSetXPathFunctionTest {
                 "/yang-xpath-functions-test/bit-is-set-function/foo-invalid.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(setOfBits));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -129,12 +114,12 @@ public class BitIsSetXPathFunctionTest {
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(
                     invalidNodeValueType));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -156,11 +141,11 @@ public class BitIsSetXPathFunctionTest {
                 "/yang-xpath-functions-test/bit-is-set-function/foo.yang");
         assertNotNull(schemaContext);
 
-        final XPathSchemaContext jaxenSchemaContext = jaxenSchemaContextFactory.createContext(schemaContext);
+        final XPathSchemaContext jaxenSchemaContext = SCHEMA_CONTEXT_FACTORY.createContext(schemaContext);
         final XPathDocument jaxenDocument = jaxenSchemaContext.createDocument(buildMyContainerNode(setOfBits));
 
         final BiMap<String, QNameModule> converterBiMap = HashBiMap.create();
-        converterBiMap.put("foo-prefix", fooModule);
+        converterBiMap.put("foo-prefix", FOO_MODULE);
 
         final NormalizedNodeContextSupport normalizedNodeContextSupport = NormalizedNodeContextSupport.create(
                 (JaxenDocument) jaxenDocument, Maps.asConverter(converterBiMap));
@@ -209,26 +194,26 @@ public class BitIsSetXPathFunctionTest {
     }
 
     private static ContainerNode buildMyContainerNode(final Object keyLeafValue) {
-        final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder().withNodeIdentifier(new NodeIdentifier(ordinaryLeaf))
-                .withValue("test-value").build();
+        final LeafNode<?> ordinaryLeafNode = Builders.leafBuilder()
+                .withNodeIdentifier(new NodeIdentifier(ORDINARY_LEAF)).withValue("test-value").build();
 
-        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(myList))
+        final MapNode myListNode = Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST))
                 .withChild(Builders.mapEntryBuilder().withNodeIdentifier(
-                        new NodeIdentifierWithPredicates(myList, flags, keyLeafValue))
+                        new NodeIdentifierWithPredicates(MY_LIST, FLAGS, keyLeafValue))
                         .withChild(ordinaryLeafNode).build()).build();
 
         final ContainerNode myContainerNode = Builders.containerBuilder().withNodeIdentifier(
-                new NodeIdentifier(myContainer)).withChild(myListNode).build();
+                new NodeIdentifier(MY_CONTAINER)).withChild(myListNode).build();
 
         return myContainerNode;
     }
 
     private static YangInstanceIdentifier buildPathToFlagsLeafNode(final Object keyLeafValue) {
         final ImmutableMap.Builder<QName, Object> builder = ImmutableMap.builder();
-        final ImmutableMap<QName, Object> keys = builder.put(flags, keyLeafValue).build();
+        final ImmutableMap<QName, Object> keys = builder.put(FLAGS, keyLeafValue).build();
 
-        final YangInstanceIdentifier path = YangInstanceIdentifier.of(myList)
-                .node(new NodeIdentifierWithPredicates(myList, keys)).node(flags);
+        final YangInstanceIdentifier path = YangInstanceIdentifier.of(MY_LIST)
+                .node(new NodeIdentifierWithPredicates(MY_LIST, keys)).node(FLAGS);
         return path;
     }
 }
