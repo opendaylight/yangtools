@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
@@ -38,7 +39,7 @@ public final class IdentityRefSpecificationEffectiveStatement extends
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof BaseEffectiveStatement) {
                 final QName identityQName = ((BaseEffectiveStatement) stmt).argument();
-                final StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> identityCtx =
+                final StmtContext<?, IdentityStatement, IdentityEffectiveStatement> identityCtx =
                         ctx.getFromNamespace(IdentityNamespace.class, identityQName);
                 builder.addIdentity((IdentitySchemaNode) identityCtx.buildEffective());
             }
