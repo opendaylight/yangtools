@@ -19,7 +19,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatementNamespace;
@@ -44,8 +43,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final Map<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
 
-    ModuleEffectiveStatementImpl(
-            final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
         super(ctx);
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
 
@@ -76,11 +74,10 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(submodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
-        final Map<QName, StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> identities =
+        final Map<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> identities =
                 ctx.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
         qnameToIdentity = identities == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(identities,
-                    stmt -> (IdentityEffectiveStatement) stmt.buildEffective()));
+                : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }
 
     @Override

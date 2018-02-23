@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
@@ -20,8 +20,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * namespace.
  */
 public interface IdentityNamespace extends
-        StatementNamespace<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
-    NamespaceBehaviour<QName, StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>,
+        StatementNamespace<QName, IdentityStatement, IdentityEffectiveStatement> {
+    NamespaceBehaviour<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>,
             @NonNull IdentityNamespace> BEHAVIOUR = NamespaceBehaviour.global(IdentityNamespace.class);
 
 }
