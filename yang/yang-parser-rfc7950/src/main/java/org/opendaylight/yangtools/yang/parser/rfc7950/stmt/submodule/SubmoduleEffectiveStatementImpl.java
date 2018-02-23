@@ -13,7 +13,6 @@ import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
@@ -27,8 +26,7 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
 
     private final QNameModule qnameModule;
 
-    SubmoduleEffectiveStatementImpl(
-            final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+    SubmoduleEffectiveStatementImpl(final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx) {
         super(ctx);
 
         final String belongsToModuleName = firstAttributeOf(ctx.declaredSubstatements(), BelongsToStatement.class);

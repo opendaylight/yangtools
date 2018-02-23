@@ -11,9 +11,9 @@ import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.f
 import static org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils.firstAttributeOf;
 
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModule
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 abstract class AbstractSubmoduleStatementSupport
-        extends AbstractStatementSupport<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> {
+        extends AbstractStatementSupport<String, SubmoduleStatement, SubmoduleEffectiveStatement> {
     AbstractSubmoduleStatementSupport() {
         super(YangStmtMapping.SUBMODULE);
     }
@@ -42,25 +42,24 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<String, SubmoduleStatement> createEffective(
-            final StmtContext<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> ctx) {
+    public final SubmoduleEffectiveStatement createEffective(
+            final StmtContext<String, SubmoduleStatement, SubmoduleEffectiveStatement> ctx) {
         return new SubmoduleEffectiveStatementImpl(ctx);
     }
 
     @Override
     public final void onPreLinkageDeclared(
-            final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
+            final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getStatementArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
     }
 
     @Override
-    public final void onLinkageDeclared(
-            final Mutable<String, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>> stmt) {
+    public final void onLinkageDeclared(final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.coerceStatementArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));
 
-        final StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>
+        final StmtContext<?, SubmoduleStatement, SubmoduleEffectiveStatement>
             possibleDuplicateSubmodule = stmt.getFromNamespace(SubmoduleNamespace.class, submoduleIdentifier);
         if (possibleDuplicateSubmodule != null && possibleDuplicateSubmodule != stmt) {
             throw new SourceException(stmt.getStatementSourceReference(), "Submodule name collision: %s. At %s",

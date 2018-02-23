@@ -19,7 +19,6 @@ import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
@@ -54,8 +53,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
     private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
 
-    ModuleEffectiveStatementImpl(
-            final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+    ModuleEffectiveStatementImpl(final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
         super(ctx);
         qnameModule = verifyNotNull(ctx.getFromNamespace(ModuleCtxToModuleQName.class, ctx));
 
@@ -86,21 +84,18 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(submodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
-        final Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
+        final Map<QName, StmtContext<?, ExtensionStatement, ExtensionEffectiveStatement>> extensions =
                 ctx.getAllFromCurrentStmtCtxNamespace(ExtensionNamespace.class);
         qnameToExtension = extensions == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(extensions,
-                    stmt -> (ExtensionEffectiveStatement) stmt.buildEffective()));
-        final Map<QName, StmtContext<?, FeatureStatement, EffectiveStatement<QName, FeatureStatement>>> features =
+                : ImmutableMap.copyOf(Maps.transformValues(extensions, StmtContext::buildEffective));
+        final Map<QName, StmtContext<?, FeatureStatement, FeatureEffectiveStatement>> features =
                 ctx.getAllFromCurrentStmtCtxNamespace(FeatureNamespace.class);
         qnameToFeature = features == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(features,
-                    stmt -> (FeatureEffectiveStatement) stmt.buildEffective()));
-        final Map<QName, StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> identities =
+                : ImmutableMap.copyOf(Maps.transformValues(features, StmtContext::buildEffective));
+        final Map<QName, StmtContext<?, IdentityStatement, IdentityEffectiveStatement>> identities =
                 ctx.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
         qnameToIdentity = identities == null ? ImmutableMap.of()
-                : ImmutableMap.copyOf(Maps.transformValues(identities,
-                    stmt -> (IdentityEffectiveStatement) stmt.buildEffective()));
+                : ImmutableMap.copyOf(Maps.transformValues(identities, StmtContext::buildEffective));
     }
 
     @Override

@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
@@ -42,8 +42,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleQNameToModuleName
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-abstract class AbstractModuleStatementSupport extends
-        AbstractStatementSupport<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> {
+abstract class AbstractModuleStatementSupport
+        extends AbstractStatementSupport<String, ModuleStatement, ModuleEffectiveStatement> {
     AbstractModuleStatementSupport() {
         super(YangStmtMapping.MODULE);
     }
@@ -59,14 +59,13 @@ abstract class AbstractModuleStatementSupport extends
     }
 
     @Override
-    public final EffectiveStatement<String, ModuleStatement> createEffective(
-            final StmtContext<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> ctx) {
+    public final ModuleEffectiveStatement createEffective(
+            final StmtContext<String, ModuleStatement, ModuleEffectiveStatement> ctx) {
         return new ModuleEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onPreLinkageDeclared(final Mutable<String, ModuleStatement,
-            EffectiveStatement<String, ModuleStatement>> stmt) {
+    public final void onPreLinkageDeclared(final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt) {
         final String moduleName = stmt.getStatementArgument();
 
         final URI moduleNs = firstAttributeOf(stmt.declaredSubstatements(), NamespaceStatement.class);
@@ -89,8 +88,7 @@ abstract class AbstractModuleStatementSupport extends
     }
 
     @Override
-    public final void onLinkageDeclared(final Mutable<String, ModuleStatement,
-            EffectiveStatement<String, ModuleStatement>> stmt) {
+    public final void onLinkageDeclared(final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt) {
 
         final Optional<URI> moduleNs = Optional.ofNullable(firstAttributeOf(stmt.declaredSubstatements(),
                 NamespaceStatement.class));
@@ -99,7 +97,7 @@ abstract class AbstractModuleStatementSupport extends
 
         final Optional<Revision> revisionDate = StmtContextUtils.getLatestRevision(stmt.declaredSubstatements());
         final QNameModule qNameModule = QNameModule.create(moduleNs.get(), revisionDate.orElse(null)).intern();
-        final StmtContext<?, ModuleStatement, EffectiveStatement<String, ModuleStatement>> possibleDuplicateModule =
+        final StmtContext<?, ModuleStatement, ModuleEffectiveStatement> possibleDuplicateModule =
                 stmt.getFromNamespace(NamespaceToModule.class, qNameModule);
         if (possibleDuplicateModule != null && possibleDuplicateModule != stmt) {
             throw new SourceException(stmt.getStatementSourceReference(), "Module namespace collision: %s. At %s",
@@ -130,7 +128,7 @@ abstract class AbstractModuleStatementSupport extends
     }
 
     private static void addToSemVerModuleNamespace(
-            final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt,
+            final Mutable<String, ModuleStatement, ModuleEffectiveStatement> stmt,
             final SourceIdentifier moduleIdentifier) {
         final String moduleName = stmt.coerceStatementArgument();
         final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);

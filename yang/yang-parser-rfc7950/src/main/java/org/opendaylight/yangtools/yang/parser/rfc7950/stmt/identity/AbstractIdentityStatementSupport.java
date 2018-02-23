@@ -9,15 +9,16 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractIdentityStatementSupport
-        extends AbstractQNameStatementSupport<IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
+        extends AbstractQNameStatementSupport<IdentityStatement, IdentityEffectiveStatement> {
 
     AbstractIdentityStatementSupport() {
         super(YangStmtMapping.IDENTITY);
@@ -34,14 +35,14 @@ abstract class AbstractIdentityStatementSupport
     }
 
     @Override
-    public final EffectiveStatement<QName, IdentityStatement> createEffective(
-            final StmtContext<QName, IdentityStatement, EffectiveStatement<QName, IdentityStatement>> ctx) {
+    public final IdentityEffectiveStatement createEffective(
+            final StmtContext<QName, IdentityStatement, IdentityEffectiveStatement> ctx) {
         return new IdentityEffectiveStatementImpl(ctx);
     }
 
     @Override
-    public final void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
-            EffectiveStatement<QName, IdentityStatement>> stmt) {
+    public final void onStatementDefinitionDeclared(
+            final Mutable<QName, IdentityStatement, IdentityEffectiveStatement> stmt) {
         stmt.addToNs(IdentityNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 }

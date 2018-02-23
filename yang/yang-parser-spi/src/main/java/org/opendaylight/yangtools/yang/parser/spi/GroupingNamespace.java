@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.GroupingEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace.TreeScoped;
@@ -23,9 +23,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
  * <p>
  * This means that any descendant node may use that grouping, and it MUST NOT define a grouping with the same name.
  */
-public interface GroupingNamespace
-    extends TreeScoped<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> {
-    NamespaceBehaviour<QName, StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>>,
+public interface GroupingNamespace extends TreeScoped<QName, GroupingStatement, GroupingEffectiveStatement> {
+    NamespaceBehaviour<QName, StmtContext<?, GroupingStatement, GroupingEffectiveStatement>,
             @NonNull GroupingNamespace> BEHAVIOUR = NamespaceBehaviour.treeScoped(GroupingNamespace.class);
 
 }
