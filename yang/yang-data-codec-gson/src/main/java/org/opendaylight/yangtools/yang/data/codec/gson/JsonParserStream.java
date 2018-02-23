@@ -288,8 +288,9 @@ public final class JsonParserStream implements Closeable, Flushable {
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, localName,
                                 getCurrentNamespace());
                     checkState(!childDataSchemaNodes.isEmpty(),
-                        "Schema for node with name %s and namespace %s does not exist.", localName,
-                        getCurrentNamespace());
+                        "Schema for node with name %s and namespace %s does not exist at %s",
+                        localName, getCurrentNamespace(), parentSchema.getPath());
+
 
                     final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent)
                             .addChild(childDataSchemaNodes);
