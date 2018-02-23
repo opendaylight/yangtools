@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Set;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -34,9 +35,7 @@ public class LeafRefContextTreeBuilderTest {
     private static final Logger LOG = LoggerFactory.getLogger(LeafRefContextTreeBuilderTest.class);
 
     private static SchemaContext context;
-    private static Module impMod;
     private static Module tstMod;
-    private static QNameModule imp;
     private static QNameModule tst;
     private static LeafRefContext rootLeafRefContext;
 
@@ -46,18 +45,22 @@ public class LeafRefContextTreeBuilderTest {
 
         final Set<Module> modules = context.getModules();
         for (final Module module : modules) {
-            if (module.getName().equals("import-mod")) {
-                impMod = module;
-            }
             if (module.getName().equals("leafref-test")) {
                 tstMod = module;
             }
         }
 
-        imp = impMod.getQNameModule();
         tst = tstMod.getQNameModule();
 
         rootLeafRefContext = LeafRefContext.create(context);
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        context = null;
+        tst = null;
+        tstMod = null;
+        rootLeafRefContext = null;
     }
 
     @Test

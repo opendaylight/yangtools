@@ -25,6 +25,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -52,71 +53,51 @@ import org.xml.sax.SAXException;
 
 public class XmlToNormalizedNodesTest {
 
+    private static final QNameModule fooModule = QNameModule.create(URI.create("foo-namespace"));
+    private static final QName parentContainer = QName.create(fooModule, "parent-container");
+
+    private static final QNameModule bazModule = QNameModule.create(URI.create("baz-namespace"));
+    private static final QName outerContainer = QName.create(bazModule, "outer-container");
+
+    private static final QName myContainer1 = QName.create(bazModule, "my-container-1");
+    private static final QName myKeyedList = QName.create(bazModule, "my-keyed-list");
+    private static final QName myKeyLeaf = QName.create(bazModule, "my-key-leaf");
+    private static final QName myLeafInList1 = QName.create(bazModule, "my-leaf-in-list-1");
+    private static final QName myLeafInList2 = QName.create(bazModule, "my-leaf-in-list-2");
+    private static final QName myLeaf1 = QName.create(bazModule, "my-leaf-1");
+    private static final QName myLeafList = QName.create(bazModule, "my-leaf-list");
+
+    private static final QName myContainer2 = QName.create(bazModule, "my-container-2");
+    private static final QName innerContainer = QName.create(bazModule, "inner-container");
+    private static final QName myLeaf2 = QName.create(bazModule, "my-leaf-2");
+    private static final QName myLeaf3 = QName.create(bazModule, "my-leaf-3");
+    private static final QName myChoice = QName.create(bazModule, "my-choice");
+    private static final QName myLeafInCase2 = QName.create(bazModule, "my-leaf-in-case-2");
+
+    private static final QName myContainer3 = QName.create(bazModule, "my-container-3");
+    private static final QName myDoublyKeyedList = QName.create(bazModule, "my-doubly-keyed-list");
+    private static final QName myFirstKeyLeaf = QName.create(bazModule, "my-first-key-leaf");
+    private static final QName mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
+    private static final QName myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
+
     private static SchemaContext schemaContext;
     private static ContainerSchemaNode outerContainerSchema;
     private static ContainerSchemaNode parentContainerSchema;
 
-    private static QNameModule fooModule;
-    private static QName parentContainer;
-
-    private static QNameModule bazModule;
-    private static QName outerContainer;
-
-    private static QName myContainer1;
-    private static QName myKeyedList;
-    private static QName myKeyLeaf;
-    private static QName myLeafInList1;
-    private static QName myLeafInList2;
-    private static QName myLeaf1;
-    private static QName myLeafList;
-
-    private static QName myContainer2;
-    private static QName innerContainer;
-    private static QName myLeaf2;
-    private static QName myLeaf3;
-    private static QName myChoice;
-    private static QName myLeafInCase2;
-
-    private static QName myContainer3;
-    private static QName myDoublyKeyedList;
-    private static QName myFirstKeyLeaf;
-    private static QName mySecondKeyLeaf;
-    private static QName myLeafInList3;
-
     @BeforeClass
     public static void setup() {
-        fooModule = QNameModule.create(URI.create("foo-namespace"));
-        parentContainer = QName.create(fooModule, "parent-container");
-
-        bazModule = QNameModule.create(URI.create("baz-namespace"));
-        outerContainer = QName.create(bazModule, "outer-container");
-
-        myContainer1 = QName.create(bazModule, "my-container-1");
-        myKeyedList = QName.create(bazModule, "my-keyed-list");
-        myKeyLeaf = QName.create(bazModule, "my-key-leaf");
-        myLeafInList1 = QName.create(bazModule, "my-leaf-in-list-1");
-        myLeafInList2 = QName.create(bazModule, "my-leaf-in-list-2");
-        myLeaf1 = QName.create(bazModule, "my-leaf-1");
-        myLeafList = QName.create(bazModule, "my-leaf-list");
-
-        myContainer2 = QName.create(bazModule, "my-container-2");
-        innerContainer = QName.create(bazModule, "inner-container");
-        myLeaf2 = QName.create(bazModule, "my-leaf-2");
-        myLeaf3 = QName.create(bazModule, "my-leaf-3");
-        myChoice = QName.create(bazModule, "my-choice");
-        myLeafInCase2 = QName.create(bazModule, "my-leaf-in-case-2");
-
-        myContainer3 = QName.create(bazModule, "my-container-3");
-        myDoublyKeyedList = QName.create(bazModule, "my-doubly-keyed-list");
-        myFirstKeyLeaf = QName.create(bazModule, "my-first-key-leaf");
-        mySecondKeyLeaf = QName.create(bazModule, "my-second-key-leaf");
-        myLeafInList3 = QName.create(bazModule, "my-leaf-in-list-3");
-
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/");
         parentContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
                 ImmutableList.of(parentContainer));
         outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil.findNodeInSchemaContext(schemaContext,
                 ImmutableList.of(outerContainer));
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
+        parentContainerSchema = null;
+        outerContainerSchema = null;
     }
 
     @Test

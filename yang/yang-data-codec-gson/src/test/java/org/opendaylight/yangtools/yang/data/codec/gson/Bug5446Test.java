@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URI;
 import java.net.URISyntaxException;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,18 +43,19 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5446Test {
 
-    private static QNameModule fooModuleQName;
-    private static QName rootQName;
-    private static QName ipAddressQName;
+    private static final QNameModule fooModuleQName = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
+    private static final QName rootQName = QName.create(fooModuleQName, "root");
+    private static final QName ipAddressQName = QName.create(fooModuleQName, "ip-address");
     private static SchemaContext schemaContext;
 
     @BeforeClass
     public static void init() {
-        fooModuleQName = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
-        rootQName = QName.create(fooModuleQName, "root");
-        ipAddressQName = QName.create(fooModuleQName, "ip-address");
-
         schemaContext = YangParserTestUtils.parseYangResources(Bug5446Test.class, "/bug5446/yang/foo.yang");
+    }
+
+    @AfterClass
+    public static void cleanup() {
+        schemaContext = null;
     }
 
     @Test

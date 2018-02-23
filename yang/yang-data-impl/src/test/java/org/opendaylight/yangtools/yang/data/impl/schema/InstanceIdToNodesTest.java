@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static org.junit.Assert.assertEquals;
 
 import java.util.Collections;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,13 +51,14 @@ public class InstanceIdToNodesTest {
     private final NodeWithValue<?> leafListWithValue = new NodeWithValue<>(
             leafList.getNodeType(), "abcd");
 
-    static SchemaContext createTestContext() {
-        return YangParserTestUtils.parseYangResources(InstanceIdToNodesTest.class, "/filter-test.yang");
-    }
-
     @BeforeClass
     public static void setUp() {
-        ctx = createTestContext();
+        ctx = YangParserTestUtils.parseYangResources(InstanceIdToNodesTest.class, "/filter-test.yang");
+    }
+
+    @AfterClass
+    public static void teardown() {
+        ctx = null;
     }
 
     @Test

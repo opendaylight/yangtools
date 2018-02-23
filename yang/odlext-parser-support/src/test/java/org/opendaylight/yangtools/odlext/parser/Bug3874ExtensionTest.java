@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 import java.util.List;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.OpenDaylightExtensionsStatements;
@@ -43,6 +44,11 @@ public class Bug3874ExtensionTest {
                 .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlStatementSupportOverride.getInstance())
                 .build();
+    }
+
+    @AfterClass
+    public static void freeReactor() {
+        reactor = null;
     }
 
     @Test
