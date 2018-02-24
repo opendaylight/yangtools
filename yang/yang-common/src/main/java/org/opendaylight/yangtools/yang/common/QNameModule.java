@@ -19,9 +19,10 @@ import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 
-public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable {
+public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
