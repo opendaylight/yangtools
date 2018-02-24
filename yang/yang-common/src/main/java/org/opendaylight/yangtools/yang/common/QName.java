@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.annotation.RegEx;
+import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -49,7 +50,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * affect equality and identity of two QNames and carry only information
  * which may be useful for serializers / deserializers.
  */
-public final class QName implements Immutable, Serializable, Comparable<QName> {
+public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 5398411242927766414L;
 
