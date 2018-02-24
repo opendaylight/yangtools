@@ -33,7 +33,6 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      * Returns statement, which was explicit declaration of this effective
      * statement.
      *
-     *
      * @return statement, which was explicit declaration of this effective
      *         statement or null if statement was inferred from context.
      */
@@ -43,21 +42,17 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
     /**
      * Returns value associated with supplied identifier.
      *
-     * @param <K>
-     *            Identifier type
-     * @param <V>
-     *            Value type
-     * @param <N>
-     *            Namespace identifier type
-     * @param namespace
-     *            Namespace type
-     * @param identifier
-     *            Identifier of element.
+     * @param <K> Identifier type
+     * @param <V> Value type
+     * @param <N> Namespace identifier type
+     * @param namespace Namespace type
+     * @param identifier Identifier of element.
      * @return Value if present, null otherwise.
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
+    // FIXME: 3.0.0: make this return an Optional, not a nullable
     @Nullable
-    <K,V,N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace,@Nonnull  K identifier);
+    <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace, @Nonnull K identifier);
 
     /**
      * Returns all local values from supplied namespace.
@@ -68,6 +63,7 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      * @param namespace Namespace type
      * @return Value if present, null otherwise.
      */
+    // FIXME: 3.0.0: make this contract return empty maps on non-presence
     @Nullable
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull Class<N> namespace);
 
@@ -80,6 +76,7 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      * @param namespace Namespace type
      * @return Key-value mappings, empty if the namespace does not exist.
      */
+    // FIXME: 3.0.0: remove this in favor of fixed getAll()
     default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(@NonNull final Class<N> namespace) {
         final Map<K, V> map = getAll(requireNonNull(namespace));
         return map == null ? ImmutableMap.of() : map;

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -46,17 +45,6 @@ public interface ModuleEffectiveStatement extends EffectiveStatement<String, Mod
     abstract class NameToEffectiveSubmoduleNamespace
             implements IdentifierNamespace<String, @NonNull SubmoduleEffectiveStatement> {
         private NameToEffectiveSubmoduleNamespace() {
-            // This class should never be subclassed
-        }
-    }
-
-    /**
-     * Namespace mapping all identities defined in this module (and its submodules). Identities are keyed by their
-     * QNameModule.
-     */
-    abstract class QNameToEffectiveIdentityNamespace
-            implements IdentifierNamespace<QName, @NonNull SubmoduleEffectiveStatement> {
-        private QNameToEffectiveIdentityNamespace() {
             // This class should never be subclassed
         }
     }
