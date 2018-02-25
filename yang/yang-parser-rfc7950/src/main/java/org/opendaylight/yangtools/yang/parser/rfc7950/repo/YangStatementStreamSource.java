@@ -25,12 +25,17 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
@@ -113,7 +118,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor.Loose(sourceName, writer, stmtDef).visit(context);
+        new StatementContextVisitor(sourceName, writer, stmtDef, null, YangVersion.VERSION_1).visit(context);
     }
 
     @Override
@@ -125,7 +130,12 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor.Loose(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion).visit(context);
+        new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
+            @Override
+            StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+                return stmtDef.getByNamespaceAndLocalName(module.getNamespace(), localName);
+            }
+        }.visit(context);
     }
 
     @Override
@@ -137,7 +147,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor.Loose(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
+        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
     }
 
     @Override
@@ -149,7 +159,13 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor.Strict(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
+        new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion) {
+            @Override
+            QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
+                return SourceException.throwIfNull(super.getValidStatementDefinition(keywordText, ref), ref,
+                    "%s is not a YANG statement or use of extension.", keywordText);
+            }
+        }.visit(context);
     }
 
     @Override

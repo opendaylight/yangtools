@@ -26,28 +26,30 @@ public class PrefixToModuleMap implements PrefixToModule {
         this(false);
     }
 
-    public PrefixToModuleMap(boolean preLinkageMap) {
+    @Deprecated
+    public PrefixToModuleMap(final boolean preLinkageMap) {
         this.preLinkageMap = preLinkageMap;
     }
 
-    public void put(String prefix, QNameModule module) {
+    public void put(final String prefix, final QNameModule module) {
         prefixToModuleMap.put(prefix, module);
         namespaceToModuleMap.put(module.getNamespace(), module);
     }
 
     @Nullable
     @Override
-    public QNameModule get(@Nonnull String prefix) {
+    public QNameModule get(@Nonnull final String prefix) {
         return prefixToModuleMap.get(prefix);
     }
 
     @Nullable
     @Override
-    public QNameModule getByNamespace(String namespace) throws URISyntaxException {
+    public QNameModule getByNamespace(final String namespace) throws URISyntaxException {
         return namespaceToModuleMap.get(new URI(namespace));
     }
 
     @Override
+    @Deprecated
     public boolean isPreLinkageMap() {
         return preLinkageMap;
     }
