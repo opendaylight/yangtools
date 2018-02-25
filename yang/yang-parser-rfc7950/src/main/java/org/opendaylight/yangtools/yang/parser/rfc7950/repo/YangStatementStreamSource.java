@@ -64,11 +64,11 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         }
     };
 
-    private final YangStatementParserListenerImpl yangStatementModelParser;
+    private final YangStatementParserVisitorImpl yangStatementModelParser;
     private final SourceIdentifier identifier;
     private final StatementContext context;
 
-    private YangStatementStreamSource(final SourceIdentifier identifier, final YangStatementParserListenerImpl parser,
+    private YangStatementStreamSource(final SourceIdentifier identifier, final YangStatementParserVisitorImpl parser,
             final StatementContext context) {
         this.identifier = Preconditions.checkNotNull(identifier);
         this.yangStatementModelParser = Preconditions.checkNotNull(parser);
@@ -91,7 +91,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         }
 
         final String sourceName = source.getSymbolicName().orElse(null);
-        final YangStatementParserListenerImpl parser = new YangStatementParserListenerImpl(sourceName);
+        final YangStatementParserVisitorImpl parser = new YangStatementParserVisitorImpl(sourceName);
         return new YangStatementStreamSource(source.getIdentifier(), parser, context);
     }
 
@@ -110,7 +110,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final StatementContext context,
         final String symbolicName) {
-        return new YangStatementStreamSource(identifier, new YangStatementParserListenerImpl(symbolicName), context);
+        return new YangStatementStreamSource(identifier, new YangStatementParserVisitorImpl(symbolicName), context);
     }
 
     @Override
