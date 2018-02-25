@@ -27,14 +27,28 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
 abstract class StatementContextVisitor {
-    static final class Loose extends StatementContextVisitor {
-        Loose(final String sourceName, final StatementWriter writer,
+    static final class PreLinkage extends StatementContextVisitor {
+        PreLinkage(final String sourceName, final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+            super(sourceName, writer, stmtDef, null, YangVersion.VERSION_1);
+        }
+    }
+
+    static final class Linkage extends StatementContextVisitor {
+        Linkage(final String sourceName, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
             super(sourceName, writer, stmtDef, prefixes, yangVersion);
         }
 
-        Loose(final String sourceName, final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-            this(sourceName, writer, stmtDef, null, YangVersion.VERSION_1);
+        @Override
+        StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+            return stmtDef.getByNamespaceAndLocalName(module.getNamespace(), localName);
+        }
+    }
+
+    static final class Loose extends StatementContextVisitor {
+        Loose(final String sourceName, final StatementWriter writer,
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
+            super(sourceName, writer, stmtDef, prefixes, yangVersion);
         }
     }
 
@@ -51,7 +65,9 @@ abstract class StatementContextVisitor {
         }
     }
 
-    private final QNameToStatementDefinition stmtDef;
+    // Visible for Linkage
+    final QNameToStatementDefinition stmtDef;
+
     private final StatementWriter writer;
     private final YangVersion yangVersion;
     private final PrefixToModule prefixes;
@@ -105,14 +121,12 @@ abstract class StatementContextVisitor {
         }
 
         final String localName = keywordText.substring(firstColon + 1);
-        final StatementDefinition foundStmtDef;
-        if (prefixes.isPreLinkageMap()) {
-            foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(), localName);
-        } else {
-            foundStmtDef = stmtDef.get(QName.create(qNameModule, localName));
-        }
-
+        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
         return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+    }
+
+    StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+        return stmtDef.get(QName.create(module, localName));
     }
 
     private void processStatement(final int myOffset, final StatementContext ctx) {

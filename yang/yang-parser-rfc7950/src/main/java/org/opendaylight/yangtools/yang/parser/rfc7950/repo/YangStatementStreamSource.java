@@ -113,7 +113,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        new StatementContextVisitor.Loose(sourceName, writer, stmtDef).visit(context);
+        new StatementContextVisitor.PreLinkage(sourceName, writer, stmtDef).visit(context);
     }
 
     @Override
@@ -125,7 +125,8 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
-        new StatementContextVisitor.Loose(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion).visit(context);
+        new StatementContextVisitor.Linkage(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion)
+            .visit(context);
     }
 
     @Override
