@@ -51,14 +51,14 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     }
 
     @SuppressWarnings("checkstyle:hiddenField")
-    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
+    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
         this.writer = writer;
         this.stmtDef = stmtDef;
         initCounters();
     }
 
     @SuppressWarnings("checkstyle:hiddenField")
-    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes) {
         this.writer = writer;
         this.stmtDef = stmtDef;
@@ -67,7 +67,7 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     }
 
     @SuppressWarnings("checkstyle:hiddenField")
-    public void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes, final YangVersion yangVersion) {
         this.yangVersion = yangVersion;
         setAttributes(writer, stmtDef, prefixes);

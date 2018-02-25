@@ -85,6 +85,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: remove this method or make it default
     void writeLinkage(StatementWriter writer, QNameToStatementDefinition stmtDef, PrefixToModule preLinkagePrefixes);
 
     /**
@@ -106,6 +107,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: make this method non-default
     default void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
         writeLinkage(writer, stmtDef, preLinkagePrefixes);
@@ -126,6 +128,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: remove this method or make it default
     void writeLinkageAndStatementDefinitions(StatementWriter writer, QNameToStatementDefinition stmtDef,
             PrefixToModule prefixes);
 
@@ -150,6 +153,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: make this method non-default
     default void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
         writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes);
@@ -169,6 +173,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: remove this method or make it default
     void writeFull(StatementWriter writer,QNameToStatementDefinition stmtDef, PrefixToModule prefixes);
 
     /**
@@ -189,6 +194,7 @@ public interface StatementStreamSource extends Identifiable<SourceIdentifier> {
      *             If source was is not valid, or provided statement writer
      *             failed to write statements.
      */
+    // FIXME: 3.0.0: make this method non-default
     default void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes, final YangVersion yangVersion) {
         writeFull(writer, stmtDef, prefixes);
