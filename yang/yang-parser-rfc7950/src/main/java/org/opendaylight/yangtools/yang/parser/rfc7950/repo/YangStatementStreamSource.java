@@ -64,15 +64,15 @@ public final class YangStatementStreamSource implements StatementStreamSource {
         }
     };
 
-    private final YangStatementParserListenerImpl yangStatementModelParser;
     private final SourceIdentifier identifier;
     private final StatementContext context;
+    private final String sourceName;
 
-    private YangStatementStreamSource(final SourceIdentifier identifier, final YangStatementParserListenerImpl parser,
-            final StatementContext context) {
+    private YangStatementStreamSource(final SourceIdentifier identifier,  final StatementContext context,
+            final String sourceName) {
         this.identifier = Preconditions.checkNotNull(identifier);
-        this.yangStatementModelParser = Preconditions.checkNotNull(parser);
         this.context = Preconditions.checkNotNull(context);
+        this.sourceName = sourceName;
     }
 
     /**
@@ -90,9 +90,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
             context = parseYangSource(source.getIdentifier(), stream);
         }
 
-        final String sourceName = source.getSymbolicName().orElse(null);
-        final YangStatementParserListenerImpl parser = new YangStatementParserListenerImpl(sourceName);
-        return new YangStatementStreamSource(source.getIdentifier(), parser, context);
+        return new YangStatementStreamSource(source.getIdentifier(), context, source.getSymbolicName().orElse(null));
     }
 
     /**
@@ -110,12 +108,12 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     public static YangStatementStreamSource create(final SourceIdentifier identifier, final StatementContext context,
         final String symbolicName) {
-        return new YangStatementStreamSource(identifier, new YangStatementParserListenerImpl(symbolicName), context);
+        return new YangStatementStreamSource(identifier, context, symbolicName);
     }
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        yangStatementModelParser.walk(writer, stmtDef, context);
+        new StatementContextVisitor.Loose(sourceName, writer, stmtDef).visit(context);
     }
 
     @Override
@@ -127,7 +125,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.walk(writer, stmtDef, preLinkagePrefixes, yangVersion, context);
+        new StatementContextVisitor.Loose(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion).visit(context);
     }
 
     @Override
@@ -139,7 +137,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.walk(writer, stmtDef, prefixes, yangVersion, context);
+        new StatementContextVisitor.Loose(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
     }
 
     @Override
@@ -151,7 +149,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.walk(writer, stmtDef, prefixes, yangVersion, context);
+        new StatementContextVisitor.Strict(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
     }
 
     @Override
