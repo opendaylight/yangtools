@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
-import com.google.common.base.Verify;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
@@ -41,6 +45,7 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     private final List<String> toBeSkipped = new ArrayList<>();
     private final Deque<Counter> counters = new ArrayDeque<>();
     private final String sourceName;
+
     private QNameToStatementDefinition stmtDef;
     private PrefixToModule prefixes;
     private StatementWriter writer;
@@ -51,38 +56,40 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     }
 
     @SuppressWarnings("checkstyle:hiddenField")
-    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        this.writer = writer;
-        this.stmtDef = stmtDef;
-        initCounters();
+    void walk(final StatementWriter writer, final QNameToStatementDefinition stmtDef, final StatementContext context) {
+        walk(writer, stmtDef, null, YangVersion.VERSION_1, context);
     }
 
     @SuppressWarnings("checkstyle:hiddenField")
-    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes) {
-        this.writer = writer;
-        this.stmtDef = stmtDef;
+    void walk(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
+            final PrefixToModule prefixes, final YangVersion yangVersion, final StatementContext context) {
+        // Verify & initialize state
+        verify(toBeSkipped.isEmpty());
+        verify(counters.isEmpty());
+        this.writer = requireNonNull(writer);
+        this.stmtDef = requireNonNull(stmtDef);
         this.prefixes = prefixes;
-        initCounters();
-    }
-
-    @SuppressWarnings("checkstyle:hiddenField")
-    void setAttributes(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes, final YangVersion yangVersion) {
-        this.yangVersion = yangVersion;
-        setAttributes(writer, stmtDef, prefixes);
-    }
-
-    private void initCounters() {
-        counters.clear();
+        this.yangVersion = requireNonNull(yangVersion);
         counters.push(new Counter());
+
+        try {
+            ParseTreeWalker.DEFAULT.walk(this, context);
+        } finally {
+            // Reset out state
+            this.writer = null;
+            this.stmtDef = null;
+            this.prefixes = null;
+            this.yangVersion = null;
+            toBeSkipped.clear();
+            counters.clear();
+        }
     }
 
     @Override
     public void enterStatement(final StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
                 ctx.getStart().getCharPositionInLine());
-        final String keywordTxt = Verify.verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
+        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final QName validStatementDefinition = getValidStatementDefinition(prefixes, stmtDef, keywordTxt, ref);
 
         final int childId = counters.peek().getAndIncrement();

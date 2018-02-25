@@ -115,8 +115,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writePreLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-        yangStatementModelParser.setAttributes(writer, stmtDef);
-        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
+        yangStatementModelParser.walk(writer, stmtDef, context);
     }
 
     @Override
@@ -128,8 +127,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, preLinkagePrefixes, yangVersion);
-        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
+        yangStatementModelParser.walk(writer, stmtDef, preLinkagePrefixes, yangVersion, context);
     }
 
     @Override
@@ -141,8 +139,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes, yangVersion);
-        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
+        yangStatementModelParser.walk(writer, stmtDef, prefixes, yangVersion, context);
     }
 
     @Override
@@ -154,8 +151,7 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule prefixes, final YangVersion yangVersion) {
-        yangStatementModelParser.setAttributes(writer, stmtDef, prefixes, yangVersion);
-        ParseTreeWalker.DEFAULT.walk(yangStatementModelParser, context);
+        yangStatementModelParser.walk(writer, stmtDef, prefixes, yangVersion, context);
     }
 
     @Override
