@@ -15,11 +15,10 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.List;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseListener;
+import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParserBaseVisitor;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -33,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-final class YangStatementParserListenerImpl extends YangStatementParserBaseListener {
+final class YangStatementParserVisitorImpl extends YangStatementParserBaseVisitor<Void> {
     private static final class Counter {
         private int value = 0;
 
@@ -51,7 +50,7 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     private StatementWriter writer;
     private YangVersion yangVersion;
 
-    YangStatementParserListenerImpl(final String sourceName) {
+    YangStatementParserVisitorImpl(final String sourceName) {
         this.sourceName = sourceName;
     }
 
@@ -73,7 +72,7 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
         counters.push(new Counter());
 
         try {
-            ParseTreeWalker.DEFAULT.walk(this, context);
+            visitStatement(context);
         } finally {
             // Reset out state
             this.writer = null;
@@ -86,9 +85,9 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
     }
 
     @Override
-    public void enterStatement(final StatementContext ctx) {
+    public Void visitStatement(final StatementContext ctx) {
         final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
-                ctx.getStart().getCharPositionInLine());
+            ctx.getStart().getCharPositionInLine());
         final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
         final QName validStatementDefinition = getValidStatementDefinition(prefixes, stmtDef, keywordTxt, ref);
 
@@ -98,30 +97,27 @@ final class YangStatementParserListenerImpl extends YangStatementParserBaseListe
             SourceException.throwIf(writer.getPhase() == ModelProcessingPhase.FULL_DECLARATION, ref,
                     "%s is not a YANG statement or use of extension.", keywordTxt);
             toBeSkipped.add(keywordTxt);
-            return;
+            return null;
         }
 
         final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-        final String argument = argumentCtx != null
-                ? ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref) : null;
+        final String argument = argumentCtx == null ? null
+                : ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref);
         writer.startStatement(childId, validStatementDefinition, argument, ref);
-    }
 
-    @Override
-    public void exitStatement(final StatementContext ctx) {
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(
-            sourceName, ctx.getStart().getLine(), ctx.getStart().getCharPositionInLine());
+        // Takes care of any children
+        // TODO: with some guidance from startStatement() we can skip visiting already parsed children
+        // FIXME: we should in-line this which will eliminate counters and toBeSkipped
+        super.visitStatement(ctx);
 
-        final KeywordContext keyword = ctx.getChild(KeywordContext.class, 0);
-        final String statementName = keyword.getText();
-        if (stmtDef != null && getValidStatementDefinition(prefixes, stmtDef, statementName, ref) != null
-                && toBeSkipped.isEmpty()) {
+        if (toBeSkipped.isEmpty()) {
             writer.endStatement(ref);
         }
 
         // No-op if the statement is not on the list
-        toBeSkipped.remove(statementName);
+        toBeSkipped.remove(keywordTxt);
         counters.pop();
+        return null;
     }
 
     /**
