@@ -12,6 +12,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,8 +24,9 @@ import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.WritableObject;
 
-public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier {
+public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
@@ -80,6 +84,20 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     /**
+     * Read a QNameModule from a DataInput. The format is expected to match the output format
+     * of {@link #writeTo(DataOutput)}.
+     *
+     * @param in DataInput to read
+     * @return A QNameModule instance
+     * @throws IOException if I/O error occurs
+     */
+    public static QNameModule readFrom(final DataInput in) throws IOException {
+        final String namespace = in.readUTF();
+        final String revision = in.readUTF();
+        return new QNameModule(URI.create(namespace), revision.isEmpty() ? null : Revision.of(revision));
+    }
+
+    /**
      * Returns the namespace of the module which is specified as argument of
      * YANG Module <b><font color="#00FF00">namespace</font></b> keyword.
      *
@@ -107,6 +125,12 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
             return cmp;
         }
         return Revision.compare(revision, o.revision);
+    }
+
+    @Override
+    public void writeTo(final DataOutput out) throws IOException {
+        out.writeUTF(namespace.toString());
+        out.writeUTF(revision == null ? "" : revision.toString());
     }
 
     @Override

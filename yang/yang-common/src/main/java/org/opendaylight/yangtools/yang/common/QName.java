@@ -13,6 +13,9 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -25,6 +28,7 @@ import javax.annotation.Nullable;
 import javax.annotation.RegEx;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but
@@ -50,7 +54,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * affect equality and identity of two QNames and carry only information
  * which may be useful for serializers / deserializers.
  */
-public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier {
+public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 5398411242927766414L;
 
@@ -243,6 +247,19 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
+     * Read a QName from a DataInput. The format is expected to match the output format of {@link #writeTo(DataOutput)}.
+     *
+     * @param in DataInput to read
+     * @return A QName instance
+     * @throws IOException if I/O error occurs
+     */
+    public static QName readFrom(final DataInput in) throws IOException {
+        final QNameModule module = QNameModule.readFrom(in);
+        final String localName = in.readUTF();
+        return new QName(module, localName);
+    }
+
+    /**
      * Get the module component of the QName.
      *
      * @return Module component
@@ -407,5 +424,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
             return result;
         }
         return module.compareTo(o.module);
+    }
+
+
+    @Override
+    public void writeTo(final DataOutput out) throws IOException {
+        module.writeTo(out);
+        out.writeUTF(localName);
     }
 }
