@@ -26,38 +26,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
 
-abstract class StatementContextVisitor {
-    static final class Loose extends StatementContextVisitor {
-        Loose(final String sourceName, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
-            super(sourceName, writer, stmtDef, prefixes, yangVersion);
-        }
-
-        Loose(final String sourceName, final StatementWriter writer, final QNameToStatementDefinition stmtDef) {
-            this(sourceName, writer, stmtDef, null, YangVersion.VERSION_1);
-        }
-    }
-
-    static final class Strict extends StatementContextVisitor {
-        Strict(final String sourceName, final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
-            super(sourceName, writer, stmtDef, prefixes, yangVersion);
-        }
-
-        @Override
-        QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
-            return SourceException.throwIfNull(super.getValidStatementDefinition(keywordText, ref), ref,
-                "%s is not a YANG statement or use of extension.", keywordText);
-        }
-    }
-
+class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
     private final StatementWriter writer;
     private final YangVersion yangVersion;
     private final PrefixToModule prefixes;
     private final String sourceName;
 
-    private StatementContextVisitor(final String sourceName, final StatementWriter writer,
+    StatementContextVisitor(final String sourceName, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
         this.writer = requireNonNull(writer);
         this.stmtDef = requireNonNull(stmtDef);
@@ -105,14 +81,12 @@ abstract class StatementContextVisitor {
         }
 
         final String localName = keywordText.substring(firstColon + 1);
-        final StatementDefinition foundStmtDef;
-        if (prefixes.isPreLinkageMap()) {
-            foundStmtDef = stmtDef.getByNamespaceAndLocalName(qNameModule.getNamespace(), localName);
-        } else {
-            foundStmtDef = stmtDef.get(QName.create(qNameModule, localName));
-        }
-
+        final StatementDefinition foundStmtDef = resolveStatement(qNameModule, localName);
         return foundStmtDef != null ? foundStmtDef.getStatementName() : null;
+    }
+
+    StatementDefinition resolveStatement(final QNameModule module, final String localName) {
+        return stmtDef.get(QName.create(module, localName));
     }
 
     private void processStatement(final int myOffset, final StatementContext ctx) {
