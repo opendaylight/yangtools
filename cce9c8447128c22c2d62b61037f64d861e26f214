@@ -45,6 +45,30 @@
       "revId": "cce9c8447128c22c2d62b61037f64d861e26f214",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "204f40a1_501fc956",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/namespace/ChildSchemaNodeNamespace.java",
+        "patchSetId": 9
+      },
+      "lineNbr": 59,
+      "author": {
+        "id": 7228
+      },
+      "writtenOn": "2018-02-26T02:08:15Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "32beeb3f_6bd3773b",
+      "range": {
+        "startLine": 59,
+        "startChar": 16,
+        "endLine": 59,
+        "endChar": 46
+      },
+      "revId": "cce9c8447128c22c2d62b61037f64d861e26f214",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
