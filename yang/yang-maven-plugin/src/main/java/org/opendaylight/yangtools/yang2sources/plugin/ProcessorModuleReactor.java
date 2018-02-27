@@ -10,9 +10,14 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
+import com.google.common.io.CharStreams;
 import java.io.IOException;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -21,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
@@ -37,21 +41,24 @@ final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 
     private final Map<SourceIdentifier, YangTextSchemaSource> modelsInProject;
+    private final Collection<ScannedDependency> dependencies;
     private final YangParser parser;
 
-    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject) {
+    ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
+        final Collection<ScannedDependency> dependencies) {
         this.parser = Preconditions.checkNotNull(parser);
         this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
+        this.dependencies = ImmutableList.copyOf(dependencies);
     }
 
-    void registerSourceFromDependency(final YangTextSchemaSource source) throws YangSyntaxErrorException, IOException {
-        // This source is coming from a dependency:
-        // - its identifier should be accurate, as it should have been processed into a file with accurate name
-        // - it is not required to be parsed, hence we add it just as a library source
-        parser.addLibSource(source);
-    }
+    ContextHolder toContext() throws IOException, YangParserException {
+        for (YangTextSchemaSource source : toUniqueSources(dependencies)) {
+            // This source is coming from a dependency:
+            // - its identifier should be accurate, as it should have been processed into a file with accurate name
+            // - it is not required to be parsed, hence we add it just as a library source
+            parser.addLibSource(source);
+        }
 
-    ContextHolder toContext() throws YangParserException {
         final SchemaContext schemaContext = Verify.verifyNotNull(parser.buildSchemaContext());
 
         final Set<Module> modules = new HashSet<>();
@@ -76,6 +83,21 @@ final class ProcessorModuleReactor {
 
     Collection<YangTextSchemaSource> getModelsInProject() {
         return modelsInProject.values();
+    }
+
+    private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<ScannedDependency> dependencies)
+            throws IOException {
+        final Map<String, YangTextSchemaSource> byContent = new HashMap<>();
+
+        for (ScannedDependency dependency : dependencies) {
+            for (YangTextSchemaSource s : dependency.sources()) {
+                try (Reader reader = s.asCharSource(StandardCharsets.UTF_8).openStream()) {
+                    final String contents = CharStreams.toString(reader);
+                    byContent.putIfAbsent(contents, s);
+                }
+            }
+        }
+        return byContent.values();
     }
 
     @Override

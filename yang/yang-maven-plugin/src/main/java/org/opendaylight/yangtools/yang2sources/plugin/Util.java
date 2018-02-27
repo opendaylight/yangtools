@@ -7,37 +7,26 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static org.opendaylight.yangtools.yang.common.YangConstants.RFC6020_YANG_FILE_EXTENSION;
 import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.LOG_PREFIX;
-import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING;
-import static org.opendaylight.yangtools.yang2sources.plugin.YangToSourcesProcessor.META_INF_YANG_STRING_JAR;
 
-import com.google.common.io.ByteSource;
-import com.google.common.io.ByteStreams;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 import org.apache.maven.artifact.Artifact;
 import org.apache.maven.artifact.repository.ArtifactRepository;
 import org.apache.maven.artifact.resolver.ArtifactResolutionRequest;
 import org.apache.maven.artifact.resolver.ArtifactResolutionResult;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Plugin;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,113 +142,6 @@ final class Util {
 
     private static boolean isJar(final File element) {
         return element.isFile() && element.getName().endsWith(".jar");
-    }
-
-    @SuppressWarnings("checkstyle:illegalCatch")
-    static List<YangTextSchemaSource> findYangFilesInDependenciesAsStream(final MavenProject project)
-            throws MojoFailureException {
-        try {
-            final List<File> filesOnCp = Util.getClassPath(project);
-            LOG.info("{} Searching for yang files in following dependencies: {}", LOG_PREFIX, filesOnCp);
-
-            final List<YangTextSchemaSource> yangsFromDependencies = new ArrayList<>();
-            for (File file : filesOnCp) {
-                final List<String> foundFilesForReporting = new ArrayList<>();
-                // is it jar file or directory?
-                if (file.isDirectory()) {
-                    //FIXME: code duplicate
-                    File yangDir = new File(file, META_INF_YANG_STRING);
-                    if (yangDir.exists() && yangDir.isDirectory()) {
-                        File[] yangFiles = yangDir.listFiles(
-                            (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
-                        for (final File yangFile : yangFiles) {
-                            foundFilesForReporting.add(yangFile.getName());
-                            yangsFromDependencies.add(YangTextSchemaSource.forFile(yangFile));
-                        }
-                    }
-                } else {
-                    try (ZipFile zip = new ZipFile(file)) {
-                        final Enumeration<? extends ZipEntry> entries = zip.entries();
-                        while (entries.hasMoreElements()) {
-                            final ZipEntry entry = entries.nextElement();
-                            final String entryName = entry.getName();
-
-                            if (entryName.startsWith(META_INF_YANG_STRING_JAR) && !entry.isDirectory()
-                                    && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
-                                foundFilesForReporting.add(entryName);
-
-                                yangsFromDependencies.add(YangTextSchemaSource.delegateForByteSource(
-                                    entryName.substring(entryName.lastIndexOf('/') + 1),
-                                    ByteSource.wrap(ByteStreams.toByteArray(zip.getInputStream(entry)))));
-                            }
-                        }
-                    }
-                }
-                if (foundFilesForReporting.size() > 0) {
-                    LOG.info("{} Found {} yang files in {}: {}", LOG_PREFIX, foundFilesForReporting.size(), file,
-                        foundFilesForReporting);
-                }
-
-            }
-
-            return yangsFromDependencies;
-        } catch (Exception e) {
-            throw new MojoFailureException(e.getMessage(), e);
-        }
-    }
-
-    /**
-     * Find all dependencies which contains yang sources.
-     * Returns collection of YANG files and Zip files which contains YANG files.
-     *
-     */
-    //  FIXME: Rename to what class is actually doing.
-    @SuppressWarnings("checkstyle:illegalCatch")
-    static Collection<File> findYangFilesInDependencies(final MavenProject project) throws MojoFailureException {
-        final List<File> yangsFilesFromDependencies = new ArrayList<>();
-
-        final List<File> filesOnCp;
-        try {
-            filesOnCp = Util.getClassPath(project);
-        } catch (Exception e) {
-            throw new MojoFailureException("Failed to scan for YANG files in dependencies", e);
-        }
-        LOG.info("{} Searching for yang files in following dependencies: {}", LOG_PREFIX, filesOnCp);
-
-        for (File file : filesOnCp) {
-            try {
-                // is it jar file or directory?
-                if (file.isDirectory()) {
-                    //FIXME: code duplicate
-                    File yangDir = new File(file, META_INF_YANG_STRING);
-                    if (yangDir.exists() && yangDir.isDirectory()) {
-                        File[] yangFiles = yangDir.listFiles(
-                            (dir, name) -> name.endsWith(RFC6020_YANG_FILE_EXTENSION) && new File(dir, name).isFile());
-
-                        yangsFilesFromDependencies.addAll(Arrays.asList(yangFiles));
-                    }
-                } else {
-                    try (ZipFile zip = new ZipFile(file)) {
-
-                        final Enumeration<? extends ZipEntry> entries = zip.entries();
-                        while (entries.hasMoreElements()) {
-                            ZipEntry entry = entries.nextElement();
-                            String entryName = entry.getName();
-
-                            if (entryName.startsWith(META_INF_YANG_STRING_JAR)
-                                    && !entry.isDirectory() && entryName.endsWith(RFC6020_YANG_FILE_EXTENSION)) {
-                                LOG.debug("{} Found a YANG file in {}: {}", LOG_PREFIX, file, entryName);
-                                yangsFilesFromDependencies.add(file);
-                                break;
-                            }
-                        }
-                    }
-                }
-            } catch (Exception e) {
-                throw new MojoFailureException("Failed to scan for YANG files in dependency: " + file.toString(), e);
-            }
-        }
-        return yangsFilesFromDependencies;
     }
 
     static SourceIdentifier moduleToIdentifier(final Module module) {

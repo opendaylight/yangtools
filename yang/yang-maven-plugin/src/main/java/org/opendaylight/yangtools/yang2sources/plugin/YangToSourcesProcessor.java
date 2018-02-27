@@ -12,14 +12,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.io.CharStreams;
 import java.io.File;
 import java.io.IOException;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.AbstractMap.SimpleImmutableEntry;
@@ -143,19 +141,21 @@ class YangToSourcesProcessor {
 
         final ProcessorModuleReactor reactor = optReactor.get();
         if (!skip) {
+            final Stopwatch watch = Stopwatch.createStarted();
             final ContextHolder holder;
 
             try {
-                holder = createContextHolder(reactor);
+                holder = reactor.toContext();
             } catch (YangParserException e) {
                 throw new MojoFailureException("Failed to process reactor " + reactor, e);
             } catch (IOException e) {
                 throw new MojoExecutionException("Failed to read reactor " + reactor, e);
             }
 
+            LOG.info("{} YANG models processed in {}", LOG_PREFIX, watch);
             generateSources(holder, codeGenerators);
         } else {
-            LOG.info("Skipping YANG code generation because property yang.skip is true");
+            LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
         }
 
         // add META_INF/yang
@@ -237,11 +237,20 @@ class YangToSourcesProcessor {
     private Optional<ProcessorModuleReactor> createReactor(final StatementParserMode parserMode,
             final List<File> yangFilesInProject) throws MojoExecutionException {
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
-        try {
 
+        try {
             final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
+            final Collection<ScannedDependency> dependencies;
             if (inspectDependencies) {
-                allFiles.addAll(Util.findYangFilesInDependencies(project));
+                dependencies = new ArrayList<>();
+                final Stopwatch watch = Stopwatch.createStarted();
+                ScannedDependency.scanDependencies(project).forEach(dep -> {
+                    allFiles.add(dep.file());
+                    dependencies.add(dep);
+                });
+                LOG.info("{} Found {} dependencies in {}", LOG_PREFIX, dependencies.size(), watch);
+            } else {
+                dependencies = ImmutableList.of();
             }
 
             /*
@@ -270,10 +279,10 @@ class YangToSourcesProcessor {
                 }
             }
 
-            LOG.debug("Processed project files: {}", yangFilesInProject);
-            LOG.info("{} Project model files parsed: {}", LOG_PREFIX, yangFilesInProject.size());
+            LOG.debug("Found project files: {}", yangFilesInProject);
+            LOG.info("{} Project model files found: {}", LOG_PREFIX, yangFilesInProject.size());
 
-            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject);
+            final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
             LOG.debug("Initialized reactor {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
         } catch (Exception e) {
@@ -283,25 +292,6 @@ class YangToSourcesProcessor {
             throw new MojoExecutionException(LOG_PREFIX + " Unable to parse YANG files from " + yangFilesRootDir,
                 rootCause);
         }
-    }
-
-    private ContextHolder createContextHolder(final ProcessorModuleReactor reactor) throws MojoFailureException,
-            IOException, YangParserException {
-        /**
-         * Set contains all modules generated from input sources. Number of
-         * modules may differ from number of sources due to submodules
-         * (parsed submodule's data are added to its parent module). Set
-         * cannot contains null values.
-         */
-        if (inspectDependencies) {
-            final List<YangTextSchemaSource> sourcesInDependencies = Util.findYangFilesInDependenciesAsStream(
-                project);
-            for (YangTextSchemaSource s : toUniqueSources(sourcesInDependencies)) {
-                reactor.registerSourceFromDependency(s);
-            }
-        }
-
-        return reactor.toContext();
     }
 
     private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
@@ -318,18 +308,6 @@ class YangToSourcesProcessor {
             }
             return true;
         }).filter(f -> f.getName().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)).collect(Collectors.toList());
-    }
-
-    private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<YangTextSchemaSource> sources)
-            throws IOException {
-        final Map<String, YangTextSchemaSource> byContent = new HashMap<>();
-        for (YangTextSchemaSource s : sources) {
-            try (Reader reader = s.asCharSource(StandardCharsets.UTF_8).openStream()) {
-                final String contents = CharStreams.toString(reader);
-                byContent.putIfAbsent(contents, s);
-            }
-        }
-        return byContent.values();
     }
 
     /**
@@ -400,7 +378,9 @@ class YangToSourcesProcessor {
         Collection<File> generated = codeGenerator.generateSources(context.getContext(), outputDir,
             context.getYangModules(), context::moduleToResourcePath);
 
-        LOG.info("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(), generated);
+        LOG.debug("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(), generated);
+        LOG.info("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(),
+                generated == null ? 0 : generated.size());
     }
 
     /**
