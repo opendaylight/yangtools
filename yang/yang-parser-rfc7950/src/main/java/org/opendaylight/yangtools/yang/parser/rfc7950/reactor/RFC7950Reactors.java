@@ -127,7 +127,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionModuleName
 import org.opendaylight.yangtools.yang.parser.spi.meta.SemanticVersionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementDefinitionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupportBundle;
-import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToModuleContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleCtx;
 import org.opendaylight.yangtools.yang.parser.spi.source.BelongsToPrefixToModuleName;
@@ -295,7 +294,6 @@ public final class RFC7950Reactors {
             .addSupport(WhenStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1, AugmentStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AugmentStatementRFC7950Support.getInstance())
-            .addSupport(AugmentToChoiceNamespace.BEHAVIOUR)
             .addVersionSpecificSupport(VERSION_1, RefineStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, RefineStatementRFC7950Support.getInstance())
             .addSupport(FeatureStatementSupport.getInstance())
@@ -319,7 +317,10 @@ public final class RFC7950Reactors {
             .put(ValidationBundleType.SUPPORTED_REFINE_SUBSTATEMENTS,
                 YangValidationBundles.SUPPORTED_REFINE_SUBSTATEMENTS)
             .put(ValidationBundleType.SUPPORTED_AUGMENT_TARGETS, YangValidationBundles.SUPPORTED_AUGMENT_TARGETS)
+
+            // FIXME: 3.0.0: we do not seem to need this validation bundle
             .put(ValidationBundleType.SUPPORTED_CASE_SHORTHANDS, YangValidationBundles.SUPPORTED_CASE_SHORTHANDS)
+
             .put(ValidationBundleType.SUPPORTED_DATA_NODES, YangValidationBundles.SUPPORTED_DATA_NODES)
             .build();
 
