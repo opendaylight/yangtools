@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
@@ -109,16 +108,21 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                     augmentNode.setIsSupportedToBuildEffective(false);
                     return;
                 }
-                /**
-                 * Marks case short hand in augment
+
+                /*
+                 * FIXME: The mechanics here are a bit contrived: we need to check if this augmentation is introducing
+                 *        any statements which induce an implicit statement to be created. If that is the case, we need
+                 *        to rework the definition of this statement to account for those implicit statements.
+                 *
+                 *        We are in API freeze and we should have a quick way of checking if the statement support
+                 *        wishes to customize any of our nodes :( We need to come up with something...
                  */
-                if (augmentTargetCtx.getPublicDefinition() == YangStmtMapping.CHOICE) {
-                    augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, Boolean.TRUE);
-                }
+                final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
+
+
 
                 // FIXME: this is a workaround for models which augment a node which is added via an extension
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
-                final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
