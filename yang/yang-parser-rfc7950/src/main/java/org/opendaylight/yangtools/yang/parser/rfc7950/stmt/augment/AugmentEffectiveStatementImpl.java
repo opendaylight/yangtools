@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
+import static com.google.common.base.Verify.verify;
+
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -32,6 +36,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.WhenEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDocumentedDataNodeContainer;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 final class AugmentEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<SchemaNodeIdentifier, AugmentStatement>
@@ -75,6 +80,20 @@ final class AugmentEffectiveStatementImpl
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         this.unknownNodes = listBuilder.build();
+    }
+
+    @Override
+    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+            final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> ctx,
+            final Collection<? extends StmtContext<?, ?, ?>> substatements) {
+        final StatementContextBase<?, ?, ?> implicitDef = ctx.getFromNamespace(AugmentImplicitHandlingNamespace.class,
+            ctx);
+        return implicitDef == null ? super.initSubstatements(ctx, substatements)
+                : Collections2.transform(Collections2.filter(substatements, StmtContext::isSupportedToBuildEffective),
+                    subCtx -> {
+                        verify(subCtx instanceof StatementContextBase);
+                        return implicitDef.wrapWithImplicit((StatementContextBase<?, ?, ?>) subCtx).buildEffective();
+                    });
     }
 
     @Override
