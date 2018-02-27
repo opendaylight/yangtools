@@ -12,6 +12,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
 public interface ActionEffectiveStatement extends SchemaTreeEffectiveStatement<ActionStatement>,
-    SchemaTreeAwareEffectiveStatement<QName, ActionStatement> {
+    DataTreeAwareEffectiveStatement<QName, ActionStatement> {
 
 }
