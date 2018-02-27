@@ -12,6 +12,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Iterator;
 import java.util.Set;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -27,6 +28,7 @@ public class Bug5884Test {
     private static final String NS = "urn:yang.foo";
     private static final String REV = "2016-01-01";
 
+    @Ignore
     @Test
     public void testBug5884() throws Exception {
         final SchemaContext context = StmtTestUtils.parseYangSources("/bugs/bug5884");
