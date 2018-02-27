@@ -55,23 +55,21 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
         for (EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DataSchemaNode) {
                 final DataSchemaNode dataSchemaNode = (DataSchemaNode) stmt;
-                if (!mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
-                    /**
-                     * Add case short hand when augmenting choice with short hand
-                     **/
-                    if (this instanceof AugmentationSchemaNode
-                            && !(stmt instanceof CaseSchemaNode || stmt instanceof ChoiceSchemaNode)
-                            && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
-                            && Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
-                        final ImplicitCaseSchemaNode caseShorthand = new ImplicitCaseSchemaNode(dataSchemaNode);
-                        mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
-                        mutablePublicChildNodes.add(caseShorthand);
-                    } else {
-                        mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
-                        mutablePublicChildNodes.add(dataSchemaNode);
-                    }
-                } else {
+                if (mutableChildNodes.containsKey(dataSchemaNode.getQName())) {
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
+                }
+
+                //  Add case short hand when augmenting choice with short hand
+                if (this instanceof AugmentationSchemaNode
+                        && !(stmt instanceof CaseSchemaNode || stmt instanceof ChoiceSchemaNode)
+                        && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
+                        && Boolean.TRUE.equals(ctx.getFromNamespace(AugmentToChoiceNamespace.class, ctx))) {
+                    final ImplicitCaseSchemaNode caseShorthand = new ImplicitCaseSchemaNode(dataSchemaNode);
+                    mutableChildNodes.put(caseShorthand.getQName(), caseShorthand);
+                    mutablePublicChildNodes.add(caseShorthand);
+                } else {
+                    mutableChildNodes.put(dataSchemaNode.getQName(), dataSchemaNode);
+                    mutablePublicChildNodes.add(dataSchemaNode);
                 }
             }
             if (stmt instanceof UsesNode) {
