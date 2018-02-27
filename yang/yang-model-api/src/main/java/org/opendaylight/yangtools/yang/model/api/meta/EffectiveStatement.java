@@ -22,13 +22,10 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Effective model statement which should be used to derive application behaviour.
  *
- * @param <A>
- *            Argument type ({@link Void} if statement does not have argument.)
- * @param <S>
- *            Class representing declared version of this statement.
+ * @param <A> Argument type ({@link Void} if statement does not have argument.)
+ * @param <D> Class representing declared version of this statement.
  */
-public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends ModelStatement<A> {
-
+public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
     /**
      * Returns statement, which was explicit declaration of this effective
      * statement.
@@ -37,7 +34,7 @@ public interface EffectiveStatement<A, S extends DeclaredStatement<A>> extends M
      *         statement or null if statement was inferred from context.
      */
     @Nullable
-    S getDeclared();
+    D getDeclared();
 
     /**
      * Returns value associated with supplied identifier.
