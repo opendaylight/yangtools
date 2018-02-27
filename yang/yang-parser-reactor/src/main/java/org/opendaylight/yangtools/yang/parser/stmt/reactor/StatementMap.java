@@ -48,21 +48,41 @@ abstract class StatementMap {
         int size() {
             return 0;
         }
+
+        @Override
+        StatementMap ensureCapacity(final int expectedLimit) {
+            return expectedLimit < 2 ? this : new Regular(expectedLimit);
+        }
+
+        @Override
+        int capacity() {
+            return 0;
+        }
     }
 
     private static final class Regular extends StatementMap {
         private StatementContextBase<?, ?, ?>[] elements;
+        private int size;
+
+        Regular(final int expectedLimit) {
+            elements = new StatementContextBase<?, ?, ?>[expectedLimit];
+        }
 
         Regular(final int index, final StatementContextBase<?, ?, ?> object) {
-            elements = new StatementContextBase<?, ?, ?>[index + 1];
-            elements[index] = requireNonNull(object);
+            this(index + 1, index, object);
         }
 
         Regular(final StatementContextBase<?, ?, ?> object0, final int index,
                 final StatementContextBase<?, ?, ?> object) {
-            elements = new StatementContextBase<?, ?, ?>[index + 1];
-            elements[0] = requireNonNull(object0);
+            this(index + 1, 0, object0);
             elements[index] = requireNonNull(object);
+            size = 2;
+        }
+
+        Regular(final int expectedLimit, final int index, final StatementContextBase<?, ?, ?> object) {
+            this(expectedLimit);
+            elements[index] = requireNonNull(object);
+            size = 1;
         }
 
         @Override
@@ -79,10 +99,12 @@ abstract class StatementMap {
             if (index < elements.length) {
                 checkArgument(elements[index] == null);
             } else {
+                // FIXME: detect linear growth
                 elements = Arrays.copyOf(elements, index + 1);
             }
 
             elements[index] = requireNonNull(obj);
+            size++;
             return this;
         }
 
@@ -93,24 +115,26 @@ abstract class StatementMap {
 
         @Override
         int size() {
-            return countElements(elements);
+            return size;
         }
-    }
 
-    static int countElements(final Object[] elements) {
-        // Optimized for non-sparse case
-        int nulls = 0;
-        for (Object e : elements) {
-            if (e == null) {
-                nulls++;
+        @Override
+        StatementMap ensureCapacity(final int expectedLimit) {
+            if (elements.length < expectedLimit) {
+                elements = Arrays.copyOf(elements, expectedLimit);
             }
+            return this;
         }
 
-        return elements.length - nulls;
+        @Override
+        int capacity() {
+            return elements.length;
+        }
     }
 
     private static final class RegularAsCollection<T> extends AbstractCollection<T> {
         private final T[] elements;
+        private int size;
 
         RegularAsCollection(final T[] elements) {
             this.elements = Preconditions.checkNotNull(elements);
@@ -127,8 +151,7 @@ abstract class StatementMap {
 
         @Override
         public boolean isEmpty() {
-            // This has a single-use and when it is instantiated, we know to have at least two items
-            return false;
+            return size != 0;
         }
 
         @Override
@@ -152,7 +175,7 @@ abstract class StatementMap {
 
         @Override
         public int size() {
-            return countElements(elements);
+            return size;
         }
     }
 
@@ -181,6 +204,16 @@ abstract class StatementMap {
 
         @Override
         int size() {
+            return 1;
+        }
+
+        @Override
+        StatementMap ensureCapacity(final int expectedLimit) {
+            return expectedLimit < 2 ? this : new Regular(expectedLimit, 0, object);
+        }
+
+        @Override
+        int capacity() {
             return 1;
         }
     }
@@ -219,4 +252,8 @@ abstract class StatementMap {
     abstract @Nonnull Collection<StatementContextBase<?, ?, ?>> values();
 
     abstract int size();
+
+    abstract StatementMap ensureCapacity(int expectedLimit);
+
+    abstract int capacity();
 }

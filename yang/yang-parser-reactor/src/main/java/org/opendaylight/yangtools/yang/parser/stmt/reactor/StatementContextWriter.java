@@ -48,6 +48,7 @@ final class StatementContextWriter implements StatementWriter {
     public void storeStatement(final int expectedChildren, final boolean fullyDefined) {
         Preconditions.checkState(current != null);
         Preconditions.checkArgument(expectedChildren >= 0);
+        current.resizeSubstatements(expectedChildren);
 
         if (fullyDefined) {
             current.setFullyDefined();

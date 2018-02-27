@@ -439,6 +439,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return createSubstatement(offset, def, ImplicitSubstatement.of(ref), argument);
     }
 
+    public void appendImplicitStatement(final StatementSupport<?, ?, ?> statementToAdd) {
+        createSubstatement(substatements.capacity(), new StatementDefinitionContext<>(statementToAdd),
+                ImplicitSubstatement.of(getStatementSourceReference()), null);
+    }
+
     /**
      * Lookup substatement by its offset in this statement.
      *
@@ -451,6 +456,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     final void setFullyDefined() {
         this.fullyDefined = true;
+    }
+
+    final void resizeSubstatements(final int expectedSize) {
+        substatements = substatements.ensureCapacity(expectedSize);
     }
 
     final void walkChildren(final ModelProcessingPhase phase) {

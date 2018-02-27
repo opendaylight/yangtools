@@ -20,9 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 abstract class AbstractRpcStatementSupport
         extends AbstractQNameStatementSupport<RpcStatement, EffectiveStatement<QName, RpcStatement>> {
@@ -70,11 +68,11 @@ abstract class AbstractRpcStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implictInput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(implictInput());
         }
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, implictOutput());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(implictOutput());
         }
     }
 
@@ -87,12 +85,4 @@ abstract class AbstractRpcStatementSupport
     abstract StatementSupport<?, ?, ?> implictInput();
 
     abstract StatementSupport<?, ?, ?> implictOutput();
-
-    private static void addImplicitStatement(final StatementContextBase<?, ?, ?> parent,
-            final StatementSupport<?, ?, ?> statementToAdd) {
-        final StatementDefinitionContext<?, ?, ?> stmtDefCtx = new StatementDefinitionContext<>(statementToAdd);
-
-        parent.createSubstatement(parent.declaredSubstatements().size(), stmtDefCtx,
-            ImplicitSubstatement.of(parent.getStatementSourceReference()), null);
-    }
 }

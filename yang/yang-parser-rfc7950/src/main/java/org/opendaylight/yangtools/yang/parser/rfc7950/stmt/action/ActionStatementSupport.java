@@ -20,14 +20,11 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeN
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input.InputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.output.OutputStatementRFC7950Support;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementDefinitionContext;
 
 public final class ActionStatementSupport
         extends AbstractQNameStatementSupport<ActionStatement, EffectiveStatement<QName, ActionStatement>> {
@@ -96,24 +93,16 @@ public final class ActionStatementSupport
         super.onFullDefinitionDeclared(stmt);
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, InputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, InputStatementRFC7950Support.getInstance());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(InputStatementRFC7950Support.getInstance());
         }
 
         if (StmtContextUtils.findFirstDeclaredSubstatement(stmt, OutputStatement.class) == null) {
-            addImplicitStatement((StatementContextBase<?, ?, ?>) stmt, OutputStatementRFC7950Support.getInstance());
+            ((StatementContextBase<?, ?, ?>) stmt).appendImplicitStatement(OutputStatementRFC7950Support.getInstance());
         }
     }
 
     @Override
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
-    }
-
-    private static void addImplicitStatement(final StatementContextBase<?, ?, ?> parent,
-        final StatementSupport<?, ?, ?> statementToAdd) {
-        final StatementDefinitionContext<?, ?, ?> stmtDefCtx = new StatementDefinitionContext<>(statementToAdd);
-
-        parent.createSubstatement(parent.declaredSubstatements().size(), stmtDefCtx,
-                ImplicitSubstatement.of(parent.getStatementSourceReference()), null);
     }
 }
