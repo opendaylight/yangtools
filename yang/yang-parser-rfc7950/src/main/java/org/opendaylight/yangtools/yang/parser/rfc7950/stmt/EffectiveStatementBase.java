@@ -53,7 +53,13 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         }
         substatementsInit.addAll(effectiveSubstatements);
 
-        this.substatements = ImmutableList.copyOf(initSubstatements(substatementsInit));
+        this.substatements = ImmutableList.copyOf(initSubstatements(ctx, substatementsInit));
+    }
+
+    @Beta
+    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(final StmtContext<A, D, ?> ctx,
+            final Collection<? extends StmtContext<?, ?, ?>> substatements) {
+        return initSubstatements(substatements);
     }
 
     /**
