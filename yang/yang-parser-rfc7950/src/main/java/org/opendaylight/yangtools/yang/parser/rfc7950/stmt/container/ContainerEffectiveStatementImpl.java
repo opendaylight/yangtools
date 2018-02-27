@@ -26,7 +26,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveContainerSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
+/**
+ * Internal implementation of ContainerEffectiveStatement.
+ *
+ * @deprecated This class is visible only for historical purposes and is going to be hidden.
+ */
+// FIXME: 3.0.0: hide this class
+@Deprecated
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements ContainerEffectiveStatement, DerivableSchemaNode {
     private final @NonNull ImmutableSet<ActionDefinition> actions;

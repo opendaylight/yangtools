@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -75,6 +76,13 @@ final class AugmentEffectiveStatementImpl
         this.actions = actionsBuilder.build();
         this.notifications = notificationsBuilder.build();
         this.unknownNodes = listBuilder.build();
+    }
+
+    @Override
+    protected Collection<? extends EffectiveStatement<?, ?>> initSubstatements(
+            final Collection<? extends StmtContext<?, ?, ?>> substatementsInit) {
+        // FIXME: we need to modify the statements based on the target we are assigned to
+        return super.initSubstatements(substatementsInit);
     }
 
     @Override
