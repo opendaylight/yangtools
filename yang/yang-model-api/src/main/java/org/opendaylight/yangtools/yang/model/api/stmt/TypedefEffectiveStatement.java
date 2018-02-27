@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
  * Effective model statement which should be used to derive application behaviour related to typedefs.
  */
-public interface TypedefEffectiveStatement extends EffectiveStatement<QName, TypedefStatement>, TypeDefinitionAware {
+public interface TypedefEffectiveStatement extends NamespacedEffectiveStatement<TypedefStatement>,
+        TypeDefinitionAware {
 
     /**
      * Return this type definition as an effective type statement.
