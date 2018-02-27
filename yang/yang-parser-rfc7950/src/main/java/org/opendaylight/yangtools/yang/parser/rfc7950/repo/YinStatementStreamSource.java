@@ -17,6 +17,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,6 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Attr;
@@ -88,16 +90,25 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         return def;
     }
 
-    private static void processAttribute(final int childId, final Attr attr, final StatementWriter writer,
+    private static boolean processAttribute(final int childId, final Attr attr, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final StatementSourceReference ref) {
+        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(childId);
+        if (optResumed.isPresent()) {
+            final ResumedStatement resumed = optResumed.get();
+            Preconditions.checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
+            return true;
+        }
+
         final StatementDefinition def = getValidDefinition(attr, writer, stmtDef, ref);
         if (def == null) {
-            return;
+            return false;
         }
 
         final String value = attr.getValue();
         writer.startStatement(childId, def.getStatementName(), value.isEmpty() ? null : value, ref);
+        writer.storeStatement(0, true);
         writer.endStatement(ref);
+        return true;
     }
 
     private static String getArgValue(final Element element, final QName argName, final boolean yinElement) {
@@ -118,36 +129,59 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         return attr.getValue();
     }
 
-    private static void processElement(final int childId, final Element element, final StatementWriter writer,
+    private static boolean processElement(final int childId, final Element element, final StatementWriter writer,
             final QNameToStatementDefinition stmtDef) {
-        final StatementSourceReference ref = extractRef(element);
-        final StatementDefinition def = getValidDefinition(element, writer, stmtDef, ref);
-        if (def == null) {
-            LOG.debug("Skipping element {}", element);
-            return;
-        }
 
-        final QName argName = def.getArgumentName();
-        final String argValue;
+        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(childId);
+        final StatementSourceReference ref;
+        final QName argName;
         final boolean allAttrs;
         final boolean allElements;
-        if (argName != null) {
-            allAttrs = def.isArgumentYinElement();
-            allElements = !allAttrs;
+        if (optResumed.isPresent()) {
+            final ResumedStatement resumed = optResumed.get();
+            if (resumed.isFullyDefined()) {
+                return true;
+            }
 
-            argValue = getArgValue(element, argName, allAttrs);
-            SourceException.throwIfNull(argValue, ref, "Statement {} is missing mandatory argument %s",
-                def.getStatementName(), argName);
+            final StatementDefinition def = resumed.getDefinition();
+            ref = resumed.getSourceReference();
+            argName = def.getArgumentName();
+            if (argName != null) {
+                allAttrs = def.isArgumentYinElement();
+                allElements = !allAttrs;
+            } else {
+                allAttrs = false;
+                allElements = false;
+            }
         } else {
-            argValue = null;
-            allAttrs = false;
-            allElements = false;
-        }
+            ref = extractRef(element);
+            final StatementDefinition def = getValidDefinition(element, writer, stmtDef, ref);
+            if (def == null) {
+                LOG.debug("Skipping element {}", element);
+                return false;
+            }
 
-        writer.startStatement(childId, def.getStatementName(), argValue, ref);
+            final String argValue;
+            argName = def.getArgumentName();
+            if (argName != null) {
+                allAttrs = def.isArgumentYinElement();
+                allElements = !allAttrs;
+
+                argValue = getArgValue(element, argName, allAttrs);
+                SourceException.throwIfNull(argValue, ref, "Statement {} is missing mandatory argument %s",
+                    def.getStatementName(), argName);
+            } else {
+                argValue = null;
+                allAttrs = false;
+                allElements = false;
+            }
+
+            writer.startStatement(childId, def.getStatementName(), argValue, ref);
+        }
 
         // Child counter
         int childCounter = 0;
+        boolean fullyDefined = true;
 
         // First process any statements defined as attributes. We need to skip argument, if present
         final NamedNodeMap attributes = element.getAttributes();
@@ -155,7 +189,9 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             for (int i = 0, len = attributes.getLength(); i < len; ++i) {
                 final Attr attr = (Attr) attributes.item(i);
                 if (allAttrs || !isArgument(argName, attr)) {
-                    processAttribute(childCounter++, attr, writer, stmtDef, ref);
+                    if (!processAttribute(childCounter++, attr, writer, stmtDef, ref)) {
+                        fullyDefined = false;
+                    }
                 }
             }
         }
@@ -166,12 +202,16 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             final Node child = children.item(i);
             if (child.getNodeType() == Node.ELEMENT_NODE) {
                 if (allElements || !isArgument(argName, child)) {
-                    processElement(childCounter++, (Element) child, writer, stmtDef);
+                    if (!processElement(childCounter++, (Element) child, writer, stmtDef)) {
+                        fullyDefined = false;
+                    }
                 }
             }
         }
 
+        writer.storeStatement(childCounter, fullyDefined);
         writer.endStatement(ref);
+        return fullyDefined;
     }
 
     private static boolean isArgument(final QName argName, final Node node) {
