@@ -81,12 +81,11 @@ abstract class ScannedDependency {
 
     static Collection<ScannedDependency> scanDependencies(final MavenProject project) throws IOException {
         final Collection<File> filesOnCp = Util.getClassPath(project);
-        LOG.info("{} Searching for YANG files in following dependencies: {}", YangToSourcesProcessor.LOG_PREFIX,
-            filesOnCp);
+        LOG.debug("{} Searching for YANG files in dependencies: {}", YangToSourcesProcessor.LOG_PREFIX, filesOnCp);
+        LOG.debug("{} Searching for YANG files in {} dependencies:", YangToSourcesProcessor.LOG_PREFIX,
+            filesOnCp.size());
 
         final List<ScannedDependency> result = new ArrayList<>();
-
-
         for (File file : filesOnCp) {
             // is it jar file or directory?
             if (file.isDirectory()) {
