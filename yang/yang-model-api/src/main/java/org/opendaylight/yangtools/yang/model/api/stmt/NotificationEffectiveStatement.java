@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
-public interface NotificationEffectiveStatement extends EffectiveStatement<QName, NotificationStatement> {
+public interface NotificationEffectiveStatement extends SchemaTreeEffectiveStatement<NotificationStatement>,
+    DataTreeAwareEffectiveStatement<QName, NotificationStatement>,
+    SchemaTreeAwareEffectiveStatement<QName, NotificationStatement> {
 
 }
