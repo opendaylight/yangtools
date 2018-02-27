@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -31,6 +32,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -198,7 +200,36 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
 
         // Add statement prefixed with namespace if needed
         final QName stmtName = def.getStatementName();
-        addNamespace(stmtName.getModule());
+        final QNameModule namespace = stmtName.getModule();
+        if (!YangConstants.RFC6020_YIN_MODULE.equals(namespace)) {
+            // Non-default namespace, a prefix is needed
+            @Nullable String prefix = namespaces.get(namespace);
+            if (prefix == null && !namespace.getRevision().isPresent()) {
+                // FIXME: this is an artifact of commonly-bound statements in parser, which means a statement's name
+                //        does not have a Revision. We'll need to find a solution to this which is acceptable. There
+                //        are multiple ways of fixing this:
+                //        - perhaps EffectiveModuleStatement should be giving us a statement-to-EffectiveModule map?
+                //        - or DeclaredStatement should provide the prefix?
+                //        The second one seems cleaner, as that means we would not have perform any lookup at all...
+                Entry<QNameModule, @NonNull String> match = null;
+                for (Entry<QNameModule, @NonNull String> entry : namespaces.entrySet()) {
+                    final QNameModule ns = entry.getKey();
+                    if (namespace.equals(ns.withoutRevision()) && (match == null
+                            || Revision.compare(match.getKey().getRevision(), ns.getRevision()) < 0)) {
+                            match = entry;
+                    }
+                }
+
+                if (match != null) {
+                    prefix = match.getValue();
+                }
+            }
+
+            checkArgument(prefix != null, "Failed to find prefix for statement %s", stmtName);
+            verify(!prefix.isEmpty(), "Empty prefix for statement %s", stmtName);
+            strings.add(prefix);
+            strings.add(":");
+        }
         strings.add(stmtName.getLocalName());
 
         // Add argument, quoted and properly indented if need be
@@ -225,19 +256,6 @@ final class YangTextSnippetIterator extends AbstractIterator<@NonNull String> {
         if (depth > 0) {
             strings.add(INDENT_STRINGS[depth]);
         }
-    }
-
-    private void addNamespace(final QNameModule namespace) {
-        if (YangConstants.RFC6020_YIN_MODULE.equals(namespace)) {
-            // Default namespace, no prefix needed
-            return;
-        }
-
-        final @Nullable String prefix = namespaces.get(namespace);
-        checkArgument(prefix != null, "Failed to find prefix for namespace %s", namespace);
-        verify(!prefix.isEmpty(), "Empty prefix for namespace %s", namespace);
-        strings.add(prefix);
-        strings.add(":");
     }
 
     private void addArgument(final StatementDefinition def, final @Nullable String arg) {
