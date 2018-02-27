@@ -80,6 +80,13 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         this.argument = def.parseArgumentValue(this, rawStatementArgument());
     }
 
+    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
+        final StatementSourceReference ref, final String rawArgument, final CopyType copyType) {
+        super(def, ref, rawArgument, copyType);
+        this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
+        this.argument = def.parseArgumentValue(this, rawStatementArgument());
+    }
+
     SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent,
             final CopyType copyType, final QNameModule targetModule) {
         super(original, copyType);
@@ -140,6 +147,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             }
 
             final SchemaPath path;
+            // FIXME: this should have been accounted for during the copy process
             if ((StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
                     || Boolean.TRUE.equals(parent.getFromNamespace(AugmentToChoiceNamespace.class, parent)))
                     && isSupportedAsShorthandCase()) {
