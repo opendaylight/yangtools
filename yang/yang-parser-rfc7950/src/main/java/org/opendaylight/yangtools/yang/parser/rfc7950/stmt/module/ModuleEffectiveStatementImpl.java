@@ -21,6 +21,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionEffectiveStatementNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.ExtensionStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureEffectiveStatementNamespace;
+import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityEffectiveStatementNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
@@ -30,6 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveModule;
+import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImportPrefixToModuleCtx;
@@ -39,6 +47,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement>
         implements ModuleEffectiveStatement {
     private final Map<String, SubmoduleEffectiveStatement> nameToSubmodule;
+    private final Map<QName, ExtensionEffectiveStatement> qnameToExtension;
+    private final Map<QName, FeatureEffectiveStatement> qnameToFeature;
     private final Map<QName, IdentityEffectiveStatement> qnameToIdentity;
     private final Map<String, ModuleEffectiveStatement> prefixToModule;
     private final Map<QNameModule, String> namespaceToPrefix;
@@ -76,6 +86,16 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
                 : ImmutableMap.copyOf(Maps.transformValues(submodules,
                     submodule -> (SubmoduleEffectiveStatement) submodule.buildEffective()));
 
+        final Map<QName, StmtContext<?, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>>> extensions =
+                ctx.getAllFromCurrentStmtCtxNamespace(ExtensionNamespace.class);
+        qnameToExtension = extensions == null ? ImmutableMap.of()
+                : ImmutableMap.copyOf(Maps.transformValues(extensions,
+                    stmt -> (ExtensionEffectiveStatement) stmt.buildEffective()));
+        final Map<QName, StmtContext<?, FeatureStatement, EffectiveStatement<QName, FeatureStatement>>> features =
+                ctx.getAllFromCurrentStmtCtxNamespace(FeatureNamespace.class);
+        qnameToFeature = features == null ? ImmutableMap.of()
+                : ImmutableMap.copyOf(Maps.transformValues(features,
+                    stmt -> (FeatureEffectiveStatement) stmt.buildEffective()));
         final Map<QName, StmtContext<?, IdentityStatement, EffectiveStatement<QName, IdentityStatement>>> identities =
                 ctx.getAllFromCurrentStmtCtxNamespace(IdentityNamespace.class);
         qnameToIdentity = identities == null ? ImmutableMap.of()
@@ -105,6 +125,12 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
         }
         if (NameToEffectiveSubmoduleNamespace.class.equals(namespace)) {
             return Optional.of((Map<K, V>) nameToSubmodule);
+        }
+        if (ExtensionEffectiveStatementNamespace.class.equals(namespace)) {
+            return Optional.of((Map<K, V>) qnameToExtension);
+        }
+        if (FeatureEffectiveStatementNamespace.class.equals(namespace)) {
+            return Optional.of((Map<K, V>) qnameToFeature);
         }
         if (IdentityEffectiveStatementNamespace.class.equals(namespace)) {
             return Optional.of((Map<K, V>) qnameToIdentity);
