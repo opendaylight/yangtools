@@ -127,6 +127,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.originalCtx = null;
     }
 
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+        final String rawArgument, final CopyType copyType) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.statementDeclSource = Preconditions.checkNotNull(ref);
+        this.rawArgument = rawArgument;
+        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
+        this.originalCtx = null;
+    }
+
     StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
         this.definition = original.definition;
         this.statementDeclSource = original.statementDeclSource;
@@ -744,14 +753,42 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
 
         final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
-        final SubstatementContext<X, Y, Z> copy = new SubstatementContext<>(original, this, type, targetModule);
+        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
+            original.getPublicDefinition());
 
-        original.definition().onStatementAdded(copy);
+        final SubstatementContext<X, Y, Z> result;
+        final SubstatementContext<X, Y, Z> copy;
+
+        if (implicitParent.isPresent()) {
+            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
+            result = new SubstatementContext(this, def, original.getSourceReference(),
+                original.rawStatementArgument(), original.getStatementArgument(), type);
+
+            final CopyType childCopyType;
+            switch (type) {
+                case ADDED_BY_AUGMENTATION:
+                    childCopyType = CopyType.ORIGINAL;
+                    break;
+                case ADDED_BY_USES_AUGMENTATION:
+                    childCopyType = CopyType.ADDED_BY_USES;
+                    break;
+                case ADDED_BY_USES:
+                case ORIGINAL:
+                default:
+                    childCopyType = type;
+            }
+
+            copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
+            result.addEffectiveSubstatement(copy);
+            original.definition().onStatementAdded(copy);
+        } else {
+            result = copy = new SubstatementContext<>(original, this, type, targetModule);
+            original.definition().onStatementAdded(copy);
+        }
+
         original.copyTo(copy, type, targetModule);
-
-        return copy;
+        return result;
     }
-
 
     @Override
     public @NonNull StatementDefinition getDefinition() {

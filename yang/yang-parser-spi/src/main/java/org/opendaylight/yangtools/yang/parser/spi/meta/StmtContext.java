@@ -215,6 +215,8 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          *                                  from an alien implementation.
          * @throws org.opendaylight.yangtools.yang.parser.spi.source.SourceException instance of SourceException
          */
+        // FIXME: 3.0.0: remove generic arguments X, Y, Z. Callers should not care, as the returned copy can actually
+        //               be an encapsulating implicit statement.
         <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
                 StmtContext<X, Y, Z> stmt, CopyType type, @Nullable QNameModule targetModule);
 
