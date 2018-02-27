@@ -27,6 +27,7 @@ import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -50,6 +51,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.ImplicitSubstatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SupportedFeaturesNamespace.SupportedFeatures;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.NamespaceBehaviourWithListeners.KeyedValueAddedListener;
@@ -58,7 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends NamespaceStorageSupport implements Mutable<A, D, E> {
+        extends NamespaceStorageSupport implements Mutable<A, D, E>, ResumedStatement {
     /**
      * Event listener when an item is added to model namespace.
      */
@@ -108,6 +110,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     // BooleanFields value
     private byte supportedByFeatures;
+
+    private boolean fullyDefined;
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
@@ -445,6 +449,18 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return substatements.get(offset);
     }
 
+    final void setFullyDefined() {
+        this.fullyDefined = true;
+    }
+
+    final void walkChildren(final ModelProcessingPhase phase) {
+        Preconditions.checkState(fullyDefined);
+        substatements.values().forEach(stmt -> {
+            stmt.walkChildren(phase);
+            stmt.endDeclared(phase);
+        });
+    }
+
     @Override
     public D buildDeclared() {
         Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
@@ -546,7 +562,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * Ends declared section of current node.
      */
-    void endDeclared(final StatementSourceReference ref, final ModelProcessingPhase phase) {
+    void endDeclared(final ModelProcessingPhase phase) {
         definition().onDeclarationFinished(this, phase);
     }
 
@@ -729,6 +745,22 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         original.copyTo(copy, type, targetModule);
 
         return copy;
+    }
+
+
+    @Override
+    public @NonNull StatementDefinition getDefinition() {
+        return getPublicDefinition();
+    }
+
+    @Override
+    public @NonNull StatementSourceReference getSourceReference() {
+        return getStatementSourceReference();
+    }
+
+    @Override
+    public boolean isFullyDefined() {
+        return fullyDefined;
     }
 
     final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
