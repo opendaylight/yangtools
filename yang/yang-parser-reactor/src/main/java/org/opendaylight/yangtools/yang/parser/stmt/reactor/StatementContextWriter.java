@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -28,26 +29,58 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
+    public Optional<? extends ResumedStatement> resumeStatement(final int childId) {
+        final Optional<StatementContextBase<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
+        existing.ifPresent(this::resumeStatement);
+        return existing;
+    }
+
+    private void resumeStatement(final StatementContextBase<?, ?, ?> child) {
+        if (child.isFullyDefined()) {
+            child.walkChildren(phase);
+            child.endDeclared(phase);
+        } else {
+            current = child;
+        }
+    }
+
+    @Override
+    public void storeStatement(final int expectedChildren, final boolean fullyDefined) {
+        Preconditions.checkState(current != null);
+        Preconditions.checkArgument(expectedChildren >= 0);
+
+        if (fullyDefined) {
+            current.setFullyDefined();
+        }
+    }
+
+    @Override
     public void startStatement(final int childId, @Nonnull final QName name, final String argument,
             @Nonnull final StatementSourceReference ref) {
-        current = Verify.verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+        final Optional<StatementContextBase<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
+        current = existing.isPresent() ? existing.get()
+                :  Verify.verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
 
     @Override
     public void endStatement(@Nonnull final StatementSourceReference ref) {
         Preconditions.checkState(current != null);
-        current.endDeclared(ref, phase);
-        StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
-        while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
-            parentContext.endDeclared(ref, phase);
-            parentContext = parentContext.getParentContext();
-        }
-        current = parentContext;
+        current.endDeclared(phase);
+        exitStatement();
     }
 
     @Nonnull
     @Override
     public ModelProcessingPhase getPhase() {
         return phase;
+    }
+
+    private void exitStatement() {
+        StatementContextBase<?, ?, ?> parentContext = current.getParentContext();
+        while (parentContext != null && StatementSource.CONTEXT == parentContext.getStatementSource()) {
+            parentContext.endDeclared(phase);
+            parentContext = parentContext.getParentContext();
+        }
+        current = parentContext;
     }
 }

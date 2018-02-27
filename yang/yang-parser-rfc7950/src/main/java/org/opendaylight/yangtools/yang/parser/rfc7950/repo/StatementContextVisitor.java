@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Optional;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.KeywordContext;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.QNameToStatementDefinit
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter;
+import org.opendaylight.yangtools.yang.parser.spi.source.StatementWriter.ResumedStatement;
 
 class StatementContextVisitor {
     private final QNameToStatementDefinition stmtDef;
@@ -88,29 +90,45 @@ class StatementContextVisitor {
         return stmtDef.get(QName.create(module, localName));
     }
 
-    private void processStatement(final int myOffset, final StatementContext ctx) {
-        final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
-        final StatementSourceReference ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
-            ctx.getStart().getCharPositionInLine());
-        final QName def = getValidStatementDefinition(keywordTxt, ref);
-        if (def == null) {
-            return;
+    private boolean processStatement(final int myOffset, final StatementContext ctx) {
+        final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(myOffset);
+        final StatementSourceReference ref;
+        if (optResumed.isPresent()) {
+            final ResumedStatement resumed = optResumed.get();
+            if (resumed.isFullyDefined()) {
+                return true;
+            }
+
+            ref = resumed.getSourceReference();
+        } else {
+            final String keywordTxt = verifyNotNull(ctx.getChild(KeywordContext.class, 0)).getText();
+            ref = DeclarationInTextSource.atPosition(sourceName, ctx.getStart().getLine(),
+                ctx.getStart().getCharPositionInLine());
+            final QName def = getValidStatementDefinition(keywordTxt, ref);
+            if (def == null) {
+                return false;
+            }
+
+            final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
+            final String argument = argumentCtx == null ? null
+                    : ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref);
+            writer.startStatement(myOffset, def, argument, ref);
         }
 
-        final ArgumentContext argumentCtx = ctx.getChild(ArgumentContext.class, 0);
-        final String argument = argumentCtx == null ? null
-                : ArgumentContextUtils.stringFromStringContext(argumentCtx, yangVersion, ref);
-        writer.startStatement(myOffset, def, argument, ref);
-
+        int childOffset = 0;
+        boolean fullyDefined = true;
         if (ctx.children != null) {
-            int childOffset = 0;
             for (ParseTree s : ctx.children) {
                 if (s instanceof StatementContext) {
-                    processStatement(childOffset++, (StatementContext) s);
+                    if (!processStatement(childOffset++, (StatementContext) s)) {
+                        fullyDefined = false;
+                    }
                 }
             }
         }
 
+        writer.storeStatement(childOffset, fullyDefined);
         writer.endStatement(ref);
+        return fullyDefined;
     }
 }
