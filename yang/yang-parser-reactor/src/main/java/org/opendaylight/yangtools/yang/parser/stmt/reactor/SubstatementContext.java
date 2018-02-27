@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Verify;
-import java.util.Collection;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.OptionalBoolean;
@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
@@ -35,10 +34,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Regist
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.StorageNodeType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
-import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
@@ -76,14 +72,21 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
             final StatementSourceReference ref, final String rawArgument) {
         super(def, ref, rawArgument);
-        this.parent = Preconditions.checkNotNull(parent, "Parent must not be null");
+        this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = def.parseArgumentValue(this, rawStatementArgument());
+    }
+
+    SubstatementContext(final StatementContextBase<?, ?, ?> parent, final StatementDefinitionContext<A, D, E> def,
+        final StatementSourceReference ref, final String rawArgument, final A argument, final CopyType copyType) {
+        super(def, ref, rawArgument, copyType);
+        this.parent = requireNonNull(parent, "Parent must not be null");
+        this.argument = argument;
     }
 
     SubstatementContext(final StatementContextBase<A, D, E> original, final StatementContextBase<?, ?, ?> parent,
             final CopyType copyType, final QNameModule targetModule) {
         super(original, copyType);
-        this.parent = Preconditions.checkNotNull(parent);
+        this.parent = requireNonNull(parent, "Parent must not be null");
         this.argument = targetModule == null ? original.getStatementArgument()
                 : original.definition().adaptArgumentValue(original, targetModule);
     }
@@ -119,12 +122,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return argument;
     }
 
-    private boolean isSupportedAsShorthandCase() {
-        final Collection<?> supportedCaseShorthands = getFromNamespace(ValidationBundlesNamespace.class,
-                ValidationBundleType.SUPPORTED_CASE_SHORTHANDS);
-        return supportedCaseShorthands == null || supportedCaseShorthands.contains(getPublicDefinition());
-    }
-
     private SchemaPath createSchemaPath() {
         final Optional<SchemaPath> maybeParentPath = parent.getSchemaPath();
         Verify.verify(maybeParentPath.isPresent(), "Parent %s does not have a SchemaPath", parent);
@@ -139,15 +136,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
                 return maybeParentPath.orElse(null);
             }
 
-            final SchemaPath path;
-            if ((StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
-                    || Boolean.TRUE.equals(parent.getFromNamespace(AugmentToChoiceNamespace.class, parent)))
-                    && isSupportedAsShorthandCase()) {
-                path = parentPath.createChild(qname);
-            } else {
-                path = parentPath;
-            }
-            return path.createChild(qname);
+            return parentPath.createChild(qname);
         }
         if (argument instanceof String) {
             // FIXME: This may yield illegal argument exceptions
