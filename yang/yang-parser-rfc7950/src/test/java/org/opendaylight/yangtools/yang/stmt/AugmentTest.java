@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -49,6 +50,7 @@ public class AugmentTest {
     private static final QName Q1 = QName.create(BAR, "ifEntry");
     private static final QName Q2 = QName.create(BAZ, "augment-holder");
 
+    @Ignore
     @Test
     public void testAugmentParsing() throws Exception {
         final SchemaContext context = TestUtils.loadModules(getClass().getResource("/augment-test/augment-in-augment")
