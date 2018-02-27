@@ -19,20 +19,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveDataSchemaNode;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container.ContainerEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf.LeafEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list.LeafListEffectiveStatementImpl;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list.ListEffectiveStatementImpl;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
@@ -65,15 +58,6 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
                 // FIXME: we may be overwriting a previous entry, is that really okay?
                 casesInit.put(choiceCaseNode.getQName(), choiceCaseNode);
             }
-            if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
-                final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
-                final CaseSchemaNode shorthandCase = new ImplicitCaseSchemaNode(dataSchemaNode);
-                // FIXME: we may be overwriting a previous entry, is that really okay?
-                casesInit.put(shorthandCase.getQName(), shorthandCase);
-                if (dataSchemaNode.isAugmenting() && !isAugmenting()) {
-                    resetAugmenting(dataSchemaNode);
-                }
-            }
         }
 
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
@@ -99,25 +83,6 @@ final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode
 
         mandatory = findFirstEffectiveSubstatementArgument(MandatoryEffectiveStatement.class).orElse(Boolean.FALSE)
                 .booleanValue();
-    }
-
-    private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
-        if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
-            final LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
-            leaf.resetAugmenting();
-        } else if (dataSchemaNode instanceof ContainerEffectiveStatementImpl) {
-            final ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
-            container.resetAugmenting();
-        } else if (dataSchemaNode instanceof LeafListEffectiveStatementImpl) {
-            final LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
-            leafList.resetAugmenting();
-        } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
-            final ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
-            list.resetAugmenting();
-        } else if (dataSchemaNode instanceof AnyxmlEffectiveStatementImpl) {
-            final AnyxmlEffectiveStatementImpl anyXml = (AnyxmlEffectiveStatementImpl) dataSchemaNode;
-            anyXml.resetAugmenting();
-        }
     }
 
     @Override

@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StmtOrderingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
@@ -109,16 +108,16 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                     augmentNode.setIsSupportedToBuildEffective(false);
                     return;
                 }
-                /**
-                 * Marks case short hand in augment
-                 */
-                if (augmentTargetCtx.getPublicDefinition() == YangStmtMapping.CHOICE) {
-                    augmentNode.addToNs(AugmentToChoiceNamespace.class, augmentNode, Boolean.TRUE);
+
+                // We are targeting a context which is creating implicit nodes. In order to keep things consistent,
+                // we will need to circle back when creating effective statements.
+                if (augmentTargetCtx.hasImplicitParentSupport()) {
+                    augmentNode.addToNs(AugmentImplicitHandlingNamespace.class, augmentNode, augmentTargetCtx);
                 }
 
+                final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
                 // FIXME: this is a workaround for models which augment a node which is added via an extension
                 //        which we do not handle. This needs to be reworked in terms of unknown schema nodes.
-                final StatementContextBase<?, ?, ?> augmentSourceCtx = (StatementContextBase<?, ?, ?>) augmentNode;
                 try {
                     copyFromSourceToTarget(augmentSourceCtx, augmentTargetCtx);
                     augmentTargetCtx.addEffectiveSubstatement(augmentSourceCtx);
