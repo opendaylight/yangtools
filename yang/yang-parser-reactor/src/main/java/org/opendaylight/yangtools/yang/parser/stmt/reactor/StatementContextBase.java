@@ -122,6 +122,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.originalCtx = null;
     }
 
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+        final String rawArgument, final CopyType copyType) {
+        this.definition = Preconditions.checkNotNull(def);
+        this.statementDeclSource = Preconditions.checkNotNull(ref);
+        this.rawArgument = def.internArgument(rawArgument);
+        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
+        this.originalCtx = null;
+    }
+
     StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
         this.definition = Preconditions.checkNotNull(original.definition,
                 "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
@@ -748,14 +757,71 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         Preconditions.checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
 
         final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
-        final SubstatementContext<X, Y, Z> copy = new SubstatementContext<>(original, this, type, targetModule);
+        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
+            original.getPublicDefinition());
 
-        original.definition().onStatementAdded(copy);
+        final SubstatementContext<X, Y, Z> result;
+        final SubstatementContext<X, Y, Z> copy;
+
+        if (implicitParent.isPresent()) {
+            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
+            result = new SubstatementContext(this, def, original.getSourceReference(),
+                original.rawStatementArgument(), type);
+
+            final CopyType childCopyType;
+            switch (type) {
+                case ADDED_BY_AUGMENTATION:
+                    childCopyType = CopyType.ORIGINAL;
+                    break;
+                case ADDED_BY_USES_AUGMENTATION:
+                    childCopyType = CopyType.ADDED_BY_USES;
+                    break;
+                case ADDED_BY_USES:
+                case ORIGINAL:
+                default:
+                    childCopyType = type;
+            }
+
+            copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
+            result.addEffectiveSubstatement(copy);
+            original.definition().onStatementAdded(copy);
+        } else {
+            result = copy = new SubstatementContext<>(original, this, type, targetModule);
+            original.definition().onStatementAdded(copy);
+        }
+
         original.copyTo(copy, type, targetModule);
-
-        return copy;
+        return result;
     }
 
+//    if (YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(effectiveStatement.statementDefinition())) {
+//        final DataSchemaNode dataSchemaNode = (DataSchemaNode) effectiveStatement;
+//        final CaseSchemaNode shorthandCase = new ImplicitCaseSchemaNode(dataSchemaNode);
+//        // FIXME: we may be overwriting a previous entry, is that really okay?
+//        casesInit.put(shorthandCase.getQName(), shorthandCase);
+//        if (dataSchemaNode.isAugmenting() && !isAugmenting()) {
+//            resetAugmenting(dataSchemaNode);
+//        }
+//    }
+//
+//    private static void resetAugmenting(final DataSchemaNode dataSchemaNode) {
+//        if (dataSchemaNode instanceof LeafEffectiveStatementImpl) {
+//            final LeafEffectiveStatementImpl leaf = (LeafEffectiveStatementImpl) dataSchemaNode;
+//            leaf.resetAugmenting();
+//        } else if (dataSchemaNode instanceof ContainerEffectiveStatementImpl) {
+//            final ContainerEffectiveStatementImpl container = (ContainerEffectiveStatementImpl) dataSchemaNode;
+//            container.resetAugmenting();
+//        } else if (dataSchemaNode instanceof LeafListEffectiveStatementImpl) {
+//            final LeafListEffectiveStatementImpl leafList = (LeafListEffectiveStatementImpl) dataSchemaNode;
+//            leafList.resetAugmenting();
+//        } else if (dataSchemaNode instanceof ListEffectiveStatementImpl) {
+//            final ListEffectiveStatementImpl list = (ListEffectiveStatementImpl) dataSchemaNode;
+//            list.resetAugmenting();
+//        } else if (dataSchemaNode instanceof AnyxmlEffectiveStatementImpl) {
+//            final AnyxmlEffectiveStatementImpl anyXml = (AnyxmlEffectiveStatementImpl) dataSchemaNode;
+//            anyXml.resetAugmenting();
+//        }
+//    }
 
     @Override
     public @NonNull StatementDefinition getDefinition() {
