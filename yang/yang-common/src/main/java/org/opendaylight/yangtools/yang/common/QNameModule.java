@@ -127,6 +127,16 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
         return Revision.compare(revision, o.revision);
     }
 
+    /**
+     * Returns a QNameModule with the same namespace, but with no revision. If this QNameModule does not have
+     * a revision, this object is returned.
+     *
+     * @return a QNameModule with the same namespace, but with no revision.
+     */
+    public QNameModule withoutRevision() {
+        return revision == null ? this : new QNameModule(namespace, null);
+    }
+
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         out.writeUTF(namespace.toString());

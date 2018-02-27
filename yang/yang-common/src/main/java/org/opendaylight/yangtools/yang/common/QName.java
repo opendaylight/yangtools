@@ -23,9 +23,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.RegEx;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -72,15 +72,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
 
     private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
 
-    // Non-null
-    private final QNameModule module;
-    // Non-null
-    private final String localName;
+    private final @NonNull QNameModule module;
+    private final @NonNull String localName;
     private transient int hash;
 
     private QName(final QNameModule module, final String localName) {
-        this.localName = checkLocalName(localName);
-        this.module = module;
+        this.module = requireNonNull(module);
+        this.localName = requireNonNull(localName);
     }
 
     /**
@@ -92,7 +90,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *            YANG schema identifier
      */
     private QName(final URI namespace, final String localName) {
-        this(QNameModule.create(namespace), localName);
+        this(QNameModule.create(namespace), checkLocalName(localName));
     }
 
     private static String checkLocalName(final String localName) {
@@ -139,7 +137,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(requireNonNull(qnameModule, "module may not be null"), localName);
+        return new QName(requireNonNull(qnameModule, "module may not be null"), checkLocalName(localName));
     }
 
     /**
@@ -153,7 +151,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, @Nullable final Revision revision, final String localName) {
+    public static QName create(final URI namespace, final @Nullable Revision revision, final String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
@@ -255,8 +253,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      */
     public static QName readFrom(final DataInput in) throws IOException {
         final QNameModule module = QNameModule.readFrom(in);
-        final String localName = in.readUTF();
-        return new QName(module, localName);
+        return new QName(module, checkLocalName(in.readUTF()));
     }
 
     /**
@@ -369,12 +366,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
-     * Creates copy of this with revision and prefix unset.
+     * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
+     * a Revision, this object is retured.
      *
-     * @return copy of this QName with revision and prefix unset.
+     * @return a QName with the same namespace and local name, but with no revision.
      */
     public QName withoutRevision() {
-        return create(getNamespace(), localName);
+        return getRevision().isPresent() ? new QName(module.withoutRevision(), localName) : this;
     }
 
     /**
@@ -416,8 +414,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     //        the impact on iteration order of SortedMap<QName, ?>?
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(@Nonnull final QName o) {
-
+    public int compareTo(final QName o) {
         // compare mandatory localName parameter
         int result = localName.compareTo(o.localName);
         if (result != 0) {
