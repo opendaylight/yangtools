@@ -35,8 +35,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-// FIXME: hide this class
-public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
+final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode {
 
     private static final String ORDER_BY_USER_KEYWORD = "user";

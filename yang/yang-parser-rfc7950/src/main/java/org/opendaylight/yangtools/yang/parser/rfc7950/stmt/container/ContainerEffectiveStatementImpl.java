@@ -24,8 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.PresenceEffectiveStatement
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveContainerSchemaNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
-public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
+final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements ContainerEffectiveStatement, DerivableSchemaNode {
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;

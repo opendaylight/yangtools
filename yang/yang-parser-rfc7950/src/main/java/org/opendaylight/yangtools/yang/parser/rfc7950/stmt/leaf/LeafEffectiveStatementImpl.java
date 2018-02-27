@@ -33,8 +33,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-// FIXME: hide this class
-public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
+final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
     private final Collection<MustDefinition> mustConstraints;
     private final LeafSchemaNode original;
