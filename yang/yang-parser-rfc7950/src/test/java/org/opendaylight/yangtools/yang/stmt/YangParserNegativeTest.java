@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.startsWith;
+import static org.hamcrest.Matchers.isA;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
@@ -26,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public class YangParserNegativeTest {
 
@@ -51,7 +51,7 @@ public class YangParserNegativeTest {
             fail("SomeModifiersUnresolvedException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause, isA(InferenceException.class));
             assertThat(rootCause.getMessage(), startsWith("Imported module"));
             assertThat(rootCause.getMessage(), containsString("was not found."));
         }
@@ -64,7 +64,7 @@ public class YangParserNegativeTest {
             fail("InferenceException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause, isA(InferenceException.class));
             assertThat(rootCause.getMessage(),
                 startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
         }
@@ -79,7 +79,7 @@ public class YangParserNegativeTest {
             fail("SomeModifiersUnresolvedException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause, isA(InferenceException.class));
             assertThat(rootCause.getMessage(), startsWith(
                 "Augment target 'Absolute{path=[(urn:simple.container.demo)unknown]}' not found"));
         }
@@ -176,12 +176,18 @@ public class YangParserNegativeTest {
 
     @Test
     public void testDuplicityInAugmentTarget2() throws IOException, ReactorException, YangSyntaxErrorException {
-        TestUtils.loadModuleResources(getClass(),
-            "/negative-scenario/duplicity/augment0.yang",
-                "/negative-scenario/duplicity/augment2.yang");
-        testLog = output.toString();
-        assertThat(testLog, containsString(
-            "An augment cannot add node named 'delta' because this name is already used in target"));
+        try {
+            TestUtils.loadModuleResources(getClass(),
+                "/negative-scenario/duplicity/augment0.yang",
+                    "/negative-scenario/duplicity/augment2.yang");
+            fail("Duplicate leaf not detected");
+        } catch (SomeModifiersUnresolvedException e) {
+            final Throwable rootCause = Throwables.getRootCause(e);
+            assertThat(rootCause, isA(SourceException.class));
+            assertThat(rootCause.getMessage(), containsString("Cannot add schema tree child with name "
+                    + "(urn:simple.augment2.demo?revision=2014-06-02)delta, a conflicting child already exists"));
+
+        }
     }
 
     @Test

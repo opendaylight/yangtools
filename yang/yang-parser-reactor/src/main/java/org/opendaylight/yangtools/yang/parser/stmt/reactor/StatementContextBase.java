@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
@@ -44,6 +45,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
@@ -124,6 +126,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = def.internArgument(rawArgument);
         this.copyHistory = CopyHistory.original();
+        this.originalCtx = null;
+    }
+
+    StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
+        final String rawArgument, final CopyType copyType) {
+        this.definition = requireNonNull(def);
+        this.statementDeclSource = requireNonNull(ref);
+        this.rawArgument = rawArgument;
+        this.copyHistory = CopyHistory.of(copyType, CopyHistory.original());
         this.originalCtx = null;
     }
 
@@ -744,14 +755,42 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
 
         final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
-        final SubstatementContext<X, Y, Z> copy = new SubstatementContext<>(original, this, type, targetModule);
+        final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(
+            original.getPublicDefinition());
 
-        original.definition().onStatementAdded(copy);
+        final SubstatementContext<X, Y, Z> result;
+        final SubstatementContext<X, Y, Z> copy;
+
+        if (implicitParent.isPresent()) {
+            final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(implicitParent.get());
+            result = new SubstatementContext(this, def, original.getSourceReference(),
+                original.rawStatementArgument(), original.getStatementArgument(), type);
+
+            final CopyType childCopyType;
+            switch (type) {
+                case ADDED_BY_AUGMENTATION:
+                    childCopyType = CopyType.ORIGINAL;
+                    break;
+                case ADDED_BY_USES_AUGMENTATION:
+                    childCopyType = CopyType.ADDED_BY_USES;
+                    break;
+                case ADDED_BY_USES:
+                case ORIGINAL:
+                default:
+                    childCopyType = type;
+            }
+
+            copy = new SubstatementContext<>(original, result, childCopyType, targetModule);
+            result.addEffectiveSubstatement(copy);
+            original.definition().onStatementAdded(copy);
+        } else {
+            result = copy = new SubstatementContext<>(original, this, type, targetModule);
+            original.definition().onStatementAdded(copy);
+        }
+
         original.copyTo(copy, type, targetModule);
-
-        return copy;
+        return result;
     }
-
 
     @Override
     public @NonNull StatementDefinition getDefinition() {
@@ -766,6 +805,48 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public boolean isFullyDefined() {
         return fullyDefined;
+    }
+
+    @Beta
+    public boolean hasImplicitParentSupport() {
+        return definition.getFactory() instanceof ImplicitParentAwareStatementSupport;
+    }
+
+    @Beta
+    public StatementContextBase<?, ?, ?> wrapWithImplicit(final StatementContextBase<?, ?, ?> original) {
+        final Optional<StatementSupport<?, ?, ?>> optImplicit = definition.getImplicitParentFor(
+            original.getPublicDefinition());
+        if (!optImplicit.isPresent()) {
+            return original;
+        }
+
+        final StatementDefinitionContext<?, ?, ?> def = new StatementDefinitionContext<>(optImplicit.get());
+        final CopyType type = original.getCopyHistory().getLastOperation();
+        final SubstatementContext<?, ?, ?> result = new SubstatementContext(this, def,
+            original.getStatementSourceReference(), original.rawStatementArgument(), original.getStatementArgument(),
+            type);
+
+        final CopyType childCopyType;
+        switch (type) {
+            case ADDED_BY_AUGMENTATION:
+                childCopyType = CopyType.ORIGINAL;
+                break;
+            case ADDED_BY_USES_AUGMENTATION:
+                childCopyType = CopyType.ADDED_BY_USES;
+                break;
+            case ADDED_BY_USES:
+            case ORIGINAL:
+            default:
+                childCopyType = type;
+        }
+
+        SubstatementContext copy = new SubstatementContext<>(original, result, childCopyType, null);
+        result.addEffectiveSubstatement(copy);
+        original.definition().onStatementAdded(copy);
+        original.copyTo(copy, type, null);
+        result.setCompletedPhase(original.getCompletedPhase());
+
+        return result;
     }
 
     final void copyTo(final StatementContextBase<?, ?, ?> target, final CopyType typeOfCopy,
