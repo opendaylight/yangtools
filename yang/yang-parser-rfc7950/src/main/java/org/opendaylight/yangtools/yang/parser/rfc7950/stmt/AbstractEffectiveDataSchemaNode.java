@@ -21,11 +21,9 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
         AbstractEffectiveSchemaNode<D> implements DataSchemaNode {
 
     private final RevisionAwareXPath whenCondition;
-    private final boolean addedByUses;
     private final boolean configuration;
-
-    // FIXME: YANGTOOLS-724: this field should be final
-    private boolean augmenting;
+    private final boolean addedByUses;
+    private final boolean augmenting;
 
     protected AbstractEffectiveDataSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
@@ -73,6 +71,6 @@ public abstract class AbstractEffectiveDataSchemaNode<D extends DeclaredStatemen
      */
     @Deprecated
     public final void resetAugmenting() {
-        augmenting = false;
+        // Intentional no-op
     }
 }

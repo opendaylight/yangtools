@@ -38,7 +38,13 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-// FIXME: hide this class
+/**
+ * Internal implementation of ListEffectiveStatement.
+ *
+ * @deprecated This class is visible only for historical purposes and is going to be hidden.
+ */
+// FIXME: 3.0.0: hide this class
+@Deprecated
 public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDataNodeContainer<ListStatement>
         implements ListEffectiveStatement, ListSchemaNode, DerivableSchemaNode {
     private static final String ORDER_BY_USER_KEYWORD = "user";

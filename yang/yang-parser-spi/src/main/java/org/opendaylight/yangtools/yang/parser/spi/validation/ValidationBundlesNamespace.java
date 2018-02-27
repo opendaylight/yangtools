@@ -42,6 +42,7 @@ public interface ValidationBundlesNamespace extends
          * Whether a <a href="https://tools.ietf.org/html/rfc6020#section-7.9.2">case shorthand</a> can be created for a
          * node.
          */
+        // FIXME: 3.0.0: consider removing this constant, this functionality is part of statement support.
         SUPPORTED_CASE_SHORTHANDS,
 
         /**

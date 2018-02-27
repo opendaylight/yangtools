@@ -48,7 +48,12 @@ public final class YangValidationBundles {
      * Example: deviate 'add' adds a 'default' substatement. In YANG 1.0, the target node of such deviation can be
      * only a leaf or a choice statement. IN YANG 1.1, the target node of such deviation can be a leaf, a leaf-list or
      * a choice.
+     *
+     * @deprecated This is an implementation leak from statement support and will be removed in next major version.
      */
+    // FIXME: 3.0.0: move this to AbstractDeviateStatementSupport. This is not resolved from validation bundles at all,
+    //               hence it makes sense to co-locate this with its user.
+    @Deprecated
     public static final Table<YangVersion, StatementDefinition, Set<StatementDefinition>> SUPPORTED_DEVIATION_TARGETS =
             ImmutableTable.<YangVersion, StatementDefinition, Set<StatementDefinition>>builder()
         .put(VERSION_1, YangStmtMapping.CONFIG, ImmutableSet.of(YangStmtMapping.CONTAINER, YangStmtMapping.LEAF,
@@ -75,6 +80,9 @@ public final class YangValidationBundles {
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.CASE, YangStmtMapping.INPUT,
         YangStmtMapping.OUTPUT, YangStmtMapping.NOTIFICATION, YangStmtMapping.CHOICE, YangStmtMapping.RPC);
 
+    // FIXME: 3.0.0: consider hiding this list, as choice nodes are handling creation of implied shorthands themselves.
+    //               This has implications on other members of this class, as they really seem like something which
+    //               should live in corresponding StatementSupport classes.
     public static final Set<StatementDefinition> SUPPORTED_CASE_SHORTHANDS = ImmutableSet.of(
         YangStmtMapping.CONTAINER, YangStmtMapping.LIST, YangStmtMapping.LEAF, YangStmtMapping.LEAF_LIST,
         YangStmtMapping.ANYXML, YangStmtMapping.ANYDATA);

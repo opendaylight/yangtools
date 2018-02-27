@@ -31,7 +31,13 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
+/**
+ * A CaseSchemaNode for implicit cases.
+ *
+ * @deprecated This class is no longer used as all implicit statements are handled transparently.
+ */
 // FIXME: hide this somewhere
+@Deprecated
 public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSchemaNode {
 
     private final DataSchemaNode caseShorthandNode;

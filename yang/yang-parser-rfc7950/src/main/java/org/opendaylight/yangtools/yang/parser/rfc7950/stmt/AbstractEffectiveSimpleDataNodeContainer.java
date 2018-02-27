@@ -38,9 +38,7 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
     private final SchemaPath path;
     private final boolean configuration;
     private final boolean addedByUses;
-
-    // FIXME: YANGTOOLS-724: this field should be final
-    private boolean augmenting;
+    private final boolean augmenting;
 
     protected AbstractEffectiveSimpleDataNodeContainer(final StmtContext<QName, D, ?> ctx) {
         super(ctx);
@@ -129,6 +127,6 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
      */
     @Deprecated
     public final void resetAugmenting() {
-        augmenting = false;
+        // Intentional no-op
     }
 }

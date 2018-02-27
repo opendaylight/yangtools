@@ -35,7 +35,13 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-// FIXME: hide this class
+/**
+ * Internal implementation of LeafListEffectiveStatement.
+ *
+ * @deprecated This class is visible only for historical purposes and is going to be hidden.
+ */
+// FIXME: 3.0.0: hide this class
+@Deprecated
 public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafListStatement>
         implements LeafListEffectiveStatement, LeafListSchemaNode, DerivableSchemaNode {
 
