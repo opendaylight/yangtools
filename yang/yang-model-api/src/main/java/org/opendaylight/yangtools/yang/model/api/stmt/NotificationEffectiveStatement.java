@@ -12,6 +12,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
 public interface NotificationEffectiveStatement extends SchemaTreeEffectiveStatement<NotificationStatement>,
+    DataTreeAwareEffectiveStatement<QName, NotificationStatement>,
     SchemaTreeAwareEffectiveStatement<QName, NotificationStatement> {
 
 }
