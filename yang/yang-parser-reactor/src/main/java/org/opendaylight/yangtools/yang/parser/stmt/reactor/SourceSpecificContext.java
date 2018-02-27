@@ -98,19 +98,23 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return inProgressPhase;
     }
 
-    StatementContextBase<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
-            final QName name, final String argument, final StatementSourceReference ref) {
-        if (current != null) {
-            // Fast path: we are entering a statement which was emitted in previous phase
-            StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
-            while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
-                existing = existing.lookupSubstatement(childId);
-            }
-            if (existing != null) {
-                return existing;
-            }
+    Optional<StatementContextBase<?, ?, ?>> lookupDeclaredChild(final StatementContextBase<?, ?, ?> current,
+            final int childId) {
+        if (current == null) {
+            return Optional.empty();
         }
 
+        // Fast path: we are entering a statement which was emitted in previous phase
+        StatementContextBase<?, ?, ?> existing = current.lookupSubstatement(childId);
+        while (existing != null && StatementSource.CONTEXT == existing.getStatementSource()) {
+            existing = existing.lookupSubstatement(childId);
+        }
+
+        return Optional.ofNullable(existing);
+    }
+
+    StatementContextBase<?, ?, ?> createDeclaredChild(final StatementContextBase<?, ?, ?> current, final int childId,
+            final QName name, final String argument, final StatementSourceReference ref) {
         StatementDefinitionContext<?, ?, ?> def = currentContext.getStatementDefinition(getRootVersion(), name);
         if (def == null) {
             def = currentContext.getModelDefinedStatementDefinition(name);
