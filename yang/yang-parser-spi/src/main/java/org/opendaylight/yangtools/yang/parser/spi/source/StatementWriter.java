@@ -7,12 +7,87 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 
 public interface StatementWriter {
+    /**
+     * Resumed statement state.
+     *
+     * @author Robert Varga
+     */
+    @Beta
+    @NonNullByDefault
+    interface ResumedStatement {
+        /**
+         * Return statement definition.
+         *
+         * @return statement definition.
+         */
+        StatementDefinition getDefinition();
+
+        /**
+         * Return statement argument, if present.
+         *
+         * @return Optional statement argument.
+         */
+        Optional<String> getArgument();
+
+        /**
+         * Return statement source reference.
+         *
+         * @return statement source reference.
+         */
+        StatementSourceReference getSourceReference();
+
+        /**
+         * Check if the statement has been fully defined. This implies that all its children have been fully defined.
+         *
+         * @return True if the statement has been fully defined.
+         */
+        boolean isFullyDefined();
+    }
+
+    /**
+     * Attempt to resume a child statement. If the statement has been previously defined, a {@link ResumedStatement}
+     * instance is returned.
+     *
+     * <p>
+     * If an empty optional is returned, the caller is expected to follow-up with
+     * {@link #startStatement(int, QName, String, StatementSourceReference)} to define the statement.
+     *
+     * <p>
+     * If the returned resumed statement indicates {@link ResumedStatement#isFullyDefined()}, the caller should take
+     * no further action with this or any of the child statements. Otherwise this call is equivalent of issuing
+     * {@link #startStatement(int, QName, String, StatementSourceReference)} and the caller is expected to process
+     * any child statements. The caller should call {@link #storeStatement(int, boolean)} before finishing processing
+     * with {@link #endStatement(StatementSourceReference)}.
+     *
+     * @param childId Child
+     * @return A resumed statement or empty if the statement has not previously been defined.
+     */
+    default Optional<? extends ResumedStatement> resumeStatement(final int childId) {
+        return Optional.empty();
+    }
+
+    /**
+     * Store a defined statement, hinting at the number of children it is expected to have and indicating whether
+     * it has been fully defined. This method should be called before {@link #endStatement(StatementSourceReference)}
+     * when the caller is taking advantage of {@link #resumeStatement(int)}.
+     *
+     * @param expectedChildren Number of expected children, cannot be negative
+     * @param fullyDefined True if the statement and all its descendants have been defined.
+     */
+    default void storeStatement(final int expectedChildren, final boolean fullyDefined) {
+        // No-op
+    }
+
     /**
      * Starts statement with supplied name and location in source.
      *
@@ -25,17 +100,12 @@ public interface StatementWriter {
      * If statement has substatements, in order to start substatement, call to
      * {@link #startStatement(int, QName, String, StatementSourceReference)} needs to be done for substatement.
      *
-     * @param childId
-     *            Child identifier, unique among siblings
-     * @param name
-     *            Fully qualified name of statement.
-     * @param argument
-     *            String representation of value as appeared in source, null if not present
-     * @param ref
-     *            Identifier of location in source, which will be used for
-     *            reporting in case of statement processing error.
-     * @throws SourceException
-     *             if statement is not valid according to current context.
+     * @param childId Child identifier, unique among siblings
+     * @param name Fully qualified name of statement.
+     * @param argument String representation of value as appeared in source, null if not present
+     * @param ref Identifier of location in source, which will be used for reporting in case of statement processing
+     *            error.
+     * @throws SourceException if statement is not valid according to current context.
      */
     void startStatement(int childId, @Nonnull QName name, @Nullable String argument,
             @Nonnull StatementSourceReference ref);
@@ -43,12 +113,9 @@ public interface StatementWriter {
     /**
      * Ends current opened statement.
      *
-     * @param ref
-     *            Identifier of location in source, which will be used for
-     *            reporting in case of statement processing error.
-     * @throws SourceException
-     *             if closed statement is not valid in current context, or there
-     *             is no such statement
+     * @param ref Identifier of location in source, which will be used for reporting in case of statement processing
+     *            error.
+     * @throws SourceException if closed statement is not valid in current context, or there is no such statement
      */
     void endStatement(@Nonnull StatementSourceReference ref);
 
