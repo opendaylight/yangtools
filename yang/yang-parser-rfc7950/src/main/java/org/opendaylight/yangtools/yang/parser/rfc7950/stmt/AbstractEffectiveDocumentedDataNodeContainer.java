@@ -59,7 +59,8 @@ public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends 
                     throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, stmt);
                 }
 
-                //  Add case short hand when augmenting choice with short hand
+                // Add case short hand when augmenting choice with short hand
+                // FIXME: this should not be necessary and should be taken care of by the copy process
                 if (this instanceof AugmentationSchemaNode
                         && !(stmt instanceof CaseSchemaNode || stmt instanceof ChoiceSchemaNode)
                         && YangValidationBundles.SUPPORTED_CASE_SHORTHANDS.contains(stmt.statementDefinition())
