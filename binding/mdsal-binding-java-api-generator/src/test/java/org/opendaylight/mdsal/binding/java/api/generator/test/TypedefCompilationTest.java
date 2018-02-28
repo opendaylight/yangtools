@@ -166,7 +166,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         // typedef string-ext1
         assertFalse(stringExt1Class.isInterface());
         CompilationTestUtils.assertContainsField(stringExt1Class, VAL, String.class);
-        CompilationTestUtils.assertContainsField(stringExt1Class, "patterns", Pattern[].class);
+        CompilationTestUtils.assertContainsField(stringExt1Class, "patterns", Pattern.class);
         CompilationTestUtils.assertContainsField(stringExt1Class, "PATTERN_CONSTANTS", List.class);
         CompilationTestUtils.assertContainsFieldWithValue(stringExt1Class, "serialVersionUID", Long.TYPE, 6943827552297110991L, String.class);
         // assertEquals(5, stringExt1Class.getDeclaredFields().length);

@@ -18,10 +18,17 @@ final class Constants {
     public static final String DOT = ".";
 
     /**
-     * Name of the class constant which contains list of <code>Pattern</code>
-     * instances.
+     * Name of the class constant which contains list of <code>Pattern</code> instances. The type of this constant
+     * is Pattern[] for more than one pattern, or Pattern if there is only a single one.
      */
     public static final String MEMBER_PATTERN_LIST = "patterns";
+
+    /**
+     * Name of the class constant which contains a list of XSD regular expression strings. The type of this constant
+     * is String[] (or String for single strings) and it corresponds to {@link #MEMBER_PATTERN_LIST} in both size and
+     * ordering.
+     */
+    public static final String MEMBER_REGEX_LIST = "regexes";
 
     /**
      * It doesn't have the sense to create the instances of this class.

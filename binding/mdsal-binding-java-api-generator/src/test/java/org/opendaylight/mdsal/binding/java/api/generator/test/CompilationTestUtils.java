@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.tools.Diagnostic;
 import javax.tools.JavaCompiler;
 import javax.tools.JavaFileObject;
 import javax.tools.StandardJavaFileManager;
@@ -351,8 +352,12 @@ public class CompilationTestUtils {
         List<File> filesList = getJavaFiles(sourcesOutputDir);
         Iterable<? extends JavaFileObject> compilationUnits = fileManager.getJavaFileObjectsFromFiles(filesList);
         Iterable<String> options = Arrays.asList("-d", compiledOutputDir.getAbsolutePath());
-        boolean compiled = compiler.getTask(null, null, null, options, null, compilationUnits).call();
-        assertTrue("Compilation failed", compiled);
+
+        List<Diagnostic<?>> diags = new ArrayList<>();
+        boolean compiled = compiler.getTask(null, null, diags::add, options, null, compilationUnits).call();
+        if (!compiled) {
+            fail("Compilation failed with " + diags);
+        }
     }
 
     /**

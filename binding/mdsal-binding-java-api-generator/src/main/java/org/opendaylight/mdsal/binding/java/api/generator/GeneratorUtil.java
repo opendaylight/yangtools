@@ -64,8 +64,6 @@ public final class GeneratorUtil {
         if (genType instanceof GeneratedTransferObject
                 && isConstantInTO(TypeConstants.PATTERN_CONSTANT_NAME, (GeneratedTransferObject) genType)) {
             putTypeIntoImports(genType, Types.typeForClass(java.util.regex.Pattern.class), imports);
-            putTypeIntoImports(genType, Types.typeForClass(java.util.Arrays.class), imports);
-            putTypeIntoImports(genType, Types.typeForClass(java.util.ArrayList.class), imports);
         }
 
         final List<MethodSignature> methods = genType.getMethodDefinitions();
@@ -324,7 +322,7 @@ public final class GeneratorUtil {
             final Type t = pTypes[i];
 
             String separator = COMMA;
-            if (i == (pTypes.length - 1)) {
+            if (i == pTypes.length - 1) {
                 separator = "";
             }
 

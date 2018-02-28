@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import com.google.common.base.Preconditions
+import static java.util.Objects.requireNonNull
+import static extension org.apache.commons.text.StringEscapeUtils.escapeJava;
+
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
 import com.google.common.io.BaseEncoding
@@ -16,6 +18,7 @@ import java.util.ArrayList
 import java.util.Arrays
 import java.util.Collections
 import java.util.List
+import java.util.Map
 import java.util.Objects
 import java.util.regex.Pattern
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
@@ -27,6 +30,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
+import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
@@ -85,8 +89,7 @@ class ClassTemplate extends BaseTemplate {
         this.enclosedGeneratedTypes = genType.enclosedTypes
 
         if (restrictions !== null && restrictions.rangeConstraint.present) {
-            rangeGenerator = AbstractRangeGenerator.forType(findProperty(genType, "value").returnType)
-            Preconditions.checkNotNull(rangeGenerator)
+            rangeGenerator = requireNonNull(AbstractRangeGenerator.forType(findProperty(genType, "value").returnType))
         } else {
             rangeGenerator = null
         }
@@ -219,14 +222,10 @@ class ClassTemplate extends BaseTemplate {
          * consequence of how this code is structured.
          */
         IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
-
-        «Preconditions.importedName».checkNotNull(_value, "Supplied value may not be null");
-
+            «Objects.importedName».requireNonNull(_value, "Supplied value may not be null");
             «FOR c : consts»
-                «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME && c.value instanceof List<?>»
-                for (Pattern p : «Constants.MEMBER_PATTERN_LIST») {
-                    «Preconditions.importedName».checkArgument(p.matcher(_value).matches(), "Supplied value \"%s\" does not match required pattern \"%s\"", _value, p);
-                }
+                «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
+                «CodeHelpers.importedName».checkPattern(_value, «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -291,7 +290,7 @@ class ClassTemplate extends BaseTemplate {
                 «IF restrictions.rangeConstraint.present»
                     «rangeGenerator.generateRangeCheckerCall(paramName, paramValue(returnType, paramName))»
                 «ENDIF»
-                }
+            }
             «ENDIF»
         «ENDIF»
     '''
@@ -435,40 +434,22 @@ class ClassTemplate extends BaseTemplate {
         «IF !consts.empty»
             «FOR c : consts»
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
-                    «val cValue = c.value»
-                    «IF cValue instanceof List<?>»
-                        private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»;
-                        public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
-                        FOR v : cValue SEPARATOR ", "»«
-                            IF v instanceof String»"«
-                                v»"«
-                            ENDIF»«
-                        ENDFOR»);
-
-                        «generateStaticInitializationBlock»
+                    «val cValue = c.value as Map<String, String>»
+                    public static final «List.importedName»<String> «TypeConstants.PATTERN_CONSTANT_NAME» = «ImmutableList.importedName».of(«
+                    FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
+                    «IF cValue.size == 1»
+                        private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST» = «Pattern.importedName».compile(«TypeConstants.PATTERN_CONSTANT_NAME».get(0));
+                        private static final String «Constants.MEMBER_REGEX_LIST» = "«cValue.values.get(0).escapeJava»";
+                    «ELSE»
+                        private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST» = «CodeHelpers.importedName».compilePatterns(«TypeConstants.PATTERN_CONSTANT_NAME»);
+                        private static final String[] «Constants.MEMBER_REGEX_LIST» = { «
+                        FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
                     «ENDIF»
                 «ELSE»
                     «emitConstant(c)»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
-    '''
-
-    /**
-     * Template method which generates JAVA static initialization block.
-     *
-     * @return string with static initialization block in JAVA format
-     */
-    def protected generateStaticInitializationBlock() '''
-        static {
-            final «Pattern.importedName» a[] = new «Pattern.importedName»[«TypeConstants.PATTERN_CONSTANT_NAME».size()];
-            int i = 0;
-            for (String regEx : «TypeConstants.PATTERN_CONSTANT_NAME») {
-                a[i++] = Pattern.compile(regEx);
-            }
-
-            «Constants.MEMBER_PATTERN_LIST» = a;
-        }
     '''
 
     /**

@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
+import org.opendaylight.yangtools.yang.binding.CodeHelpers
 
 /**
  * Template for generating JAVA builder classes.
@@ -322,12 +323,7 @@ class BuilderTemplate extends BaseTemplate {
                     «FOR impl : ifc.getAllIfcs»
                         «generateIfCheck(impl, done)»
                     «ENDFOR»
-                    if (!isValidArg) {
-                        throw new IllegalArgumentException(
-                          "expected one of: «ifc.getAllIfcs.toListOfNames» \n" +
-                          "but was: " + arg
-                        );
-                    }
+                    «CodeHelpers.importedName».validValue(isValidArg, arg, "«ifc.getAllIfcs.toListOfNames»");
                 }
             «ENDIF»
         «ENDIF»
@@ -335,7 +331,7 @@ class BuilderTemplate extends BaseTemplate {
 
     def private generateMethodFieldsFromComment(GeneratedType type) '''
         /**
-         *Set fields from given grouping argument. Valid argument is instance of one of following types:
+         * Set fields from given grouping argument. Valid argument is instance of one of following types:
          * <ul>
          «FOR impl : type.getAllIfcs»
          * <li>«impl.fullyQualifiedName»</li>
@@ -604,10 +600,7 @@ class BuilderTemplate extends BaseTemplate {
             @SuppressWarnings("unchecked")
             «IF addOverride»@Override«ENDIF»
             public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(«Class.importedName»<E> augmentationType) {
-                if (augmentationType == null) {
-                    throw new IllegalArgumentException("Augmentation Type reference cannot be NULL!");
-                }
-                return (E) «augmentField.name».get(augmentationType);
+                return (E) «augmentField.name».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
             }
         «ENDIF»
     '''
