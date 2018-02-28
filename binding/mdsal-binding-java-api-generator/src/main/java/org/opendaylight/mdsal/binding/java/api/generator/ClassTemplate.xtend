@@ -126,10 +126,10 @@ class ClassTemplate extends BaseTemplate {
 
             «IF restrictions !== null»
                 «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraint.get)»
+                    «LengthGenerator.generateLengthChecker("_value", findProperty(genTO, "value").returnType, restrictions.lengthConstraint.get, this)»
                 «ENDIF»
                 «IF restrictions.rangeConstraint.present»
-                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.get)»
+                    «rangeGenerator.generateRangeChecker("_value", restrictions.rangeConstraint.get, this)»
                 «ENDIF»
             «ENDIF»
 

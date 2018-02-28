@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +96,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
 
     @Override
     protected final String generateRangeCheckerImplementation(final String checkerName,
-            final RangeConstraint<?> constraints) {
+            final RangeConstraint<?> constraints, final Function<Class<?>, String> classImporter) {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraints);
 
@@ -107,8 +109,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
                 sb.append("    }\n");
             }
 
-            sb.append("    throw new IllegalArgumentException(String.format(\"Invalid range: %s, expected: ")
-              .append(createRangeString(constraints)).append(".\", value));\n");
+            sb.append("    ").append(classImporter.apply(CodeHelpers.class)).append(".throwInvalidRange(\"")
+            .append(createRangeString(constraints)).append("\", value);\n");
         }
 
         sb.append("}\n");

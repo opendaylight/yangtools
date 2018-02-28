@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -93,7 +94,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
 
     // FIXME: Once BUG-3399 is fixed, we should never need this
     @Deprecated
-    protected abstract T convert(final Number value);
+    protected abstract T convert(Number value);
 
     /**
      * Format a value into a Java-compilable expression which results in the appropriate
@@ -102,7 +103,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param value Number value
      * @return Java language string representation
      */
-    @Nonnull protected abstract String format(final T value);
+    @Nonnull protected abstract String format(T value);
 
     /**
      * Generate the checker method source code.
@@ -110,15 +111,16 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param constraints Restrictions which need to be applied.
      * @return Method source code.
      */
-    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull final String checkerName,
-            @Nonnull final RangeConstraint<?> constraints);
+    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull String checkerName,
+            @Nonnull RangeConstraint<?> constraints, Function<Class<?>, String> classImporter);
 
     private static String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
 
-    String generateRangeChecker(@Nonnull final String member, @Nonnull final RangeConstraint<?> constraints) {
-        return generateRangeCheckerImplementation(rangeCheckerName(member), constraints);
+    String generateRangeChecker(@Nonnull final String member, @Nonnull final RangeConstraint<?> constraints,
+            final JavaFileTemplate template) {
+        return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, template::importedName);
     }
 
     String generateRangeCheckerCall(@Nonnull final String member, @Nonnull final String valueReference) {

@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
@@ -117,5 +118,49 @@ public final class CodeHelpers {
         for (int i = 0; i < patterns.length; ++i) {
             checkPattern(value, patterns[i], regexes[i]);
         }
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a length violation.
+     *
+     * @param expected String describing expected lengths
+     * @param actual Actual observed object
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidLength(final String expected, final Object actual) {
+        throw new IllegalArgumentException("Invalid length: " + actual + ", expected: " + expected + ".");
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a length violation.
+     *
+     * @param expected String describing expected lengths
+     * @param actual Actual observed byte array
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidLength(final String expected, final byte[] actual) {
+        throwInvalidLength(expected, Arrays.toString(actual));
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a range violation.
+     *
+     * @param expected String describing expected ranges
+     * @param actual Actual observed object
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidRange(final String expected, final Object actual) {
+        throw new IllegalArgumentException("Invalid range: " + actual + ", expected: " + expected + ".");
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a range violation.
+     *
+     * @param expected Objects describing expected ranges
+     * @param actual Actual observed byte array
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidRange(final Object[] expected, final Object actual) {
+        throwInvalidRange(Arrays.toString(expected), actual);
     }
 }

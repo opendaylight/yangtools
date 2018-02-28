@@ -439,11 +439,11 @@ class BuilderTemplate extends BaseTemplate {
              «IF !(field.returnType instanceof GeneratedType) && restrictions !== null»
                     «IF restrictions.rangeConstraint.present»
                         «val rangeGenerator = AbstractRangeGenerator.forType(field.returnType)»
-                        «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraint.get)»
+                        «rangeGenerator.generateRangeChecker(field.name.toFirstUpper, restrictions.rangeConstraint.get, this)»
 
                     «ENDIF»
                     «IF restrictions.lengthConstraint.present»
-                    «LengthGenerator.generateLengthChecker(field.fieldName.toString, field.returnType, restrictions.lengthConstraint.get)»
+                    «LengthGenerator.generateLengthChecker(field.fieldName.toString, field.returnType, restrictions.lengthConstraint.get, this)»
 
                     «ENDIF»
             «ENDIF»

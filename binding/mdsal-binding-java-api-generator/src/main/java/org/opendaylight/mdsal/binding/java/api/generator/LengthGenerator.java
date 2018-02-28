@@ -14,6 +14,7 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +64,8 @@ final class LengthGenerator {
         return new ArrayList<>(constraint.getAllowedRanges().asRanges()).toString();
     }
 
-    private static String generateArrayLengthChecker(final String member, final LengthConstraint constraint) {
+    private static String generateArrayLengthChecker(final String member, final LengthConstraint constraint,
+            final JavaFileTemplate template) {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraint);
 
@@ -78,16 +80,15 @@ final class LengthGenerator {
                 sb.append("    }\n");
             }
 
-            sb.append("    throw new IllegalArgumentException(String.format(\"Invalid length: %s, expected: ")
-              .append(createLengthString(constraint)).append(".\", java.util.Arrays.toString(value)));\n");
+            sb.append("    ").append(template.importedName(CodeHelpers.class)).append(".throwInvalidLength(\"")
+            .append(createLengthString(constraint)).append("\", value);\n");
         }
 
-        sb.append("}\n");
-
-        return sb.toString();
+        return sb.append("}\n").toString();
     }
 
-    private static String generateStringLengthChecker(final String member, final LengthConstraint constraint) {
+    private static String generateStringLengthChecker(final String member, final LengthConstraint constraint,
+            final JavaFileTemplate template) {
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraint);
 
@@ -102,19 +103,18 @@ final class LengthGenerator {
                 sb.append("    }\n");
             }
 
-            sb.append("    throw new IllegalArgumentException(String.format(\"Invalid length: %s, expected: ")
-              .append(createLengthString(constraint)).append(".\", value));\n");
+            sb.append("    ").append(template.importedName(CodeHelpers.class)).append(".throwInvalidLength(\"")
+            .append(createLengthString(constraint)).append("\", value);\n");
         }
 
-        sb.append("}\n");
-
-        return sb.toString();
+        return sb.append("}\n").toString();
     }
 
     static String generateLengthChecker(final String member, final Type type,
-            final LengthConstraint constraint) {
+            final LengthConstraint constraint, final JavaFileTemplate template) {
         return TypeUtils.getBaseYangType(type).getName().indexOf('[') != -1
-                ? generateArrayLengthChecker(member, constraint) : generateStringLengthChecker(member, constraint);
+                ? generateArrayLengthChecker(member, constraint, template)
+                        : generateStringLengthChecker(member, constraint, template);
     }
 
     static String generateLengthCheckerCall(@Nullable final String member, @Nonnull final String valueReference) {
