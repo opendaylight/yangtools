@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "ef0b3f7b_072367f0",
+        "filename": "yang/yang-parser-rfc7950/src/test/resources/bugs/name-collision-within-case/baz.yang",
+        "patchSetId": 13
+      },
+      "lineNbr": 21,
+      "author": {
+        "id": 7228
+      },
+      "writtenOn": "2018-02-28T01:12:39Z",
+      "side": 1,
+      "message": "Collision of \u0027bar\u0027 should be detected.\nIf we add a new namespace, we also should put this node into it,\nit\u0027s not neccesory.",
+      "range": {
+        "startLine": 21,
+        "startChar": 5,
+        "endLine": 21,
+        "endChar": 21
+      },
+      "revId": "063230a5d72d0982f5e68738afe5131a5516a6f9",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
