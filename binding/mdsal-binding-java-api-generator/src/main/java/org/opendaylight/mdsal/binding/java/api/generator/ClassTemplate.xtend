@@ -224,7 +224,7 @@ class ClassTemplate extends BaseTemplate {
 
             «FOR c : consts»
                 «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME && c.value instanceof List<?>»
-                for (Pattern p : patterns) {
+                for (Pattern p : «Constants.MEMBER_PATTERN_LIST») {
                     «Preconditions.importedName».checkArgument(p.matcher(_value).matches(), "Supplied value \"%s\" does not match required pattern \"%s\"", _value, p);
                 }
                 «ENDIF»
