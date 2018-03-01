@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 
-public class ListsBindingUtils {
+public final class ListsBindingUtils {
 
     private static final InstanceIdentifier<Top> TOP_PATH = InstanceIdentifier.create(Top.class);
 
@@ -53,7 +53,8 @@ public class ListsBindingUtils {
         return path(top).augmentation(TreeComplexUsesAugment.class).child(ListViaUses.class, uses);
     }
 
-    public static <T extends DataObject & Augmentation<TopLevelList>> InstanceIdentifier<T> path(final TopLevelListKey key, final Class<T> augmentation) {
+    public static <T extends DataObject & Augmentation<TopLevelList>> InstanceIdentifier<T> path(
+            final TopLevelListKey key, final Class<T> augmentation) {
         return path(key).augmentation(augmentation);
     }
 
