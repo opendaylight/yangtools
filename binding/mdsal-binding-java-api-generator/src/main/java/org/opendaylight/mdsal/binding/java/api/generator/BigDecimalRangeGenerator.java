@@ -32,6 +32,7 @@ final class BigDecimalRangeGenerator extends AbstractBigRangeGenerator<BigDecima
     }
 
     @Override
+    @Deprecated
     protected BigDecimal convert(final Number value) {
         if (value instanceof BigInteger) {
             return new BigDecimal((BigInteger)value);

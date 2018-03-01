@@ -10,12 +10,12 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.LongRangeGenerator;
 
 public class LongRangeGeneratorTest {
 
     @Test
-    public void convertTest() throws Exception {
+    @Deprecated
+    public void convertTest() {
         assertTrue(new LongRangeGenerator().convert(1).equals(new Integer(1).longValue()));
     }
 }

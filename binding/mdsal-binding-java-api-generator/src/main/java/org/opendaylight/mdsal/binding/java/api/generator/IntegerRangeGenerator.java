@@ -18,6 +18,7 @@ final class IntegerRangeGenerator extends AbstractPrimitiveRangeGenerator<Intege
     }
 
     @Override
+    @Deprecated
     protected Integer convert(final Number value) {
         return value.intValue();
     }

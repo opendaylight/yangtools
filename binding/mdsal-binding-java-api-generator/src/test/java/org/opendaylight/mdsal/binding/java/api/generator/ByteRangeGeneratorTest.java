@@ -10,12 +10,12 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.ByteRangeGenerator;
 
 public class ByteRangeGeneratorTest {
 
     @Test
-    public void convertTest() throws Exception {
+    @Deprecated
+    public void convertTest() {
         assertTrue(new ByteRangeGenerator().convert(1L).equals(new Long(1L).byteValue()));
     }
 }

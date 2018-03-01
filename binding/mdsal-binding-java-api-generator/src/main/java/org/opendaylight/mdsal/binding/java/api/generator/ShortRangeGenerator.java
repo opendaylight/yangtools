@@ -13,6 +13,7 @@ final class ShortRangeGenerator extends AbstractSubIntegerRangeGenerator<Short> 
     }
 
     @Override
+    @Deprecated
     protected Short convert(final Number value) {
         return value.shortValue();
     }

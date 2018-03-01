@@ -30,12 +30,13 @@ final class BigIntegerRangeGenerator extends AbstractBigRangeGenerator<BigIntege
         final long l = value.longValue();
         if (value.equals(BigInteger.valueOf(l))) {
             return "java.math.BigInteger.valueOf(" + l + "L)";
-        } else {
-            return "new java.math.BigInteger(\"" + value.toString() + "\")";
         }
+
+        return "new java.math.BigInteger(\"" + value.toString() + "\")";
     }
 
     @Override
+    @Deprecated
     protected BigInteger convert(final Number value) {
         return BigInteger.valueOf(value.longValue());
     }

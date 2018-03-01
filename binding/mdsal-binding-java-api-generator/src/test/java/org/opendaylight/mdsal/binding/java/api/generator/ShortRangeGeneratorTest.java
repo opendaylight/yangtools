@@ -10,12 +10,12 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.ShortRangeGenerator;
 
 public class ShortRangeGeneratorTest {
 
     @Test
-    public void convertTest() throws Exception {
+    @Deprecated
+    public void convertTest() {
         assertTrue(new ShortRangeGenerator().convert(1L).equals(new Long(1L).shortValue()));
     }
 }

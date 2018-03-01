@@ -13,12 +13,12 @@ import static org.junit.Assert.assertNotNull;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.BigDecimalRangeGenerator;
 
 public class BigDecimalRangeGeneratorTest {
 
     @Test
-    public void convertTest() throws Exception {
+    @Deprecated
+    public void convertTest() {
         BigDecimalRangeGenerator generator = new BigDecimalRangeGenerator();
         assertEquals(BigDecimal.valueOf(1L), generator.convert(1L));
         assertEquals(BigDecimal.valueOf(1), generator.convert(new BigInteger("1")));

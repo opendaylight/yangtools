@@ -19,6 +19,7 @@ final class LongRangeGenerator extends AbstractPrimitiveRangeGenerator<Long> {
     }
 
     @Override
+    @Deprecated
     protected Long convert(final Number value) {
         return value.longValue();
     }

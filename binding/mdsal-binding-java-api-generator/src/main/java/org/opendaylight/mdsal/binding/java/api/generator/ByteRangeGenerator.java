@@ -13,6 +13,7 @@ final class ByteRangeGenerator extends AbstractSubIntegerRangeGenerator<Byte> {
     }
 
     @Override
+    @Deprecated
     protected Byte convert(final Number value) {
         return value.byteValue();
     }
