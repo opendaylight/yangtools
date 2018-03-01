@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import com.google.common.collect.ImmutableMap
 import com.google.common.collect.ImmutableSortedSet
 import java.util.ArrayList
 import java.util.Arrays
@@ -537,17 +538,7 @@ class BuilderTemplate extends BaseTemplate {
             «ENDFOR»
             «IF augmentField !== null»
                 «IF impl»
-                    switch (base.«augmentField.name».size()) {
-                    case 0:
-                        this.«augmentField.name» = «Collections.importedName».emptyMap();
-                        break;
-                    case 1:
-                        final «Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e = base.«augmentField.name».entrySet().iterator().next();
-                        this.«augmentField.name» = «Collections.importedName».<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»>singletonMap(e.getKey(), e.getValue());
-                        break;
-                    default :
-                        this.«augmentField.name» = new «HashMap.importedName»<>(base.«augmentField.name»);
-                    }
+                    this.«augmentField.name» = «ImmutableMap.importedName».copyOf(base.«augmentField.name»);
                 «ELSE»
                     if (base instanceof «type.name»«IMPL») {
                         «type.name»«IMPL» impl = («type.name»«IMPL») base;
