@@ -40,22 +40,22 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.SchemaNode
 
 abstract class BaseTemplate {
+    protected val Map<String, String> importMap = new HashMap()
     protected val GeneratedType type;
-    protected val Map<String, String> importMap;
 
     private static final char NEW_LINE = '\n'
-    private static final CharMatcher NL_MATCHER = CharMatcher.is(NEW_LINE)
-    private static final CharMatcher TAB_MATCHER = CharMatcher.is('\t')
-    private static final Pattern SPACES_PATTERN = Pattern.compile(" +")
-    private static final Splitter NL_SPLITTER = Splitter.on(NL_MATCHER)
-    private static final Pattern TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
+    private static val AMP_MATCHER = CharMatcher.is('&')
+    private static val NL_MATCHER = CharMatcher.is(NEW_LINE)
+    private static val TAB_MATCHER = CharMatcher.is('\t')
+    private static val SPACES_PATTERN = Pattern.compile(" +")
+    private static val NL_SPLITTER = Splitter.on(NL_MATCHER)
+    private static val TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
     new(GeneratedType _type) {
         if (_type === null) {
             throw new IllegalArgumentException("Generated type reference cannot be NULL!")
         }
         this.type = _type;
-        this.importMap = new HashMap<String,String>()
     }
 
     def packageDefinition() '''package «type.packageName»;'''
@@ -203,9 +203,7 @@ abstract class BaseTemplate {
         if (text.empty)
             return ""
 
-        val StringBuilder sb = new StringBuilder("/**")
-        sb.append(NEW_LINE)
-
+        val StringBuilder sb = new StringBuilder().append("/**\n")
         for (String t : NL_SPLITTER.split(text)) {
             sb.append(" *")
             if (!t.isEmpty()) {
@@ -234,8 +232,6 @@ abstract class BaseTemplate {
             «ENDIF»
         '''.toString
     }
-
-    private static val AMP_MATCHER = CharMatcher.is('&')
 
     def static encodeJavadocSymbols(String description) {
         if (description.nullOrEmpty) {
