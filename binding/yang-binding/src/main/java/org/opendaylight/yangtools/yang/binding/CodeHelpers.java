@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.VerifyException;
 import java.util.Arrays;
 import java.util.List;
@@ -62,6 +63,35 @@ public final class CodeHelpers {
         requireNonNull(name);
         checkArgument(value != null, "%s must not be null", name);
         return value;
+    }
+
+    /**
+     * Append a named value to a ToStringHelper. If the value is null, this method does nothing.
+     *
+     * @param helper Helper to append to
+     * @param name Name of the value
+     * @param value Value to append
+     * @throws NullPointerException if the name or helper is null
+     */
+    public static void appendValue(final @NonNull ToStringHelper helper, final @NonNull String name,
+            final @Nullable Object value) {
+        if (value != null) {
+            helper.add(name, value);
+        }
+    }
+
+    /**
+     * Append a named value to a ToStringHelper. If the value is null, this method does nothing.
+     *
+     * @param helper Helper to append to
+     * @param name Name of the value
+     * @param value Value to append
+     * @throws NullPointerException if the name or helper is null
+     */
+    public static void appendValue(final ToStringHelper helper, final String name, final byte[] value) {
+        if (value != null) {
+            helper.add(name, Arrays.toString(value));
+        }
     }
 
     /**

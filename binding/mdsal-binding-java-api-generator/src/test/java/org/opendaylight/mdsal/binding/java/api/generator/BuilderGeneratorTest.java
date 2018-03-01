@@ -39,79 +39,82 @@ public class BuilderGeneratorTest {
     private static final String TEST = "test";
 
     @Test
-    public void basicTest() throws Exception {
+    public void basicTest() {
         assertEquals("", new BuilderGenerator().generate(mock(Type.class)));
     }
 
     @Test
-    public void builderTemplateGenerateToStringWithPropertyTest() throws Exception {
+    public void builderTemplateGenerateToStringWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART
-                + "\n    if (_test != null) {\n        builder.append(\"_test=\");\n        builder.append(_test);\n    }"
-                + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(genType).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
-        final GeneratedType genType = mockGenType(TEST);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(mockGenType(TEST)).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
-        final GeneratedType genType = mockGenTypeMoreMeth("get" + TEST);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART
-                + "\n    if (_test1 != null) {\n        builder.append(\"_test1=\");\n        builder.append(_test1);"
-                + "\n        " + APPEND_COMMA + "\n    }"
-                + "\n    if (_test2 != null) {\n        builder.append(\"_test2=\");\n        builder.append(_test2);\n    }"
-                + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
+                "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(mockGenTypeMoreMeth("get" + TEST)).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
-        final GeneratedType genType = mockGenType(TEST);
-        mockAugment(genType);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART + GEN_TO_STRING_AUGMENT_PART + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
-        final GeneratedType genType = mockGenType("get" + TEST);
-        mockAugment(genType);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART
-                + "\n    if (_test != null) {\n        builder.append(\"_test=\");\n        builder.append(_test);\n    }"
-                + "\n    " + APPEND_COMMA_AUGMENT + GEN_TO_STRING_AUGMENT_PART + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
-        final GeneratedType genType = mockGenTypeMoreMeth("get" + TEST);
-        mockAugment(genType);
-        final String generateToString = genToString(genType).toString();
-        final String expected = GEN_TO_STRING_FIRST_PART
-                + "\n    if (_test1 != null) {\n        builder.append(\"_test1=\");\n        builder.append(_test1);\n        "
-                + APPEND_COMMA + "\n    }"
-                + "\n    if (_test2 != null) {\n        builder.append(\"_test2=\");\n        builder.append(_test2);\n    }"
-                + "\n    " + APPEND_COMMA_AUGMENT + GEN_TO_STRING_AUGMENT_PART + GEN_TO_STRING_LAST_PART;
-        assertEquals(expected, generateToString);
+        assertEquals("@Override\n" +
+                "public java.lang.String toString() {\n" +
+                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
+                "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
+                "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
+                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values()); \n" +
+                "    return helper.toString();\n" +
+                "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }
 
-    private static void mockAugment(final GeneratedType genType) {
+    private static GeneratedType mockAugment(final GeneratedType genType) {
         final List<Type> impls = new ArrayList<>();
         final Type impl = mock(Type.class);
         doReturn("org.opendaylight.yangtools.yang.binding.Augmentable").when(impl).getFullyQualifiedName();
         impls.add(impl);
         doReturn(impls).when(genType).getImplements();
+        return genType;
     }
 
     private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
@@ -132,12 +135,15 @@ public class BuilderGeneratorTest {
     }
 
     @SuppressWarnings("unchecked")
-    private static CharSequence genToString(final GeneratedType genType)
-            throws NoSuchFieldException, IllegalAccessException {
-        final BuilderTemplate bt = new BuilderTemplate(genType);
-        final Field propertiesField = bt.getClass().getDeclaredField(PROPERTIES_FIELD_NAME);
-        propertiesField.setAccessible(true);
-        return bt.generateToString((Collection<GeneratedProperty>) propertiesField.get(bt));
+    private static CharSequence genToString(final GeneratedType genType) {
+        try {
+            final BuilderTemplate bt = new BuilderTemplate(genType);
+            final Field propertiesField = bt.getClass().getDeclaredField(PROPERTIES_FIELD_NAME);
+            propertiesField.setAccessible(true);
+            return bt.generateToString((Collection<GeneratedProperty>) propertiesField.get(bt));
+        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private static GeneratedType mockGenType(final String methodeName) {

@@ -10,9 +10,9 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
 
 import com.google.common.base.CharMatcher
+import com.google.common.base.MoreObjects
 import com.google.common.base.Splitter
 import com.google.common.collect.Iterables
-import java.util.Arrays
 import java.util.Collection
 import java.util.List
 import java.util.StringTokenizer
@@ -25,6 +25,7 @@ import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
 import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode
@@ -382,25 +383,11 @@ abstract class BaseTemplate extends JavaFileTemplate {
         «IF !properties.empty»
             @Override
             public «String.importedName» toString() {
-                «StringBuilder.importedName» builder = new «StringBuilder.importedName»(«type.importedName».class.getSimpleName()).append(" [");
-                boolean first = true;
-
+                final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»
-                    if («property.fieldName» != null) {
-                        if (first) {
-                            first = false;
-                        } else {
-                            builder.append(", ");
-                        }
-                        builder.append("«property.fieldName»=");
-                        «IF property.returnType.name.contains("[")»
-                            builder.append(«Arrays.importedName».toString(«property.fieldName»));
-                        «ELSE»
-                            builder.append(«property.fieldName»);
-                        «ENDIF»
-                    }
+                    «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
-                return builder.append(']').toString();
+                return helper.toString();
             }
         «ENDIF»
     '''
