@@ -14,19 +14,13 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Iterables
 import java.util.Arrays
 import java.util.Collection
-import java.util.HashMap
 import java.util.List
-import java.util.Map
 import java.util.StringTokenizer
 import java.util.regex.Pattern
-import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
-import org.opendaylight.mdsal.binding.model.api.Restrictions
-import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
@@ -39,10 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition
 import org.opendaylight.yangtools.yang.model.api.SchemaNode
 
-abstract class BaseTemplate {
-    protected val Map<String, String> importMap = new HashMap()
-    protected val GeneratedType type;
-
+abstract class BaseTemplate extends JavaFileTemplate {
     private static final char NEW_LINE = '\n'
     private static val AMP_MATCHER = CharMatcher.is('&')
     private static val NL_MATCHER = CharMatcher.is(NEW_LINE)
@@ -51,45 +42,18 @@ abstract class BaseTemplate {
     private static val NL_SPLITTER = Splitter.on(NL_MATCHER)
     private static val TAIL_COMMENT_PATTERN = Pattern.compile("*/", Pattern.LITERAL);
 
-    new(GeneratedType _type) {
-        if (_type === null) {
-            throw new IllegalArgumentException("Generated type reference cannot be NULL!")
-        }
-        this.type = _type;
+    new(GeneratedType type) {
+        super(type)
     }
-
-    def packageDefinition() '''package «type.packageName»;'''
 
     final public def generate() {
         val _body = body()
         '''
-            «packageDefinition»
-            «imports»
+            package «type.packageName»;
+            «generateImportBlock»
 
             «_body»
         '''.toString
-    }
-
-    protected def imports() '''
-        «FOR entry : importMap.entrySet»
-            «IF !hasSamePackage(entry.value) && !isLocalInnerClass(entry.value)»
-                import «entry.value».«entry.key»;
-            «ENDIF»
-        «ENDFOR»
-    '''
-
-    /**
-     * Checks if packages of generated type and imported type is the same
-     *
-     * @param importedTypePackageName the package name of imported type
-     * @return true if the packages are the same false otherwise
-     */
-    final private def boolean hasSamePackage(String importedTypePackageName) {
-        return type.packageName.equals(importedTypePackageName);
-    }
-
-    def isLocalInnerClass(String importedTypePackageName) {
-        return type.fullyQualifiedName.equals(importedTypePackageName);
     }
 
     protected abstract def CharSequence body();
@@ -151,15 +115,6 @@ abstract class BaseTemplate {
             return this;
         }
     '''
-
-    final protected def importedName(Type intype) {
-        GeneratorUtil.putTypeIntoImports(type, intype, importMap);
-        GeneratorUtil.getExplicitType(type, intype, importMap)
-    }
-
-    final protected def importedName(Class<?> cls) {
-        importedName(Types.typeForClass(cls))
-    }
 
     /**
      * Template method which generates method parameters with their types from <code>parameters</code>.
@@ -450,16 +405,6 @@ abstract class BaseTemplate {
         «ENDIF»
     '''
 
-    def getRestrictions(Type type) {
-        var Restrictions restrictions = null
-        if (type instanceof ConcreteType) {
-            restrictions = type.restrictions
-        } else if (type instanceof GeneratedTransferObject) {
-            restrictions = type.restrictions
-        }
-        return restrictions
-    }
-
     /**
      * Template method which generates method parameters with their types from <code>parameters</code>.
      *
@@ -474,20 +419,6 @@ abstract class BaseTemplate {
             ENDFOR»«
         ENDIF
     »'''
-
-    def protected GeneratedProperty findProperty(GeneratedTransferObject gto, String name) {
-        val props = gto.properties
-        for (prop : props) {
-            if (prop.name.equals(name)) {
-                return prop
-            }
-        }
-        val GeneratedTransferObject parent = gto.superType
-        if (parent !== null) {
-            return findProperty(parent, name)
-        }
-        return null
-    }
 
     def protected emitConstant(Constant c) '''
         «IF c.value instanceof QName»

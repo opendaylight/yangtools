@@ -126,11 +126,11 @@ class InterfaceTemplate extends BaseTemplate {
                     «IF innerClass.unionType»
                         «val unionTemplate = new UnionTemplate(innerClass)»
                         «unionTemplate.generateAsInnerClass»
-                        «this.importMap.putAll(unionTemplate.importMap)»
+                        «addImports(unionTemplate)»
                     «ELSE»
                         «val classTemplate = new ClassTemplate(innerClass)»
                         «classTemplate.generateAsInnerClass»
-                        «this.importMap.putAll(classTemplate.importMap)»
+                        «addImports(classTemplate)»
                     «ENDIF»
 
                 «ENDIF»

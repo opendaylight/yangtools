@@ -29,8 +29,8 @@ class UnionTemplate extends ClassTemplate {
      */
     new(GeneratedTransferObject genType) {
         super(genType)
-        if(isBaseEncodingImportRequired) {
-            this.importMap.put("BaseEncoding","com.google.common.io")
+        if (isBaseEncodingImportRequired) {
+            addImport("BaseEncoding","com.google.common.io")
         }
     }
 

@@ -80,7 +80,7 @@ class BuilderTemplate extends BaseTemplate {
     new(GeneratedType genType) {
         super(genType)
         this.properties = propertiesFromMethods(createMethods)
-        importMap.put(Builder.simpleName, Builder.package.name)
+        addImport(Builder.simpleName, Builder.package.name)
     }
 
     /**
