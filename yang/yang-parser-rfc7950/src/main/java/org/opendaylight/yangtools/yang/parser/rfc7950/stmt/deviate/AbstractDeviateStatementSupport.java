@@ -182,6 +182,21 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
     }
 
     @Override
+    public String internArgument(final String rawArgument) {
+        if ("add".equals(rawArgument)) {
+            return "add";
+        } else if ("delete".equals(rawArgument)) {
+            return "delete";
+        } else if ("replace".equals(rawArgument)) {
+            return "replace";
+        } else if ("not-supported".equals(rawArgument)) {
+            return "not-supported";
+        } else {
+            return rawArgument;
+        }
+    }
+
+    @Override
     protected final SubstatementValidator getSubstatementValidator() {
         return null;
     }

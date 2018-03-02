@@ -50,4 +50,9 @@ public final class MaxElementsStatementSupport extends
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    public String internArgument(final String rawArgument) {
+        return "unbounded".equals(rawArgument) ? "unbounded" : rawArgument;
+    }
 }

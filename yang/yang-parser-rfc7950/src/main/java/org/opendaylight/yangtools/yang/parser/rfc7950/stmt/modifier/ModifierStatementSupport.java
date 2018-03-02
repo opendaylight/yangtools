@@ -52,4 +52,9 @@ public final class ModifierStatementSupport extends AbstractStatementSupport<Mod
     protected SubstatementValidator getSubstatementValidator() {
         return SUBSTATEMENT_VALIDATOR;
     }
+
+    @Override
+    public String internArgument(final String rawArgument) {
+        return "invert-match".equals(rawArgument) ? "invert-match" : rawArgument;
+    }
 }
