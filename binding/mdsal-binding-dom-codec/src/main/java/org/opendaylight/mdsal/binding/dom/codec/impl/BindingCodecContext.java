@@ -47,6 +47,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -315,8 +316,8 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 throw new IllegalStateException("Unable to load codec for " + valueType, e);
             }
         } else if (typeDef instanceof LeafrefTypeDefinition) {
-            final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(valueType);
-            final Object schema = typeWithSchema.getValue();
+            final Entry<GeneratedType, WithStatus> typeWithSchema = context.getTypeWithSchema(valueType);
+            final WithStatus schema = typeWithSchema.getValue();
             Preconditions.checkState(schema instanceof TypeDefinition<?>);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }

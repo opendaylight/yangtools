@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.slf4j.Logger;
@@ -163,9 +164,9 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
     private DataObjectSerializerSource generateEmitterSource(final Class<?> type, final String serializerName) {
         Types.typeForClass(type);
         javassist.appendClassLoaderIfMissing(type.getClassLoader());
-        final Entry<GeneratedType, Object> typeWithSchema = context.getTypeWithSchema(type);
+        final Entry<GeneratedType, WithStatus> typeWithSchema = context.getTypeWithSchema(type);
         final GeneratedType generatedType = typeWithSchema.getKey();
-        final Object schema = typeWithSchema.getValue();
+        final WithStatus schema = typeWithSchema.getValue();
 
         final DataObjectSerializerSource source;
         if (schema instanceof ContainerSchemaNode) {
