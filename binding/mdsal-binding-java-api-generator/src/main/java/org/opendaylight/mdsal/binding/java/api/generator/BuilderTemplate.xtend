@@ -29,7 +29,7 @@ import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl
 import org.opendaylight.mdsal.binding.model.util.Types
-import org.opendaylight.mdsal.binding.model.util.generated.type.builder.GeneratedTOBuilderImpl
+import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
@@ -122,7 +122,7 @@ class BuilderTemplate extends BaseTemplate {
                         val fullyQualifiedName = m.returnType.name
                         val pkg = fullyQualifiedName.package
                         val name = fullyQualifiedName.name
-                        val tmpGenTO = new GeneratedTOBuilderImpl(pkg, name)
+                        val tmpGenTO = new CodegenGeneratedTOBuilder(pkg, name)
                         val refType = new ReferencedTypeImpl(pkg, name)
                         val generic = new ReferencedTypeImpl(type.packageName, type.name)
                         val parametrizedReturnType = Types.parameterizedTypeFor(refType, generic)
@@ -207,7 +207,7 @@ class BuilderTemplate extends BaseTemplate {
         }
         if (method.name.startsWith(prefix)) {
             val fieldName = method.getName().substring(prefix.length()).toFirstLower
-            val tmpGenTO = new GeneratedTOBuilderImpl("foo", "foo")
+            val tmpGenTO = new CodegenGeneratedTOBuilder("foo", "foo")
             tmpGenTO.addProperty(fieldName).setReturnType(method.returnType)
             return tmpGenTO.toInstance.properties.first
         }

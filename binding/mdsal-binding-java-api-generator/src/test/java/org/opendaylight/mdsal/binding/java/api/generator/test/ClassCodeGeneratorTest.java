@@ -24,7 +24,7 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
-import org.opendaylight.mdsal.binding.model.util.generated.type.builder.GeneratedTOBuilderImpl;
+import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -91,8 +91,7 @@ public class ClassCodeGeneratorTest {
      */
     @Test
     public void defaultConstructorNotPresentInValueTypeTest() {
-        final GeneratedTOBuilder toBuilder = new GeneratedTOBuilderImpl(
-                "simple.pack", "DefCtor");
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder("simple.pack", "DefCtor");
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
@@ -113,8 +112,7 @@ public class ClassCodeGeneratorTest {
 
     @Test
     public void toStringTest() {
-        final GeneratedTOBuilder toBuilder = new GeneratedTOBuilderImpl(
-                "simple.pack", "DefCtor");
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder("simple.pack", "DefCtor");
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
