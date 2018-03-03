@@ -127,7 +127,7 @@ class BuilderTemplate extends BaseTemplate {
                         val generic = new ReferencedTypeImpl(type.packageName, type.name)
                         val parametrizedReturnType = Types.parameterizedTypeFor(refType, generic)
                         tmpGenTO.addMethod(m.name).setReturnType(parametrizedReturnType)
-                        augmentField = tmpGenTO.toInstance.methodDefinitions.first.propertyFromGetter
+                        augmentField = tmpGenTO.build.methodDefinitions.first.propertyFromGetter
                     }
                 }
             }
@@ -209,7 +209,7 @@ class BuilderTemplate extends BaseTemplate {
             val fieldName = method.getName().substring(prefix.length()).toFirstLower
             val tmpGenTO = new CodegenGeneratedTOBuilder("foo", "foo")
             tmpGenTO.addProperty(fieldName).setReturnType(method.returnType)
-            return tmpGenTO.toInstance.properties.first
+            return tmpGenTO.build.properties.first
         }
     }
 

@@ -101,7 +101,7 @@ public class ClassCodeGeneratorTest {
         propBuilder.setReturnType(Types.typeForClass(Integer.class));
         propBuilder.setReadOnly(false);
 
-        final GeneratedTransferObject genTO = toBuilder.toInstance();
+        final GeneratedTransferObject genTO = toBuilder.build();
 
         final TOGenerator clsGen = new TOGenerator();
         final String outputStr = clsGen.generate(genTO);
@@ -123,7 +123,7 @@ public class ClassCodeGeneratorTest {
         propBuilder.setReturnType(Types.typeForClass(Integer.class));
         propBuilder.setReadOnly(false);
         toBuilder.addToStringProperty(propBuilder);
-        final GeneratedTransferObject genTO = toBuilder.toInstance();
+        final GeneratedTransferObject genTO = toBuilder.build();
         final TOGenerator clsGen = new TOGenerator();
         assertEquals("", clsGen.generate(Types.typeForClass(String.class)));
         assertNotNull(clsGen.generate(genTO));

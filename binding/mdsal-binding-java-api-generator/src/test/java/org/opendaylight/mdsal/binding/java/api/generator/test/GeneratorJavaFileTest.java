@@ -29,7 +29,7 @@ public class GeneratorJavaFileTest {
 
     @Test
     public void test() throws IOException {
-        final Set<GeneratedType> types = new HashSet<GeneratedType>();
+        final Set<GeneratedType> types = new HashSet<>();
         GeneratedType t1 = createGeneratedType("org.opendaylight.controller.gen", "Type1");
         GeneratedType t2 = createGeneratedType("org.opendaylight.controller.gen", "Type2");
         GeneratedType t3 = createGeneratedType("org.opendaylight.controller.gen", "Type3");
@@ -38,7 +38,7 @@ public class GeneratorJavaFileTest {
         types.add(t3);
         GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder("org.opendaylight.controller.gen", "Type4");
         gtb.addImplementsType(Types.augmentableTypeFor(gtb));
-        types.add(gtb.toInstance());
+        types.add(gtb.build());
         GeneratorJavaFile generator = new GeneratorJavaFile(types);
         generator.generateToFile(new File(PATH));
 
@@ -53,10 +53,10 @@ public class GeneratorJavaFileTest {
         assertTrue(filesList.contains("Type4Builder.java"));
     }
 
-    private static GeneratedType createGeneratedType(String pkgName, String name) {
+    private static GeneratedType createGeneratedType(final String pkgName, final String name) {
         GeneratedTypeBuilder builder = new CodegenGeneratedTypeBuilder(pkgName, name);
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
-        return builder.toInstance();
+        return builder.build();
     }
 
 }
