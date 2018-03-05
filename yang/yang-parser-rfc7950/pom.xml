@@ -87,7 +87,7 @@
                     <sourceDirectory>src/main/antlr</sourceDirectory>
                     <outputDirectory>${project.build.directory}/generated-sources/parser/org/opendaylight/yangtools/antlrv4/code/gen</outputDirectory>
                     <visitor>true</visitor>
-                    <listener>true</listener>
+                    <listener>false</listener>
                 </configuration>
             </plugin>
             <plugin>
