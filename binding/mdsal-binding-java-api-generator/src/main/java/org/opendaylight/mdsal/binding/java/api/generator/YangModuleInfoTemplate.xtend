@@ -111,7 +111,7 @@ class YangModuleInfoTemplate {
                 «FOR imp : m.imports»
                     «val name = imp.moduleName»
                     «val rev = imp.revision»
-                    «IF rev === null»
+                    «IF !rev.present»
                         «val Set<Module> modules = ctx.modules»
                         «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap()»
                         «FOR module : modules»
