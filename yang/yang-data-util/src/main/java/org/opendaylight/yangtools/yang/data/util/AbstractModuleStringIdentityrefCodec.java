@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import javax.annotation.Nonnull;
 
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
 @Beta
@@ -29,6 +30,14 @@ public abstract class AbstractModuleStringIdentityrefCodec extends AbstractStrin
     protected final QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
         final Module module = moduleForPrefix(prefix);
         Preconditions.checkArgument(module != null, "Failed to lookup prefix %s", prefix);
-        return QName.create(module.getQNameModule(), localName);
+
+        final QName qname = QName.create(module.getQNameModule(), localName);
+        for (IdentitySchemaNode identity : module.getIdentities()) {
+            if (qname.equals(identity.getQName())) {
+                return identity.getQName();
+            }
+        }
+
+        throw new IllegalArgumentException("Failed to find identity matching " + qname);
     }
 }
