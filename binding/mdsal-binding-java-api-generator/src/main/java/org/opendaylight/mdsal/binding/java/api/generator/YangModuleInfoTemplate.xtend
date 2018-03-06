@@ -177,16 +177,6 @@ class YangModuleInfoTemplate {
         }
 
         @Override
-        public int hashCode() {
-            return «className».class.hashCode();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            return obj != null && «className».class.equals(obj.getClass());
-        }
-
-        @Override
         public «String.importedName» toString() {
             «StringBuilder.importedName» sb = new «StringBuilder.importedName»(this.getClass().getCanonicalName());
             sb.append("[");
