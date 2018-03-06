@@ -44,10 +44,8 @@ abstract class AbstractNamespaceCodec {
 
     protected final StringBuilder appendQName(final StringBuilder sb, final QName qname) {
         final String prefix = prefixForNamespace(qname.getNamespace());
-        Preconditions.checkArgument(prefix != null, "Failed to map QName {}", qname);
-        sb.append(prefix);
-        sb.append(':');
-        sb.append(qname.getLocalName());
+        Preconditions.checkArgument(prefix != null, "Failed to map QName %s to prefix", qname);
+        sb.append(prefix).append(':').append(qname.getLocalName());
         return sb;
     }
 
