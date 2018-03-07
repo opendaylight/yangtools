@@ -12,6 +12,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
@@ -451,13 +452,8 @@ public class CompilationTest extends BaseCompilationTest {
                 .forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.bar.rev131008.IdentityClass", true, loader);
 
         // test identity
-        try {
-            identityClass.getConstructor();
-            final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true, loader);
-            assertEquals(baseIdentity, identityClass.getSuperclass());
-        } catch (final NoSuchMethodException e) {
-            throw new AssertionError("IdentityClass must have no-arg constructor");
-        }
+        final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true, loader);
+        assertEquals(ImmutableList.of(baseIdentity), Arrays.asList(identityClass.getInterfaces()));
 
         // Test annotation
         try {
