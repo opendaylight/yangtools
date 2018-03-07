@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 
 /**
- * Namespace of available features. According to RFC7950 section 6.2.1:
+ * Namespace of supported features. According to RFC7950 section 6.2.1:
  * <pre>
  *     All feature names defined in a module and its submodules share the
  *     same feature identifier namespace.

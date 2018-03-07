@@ -50,6 +50,16 @@ public interface ModuleEffectiveStatement extends EffectiveStatement<String, Mod
     }
 
     /**
+     * Namespace containing all effective modules which are applying deviations to this module.
+     */
+    abstract class DeviatingEffectiveModuleNamespace
+            implements IdentifierNamespace<@NonNull QNameModule, @NonNull ModuleEffectiveStatement> {
+        private DeviatingEffectiveModuleNamespace() {
+            // This class should never be subclassed
+        }
+    }
+
+    /**
      * Get the local QNameModule of this module. All implementations need to override this default method.
      *
      * @return Local QNameModule
@@ -57,5 +67,15 @@ public interface ModuleEffectiveStatement extends EffectiveStatement<String, Mod
     // FIXME: 3.0.0 make this method non-default
     default @NonNull QNameModule localQNameModule() {
         throw new UnsupportedOperationException(getClass() + " is missing an implementation");
+    }
+
+    /**
+     * Return the conformance type of this module.
+     *
+     * @return conformance type of this module.
+     */
+    // FIXME: 3.0.0 make this method non-default
+    default @NonNull ConformanceType conformanceLevel() {
+        return ConformanceType.IMPLEMENT;
     }
 }
