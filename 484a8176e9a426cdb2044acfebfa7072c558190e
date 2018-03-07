@@ -22,6 +22,30 @@
       "revId": "484a8176e9a426cdb2044acfebfa7072c558190e",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "0847a950_e5483419",
+        "filename": "statements.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-03-07T17:18:14Z",
+      "side": 1,
+      "message": "... but then this would not match the namespace definition in RFC7950.",
+      "parentUuid": "dc721110_a33fbf4d",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 14
+      },
+      "revId": "484a8176e9a426cdb2044acfebfa7072c558190e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
