@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "dc721110_a33fbf4d",
+        "filename": "statements.txt",
+        "patchSetId": 1
+      },
+      "lineNbr": 10,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-03-07T17:04:31Z",
+      "side": 1,
+      "message": "These two should probably not be there, so that a direct lookup can be made from a parent data node (container) to the corresponding leaf/etc, skipping over whatever contrived choice/case structure exists.",
+      "range": {
+        "startLine": 9,
+        "startChar": 0,
+        "endLine": 10,
+        "endChar": 14
+      },
+      "revId": "484a8176e9a426cdb2044acfebfa7072c558190e",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
