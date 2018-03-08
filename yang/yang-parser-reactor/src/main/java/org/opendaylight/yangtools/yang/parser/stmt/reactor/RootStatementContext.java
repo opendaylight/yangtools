@@ -50,7 +50,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
 
     private YangVersion rootVersion;
     private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
-    private SourceIdentifier rootIdentifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
@@ -65,11 +64,9 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     }
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
-            final StatementSourceReference ref, final String rawArgument, final YangVersion version,
-            final SourceIdentifier identifier) {
+            final StatementSourceReference ref, final String rawArgument, final YangVersion version) {
         this(sourceContext, def, ref, rawArgument);
         this.setRootVersion(version);
-        this.setRootIdentifier(identifier);
     }
 
     @Override
@@ -231,15 +228,6 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
      */
     Collection<SourceIdentifier> getRequiredSources() {
         return ImmutableSet.copyOf(requiredSources);
-    }
-
-    @Override
-    public void setRootIdentifier(final SourceIdentifier identifier) {
-        this.rootIdentifier = requireNonNull(identifier);
-    }
-
-    SourceIdentifier getRootIdentifier() {
-        return rootIdentifier;
     }
 
     @Override

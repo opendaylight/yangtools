@@ -48,13 +48,6 @@ abstract class AbstractSubmoduleStatementSupport
     }
 
     @Override
-    public final void onPreLinkageDeclared(
-            final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getStatementArgument(),
-            StmtContextUtils.getLatestRevision(stmt.declaredSubstatements())));
-    }
-
-    @Override
     public final void onLinkageDeclared(final Mutable<String, SubmoduleStatement, SubmoduleEffectiveStatement> stmt) {
         final SourceIdentifier submoduleIdentifier = RevisionSourceIdentifier.create(stmt.coerceStatementArgument(),
             StmtContextUtils.getLatestRevision(stmt.declaredSubstatements()));

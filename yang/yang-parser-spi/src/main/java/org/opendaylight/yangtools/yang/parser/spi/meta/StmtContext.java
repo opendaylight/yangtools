@@ -301,10 +301,15 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         /**
          * Set identifier of current root context.
          *
-         * @param identifier
-         *            of current root context, must not be null
+         * @param identifier of current root context, must not be null
+         *
+         * @deprecated This method should never be called nor implemented.
          */
-        void setRootIdentifier(SourceIdentifier identifier);
+        // FIXME: 3.0.0: remove this method
+        @Deprecated
+        default void setRootIdentifier(final SourceIdentifier identifier) {
+            throw new IllegalStateException("This method should never be called. Update the caller to not use it");
+        }
 
         void setIsSupportedToBuildEffective(boolean isSupportedToBuild);
 

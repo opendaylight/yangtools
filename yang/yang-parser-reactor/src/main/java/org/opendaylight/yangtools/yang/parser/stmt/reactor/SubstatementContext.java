@@ -239,11 +239,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
     }
 
     @Override
-    public void setRootIdentifier(final SourceIdentifier identifier) {
-        getRoot().setRootIdentifier(identifier);
-    }
-
-    @Override
     protected boolean isIgnoringIfFeatures() {
         if (OptionalBoolean.isPresent(ignoreIfFeature)) {
             return OptionalBoolean.get(ignoreIfFeature);
