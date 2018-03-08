@@ -178,7 +178,6 @@ public final class ModuleStatementSupport
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getArgument().getLocalName(), revisionDate));
     }
 
     @Override
