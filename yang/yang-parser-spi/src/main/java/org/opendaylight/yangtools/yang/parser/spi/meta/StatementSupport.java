@@ -11,6 +11,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -220,5 +221,30 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     @Beta
     default boolean isIgnoringConfig() {
         return false;
+    }
+
+    @Override
+    default QName getStatementName() {
+        return getPublicView().getStatementName();
+    }
+
+    @Override
+    default QName getArgumentName() {
+        return getPublicView().getArgumentName();
+    }
+
+    @Override
+    default Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+        return getPublicView().getDeclaredRepresentationClass();
+    }
+
+    @Override
+    default Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
+        return getPublicView().getEffectiveRepresentationClass();
+    }
+
+    @Override
+    default boolean isArgumentYinElement() {
+        return getPublicView().isArgumentYinElement();
     }
 }
