@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 
 import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -267,21 +266,22 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                 checkForMandatoryNodes(sourceCtx);
             }
 
-            final List<Mutable<?, ?, ?>> targetSubStatements = ImmutableList.<Mutable<?, ?, ?>>builder()
-                    .addAll(targetCtx.mutableDeclaredSubstatements()).addAll(targetCtx.mutableEffectiveSubstatements())
-                    .build();
+            // Data definition statements must not collide on their namespace
+            if (DataDefinitionStatement.class.isAssignableFrom(
+                sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
+                final Iterable<Mutable<?, ?, ?>> targetSubStatements = Iterables.concat(
+                    targetCtx.mutableDeclaredSubstatements(), targetCtx.mutableEffectiveSubstatements());
+                for (final StmtContext<?, ?, ?> subStatement : targetSubStatements) {
+                    if (DataDefinitionStatement.class.isAssignableFrom(
+                        subStatement.getPublicDefinition().getDeclaredRepresentationClass())) {
 
-            for (final Mutable<?, ?, ?> subStatement : targetSubStatements) {
-                final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
-                        .getPublicDefinition().getDeclaredRepresentationClass());
-                final boolean targetIsDataNode = DataDefinitionStatement.class.isAssignableFrom(subStatement
-                        .getPublicDefinition().getDeclaredRepresentationClass());
-                final boolean qNamesEqual = sourceIsDataNode && targetIsDataNode
-                        && Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument());
-
-                InferenceException.throwIf(qNamesEqual, sourceCtx.getStatementSourceReference(),
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawStatementArgument());
+                        InferenceException.throwIf(
+                            Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument()),
+                            sourceCtx.getStatementSourceReference(),
+                            "An augment cannot add node named '%s' because this name is already used in target",
+                            sourceCtx.rawStatementArgument());
+                    }
+                }
             }
         }
 
