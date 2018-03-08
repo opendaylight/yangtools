@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -32,31 +31,6 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
 
     @Override
     protected abstract StatementSupport<A, D, E> delegate();
-
-    @Override
-    public QName getStatementName() {
-        return delegate().getStatementName();
-    }
-
-    @Override
-    public QName getArgumentName() {
-        return delegate().getArgumentName();
-    }
-
-    @Override
-    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return delegate().getDeclaredRepresentationClass();
-    }
-
-    @Override
-    public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
-        return delegate().getEffectiveRepresentationClass();
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return delegate().isArgumentYinElement();
-    }
 
     @Override
     public D createDeclared(final StmtContext<A, D, ?> ctx) {

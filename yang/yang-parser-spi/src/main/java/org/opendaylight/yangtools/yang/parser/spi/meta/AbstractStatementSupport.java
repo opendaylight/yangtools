@@ -11,9 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -37,29 +35,6 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
         this.type = requireNonNull(publicDefinition);
         checkArgument(publicDefinition != this);
-    }
-
-    @Nonnull
-    @Override
-    public final QName getStatementName() {
-        return type.getStatementName();
-    }
-
-    @Override
-    public final QName getArgumentName() {
-        return type.getArgumentName();
-    }
-
-    @Nonnull
-    @Override
-    public final Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
-        return type.getDeclaredRepresentationClass();
-    }
-
-    @Nonnull
-    @Override
-    public final Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
-        return type.getEffectiveRepresentationClass();
     }
 
     @Override
@@ -127,11 +102,6 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
         if (validator != null) {
             validator.validate(stmt);
         }
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return getPublicView().isArgumentYinElement();
     }
 
     @Override
