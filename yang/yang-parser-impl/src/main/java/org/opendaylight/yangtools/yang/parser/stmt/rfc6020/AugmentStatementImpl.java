@@ -271,17 +271,20 @@ public class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeId
                     .addAll(targetCtx.mutableDeclaredSubstatements()).addAll(targetCtx.mutableEffectiveSubstatements())
                     .build();
 
-            for (final Mutable<?, ?, ?> subStatement : targetSubStatements) {
-                final boolean sourceIsDataNode = DataDefinitionStatement.class.isAssignableFrom(sourceCtx
-                        .getPublicDefinition().getDeclaredRepresentationClass());
-                final boolean targetIsDataNode = DataDefinitionStatement.class.isAssignableFrom(subStatement
-                        .getPublicDefinition().getDeclaredRepresentationClass());
-                final boolean qNamesEqual = sourceIsDataNode && targetIsDataNode
-                        && Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument());
+            // Data definition statements must not collide on their namespace
+            if (DataDefinitionStatement.class.isAssignableFrom(
+                sourceCtx.getPublicDefinition().getDeclaredRepresentationClass())) {
+                for (final StmtContext<?, ?, ?> subStatement : targetCtx.allSubstatements()) {
+                    if (DataDefinitionStatement.class.isAssignableFrom(
+                        subStatement.getPublicDefinition().getDeclaredRepresentationClass())) {
 
-                InferenceException.throwIf(qNamesEqual, sourceCtx.getStatementSourceReference(),
-                        "An augment cannot add node named '%s' because this name is already used in target",
-                        sourceCtx.rawStatementArgument());
+                        InferenceException.throwIf(
+                            Objects.equals(sourceCtx.getStatementArgument(), subStatement.getStatementArgument()),
+                            sourceCtx.getStatementSourceReference(),
+                            "An augment cannot add node named '%s' because this name is already used in target",
+                            sourceCtx.rawStatementArgument());
+                    }
+                }
             }
         }
 
