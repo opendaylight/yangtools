@@ -85,7 +85,6 @@ abstract class AbstractModuleStatementSupport extends
         final QNameModule qNameModule = QNameModule.create(moduleNs, revisionDate.orElse(null)).intern();
 
         stmt.addToNs(ModuleCtxToModuleQName.class, stmt, qNameModule);
-        stmt.setRootIdentifier(RevisionSourceIdentifier.create(stmt.getStatementArgument(), revisionDate));
     }
 
     @Override
