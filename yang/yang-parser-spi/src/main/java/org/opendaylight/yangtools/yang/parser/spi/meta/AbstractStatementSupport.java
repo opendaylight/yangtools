@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -65,12 +64,6 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     @Override
     public final StatementDefinition getPublicView() {
         return type;
-    }
-
-    @Override
-    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        // NOOP for most implementations and also no implicit parent
-        return Optional.empty();
     }
 
     @Override
