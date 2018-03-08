@@ -32,8 +32,9 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <E>
  *            Effective Statement representation
  */
+// FIXME: 3.0.0: do not extends ImplicitParentAwareStatementSupport
 public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementDefinition, StatementFactory<A, D, E> {
+        extends StatementDefinition, StatementFactory<A, D, E>, ImplicitParentAwareStatementSupport {
 
     /**
      * Returns public statement definition, which will be present in built statements.
@@ -86,16 +87,11 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      */
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
 
-    /**
-     * Returns implicit parent statement support for supplied statement definition, if it is defined. This allows
-     * implementations of this interface add implicit parent to the build context hierarchy before a substatement
-     * is created.
-     *
-     * @param stmtDef
-     *            statement definition of substatement
-     * @return optional of implicit parent statement support
-     */
-    Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(StatementDefinition stmtDef);
+    // FIXME: 3.0.0: remove this default method
+    @Override
+    default Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
+        return Optional.empty();
+    }
 
     /**
      * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
