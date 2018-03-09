@@ -1,0 +1,24 @@
+module bbf-sub-interfaces {
+  yang-version 1.1;
+  namespace "urn:bbf:yang:bbf-sub-interfaces";
+
+  prefix bbf-subif;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+
+  feature tag-rewrites {
+
+  }
+
+  container egress-rewrite {
+     if-feature "tag-rewrites";
+  }
+
+  augment '/if:interfaces/if:interface' {
+    container egress-rewrite {
+       if-feature "tag-rewrites";
+    }
+  }
+}
