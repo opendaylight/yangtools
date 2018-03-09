@@ -1,0 +1,22 @@
+module bbf-sub-interface-tagging {
+  yang-version 1.1;
+  namespace "urn:bbf:yang:bbf-sub-interface-tagging";
+
+  prefix bbf-subif-tag;
+
+  import ietf-interfaces {
+    prefix if;
+  }
+
+  import bbf-sub-interfaces {
+    prefix bbf-subif;
+  }
+
+  augment '/if:interfaces/if:interface/bbf-subif:egress-rewrite' {
+    leaf pop-tags {
+      type uint8 {
+        range "0..2";
+      }
+    }
+  }
+}
