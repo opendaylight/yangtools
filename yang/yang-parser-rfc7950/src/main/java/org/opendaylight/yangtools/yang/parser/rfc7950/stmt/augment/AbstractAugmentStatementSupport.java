@@ -78,10 +78,6 @@ abstract class AbstractAugmentStatementSupport
     @Override
     public final void onFullDefinitionDeclared(
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
-        if (!augmentNode.isSupportedByFeatures()) {
-            return;
-        }
-
         super.onFullDefinitionDeclared(augmentNode);
 
         if (StmtContextUtils.isInExtensionBody(augmentNode)) {
@@ -99,7 +95,7 @@ abstract class AbstractAugmentStatementSupport
             public void apply(final InferenceContext ctx) {
                 final StatementContextBase<?, ?, ?> augmentTargetCtx =
                         (StatementContextBase<?, ?, ?>) target.resolve(ctx);
-                if (!isSupportedAugmentTarget(augmentTargetCtx)
+                if (!augmentNode.isSupportedByFeatures() || !isSupportedAugmentTarget(augmentTargetCtx)
                         || StmtContextUtils.isInExtensionBody(augmentTargetCtx)) {
                     augmentNode.setIsSupportedToBuildEffective(false);
                     return;
@@ -143,6 +139,12 @@ abstract class AbstractAugmentStatementSupport
 
                 throw new InferenceException(augmentNode.getStatementSourceReference(),
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
+            }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                LOG.debug("Augmentation of '{}' skipped due to it not being available",
+                    augmentNode.getStatementArgument());
             }
         });
     }
@@ -211,18 +213,18 @@ abstract class AbstractAugmentStatementSupport
          */
         final boolean skipCheckOfMandatoryNodes = YangVersion.VERSION_1_1.equals(sourceCtx.getRootVersion())
                 && isConditionalAugmentStmt(sourceCtx);
+        final boolean unsupported = !sourceCtx.isSupportedByFeatures();
 
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceCtx.mutableEffectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
-            if (originalStmtCtx.isSupportedByFeatures()) {
-                copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
-            }
+            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
+                unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
         for (final Mutable<?, ?, ?> originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
+            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
@@ -248,12 +250,17 @@ abstract class AbstractAugmentStatementSupport
 
     private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
-            final boolean skipCheckOfMandatoryNodes) {
+            final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
         if (needToCopyByAugment(original)) {
             validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
-            buffer.add(target.childCopyOf(original, typeOfCopy));
-        } else if (isReusedByAugment(original)) {
+            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
+            if (unsupported) {
+                LOG.info("Unsupported statement {}", copy.getSchemaPath());
+                copy.setIsSupportedToBuildEffective(false);
+            }
+            buffer.add(copy);
+        } else if (isReusedByAugment(original) && !unsupported) {
             buffer.add(original);
         }
     }
