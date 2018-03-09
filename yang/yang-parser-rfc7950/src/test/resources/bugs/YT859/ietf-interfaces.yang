@@ -1,0 +1,18 @@
+module ietf-interfaces {
+
+  namespace "urn:ietf:params:xml:ns:yang:ietf-interfaces";
+  prefix if;
+
+  container interfaces {
+    description
+      "Interface configuration parameters.";
+
+    list interface {
+      key "name";
+
+      leaf name {
+        type string;
+      }
+    }
+  }
+}
