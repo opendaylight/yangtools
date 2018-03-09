@@ -1,0 +1,15 @@
+module xyzzy {
+  namespace xyzzy;
+  prefix xyzzy;
+
+  container xyzzy {
+
+    list named {
+      key name;
+
+      leaf name {
+        type string;
+      }
+    }
+  }
+}
