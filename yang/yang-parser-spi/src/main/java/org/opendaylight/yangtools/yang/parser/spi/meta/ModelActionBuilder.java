@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -122,6 +125,21 @@ public interface ModelActionBuilder {
          *                            the issue in sources.
          */
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed);
+
+        /**
+         * Invoked once the prerequisite is deemed unavailable due to conformance reasons. This typically happens when
+         * a feature-dependent prerequisite does not have the appropriate feature activated.
+         *
+         * <p>
+         * The default implementation invokes {@link #prerequisiteFailed(Collection)}, implementations should override
+         * this method if they wish, for example, to ignore the missing prerequisite.
+         *
+         * @param unavail Unavailable prerequisite
+         */
+        @Beta
+        default void prerequisiteUnavailable(Prerequisite<?> unavail) {
+            prerequisiteFailed(ImmutableList.of(unavail));
+        }
     }
 
     /**
@@ -173,6 +191,10 @@ public interface ModelActionBuilder {
 
     @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
         Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
+
+    @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+        Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(StmtContext<?, ?, ?> context, Class<N> namespace,
+                List<K> keys);
 
     /**
      * Action mutates the specified statement in the specified phase. Target statement cannot complete specified

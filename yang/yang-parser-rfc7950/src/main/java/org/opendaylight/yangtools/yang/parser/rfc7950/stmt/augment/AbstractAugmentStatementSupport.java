@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,6 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -95,8 +97,9 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
                 augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
-                augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode),
-                    SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
+                augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
+                    ChildSchemaNodeNamespace.class,
+                    ImmutableList.copyOf(augmentNode.getStatementArgument().getPathFromRoot()));
 
         augmentAction.apply(new ModelActionBuilder.InferenceAction() {
             @Override
@@ -160,6 +163,12 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
 
                 throw new InferenceException(augmentNode.getStatementSourceReference(),
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
+            }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                LOG.debug("Augmentation of '%s' skipped due to it not being available",
+                    augmentNode.getStatementArgument());
             }
         });
     }
