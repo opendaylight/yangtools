@@ -416,14 +416,21 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
-            LOG.debug("Action for {} got key {}", keys, key);
+            final C stmt = (C) value;
+            if (!stmt.isSupportedByFeatures()) {
+                LOG.debug("Key {} in {} is not supported", key, keys);
+                resolvePrereq(null);
+                action.prerequisiteUnavailable(this);
+                return;
+            }
+
             if (!it.hasNext()) {
-                resolvePrereq((C) value);
+                resolvePrereq(stmt);
                 return;
             }
 
             final K next = nextKey();
-            contextImpl(value).onNamespaceItemAddedAction((Class) namespace, next, this);
+            contextImpl(stmt).onNamespaceItemAddedAction((Class) namespace, next, this);
         }
     }
 }
