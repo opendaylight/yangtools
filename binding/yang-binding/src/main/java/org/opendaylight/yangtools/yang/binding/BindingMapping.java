@@ -36,9 +36,7 @@ public final class BindingMapping {
         "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
         "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
         "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
-        "throw", "throws", "transient", "try", "void", "volatile", "while",
-        // FIXME: _ is excluded to retain compatibility with previous releases
-        // "_",
+        "throw", "throws", "transient", "try", "void", "volatile", "while", "_",
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.3
         "false", "true",
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.7
@@ -317,7 +315,7 @@ public final class BindingMapping {
     }
 
     /**
-     * Returns Java identifiers, conforming to JLS8 Section 3.8 to use for specified YANG assigned names
+     * Returns Java identifiers, conforming to JLS9 Section 3.8 to use for specified YANG assigned names
      * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
      * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
      * Unicode strings.
