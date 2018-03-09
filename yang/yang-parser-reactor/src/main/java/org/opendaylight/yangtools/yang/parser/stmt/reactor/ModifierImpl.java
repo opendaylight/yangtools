@@ -428,6 +428,13 @@ final class ModifierImpl implements ModelActionBuilder {
 
         @SuppressWarnings("unchecked")
         private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
+            if (!context.isSupportedByFeatures()) {
+                LOG.debug("Key {} in {} is not supported", key, keys);
+                resolvePrereq(null);
+                action.prerequisiteUnavailable(this);
+                return;
+            }
+
             context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
         }
     }
