@@ -78,7 +78,8 @@ abstract class AbstractAugmentStatementSupport
     public final void onFullDefinitionDeclared(
             final Mutable<SchemaNodeIdentifier, AugmentStatement, AugmentEffectiveStatement> augmentNode) {
         if (!augmentNode.isSupportedByFeatures()) {
-            return;
+            // We need this augment node to be present, but it should not escape to effective world
+            augmentNode.setIsSupportedToBuildEffective(false);
         }
 
         super.onFullDefinitionDeclared(augmentNode);
@@ -210,18 +211,18 @@ abstract class AbstractAugmentStatementSupport
          */
         final boolean skipCheckOfMandatoryNodes = YangVersion.VERSION_1_1.equals(sourceCtx.getRootVersion())
                 && isConditionalAugmentStmt(sourceCtx);
+        final boolean unsupported = !sourceCtx.isSupportedByFeatures();
 
         final Collection<? extends Mutable<?, ?, ?>> declared = sourceCtx.mutableDeclaredSubstatements();
         final Collection<? extends Mutable<?, ?, ?>> effective = sourceCtx.mutableEffectiveSubstatements();
         final Collection<Mutable<?, ?, ?>> buffer = new ArrayList<>(declared.size() + effective.size());
 
         for (final Mutable<?, ?, ?> originalStmtCtx : declared) {
-            if (originalStmtCtx.isSupportedByFeatures()) {
-                copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
-            }
+            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes,
+                unsupported || !originalStmtCtx.isSupportedByFeatures());
         }
         for (final Mutable<?, ?, ?> originalStmtCtx : effective) {
-            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes);
+            copyStatement(originalStmtCtx, targetCtx, typeOfCopy, buffer, skipCheckOfMandatoryNodes, unsupported);
         }
 
         targetCtx.addEffectiveSubstatements(buffer);
@@ -247,12 +248,18 @@ abstract class AbstractAugmentStatementSupport
 
     private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
             final CopyType typeOfCopy, final Collection<Mutable<?, ?, ?>> buffer,
-            final boolean skipCheckOfMandatoryNodes) {
+            final boolean skipCheckOfMandatoryNodes, final boolean unsupported) {
+        // We always copy statements, but if either the source statement or the augmentation which causes it are not
+        // supported to build we also mark the target as such.
         if (needToCopyByAugment(original)) {
             validateNodeCanBeCopiedByAugment(original, target, typeOfCopy, skipCheckOfMandatoryNodes);
 
-            buffer.add(target.childCopyOf(original, typeOfCopy));
-        } else if (isReusedByAugment(original)) {
+            final Mutable<?, ?, ?> copy = target.childCopyOf(original, typeOfCopy);
+            if (unsupported) {
+                copy.setIsSupportedToBuildEffective(false);
+            }
+            buffer.add(copy);
+        } else if (isReusedByAugment(original) && !unsupported) {
             buffer.add(original);
         }
     }

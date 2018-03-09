@@ -1,0 +1,15 @@
+module baz {
+  yang-version 1.1;
+  namespace baz;
+  prefix baz;
+
+  import xyzzy { prefix xyzzy; }
+  import foo { prefix foo; }
+  import bar { prefix bar; }
+
+  augment /xyzzy:xyzzy/xyzzy:named/foo:foo/bar:bar {
+    leaf baz {
+      type string;
+    }
+  }
+}
