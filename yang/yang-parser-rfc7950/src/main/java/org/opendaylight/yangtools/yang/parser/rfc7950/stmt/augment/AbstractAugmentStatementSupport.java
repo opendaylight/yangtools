@@ -144,6 +144,12 @@ abstract class AbstractAugmentStatementSupport
                 throw new InferenceException(augmentNode.getStatementSourceReference(),
                         "Augment target '%s' not found", augmentNode.getStatementArgument());
             }
+
+            @Override
+            public void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+                LOG.debug("Augmentation of '{}' skipped due to it not being available",
+                    augmentNode.getStatementArgument());
+            }
         });
     }
 
