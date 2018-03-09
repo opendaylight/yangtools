@@ -27,6 +27,7 @@ module org.opendaylight.yangtools.yang.parser.rfc7950 {
     requires org.opendaylight.yangtools.yang.parser.reactor;
     requires org.opendaylight.yangtools.util;
     requires org.slf4j;
+    requires org.opendaylight.yangtools.yang.model.api;
 
     // FIXME: hide these
     exports org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action;
