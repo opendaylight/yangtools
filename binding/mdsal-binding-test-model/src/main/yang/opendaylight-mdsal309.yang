@@ -1,0 +1,62 @@
+module opendaylight-mdsal309 {
+    namespace "urn:test:opendaylight-mdsal309";
+    prefix mdsal309;
+
+    description "Test model for enumeration name mapping hell.";
+
+    leaf simple {
+        type enumeration {
+            enum "simple";
+            enum "a-z";
+            enum "ľaľaho papľuhu";
+        }
+    }
+
+    leaf classConflictDash {
+        type enumeration {
+            enum "a-z";
+            enum "AZ";
+        }
+    }
+
+    leaf classConflictCaps {
+        type enumeration {
+            enum "a-z";
+            enum "A-z";
+        }
+    }
+
+    leaf specialCharAsterisk {
+        type enumeration {
+            enum "*";
+        }
+    }
+
+    leaf specialCharDot {
+        type enumeration {
+            enum ".";
+        }
+    }
+
+    leaf specialCharQuestionMark {
+        type enumeration {
+            enum "?";
+        }
+    }
+
+    leaf specialCharSpace {
+        type enumeration {
+            enum " ";
+        }
+    }
+
+    leaf simpleWithSpecial {
+        type enumeration {
+            enum "a-z";
+            enum "ľaľaho";
+            enum "papľuhu";
+            enum "*";
+        }
+    }
+}
+

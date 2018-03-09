@@ -10,11 +10,14 @@ package org.opendaylight.yangtools.yang.binding;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.base.CharMatcher;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
+import java.util.Collection;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -27,12 +30,19 @@ public final class BindingMapping {
 
     public static final String VERSION = "0.6";
 
-    public static final Set<String> JAVA_RESERVED_WORDS = ImmutableSet.of("abstract", "assert", "boolean", "break",
-            "byte", "case", "catch", "char", "class", "const", "continue", "default", "double", "do", "else", "enum",
-            "extends", "false", "final", "finally", "float", "for", "goto", "if", "implements", "import", "instanceof",
-            "int", "interface", "long", "native", "new", "null", "package", "private", "protected", "public", "return",
-            "short", "static", "strictfp", "super", "switch", "synchronized", "this", "throw", "throws", "transient",
-            "true", "try", "void", "volatile", "while");
+    public static final Set<String> JAVA_RESERVED_WORDS = ImmutableSet.of(
+        // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.9
+        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const", "continue",
+        "default", "do", "double", "else", "enum", "extends", "final", "finally", "float", "for", "goto", "if",
+        "implements", "import", "instanceof", "int", "interface", "long", "native", "new", "package", "private",
+        "protected", "public", "return", "short", "static", "strictfp", "super", "switch", "synchronized", "this",
+        "throw", "throws", "transient", "try", "void", "volatile", "while",
+        // FIXME: _ is excluded to retain compatibility with previous releases
+        // "_",
+        // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.3
+        "false", "true",
+        // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.7
+        "null");
 
     public static final String DATA_ROOT_SUFFIX = "Data";
     public static final String RPC_SERVICE_SUFFIX = "Service";
@@ -110,7 +120,7 @@ public final class BindingMapping {
             // Revision is in format 2017-10-26, we want the output to be 171026, which is a matter of picking the
             // right characters.
             final String rev = optRev.get().toString();
-            Preconditions.checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
+            checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
             packageNameBuilder.append("rev");
             packageNameBuilder.append(rev.substring(2, 4)).append(rev.substring(5, 7)).append(rev.substring(8));
         } else {
@@ -304,5 +314,78 @@ public final class BindingMapping {
             return str.toLowerCase();
         }
         return str.substring(0, 1).toLowerCase() + str.substring(1);
+    }
+
+    /**
+     * Returns Java identifiers, conforming to JLS8 Section 3.8 to use for specified YANG assigned names
+     * (RFC7950 Section 9.6.4). This method considers two distinct encodings: one the pre-Fluorine mapping, which is
+     * okay and convenient for sane strings, and an escaping-based bijective mapping which works for all possible
+     * Unicode strings.
+     *
+     * @param assignedNames Collection of assigned names
+     * @return A BiMap keyed by assigned name, with Java identifiers as values
+     * @throws NullPointerException if assignedNames is null or contains null items
+     * @throws IllegalArgumentException if any of the names is empty
+     */
+    public static BiMap<String, String> mapEnumAssignedNames(final Collection<String> assignedNames) {
+        /*
+         * Original mapping assumed strings encountered are identifiers, hence it used getClassName to map the names
+         * and that function is not an injection -- this is evidenced in MDSAL-208 and results in a failure to compile
+         * generated code. If we encounter such a conflict or if the result is not a valid identifier (like '*'), we
+         * abort and switch the mapping schema to mapEnumAssignedName(), which is a bijection.
+         *
+         * Note that assignedNames can contain duplicates, which must not trigger a duplication fallback.
+         */
+        final BiMap<String, String> javaToYang = HashBiMap.create(assignedNames.size());
+        boolean valid = true;
+        for (String name : assignedNames) {
+            checkArgument(!name.isEmpty());
+            if (!javaToYang.containsValue(name)) {
+                final String mappedName = getClassName(name);
+                if (!isValidJavaIdentifier(mappedName) || javaToYang.forcePut(mappedName, name) != null) {
+                    valid = false;
+                    break;
+                }
+            }
+        }
+
+        if (!valid) {
+            // Fall back to bijective mapping
+            javaToYang.clear();
+            for (String name : assignedNames) {
+                javaToYang.put(mapEnumAssignedName(name), name);
+            }
+        }
+
+        return javaToYang.inverse();
+    }
+
+    // See https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.8
+    private static boolean isValidJavaIdentifier(final String str) {
+        return !str.isEmpty() && !JAVA_RESERVED_WORDS.contains(str)
+                && Character.isJavaIdentifierStart(str.codePointAt(0))
+                && str.codePoints().skip(1).allMatch(Character::isJavaIdentifierPart);
+    }
+
+    private static String mapEnumAssignedName(final String assignedName) {
+        checkArgument(!assignedName.isEmpty());
+
+        // Mapping rules:
+        // - if the string is a valid java identifier and does not contain '$', use it as-is
+        if (assignedName.indexOf('$') == -1 && isValidJavaIdentifier(assignedName)) {
+            return assignedName;
+        }
+
+        // - otherwise prefix it with '$' and replace any invalid character (including '$') with '$XX$', where XX is
+        //   hex-encoded unicode codepoint (including plane, stripping leading zeroes)
+        final StringBuilder sb = new StringBuilder().append('$');
+        assignedName.codePoints().forEachOrdered(codePoint -> {
+            if (codePoint == '$' || !Character.isJavaIdentifierPart(codePoint)) {
+                sb.append('$').append(Integer.toHexString(codePoint).toUpperCase(Locale.ROOT)).append('$');
+            } else {
+                sb.appendCodePoint(codePoint);
+            }
+        });
+        return sb.toString();
     }
 }

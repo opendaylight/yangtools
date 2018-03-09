@@ -7,11 +7,15 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.collect.ImmutableBiMap.Builder;
 import java.util.concurrent.Callable;
+import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ValueTypeCodec.SchemaUnawareCodec;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
@@ -20,41 +24,42 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 final class EnumerationCodec extends ReflectionBasedCodec implements SchemaUnawareCodec {
     private final ImmutableBiMap<String, Enum<?>> yangValueToBinding;
 
-    EnumerationCodec(final Class<? extends Enum<?>> enumeration, final Map<String, Enum<?>> schema) {
+    EnumerationCodec(final Class<? extends Enum<?>> enumeration, final ImmutableBiMap<String, Enum<?>> schema) {
         super(enumeration);
-        yangValueToBinding = ImmutableBiMap.copyOf(schema);
+        yangValueToBinding = requireNonNull(schema);
     }
 
     static Callable<EnumerationCodec> loader(final Class<?> returnType, final EnumTypeDefinition enumSchema) {
-        Preconditions.checkArgument(Enum.class.isAssignableFrom(returnType));
+        checkArgument(Enum.class.isAssignableFrom(returnType));
         @SuppressWarnings({ "rawtypes", "unchecked" })
         final Class<? extends Enum<?>> enumType = (Class) returnType;
         return () -> {
-            Map<String, Enum<?>> nameToValue = new HashMap<>();
+            final BiMap<String, String> identifierToYang = BindingMapping.mapEnumAssignedNames(
+                enumSchema.getValues().stream().map(EnumPair::getName).collect(Collectors.toList())).inverse();
+
+            final Builder<String, Enum<?>> builder = ImmutableBiMap.builder();
             for (Enum<?> enumValue : enumType.getEnumConstants()) {
-                nameToValue.put(enumValue.toString(), enumValue);
+                final String yangName = identifierToYang.get(enumValue.name());
+                checkState(yangName != null, "Failed to find enumeration constant %s in mapping %s", enumValue,
+                        identifierToYang);
+                builder.put(yangName, enumValue);
             }
-            Map<String, Enum<?>> yangNameToBinding = new HashMap<>();
-            for (EnumPair yangValue : enumSchema.getValues()) {
-                final String bindingName = BindingMapping.getClassName(yangValue.getName());
-                final Enum<?> bindingVal = nameToValue.get(bindingName);
-                yangNameToBinding.put(yangValue.getName(), bindingVal);
-            }
-            return new EnumerationCodec(enumType, yangNameToBinding);
+
+            return new EnumerationCodec(enumType, builder.build());
         };
     }
 
     @Override
     public Object deserialize(final Object input) {
         Enum<?> value = yangValueToBinding.get(input);
-        Preconditions.checkArgument(value != null, "Invalid enumeration value %s. Valid values are %s", input,
+        checkArgument(value != null, "Invalid enumeration value %s. Valid values are %s", input,
                 yangValueToBinding.keySet());
         return value;
     }
 
     @Override
     public Object serialize(final Object input) {
-        Preconditions.checkArgument(getTypeClass().isInstance(input), "Input must be instance of %s", getTypeClass());
+        checkArgument(getTypeClass().isInstance(input), "Input must be instance of %s", getTypeClass());
         return yangValueToBinding.inverse().get(input);
     }
 }
