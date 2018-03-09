@@ -16,6 +16,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
@@ -135,6 +136,24 @@ final class ModifierImpl implements ModelActionBuilder {
         return mod;
     }
 
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
+                    final Iterator<K> keys, final ModelProcessingPhase phase) {
+        final PhaseModificationInNamespace<C> ret = new PhaseModificationInNamespace<>(phase);
+        addReq(ret);
+        addMutation(ret);
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, keys.next(),
+            (parent, ns, foundKey, foundValue) -> {
+                if (keys.hasNext()) {
+                    mutatesCtxImpl((C) foundValue, namespace, keys, phase);
+                }
+
+                ret.resolvePrereq((C) foundValue);
+            });
+        return ret;
+    }
+
     private static StatementContextBase<?, ?, ?> contextImpl(final Object value) {
         Preconditions.checkArgument(value instanceof StatementContextBase,
             "Supplied context %s is not provided by this reactor.", value);
@@ -244,6 +263,17 @@ final class ModifierImpl implements ModelActionBuilder {
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
+    }
+
+    @Nonnull
+    @Override
+    public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
+                    final Class<N> namespace, final List<K> keys) {
+        Preconditions.checkArgument(!keys.isEmpty(), "Namespace %s keys may not be empty", namespace);
+        checkNotRegistered();
+
+        return mutatesCtxImpl(context, namespace, keys.iterator(), EFFECTIVE_MODEL);
     }
 
     @Override
