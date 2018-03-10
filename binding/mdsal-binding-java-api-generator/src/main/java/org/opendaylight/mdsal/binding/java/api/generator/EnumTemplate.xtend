@@ -7,17 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
+
+import com.google.common.collect.ImmutableMap
+import java.util.Map
+import java.util.Objects
+import java.util.Optional
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
-
-import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
 
 /**
  * Template for generating JAVA enumeration type.
  */
 class EnumTemplate extends BaseTemplate {
-
-
     /**
      * Enumeration which will be transformed to JAVA source code for enumeration
      */
@@ -29,10 +31,9 @@ class EnumTemplate extends BaseTemplate {
      * @param enums enumeration which will be transformed to JAVA source code
      */
     new(Enumeration enums) {
-        super(enums as GeneratedType )
+        super(enums as GeneratedType)
         this.enums = enums
     }
-
 
     /**
      * Generates only JAVA enumeration source code.
@@ -53,23 +54,30 @@ class EnumTemplate extends BaseTemplate {
      *
      * @return string with the enumeration body
      */
+    // FIXME: for some reason importedName does not work here :(
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(enums))»
-        public enum «enums.name» {
+        public enum «enums.name» implements org.opendaylight.yangtools.yang.binding.Enumeration {
             «writeEnumeration(enums)»
 
+            private static final java.util.Map<java.lang.String, «enums.name»> NAME_MAP;
             private static final java.util.Map<java.lang.Integer, «enums.name»> VALUE_MAP;
 
             static {
-                final com.google.common.collect.ImmutableMap.Builder<java.lang.Integer, «enums.name»> b = com.google.common.collect.ImmutableMap.builder();
+                final com.google.common.collect.ImmutableMap.Builder<java.lang.String, «enums.name»> nb =
+                    com.google.common.collect.ImmutableMap.builder();
+                final com.google.common.collect.ImmutableMap.Builder<java.lang.Integer, «enums.name»> vb =
+                    com.google.common.collect.ImmutableMap.builder();
                 for («enums.name» enumItem : «enums.name».values()) {
-                    b.put(enumItem.value, enumItem);
+                    vb.put(enumItem.value, enumItem);
+                    nb.put(enumItem.name, enumItem);
                 }
 
-                VALUE_MAP = b.build();
+                NAME_MAP = nb.build();
+                VALUE_MAP = vb.build();
             }
 
-            private final «String.importedName» name;
+            private final java.lang.String name;
             private final int value;
 
             private «enums.name»(int value, «String.importedName» name) {
@@ -77,28 +85,35 @@ class EnumTemplate extends BaseTemplate {
                 this.name = name;
             }
 
-            /**
-             * Returns the name of the enumeration item as it is specified in the input yang.
-             *
-             * @return the name of the enumeration item as it is specified in the input yang
-             */
-            public «String.importedName» getName() {
+            @Override
+            public java.lang.String getName() {
                 return name;
             }
 
-            /**
-             * @return integer value
-             */
+            @Override
             public int getIntValue() {
                 return value;
             }
 
             /**
-             * @param valueArg integer value
-             * @return corresponding «enums.name» item
+             * Return the enumeration member whose {@link #getName()} matches specified value.
+             *
+             * @param name YANG assigned name
+             * @return corresponding «enums.name» item, if present
+             * @throws NullPointerException if name is null
              */
-            public static «enums.name» forValue(int valueArg) {
-                return VALUE_MAP.get(valueArg);
+            public static java.util.Optional<«enums.name»> forName(«String.importedName» name) {
+                return java.util.Optional.ofNullable(NAME_MAP.get(java.util.Objects.requireNonNull(name)));
+            }
+
+            /**
+             * Return the enumeration member whose {@link #getIntValue()} matches specified value.
+             *
+             * @param intValue integer value
+             * @return corresponding «enums.name» item, or null if no such item exists
+             */
+            public static «enums.name» forValue(int intValue) {
+                return VALUE_MAP.get(intValue);
             }
         }
     '''
