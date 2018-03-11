@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -70,7 +69,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
-    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
+    private static final char[] ILLEGAL_CHARACTERS = { '?', '(', ')', '&', ':' };
 
     private final @NonNull QNameModule module;
     private final @NonNull String localName;
@@ -95,12 +94,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
 
     private static String checkLocalName(final String localName) {
         checkArgument(localName != null, "Parameter 'localName' may not be null.");
-        checkArgument(!Strings.isNullOrEmpty(localName), "Parameter 'localName' must be a non-empty string.");
+        checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
 
         for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
-                throw new IllegalArgumentException(String.format(
-                        "Parameter 'localName':'%s' contains illegal character '%s'", localName, c));
+                throw new IllegalArgumentException("Parameter 'localName':'" + localName
+                    + "' contains illegal character '" + c + "'");
             }
         }
         return localName;
@@ -345,7 +344,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         try {
             return new URI(namespace);
         } catch (final URISyntaxException ue) {
-            throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
+            throw new IllegalArgumentException("Namespace '" + namespace + "' is not a valid URI", ue);
         }
     }
 
@@ -363,6 +362,16 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         }
         sb.append(localName);
         return sb.toString();
+    }
+
+    /**
+     * Returns a QName with the specified QNameModule and the same localname as this one.
+     *
+     * @param newModule New QNameModule to use
+     * @return a QName with specified QNameModule and same local name as this one
+     */
+    public QName withModule(@NonNull final QNameModule newModule) {
+        return new QName(newModule, localName);
     }
 
     /**
@@ -422,7 +431,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         }
         return module.compareTo(o.module);
     }
-
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
