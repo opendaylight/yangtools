@@ -15,11 +15,10 @@ import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.Futures;
-import java.lang.reflect.Field;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.junit.Test;
@@ -41,18 +40,13 @@ public class AbstractMappedRpcInvokerTest {
 
         final RpcService rpcService = new TestRpcService();
 
-        final RpcServiceInvoker testRpcInvoker =
+        final TestRpcInvokerImpl testRpcInvoker =
                 new TestRpcInvokerImpl(ImmutableMap.of(
                         "(test)tstWithoutInput", methodWithoutInput,
                         "(test)tstWithInput", methodWithInput));
 
-        final Field testInvokerMapField = testRpcInvoker.getClass().getSuperclass().getDeclaredField("map");
-        testInvokerMapField.setAccessible(true);
-        final Map<String, RpcMethodInvoker> testInvokerMap =
-                (Map<String, RpcMethodInvoker>) testInvokerMapField.get(testRpcInvoker);
-
-        assertTrue(testInvokerMap.get("(test)tstWithInput") instanceof RpcMethodInvokerWithInput);
-        assertTrue(testInvokerMap.get("(test)tstWithoutInput") instanceof RpcMethodInvokerWithoutInput);
+        assertTrue(testRpcInvoker.map.get("(test)tstWithInput") instanceof RpcMethodInvokerWithInput);
+        assertTrue(testRpcInvoker.map.get("(test)tstWithoutInput") instanceof RpcMethodInvokerWithoutInput);
 
         final Crate crateWithoutInput =
                 (Crate) testRpcInvoker.invokeRpc(rpcService, QName.create("test", "tstWithoutInput"), null).get();
@@ -105,11 +99,11 @@ public class AbstractMappedRpcInvokerTest {
     }
 
     static class TestRpcService implements RpcService {
-        static Future<Crate> methodWithoutInput(final RpcService testArgument) {
+        static ListenableFuture<Crate> methodWithoutInput(final RpcService testArgument) {
             return Futures.immediateFuture(new Crate(testArgument, null));
         }
 
-        static Future<Crate> methodWithInput(final RpcService testArgument, final DataObject testArgument2) {
+        static ListenableFuture<Crate> methodWithInput(final RpcService testArgument, final DataObject testArgument2) {
             return Futures.immediateFuture(new Crate(testArgument, testArgument2));
         }
     }

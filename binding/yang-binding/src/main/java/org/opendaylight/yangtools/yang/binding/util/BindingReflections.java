@@ -17,6 +17,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
@@ -27,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -131,7 +131,7 @@ public final class BindingReflections {
      */
     public static boolean isRpcMethod(final Method possibleMethod) {
         return possibleMethod != null && RpcService.class.isAssignableFrom(possibleMethod.getDeclaringClass())
-                && Future.class.isAssignableFrom(possibleMethod.getReturnType())
+                && ListenableFuture.class.isAssignableFrom(possibleMethod.getReturnType())
                 // length <= 2: it seemed to be impossible to get correct RpcMethodInvoker because of
                 // resolveRpcInputClass() check.While RpcMethodInvoker counts with one argument for
                 // non input type and two arguments for input type, resolveRpcInputClass() counting

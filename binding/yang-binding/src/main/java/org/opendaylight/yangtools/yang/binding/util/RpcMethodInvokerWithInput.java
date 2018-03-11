@@ -8,16 +8,16 @@
 package org.opendaylight.yangtools.yang.binding.util;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodType;
-import java.util.concurrent.Future;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 class RpcMethodInvokerWithInput extends RpcMethodInvoker {
-    private static final MethodType INVOCATION_SIGNATURE = MethodType.methodType(Future.class, RpcService.class,
-        DataObject.class);
+    private static final MethodType INVOCATION_SIGNATURE = MethodType.methodType(ListenableFuture.class,
+        RpcService.class, DataObject.class);
 
     private final MethodHandle handle;
 
@@ -27,9 +27,9 @@ class RpcMethodInvokerWithInput extends RpcMethodInvoker {
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public Future<RpcResult<?>> invokeOn(final RpcService impl, final DataObject input) {
+    ListenableFuture<RpcResult<?>> invokeOn(final RpcService impl, final DataObject input) {
         try {
-            return (Future<RpcResult<?>>) handle.invokeExact(impl,input);
+            return (ListenableFuture<RpcResult<?>>) handle.invokeExact(impl,input);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);

@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.binding.util;
 
 import com.google.common.base.Preconditions;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Method;
 import java.util.Map;
-import java.util.concurrent.Future;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -75,6 +75,6 @@ public abstract class RpcServiceInvoker {
      * @param input Input data for RPC.
      * @return Future which will complete once rpc procesing is finished.
      */
-    public abstract Future<RpcResult<?>> invokeRpc(@Nonnull RpcService impl, @Nonnull QName rpcName,
+    public abstract ListenableFuture<RpcResult<?>> invokeRpc(@Nonnull RpcService impl, @Nonnull QName rpcName,
             @Nullable DataObject input);
 }

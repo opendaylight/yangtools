@@ -7,16 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Set;
-import java.util.concurrent.Future;
-
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 public interface RpcImplementation {
 
-    // Fixme: Change to RpcInput
+    // FIXME: Change to RpcInput
     Set<Class<? extends DataContainer>> getSupportedInputs();
 
-    // Fixme: Change to RpcInput
-    <T extends DataContainer> Future<RpcResult<?>> invoke(Class<T> type, T input);
+    // FIXME: Change to RpcInput
+    <T extends DataContainer> ListenableFuture<RpcResult<?>> invoke(Class<T> type, T input);
 }

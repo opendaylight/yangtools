@@ -10,9 +10,9 @@ package org.opendaylight.yangtools.yang.binding.util;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.util.concurrent.Future;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.RpcService;
@@ -39,11 +39,12 @@ public class RpcMethodInvokerWithInputTest {
 
     private static final class TestImplClassWithInput implements RpcService {
 
-        static Future<?> testMethod(final RpcService testArg, final DataObject data) {
+        static ListenableFuture<?> testMethod(final RpcService testArg, final DataObject data) {
             return Futures.immediateFuture(null);
         }
 
-        static Future<?> testMethodWithException(final RpcService testArg, final DataObject data) throws Exception {
+        static ListenableFuture<?> testMethodWithException(final RpcService testArg, final DataObject data)
+                throws Exception {
             throw new InternalError();
         }
     }

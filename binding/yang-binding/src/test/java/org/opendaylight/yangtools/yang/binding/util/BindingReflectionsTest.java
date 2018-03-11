@@ -15,11 +15,11 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.opendaylight.yangtools.yang.binding.util.BindingReflections.findHierarchicalParent;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Future;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -85,12 +85,12 @@ public class BindingReflectionsTest {
         public static final QName QNAME = QName.create("test", "test");
 
         @SuppressWarnings({ "unused", "static-method" })
-        Future<List<Object>> rpcMethodTest() {
+        ListenableFuture<List<Object>> rpcMethodTest() {
             return null;
         }
 
         @SuppressWarnings({ "unused", "static-method" })
-        Future<?> rpcMethodTest2() {
+        ListenableFuture<?> rpcMethodTest2() {
             return null;
         }
     }
