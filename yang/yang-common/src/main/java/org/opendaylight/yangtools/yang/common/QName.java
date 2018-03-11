@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil.getRevisionFormat;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.Serializable;
@@ -70,7 +69,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private static final Pattern QNAME_PATTERN_NO_NAMESPACE_NO_REVISION =
         Pattern.compile(QNAME_STRING_NO_NAMESPACE_NO_REVISION);
 
-    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
+    private static final char[] ILLEGAL_CHARACTERS = { '?', '(', ')', '&', ':' };
 
     // Non-null
     private final QNameModule module;
@@ -79,7 +78,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private transient int hash;
 
     private QName(final QNameModule module, final String localName) {
-        this.localName = checkLocalName(localName);
+        this.localName = localName;
         this.module = module;
     }
 
@@ -92,18 +91,17 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            YANG schema identifier
      */
     public QName(final URI namespace, final String localName) {
-        this(QNameModule.create(namespace, null), localName);
+        this(QNameModule.create(namespace, null), checkLocalName(localName));
     }
 
     private static String checkLocalName(final String localName) {
         Preconditions.checkArgument(localName != null, "Parameter 'localName' may not be null.");
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(localName),
-                "Parameter 'localName' must be a non-empty string.");
+        Preconditions.checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
 
         for (final char c : ILLEGAL_CHARACTERS) {
             if (localName.indexOf(c) != -1) {
-                throw new IllegalArgumentException(String.format(
-                        "Parameter 'localName':'%s' contains illegal character '%s'", localName, c));
+                throw new IllegalArgumentException("Parameter 'localName':'" + localName
+                    + "' contains illegal character '" + c + "'");
             }
         }
         return localName;
@@ -145,7 +143,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(Preconditions.checkNotNull(qnameModule,"module may not be null"), localName);
+        return new QName(Preconditions.checkNotNull(qnameModule, "module may not be null"), checkLocalName(localName));
     }
 
     /**
@@ -311,7 +309,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
         try {
             return new URI(namespace);
         } catch (final URISyntaxException ue) {
-            throw new IllegalArgumentException(String.format("Namespace '%s' is not a valid URI", namespace), ue);
+            throw new IllegalArgumentException("Namespace '" + namespace + "' is not a valid URI", ue);
         }
     }
 
@@ -347,6 +345,18 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
 
     /**
      * Creates copy of this with revision and prefix unset.
+     * Returns a QName with the specified QNameModule and the same localname as this one.
+     *
+     * @param newModule New QNameModule to use
+     * @return a QName with specified QNameModule and same local name as this one
+     */
+    public QName withModule(@Nonnull final QNameModule newModule) {
+        return new QName(Preconditions.checkNotNull(newModule), localName);
+    }
+
+    /**
+     * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
+     * a Revision, this object is retured.
      *
      * @return copy of this QName with revision and prefix unset.
      */
