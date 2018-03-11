@@ -70,7 +70,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
-    private static final char[] ILLEGAL_CHARACTERS = new char[] { '?', '(', ')', '&', ':' };
+    private static final char[] ILLEGAL_CHARACTERS = { '?', '(', ')', '&', ':' };
 
     private final @NonNull QNameModule module;
     private final @NonNull String localName;
@@ -366,6 +366,17 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
+     * Returns a QName with the specified QNameModule and the same localname as this one. If this QName already has
+     * the specified QNameModule, this object is returned.
+     *
+     * @param module New QNameModule to use
+     * @return a QName with specified QNameModule and same local name as this one
+     */
+    public QName withModule(@NonNull final QNameModule module) {
+        return module.equals(this.module) ? this : new QName(module, localName);
+    }
+
+    /**
      * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
      * a Revision, this object is retured.
      *
@@ -422,7 +433,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         }
         return module.compareTo(o.module);
     }
-
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
