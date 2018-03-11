@@ -33,7 +33,6 @@ public abstract class AbstractQNameStatementSupport<D extends DeclaredStatement<
 
     @Override
     public QName adaptArgumentValue(final StmtContext<QName, D, E> ctx, final QNameModule targetModule) {
-        return ctx.getFromNamespace(QNameCacheNamespace.class,
-            QName.create(targetModule, ctx.getStatementArgument().getLocalName()));
+        return ctx.getFromNamespace(QNameCacheNamespace.class, ctx.getStatementArgument().withModule(targetModule));
     }
 }

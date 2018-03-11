@@ -67,8 +67,7 @@ public final class KeyStatementSupport
         for (final SchemaNodeIdentifier arg : ctx.getStatementArgument()) {
             final QName qname = arg.getLastComponent();
             if (!targetModule.equals(qname.getModule())) {
-                final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class,
-                        QName.create(targetModule, qname.getLocalName()));
+                final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class, qname.withModule(targetModule));
                 builder.add(SchemaNodeIdentifier.SAME.createChild(newQname));
                 replaced = true;
             } else {
