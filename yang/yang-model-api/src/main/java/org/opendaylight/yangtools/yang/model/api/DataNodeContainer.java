@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -31,7 +32,9 @@ public interface DataNodeContainer {
      * be present at most once.
      *
      * @return child nodes in lexicographical order
+     * @deprecated Use {@link #findDataChildByName(QName)} or {@link #streamDataChildren()} instead.
      */
+    @Deprecated
     Collection<DataSchemaNode> getChildNodes();
 
     /**
@@ -53,6 +56,16 @@ public interface DataNodeContainer {
     @Deprecated
     @Nullable default DataSchemaNode getDataChildByName(final QName name) {
         return findDataChildByName(name).orElse(null);
+    }
+
+    /**
+     * Returns a stream of data definition defined in YANG modules in this context.
+     *
+     * @return child nodes in lexicographical order
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<DataSchemaNode> streamDataChildren() {
+        return getChildNodes().stream();
     }
 
     /**
