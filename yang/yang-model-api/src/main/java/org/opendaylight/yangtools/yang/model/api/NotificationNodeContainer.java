@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -19,9 +20,10 @@ public interface NotificationNodeContainer {
      * Return the set of notifications in this container, keyed by QName. RFC7950 specifies that
      * {@link AugmentationSchemaNode}s, {@link GroupingDefinition}s, {@link ListSchemaNode}s and
      * {@link ContainerSchemaNode}s can also contain {@link NotificationDefinition}s.
-      *
-     * @return set of notification nodes
+     *
+     * @deprecated Use {@link #findNotification(QName)} or {@link #streamNotifications()}} instead.
      */
+    @Deprecated
     @NonNull Set<NotificationDefinition> getNotifications();
 
     /**
@@ -34,11 +36,17 @@ public interface NotificationNodeContainer {
      */
     default Optional<NotificationDefinition> findNotification(final QName qname) {
         requireNonNull(qname);
-        for (NotificationDefinition notif : getNotifications()) {
-            if (qname.equals(notif.getQName())) {
-                return Optional.of(notif);
-            }
-        }
-        return Optional.empty();
+        return streamNotifications().filter(ext -> qname.equals(ext.getQName())).findFirst();
+    }
+
+    /**
+     * Returns a stream of notification definitions defined in YANG modules in this context.
+     *
+     * @return A stream of {@code NotificationDefinition} instances which represents nodes defined via
+     *         {@code notification} YANG keyword
+     */
+    // FIXME: 5.0.0: make this method non-default
+    default @NonNull Stream<NotificationDefinition> streamNotifications() {
+        return getNotifications().stream();
     }
 }

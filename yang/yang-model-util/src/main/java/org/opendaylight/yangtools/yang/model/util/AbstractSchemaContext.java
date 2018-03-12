@@ -15,13 +15,14 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -90,39 +91,47 @@ public abstract class AbstractSchemaContext implements SchemaContext {
     protected abstract Map<QNameModule, Module> getModuleMap();
 
     @Override
+    @Deprecated
     public Set<DataSchemaNode> getDataDefinitions() {
-        final Set<DataSchemaNode> dataDefs = new HashSet<>();
-        for (Module m : getModules()) {
-            dataDefs.addAll(m.getChildNodes());
-        }
-        return dataDefs;
+        return streamDataDefinitions().collect(Collectors.toSet());
     }
 
     @Override
+    public Stream<DataSchemaNode> streamDataDefinitions() {
+        return getModules().stream().flatMap(Module::streamDataChildren);
+    }
+
+    @Override
+    @Deprecated
     public Set<NotificationDefinition> getNotifications() {
-        final Set<NotificationDefinition> notifications = new HashSet<>();
-        for (Module m : getModules()) {
-            notifications.addAll(m.getNotifications());
-        }
-        return notifications;
+        return streamNotifications().collect(Collectors.toSet());
     }
 
     @Override
+    public Stream<NotificationDefinition> streamNotifications() {
+        return getModules().stream().flatMap(Module::streamNotifications);
+    }
+
+    @Override
+    @Deprecated
     public Set<RpcDefinition> getOperations() {
-        final Set<RpcDefinition> rpcs = new HashSet<>();
-        for (Module m : getModules()) {
-            rpcs.addAll(m.getRpcs());
-        }
-        return rpcs;
+        return streamRpcs().collect(Collectors.toSet());
     }
 
     @Override
+    public Stream<RpcDefinition> streamRpcs() {
+        return getModules().stream().flatMap(Module::streamRpcs);
+    }
+
+    @Override
+    @Deprecated
     public Set<ExtensionDefinition> getExtensions() {
-        final Set<ExtensionDefinition> extensions = new HashSet<>();
-        for (Module m : getModules()) {
-            extensions.addAll(m.getExtensionSchemaNodes());
-        }
-        return extensions;
+        return streamExtensions().collect(Collectors.toSet());
+    }
+
+    @Override
+    public Stream<ExtensionDefinition> streamExtensions() {
+        return getModules().stream().flatMap(Module::streamExtensions);
     }
 
     @Override

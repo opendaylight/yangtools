@@ -17,6 +17,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -41,7 +43,9 @@ public interface DataNodeContainer {
      * is consistent with {@code schema tree}.
      *
      * @return child nodes in lexicographical order
+     * @deprecated Use {@link #findDataChildByName(QName)} or {@link #streamDataChildren()} instead.
      */
+    @Deprecated
     Collection<DataSchemaNode> getChildNodes();
 
     /**
@@ -67,6 +71,16 @@ public interface DataNodeContainer {
     @Deprecated
     default @Nullable DataSchemaNode getDataChildByName(final QName name) {
         return findDataChildByName(name).orElse(null);
+    }
+
+    /**
+     * Returns a stream of data definition defined in YANG modules in this context.
+     *
+     * @return child nodes in lexicographical order
+     */
+    // FIXME: 4.0.0: make this method non-default
+    default @NonNull Stream<DataSchemaNode> streamDataChildren() {
+        return getChildNodes().stream();
     }
 
     /**
