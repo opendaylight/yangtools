@@ -13,6 +13,7 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -40,10 +41,30 @@ public interface SchemaContext extends ContainerSchemaNode {
      * Returns data schema node instances which represents direct subnodes (like
      * leaf, leaf-list, list, container) in all YANG modules in the context.
      *
-     * @return set of <code>DataSchemaNode</code> instances which represents
-     *         YANG data nodes at the module top level
+     * @return set of <code>DataSchemaNode</code> instances which represents YANG data nodes at the module top level
+     * @deprecated Use {@link #findDataDefinition(QName)} or {@link #streamDataDefinitions()}} instead.
      */
+    @Deprecated
     Set<DataSchemaNode> getDataDefinitions();
+
+    /**
+     * Finds a data definition matching specified QName.
+     *
+     * @return A {@code DataSchemaNode} if a match is found.
+     */
+    default Optional<DataSchemaNode> findDataDefinition(final QName qname) {
+        return findModule(qname.getModule()).flatMap(module -> module.findDataChildByName(qname));
+    }
+
+    /**
+     * Returns a stream of data definition defined in YANG modules in this context.
+     *
+     * @return stream of <code>DataSchemaNode</code> instances which represents YANG data nodes at the module top level
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<DataSchemaNode> streamDataDefinitions() {
+        return getDataDefinitions().stream();
+    }
 
     /**
      * Returns modules which are part of the schema context. Returned set is required to have its iteration ordered
@@ -60,17 +81,60 @@ public interface SchemaContext extends ContainerSchemaNode {
      *
      * @return set of <code>RpcDefinition</code> instances which represents
      *         nodes defined via <code>rpc</code> YANG keyword
+     * @deprecated Use {@link #findRpc(QName)} or {@link #streamRpcs()}} instead.
      */
+    @Deprecated
     Set<RpcDefinition> getOperations();
 
     /**
-     * Returns extension definition instances which are defined as the direct
-     * subelements in all YANG modules in the context.
+     * Finds an RPC definition matching specified QName.
+     *
+     * @return A {@code RpcDefinition} if a match is found.
+     */
+    default Optional<RpcDefinition> findRpc(final QName qname) {
+        return findModule(qname.getModule()).flatMap(module -> module.findRpc(qname));
+    }
+
+    /**
+     * Returns a stream of RPC definitions defined in YANG modules in this context.
+     *
+     * @return A set of {@code RpcDefinition} instances which represents nodes defined via {@code rpc} YANG keyword
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<RpcDefinition> streamRpcs() {
+        return getOperations().stream();
+    }
+
+    /**
+     * Returns extension definition instances which are defined as the direct subelements in all YANG modules
+     * in the context.
      *
      * @return set of <code>ExtensionDefinition</code> instances which
      *         represents nodes defined via <code>extension</code> YANG keyword
+     * @deprecated Use {@link #findExtension(QName)} or {@link #streamExtensions()}} instead.
      */
+    @Deprecated
     Set<ExtensionDefinition> getExtensions();
+
+    /**
+     * Finds an extension definition matching specified QName.
+     *
+     * @return A {@code ExtensionDefinition} if a match is found.
+     */
+    default Optional<ExtensionDefinition> findExtension(final QName qname) {
+        return findModule(qname.getModule()).flatMap(module -> module.findExtension(qname));
+    }
+
+    /**
+     * Returns a stream of extension definitions defined in YANG modules in this context.
+     *
+     * @return A stream of {@code ExtensionDefinition} instances which represents nodes defined via {@code extension}
+     *         YANG keyword
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<ExtensionDefinition> streamExtensions() {
+        return getExtensions().stream();
+    }
 
     /**
      * Returns the module matching specified {@link QNameModule}, if present.
@@ -209,5 +273,10 @@ public interface SchemaContext extends ContainerSchemaNode {
     @Override
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();
+    }
+
+    @Override
+    default Optional<NotificationDefinition> findNotification(final QName qname) {
+        return findModule(qname.getModule()).flatMap(module -> module.findNotification(qname));
     }
 }
