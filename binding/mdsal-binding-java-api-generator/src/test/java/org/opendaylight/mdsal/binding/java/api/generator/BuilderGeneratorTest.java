@@ -19,6 +19,7 @@ import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
@@ -26,6 +27,7 @@ public class BuilderGeneratorTest {
 
     private static final String PROPERTIES_FIELD_NAME = "properties";
     private static final String TEST = "test";
+    private static final JavaTypeName TYPE_NAME = JavaTypeName.create(TEST, TEST);
 
     @Test
     public void basicTest() {
@@ -108,6 +110,7 @@ public class BuilderGeneratorTest {
 
     private static GeneratedType mockGenTypeMoreMeth(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
+        doReturn(TYPE_NAME).when(genType).getIdentifier();
         doReturn(TEST).when(genType).getName();
         doReturn(TEST).when(genType).getPackageName();
 
@@ -137,6 +140,7 @@ public class BuilderGeneratorTest {
 
     private static GeneratedType mockGenType(final String methodeName) {
         final GeneratedType genType = spy(GeneratedType.class);
+        doReturn(TYPE_NAME).when(genType).getIdentifier();
         doReturn(TEST).when(genType).getName();
         doReturn(TEST).when(genType).getPackageName();
 
@@ -154,8 +158,7 @@ public class BuilderGeneratorTest {
         final MethodSignature methSign = mock(MethodSignature.class);
         doReturn(methodeName).when(methSign).getName();
         final Type methType = mock(Type.class);
-        doReturn(TEST).when(methType).getName();
-        doReturn(TEST).when(methType).getPackageName();
+        doReturn(TYPE_NAME).when(methType).getIdentifier();
         doReturn(methType).when(methSign).getReturnType();
         return methSign;
     }

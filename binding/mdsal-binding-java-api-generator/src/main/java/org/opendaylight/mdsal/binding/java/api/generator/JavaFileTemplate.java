@@ -17,6 +17,7 @@ import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -26,7 +27,7 @@ import org.opendaylight.mdsal.binding.model.util.Types;
  */
 class JavaFileTemplate {
     // Hidden to well-define operations
-    private final Map<String, String> importMap = new HashMap<>();
+    private final Map<String, JavaTypeName> importMap = new HashMap<>();
 
     protected final GeneratedType type;
 
@@ -59,10 +60,9 @@ class JavaFileTemplate {
         return importMap.entrySet().stream()
                 .filter(e -> isDefaultVisible(e.getValue()))
                 .sorted((e1, e2) -> {
-                    final int cmp = e1.getValue().compareTo(e2.getValue());
-                    return cmp != 0 ? cmp : e1.getKey().compareTo(e2.getKey());
+                    return e1.getValue().toString().compareTo(e2.getValue().toString());
                 })
-                .map(e -> "import " + e.getValue() + "." + e.getKey() + ";\n")
+                .map(e -> "import " + e.getValue() + ";\n")
                 .collect(Collectors.joining());
     }
 
@@ -75,8 +75,9 @@ class JavaFileTemplate {
         return importedName(Types.typeForClass(cls));
     }
 
-    final void addImport(final String className, final String packageName) {
-        importMap.put(className, packageName);
+    final void addImport(final Class<?> cls) {
+        final JavaTypeName name = JavaTypeName.create(cls);
+        importMap.put(name.simpleName(), name);
     }
 
     final void addImports(final JavaFileTemplate from) {
@@ -84,12 +85,13 @@ class JavaFileTemplate {
     }
 
     // Exposed for BuilderTemplate
-    boolean isLocalInnerClass(final String importedTypePackageName) {
-        return type.getFullyQualifiedName().equals(importedTypePackageName);
+    boolean isLocalInnerClass(final JavaTypeName name) {
+        final Optional<JavaTypeName> optEnc = name.immediatelyEnclosingClass();
+        return optEnc.isPresent() && type.getIdentifier().equals(optEnc.get());
     }
 
-    private boolean isDefaultVisible(final String prefix) {
-        return !hasSamePackage(prefix) || !isLocalInnerClass(prefix);
+    private boolean isDefaultVisible(final JavaTypeName name) {
+        return !hasSamePackage(name) || !isLocalInnerClass(name);
     }
 
     /**
@@ -98,7 +100,7 @@ class JavaFileTemplate {
      * @param importedTypePackageName the package name of imported type
      * @return true if the packages are the same false otherwise
      */
-    private boolean hasSamePackage(final String importedTypePackageName) {
-        return type.getPackageName().equals(importedTypePackageName);
+    private boolean hasSamePackage(final JavaTypeName name) {
+        return type.getPackageName().equals(name.packageName());
     }
 }

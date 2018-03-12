@@ -27,11 +27,15 @@ import org.opendaylight.mdsal.binding.model.api.Constant;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 public class GeneratorUtilTest {
+    private static final JavaTypeName ANNOTATION = JavaTypeName.create("tst.package", "tstAnnotationName");
+    private static final JavaTypeName PARAMETERIZED_TYPE = JavaTypeName.create("tst.package", "tstParametrizedType");
+    private static final JavaTypeName TYPE = JavaTypeName.create("tst.package", "tstName");
 
     private final GeneratedType generatedType = mock(GeneratedType.class);
     private final GeneratedTransferObject enclosedType = mock(GeneratedTransferObject.class);
@@ -48,18 +52,23 @@ public class GeneratorUtilTest {
 
         doReturn("tst.package").when(parameterizedType).getPackageName();
         doReturn("tstParametrizedType").when(parameterizedType).getName();
+        doReturn(PARAMETERIZED_TYPE).when(parameterizedType).getIdentifier();
         doReturn("tst.package").when(type).getPackageName();
         doReturn("tstName").when(type).getName();
+        doReturn(TYPE).when(type).getIdentifier();
         doReturn(parameterizedType).when(property).getReturnType();
         doReturn(new Type[] { type }).when(parameterizedType).getActualTypeArguments();
         doReturn(ImmutableList.of(property)).when(enclosedType).getProperties();
         doReturn(true).when(property).isReadOnly();
         doReturn("tst.package").when(enclosedType).getPackageName();
         doReturn("tstName").when(enclosedType).getName();
+        doReturn(TYPE).when(enclosedType).getIdentifier();
+
         doReturn(ImmutableList.of(parameter)).when(methodSignature).getParameters();
 
         doReturn("tst.package").when(annotationType).getPackageName();
         doReturn("tstAnnotationName").when(annotationType).getName();
+        doReturn(ANNOTATION).when(annotationType).getIdentifier();
 
         doReturn(type).when(parameter).getType();
         doReturn(type).when(methodSignature).getReturnType();
@@ -103,9 +112,9 @@ public class GeneratorUtilTest {
 
     @Test
     public void createImportsTest() throws Exception {
-        final Map<String, String> generated = createImports(generatedType);
+        final Map<String, JavaTypeName> generated = createImports(generatedType);
         assertNotNull(generated);
-        assertTrue(generated.get("tstAnnotationName").equals("tst.package"));
+        assertEquals(JavaTypeName.create("tst.package", "tstAnnotationName"), generated.get("tstAnnotationName"));
     }
 
     @Test(expected = IllegalArgumentException.class)

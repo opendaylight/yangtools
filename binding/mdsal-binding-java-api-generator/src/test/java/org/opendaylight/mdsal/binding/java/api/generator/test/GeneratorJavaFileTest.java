@@ -18,6 +18,7 @@ import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
 import org.opendaylight.mdsal.binding.model.util.BindingTypes;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -36,7 +37,8 @@ public class GeneratorJavaFileTest {
         types.add(t1);
         types.add(t2);
         types.add(t3);
-        GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder("org.opendaylight.controller.gen", "Type4");
+        GeneratedTypeBuilder gtb = new CodegenGeneratedTypeBuilder(
+            JavaTypeName.create("org.opendaylight.controller.gen", "Type4"));
         gtb.addImplementsType(Types.augmentableTypeFor(gtb));
         types.add(gtb.build());
         GeneratorJavaFile generator = new GeneratorJavaFile(types);
@@ -54,7 +56,7 @@ public class GeneratorJavaFileTest {
     }
 
     private static GeneratedType createGeneratedType(final String pkgName, final String name) {
-        GeneratedTypeBuilder builder = new CodegenGeneratedTypeBuilder(pkgName, name);
+        GeneratedTypeBuilder builder = new CodegenGeneratedTypeBuilder(JavaTypeName.create(pkgName, name));
         builder.addImplementsType(BindingTypes.DATA_OBJECT);
         return builder.build();
     }

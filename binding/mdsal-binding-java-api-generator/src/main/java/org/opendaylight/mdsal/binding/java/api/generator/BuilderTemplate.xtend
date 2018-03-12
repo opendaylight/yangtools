@@ -29,6 +29,7 @@ import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
@@ -89,7 +90,7 @@ class BuilderTemplate extends BaseTemplate {
     new(GeneratedType genType) {
         super(genType)
         this.properties = propertiesFromMethods(createMethods)
-        addImport(Builder.simpleName, Builder.package.name)
+        addImport(Builder)
     }
 
     /**
@@ -126,12 +127,10 @@ class BuilderTemplate extends BaseTemplate {
             } else if (implementedIfc.fullyQualifiedName == Augmentable.name) {
                 for (m : Augmentable.methods) {
                     if (m.name == GET_AUGMENTATION_METHOD_NAME) {
-                        val fullyQualifiedName = m.returnType.name
-                        val pkg = fullyQualifiedName.package
-                        val name = fullyQualifiedName.name
-                        val tmpGenTO = new CodegenGeneratedTOBuilder(pkg, name)
-                        val refType = new ReferencedTypeImpl(pkg, name)
-                        val generic = new ReferencedTypeImpl(type.packageName, type.name)
+                        val identifier = JavaTypeName.create(m.returnType)
+                        val tmpGenTO = new CodegenGeneratedTOBuilder(identifier)
+                        val refType = new ReferencedTypeImpl(identifier)
+                        val generic = new ReferencedTypeImpl(type.identifier)
                         val parametrizedReturnType = Types.parameterizedTypeFor(refType, generic)
                         tmpGenTO.addMethod(m.name).setReturnType(parametrizedReturnType)
                         augmentField = tmpGenTO.build.methodDefinitions.first.propertyFromGetter
@@ -148,28 +147,6 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private <E> first(List<E> elements) {
         elements.get(0)
-    }
-
-    /**
-     * Returns the name of the package from <code>fullyQualifiedName</code>.
-     *
-     * @param fullyQualifiedName string with fully qualified type name (package + type)
-     * @return string with the package name
-     */
-    def private String getPackage(String fullyQualifiedName) {
-        val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
-        return if (lastDotIndex == -1) "" else fullyQualifiedName.substring(0, lastDotIndex)
-    }
-
-    /**
-     * Returns the name of tye type from <code>fullyQualifiedName</code>
-     *
-     * @param fullyQualifiedName string with fully qualified type name (package + type)
-     * @return string with the name of the type
-     */
-    def private String getName(String fullyQualifiedName) {
-        val lastDotIndex = fullyQualifiedName.lastIndexOf(Constants.DOT)
-        return if (lastDotIndex == -1) fullyQualifiedName else fullyQualifiedName.substring(lastDotIndex + 1)
     }
 
     /**
@@ -214,13 +191,13 @@ class BuilderTemplate extends BaseTemplate {
         }
         if (method.name.startsWith(prefix)) {
             val fieldName = method.getName().substring(prefix.length()).toFirstLower
-            val tmpGenTO = new CodegenGeneratedTOBuilder("foo", "foo")
+            val tmpGenTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("foo", "foo"))
             tmpGenTO.addProperty(fieldName).setReturnType(method.returnType)
             return tmpGenTO.build.properties.first
         }
     }
 
-    override isLocalInnerClass(String importedTypePackageName) {
+    override isLocalInnerClass(JavaTypeName name) {
         // Builders do not have inner types
         return false;
     }

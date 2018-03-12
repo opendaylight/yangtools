@@ -11,6 +11,7 @@ import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
 import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
 
 import com.google.common.base.Preconditions;
+import com.google.common.io.BaseEncoding
 import java.beans.ConstructorProperties
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
@@ -30,7 +31,7 @@ class UnionTemplate extends ClassTemplate {
     new(GeneratedTransferObject genType) {
         super(genType)
         if (isBaseEncodingImportRequired) {
-            addImport("BaseEncoding","com.google.common.io")
+            addImport(BaseEncoding)
         }
     }
 

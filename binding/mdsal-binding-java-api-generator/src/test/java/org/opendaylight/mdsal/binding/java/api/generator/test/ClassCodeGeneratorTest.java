@@ -21,6 +21,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -91,7 +92,7 @@ public class ClassCodeGeneratorTest {
      */
     @Test
     public void defaultConstructorNotPresentInValueTypeTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder("simple.pack", "DefCtor");
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
@@ -112,7 +113,7 @@ public class ClassCodeGeneratorTest {
 
     @Test
     public void toStringTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder("simple.pack", "DefCtor");
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));

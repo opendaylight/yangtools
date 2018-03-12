@@ -19,6 +19,7 @@ import org.opendaylight.mdsal.binding.model.api.Constant;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -47,11 +48,11 @@ public final class GeneratorUtil {
      * @throws IllegalArgumentException
      *             if <code>genType</code> equals <code>null</code>
      */
-    static Map<String, String> createImports(final GeneratedType genType) {
+    static Map<String, JavaTypeName> createImports(final GeneratedType genType) {
         if (genType == null) {
             throw new IllegalArgumentException("Generated Type cannot be NULL!");
         }
-        final Map<String, String> imports = new LinkedHashMap<>();
+        final Map<String, JavaTypeName> imports = new LinkedHashMap<>();
 
         List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
         if (!childGeneratedTypes.isEmpty()) {
@@ -124,7 +125,7 @@ public final class GeneratorUtil {
      *             </ul>
      */
     static void putTypeIntoImports(final GeneratedType parentGenType, final Type type,
-                                   final Map<String, String> imports) {
+                                   final Map<String, JavaTypeName> imports) {
         checkArgument(parentGenType != null, "Parent Generated Type parameter MUST be specified and cannot be "
                 + "NULL!");
         checkArgument(parentGenType.getName() != null, "Parent Generated Type name cannot be NULL!");
@@ -142,7 +143,7 @@ public final class GeneratorUtil {
             return;
         }
         if (!imports.containsKey(typeName)) {
-            imports.put(typeName, typePackageName);
+            imports.put(typeName, type.getIdentifier());
         }
         if (type instanceof ParameterizedType) {
             final ParameterizedType paramType = (ParameterizedType) type;
@@ -192,21 +193,18 @@ public final class GeneratorUtil {
     /**
      * Creates the map which maps the type name to package name and contains
      * only package names for enclosed types of <code>genType</code> and
-     * recursivelly their enclosed types.
+     * recursively their enclosed types.
      *
      * @param genType
      *            JAVA <code>Type</code> for which is the map created
      * @return map of the package names for all the enclosed types and
-     *         recursivelly their enclosed types
+     *         recursively their enclosed types
      */
     static Map<String, String> createChildImports(final GeneratedType genType) {
         Map<String, String> childImports = new LinkedHashMap<>();
-        List<GeneratedType> childGeneratedTypes = genType.getEnclosedTypes();
-        if (!childGeneratedTypes.isEmpty()) {
-            for (GeneratedType genTypeChild : childGeneratedTypes) {
-                createChildImports(genTypeChild);
-                childImports.put(genTypeChild.getName(), genTypeChild.getPackageName());
-            }
+        for (GeneratedType genTypeChild : genType.getEnclosedTypes()) {
+            createChildImports(genTypeChild);
+            childImports.put(genTypeChild.getName(), genTypeChild.getPackageName());
         }
         return childImports;
     }
@@ -236,34 +234,23 @@ public final class GeneratorUtil {
      *             </ul>
      */
     static String getExplicitType(final GeneratedType parentGenType, final Type type,
-                                  final Map<String, String> imports) {
-
+                                  final Map<String, JavaTypeName> imports) {
         checkArgument(type != null, "Type parameter MUST be specified and cannot be NULL!");
-        checkArgument(type.getName() != null, "Type name cannot be NULL!");
-        checkArgument(type.getPackageName() != null, "Type cannot have Package Name referenced as NULL!");
         checkArgument(imports != null, "Imports Map cannot be NULL!");
 
-        final String typePackageName = type.getPackageName();
-        final String typeName = type.getName();
-        final String importedPackageName = imports.get(typeName);
-        final StringBuilder builder;
-
-        if (typePackageName.equals(importedPackageName)) {
-            builder = new StringBuilder(type.getName());
+        final JavaTypeName importedType = imports.get(type.getName());
+        final StringBuilder builder = new StringBuilder();
+        if (type.getIdentifier().equals(importedType)) {
+            builder.append(type.getName());
             addActualTypeParameters(builder, type, parentGenType, imports);
             if (builder.toString().equals("Void")) {
                 return "void";
             }
         } else {
-            builder = new StringBuilder();
-            if (!typePackageName.isEmpty()) {
-                builder.append(typePackageName).append(Constants.DOT).append(type.getName());
-            } else {
-                builder.append(type.getName());
-            }
             if (type.equals(Types.voidType())) {
                 return "void";
             }
+            builder.append(type.getFullyQualifiedName());
             addActualTypeParameters(builder, type, parentGenType, imports);
         }
         return builder.toString();
@@ -288,7 +275,7 @@ public final class GeneratorUtil {
      *         parameters</li> <li>else only <code>builder</code></li>
      */
     private static StringBuilder addActualTypeParameters(final StringBuilder builder, final Type type,
-                                                         final GeneratedType parentGenType, final Map<String, String> imports) {
+            final GeneratedType parentGenType, final Map<String, JavaTypeName> imports) {
         if (type instanceof ParameterizedType) {
             final ParameterizedType pType = (ParameterizedType) type;
             final Type[] pTypes = pType.getActualTypeArguments();
@@ -312,7 +299,7 @@ public final class GeneratorUtil {
      * @return string with all actual type parameters from <code>pTypes</code>
      */
     private static String getParameters(final GeneratedType parentGenType, final Type[] pTypes,
-                                        final Map<String, String> availableImports) {
+                                        final Map<String, JavaTypeName> availableImports) {
 
         if (pTypes == null || pTypes.length == 0) {
             return "?";
