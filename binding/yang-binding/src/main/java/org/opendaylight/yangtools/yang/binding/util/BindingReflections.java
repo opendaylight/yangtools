@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -523,10 +524,10 @@ public final class BindingReflections {
             } else if (isRpcType(key)) {
                 final String className = key.getSimpleName();
                 if (className.endsWith(BindingMapping.RPC_OUTPUT_SUFFIX)) {
-                    return QName.create(module, "output").intern();
-                } else {
-                    return QName.create(module, "input").intern();
+                    return YangConstants.operationOutputQName(module.getModule()).intern();
                 }
+
+                return YangConstants.operationInputQName(module.getModule()).intern();
             }
 
             /*
@@ -534,7 +535,6 @@ public final class BindingReflections {
              */
             return module;
         }
-
     }
 
     /**
