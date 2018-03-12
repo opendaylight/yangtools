@@ -387,9 +387,9 @@ public class CompilationTestUtils {
         File[] dirContent = dir.listFiles();
         if (dirContent == null) {
             throw new AssertionError("File " + dir + " doesn't exists or it's not a directory");
-        } else {
-            assertEquals("Unexpected count of generated files", count, dirContent.length);
         }
+
+        assertEquals("Unexpected count of generated files", count, dirContent.length);
     }
 
     /**

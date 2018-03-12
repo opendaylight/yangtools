@@ -13,8 +13,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -23,12 +25,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
+import javax.annotation.Nullable;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
@@ -46,7 +51,8 @@ public class CompilationTest extends BaseCompilationTest {
      */
     private static Collection<Method> abstractMethods(final Class<?> clazz) {
         // Filter out
-        return Collections2.filter(Arrays.asList(clazz.getDeclaredMethods()), input -> Modifier.isAbstract(input.getModifiers()));
+        return Collections2.filter(Arrays.asList(clazz.getDeclaredMethods()),
+            input -> Modifier.isAbstract(input.getModifiers()));
     }
 
     @Test
@@ -90,9 +96,12 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        final Class<?> keyArgsClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.test.rev131008.KeyArgs", true, loader);
-        final Class<?> linksClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.test.rev131008.Links", true, loader);
-        final Class<?> linksKeyClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
+        final Class<?> keyArgsClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.test.rev131008.KeyArgs", true, loader);
+        final Class<?> linksClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.test.rev131008.Links", true, loader);
+        final Class<?> linksKeyClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.test.rev131008.LinksKey", true, loader);
 
         // Test generated 'grouping key-args'
         assertTrue(keyArgsClass.isInterface());
@@ -405,7 +414,8 @@ public class CompilationTest extends BaseCompilationTest {
         final List<Range<Integer>> lengthConstraints = new ArrayList<>();
         lengthConstraints.add(Range.closed(1, 10));
         byte[] arg = new byte[] {};
-        String expectedMsg = String.format("Invalid length: %s, expected: %s.", Arrays.toString(arg), lengthConstraints);
+        String expectedMsg = String.format("Invalid length: %s, expected: %s.", Arrays.toString(arg),
+            lengthConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(builderObj, m, expectedMsg, arg);
 
         m = CompilationTestUtils.assertContainsMethod(builderClass, builderClass, "setIdDecimal64", BigDecimal.class);
@@ -419,7 +429,8 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
-    public void testGenerationContextReferenceExtension() throws Exception {
+    public void testGenerationContextReferenceExtension() throws IOException, URISyntaxException,
+            ClassNotFoundException {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("context-reference");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("context-reference");
         generateTestSources("/compilation/context-reference", sourcesOutputDir);
@@ -439,25 +450,26 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        final Class<?> nodesClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
+        final Class<?> nodesClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.foo.rev131008.Nodes", true, loader);
         final Class<?> identityClass = Class
                 .forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.bar.rev131008.IdentityClass", true, loader);
 
         // test identity
-        final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true, loader);
+        final Class<?> baseIdentity = Class.forName("org.opendaylight.yangtools.yang.binding.BaseIdentity", true,
+            loader);
         assertEquals(ImmutableList.of(baseIdentity), Arrays.asList(identityClass.getInterfaces()));
 
         // Test annotation
+        final Method getId;
         try {
-            final Method getId = nodesClass.getMethod("getId");
-            final Annotation[] annotations = getId.getAnnotations();
-            assertEquals(1, annotations.length);
-            final Annotation routingContext = annotations[0];
-            assertEquals(RoutingContext.class, routingContext.annotationType());
+            getId = nodesClass.getMethod("getId");
         } catch (final NoSuchMethodException e) {
-            throw new AssertionError("Method getId() not found");
+            throw new AssertionError("Method getId() not found", e);
         }
 
+        assertEquals(ImmutableSet.of(RoutingContext.class, Nullable.class), Arrays.stream(getId.getAnnotations())
+            .map(Annotation::annotationType).collect(Collectors.toSet()));
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
@@ -597,11 +609,13 @@ public class CompilationTest extends BaseCompilationTest {
         final ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
         final Class<?> outputActionClass = Class.forName(CompilationTestUtils.BASE_PKG
                 + ".urn.test.foo.rev140717.action.action.output.action._case.OutputAction", true, loader);
-        final Class<?> actionClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.test.foo.rev140717.Action", true, loader);
+        final Class<?> actionClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.test.foo.rev140717.Action",
+            true, loader);
 
         // Test generated 'container output-action'
         assertTrue(outputActionClass.isInterface());
-        CompilationTestUtils.assertImplementsParameterizedIfc(outputActionClass, ChildOf.class.toString(), actionClass.getCanonicalName());
+        CompilationTestUtils.assertImplementsParameterizedIfc(outputActionClass, ChildOf.class.toString(),
+            actionClass.getCanonicalName());
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
@@ -634,47 +648,36 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName,
-            final String returnTypeStr) throws Exception {
-        Method method;
-        java.lang.reflect.Type returnType;
-        try {
-            method = clazz.getMethod(methodName);
-            assertEquals(java.lang.Class.class, method.getReturnType());
-            returnType = method.getGenericReturnType();
-            assertTrue(returnType instanceof ParameterizedType);
-            final ParameterizedType pt = (ParameterizedType) returnType;
-            final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
-            assertEquals(1, parameters.length);
-            final java.lang.reflect.Type parameter = parameters[0];
-            assertTrue(parameter instanceof WildcardType);
-            final WildcardType wildcardType = (WildcardType) parameter;
-            assertEquals("? extends " + returnTypeStr, wildcardType.toString());
-        } catch (final NoSuchMethodException e) {
-            throw new AssertionError("Method '" + methodName + "' not found");
-        }
+            final String returnTypeStr) throws NoSuchMethodException {
+        Method method = clazz.getMethod(methodName);
+        assertEquals(java.lang.Class.class, method.getReturnType());
+        java.lang.reflect.Type returnType = method.getGenericReturnType();
+        assertTrue(returnType instanceof ParameterizedType);
+        final ParameterizedType pt = (ParameterizedType) returnType;
+        final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+        assertEquals(1, parameters.length);
+        final java.lang.reflect.Type parameter = parameters[0];
+        assertTrue(parameter instanceof WildcardType);
+        final WildcardType wildcardType = (WildcardType) parameter;
+        assertEquals("? extends " + returnTypeStr, wildcardType.toString());
     }
 
     private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
-            final String methodName) throws Exception {
+            final String methodName) throws ClassNotFoundException, NoSuchMethodException, SecurityException {
         Method method;
         Class<?> rawReturnType;
         java.lang.reflect.Type returnType;
-        try {
-            method = clazz.getMethod(methodName);
-            rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true, loader);
-            assertEquals(rawReturnType, method.getReturnType());
-            returnType = method.getGenericReturnType();
-            assertTrue(returnType instanceof ParameterizedType);
-            final ParameterizedType pt = (ParameterizedType) returnType;
-            final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
-            assertEquals(1, parameters.length);
-            final java.lang.reflect.Type parameter = parameters[0];
-            assertTrue(parameter instanceof WildcardType);
-            final WildcardType wildcardType = (WildcardType) parameter;
-            assertEquals("?", wildcardType.toString());
-        } catch (final NoSuchMethodException e) {
-            throw new AssertionError("Method '" + methodName + "' not found");
-        }
+        method = clazz.getMethod(methodName);
+        rawReturnType = Class.forName("org.opendaylight.yangtools.yang.binding.InstanceIdentifier", true, loader);
+        assertEquals(rawReturnType, method.getReturnType());
+        returnType = method.getGenericReturnType();
+        assertTrue(returnType instanceof ParameterizedType);
+        final ParameterizedType pt = (ParameterizedType) returnType;
+        final java.lang.reflect.Type[] parameters = pt.getActualTypeArguments();
+        assertEquals(1, parameters.length);
+        final java.lang.reflect.Type parameter = parameters[0];
+        assertTrue(parameter instanceof WildcardType);
+        final WildcardType wildcardType = (WildcardType) parameter;
+        assertEquals("?", wildcardType.toString());
     }
-
 }
