@@ -11,8 +11,10 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -205,8 +207,29 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
      *         module as YANG {@link Module <b><font
      *         color="#d2691e">rpc</font></b>} keywords and are lexicographicaly
      *         ordered
+     * @deprecated Use {@link #findRpc(QName)} or {@link #streamRpcs()}} instead.
      */
+    @Deprecated
     Set<RpcDefinition> getRpcs();
+
+    /**
+     * Finds an RPC definition matching specified QName.
+     *
+     * @return A {@code RpcDefinition} if a match is found.
+     */
+    default Optional<RpcDefinition> findRpc(final QName qname) {
+        return streamRpcs().filter(rpc -> qname.equals(rpc.getQName())).findFirst();
+    }
+
+    /**
+     * Returns a stream of RPC definitions defined in YANG modules in this context.
+     *
+     * @return A set of {@code RpcDefinition} instances which represents nodes defined via {@code rpc} YANG keyword
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<RpcDefinition> streamRpcs() {
+        return getRpcs().stream();
+    }
 
     /**
      * Returns <code>Deviation</code> instances which contain data from
@@ -235,6 +258,28 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
      *         module as YANG {@link Module <b><font
      *         color="#808000">extension</font></b>} keyword and are
      *         lexicographically ordered
+     * @deprecated Use {@link #findExtension(QName)} or {@link #streamExtensions()}} instead.
      */
+    @Deprecated
     List<ExtensionDefinition> getExtensionSchemaNodes();
+
+    /**
+     * Finds an extension definition matching specified QName.
+     *
+     * @return A {@code ExtensionDefinition} if a match is found.
+     */
+    default Optional<ExtensionDefinition> findExtension(final QName qname) {
+        return streamExtensions().filter(ext -> qname.equals(ext.getQName())).findFirst();
+    }
+
+    /**
+     * Returns a stream of extension definitions defined in YANG modules in this context.
+     *
+     * @return A stream of {@code ExtensionDefinition} instances which represents nodes defined via {@code extension}
+     *         YANG keyword
+     */
+    // FIXME: 3.0.0: make this method non-default
+    default Stream<ExtensionDefinition> streamExtensions() {
+        return getExtensionSchemaNodes().stream();
+    }
 }
