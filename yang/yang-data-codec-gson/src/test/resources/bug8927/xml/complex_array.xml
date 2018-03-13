@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<foo xmlns="bug8927.test">
+    <alarm-information xmlns="bug8927.test">
+        <alarm-detail>
+            <alarm-time>
+                2017-08-02 19:03:44 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-description>
+               <test>123</test>
+            </alarm-description>
+            <alarm-description>
+               <test>456</test>
+            </alarm-description>
+            <alarm-short-description>gnf-creation</alarm-short-description>
+            <alarm-type>License</alarm-type>
+        </alarm-detail>
+        <alarm-detail>
+            <alarm-time>
+                2017-07-25 16:04:31 UTC
+            </alarm-time>
+            <alarm-class>Minor</alarm-class>
+            <alarm-class>Minor1</alarm-class>
+            <alarm-description>VMHost RE 0 host application failed</alarm-description>
+            <alarm-short-description>VMHost RE 0 host ap</alarm-short-description>
+            <alarm-type>Chassis</alarm-type>
+        </alarm-detail>
+    </alarm-information>
+</foo>
+</root>
+</root>
