@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+<foo xmlns="bug8927.test">
+    <alarm-information xmlns="bug8927.test">
+        <alarm-summary>
+            <active-alarm-count/>
+        </alarm-summary>
+        <elmt>1</elmt>
+        <elmt>2</elmt>
+        <elmt>3</elmt>
+    </alarm-information>
+</foo>
+</root>
+</root>
