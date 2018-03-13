@@ -18,14 +18,22 @@ import static org.opendaylight.yangtools.yang.data.codec.gson.TestUtils.normaliz
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.net.URISyntaxException;
+
 import com.google.common.base.Optional;
+
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -111,7 +119,10 @@ public class AnyXmlSupportTest {
         // lf12-any check
         final DOMSource Lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
         final DOMSource Lf12AnyExpectedValue = createLf12AnyXmlCompositeValue("ns:complex:json", "lf12-any");
+        // toString(Lf12AnyActualValue);
+        // toString(Lf12AnyExpectedValue);
         verifyTransformedAnyXmlNodeValue(Lf12AnyExpectedValue, Lf12AnyActualValue);
+
 
         // lf13-any check
         final DOMSource Lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
@@ -128,15 +139,40 @@ public class AnyXmlSupportTest {
                 SchemaPath.ROOT);
 
         final JsonParser parser = new JsonParser();
-        final JsonElement expected = parser.parse(inputJson);
+        final String expectedJson = loadTextFile("/bug8927/json/composite.json");
+        final JsonElement expected = parser.parse(expectedJson);
         final JsonElement actual = parser.parse(serializationResult);
         assertTrue(expected.equals(actual));
     }
 
+
     @Test
-    public void bug8927Test() throws Exception {
+    public void bug8927TestComplexArrayWithOthers() throws Exception {;
+        executebug8927Test("/bug8927/xml/complex_array_with_other_elements.xml"
+            ,"/bug8927/json/complex_array_with_other_elements.json");
+    }
+
+    @Test
+    public void bug8927TestComplexArray() throws Exception {;
+        executebug8927Test("/bug8927/xml/complex_array.xml"
+           ,"/bug8927/json/complex_array.json");
+    }
+
+    @Test
+    public void bug8927TestScalarArrayWithOthers() throws Exception {;
+        executebug8927Test("/bug8927/xml/scalar_array_with_other_elements.xml"
+            ,"/bug8927/json/scalar_array_with_other_elements.json");
+    }
+
+    @Test
+    public void bug8927TestScalarArray() throws Exception {;
+        executebug8927Test("/bug8927/xml/scalar_array.xml"
+            ,"/bug8927/json/scalar_array.json");
+    }
+
+    private void executebug8927Test(String inputXmlFile, String expectedJsonFile) throws Exception {
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class
-                .getResourceAsStream("/bug8927/xml/input.xml");
+                .getResourceAsStream(inputXmlFile);
         final NormalizedNodeResult result = new NormalizedNodeResult();
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
 
@@ -147,9 +183,8 @@ public class AnyXmlSupportTest {
 
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser
-                .parse(new FileReader(new File(getClass().getResource("/bug8927/json/expected.json").toURI())));
+                .parse(new FileReader(new File(getClass().getResource(expectedJsonFile).toURI())));
         final JsonElement serializedJson = parser.parse(jsonOutput);
-
         assertEquals(expextedJson, serializedJson);
     }
 
@@ -322,4 +357,18 @@ public class AnyXmlSupportTest {
 
         return new DOMSource(doc.getDocumentElement());
     }
+
+    private  void toString(DOMSource domSource) {
+        // DOMSource domSource = new DOMSource(newDoc);
+         try {
+            Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            StringWriter sw = new StringWriter();
+            StreamResult sr = new StreamResult(sw);
+            transformer.transform(domSource, sr);
+            System.out.println(sw.toString());
+         } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+       }
 }
