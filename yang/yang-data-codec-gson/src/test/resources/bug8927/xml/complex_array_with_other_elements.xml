@@ -5,6 +5,7 @@
         <alarm-summary>
             <active-alarm-count/>
         </alarm-summary>
+        
         <alarm-detail>
             <alarm-time>
                 2017-08-02 19:03:44 UTC
@@ -151,4 +152,5 @@
         </alarm-detail>
     </alarm-information>
 </foo>
+</root>
 </root>
