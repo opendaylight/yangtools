@@ -468,35 +468,35 @@ public final class StmtContextUtils {
             return ctx.getPublicDefinition().getStatementName();
         }
 
-        String prefix;
-        QNameModule qnameModule = null;
-        String localName = null;
+        final int colon = value.indexOf(':');
+        if (colon == -1) {
+            return internedQName(ctx, value);
+        }
 
-        final String[] namesParts = value.split(":");
-        switch (namesParts.length) {
-            case 1:
-                localName = namesParts[0];
-                qnameModule = StmtContextUtils.getRootModuleQName(ctx);
-                break;
-            default:
-                prefix = namesParts[0];
-                localName = namesParts[1];
+        final String prefix = value.substring(0, colon);
+        QNameModule qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+        // in case of unknown statement argument, we're not going to parse it
+        if (qnameModule == null) {
+            if (isUnknownStatement(ctx)) {
+                return internedQName(ctx, value);
+            }
+            if (ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                ctx = ctx.getOriginalCtx().orElse(null);
                 qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-                // in case of unknown statement argument, we're not going to parse it
-                if (qnameModule == null && isUnknownStatement(ctx)) {
-                    localName = value;
-                    qnameModule = StmtContextUtils.getRootModuleQName(ctx);
-                }
-                if (qnameModule == null && ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
-                    ctx = ctx.getOriginalCtx().orElse(null);
-                    qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
-                }
-                break;
+            }
         }
 
         qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
             "Cannot resolve QNameModule for '%s'", value);
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName));
+        return internedQName(ctx, QName.create(qnameModule, value.substring(colon + 1)));
+    }
+
+    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
+        return internedQName(ctx, QName.create(StmtContextUtils.getRootModuleQName(ctx), localName));
+    }
+
+    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QName qname) {
+        return ctx.getFromNamespace(QNameCacheNamespace.class, qname);
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {
