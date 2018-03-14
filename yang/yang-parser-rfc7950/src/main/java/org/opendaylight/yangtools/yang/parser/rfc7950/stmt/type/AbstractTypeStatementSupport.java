@@ -186,7 +186,7 @@ abstract class AbstractTypeStatementSupport
                 typeStmt = BuiltinEffectiveStatement.UINT64;
                 break;
             default:
-                final QName qname = StmtContextUtils.qnameFromArgument(ctx, ctx.getStatementArgument());
+                final QName qname = StmtContextUtils.parseNodeIdentifier(ctx, ctx.getStatementArgument());
                 final StmtContext<?, TypedefStatement, TypedefEffectiveStatement> typedef =
                         SourceException.throwIfNull(ctx.getFromNamespace(TypeNamespace.class, qname),
                             ctx.getStatementSourceReference(), "Type '%s' not found", qname);
@@ -261,7 +261,7 @@ abstract class AbstractTypeStatementSupport
             return;
         }
 
-        final QName typeQName = StmtContextUtils.qnameFromArgument(stmt, stmt.getStatementArgument());
+        final QName typeQName = StmtContextUtils.parseNodeIdentifier(stmt, stmt.getStatementArgument());
         final ModelActionBuilder typeAction = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<StmtContext<?, ?, ?>> typePrereq = typeAction.requiresCtx(stmt, TypeNamespace.class,
                 typeQName, ModelProcessingPhase.EFFECTIVE_MODEL);

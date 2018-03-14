@@ -46,7 +46,7 @@ public final class KeyStatementSupport
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         int tokens = 0;
         for (String keyToken : LIST_KEY_SPLITTER.split(value)) {
-            builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.qnameFromArgument(ctx, keyToken)));
+            builder.add(SchemaNodeIdentifier.SAME.createChild(StmtContextUtils.parseNodeIdentifier(ctx, keyToken)));
             tokens++;
         }
 

@@ -25,7 +25,7 @@ abstract class AbstractNotificationStatementSupport
 
     @Override
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.qnameFromArgument(ctx, value);
+        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
