@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.rfc6020;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
@@ -54,7 +55,7 @@ public class InputStatementImpl extends AbstractDeclaredStatement<QName>
 
         @Override
         public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-            return StmtContextUtils.qnameFromArgument(ctx, "input");
+            return YangConstants.operationInputQName(StmtContextUtils.getRootModuleQName(ctx));
         }
 
         @Override
