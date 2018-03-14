@@ -94,7 +94,7 @@ module custom-types-test {
             bit auto-sense-speed {
                 position 1;
             }
-            bit 10-Mb-only {
+            bit only-10-Mb {
                 position 2;
             }
         }

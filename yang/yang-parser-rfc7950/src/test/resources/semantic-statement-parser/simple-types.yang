@@ -80,7 +80,7 @@ module simple-types {
                 bit auto-sense-speed {
                     position 1;
                 }
-                bit 10-Mb-only {
+                bit onyl-10-Mb {
                     position 2;
                 }
             }

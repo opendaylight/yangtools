@@ -51,7 +51,7 @@ public final class AnnotationStatementSupport
         Effective(final StmtContext<String, AnnotationStatement, ?> ctx) {
             super(ctx);
             path = ctx.getParentContext().getSchemaPath().get().createChild(
-                StmtContextUtils.qnameFromArgument(ctx, argument()));
+                StmtContextUtils.parseIdentifier(ctx, argument()));
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),

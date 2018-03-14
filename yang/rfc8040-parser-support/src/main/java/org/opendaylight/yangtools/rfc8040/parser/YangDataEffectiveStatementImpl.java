@@ -36,7 +36,7 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
 
         QName maybeQNameArgumentInit;
         try {
-            maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(ctx, argument());
+            maybeQNameArgumentInit = StmtContextUtils.parseIdentifier(ctx, argument());
         } catch (IllegalArgumentException e) {
             maybeQNameArgumentInit = getNodeType();
         }

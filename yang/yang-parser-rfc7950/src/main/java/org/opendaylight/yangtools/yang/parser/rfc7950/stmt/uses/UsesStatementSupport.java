@@ -54,7 +54,7 @@ public final class UsesStatementSupport extends
 
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.qnameFromArgument(ctx, value);
+        return StmtContextUtils.parseNodeIdentifier(ctx, value);
     }
 
     @Override

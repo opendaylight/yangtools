@@ -237,7 +237,7 @@ public class TypesResolutionTest {
         assertEquals(1L, bit2.getPosition());
 
         Bit bit3 = bits.get(2);
-        assertEquals("10-Mb-only", bit3.getName());
+        assertEquals("only-10-Mb", bit3.getName());
         assertEquals(2L, bit3.getPosition());
     }
 
