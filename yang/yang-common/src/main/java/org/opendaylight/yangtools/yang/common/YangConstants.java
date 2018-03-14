@@ -85,7 +85,33 @@ public final class YangConstants {
      */
     public static final String YANG_XPATH_FUNCTIONS_PREFIX = "yang";
 
+    // Dummy template QNames. These are never leaked, but are used for efficient instantiation via QName#withModule()
+    private static final QName DUMMY_OPERATION_INPUT = QName.create("DUMMY", "input");
+    private static final QName DUMMY_OPERATION_OUTPUT = QName.create("DUMMY", "output");
+
     private YangConstants() {
         throw new UnsupportedOperationException("Utility class");
+    }
+
+    /**
+     * Create a {@link QName} representing the 'input' statement of an operation (RPC or action) within specified
+     * {@link QNameModule}.
+     *
+     * @param module Desired module
+     * @return A QName representing action or RPC input.
+     */
+    public static QName operationInputQName(final QNameModule module) {
+        return DUMMY_OPERATION_INPUT.withModule(module);
+    }
+
+    /**
+     * Create a {@link QName} representing the 'output' statement of an operation (RPC or action) within specified
+     * {@link QNameModule}.
+     *
+     * @param module Desired module
+     * @return A QName representing action or RPC output.
+     */
+    public static QName operationOutputQName(final QNameModule module) {
+        return DUMMY_OPERATION_OUTPUT.withModule(module);
     }
 }
