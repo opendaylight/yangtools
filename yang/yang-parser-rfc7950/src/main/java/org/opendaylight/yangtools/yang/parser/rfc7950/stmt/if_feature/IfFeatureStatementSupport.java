@@ -40,7 +40,7 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
             return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
         }
 
-        final QName qname = StmtContextUtils.qnameFromArgument(ctx, value);
+        final QName qname = StmtContextUtils.parseNodeIdentifier(ctx, value);
         return setQNames -> setQNames.contains(qname);
     }
 

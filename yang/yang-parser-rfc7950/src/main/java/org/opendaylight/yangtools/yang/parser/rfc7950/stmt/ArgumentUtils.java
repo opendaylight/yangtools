@@ -129,8 +129,7 @@ public final class ArgumentUtils {
         final List<QName> qNames = new ArrayList<>();
         for (final String nodeName : SLASH_SPLITTER.split(trimSingleLastSlashFromXPath(path))) {
             try {
-                final QName qName = StmtContextUtils.qnameFromArgument(ctx, nodeName);
-                qNames.add(qName);
+                qNames.add(StmtContextUtils.parseNodeIdentifier(ctx, nodeName));
             } catch (final RuntimeException e) {
                 throw new SourceException(ctx.getStatementSourceReference(), e,
                         "Failed to parse node '%s' in path '%s'", nodeName, path);

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -44,6 +45,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class StmtContextUtils {
+    private static final CharMatcher IDENTIFIER_START =
+            CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
+    private static final CharMatcher NOT_IDENTIFIER_PART =
+            IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
+
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -491,12 +497,87 @@ public final class StmtContextUtils {
                     ctx = ctx.getOriginalCtx().orElse(null);
                     qnameModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
                 }
-                break;
         }
 
-        qnameModule = InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
-            "Cannot resolve QNameModule for '%s'", value);
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(qnameModule, localName));
+        return internedQName(ctx,
+            InferenceException.throwIfNull(qnameModule, ctx.getStatementSourceReference(),
+            "Cannot resolve QNameModule for '%s'", value), localName);
+    }
+
+    /**
+     * Parse a YANG identifier string in context of a statement.
+     *
+     * @param ctx Statement context
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG identifier
+     */
+    public static QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+        SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
+                "Identifier may not be an empty string");
+        checkIdentifierString(ctx, str);
+        return internedQName(ctx, str);
+    }
+
+    /**
+     * Parse a YANG node identifier string in context of a statement.
+     *
+     * @param ctx Statement context
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG node identifier
+     */
+    public static QName parseNodeIdentifier(StmtContext<?, ?, ?> ctx, final String str) {
+        SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
+                "Node identifier may not be an empty string");
+
+        final int colon = str.indexOf(':');
+        if (colon == -1) {
+            checkIdentifierString(ctx, str);
+            return internedQName(ctx, str);
+        }
+
+        final String prefix = str.substring(0, colon);
+        SourceException.throwIf(prefix.isEmpty(), ctx.getStatementSourceReference(),
+            "String '%s' has an empty prefix", str);
+        final String localName = str.substring(colon + 1);
+        SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
+            "String '%s' has an empty identifier", str);
+        checkIdentifierString(ctx, localName);
+
+        final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+        if (module != null) {
+            return internedQName(ctx, module, localName);
+        }
+
+        if (ctx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+            final Optional<StmtContext<?, ?, ?>> optOrigCtx = ctx.getOriginalCtx();
+            if (optOrigCtx.isPresent()) {
+                ctx = optOrigCtx.get();
+                final QNameModule origModule = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
+                if (origModule != null) {
+                    return internedQName(ctx, origModule, localName);
+                }
+            }
+        }
+
+        throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", str);
+    }
+
+    private static void checkIdentifierString(final StmtContext<?, ?, ?> ctx, final String str) {
+        SourceException.throwIf(!IDENTIFIER_START.matches(str.charAt(0)) || NOT_IDENTIFIER_PART.indexIn(str, 1) != -1,
+            ctx.getStatementSourceReference(), "String '%s' is not a valid identifier", str);
+    }
+
+    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
+        return internedQName(ctx, StmtContextUtils.getRootModuleQName(ctx), localName);
+    }
+
+    private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
+            final String localName) {
+        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(module, localName));
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

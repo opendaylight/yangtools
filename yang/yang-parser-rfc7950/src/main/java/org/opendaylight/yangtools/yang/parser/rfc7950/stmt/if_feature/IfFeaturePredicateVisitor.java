@@ -74,7 +74,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
 
     @Override
     public Predicate<Set<QName>> visitIdentifier_ref_arg(final Identifier_ref_argContext ctx) {
-        final QName featureQName = StmtContextUtils.qnameFromArgument(stmtCtx, ctx.getText());
+        final QName featureQName = StmtContextUtils.parseNodeIdentifier(stmtCtx, ctx.getText());
         return setQNames -> setQNames.contains(featureQName);
     }
 }

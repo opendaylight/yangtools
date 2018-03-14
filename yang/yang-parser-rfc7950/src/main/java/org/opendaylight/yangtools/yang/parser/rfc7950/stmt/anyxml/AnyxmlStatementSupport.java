@@ -43,7 +43,7 @@ public final class AnyxmlStatementSupport
 
     @Override
     public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return StmtContextUtils.qnameFromArgument(ctx, value);
+        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
