@@ -25,17 +25,6 @@ import org.opendaylight.mdsal.binding.model.api.Type;
 public class BuilderGeneratorTest {
 
     private static final String PROPERTIES_FIELD_NAME = "properties";
-    private static final String GEN_TO_STRING_FIRST_PART =
-            "@Override\npublic java.lang.String toString() {\n    java.lang.String name = \"test [\";\n    "
-                    + "java.lang.StringBuilder builder = new java.lang.StringBuilder (name);";
-    private static final String GEN_TO_STRING_LAST_PART = "\n    return builder.append(']').toString();\n}\n";
-    private static final String GEN_TO_STRING_AUGMENT_PART =
-            "\n    builder.append(\"augmentation=\");\n    builder.append(augmentation.values());";
-    private static final String APPEND_COMMA = "builder.append(\", \");";
-    private static final String APPEND_COMMA_AUGMENT = "final int builderLength = builder.length();\n"
-            + "    final int builderAdditionalLength = builder.substring(name.length(), builderLength).length();\n"
-            + "    if (builderAdditionalLength > 2 && !builder.substring(builderLength - 2, builderLength).equals(\", \")) {\n"
-            + "        " + APPEND_COMMA + "\n" + "    }";
     private static final String TEST = "test";
 
     @Test
