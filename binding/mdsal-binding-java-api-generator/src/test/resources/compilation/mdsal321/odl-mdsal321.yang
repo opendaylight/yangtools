@@ -1,0 +1,17 @@
+module odl-mdsal {
+    namespace "urn:odl:mdsal321";
+    prefix odl;
+
+    container foo {
+        leaf foo {
+            type enumeration {
+                enum "foo";
+            }
+            description "Enumeration defined in a leaf. This triggers a nested
+                         class with a name derived from leaf name to be created
+                         in a class from container name. Both names are 'foo'.
+                         Measures have to be taken to rename the class, so it
+                         does not clash with its enclosing class.";
+        }
+    }
+}
