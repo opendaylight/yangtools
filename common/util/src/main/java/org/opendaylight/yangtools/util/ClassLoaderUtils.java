@@ -11,22 +11,95 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ClassLoaderUtils {
     private static final Logger LOG = LoggerFactory.getLogger(ClassLoaderUtils.class);
+    private static final Joiner DOT_JOINER = Joiner.on(".");
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     private ClassLoaderUtils() {
         throw new UnsupportedOperationException("Utility class");
+    }
+
+    /**
+     * Immediately call {@link Function#apply(Object)} with provided {@link ClassLoader}. This method safely switches
+     * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
+     * method.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param function Function to be applied.
+     * @param input Function input
+     */
+    public static <T, R> R applyWithClassLoader(final ClassLoader cls, final Function<T, R> function, final T input) {
+        return getWithClassLoader(cls, () -> {
+            return requireNonNull(function).apply(input);
+        });
+    }
+
+    /**
+     * Immediately call {@link Callable#call()} with provided {@link ClassLoader}. This method safely switches
+     * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
+     * method.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param callable Function to be executed.
+     * @return Result of callable invocation.
+     */
+    public static <V> V callWithClassLoader(final ClassLoader cls, final Callable<V> callable) throws Exception {
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        try {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            return requireNonNull(callable).call();
+        } finally {
+            currentThread.setContextClassLoader(oldCls);
+        }
+    }
+
+    /**
+     * Immediately call {@link Supplier#get()} with provided {@link ClassLoader}. This method safely switches
+     * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
+     * method.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param supplier Function to be executed.
+     * @return Result of supplier invocation.
+     */
+    public static <V> V getWithClassLoader(final ClassLoader cls, final Supplier<V> supplier) {
+        final Thread currentThread = Thread.currentThread();
+        final ClassLoader oldCls = currentThread.getContextClassLoader();
+        try {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            return requireNonNull(supplier).get();
+        } finally {
+            currentThread.setContextClassLoader(oldCls);
+        }
+    }
+
+    /**
+     * Immediately call {@link Runnable#run()} with provided {@link ClassLoader}. This method safely switches
+     * the thread's Thread Context Class Loader to the specified class loader for the duration of execution of that
+     * method.
+     *
+     * @param cls {@link ClassLoader} to be used.
+     * @param runnable Function to be executed.
+     */
+    public static void runWithClassLoader(final ClassLoader cls, final Runnable runnable) {
+        getWithClassLoader(cls, () -> {
+            requireNonNull(runnable).run();
+            return null;
+        });
     }
 
     /**
@@ -39,19 +112,12 @@ public final class ClassLoaderUtils {
      * @param cls {@link ClassLoader} to be used.
      * @param function Function to be executed.
      * @return Result of supplier invocation.
+     *
+     * @deprecated Use {@link #getWithClassLoader(ClassLoader, Supplier)} instead.
      */
+    @Deprecated
     public static <V> V withClassLoader(final ClassLoader cls, final Supplier<V> function) {
-        requireNonNull(cls, "Classloader should not be null");
-        requireNonNull(function, "Function should not be null");
-
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
-        try {
-            currentThread.setContextClassLoader(cls);
-            return function.get();
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        return getWithClassLoader(cls, function);
     }
 
     /**
@@ -64,21 +130,15 @@ public final class ClassLoaderUtils {
      * @param cls {@link ClassLoader} to be used.
      * @param function Function to be executed.
      * @return Result of callable invocation.
+     *
+     * @deprecated Use {@link #callWithClassLoader(ClassLoader, Callable)} instead.
      */
+    @Deprecated
     public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
-        requireNonNull(cls, "Classloader should not be null");
-        requireNonNull(function, "Function should not be null");
-
-        final Thread currentThread = Thread.currentThread();
-        final ClassLoader oldCls = currentThread.getContextClassLoader();
-        try {
-            currentThread.setContextClassLoader(cls);
-            return function.call();
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        return callWithClassLoader(cls, function);
     }
 
+    // FIXME: 3.0.0: Remove or improve this to be an explicit cast to a receiver <T>?
     public static Object construct(final Constructor<?> constructor, final List<Object> objects)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         final Object[] initargs = objects.toArray();
@@ -108,7 +168,7 @@ public final class ClassLoaderUtils {
 
             if (isInnerClass(components)) {
                 final int length = components.size() - 1;
-                final String outerName = Joiner.on(".").join(components.subList(0, length));
+                final String outerName = DOT_JOINER.join(Iterables.limit(components, length));
                 final String innerName = outerName + "$" + components.get(length);
                 return cls.loadClass(innerName);
             }
@@ -134,11 +194,12 @@ public final class ClassLoaderUtils {
         return loadClass(Thread.currentThread().getContextClassLoader(), name);
     }
 
-    public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedName) {
+    // FIXME: 3.0.0: Document and return Optional
+    public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedClassName) {
         try {
-            return loadClassWithTCCL(fullyQualifiedName);
+            return loadClassWithTCCL(fullyQualifiedClassName);
         } catch (final ClassNotFoundException e) {
-            LOG.debug("Failed to load class {}", fullyQualifiedName, e);
+            LOG.debug("Failed to load class {}", fullyQualifiedClassName, e);
             return null;
         }
     }
@@ -159,6 +220,7 @@ public final class ClassLoaderUtils {
         };
     }
 
+    // FIXME: 3.0.0: Document and return Optional
     public static ParameterizedType findParameterizedType(final Class<?> subclass, final Class<?> genericType) {
         requireNonNull(subclass);
         requireNonNull(genericType);
@@ -173,6 +235,7 @@ public final class ClassLoaderUtils {
         return null;
     }
 
+    // FIXME: 3.0.0: Document and return Optional
     public static Type getFirstGenericParameter(final Type type) {
         if (type instanceof ParameterizedType) {
             return ((ParameterizedType) type).getActualTypeArguments()[0];
