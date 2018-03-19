@@ -26,11 +26,8 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
     @Test
     public void testAugmentToUsesInAugment() throws IOException, URISyntaxException {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "augment-uses-to-augment");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "augment-uses-to-augment");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-uses-to-augment");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-uses-to-augment");
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/augment-uses-to-augment");
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);

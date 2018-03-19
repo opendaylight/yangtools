@@ -8,8 +8,6 @@
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
@@ -35,11 +33,8 @@ public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
 
     @Test
     public void testUnionTypedefUnusedImport() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "union-typedef");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "union-typedef");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-typedef");
         final List<File> sourceFiles = getSourceFiles("/compilation/union-typedef");
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);

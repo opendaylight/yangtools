@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
 import java.io.File;
@@ -35,11 +34,8 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "union-with-identityref");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "union-with-identityref");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-with-identityref");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-with-identityref");
         generateTestSources("/compilation/union-with-identityref", sourcesOutputDir);
 
         // Test if sources are compilable

@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
+import static com.google.common.base.Preconditions.checkState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -40,7 +41,7 @@ public class CompilationTestUtils {
 
     static final String GENERATOR_OUTPUT_PATH = TEST_PATH + FS + "src";
     static final File GENERATOR_OUTPUT_DIR = new File(GENERATOR_OUTPUT_PATH);
-    static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
+    private static final String COMPILER_OUTPUT_PATH = TEST_PATH + FS + "bin";
     static final File COMPILER_OUTPUT_DIR = new File(COMPILER_OUTPUT_PATH);
 
     static final String AUGMENTATION = "interface org.opendaylight.yangtools.yang.binding.Augmentation";
@@ -50,6 +51,20 @@ public class CompilationTestUtils {
     static final String NS_BAR = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "bar" + FS + "rev131008";
     static final String NS_BAZ = BASE_PATH + FS + "urn" + FS + "opendaylight" + FS + "baz" + FS + "rev131008";
     static final String NS_BUG5882 = BASE_PATH + FS + "urn" + FS + "yang" + FS + "foo" + FS + "rev160102";
+
+    static File compilerOutput(final String name) {
+        return createDirectory(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + name);
+    }
+
+    static File generatorOutput(final String name) {
+        return createDirectory(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + name);
+    }
+
+    private static File createDirectory(final String path) {
+        final File ret = new File(path);
+        checkState(ret.mkdir(), "Failed to create test directory %s", path);
+        return ret;
+    }
 
     /**
      * Method to clean resources. It is manually called at the end of each test

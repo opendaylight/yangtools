@@ -51,11 +51,8 @@ public class Bug1276Test extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug1276");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug1276");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1276");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1276");
         generateTestSources("/compilation/bug1276", sourcesOutputDir);
 
         // Test if sources are compilable

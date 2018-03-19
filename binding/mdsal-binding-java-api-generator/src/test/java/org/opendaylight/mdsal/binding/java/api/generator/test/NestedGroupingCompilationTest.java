@@ -9,9 +9,6 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.BASE_PKG;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.NS_TEST;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.assertImplementsIfc;
@@ -40,11 +37,8 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
 
     @Test
     public void testListGeneration() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "nested-grouping");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "nested-grouping");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("nested-grouping");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("nested-grouping");
         generateTestSources("/compilation/nested-grouping", sourcesOutputDir);
 
         // Test if all sources are generated

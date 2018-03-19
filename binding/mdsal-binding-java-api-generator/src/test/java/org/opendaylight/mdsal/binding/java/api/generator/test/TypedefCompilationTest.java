@@ -39,11 +39,8 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "typedef");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "typedef");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("typedef");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("typedef");
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/typedef");
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);

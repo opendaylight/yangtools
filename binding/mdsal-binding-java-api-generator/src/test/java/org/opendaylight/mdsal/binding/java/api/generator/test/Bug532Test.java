@@ -9,11 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.BASE_PKG;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.testCompilation;
@@ -41,11 +37,8 @@ public class Bug532Test extends BaseCompilationTest {
 
     @Test
     public void test() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "bug532");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "bug532");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug532");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug532");
         generateTestSources("/compilation/list-gen-test", sourcesOutputDir);
 
         // Test if sources are compilable

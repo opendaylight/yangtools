@@ -7,10 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
-import static org.junit.Assert.assertTrue;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.testCompilation;
@@ -32,11 +28,8 @@ public class EncodingInJavaDocTest extends BaseCompilationTest {
 
     @Test
     public void testAugmentToUsesInAugment() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "encoding-javadoc");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "encoding-javadoc");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("encoding-javadoc");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("encoding-javadoc");
         final List<File> sourceFiles = getSourceFiles("/compilation/encoding-javadoc");
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);

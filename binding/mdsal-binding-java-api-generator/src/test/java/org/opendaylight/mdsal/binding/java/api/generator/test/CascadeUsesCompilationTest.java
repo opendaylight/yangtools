@@ -12,9 +12,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.BASE_PKG;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.COMPILER_OUTPUT_PATH;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.NS_BAR;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.NS_BAZ;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.NS_FOO;
@@ -41,11 +38,8 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
     @Test
     public void testCascadeUsesCompilation() throws Exception {
-        final File sourcesOutputDir = new File(GENERATOR_OUTPUT_PATH + FS + "cascade-uses");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(COMPILER_OUTPUT_PATH + FS + "cascade-uses");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("cascade-uses");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("cascade-uses");
         final List<File> sourceFiles = getSourceFiles("/compilation/cascade-uses");
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);

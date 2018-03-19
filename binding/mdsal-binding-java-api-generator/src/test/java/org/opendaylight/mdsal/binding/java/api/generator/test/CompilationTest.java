@@ -58,11 +58,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testListGeneration() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "list-gen");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "list-gen");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("list-gen");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("list-gen");
         generateTestSources("/compilation/list-gen", sourcesOutputDir);
 
         // Test if all sources are generated
@@ -128,11 +125,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testAugmentUnderUsesGeneration() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "augment-under-uses");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "augment-under-uses");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-under-uses");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-under-uses");
         generateTestSources("/compilation/augment-under-uses", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
@@ -233,11 +227,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testAugmentOfAugmentGeneration() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "aug-of-aug");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "aug-of-aug");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("aug-of-aug");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("aug-of-aug");
         generateTestSources("/compilation/augment-of-augment", sourcesOutputDir);
 
         // Test if all sources were generated from 'module foo'
@@ -373,11 +364,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testLeafReturnTypes() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "leaf-return-types");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "leaf-return-types");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("leaf-return-types");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("leaf-return-types");
         generateTestSources("/compilation/leaf-return-types", sourcesOutputDir);
 
         final File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_TEST);
@@ -439,11 +427,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testGenerationContextReferenceExtension() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "context-reference");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "context-reference");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("context-reference");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("context-reference");
         generateTestSources("/compilation/context-reference", sourcesOutputDir);
 
         // Test if all sources are generated
@@ -490,11 +475,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void compilationTest() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "yang");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "yang");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("yang");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("yang");
         generateTestSources("/yang", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -505,11 +487,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testBug586() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug586");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug586");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug586");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug586");
         generateTestSources("/compilation/bug586", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -520,11 +499,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testBug4760() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug4760");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug4760");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug4760");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug4760");
         generateTestSources("/compilation/bug4760", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -540,11 +516,8 @@ public class CompilationTest extends BaseCompilationTest {
      */
     @Test
     public void testBug1172() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug1172");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug1172");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1172");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1172");
         generateTestSources("/compilation/bug1172", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -555,11 +528,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testBug5461() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug5461");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug5461");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5461");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug5461");
         generateTestSources("/compilation/bug5461", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -570,10 +540,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void testBug5882() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug5882");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug5882");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug5882");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug5882");
         generateTestSources("/compilation/bug5882", sourcesOutputDir);
 
         // Test if sources are compilable
@@ -630,10 +598,8 @@ public class CompilationTest extends BaseCompilationTest {
      */
     @Test
     public void testBug1377() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "bug1377");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "bug1377");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("bug1377");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("bug1377");
 
         generateTestSources("/compilation/bug1377", sourcesOutputDir);
 
@@ -654,11 +620,8 @@ public class CompilationTest extends BaseCompilationTest {
 
     @Test
     public void classNamesColisionTest() throws Exception {
-        final File sourcesOutputDir = new File(CompilationTestUtils.GENERATOR_OUTPUT_PATH + CompilationTestUtils.FS + "class-name-collision");
-        assertTrue("Failed to create test file '" + sourcesOutputDir + "'", sourcesOutputDir.mkdir());
-        final File compiledOutputDir = new File(CompilationTestUtils.COMPILER_OUTPUT_PATH + CompilationTestUtils.FS + "class-name-collision");
-        assertTrue("Failed to create test file '" + compiledOutputDir + "'", compiledOutputDir.mkdir());
-
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("class-name-collision");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("class-name-collision");
         generateTestSources("/compilation/class-name-collision", sourcesOutputDir);
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
