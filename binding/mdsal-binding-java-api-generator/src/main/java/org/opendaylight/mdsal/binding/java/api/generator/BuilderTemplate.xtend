@@ -418,14 +418,13 @@ class BuilderTemplate extends BaseTemplate {
         «FOR c : type.getConstantDefinitions»
             «IF c.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)»
                 «val cValue = c.value as Map<String, String>»
-                «val String fieldSuffix = c.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length).toLowerCase»
-                public static final «List.importedName»<String> «c.getName» = «ImmutableList.importedName».of(
-                «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»);
+                «val String fieldSuffix = c.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length)»
                 «IF cValue.size == 1»
-                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile(«c.getName».get(0));
+                   private static final «Pattern.importedName» «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «Pattern.importedName».compile("«cValue.keySet.get(0).escapeJava»");
                    private static final String «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = "«cValue.values.get(0).escapeJava»";
                 «ELSE»
-                   private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CodeHelpers.importedName».compilePatterns(«c.getName»);
+                   private static final «Pattern.importedName»[] «Constants.MEMBER_PATTERN_LIST»«fieldSuffix» = «CodeHelpers.importedName».compilePatterns(«ImmutableList.importedName».of(
+                   «FOR v : cValue.keySet SEPARATOR ", "»"«v.escapeJava»"«ENDFOR»));
                    private static final String[] «Constants.MEMBER_REGEX_LIST»«fieldSuffix» = { «
                    FOR v : cValue.values SEPARATOR ", "»"«v.escapeJava»"«ENDFOR» };
                 «ENDIF»
