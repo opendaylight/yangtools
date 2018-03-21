@@ -1,0 +1,27 @@
+module mdsal-300 {
+    namespace "mdsal-300";
+    prefix "mdsal300";
+    yang-version 1.1;
+
+    grouping foo {
+        action foo-act;
+    }
+
+    grouping bar {
+        container baz {
+            action baz-act;
+        }
+    }
+
+    container cont {
+        action cont-act;
+
+        uses foo;
+    }
+
+    container other {
+        uses foo;
+    }
+
+    uses bar;
+}

@@ -1,0 +1,11 @@
+module mdsal-300-aug {
+    namespace "mdsal-300-aug";
+    prefix "aug";
+    yang-version 1.1;
+
+    import mdsal-300 { prefix base; }
+
+    augment /base:cont/base:cont-act/base:input {
+       container aug-cont;
+    }
+}
