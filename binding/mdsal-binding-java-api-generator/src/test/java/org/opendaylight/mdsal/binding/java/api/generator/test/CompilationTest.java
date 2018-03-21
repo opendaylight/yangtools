@@ -636,16 +636,6 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-
-    @Test
-    public void twoNestedUnionsTest() throws Exception {
-        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal320");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal320");
-        generateTestSources("/compilation/mdsal320", sourcesOutputDir);
-        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
-        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
-    }
-
     private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
             throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
