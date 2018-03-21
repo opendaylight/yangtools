@@ -8,11 +8,13 @@
 package org.opendaylight.yangtools.yang.binding;
 
 import java.util.ServiceLoader;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Provider of YangModuleInfo for specified package / model. Implementations of this interface should be discoverable
  * via {@link ServiceLoader}.
  */
+@NonNullByDefault
 public interface YangModelBindingProvider {
     /**
      * Returns YangModuleInfo associated with a package.

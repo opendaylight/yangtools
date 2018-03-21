@@ -20,7 +20,6 @@ import com.google.common.collect.Sets;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -47,7 +46,6 @@ import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.common.Revision;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -234,15 +232,24 @@ public final class BindingReflections {
             return findQName(clz).getModule();
         }
         try {
-            YangModuleInfo modInfo = BindingReflections.getModuleInfo(clz);
-            return getQNameModule(modInfo);
+            return BindingReflections.getModuleInfo(clz).getName().getModule();
         } catch (Exception e) {
             throw new IllegalStateException("Unable to get QName of defining model.", e);
         }
     }
 
+    /**
+     * Extract a QNameModule from YangModuleInfo.
+     *
+     * @param modInfo Module info
+     * @return QNameModule for the module
+     * @throws NullPointerException in modInfo is null
+     *
+     * @deprecated Use {@code YangModuleInfo.getName().getModule()} instead.
+     */
+    @Deprecated
     public static QNameModule getQNameModule(final YangModuleInfo modInfo) {
-        return QNameModule.create(URI.create(modInfo.getNamespace()), Revision.ofNullable(modInfo.getRevision()));
+        return modInfo.getName().getModule();
     }
 
     /**
@@ -510,7 +517,7 @@ public final class BindingReflections {
                 throw new IllegalStateException("Unable to get QName for " + key + ". YangModuleInfo was not found.",
                     e);
             }
-            final QName module = getModuleQName(moduleInfo).intern();
+            final QName module = moduleInfo.getName();
             if (Augmentation.class.isAssignableFrom(key)) {
                 return module;
             } else if (isRpcType(key)) {
@@ -537,10 +544,13 @@ public final class BindingReflections {
      * @param moduleInfo
      *            module information
      * @return QName representing the module
+     *
+     * @deprecated Use {@link YangModuleInfo#getName()} instead.
      */
+    @Deprecated
     public static QName getModuleQName(final YangModuleInfo moduleInfo) {
         checkArgument(moduleInfo != null, "moduleInfo must not be null.");
-        return QName.create(moduleInfo.getNamespace(), moduleInfo.getRevision(), moduleInfo.getName());
+        return moduleInfo.getName();
     }
 
     /**

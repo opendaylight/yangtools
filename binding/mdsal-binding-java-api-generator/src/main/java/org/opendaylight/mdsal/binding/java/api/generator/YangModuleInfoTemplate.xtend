@@ -9,13 +9,11 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODULE_INFO_CLASS_NAME
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.getClassName
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.getRootPackageName
+import static extension org.opendaylight.yangtools.yang.binding.BindingMapping.getClassName
+import static extension org.opendaylight.yangtools.yang.binding.BindingMapping.getRootPackageName
 
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
-import java.io.IOException
-import java.io.InputStream
 import java.util.Collections
 import java.util.HashSet
 import java.util.LinkedHashMap
@@ -29,11 +27,13 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.WildcardType
 import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.yangtools.yang.binding.ResourceYangModuleInfo
 import org.opendaylight.yangtools.yang.binding.YangModelBindingProvider
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo
+import org.opendaylight.yangtools.yang.common.QName
+import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
-import org.opendaylight.yangtools.yang.common.Revision
 
 class YangModuleInfoTemplate {
 
@@ -43,36 +43,29 @@ class YangModuleInfoTemplate {
     val Function<Module, Optional<String>> moduleFilePathResolver
 
     @Accessors
-    val String packageName;
+    val String packageName
 
     @Accessors
-    val String modelBindingProviderName;
+    val String modelBindingProviderName
 
     new(Module module, SchemaContext ctx, Function<Module, Optional<String>> moduleFilePathResolver) {
-        Preconditions.checkArgument(module !== null, "Module must not be null.");
+        Preconditions.checkArgument(module !== null, "Module must not be null.")
         this.module = module
         this.ctx = ctx
         this.moduleFilePathResolver = moduleFilePathResolver
-        packageName = getRootPackageName(module.getQNameModule());
-        modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»''';
+        packageName = module.QNameModule.rootPackageName;
+        modelBindingProviderName = '''«packageName».«MODEL_BINDING_PROVIDER_CLASS_NAME»'''
     }
 
     def String generate() {
         val body = '''
-            public final class «MODULE_INFO_CLASS_NAME» implements «YangModuleInfo.importedName» {
+            public final class «MODULE_INFO_CLASS_NAME» extends «ResourceYangModuleInfo.importedName» {
 
                 private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
-                private final «String.importedName» name = "«module.name»";
-                private final «String.importedName» namespace = "«module.namespace.toString»";
-                «IF module.revision.isPresent»
-                private final «String.importedName» revision = "«module.revision.get.toString»";
-                «ELSE»
-                private final «String.importedName» revision = null;
-                «ENDIF»
-                private final «String.importedName» resourcePath = "«sourcePath(module)»";
-
-                private final «Set.importedName»<YangModuleInfo> importedModules;
+                «val rev = module.revision»
+                private final «QName.importedName» name = QName.create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
+                private final «Set.importedName»<«YangModuleInfo.importedName»> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
@@ -119,15 +112,15 @@ class YangModuleInfoTemplate {
                                 «sorted.put(module.revision, module)»
                             «ENDIF»
                         «ENDFOR»
-                        set.add(«getRootPackageName(sorted.lastEntry().value.QNameModule)».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«sorted.lastEntry().value.QNameModule.rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ELSE»
-                        set.add(«getRootPackageName((ctx.findModule(name, rev).get.QNameModule))».«MODULE_INFO_CLASS_NAME».getInstance());
+                        set.add(«(ctx.findModule(name, rev).get.QNameModule).rootPackageName».«MODULE_INFO_CLASS_NAME».getInstance());
                     «ENDIF»
                 «ENDFOR»
             «ENDIF»
             «IF !m.submodules.empty»
                 «FOR submodule : m.submodules»
-                    set.add(«getClassName(submodule.name)»Info.getInstance());
+                    set.add(«submodule.name.className»Info.getInstance());
                 «ENDFOR»
             «ENDIF»
             «IF m.imports.empty && m.submodules.empty»
@@ -135,58 +128,21 @@ class YangModuleInfoTemplate {
             «ELSE»
                 importedModules = «ImmutableSet.importedName».copyOf(set);
             «ENDIF»
-
-            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
-            if (stream == null) {
-                throw new IllegalStateException("Resource '" + resourcePath + "' is missing");
-            }
-            try {
-                stream.close();
-            } catch («IOException.importedName» e) {
-            // Resource leak, but there is nothing we can do
-            }
         }
 
         @Override
-        public «String.importedName» getName() {
+        public «QName.importedName» getName() {
             return name;
         }
 
         @Override
-        public «String.importedName» getRevision() {
-            return revision;
-        }
-
-        @Override
-        public «String.importedName» getNamespace() {
-            return namespace;
-        }
-
-        @Override
-        public «InputStream.importedName» getModuleSourceStream() throws IOException {
-            «InputStream.importedName» stream = «MODULE_INFO_CLASS_NAME».class.getResourceAsStream(resourcePath);
-            if (stream == null) {
-                throw new «IOException.importedName»("Resource " + resourcePath + " is missing");
-            }
-            return stream;
+        protected «String.importedName» resourceName() {
+            return "«sourcePath(m)»";
         }
 
         @Override
         public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
             return importedModules;
-        }
-
-        @Override
-        public «String.importedName» toString() {
-            «StringBuilder.importedName» sb = new «StringBuilder.importedName»(this.getClass().getCanonicalName());
-            sb.append("[");
-            sb.append("name = " + name);
-            sb.append(", namespace = " + namespace);
-            sb.append(", revision = " + revision);
-            sb.append(", resourcePath = " + resourcePath);
-            sb.append(", imports = " + importedModules);
-            sb.append("]");
-            return sb.toString();
         }
 
         «generateSubInfo(m)»
@@ -202,7 +158,7 @@ class YangModuleInfoTemplate {
     private def imports() '''
         «IF !importMap.empty»
             «FOR entry : importMap.entrySet»
-                «IF entry.value != getRootPackageName(module.QNameModule)»
+                «IF entry.value != module.QNameModule.rootPackageName»
                     import «entry.value».«entry.key»;
                 «ENDIF»
             «ENDFOR»
@@ -211,118 +167,110 @@ class YangModuleInfoTemplate {
 
     final protected def importedName(Class<?> cls) {
         val Type intype = Types.typeForClass(cls)
-        putTypeIntoImports(intype);
-        getExplicitType(intype)
+        putTypeIntoImports(intype)
+        intype.explicitType
     }
 
     final def void putTypeIntoImports(Type type) {
-        val String typeName = type.getName();
-        val String typePackageName = type.getPackageName();
-        if (typePackageName.startsWith("java.lang") || typePackageName.isEmpty()) {
-            return;
+        val String typeName = type.name
+        val String typePackageName = type.packageName
+        if (typePackageName.startsWith("java.lang") || typePackageName.empty) {
+            return
         }
         if (!importMap.containsKey(typeName)) {
-            importMap.put(typeName, typePackageName);
+            importMap.put(typeName, typePackageName)
         }
         if (type instanceof ParameterizedType) {
-            val Type[] params = type.getActualTypeArguments()
+            val Type[] params = type.actualTypeArguments
             if (params !== null) {
                 for (Type param : params) {
-                    putTypeIntoImports(param);
+                    putTypeIntoImports(param)
                 }
             }
         }
     }
 
     final def String getExplicitType(Type type) {
-        val String typePackageName = type.getPackageName();
-        val String typeName = type.getName();
-        val String importedPackageName = importMap.get(typeName);
-        var StringBuilder builder;
+        val String typePackageName = type.packageName
+        val String typeName = type.name
+        val String importedPackageName = importMap.get(typeName)
+        var StringBuilder builder
         if (typePackageName.equals(importedPackageName)) {
-            builder = new StringBuilder(type.getName());
+            builder = new StringBuilder(typeName)
             if (builder.toString().equals("Void")) {
-                return "void";
+                return "void"
             }
-            addActualTypeParameters(builder, type);
+            addActualTypeParameters(builder, type)
         } else {
             if (type.equals(Types.voidType())) {
-                return "void";
+                return "void"
             }
-            builder = new StringBuilder();
-            if (!typePackageName.isEmpty()) {
-                builder.append(typePackageName + Constants.DOT + type.getName());
+            builder = new StringBuilder()
+            if (!typePackageName.empty) {
+                builder.append(typePackageName).append(Constants.DOT).append(typeName)
             } else {
-                builder.append(type.getName());
+                builder.append(typeName)
             }
-            addActualTypeParameters(builder, type);
+            addActualTypeParameters(builder, type)
         }
-        return builder.toString();
+        return builder.toString()
     }
 
     final def StringBuilder addActualTypeParameters(StringBuilder builder, Type type) {
         if (type instanceof ParameterizedType) {
-            val Type[] pTypes = type.getActualTypeArguments();
-            builder.append('<');
-            builder.append(getParameters(pTypes));
-            builder.append('>');
+            val Type[] pTypes = type.actualTypeArguments
+            builder.append('<').append(getParameters(pTypes)).append('>')
         }
-        return builder;
+        return builder
     }
 
     final def String getParameters(Type[] pTypes) {
         if (pTypes === null || pTypes.length == 0) {
-            return "?";
+            return "?"
         }
-        val StringBuilder builder = new StringBuilder();
+        val StringBuilder builder = new StringBuilder()
 
-        var int i = 0;
+        var int i = 0
         for (pType : pTypes) {
             val Type t = pTypes.get(i)
 
-            var String separator = ",";
+            var String separator = ","
             if (i == (pTypes.length - 1)) {
-                separator = "";
+                separator = ""
             }
 
-            var String wildcardParam = "";
+            var String wildcardParam = ""
             if (t.equals(Types.voidType())) {
-                builder.append("java.lang.Void" + separator);
+                builder.append("java.lang.Void").append(separator)
             } else {
 
                 if (t instanceof WildcardType) {
-                    wildcardParam = "? extends ";
+                    wildcardParam = "? extends "
                 }
 
-                builder.append(wildcardParam + getExplicitType(t) + separator);
+                builder.append(wildcardParam).append(t.explicitType).append(separator)
                 i = i + 1
             }
         }
-        return builder.toString();
+        return builder.toString()
     }
 
     private def generateSubInfo(Module module) '''
         «FOR submodule : module.submodules»
-            private static final class «getClassName(submodule.name)»Info implements «YangModuleInfo.importedName» {
+            «val className = submodule.name.className»
+            private static final class «className»Info extends «ResourceYangModuleInfo.importedName» {
 
-                private static final «YangModuleInfo.importedName» INSTANCE = new «getClassName(submodule.name)»Info();
+                private static final «YangModuleInfo.importedName» INSTANCE = new «className»Info();
 
-                private final «String.importedName» name = "«submodule.name»";
-                private final «String.importedName» namespace = "«submodule.namespace.toString»";
-                «IF submodule.revision.isPresent»
-                private final «String.importedName» revision = "«submodule.revision.get.toString»";
-                «ELSE»
-                private final «String.importedName» revision = null;
-                «ENDIF»
-                private final «String.importedName» resourcePath = "«sourcePath(submodule)»";
-
+                «val rev = submodule.revision»
+                private final «QName.importedName» name = QName.create("«submodule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF» "«submodule.name»").intern();
                 private final «Set.importedName»<YangModuleInfo> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
                 }
 
-                «classBody(submodule, getClassName(submodule.name + "Info"))»
+                «classBody(submodule, className + "Info")»
             }
         «ENDFOR»
     '''
