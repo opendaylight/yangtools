@@ -185,7 +185,7 @@ class ClassTemplate extends BaseTemplate {
                 «IF (innerClass instanceof GeneratedTransferObject)»
                     «val classTemplate = new ClassTemplate(innerClass)»
                     «classTemplate.generateAsInnerClass»
-                    «addImports(classTemplate)»
+
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -407,7 +407,6 @@ class ClassTemplate extends BaseTemplate {
             «FOR e : enums SEPARATOR "\n"»
                 «val enumTemplate = new EnumTemplate(e)»
                 «enumTemplate.generateAsInnerClass»
-                «addImports(enumTemplate)»
             «ENDFOR»
         «ENDIF»
     '''

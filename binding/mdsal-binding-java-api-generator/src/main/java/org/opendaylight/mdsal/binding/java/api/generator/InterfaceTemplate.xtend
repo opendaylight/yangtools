@@ -148,7 +148,6 @@ class InterfaceTemplate extends BaseTemplate {
             «FOR e : enums SEPARATOR "\n"»
                 «val enumTemplate = new EnumTemplate(e)»
                 «enumTemplate.generateAsInnerClass»
-                «addImports(enumTemplate)»
             «ENDFOR»
         «ENDIF»
     '''
