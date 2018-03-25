@@ -7,10 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
@@ -24,13 +23,24 @@ import org.opendaylight.mdsal.binding.model.util.Types;
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
 class JavaFileTemplate {
-    // Hidden to well-define operations
-    private final Map<String, JavaTypeName> importMap = new HashMap<>();
-
-    protected final GeneratedType type;
+    private final AbstractJavaGeneratedType javaType;
+    private final GeneratedType type;
 
     JavaFileTemplate(final GeneratedType type) {
+        this(new TopLevelJavaGeneratedType(type), type);
+    }
+
+    JavaFileTemplate(final AbstractJavaGeneratedType javaType, final GeneratedType type) {
+        this.javaType = requireNonNull(javaType);
         this.type = requireNonNull(type);
+    }
+
+    final AbstractJavaGeneratedType javaType() {
+        return javaType;
+    }
+
+    final GeneratedType type() {
+        return type;
     }
 
     final GeneratedProperty findProperty(final GeneratedTransferObject gto, final String name) {
@@ -45,18 +55,13 @@ class JavaFileTemplate {
     }
 
     final String generateImportBlock() {
-        return importMap.entrySet().stream()
-                .filter(e -> isDefaultVisible(e.getValue()))
-                .sorted((e1, e2) -> {
-                    return e1.getValue().toString().compareTo(e2.getValue().toString());
-                })
-                .map(e -> "import " + e.getValue() + ";\n")
+        verify(javaType instanceof TopLevelJavaGeneratedType);
+        return ((TopLevelJavaGeneratedType) javaType).imports().map(name -> "import " + name + ";\n")
                 .collect(Collectors.joining());
     }
 
     final String importedName(final Type intype) {
-        GeneratorUtil.putTypeIntoImports(type, intype, importMap);
-        return GeneratorUtil.getExplicitType(type, intype, importMap);
+        return javaType.getReferenceString(intype);
     }
 
     final String importedName(final Class<?> cls) {
@@ -64,31 +69,12 @@ class JavaFileTemplate {
     }
 
     final void addImport(final Class<?> cls) {
-        final JavaTypeName name = JavaTypeName.create(cls);
-        importMap.put(name.simpleName(), name);
-    }
-
-    final void addImports(final JavaFileTemplate from) {
-        importMap.putAll(from.importMap);
+        javaType.getReferenceString(JavaTypeName.create(cls));
     }
 
     // Exposed for BuilderTemplate
     boolean isLocalInnerClass(final JavaTypeName name) {
         final Optional<JavaTypeName> optEnc = name.immediatelyEnclosingClass();
         return optEnc.isPresent() && type.getIdentifier().equals(optEnc.get());
-    }
-
-    private boolean isDefaultVisible(final JavaTypeName name) {
-        return !hasSamePackage(name) || !isLocalInnerClass(name);
-    }
-
-    /**
-     * Checks if packages of generated type and imported type is the same
-     *
-     * @param importedTypePackageName the package name of imported type
-     * @return true if the packages are the same false otherwise
-     */
-    private boolean hasSamePackage(final JavaTypeName name) {
-        return type.getPackageName().equals(name.packageName());
     }
 }

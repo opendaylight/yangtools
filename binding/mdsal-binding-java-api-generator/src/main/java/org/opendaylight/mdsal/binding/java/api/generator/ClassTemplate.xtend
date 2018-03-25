@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static java.util.Objects.requireNonNull
-import static extension org.apache.commons.text.StringEscapeUtils.escapeJava;
+import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
@@ -26,7 +26,6 @@ import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
-import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
@@ -54,11 +53,6 @@ class ClassTemplate extends BaseTemplate {
      */
     protected val List<Constant> consts
 
-    /**
-     * List of generated types which are enclosed inside <code>genType</code>
-     */
-    protected val List<GeneratedType> enclosedGeneratedTypes;
-
     protected val GeneratedTransferObject genTO;
 
     private val AbstractRangeGenerator<?> rangeGenerator
@@ -69,7 +63,16 @@ class ClassTemplate extends BaseTemplate {
      * @param genType generated transfer object which will be transformed to JAVA class source code
      */
     new(GeneratedTransferObject genType) {
-        super(genType)
+        this(new TopLevelJavaGeneratedType(genType), genType)
+    }
+
+    /**
+     * Creates instance of this class with concrete <code>genType</code>.
+     *
+     * @param genType generated transfer object which will be transformed to JAVA class source code
+     */
+    new(AbstractJavaGeneratedType javaType, GeneratedTransferObject genType) {
+        super(javaType, genType)
         this.genTO = genType
         this.properties = genType.properties
         this.finalProperties = GeneratorUtil.resolveReadOnlyPropertiesFromTO(genTO.properties)
@@ -86,7 +89,6 @@ class ClassTemplate extends BaseTemplate {
         this.allProperties = sorted
         this.enums = genType.enumerations
         this.consts = genType.constantDefinitions
-        this.enclosedGeneratedTypes = genType.enclosedTypes
 
         if (restrictions !== null && restrictions.rangeConstraint.present) {
             rangeGenerator = requireNonNull(AbstractRangeGenerator.forType(findProperty(genType, "value").returnType))
@@ -180,12 +182,10 @@ class ClassTemplate extends BaseTemplate {
      * @return string with the source code for inner classes in JAVA format
      */
     def protected innerClassesDeclarations() '''
-        «IF !enclosedGeneratedTypes.empty»
-            «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
+        «IF !type.enclosedTypes.empty»
+            «FOR innerClass : type.enclosedTypes SEPARATOR "\n"»
                 «IF (innerClass instanceof GeneratedTransferObject)»
-                    «val classTemplate = new ClassTemplate(innerClass)»
-                    «classTemplate.generateAsInnerClass»
-
+                    «new ClassTemplate(javaType.getEnclosedType(innerClass.identifier), innerClass).generateAsInnerClass»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
@@ -405,8 +405,7 @@ class ClassTemplate extends BaseTemplate {
     def protected enumDeclarations() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «val enumTemplate = new EnumTemplate(e)»
-                «enumTemplate.generateAsInnerClass»
+                «new EnumTemplate(javaType.getEnclosedType(e.identifier), e).generateAsInnerClass»
             «ENDFOR»
         «ENDIF»
     '''

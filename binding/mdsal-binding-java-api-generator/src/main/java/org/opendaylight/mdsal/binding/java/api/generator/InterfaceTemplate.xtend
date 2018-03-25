@@ -123,14 +123,13 @@ class InterfaceTemplate extends BaseTemplate {
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
                 «IF (innerClass instanceof GeneratedTransferObject)»
+                    «val innerJavaType = javaType.getEnclosedType(innerClass.identifier)»
                     «IF innerClass.unionType»
-                        «val unionTemplate = new UnionTemplate(innerClass)»
+                        «val unionTemplate = new UnionTemplate(innerJavaType, innerClass)»
                         «unionTemplate.generateAsInnerClass»
-                        «addImports(unionTemplate)»
                     «ELSE»
-                        «val classTemplate = new ClassTemplate(innerClass)»
+                        «val classTemplate = new ClassTemplate(innerJavaType, innerClass)»
                         «classTemplate.generateAsInnerClass»
-                        «addImports(classTemplate)»
                     «ENDIF»
 
                 «ENDIF»
@@ -146,7 +145,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateEnums() '''
         «IF !enums.empty»
             «FOR e : enums SEPARATOR "\n"»
-                «val enumTemplate = new EnumTemplate(e)»
+                «val enumTemplate = new EnumTemplate(javaType.getEnclosedType(e.identifier), e)»
                 «enumTemplate.generateAsInnerClass»
             «ENDFOR»
         «ENDIF»

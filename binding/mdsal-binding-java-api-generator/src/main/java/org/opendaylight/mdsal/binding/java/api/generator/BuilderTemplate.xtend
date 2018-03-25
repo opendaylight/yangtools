@@ -88,9 +88,14 @@ class BuilderTemplate extends BaseTemplate {
      * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     new(GeneratedType genType) {
-        super(genType)
+        super(new TopLevelJavaGeneratedType(builderName(genType), genType), genType)
         this.properties = propertiesFromMethods(createMethods)
         addImport(Builder)
+    }
+
+    def static builderName(GeneratedType genType) {
+        val name = genType.identifier
+        name.createSibling(name.simpleName + "Builder")
     }
 
     /**

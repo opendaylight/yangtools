@@ -20,8 +20,8 @@ import org.opendaylight.mdsal.binding.java.api.generator.TOGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedPropertyBuilder;
 import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
 import org.opendaylight.mdsal.binding.model.util.Types;
@@ -67,8 +67,7 @@ public class ClassCodeGeneratorTest {
                     final String outputStr = clsGen.generate(genTO);
 
                     assertNotNull(outputStr);
-                    assertTrue(outputStr.contains(
-                        "public CompositeKeyListKey(java.lang.Byte _key1, java.lang.String _key2)"));
+                    assertTrue(outputStr.contains("public CompositeKeyListKey(Byte _key1, String _key2)"));
 
                     assertEquals(2, propertyCount);
                     genTOsCount++;

@@ -1,0 +1,27 @@
+module test-imports {
+    yang-version 1;
+    namespace "urn:test:imports";
+    prefix "tet";
+
+    revision "2018-04-12" {
+    }
+
+    container map {
+        list class {
+            key "name";
+            leaf name {
+                type string;
+            }
+
+            leaf string {
+                type union {
+                  type string;
+                  type enumeration {
+                    enum string;
+                    enum int8;
+                  }
+                }
+            }
+       }
+    }
+}

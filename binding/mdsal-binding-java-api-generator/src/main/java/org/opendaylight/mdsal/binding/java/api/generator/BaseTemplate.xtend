@@ -61,6 +61,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
         super(type)
     }
 
+    new(AbstractJavaGeneratedType javaType, GeneratedType type) {
+        super(javaType, type)
+    }
+
     final public def generate() {
         val _body = body()
         '''

@@ -39,7 +39,7 @@ public class BuilderGeneratorTest {
         final GeneratedType genType = mockGenType("get" + TEST);
 
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
                 "    return helper.toString();\n" +
@@ -49,7 +49,7 @@ public class BuilderGeneratorTest {
     @Test
     public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    return helper.toString();\n" +
                 "}\n", genToString(mockGenType(TEST)).toString());
@@ -58,7 +58,7 @@ public class BuilderGeneratorTest {
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
                 "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
@@ -69,7 +69,7 @@ public class BuilderGeneratorTest {
     @Test
     public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
                 "    return helper.toString();\n" +
@@ -79,7 +79,7 @@ public class BuilderGeneratorTest {
     @Test
     public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
                 "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
@@ -90,7 +90,7 @@ public class BuilderGeneratorTest {
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
         assertEquals("@Override\n" +
-                "public java.lang.String toString() {\n" +
+                "public String toString() {\n" +
                 "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
                 "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
                 "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
