@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
@@ -29,9 +30,11 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.SimpleDateFormatUtil;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -371,15 +374,23 @@ public class XmlToNormalizedNodesTest {
                                 new NodeIdentifier(myLeafInList3)).withValue("listleafvalue1").build()).build())
                 .build();
 
+        AugmentationNode myDoublyKeyedListAugNode = Builders.augmentationBuilder().withNodeIdentifier(
+                new AugmentationIdentifier(Sets.newHashSet(myDoublyKeyedList)))
+                .withChild(myDoublyKeyedListNode).build();
+
         ContainerNode myContainer3Node = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(myContainer3))
-                .withChild(myDoublyKeyedListNode).build();
+                .withChild(myDoublyKeyedListAugNode).build();
+
+        AugmentationNode myContainer3AugNode = Builders.augmentationBuilder().withNodeIdentifier(
+                new AugmentationIdentifier(Sets.newHashSet(myContainer3)))
+                .withChild(myContainer3Node).build();
 
         ContainerNode outerContainerNode = Builders.containerBuilder().withNodeIdentifier(
                 new NodeIdentifier(outerContainer))
                 .withChild(myContainer1Node)
                 .withChild(myContainer2Node)
-                .withChild(myContainer3Node).build();
+                .withChild(myContainer3AugNode).build();
 
         return outerContainerNode;
     }
