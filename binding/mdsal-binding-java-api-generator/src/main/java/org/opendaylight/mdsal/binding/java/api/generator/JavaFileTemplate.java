@@ -13,12 +13,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
-import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.util.Types;
 
@@ -44,16 +42,6 @@ class JavaFileTemplate {
 
         final GeneratedTransferObject parent = gto.getSuperType();
         return parent != null ? findProperty(parent, name) : null;
-    }
-
-    static final Restrictions getRestrictions(final Type type) {
-        if (type instanceof ConcreteType) {
-            return ((ConcreteType)type).getRestrictions();
-        }
-        if (type instanceof GeneratedTransferObject) {
-            return ((GeneratedTransferObject)type).getRestrictions();
-        }
-        return null;
     }
 
     final String generateImportBlock() {

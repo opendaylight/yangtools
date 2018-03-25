@@ -17,10 +17,14 @@ import java.util.Collection
 import java.util.List
 import java.util.StringTokenizer
 import java.util.regex.Pattern
+import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
+import org.opendaylight.mdsal.binding.model.api.Restrictions
+import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
@@ -434,4 +438,14 @@ abstract class BaseTemplate extends JavaFileTemplate {
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»
     '''
+
+    def static Restrictions getRestrictions(Type type) {
+        if (type instanceof ConcreteType) {
+            return type.restrictions
+        }
+        if (type instanceof GeneratedTransferObject) {
+            return type.restrictions
+        }
+        return null
+    }
 }
