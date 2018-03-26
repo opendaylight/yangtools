@@ -9,6 +9,11 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.model.util.BindingGeneratorUtil.encodeAngleBrackets
 
+import com.google.common.collect.ImmutableMap
+import com.google.common.collect.ImmutableMap.Builder
+import java.util.Map
+import java.util.Objects
+import java.util.Optional
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 
@@ -60,20 +65,17 @@ class EnumTemplate extends BaseTemplate {
      *
      * @return string with the enumeration body
      */
-    // FIXME: for some reason importedName does not work here :(
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(enums))»
-        public enum «enums.name» implements org.opendaylight.yangtools.yang.binding.Enumeration {
+        public enum «enums.name» implements «org.opendaylight.yangtools.yang.binding.Enumeration.importedName» {
             «writeEnumeration(enums)»
 
-            private static final java.util.Map<java.lang.String, «enums.name»> NAME_MAP;
-            private static final java.util.Map<java.lang.Integer, «enums.name»> VALUE_MAP;
+            private static final «Map.importedName»<«String.importedName», «enums.name»> NAME_MAP;
+            private static final «Map.importedName»<«Integer.importedName», «enums.name»> VALUE_MAP;
 
             static {
-                final com.google.common.collect.ImmutableMap.Builder<java.lang.String, «enums.name»> nb =
-                    com.google.common.collect.ImmutableMap.builder();
-                final com.google.common.collect.ImmutableMap.Builder<java.lang.Integer, «enums.name»> vb =
-                    com.google.common.collect.ImmutableMap.builder();
+                final «Builder.importedName»<«String.importedName», «enums.name»> nb = «ImmutableMap.importedName».builder();
+                final «Builder.importedName»<«Integer.importedName», «enums.name»> vb = «ImmutableMap.importedName».builder();
                 for («enums.name» enumItem : «enums.name».values()) {
                     vb.put(enumItem.value, enumItem);
                     nb.put(enumItem.name, enumItem);
@@ -83,7 +85,7 @@ class EnumTemplate extends BaseTemplate {
                 VALUE_MAP = vb.build();
             }
 
-            private final java.lang.String name;
+            private final «String.importedName» name;
             private final int value;
 
             private «enums.name»(int value, «String.importedName» name) {
@@ -92,7 +94,7 @@ class EnumTemplate extends BaseTemplate {
             }
 
             @Override
-            public java.lang.String getName() {
+            public «String.importedName» getName() {
                 return name;
             }
 
@@ -108,8 +110,8 @@ class EnumTemplate extends BaseTemplate {
              * @return corresponding «enums.name» item, if present
              * @throws NullPointerException if name is null
              */
-            public static java.util.Optional<«enums.name»> forName(«String.importedName» name) {
-                return java.util.Optional.ofNullable(NAME_MAP.get(java.util.Objects.requireNonNull(name)));
+            public static «Optional.importedName»<«enums.name»> forName(«String.importedName» name) {
+                return «Optional.importedName».ofNullable(NAME_MAP.get(«Objects.importedName».requireNonNull(name)));
             }
 
             /**
