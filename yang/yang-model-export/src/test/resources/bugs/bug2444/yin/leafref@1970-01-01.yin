@@ -25,7 +25,7 @@
     <leaf name="my-leafref-3">
         <type name="leafref">
             <path value="/target"></path>
-            <require-instance value="false"></require-instance>
+            <require-instance value="true"></require-instance>
         </type>
         <config value="true"></config>
         <mandatory value="false"></mandatory>
