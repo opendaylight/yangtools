@@ -13,7 +13,6 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.util.Optional;
 import org.junit.Test;
@@ -23,6 +22,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.model.util.type.LeafrefTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RequireInstanceRestrictedTypeBuilder;
+import org.opendaylight.yangtools.yang.model.util.type.RestrictedTypes;
 
 public class LeafrefTest {
 
@@ -69,29 +70,24 @@ public class LeafrefTest {
         final SchemaPath schemaPath = SchemaPath.create(true, QName.create("test", "my-cont"),
             QName.create("test", "my-leafref"));
         final RevisionAwareXPathImpl path = new RevisionAwareXPathImpl("../my-leaf", false);
+        final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
 
-        LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
+        assertTrue(leafrefTypeBuilder.build().requireInstance());
 
         leafrefTypeBuilder.setRequireInstance(false);
-        LeafrefTypeDefinition leafref = leafrefTypeBuilder.build();
-        assertFalse(leafref.requireInstance());
+        final LeafrefTypeDefinition falseLeafref = leafrefTypeBuilder.build();
+        assertFalse(falseLeafref.requireInstance());
 
         leafrefTypeBuilder.setRequireInstance(true);
-        leafref = leafrefTypeBuilder.build();
-        assertTrue(leafref.requireInstance());
+        final LeafrefTypeDefinition trueLeafref = leafrefTypeBuilder.build();
+        assertTrue(trueLeafref.requireInstance());
 
-        leafrefTypeBuilder.setRequireInstance(true);
-        leafref = leafrefTypeBuilder.build();
-        assertTrue(leafref.requireInstance());
+        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> falseBuilder =
+                RestrictedTypes.newLeafrefBuilder(falseLeafref, schemaPath);
+        assertFalse(falseBuilder.build().requireInstance());
 
-        try {
-            leafrefTypeBuilder.setRequireInstance(false);
-            fail("An IllegalArgumentException should have been thrown.");
-        } catch (IllegalArgumentException ex) {
-            assertEquals(
-                "Cannot switch off require-instance in type AbsoluteSchemaPath{path=[(test)my-cont, (test)my-leafref]}",
-                ex.getMessage());
-        }
-
+        final RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> trueBuilder =
+                RestrictedTypes.newLeafrefBuilder(trueLeafref, schemaPath);
+        assertTrue(trueBuilder.build().requireInstance());
     }
 }

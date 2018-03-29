@@ -53,7 +53,7 @@ public class LeafrefStatementTest {
         final LeafSchemaNode leafrefC = (LeafSchemaNode) foo.getDataChildByName(QName.create(foo.getQNameModule(),
                 "leafref-c"));
         assertNotNull(leafrefC);
-        assertRequireInstanceInLeafref(leafrefC, false);
+        assertRequireInstanceInLeafref(leafrefC, true);
     }
 
     private static void assertRequireInstanceInLeafref(final LeafSchemaNode leaf, final boolean requireInstance) {

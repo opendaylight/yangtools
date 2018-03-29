@@ -9,19 +9,19 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
+public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
 
     // FIXME: this is not the same syntax as when statement. See https://tools.ietf.org/html/rfc7950#section-9.9.2
     RevisionAwareXPath getPathStatement();
 
     /**
-     * Require instance pointed to by {@link #getPathStatement()} to be present or not. For YANG version (RFC6020), this
-     * should always return true.
+     * {@inheritDoc}
      *
-     * @return True if the instance pointed to by {@link #getPathStatement()} must be present in the data tree.
+     * <p>
+     * For YANG version 1 (RFC6020), this should always return true.
      */
+    @Override
     boolean requireInstance();
 
     static int hashCode(final LeafrefTypeDefinition type) {
