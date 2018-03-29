@@ -5,15 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.RequireInstanceRestrictedTypeDefinition;
 
 @Beta
+//FIXME: 3.0.0: this should require T to be a RequireInstanceRestrictedTypeDefinition
 public abstract class RequireInstanceRestrictedTypeBuilder<T extends TypeDefinition<T>>
         extends AbstractRestrictedTypeBuilder<T> {
 
@@ -21,13 +21,11 @@ public abstract class RequireInstanceRestrictedTypeBuilder<T extends TypeDefinit
 
     RequireInstanceRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);
+        requireInstance = baseType instanceof RequireInstanceRestrictedTypeDefinition
+                ? ((RequireInstanceRestrictedTypeDefinition<?>)baseType).requireInstance() : true;
     }
 
     public final void setRequireInstance(final boolean requireInstance) {
-        if (this.requireInstance) {
-            Preconditions.checkArgument(requireInstance, "Cannot switch off require-instance in type %s", getPath());
-        }
-
         this.requireInstance = requireInstance;
         touch();
     }
