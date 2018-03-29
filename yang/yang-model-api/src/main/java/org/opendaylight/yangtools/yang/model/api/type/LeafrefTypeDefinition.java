@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
-public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinition> {
+public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
 
     RevisionAwareXPath getPathStatement();
 
@@ -22,7 +21,8 @@ public interface LeafrefTypeDefinition extends TypeDefinition<LeafrefTypeDefinit
      *
      * @return boolean value which is true if the <code>require-instance</code> statement is true and vice versa
      */
-     // FIXME: version 2.0.0: make this method non-default
+    // FIXME: version 2.0.0: make this method non-default
+    @Override
     default boolean requireInstance() {
         return true;
     }
