@@ -1,0 +1,17 @@
+module odl-amend {
+    namespace "urn:opendaylight:yang:extension:amend";
+    prefix amend;
+
+    organization "The OpenDaylight Project";
+
+    revision 2018-04-01 {
+        description "Initial version.";
+    }
+
+    extension amend {
+        argument "target-statement";
+        description "Amend a target statements with additional child
+                     statements. Argument string needs to conform to
+                     target-statement specification.";
+    }
+}
