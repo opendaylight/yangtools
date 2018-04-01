@@ -1,0 +1,110 @@
+module odl-append {
+    namespace "urn:opendaylight:yang:extension:append";
+    prefix append;
+
+    organization "The OpenDaylight Project";
+    author "Robert Varga"
+
+    revision 2018-04-01 {
+        description "Initial version.";
+    }
+
+    extension append {
+        argument "target-statement";
+        description 
+            "Amend a target statement with additional child statements. This
+             is similar to what 'uses' does inline and augment does externally
+             retaining namespace declarations. This statement is a combination
+             of both, as it can target all statements that 'augment' can
+             target or which 'uses' can be a child of.
+
+             Argument is a Statement Path encoded as space-separated elements
+             in the form of 'NO@string', where N is a single-letter namespace,
+             O is a variable-width unsigned integer offset encoded in decimal.
+             If O is 0, it must be omitted. String is interpreted according
+             to namespace rules.
+
+             'a' to look for an 'augment' statement. The string is to be
+                 interpreted as a raw 'augment' statement argument and all
+                 existing 'augment' statements must be enumerated, filtered
+                 on this string and the one at offset O must be selected.
+             'b' to look for an 'bit' statement. The string is to be
+                 interpreted as a raw 'bit' statement argument and all
+                 existing 'bit' statements must be enumerated, filtered
+                 on this string and the one at offset O must be selected.
+             'c' to look for a 'case' within a 'choice' statement. The string
+                 is to be interpreted as an identifier and must perform a
+                 lookup on the 'case' namespace. It is a syntax error to
+                 specify O.
+             'd' to look for an 'action', 'anydata', 'anyxml', 'choice',
+                 'container', 'input', 'leaf', 'leaf-list', 'list',
+                 'notification', 'output' or 'rpc' statement. The string is
+                 to be interpreted as an identifier and looked up against
+                 this namespace. For purposes of matching 'input' and 'output'
+                 statements, statements need to be treated as if they were
+                 'input input' or 'output output' -- thus addressed as
+                 'd@input' or 'd@output'. It is a syntax error to specify O.
+             'e' to look for an 'extension' statement. The string is to be
+                 interpreted as an identifier and looked up against this
+                 namespace.  It is a syntax error to specify O.
+             'f' to look for an 'feature' statement. The string is to be
+                 interpreted as an identifier and looked up against this
+                 namespace.  It is a syntax error to specify O.
+             'g' to look for an 'grouping' statement. The string is to be
+                 interpreted as an identifier and looked up against this
+                 namespace.  It is a syntax error to specify O.
+             'i' to look for an 'identity' statement. The string is to be
+                 interpreted as an identifier and looked up against this
+                 namespace.  It is a syntax error to specify O.
+             'k' to look for an 'key' statement. The string is to be
+                 interpreted as a raw 'key' statement argument and all existing
+                 'key' statements must be enumerated, filtered on this string
+                 and the one at offset O must be selected. If the desired
+                 argument contains spaces, the string needs to start with '"'
+                 and must be properly escaped for processing as a double-quoted
+                 string.
+             'm' to look for imported module. The string is to be interpreted
+                 as an identifier of a 'prefix' statement. Note this is more
+                 powerful than module name as it supports multiple-imports via
+                 'import' statement mechanics. It is a syntax error to specify
+                 O.
+             'r' to look for an 'refine' statement. The string is to be
+                 interpreted as a raw 'refine' statement argument and all
+                 existing 'refine' statements must be enumerated, filtered on
+                 this string and the one at offset O must be selected.
+             't' to look for an 'type' or 'typedef' statement. The string is
+                 to be interpreted as an identifier and looked up against
+                 arguments of candidate statements.
+             'u' to look for an 'uses' statement. The string is to be
+                 interpreted as a raw 'uses' statement argument and all
+                 existing 'uses' statements must be enumerated, filtered on
+                 this string and the one at offset O must be selected.
+             'x' to look for an 'deviate' or 'deviation' statement. The string
+                 is to be interpreted as a raw augment statement argument and
+                 all existing uses statements must be enumerated, filtered on
+                 this string and the one at offset O must be selected.
+             'y' to look for an 'enum' statement. The string is to be
+                 interpreted as a raw 'enum' statement argument and all
+                 existing 'enum' statements must be enumerated, filtered on
+                 this string and the one at offset O must be selected. If the
+                 desired argument contains spaces, the string needs to start
+                 with '"' and must be properly escaped for processing as a
+                 double-quoted string.
+
+             A Statement Path may never be empty and must start with
+             an m-namespaced element.
+
+             An 'append' statement's substatements are restrected to the set
+             of substatements target statements allows.
+
+             An 'append' statement's effect occurs just after the target
+             statement has all its children declared, just before a
+             depth-first parser out exit the target statement. It MUST take
+             effect before the target statement is issued an any way, such as
+             a grouping referenced by a 'uses' statement.
+
+             The effect of an 'append' statement is equivalent of
+             instantiating an invisible grouping at the node and immediately
+             inlining it with 'uses'."
+    }
+}
