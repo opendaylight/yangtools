@@ -56,6 +56,10 @@
         <!-- Combined RFC6020/RFC7960 metamodel implementation -->
         <module>yang-parser-rfc7950</module>
 
+        <!-- OpendDaylight append extension -->
+        <module>append-model-api</module>
+        <module>append-parser-support</module>
+
         <!-- OpenConfig (semantic version, hashed value) metamodel support -->
         <module>openconfig-model-api</module>
         <!-- OpenConfig hashed value parser support. Semantic version support
@@ -83,5 +87,4 @@
              should be co-located with the corresponding models in md-sal. -->
         <module>ietf-string-types</module>
     </modules>
-
 </project>
