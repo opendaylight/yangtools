@@ -56,6 +56,10 @@
         <!-- Combined RFC6020/RFC7960 metamodel implementation -->
         <module>yang-parser-rfc7950</module>
 
+        <!-- OpendDaylight amend extension -->
+        <module>amend-model-api</module>
+        <module>amend-parser-support</module>
+
         <!-- OpenConfig (semantic version, hashed value) metamodel support -->
         <module>openconfig-model-api</module>
         <!-- OpenConfig hashed value parser support. Semantic version support
@@ -78,5 +82,4 @@
         <module>rfc8040-model-api</module>
         <module>rfc8040-parser-support</module>
     </modules>
-
 </project>
