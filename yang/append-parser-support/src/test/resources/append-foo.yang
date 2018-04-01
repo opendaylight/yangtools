@@ -1,0 +1,41 @@
+module append-foo {
+    namespace "append:foo";
+    prefix "af";
+
+    import foo {
+        prefix foo;
+    }
+
+    import odl-append {
+        prefix append;
+    }
+
+    append:append "m@foo t@toplevel" {
+        units toplevel-units;
+    }
+
+    append:append "m@foo g@grp1 t@grp1" {
+        units grp1-units;
+    }
+
+    append:append "m@foo g@grp1 g@grp2" {
+        description "grp2-description";
+    }
+
+    append:append "m@foo g@grp1 g@grp2 t@grp2" {
+        description "grp2-description";
+    }
+
+    append:append "m@foo d@cont t@cont" {
+        units cont-units;
+    }
+
+    append:append "m@foo d@cont d@cont-leaf" {
+        default "foo";
+    }
+
+    append:append "m@foo d@list t@list" {
+        units "list-units";
+    }
+}
+

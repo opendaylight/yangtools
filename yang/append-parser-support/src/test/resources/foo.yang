@@ -1,0 +1,44 @@
+module foo {
+    namespace "foo";
+    prefix "foo";
+
+    typedef toplevel {
+        type string;
+    }
+
+    grouping grp1 {
+        typedef grp1 {
+            type string;
+        }
+
+        grouping grp2 {
+            typedef grp2 {
+                type string;
+            }
+        }
+    }
+
+    container cont {
+        typedef cont {
+            type string;
+        }
+
+        leaf cont-leaf {
+            type string;
+        }
+    }
+
+    list list {
+        typedef list {
+            type string;
+        }
+
+        leaf list-leaf {
+            type union {
+                type string;
+                type uint16;
+            }
+        }
+    }
+}
+
