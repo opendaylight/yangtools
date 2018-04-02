@@ -13,7 +13,6 @@ import static com.google.common.base.Verify.verify;
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
-import com.google.common.primitives.Longs;
 import java.math.BigDecimal;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -300,7 +299,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
     @Override
     public int hashCode() {
         // We need to normalize the results in order to be consistent with equals()
-        return Longs.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
+        return Long.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
     }
 
     @Override
