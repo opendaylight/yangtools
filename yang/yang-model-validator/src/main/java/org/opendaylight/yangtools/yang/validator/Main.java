@@ -18,11 +18,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import org.apache.commons.cli.BasicParser;
+import java.util.Set;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -44,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *  -p,--path &lt;arg&gt;       path is a colon (:) separated list of directories
  *                        to search for yang modules.
  *  -r, --recursive       recursive search of directories specified by -p option
- *  -v,--verbose          shows details about the results of test running.
+ *  -v, --verbose         shows details about the results of test running.
  *  -o, --output          path to output file for logs. Output file will be overwritten.
  *  -m, --module-name     validate yang by module name.
  */
@@ -55,49 +57,45 @@ public final class Main {
             (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
     private static final int MB = 1024 * 1024;
 
+    private static final Option FEATURE = new Option("f", "features", true,
+        "features is a string in the form [feature(,feature)*] and feature is a string in the form "
+                + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model "
+                + "by removing all nodes that are defined with a \"if-feature\".");
+
+    private static final Option HELP = new Option("h", "help", false, "print help message and exit.");
+    private static final Option MODULE_NAME = new Option("m", "module-name", true,
+            "validate yang model by module name.");
+    private static final Option OUTPUT = new Option("o", "output", true,
+            "path to output file for logs. Output file will be overwritten");
+    private static final Option PATH = new Option("p", "path", true,
+            "path is a colon (:) separated list of directories to search for yang modules.");
+    private static final Option RECURSIVE = new Option("r", "recursive", false,
+            "recursive search of directories specified by -p option.");
+
+    private static final Option DEBUG = new Option("d", "debug", false, "add debug output");
+    private static final Option QUIET = new Option("q", "quiet", false, "completely suppress output.");
+    private static final Option VERBOSE = new Option("v", "verbose", false,
+        "shows details about the results of test running.");
+
     private Main() {
         // Hidden on purpose
     }
 
     private static Options createOptions() {
         final Options options = new Options();
+        options.addOption(HELP);
+        options.addOption(PATH);
+        options.addOption(RECURSIVE);
 
-        final Option help = new Option("h", "help", false, "print help message and exit.");
-        help.setRequired(false);
-        options.addOption(help);
+        final OptionGroup verbosity = new OptionGroup();
+        verbosity.addOption(DEBUG);
+        verbosity.addOption(QUIET);
+        verbosity.addOption(VERBOSE);
+        options.addOptionGroup(verbosity);
 
-        final Option path = new Option("p", "path", true,
-                "path is a colon (:) separated list of directories to search for yang modules.");
-        path.setRequired(false);
-        options.addOption(path);
-
-        final Option recursiveSearch = new Option("r", "recursive", false,
-                "recursive search of directories specified by -p option.");
-        recursiveSearch.setRequired(false);
-        options.addOption(recursiveSearch);
-
-        final Option verbose = new Option("v", "verbose", false, "shows details about the results of test running.");
-        verbose.setRequired(false);
-        options.addOption(verbose);
-
-        final Option output =
-                new Option("o", "output", true, "path to output file for logs. Output file will be overwritten");
-        output.setRequired(false);
-        options.addOption(output);
-
-        final Option moduleName = new Option("m", "module-name", true, "validate yang model by module name.");
-        moduleName.setRequired(false);
-        options.addOption(moduleName);
-
-        final Option feature = new Option(
-                "f",
-                "features",
-                true,
-                "features is a string in the form [feature(,feature)*] and feature is a string in the form "
-                        + "[($namespace?revision=$revision)$local_name]. This option is used to prune the data model "
-                        + "by removing all nodes that are defined with a \"if-feature\".");
-        feature.setRequired(false);
-        options.addOption(feature);
+        options.addOption(OUTPUT);
+        options.addOption(MODULE_NAME);
+        options.addOption(FEATURE);
         return options;
     }
 
@@ -106,31 +104,34 @@ public final class Main {
         final Options options = createOptions();
         final CommandLine arguments = parseArguments(args, options, formatter);
 
-        if (arguments.hasOption("help")) {
+        if (arguments.hasOption(HELP.getLongOpt())) {
             printHelp(options, formatter);
             return;
         }
 
-        if (arguments.hasOption("output")) {
-            setOutput(arguments.getOptionValues("output"));
+        final String[] outputValues = arguments.getOptionValues(OUTPUT.getLongOpt());
+        if (outputValues != null) {
+            setOutput(outputValues);
         }
 
-        if (arguments.hasOption("verbose")) {
+        LOG_ROOT.setLevel(Level.WARN);
+        if (arguments.hasOption(DEBUG.getLongOpt())) {
             LOG_ROOT.setLevel(Level.DEBUG);
-
-        } else {
-            LOG_ROOT.setLevel(Level.ERROR);
+        } else if (arguments.hasOption(VERBOSE.getLongOpt())) {
+            LOG_ROOT.setLevel(Level.INFO);
+        } else if (arguments.hasOption(QUIET.getLongOpt())) {
+            LOG_ROOT.detachAndStopAllAppenders();
         }
 
         final List<String> yangLibDirs = initYangDirsPath(arguments);
-
         final List<String> yangFiles = new ArrayList<>();
-        if (arguments.hasOption("module-name")) {
-            yangFiles.addAll(Arrays.asList(arguments.getOptionValues("module-name")));
+        final String[] moduleNameValues = arguments.getOptionValues(MODULE_NAME.getLongOpt());
+        if (moduleNameValues != null) {
+            yangFiles.addAll(Arrays.asList(moduleNameValues));
         }
         yangFiles.addAll(Arrays.asList(arguments.getArgs()));
 
-        final HashSet<QName> supportedFeatures = initSupportedFeatures(arguments);
+        final Set<QName> supportedFeatures = initSupportedFeatures(arguments);
 
         runSystemTest(yangLibDirs, yangFiles, supportedFeatures, arguments.hasOption("recursive"));
 
@@ -161,7 +162,7 @@ public final class Main {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
-            final HashSet<QName> supportedFeatures, final boolean recursiveSearch) {
+            final Set<QName> supportedFeatures, final boolean recursiveSearch) {
         LOG.info("Yang model dirs: {} ", yangLibDirs);
         LOG.info("Yang model files: {} ", yangFiles);
         LOG.info("Supported features: {} ", supportedFeatures);
@@ -196,8 +197,8 @@ public final class Main {
         return yangDirs;
     }
 
-    private static HashSet<QName> initSupportedFeatures(final CommandLine arguments) {
-        HashSet<QName> supportedFeatures = null;
+    private static Set<QName> initSupportedFeatures(final CommandLine arguments) {
+        Set<QName> supportedFeatures = null;
         if (arguments.hasOption("features")) {
             supportedFeatures = new HashSet<>();
             for (final String pathArg : arguments.getOptionValues("features")) {
@@ -208,7 +209,7 @@ public final class Main {
     }
 
     private static Collection<? extends QName> createQNames(final String[] featuresArg) {
-        final HashSet<QName> qnames = new HashSet<>();
+        final Set<QName> qnames = new HashSet<>();
         for (final String featureStr : featuresArg) {
             qnames.add(QName.create(featureStr));
         }
@@ -218,7 +219,7 @@ public final class Main {
 
     private static CommandLine parseArguments(final String[] args, final Options options,
             final HelpFormatter formatter) {
-        final CommandLineParser parser = new BasicParser();
+        final CommandLineParser parser = new DefaultParser();
 
         CommandLine cmd = null;
         try {
@@ -226,7 +227,6 @@ public final class Main {
         } catch (final ParseException e) {
             LOG.error("Failed to parse command line options.", e);
             printHelp(options, formatter);
-
             System.exit(1);
         }
 
@@ -234,8 +234,7 @@ public final class Main {
     }
 
     private static void printHelp(final Options options, final HelpFormatter formatter) {
-        formatter.printHelp("yang-system-test [-f features] [-h help] [-p path] [-o output] [-m module-name]"
-                + "[-v verbose] yangFiles...", options);
+        formatter.printHelp("yang-system-test [OPTION...] YANG-FILE...", options);
     }
 
     private static void printMemoryInfo(final String info) {
