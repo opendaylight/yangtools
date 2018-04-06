@@ -1,0 +1,41 @@
+/*
+ * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.ietf.stringtypes;
+
+import static com.google.common.base.Preconditions.checkArgument;
+
+import com.google.common.annotations.Beta;
+import java.util.Optional;
+import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+
+@Beta
+@NonNullByDefault
+@ThreadSafe
+public class Ipv4AddressNoZoneString extends Ipv4AddressString {
+    private static final long serialVersionUID = 1L;
+
+    protected Ipv4AddressNoZoneString(final int intBits) {
+        super(intBits);
+    }
+
+    protected Ipv4AddressNoZoneString(final Ipv4AddressString other) {
+        super(other);
+        checkArgument(!other.getZone().isPresent());
+    }
+
+    @Override
+    public final Optional<String> getZone() {
+        return Optional.empty();
+    }
+
+    @Override
+    public Ipv4AddressNoZoneStringValidator validator() {
+        return Ipv4AddressNoZoneStringValidator.getInstance();
+    }
+}
