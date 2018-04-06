@@ -77,6 +77,11 @@
         <!-- RFC8040 (yang-data) metamodel support -->
         <module>rfc8040-model-api</module>
         <module>rfc8040-parser-support</module>
+
+        <!-- Useful layering violations. This code is useful for testing
+             custom string storage support and also in production. It really
+             should be co-located with the corresponding models in md-sal. -->
+        <module>ietf-string-types</module>
     </modules>
 
 </project>
