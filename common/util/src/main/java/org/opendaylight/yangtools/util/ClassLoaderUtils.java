@@ -17,6 +17,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
@@ -52,12 +55,14 @@ public final class ClassLoaderUtils {
             final T input) {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
-        currentThread.setContextClassLoader(requireNonNull(cls));
-        try {
-            return requireNonNull(function).apply(input);
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        return AccessController.doPrivileged((PrivilegedAction<R>) () -> {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            try {
+                return requireNonNull(function).apply(input);
+            } finally {
+                currentThread.setContextClassLoader(oldCls);
+            }
+        });
     }
 
     /**
@@ -75,12 +80,14 @@ public final class ClassLoaderUtils {
             throws Exception {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
-        currentThread.setContextClassLoader(requireNonNull(cls));
-        try {
-            return requireNonNull(callable).call();
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        return AccessController.doPrivileged((PrivilegedExceptionAction<V>) () -> {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            try {
+                return requireNonNull(callable).call();
+            } finally {
+                currentThread.setContextClassLoader(oldCls);
+            }
+        });
     }
 
     /**
@@ -97,12 +104,14 @@ public final class ClassLoaderUtils {
     public static <V> V getWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Supplier<V> supplier) {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
-        currentThread.setContextClassLoader(requireNonNull(cls));
-        try {
-            return requireNonNull(supplier).get();
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        return AccessController.doPrivileged((PrivilegedAction<V>) () -> {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            try {
+                return requireNonNull(supplier).get();
+            } finally {
+                currentThread.setContextClassLoader(oldCls);
+            }
+        });
     }
 
     /**
@@ -118,12 +127,15 @@ public final class ClassLoaderUtils {
     public static void runWithClassLoader(final @NonNull ClassLoader cls, final @NonNull Runnable runnable) {
         final Thread currentThread = Thread.currentThread();
         final ClassLoader oldCls = currentThread.getContextClassLoader();
-        currentThread.setContextClassLoader(requireNonNull(cls));
-        try {
-            requireNonNull(runnable).run();
-        } finally {
-            currentThread.setContextClassLoader(oldCls);
-        }
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            currentThread.setContextClassLoader(requireNonNull(cls));
+            try {
+                requireNonNull(runnable).run();
+            } finally {
+                currentThread.setContextClassLoader(oldCls);
+            }
+            return null;
+        });
     }
 
     /**
