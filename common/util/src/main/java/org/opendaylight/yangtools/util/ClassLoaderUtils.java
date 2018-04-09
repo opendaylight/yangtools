@@ -215,13 +215,27 @@ public final class ClassLoaderUtils {
     }
 
     public static Class<?> loadClassWithTCCL(final String name) throws ClassNotFoundException {
-        return loadClass(Thread.currentThread().getContextClassLoader(), name);
+        final Thread thread = Thread.currentThread();
+        final ClassLoader tccl = thread.getContextClassLoader();
+        if (tccl == null) {
+            throw new ClassNotFoundException("Thread " + thread + " does not have a Context Class Loader, cannot load "
+                    + name);
+        }
+        return loadClass(tccl, name);
     }
 
     // FIXME: 3.0.0: Document and return Optional
     public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedClassName) {
+        final Thread thread = Thread.currentThread();
+        final ClassLoader tccl = thread.getContextClassLoader();
+        if (tccl == null) {
+            LOG.debug("Thread {} does not have a Context Class Loader, not loading class {}", thread,
+                fullyQualifiedClassName);
+            return null;
+        }
+
         try {
-            return loadClassWithTCCL(fullyQualifiedClassName);
+            return loadClass(tccl, fullyQualifiedClassName);
         } catch (final ClassNotFoundException e) {
             LOG.debug("Failed to load class {}", fullyQualifiedClassName, e);
             return null;
