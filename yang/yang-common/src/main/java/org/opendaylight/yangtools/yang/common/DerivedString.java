@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -80,11 +81,11 @@ import org.slf4j.LoggerFactory;
 @NonNullByDefault
 @ThreadSafe
 public abstract class DerivedString<R extends DerivedString<R>> implements Comparable<R>, Immutable, Serializable {
-    private static final class Validator extends ClassValue<Boolean> {
-        private static final Logger LOG = LoggerFactory.getLogger(Validator.class);
+    private abstract static class AbstractValidator extends ClassValue<Boolean> {
+        private static final Logger LOG = LoggerFactory.getLogger(AbstractValidator.class);
 
         @Override
-        protected Boolean computeValue(final @Nullable Class<?> type) {
+        protected final Boolean computeValue(final @Nullable Class<?> type) {
             // Every DerivedString representation class must:
             checkArgument(DerivedString.class.isAssignableFrom(type), "%s is not a DerivedString", type);
 
@@ -114,7 +115,6 @@ public abstract class DerivedString<R extends DerivedString<R>> implements Compa
                 checkFinalMethod(type, "support");
                 checkFinalMethod(type, "hashCode");
                 checkFinalMethod(type, "equals", Object.class);
-                checkFinalMethod(type, "compareTo", type);
             } catch (SecurityException e) {
                 LOG.warn("Cannot completely validate {}", type, e);
                 return Boolean.FALSE;
@@ -122,6 +122,8 @@ public abstract class DerivedString<R extends DerivedString<R>> implements Compa
 
             return Boolean.TRUE;
         }
+
+        abstract void checkCompareTo(Class<?> type);
 
         private static void checkFinalMethod(final Class<?> type, final String name) {
             try {
@@ -131,7 +133,7 @@ public abstract class DerivedString<R extends DerivedString<R>> implements Compa
             }
         }
 
-        private static void checkFinalMethod(final Class<?> type, final String name, final Class<?> arg) {
+        static void checkFinalMethod(final Class<?> type, final String name, final Class<?> arg) {
             final String argName = arg.getSimpleName();
             try {
                 checkFinalMethod(type.getMethod(name, arg).getModifiers(), type, name, argName);
@@ -146,7 +148,18 @@ public abstract class DerivedString<R extends DerivedString<R>> implements Compa
         }
     }
 
-    private static final ClassValue<Boolean> VALIDATED_REPRESENTATIONS = new Validator();
+    private static final ClassValue<Boolean> VALIDATED_REPRESENTATIONS = new AbstractValidator() {
+        @Override
+        void checkCompareTo(@NonNull final Class<?> type) {
+            checkFinalMethod(type, "compareTo", type);
+        }
+    };
+    private static final ClassValue<Boolean> VALIDATED_VALIDATIONS = new AbstractValidator() {
+        @Override
+        void checkCompareTo(@NonNull final Class<?> type) {
+            // Intentional no-op, as we'd need a type capture of the representation
+        }
+    };
     private static final long serialVersionUID = 1L;
 
     /**
@@ -187,6 +200,12 @@ public abstract class DerivedString<R extends DerivedString<R>> implements Compa
     static <T extends DerivedString<?>> Class<T> validateRepresentationClass(final Class<T> representationClass) {
         // Validation is reflective, cache its result
         VALIDATED_REPRESENTATIONS.get(representationClass);
+        return representationClass;
+    }
+
+    static <T extends DerivedString<?>> Class<T> validateValidationClass(final Class<T> representationClass) {
+        // Validation is reflective, cache its result
+        VALIDATED_VALIDATIONS.get(representationClass);
         return representationClass;
     }
 }

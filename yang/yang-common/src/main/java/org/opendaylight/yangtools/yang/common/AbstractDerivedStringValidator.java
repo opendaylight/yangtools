@@ -32,7 +32,7 @@ public abstract class AbstractDerivedStringValidator<R extends DerivedString<R>,
     protected AbstractDerivedStringValidator(final DerivedStringSupport<R> representationSupport,
             final Class<T> validatedClass) {
         this.representationSupport = requireNonNull(representationSupport);
-        this.validatedClass = DerivedString.validateRepresentationClass(validatedClass);
+        this.validatedClass = DerivedString.validateValidationClass(validatedClass);
     }
 
     @Override
