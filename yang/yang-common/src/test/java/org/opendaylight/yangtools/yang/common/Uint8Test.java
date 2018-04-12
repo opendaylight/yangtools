@@ -53,7 +53,7 @@ public class Uint8Test {
         final Uint8 zero = Uint8.valueOf(0);
         final Uint8 max = Uint8.valueOf(255);
 
-        final Uint8 test = new Uint8((byte) 5);
+        final Uint8 test = new Uint8(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));

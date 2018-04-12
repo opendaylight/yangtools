@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public final class Uint16 extends Number implements Comparable<Uint16>, Immutable {
+public class Uint16 extends Number implements Comparable<Uint16>, Immutable {
     private static final long serialVersionUID = 1L;
     private static final int MIN_VALUE = 0;
     private static final int MAX_VALUE = 65535;
@@ -65,9 +64,12 @@ public final class Uint16 extends Number implements Comparable<Uint16>, Immutabl
 
     private final short value;
 
-    @VisibleForTesting
     Uint16(final short value) {
         this.value = value;
+    }
+
+    protected Uint16(final Uint16 other) {
+        this.value = other.value;
     }
 
     private static Uint16 instanceFor(final short value) {
@@ -141,52 +143,48 @@ public final class Uint16 extends Number implements Comparable<Uint16>, Immutabl
     }
 
     @Override
-    public short shortValue() {
+    public final short shortValue() {
         return value;
     }
 
     @Override
-    public int intValue() {
+    public final int intValue() {
         return Short.toUnsignedInt(value);
     }
 
     @Override
-    public long longValue() {
+    public final long longValue() {
         return Short.toUnsignedLong(value);
     }
 
     @Override
-    public float floatValue() {
+    public final float floatValue() {
         return intValue();
     }
 
     @Override
-    public double doubleValue() {
+    public final double doubleValue() {
         return intValue();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Uint16 o) {
+    public final int compareTo(final Uint16 o) {
         return Integer.compare(intValue(), o.intValue());
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Short.hashCode(value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        return obj instanceof Uint16 && value == ((Uint16)obj).value;
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof Uint16 && value == ((Uint16)obj).value;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return String.valueOf(intValue());
     }
 

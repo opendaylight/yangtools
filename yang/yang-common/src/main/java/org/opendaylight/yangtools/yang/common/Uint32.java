@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -23,7 +22,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public final class Uint32 extends Number implements Comparable<Uint32>, Immutable {
+public class Uint32 extends Number implements Comparable<Uint32>, Immutable {
     private static final long serialVersionUID = 1L;
     private static final long MIN_VALUE = 0;
     private static final long MAX_VALUE = 0xffffffffL;
@@ -67,9 +66,12 @@ public final class Uint32 extends Number implements Comparable<Uint32>, Immutabl
 
     private final int value;
 
-    @VisibleForTesting
     Uint32(final int value) {
         this.value = value;
+    }
+
+    protected Uint32(final Uint32 other) {
+        this.value = other.value;
     }
 
     private static Uint32 instanceFor(final int value) {
@@ -148,51 +150,47 @@ public final class Uint32 extends Number implements Comparable<Uint32>, Immutabl
     }
 
     @Override
-    public int intValue() {
+    public final int intValue() {
         return value;
     }
 
     @Override
-    public long longValue() {
+    public final long longValue() {
         return Integer.toUnsignedLong(value);
     }
 
     @Override
-    public float floatValue() {
+    public final float floatValue() {
         return longValue();
     }
 
     @Override
-    public double doubleValue() {
+    public final double doubleValue() {
         return longValue();
     }
 
-    public UnsignedInteger toUnsignedInteger() {
+    public final UnsignedInteger toUnsignedInteger() {
         return UnsignedInteger.fromIntBits(value);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Uint32 o) {
+    public final int compareTo(final Uint32 o) {
         return Integer.compareUnsigned(value, o.value);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Integer.hashCode(value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        return obj instanceof Uint32 && value == ((Uint32)obj).value;
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof Uint32 && value == ((Uint32)obj).value;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return Integer.toUnsignedString(value);
     }
 

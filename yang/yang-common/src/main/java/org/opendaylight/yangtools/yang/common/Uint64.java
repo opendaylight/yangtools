@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.annotations.VisibleForTesting;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -24,7 +23,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public final class Uint64 extends Number implements Comparable<Uint64>, Immutable {
+public class Uint64 extends Number implements Comparable<Uint64>, Immutable {
     private static final long serialVersionUID = 1L;
     private static final long MIN_VALUE = 0;
 
@@ -69,9 +68,12 @@ public final class Uint64 extends Number implements Comparable<Uint64>, Immutabl
 
     private final long value;
 
-    @VisibleForTesting
     Uint64(final long value) {
         this.value = value;
+    }
+
+    protected Uint64(final Uint64 other) {
+        this.value = other.value;
     }
 
     private static Uint64 instanceFor(final long value) {
@@ -156,53 +158,49 @@ public final class Uint64 extends Number implements Comparable<Uint64>, Immutabl
     }
 
     @Override
-    public int intValue() {
+    public final int intValue() {
         return (int)value;
     }
 
     @Override
-    public long longValue() {
+    public final long longValue() {
         return value;
     }
 
     @Override
-    public float floatValue() {
+    public final float floatValue() {
         // TODO: ditch Guava
         return UnsignedLong.fromLongBits(value).floatValue();
     }
 
     @Override
-    public double doubleValue() {
+    public final double doubleValue() {
         // TODO: ditch Guava
         return UnsignedLong.fromLongBits(value).doubleValue();
     }
 
-    public UnsignedLong toUnsignedLong() {
+    public final UnsignedLong toUnsignedLong() {
         return UnsignedLong.fromLongBits(value);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Uint64 o) {
+    public final int compareTo(final Uint64 o) {
         return Long.compareUnsigned(value, o.value);
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Long.hashCode(value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        return obj instanceof Uint64 && value == ((Uint64)obj).value;
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof Uint64 && value == ((Uint64)obj).value;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return Long.toUnsignedString(value);
     }
 

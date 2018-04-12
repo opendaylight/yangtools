@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public final class Decimal64 extends Number implements Comparable<Decimal64>, Immutable {
+public class Decimal64 extends Number implements Comparable<Decimal64>, Immutable {
     private static final long serialVersionUID = 1L;
 
     private static final int MAX_FRACTION_DIGITS = 18;
@@ -63,6 +63,11 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
 
         final long bits = intPart * SCALE[this.scaleOffset] + fracPart;
         this.value = negative ? -bits : bits;
+    }
+
+    protected Decimal64(final Decimal64 other) {
+        this.scaleOffset = other.scaleOffset;
+        this.value = other.value;
     }
 
     public static Decimal64 valueOf(final byte byteVal) {
@@ -193,27 +198,27 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
         return new Decimal64(fracLen, intPart, fracPart, negative);
     }
 
-    public BigDecimal decimalValue() {
+    public final BigDecimal decimalValue() {
         return BigDecimal.valueOf(value, scaleOffset + 1);
     }
 
     @Override
-    public int intValue() {
+    public final int intValue() {
         return (int) intPart();
     }
 
     @Override
-    public long longValue() {
+    public final long longValue() {
         return intPart();
     }
 
     @Override
-    public float floatValue() {
+    public final float floatValue() {
         return (float) doubleValue();
     }
 
     @Override
-    public double doubleValue() {
+    public final double doubleValue() {
         return 1.0 * value / SCALE[scaleOffset];
     }
 
@@ -225,7 +230,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
      * @return this {@code Decimal64} converted to a {@code byte}.
      * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in a {@code byte}.
      */
-    public byte byteValueExact() {
+    public final byte byteValueExact() {
         final long val = longValueExact();
         final byte ret = (byte) val;
         if (val != ret) {
@@ -242,7 +247,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
      * @return this {@code Decimal64} converted to a {@code short}.
      * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in a {@code short}.
      */
-    public short shortValueExact() {
+    public final short shortValueExact() {
         final long val = longValueExact();
         final short ret = (short) val;
         if (val != ret) {
@@ -259,7 +264,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
      * @return this {@code Decimal64} converted to an {@code int}.
      * @throws ArithmeticException if {@code this} has a nonzero fractional part, or will not fit in an {@code int}.
      */
-    public int intValueExact() {
+    public final int intValueExact() {
         final long val = longValueExact();
         final int ret = (int) val;
         if (val != ret) {
@@ -275,7 +280,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
      * @return this {@code Decimal64} converted to a {@code long}.
      * @throws ArithmeticException if {@code this} has a nonzero fractional part.
      */
-    public long longValueExact() {
+    public final long longValueExact() {
         if (fracPart() != 0) {
             throw new ArithmeticException("Conversion of " + this + " would lose fraction");
         }
@@ -284,7 +289,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Decimal64 o) {
+    public final int compareTo(final Decimal64 o) {
         if (this == o) {
             return 0;
         }
@@ -297,13 +302,13 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         // We need to normalize the results in order to be consistent with equals()
         return Long.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public final boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
@@ -320,7 +325,7 @@ public final class Decimal64 extends Number implements Comparable<Decimal64>, Im
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         // https://tools.ietf.org/html/rfc6020#section-9.3.2
         //
         // The canonical form of a positive decimal64 does not include the sign

@@ -55,7 +55,7 @@ public class Uint32Test {
         final Uint32 zero = Uint32.valueOf(0);
         final Uint32 max = Uint32.valueOf(4294967295L);
 
-        final Uint32 test = new Uint32(5);
+        final Uint32 test = new Uint32(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));

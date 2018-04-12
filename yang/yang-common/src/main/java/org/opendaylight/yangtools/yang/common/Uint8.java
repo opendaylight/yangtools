@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import com.google.common.annotations.VisibleForTesting;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public final class Uint8 extends Number implements Comparable<Uint8>, Immutable {
+public class Uint8 extends Number implements Comparable<Uint8>, Immutable {
     static final short MIN_VALUE = 0;
     static final short MAX_VALUE = 255;
 
@@ -28,9 +27,12 @@ public final class Uint8 extends Number implements Comparable<Uint8>, Immutable 
 
     private final byte value;
 
-    @VisibleForTesting
-    Uint8(final byte value) {
+    private Uint8(final byte value) {
         this.value = value;
+    }
+
+    protected Uint8(final Uint8 other) {
+        this.value = other.value;
     }
 
     private static Uint8 instanceFor(final byte value) {
@@ -95,52 +97,48 @@ public final class Uint8 extends Number implements Comparable<Uint8>, Immutable 
     }
 
     @Override
-    public byte byteValue() {
+    public final byte byteValue() {
         return value;
     }
 
     @Override
-    public int intValue() {
+    public final int intValue() {
         return Byte.toUnsignedInt(value);
     }
 
     @Override
-    public long longValue() {
+    public final long longValue() {
         return Byte.toUnsignedLong(value);
     }
 
     @Override
-    public float floatValue() {
+    public final float floatValue() {
         return intValue();
     }
 
     @Override
-    public double doubleValue() {
+    public final double doubleValue() {
         return intValue();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public int compareTo(final Uint8 o) {
+    public final int compareTo(final Uint8 o) {
         return intValue() - o.intValue();
     }
 
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return Byte.hashCode(value);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        return obj instanceof Uint8 && value == ((Uint8)obj).value;
+    public final boolean equals(final Object obj) {
+        return this == obj || obj instanceof Uint8 && value == ((Uint8)obj).value;
     }
 
     @Override
-    public String toString() {
+    public final String toString() {
         return String.valueOf(intValue());
     }
 

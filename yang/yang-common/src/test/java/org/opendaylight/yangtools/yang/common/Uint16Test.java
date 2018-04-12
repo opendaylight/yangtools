@@ -54,7 +54,7 @@ public class Uint16Test {
         final Uint16 zero = Uint16.valueOf(0);
         final Uint16 max = Uint16.valueOf(65535);
 
-        final Uint16 test = new Uint16((short) 5);
+        final Uint16 test = new Uint16(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));

@@ -56,7 +56,7 @@ public class Uint64Test {
         final Uint64 zero = Uint64.valueOf(0);
         final Uint64 max = Uint64.valueOf(4294967295L);
 
-        final Uint64 test = new Uint64(5);
+        final Uint64 test = new Uint64(five);
         assertFalse(test.equals(zero));
         assertFalse(test.equals(new Object()));
         assertFalse(test.equals(max));
