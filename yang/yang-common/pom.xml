@@ -22,7 +22,7 @@
     <version>2.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
-    <description>${project.artifactId}</description>
+    <description>ODL :: YANG Tools :: ${project.artifactId}</description>
 
     <dependencyManagement>
         <dependencies>
