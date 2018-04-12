@@ -12,6 +12,7 @@ import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Table;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,6 +44,16 @@ public final class ModuleDependencySort {
      */
     private ModuleDependencySort() {
         throw new UnsupportedOperationException();
+    }
+    /**
+     * Topological sort of module dependency graph.
+     *
+     * @param modules YANG modules
+     * @return Sorted list of Modules. Modules can be further processed in returned order.
+     * @throws IllegalArgumentException when provided modules are not consistent.
+     */
+    public static List<Module> sort(final Module... modules) {
+        return sort(Arrays.asList(modules));
     }
 
     /**
