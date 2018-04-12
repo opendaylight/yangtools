@@ -78,7 +78,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
     private transient int hash;
 
     private QName(final QNameModule module, final String localName) {
-        this.localName = checkLocalName(localName);
+        this.localName = localName;
         this.module = module;
     }
 
@@ -91,7 +91,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      *            YANG schema identifier
      */
     public QName(final URI namespace, final String localName) {
-        this(QNameModule.create(namespace, null), localName);
+        this(QNameModule.create(namespace, null), checkLocalName(localName));
     }
 
     private static String checkLocalName(final String localName) {
@@ -231,7 +231,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
-        return new QName(Preconditions.checkNotNull(qnameModule,"module may not be null"), localName);
+        return new QName(Preconditions.checkNotNull(qnameModule, "module may not be null"), checkLocalName(localName));
     }
 
     /**
@@ -352,7 +352,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return a QName with specified QNameModule and same local name as this one
      */
     public QName withModule(@Nonnull final QNameModule newModule) {
-        return new QName(newModule, localName);
+        return new QName(Preconditions.checkNotNull(newModule), localName);
     }
 
     /**
@@ -362,7 +362,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName> {
      * @return copy of this QName with revision and prefix unset.
      */
     public QName withoutRevision() {
-        return create(getNamespace(), null, localName);
+        return new QName(QNameModule.create(getNamespace(), null), localName);
     }
 
     public static Date parseRevision(final String formatedDate) {
