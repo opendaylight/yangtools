@@ -38,6 +38,7 @@ public class SchemaContextUtilTest {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
 
+        doReturn("test").when(mockModule).getName();
         doReturn("test").when(mockModule).getPrefix();
         doReturn(NAMESPACE).when(mockModule).getNamespace();
         doReturn(QNameModule.create(NAMESPACE)).when(mockModule).getQNameModule();

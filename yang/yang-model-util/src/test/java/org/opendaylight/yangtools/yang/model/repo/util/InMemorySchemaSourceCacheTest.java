@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects;
@@ -49,7 +50,8 @@ public class InMemorySchemaSourceCacheTest {
 
     @Before
     public void setUp() throws Exception {
-        doReturn(this.registration).when(this.registry).registerSchemaSource(any(SchemaSourceProvider.class),
+        doNothing().when(registration).close();
+        doReturn(registration).when(registry).registerSchemaSource(any(SchemaSourceProvider.class),
                 any(PotentialSchemaSource.class));
     }
 
@@ -99,7 +101,7 @@ public class InMemorySchemaSourceCacheTest {
     }
 
     @Test
-    public void inMemorySchemaSourceCache3test() throws Exception {
+    public void inMemorySchemaSourceCache3test() throws InterruptedException, ExecutionException {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache2 =

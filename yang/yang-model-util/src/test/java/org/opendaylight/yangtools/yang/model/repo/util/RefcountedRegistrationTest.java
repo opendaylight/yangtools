@@ -7,37 +7,50 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+
+import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.model.repo.spi.SchemaSourceRegistration;
 
+@RunWith(MockitoJUnitRunner.class)
 public class RefcountedRegistrationTest {
+    @Mock
+    private SchemaSourceRegistration<?> reg;
+
+    @Before
+    public void before() {
+        doNothing().when(reg).close();
+    }
 
     @Test
     public void refcountDecTrue() {
-        final SchemaSourceRegistration<?> reg = Mockito.mock(SchemaSourceRegistration.class);
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
-        Assert.assertTrue(ref.decRef());
-        Mockito.verify(reg, Mockito.times(1)).close();
+        assertTrue(ref.decRef());
+        verify(reg, times(1)).close();
     }
 
     @Test
     public void refcountIncDecFalse() {
-        final SchemaSourceRegistration<?> reg = Mockito.mock(SchemaSourceRegistration.class);
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
         ref.incRef();
-        Assert.assertFalse(ref.decRef());
-        Mockito.verify(reg, Mockito.times(0)).close();
+        assertFalse(ref.decRef());
+        verify(reg, times(0)).close();
     }
 
     @Test
     public void refcountIncDecTrue() {
-        final SchemaSourceRegistration<?> reg = Mockito.mock(SchemaSourceRegistration.class);
         final RefcountedRegistration ref = new RefcountedRegistration(reg);
         ref.incRef();
-        Assert.assertFalse(ref.decRef());
-        Assert.assertTrue(ref.decRef());
-        Mockito.verify(reg, Mockito.times(1)).close();
+        assertFalse(ref.decRef());
+        assertTrue(ref.decRef());
+        verify(reg, times(1)).close();
     }
 }

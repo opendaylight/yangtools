@@ -13,6 +13,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.collect.ImmutableList;
@@ -107,6 +108,7 @@ public class TypeTest {
     public void identityrefTypeTest() {
         final IdentityrefTypeBuilder identityrefTypeBuilder1 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);
         final IdentitySchemaNode identitySchemaNode = mock(IdentitySchemaNode.class);
+        doReturn("identitySchemaNode").when(identitySchemaNode).toString();
         identityrefTypeBuilder1.addIdentity(identitySchemaNode);
         final IdentityrefTypeDefinition identityrefTypeDefinition1 = identityrefTypeBuilder1.build();
         final IdentityrefTypeBuilder identityrefTypeBuilder2 = BaseTypes.identityrefTypeBuilder(SCHEMA_PATH);

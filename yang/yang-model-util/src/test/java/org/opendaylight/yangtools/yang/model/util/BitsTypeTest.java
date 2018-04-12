@@ -16,23 +16,25 @@ import static org.mockito.Mockito.doReturn;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 
+@RunWith(MockitoJUnitRunner.class)
 public class BitsTypeTest {
-
     @Mock
     private BitsTypeDefinition.Bit bit;
 
     @Test
     public void canCreateBitsType() {
-        MockitoAnnotations.initMocks(this);
         doReturn("test").when(bit).getName();
+        doReturn(0L).when(bit).getPosition();
+        doReturn("toString").when(bit).toString();
 
         QName qname = QName.create("namespace", "localname");
         SchemaPath schemaPath = SchemaPath.create(true, qname);
@@ -56,7 +58,5 @@ public class BitsTypeTest {
         assertNotEquals("bitsType shouldn't equal to null", null, bitsType);
         assertEquals("bitsType should equals to itself", bitsType, bitsType);
         assertNotEquals("bitsType shouldn't equal to object of other type", "str", bitsType);
-
     }
-
 }
