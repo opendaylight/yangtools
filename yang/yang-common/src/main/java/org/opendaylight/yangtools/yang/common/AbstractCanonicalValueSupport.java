@@ -13,25 +13,27 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.lang.reflect.Modifier;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * Base implementation of {@link DerivedStringSupport}. This class should be used as superclass to all implementations
- * of {@link DerivedStringSupport}, as doing so provides a simpler base and enforces some aspects of the subclass.
+ * Base implementation of {@link CanonicalValueSupport}. This class should be used as superclass to all implementations
+ * of {@link CanonicalValueSupport}, as doing so provides a simpler base and enforces some aspects of the subclass.
  *
- * @param <T> derived string type
+ * @param <T> canonical value type
  * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 @ThreadSafe
-public abstract class AbstractDerivedStringSupport<T extends DerivedString<T>> implements DerivedStringSupport<T> {
-    private static final ClassValue<Boolean> VALIDATED_INSTANCES = new ClassValue<Boolean>() {
+public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>> implements CanonicalValueSupport<T> {
+    private static final ClassValue<Boolean> SUPPORTS = new ClassValue<Boolean>() {
         @Override
         protected Boolean computeValue(final @Nullable Class<?> type) {
             // Every DerivedStringSupport representation class must:
-            checkArgument(DerivedStringSupport.class.isAssignableFrom(type), "%s is not a DerivedStringSupport", type);
+            checkArgument(CanonicalValueSupport.class.isAssignableFrom(type), "%s is not a CanonicalValueSupport",
+                type);
 
             // be final
             final int modifiers = type.getModifiers();
@@ -40,12 +42,19 @@ public abstract class AbstractDerivedStringSupport<T extends DerivedString<T>> i
             return Boolean.TRUE;
         }
     };
+    private static final ClassValue<Boolean> VALUES = new AbstractCanonicalValueImplementationValidator() {
+        @Override
+        void checkCompareTo(@NonNull final Class<?> type) {
+            checkFinalMethod(type, "compareTo", type);
+        }
+    };
 
     private final Class<T> representationClass;
 
-    protected AbstractDerivedStringSupport(final Class<T> representationClass) {
-        this.representationClass = DerivedString.validateRepresentationClass(representationClass);
-        VALIDATED_INSTANCES.get(getClass());
+    protected AbstractCanonicalValueSupport(final Class<T> representationClass) {
+        VALUES.get(representationClass);
+        this.representationClass = representationClass;
+        SUPPORTS.get(getClass());
     }
 
     @Override

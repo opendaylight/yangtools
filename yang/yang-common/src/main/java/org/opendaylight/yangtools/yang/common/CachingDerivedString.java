@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -17,6 +18,7 @@ import org.eclipse.jdt.annotation.Nullable;
  * @param <T> derived string type
  * @author Robert Varga
  */
+@Beta
 @NonNullByDefault
 public abstract class CachingDerivedString<T extends CachingDerivedString<T>> extends DerivedString<T> {
     private static final long serialVersionUID = 1L;
@@ -43,5 +45,4 @@ public abstract class CachingDerivedString<T extends CachingDerivedString<T>> ex
      * @return Canonical string
      */
     protected abstract String computeCanonicalString();
-
 }
