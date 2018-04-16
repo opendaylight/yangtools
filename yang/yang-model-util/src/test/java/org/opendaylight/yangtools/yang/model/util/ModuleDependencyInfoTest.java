@@ -14,33 +14,72 @@ import static org.mockito.Mockito.doReturn;
 import com.google.common.collect.ImmutableSet;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ModuleDependencyInfoTest {
-    private static final QNameModule TEST = QNameModule.create(URI.create("foo"));
+    private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"));
+    private static final QNameModule BAR_MODULE = QNameModule.create(URI.create("bar"));
 
     @Mock
     private Module fooNoRev;
 
+    @Mock
+    private ModuleImport fooNoRevImport;
+
+    @Mock
+    private Module bar;
+
+    @Mock
+    private Module barSubmodule;
+
     @Before
     public void before() {
-        doReturn(ImmutableSet.of()).when(fooNoRev).getImports();
         doReturn("foo").when(fooNoRev).getName();
-        doReturn(TEST).when(fooNoRev).getQNameModule();
-        doReturn(TEST.getNamespace()).when(fooNoRev).getNamespace();
-        doReturn(TEST.getRevision()).when(fooNoRev).getRevision();
+        doReturn(FOO_MODULE).when(fooNoRev).getQNameModule();
+        doReturn(FOO_MODULE.getNamespace()).when(fooNoRev).getNamespace();
+        doReturn(FOO_MODULE.getRevision()).when(fooNoRev).getRevision();
+        doReturn(YangVersion.VERSION_1).when(fooNoRev).getYangVersion();
+        doReturn(ImmutableSet.of()).when(fooNoRev).getImports();
+        doReturn(ImmutableSet.of()).when(fooNoRev).getSubmodules();
+
+        doReturn("foo").when(fooNoRevImport).getModuleName();
+        doReturn(Optional.empty()).when(fooNoRevImport).getRevision();
+
+        doReturn("bar").when(bar).getName();
+        doReturn(BAR_MODULE).when(bar).getQNameModule();
+        doReturn(BAR_MODULE.getNamespace()).when(bar).getNamespace();
+        doReturn(BAR_MODULE.getRevision()).when(bar).getRevision();
+        doReturn(YangVersion.VERSION_1).when(bar).getYangVersion();
+        doReturn(ImmutableSet.of()).when(bar).getImports();
+        doReturn(ImmutableSet.of(barSubmodule)).when(bar).getSubmodules();
+
+        doReturn("bar-submodule").when(barSubmodule).getName();
+        doReturn(BAR_MODULE).when(barSubmodule).getQNameModule();
+        doReturn(BAR_MODULE.getNamespace()).when(barSubmodule).getNamespace();
+        doReturn(BAR_MODULE.getRevision()).when(barSubmodule).getRevision();
+        doReturn(ImmutableSet.of(fooNoRevImport)).when(barSubmodule).getImports();
+        doReturn(ImmutableSet.of()).when(barSubmodule).getSubmodules();
     }
 
     @Test
     public void testSimpleModules() {
         assertSortedTo(of(fooNoRev), fooNoRev);
+    }
+
+    @Test
+    public void testSubmodules() {
+        assertSortedTo(of(fooNoRev, bar), bar, fooNoRev);
+        assertSortedTo(of(fooNoRev, bar), fooNoRev, bar);
     }
 
     private static void assertSortedTo(final List<Module> expected, final Module... modules) {
