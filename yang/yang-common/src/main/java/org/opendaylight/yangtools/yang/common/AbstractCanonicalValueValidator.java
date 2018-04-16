@@ -11,49 +11,58 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Abstract base class for implementing validators.
  *
- * @param <R> string representation class
- * @param <T> validated string representation class
+ * @param <T> string representation class
+ * @param <V> validated string representation class
  * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 @ThreadSafe
-public abstract class AbstractDerivedStringValidator<R extends DerivedString<R>, T extends R>
-        implements DerivedStringValidator<R, T> {
-    private final DerivedStringSupport<R> representationSupport;
-    private final Class<T> validatedClass;
+public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>, V extends T>
+        implements CanonicalValueValidator<T, V> {
+    private static final ClassValue<Boolean> IMPLEMENTATIONS = new AbstractCanonicalValueImplementationValidator() {
+        @Override
+        void checkCompareTo(@NonNull final Class<?> type) {
+            // Intentional no-op, as we'd need a type capture of the representation
+        }
+    };
 
-    protected AbstractDerivedStringValidator(final DerivedStringSupport<R> representationSupport,
-            final Class<T> validatedClass) {
+    private final CanonicalValueSupport<T> representationSupport;
+    private final Class<V> validatedClass;
+
+    protected AbstractCanonicalValueValidator(final CanonicalValueSupport<T> representationSupport,
+            final Class<V> validatedClass) {
         this.representationSupport = requireNonNull(representationSupport);
-        this.validatedClass = DerivedString.validateValidationClass(validatedClass);
+        IMPLEMENTATIONS.get(validatedClass);
+        this.validatedClass = validatedClass;
     }
 
     @Override
-    public final Class<R> getRepresentationClass() {
+    public final Class<T> getRepresentationClass() {
         return representationSupport.getRepresentationClass();
     }
 
     @Override
-    public final Class<T> getValidatedRepresentationClass() {
+    public final Class<V> getValidatedRepresentationClass() {
         return validatedClass;
     }
 
     @Override
-    public final T validateRepresentation(final R value) {
-        @Nullable T valid;
+    public final V validateRepresentation(final T value) {
+        @Nullable V valid;
         return (valid = castIfValid(value)) != null ? valid : validate(value);
     }
 
     @Override
-    public final T validateRepresentation(final R value, final String canonicalString) {
-        @Nullable T valid;
+    public final V validateRepresentation(final T value, final String canonicalString) {
+        @Nullable V valid;
         return (valid = castIfValid(value)) != null ? valid : validate(value, requireNonNull(canonicalString));
     }
 
@@ -66,7 +75,7 @@ public abstract class AbstractDerivedStringValidator<R extends DerivedString<R>,
      * @throws NullPointerException if {@code value} is null
      * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    protected T validate(final R value) {
+    protected V validate(final T value) {
         return validate(value, value.toCanonicalString());
     }
 
@@ -80,9 +89,9 @@ public abstract class AbstractDerivedStringValidator<R extends DerivedString<R>,
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
      * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    protected abstract T validate(R value, String canonicalString);
+    protected abstract V validate(T value, String canonicalString);
 
-    private @Nullable T castIfValid(final R value) {
+    private @Nullable V castIfValid(final T value) {
         return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
                 ? validatedClass.cast(value) : null;
     }
