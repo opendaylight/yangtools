@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Support for a {@link CanonicalValue} subclasses. An implementation of this interface must be registered
@@ -37,11 +38,10 @@ public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends Cano
      * strings must be accepted and result in objects equal to objects obtained from the corresponding canonical format.
      *
      * @param str String representation
-     * @return A {@link CanonicalValue} instance.
+     * @return A {@link CanonicalValue} instance or CanonicalValueViolation if {@code str} does not conform
      * @throws NullPointerException if {@code str} is null
-     * @throws IllegalArgumentException if {@code str} does not contain a valid representation
      */
-    T fromString(String str);
+    Variant<T, CanonicalValueViolation> fromString(String str);
 
     /**
      * Create a instance for the canonical string representation. Implementations of this method may perform
@@ -49,11 +49,10 @@ public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends Cano
      * is detected.
      *
      * @param str String representation
-     * @return A {@link CanonicalValue} instance.
+     * @return A {@link CanonicalValue} instance or CanonicalValueViolation if {@code str} does not conform
      * @throws NullPointerException if {@code str} is null
-     * @throws IllegalArgumentException if {@code str} does not contain canonical representation
      */
-    default T fromCanonicalString(final String str) {
+    default Variant<T, CanonicalValueViolation> fromCanonicalString(final String str) {
         return fromString(requireNonNull(str));
     }
 
