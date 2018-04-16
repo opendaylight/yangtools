@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.lang.reflect.Modifier;
@@ -16,6 +15,7 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Base implementation of {@link CanonicalValueSupport}. This class should be used as superclass to all implementations
@@ -68,12 +68,13 @@ public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>>
     }
 
     @Override
-    public final T validateRepresentation(final T value) {
-        return requireNonNull(value);
+    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value) {
+        return Variant.ofFirst(value);
     }
 
     @Override
-    public final T validateRepresentation(final T value, final String canonicalString) {
-        return requireNonNull(value);
+    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value,
+            final String canonicalString) {
+        return Variant.ofFirst(value);
     }
 }

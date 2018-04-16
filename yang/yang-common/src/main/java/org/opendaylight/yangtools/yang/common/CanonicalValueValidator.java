@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * {@link CanonicalValue} validator interface. Implementations of this interface can perform further validation of
@@ -47,11 +48,10 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      * provide a validation algorithm which does not rely on canonical strings but works on representation state only.
      *
      * @param value Representation value
-     * @return Validated representation
+     * @return Validated representation or a {@link CanonicalValueViolation}
      * @throws NullPointerException if {@code value} is null
-     * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    default V validateRepresentation(final T value) {
+    default Variant<T, CanonicalValueViolation> validateRepresentation(final T value) {
         return validateRepresentation(value, value.toCanonicalString());
     }
 
@@ -62,9 +62,8 @@ public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends 
      *
      * @param value Representation value
      * @param canonicalString Canonical string matching the representation value
-     * @return Validated representation
+     * @return Validated representation or a {@link CanonicalValueViolation}
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
-     * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    V validateRepresentation(T value, String canonicalString);
+    Variant<T, CanonicalValueViolation> validateRepresentation(T value, String canonicalString);
 }
