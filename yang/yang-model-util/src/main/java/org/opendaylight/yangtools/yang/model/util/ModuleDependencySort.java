@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -110,7 +111,7 @@ public final class ModuleDependencySort {
             }
 
             // no need to check if other Type of object, check is performed in process modules
-            for (final ModuleImport imprt : module.getImports()) {
+            for (final ModuleImport imprt : allImports(module)) {
                 final String toName = imprt.getModuleName();
                 final Optional<Revision> toRevision = imprt.getRevision();
 
@@ -137,6 +138,19 @@ public final class ModuleDependencySort {
                 from.addEdge(to);
             }
         }
+    }
+
+    private static Collection<ModuleImport> allImports(final Module mod) {
+        if (mod.getSubmodules().isEmpty()) {
+            return mod.getImports();
+        }
+
+        final Collection<ModuleImport> concat = new LinkedHashSet<>();
+        concat.addAll(mod.getImports());
+        for (Module sub : mod.getSubmodules()) {
+            concat.addAll(sub.getImports());
+        }
+        return concat;
     }
 
     /**
