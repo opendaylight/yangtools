@@ -77,6 +77,7 @@ public class SimpleSchemaContextTest {
         doReturn(mod).when(ret).getQNameModule();
         doReturn(mod.toString()).when(ret).toString();
         doReturn(ImmutableSet.of()).when(ret).getImports();
+        doReturn(ImmutableSet.of()).when(ret).getSubmodules();
         return ret;
     }
 }
