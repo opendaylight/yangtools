@@ -14,34 +14,34 @@ import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Support for a {@link DerivedString} subclasses. An implementation of this interface must be registered
- * in the system and be available from each DerivedString object.
+ * Support for a {@link CanonicalValue} subclasses. An implementation of this interface must be registered
+ * in the system and be available from each CanonicalValue object.
  *
  * <p>
- * Note: never implement this interface directly, subclass {@link AbstractDerivedStringSupport} instead.
+ * Note: never implement this interface directly, subclass {@link AbstractCanonicalValueSupport} instead.
  *
  * <p>
- * This interface allows a {@link DerivedString} to be instantiated from a String. The implementation is expected
+ * This interface allows a {@link CanonicalValue} to be instantiated from a String. The implementation is expected
  * to perform all checks implied by the corresponding YANG data model.
  *
- * @param <R> derived string representation
+ * @param <T> canonical value type
  * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
 @ThreadSafe
-public interface DerivedStringSupport<R extends DerivedString<R>> extends DerivedStringValidator<R, R> {
+public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends CanonicalValueValidator<T, T> {
     /**
      * Create a instance for a string representation. Implementations of this method are required to perform checks
      * equivalent to the YANG data model restrictions attached to the corresponding YANG type. Non-canonical format
      * strings must be accepted and result in objects equal to objects obtained from the corresponding canonical format.
      *
      * @param str String representation
-     * @return A {@link DerivedString} instance.
-     * @throws NullPointerException if str is null
-     * @throws IllegalArgumentException if str does not contain a valid representation
+     * @return A {@link CanonicalValue} instance.
+     * @throws NullPointerException if {@code str} is null
+     * @throws IllegalArgumentException if {@code str} does not contain a valid representation
      */
-    R fromString(String str);
+    T fromString(String str);
 
     /**
      * Create a instance for the canonical string representation. Implementations of this method may perform
@@ -49,11 +49,11 @@ public interface DerivedStringSupport<R extends DerivedString<R>> extends Derive
      * is detected.
      *
      * @param str String representation
-     * @return A {@link DerivedString} instance.
-     * @throws NullPointerException if str is null
-     * @throws IllegalArgumentException if str does not contain canonical representation
+     * @return A {@link CanonicalValue} instance.
+     * @throws NullPointerException if {@code str} is null
+     * @throws IllegalArgumentException if {@code str} does not contain canonical representation
      */
-    default R fromCanonicalString(final String str) {
+    default T fromCanonicalString(final String str) {
         return fromString(requireNonNull(str));
     }
 
@@ -63,7 +63,7 @@ public interface DerivedStringSupport<R extends DerivedString<R>> extends Derive
      * @return This instance cast to specified type
      */
     @SuppressWarnings("unchecked")
-    default <X extends DerivedString<X>> DerivedStringSupport<X> unsafe() {
-        return (DerivedStringSupport<X>) this;
+    default <X extends CanonicalValue<X>> CanonicalValueSupport<X> unsafe() {
+        return (CanonicalValueSupport<X>) this;
     }
 }
