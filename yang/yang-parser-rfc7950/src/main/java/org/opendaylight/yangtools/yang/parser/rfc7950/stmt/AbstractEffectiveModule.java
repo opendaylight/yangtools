@@ -149,7 +149,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
                 Verify.verify(submodule instanceof Module, "Submodule statement %s is not a Module", submodule);
                 submodulesInit.add((Module) submodule);
                 substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements().stream()
-                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer)
+                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer
+                            || sub instanceof ModuleImport)
                         .collect(Collectors.toList()));
             }
 
