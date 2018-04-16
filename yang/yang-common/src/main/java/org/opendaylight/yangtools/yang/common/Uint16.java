@@ -15,6 +15,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Dedicated type for YANG's 'type uint16' type.
@@ -30,8 +31,12 @@ public class Uint16 extends Number implements CanonicalValue<Uint16> {
         }
 
         @Override
-        public Uint16 fromString(final String str) {
-            return Uint16.valueOf(str);
+        public Variant<Uint16, CanonicalValueViolation> fromString(final String str) {
+            try {
+                return Variant.ofFirst(Uint16.valueOf(str));
+            } catch (IllegalArgumentException e) {
+                return CanonicalValueViolation.variantOf(e);
+            }
         }
     }
 
