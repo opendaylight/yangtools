@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Abstract base class for implementing validators.
@@ -54,15 +54,16 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
     }
 
     @Override
-    public final V validateRepresentation(final T value) {
-        @Nullable V valid;
-        return (valid = castIfValid(value)) != null ? valid : validate(value);
+    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value) {
+        return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
+                ? Variant.ofFirst(validatedClass.cast(value)) : validate(value);
     }
 
     @Override
-    public final V validateRepresentation(final T value, final String canonicalString) {
-        @Nullable V valid;
-        return (valid = castIfValid(value)) != null ? valid : validate(value, requireNonNull(canonicalString));
+    public final Variant<T, CanonicalValueViolation> validateRepresentation(final T value,
+            final String canonicalString) {
+        return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
+                ? Variant.ofFirst(validatedClass.cast(value)) : validate(value, requireNonNull(canonicalString));
     }
 
     /**
@@ -70,11 +71,10 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
      * provide a validation algorithm which does not rely on canonical strings but works on representation state only.
      *
      * @param value Representation value
-     * @return Validated representation
+     * @return Validated representation or CanonicalValueViolation
      * @throws NullPointerException if {@code value} is null
-     * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    protected V validate(final T value) {
+    protected Variant<T, CanonicalValueViolation> validate(final T value) {
         return validate(value, value.toCanonicalString());
     }
 
@@ -86,12 +86,6 @@ public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>
      * @param canonicalString Canonical string matching the representation value
      * @return Validated representation
      * @throws NullPointerException if {@code value} or {@code canonicalString} is null.
-     * @throws IllegalArgumentException if the value does not meet validation criteria.
      */
-    protected abstract V validate(T value, String canonicalString);
-
-    private @Nullable V castIfValid(final T value) {
-        return validatedClass.isAssignableFrom(value.validator().getValidatedRepresentationClass())
-                ? validatedClass.cast(value) : null;
-    }
+    protected abstract Variant<T, CanonicalValueViolation> validate(T value, String canonicalString);
 }
