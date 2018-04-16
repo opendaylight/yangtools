@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.util;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Lists;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public final class ModuleDependencySort {
                 fromRevision = DEFAULT_REVISION;
             }
 
-            for (final ModuleImport imprt : module.getImports()) {
+            for (final ModuleImport imprt : allImports(module)) {
                 final String toName = imprt.getModuleName();
                 final Date toRevision = imprt.getRevision() == null ? DEFAULT_REVISION : imprt.getRevision();
 
@@ -146,6 +147,19 @@ public final class ModuleDependencySort {
                 from.addEdge(to);
             }
         }
+    }
+
+    private static Collection<ModuleImport> allImports(final Module mod) {
+        if (mod.getSubmodules().isEmpty()) {
+            return mod.getImports();
+        }
+
+        final List<ModuleImport> concat = new ArrayList<>();
+        concat.addAll(mod.getImports());
+        for (Module sub : mod.getSubmodules()) {
+            concat.addAll(sub.getImports());
+        }
+        return concat;
     }
 
     /**
