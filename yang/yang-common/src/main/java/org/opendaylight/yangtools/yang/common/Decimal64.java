@@ -14,7 +14,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Strings;
 import java.math.BigDecimal;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
@@ -23,7 +24,20 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public class Decimal64 extends Number implements Comparable<Decimal64>, Immutable {
+@NonNullByDefault
+public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
+    private static final class Support extends AbstractCanonicalValueSupport<Decimal64> {
+        Support() {
+            super(Decimal64.class);
+        }
+
+        @Override
+        public Decimal64 fromString(final String str) {
+            return Decimal64.valueOf(str);
+        }
+    }
+
+    private static final CanonicalValueSupport<Decimal64> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
 
     private static final int MAX_FRACTION_DIGITS = 18;
@@ -302,30 +316,7 @@ public class Decimal64 extends Number implements Comparable<Decimal64>, Immutabl
     }
 
     @Override
-    public final int hashCode() {
-        // We need to normalize the results in order to be consistent with equals()
-        return Long.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
-    }
-
-    @Override
-    public final boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Decimal64)) {
-            return false;
-        }
-        final Decimal64 other = (Decimal64) obj;
-        if (scaleOffset == other.scaleOffset) {
-            return value == other.value;
-        }
-
-        // We need to normalize both
-        return intPart() == other.intPart() && fracPart() == fracPart();
-    }
-
-    @Override
-    public final String toString() {
+    public final String toCanonicalString() {
         // https://tools.ietf.org/html/rfc6020#section-9.3.2
         //
         // The canonical form of a positive decimal64 does not include the sign
@@ -343,6 +334,39 @@ public class Decimal64 extends Number implements Comparable<Decimal64>, Immutabl
         }
 
         return sb.toString();
+    }
+
+    @Override
+    public final CanonicalValueSupport<Decimal64> support() {
+        return SUPPORT;
+    }
+
+    @Override
+    public final int hashCode() {
+        // We need to normalize the results in order to be consistent with equals()
+        return Long.hashCode(intPart()) * 31 + Long.hashCode(fracPart());
+    }
+
+    @Override
+    public final boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Decimal64)) {
+            return false;
+        }
+        final Decimal64 other = (Decimal64) obj;
+        if (scaleOffset == other.scaleOffset) {
+            return value == other.value;
+        }
+
+        // We need to normalize both
+        return intPart() == other.intPart() && fracPart() == fracPart();
+    }
+
+    @Override
+    public final String toString() {
+        return toCanonicalString();
     }
 
     private long intPart() {
