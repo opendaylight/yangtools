@@ -146,7 +146,8 @@ abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> exte
                         .buildEffective();
                 submodulesInit.add(submodule);
                 substatementsOfSubmodulesInit.addAll(submodule.effectiveSubstatements().stream()
-                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer)
+                        .filter(sub -> sub instanceof SchemaNode || sub instanceof DataNodeContainer
+                            || sub instanceof ModuleImport)
                         .collect(Collectors.toList()));
             }
 
