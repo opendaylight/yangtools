@@ -17,6 +17,7 @@ import com.google.common.primitives.UnsignedLong;
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Dedicated type for YANG's 'type uint64' type.
@@ -32,8 +33,12 @@ public class Uint64 extends Number implements CanonicalValue<Uint64> {
         }
 
         @Override
-        public Uint64 fromString(final String str) {
-            return Uint64.valueOf(str);
+        public Variant<Uint64, CanonicalValueViolation> fromString(final String str) {
+            try {
+                return Variant.ofFirst(Uint64.valueOf(str));
+            } catch (IllegalArgumentException e) {
+                return CanonicalValueViolation.variantOf(e);
+            }
         }
     }
 
