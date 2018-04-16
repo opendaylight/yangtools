@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -24,15 +25,23 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 @NonNullByDefault
 @ThreadSafe
-public abstract class AbstractDerivedStringValidator<R extends DerivedString<R>, T extends R>
-        implements DerivedStringValidator<R, T> {
-    private final DerivedStringSupport<R> representationSupport;
+public abstract class AbstractCanonicalValueValidator<R extends DerivedString<R>, T extends R>
+        implements CanonicalValueValidator<R, T> {
+    private static final ClassValue<Boolean> IMPLEMENTATIONS = new AbstractCanonicalValueImplementationValidator() {
+        @Override
+        void checkCompareTo(@NonNull final Class<?> type) {
+            // Intentional no-op, as we'd need a type capture of the representation
+        }
+    };
+
+    private final CanonicalValueSupport<R> representationSupport;
     private final Class<T> validatedClass;
 
-    protected AbstractDerivedStringValidator(final DerivedStringSupport<R> representationSupport,
+    protected AbstractCanonicalValueValidator(final CanonicalValueSupport<R> representationSupport,
             final Class<T> validatedClass) {
         this.representationSupport = requireNonNull(representationSupport);
-        this.validatedClass = DerivedString.validateValidationClass(validatedClass);
+        IMPLEMENTATIONS.get(validatedClass);
+        this.validatedClass = validatedClass;
     }
 
     @Override
