@@ -30,7 +30,7 @@ public class DerivedStringTest {
         }
 
         @Override
-        public final DerivedStringSupport<EagerDerivedString> support() {
+        public final CanonicalValueSupport<EagerDerivedString> support() {
             return EAGER_SUPPORT;
         }
 
@@ -74,7 +74,7 @@ public class DerivedStringTest {
         }
 
         @Override
-        public final DerivedStringSupport<LazyDerivedString> support() {
+        public final CanonicalValueSupport<LazyDerivedString> support() {
             return LAZY_SUPPORT;
         }
 
@@ -101,7 +101,7 @@ public class DerivedStringTest {
         }
     }
 
-    public static final class EagerDerivedStringSupport extends AbstractDerivedStringSupport<EagerDerivedString> {
+    public static final class EagerDerivedStringSupport extends AbstractCanonicalValueSupport<EagerDerivedString> {
         EagerDerivedStringSupport() {
             super(EagerDerivedString.class);
         }
@@ -112,7 +112,7 @@ public class DerivedStringTest {
         }
     }
 
-    public static final class LazyDerivedStringSupport extends AbstractDerivedStringSupport<LazyDerivedString> {
+    public static final class LazyDerivedStringSupport extends AbstractCanonicalValueSupport<LazyDerivedString> {
         LazyDerivedStringSupport() {
             super(LazyDerivedString.class);
         }
@@ -123,8 +123,8 @@ public class DerivedStringTest {
         }
     }
 
-    private static final DerivedStringSupport<EagerDerivedString> EAGER_SUPPORT = new EagerDerivedStringSupport();
-    private static final DerivedStringSupport<LazyDerivedString> LAZY_SUPPORT = new LazyDerivedStringSupport();
+    private static final CanonicalValueSupport<EagerDerivedString> EAGER_SUPPORT = new EagerDerivedStringSupport();
+    private static final CanonicalValueSupport<LazyDerivedString> LAZY_SUPPORT = new LazyDerivedStringSupport();
 
     @Test
     public void testEager() {
