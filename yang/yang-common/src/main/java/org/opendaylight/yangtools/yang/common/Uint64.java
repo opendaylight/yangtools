@@ -15,7 +15,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.primitives.UnsignedLong;
 import java.math.BigInteger;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated type for YANG's 'type uint64' type.
@@ -23,7 +24,20 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public class Uint64 extends Number implements Comparable<Uint64>, Immutable {
+@NonNullByDefault
+public class Uint64 extends Number implements CanonicalValue<Uint64> {
+    private static final class Support extends AbstractCanonicalValueSupport<Uint64> {
+        Support() {
+            super(Uint64.class);
+        }
+
+        @Override
+        public Uint64 fromString(final String str) {
+            return Uint64.valueOf(str);
+        }
+    }
+
+    private static final CanonicalValueSupport<Uint64> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
     private static final long MIN_VALUE = 0;
 
@@ -190,18 +204,28 @@ public class Uint64 extends Number implements Comparable<Uint64>, Immutable {
     }
 
     @Override
+    public final String toCanonicalString() {
+        return Long.toUnsignedString(value);
+    }
+
+    @Override
+    public final CanonicalValueSupport<Uint64> support() {
+        return SUPPORT;
+    }
+
+    @Override
     public final int hashCode() {
         return Long.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint64 && value == ((Uint64)obj).value;
     }
 
     @Override
     public final String toString() {
-        return Long.toUnsignedString(value);
+        return toCanonicalString();
     }
 
     private Object readResolve() {

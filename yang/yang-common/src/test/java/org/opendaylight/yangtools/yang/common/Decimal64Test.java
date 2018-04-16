@@ -56,11 +56,6 @@ public class Decimal64Test {
         Decimal64.valueOf(".a");
     }
 
-    @Test(expected = NullPointerException.class)
-    public void testParseNull() {
-        Decimal64.valueOf((String)null);
-    }
-
     @Test(expected = NumberFormatException.class)
     public void testParseMinus() {
         Decimal64.valueOf("-");

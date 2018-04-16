@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated type for YANG's 'type uint8' type.
@@ -18,7 +19,21 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public class Uint8 extends Number implements Comparable<Uint8>, Immutable {
+@NonNullByDefault
+public class Uint8 extends Number implements CanonicalValue<Uint8> {
+    private static final class Support extends AbstractCanonicalValueSupport<Uint8> {
+        Support() {
+            super(Uint8.class);
+        }
+
+        @Override
+        public Uint8 fromString(final String str) {
+            return Uint8.valueOf(str);
+        }
+    }
+
+    private static final CanonicalValueSupport<Uint8> SUPPORT = new Support();
+
     static final short MIN_VALUE = 0;
     static final short MAX_VALUE = 255;
 
@@ -128,18 +143,28 @@ public class Uint8 extends Number implements Comparable<Uint8>, Immutable {
     }
 
     @Override
+    public final String toCanonicalString() {
+        return String.valueOf(intValue());
+    }
+
+    @Override
+    public final CanonicalValueSupport<Uint8> support() {
+        return SUPPORT;
+    }
+
+    @Override
     public final int hashCode() {
         return Byte.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint8 && value == ((Uint8)obj).value;
     }
 
     @Override
     public final String toString() {
-        return String.valueOf(intValue());
+        return toCanonicalString();
     }
 
     private Object readResolve() {
