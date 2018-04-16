@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -132,7 +133,7 @@ public final class ModuleDependencySort {
                 fromRevision = DEFAULT_DATE_REV;
             }
 
-            for (final ModuleImport imprt : module.getImports()) {
+            for (final ModuleImport imprt : allImports(module)) {
                 final String toName = imprt.getModuleName();
                 final Date toRevision = imprt.getRevision() == null ? DEFAULT_DATE_REV : imprt.getRevision();
 
@@ -160,6 +161,19 @@ public final class ModuleDependencySort {
                 from.addEdge(to);
             }
         }
+    }
+
+    private static Collection<ModuleImport> allImports(final Module mod) {
+        if (mod.getSubmodules().isEmpty()) {
+            return mod.getImports();
+        }
+
+        final Collection<ModuleImport> concat = new LinkedHashSet<>();
+        concat.addAll(mod.getImports());
+        for (Module sub : mod.getSubmodules()) {
+            concat.addAll(sub.getImports());
+        }
+        return concat;
     }
 
     /**
