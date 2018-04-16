@@ -16,6 +16,8 @@ import com.google.common.base.Strings;
 import java.math.BigDecimal;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.CheckedValue;
+import org.opendaylight.yangtools.concepts.Variant;
 
 /**
  * Dedicated type for YANG's 'type decimal64' type. This class is similar to {@link BigDecimal}, but provides more
@@ -32,8 +34,97 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
         }
 
         @Override
-        public Decimal64 fromString(final String str) {
-            return Decimal64.valueOf(str);
+        public Variant<Decimal64, CanonicalValueViolation> fromString(final String str) {
+            // https://tools.ietf.org/html/rfc6020#section-9.3.1
+            //
+            // A decimal64 value is lexically represented as an optional sign ("+"
+            // or "-"), followed by a sequence of decimal digits, optionally
+            // followed by a period ('.') as a decimal indicator and a sequence of
+            // decimal digits.  If no sign is specified, "+" is assumed.
+            if (str.isEmpty()) {
+                return CanonicalValueViolation.variantOf("Empty string is not a valid decimal64 representation");
+            }
+
+            // Deal with optional sign
+            final boolean negative;
+            int idx;
+            switch (str.charAt(0)) {
+                case '-':
+                    negative = true;
+                    idx = 1;
+                    break;
+                case '+':
+                    negative = false;
+                    idx = 1;
+                    break;
+                default:
+                    negative = false;
+                    idx = 0;
+            }
+
+            // Sanity check length
+            if (idx == str.length()) {
+                return CanonicalValueViolation.variantOf("Missing digits after sign");
+            }
+
+            // Character limit, used for caching and cutting trailing zeroes
+            int limit = str.length() - 1;
+
+            // Skip any leading zeroes, but leave at least one
+            for (; idx < limit && str.charAt(idx) == '0'; idx++) {
+                final char ch = str.charAt(idx + 1);
+                if (ch < '0' || ch > '9') {
+                    break;
+                }
+            }
+
+            // Integer part and its length
+            int intLen = 0;
+            long intPart = 0;
+
+            for (; idx <= limit; idx++, intLen++) {
+                final char ch = str.charAt(idx);
+                if (ch == '.') {
+                    // Fractions are next
+                    break;
+                }
+                if (intLen == MAX_FRACTION_DIGITS) {
+                    return CanonicalValueViolation.variantOf(
+                        "Integer part is longer than " + MAX_FRACTION_DIGITS + " digits");
+                }
+
+                intPart = 10 * intPart + toInt(ch, idx);
+            }
+
+            if (idx > limit) {
+                // No fraction digits, we are done
+                return Variant.ofFirst(new Decimal64((byte)1, intPart, 0, negative));
+            }
+
+            // Bump index to skip over period and check the remainder
+            idx++;
+            if (idx > limit) {
+                return CanonicalValueViolation.variantOf("Value '" + str + "' is missing fraction digits");
+            }
+
+            // Trim trailing zeroes, if any
+            while (idx < limit && str.charAt(limit) == '0') {
+                limit--;
+            }
+
+            final int fracLimit = MAX_FRACTION_DIGITS - intLen;
+            byte fracLen = 0;
+            long fracPart = 0;
+            for (; idx <= limit; idx++, fracLen++) {
+                final char ch = str.charAt(idx);
+                if (fracLen == fracLimit) {
+                    return CanonicalValueViolation.variantOf("Fraction part longer than " + fracLimit + " digits");
+                }
+
+                fracPart = 10 * fracPart + toInt(ch, idx);
+            }
+
+            return Variant.ofFirst(new Decimal64(fracLen, intPart, fracPart, negative));
         }
     }
 
@@ -121,95 +212,8 @@ public class Decimal64 extends Number implements CanonicalValue<Decimal64> {
      * @throws NumberFormatException if the string does not contain a parsable decimal64.
      */
     public static Decimal64 valueOf(final String str) {
-        // https://tools.ietf.org/html/rfc6020#section-9.3.1
-        //
-        // A decimal64 value is lexically represented as an optional sign ("+"
-        // or "-"), followed by a sequence of decimal digits, optionally
-        // followed by a period ('.') as a decimal indicator and a sequence of
-        // decimal digits.  If no sign is specified, "+" is assumed.
-        if (str.isEmpty()) {
-            throw new NumberFormatException("Empty string is not a valid decimal64 representation");
-        }
-
-        // Deal with optional sign
-        final boolean negative;
-        int idx;
-        switch (str.charAt(0)) {
-            case '-':
-                negative = true;
-                idx = 1;
-                break;
-            case '+':
-                negative = false;
-                idx = 1;
-                break;
-            default:
-                negative = false;
-                idx = 0;
-        }
-
-        // Sanity check length
-        if (idx == str.length()) {
-            throw new NumberFormatException("Missing digits after sign");
-        }
-
-        // Character limit, used for caching and cutting trailing zeroes
-        int limit = str.length() - 1;
-
-        // Skip any leading zeroes, but leave at least one
-        for (; idx < limit && str.charAt(idx) == '0'; idx++) {
-            final char ch = str.charAt(idx + 1);
-            if (ch < '0' || ch > '9') {
-                break;
-            }
-        }
-
-        // Integer part and its length
-        int intLen = 0;
-        long intPart = 0;
-
-        for (; idx <= limit; idx++, intLen++) {
-            final char ch = str.charAt(idx);
-            if (ch == '.') {
-                // Fractions are next
-                break;
-            }
-            if (intLen == MAX_FRACTION_DIGITS) {
-                throw new NumberFormatException("Integer part is longer than " + MAX_FRACTION_DIGITS + " digits");
-            }
-
-            intPart = 10 * intPart + toInt(ch, idx);
-        }
-
-        if (idx > limit) {
-            // No fraction digits, we are done
-            return new Decimal64((byte)1, intPart, 0, negative);
-        }
-
-        // Bump index to skip over period and check the remainder
-        idx++;
-        if (idx > limit) {
-            throw new NumberFormatException("Value '" + str + "' is missing fraction digits");
-        }
-
-        // Trim trailing zeroes, if any
-        while (idx < limit && str.charAt(limit) == '0') {
-            limit--;
-        }
-
-        final int fracLimit = MAX_FRACTION_DIGITS - intLen;
-        byte fracLen = 0;
-        long fracPart = 0;
-        for (; idx <= limit; idx++, fracLen++) {
-            final char ch = str.charAt(idx);
-            if (fracLen == fracLimit) {
-                throw new NumberFormatException("Fraction part longer than " + fracLimit + " digits");
-            }
-
-            fracPart = 10 * fracPart + toInt(ch, idx);
-        }
-
-        return new Decimal64(fracLen, intPart, fracPart, negative);
+        return CheckedValue.ofVariant(SUPPORT.fromString(str), CanonicalValueViolation::toIllegalArgument)
+                .orElseThrow();
     }
 
     public final BigDecimal decimalValue() {
