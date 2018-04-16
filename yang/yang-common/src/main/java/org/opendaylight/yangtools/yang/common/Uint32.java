@@ -14,7 +14,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.primitives.UnsignedInteger;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated type for YANG's 'type uint32' type.
@@ -22,7 +23,20 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public class Uint32 extends Number implements Comparable<Uint32>, Immutable {
+@NonNullByDefault
+public class Uint32 extends Number implements CanonicalValue<Uint32> {
+    private static final class Support extends AbstractCanonicalValueSupport<Uint32> {
+        Support() {
+            super(Uint32.class);
+        }
+
+        @Override
+        public Uint32 fromString(final String str) {
+            return Uint32.valueOf(str);
+        }
+    }
+
+    private static final CanonicalValueSupport<Uint32> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
     private static final long MIN_VALUE = 0;
     private static final long MAX_VALUE = 0xffffffffL;
@@ -180,18 +194,28 @@ public class Uint32 extends Number implements Comparable<Uint32>, Immutable {
     }
 
     @Override
+    public final String toCanonicalString() {
+        return Integer.toUnsignedString(value);
+    }
+
+    @Override
+    public final CanonicalValueSupport<Uint32> support() {
+        return SUPPORT;
+    }
+
+    @Override
     public final int hashCode() {
         return Integer.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint32 && value == ((Uint32)obj).value;
     }
 
     @Override
     public final String toString() {
-        return Integer.toUnsignedString(value);
+        return toCanonicalString();
     }
 
     private Object readResolve() {

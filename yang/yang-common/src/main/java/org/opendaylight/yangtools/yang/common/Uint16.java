@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated type for YANG's 'type uint16' type.
@@ -21,7 +22,20 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
-public class Uint16 extends Number implements Comparable<Uint16>, Immutable {
+@NonNullByDefault
+public class Uint16 extends Number implements CanonicalValue<Uint16> {
+    private static final class Support extends AbstractCanonicalValueSupport<Uint16> {
+        Support() {
+            super(Uint16.class);
+        }
+
+        @Override
+        public Uint16 fromString(final String str) {
+            return Uint16.valueOf(str);
+        }
+    }
+
+    private static final CanonicalValueSupport<Uint16> SUPPORT = new Support();
     private static final long serialVersionUID = 1L;
     private static final int MIN_VALUE = 0;
     private static final int MAX_VALUE = 65535;
@@ -174,18 +188,28 @@ public class Uint16 extends Number implements Comparable<Uint16>, Immutable {
     }
 
     @Override
+    public final String toCanonicalString() {
+        return String.valueOf(intValue());
+    }
+
+    @Override
+    public final CanonicalValueSupport<Uint16> support() {
+        return SUPPORT;
+    }
+
+    @Override
     public final int hashCode() {
         return Short.hashCode(value);
     }
 
     @Override
-    public final boolean equals(final Object obj) {
+    public final boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Uint16 && value == ((Uint16)obj).value;
     }
 
     @Override
     public final String toString() {
-        return String.valueOf(intValue());
+        return toCanonicalString();
     }
 
     private Object readResolve() {
