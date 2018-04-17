@@ -9,6 +9,9 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import static org.w3c.dom.Node.ELEMENT_NODE;
+import static org.w3c.dom.Node.TEXT_NODE;
+
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
@@ -31,9 +34,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 
-import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
-import static org.w3c.dom.Node.ELEMENT_NODE;
-import static org.w3c.dom.Node.TEXT_NODE;
 
 /**
  * This implementation will create JSON output as output stream.
@@ -241,34 +241,69 @@ public final class JSONNormalizedNodeStreamWriter implements NormalizedNodeStrea
     }
 
     private void writeXmlNode(final Node node) throws IOException {
+        if (isArrayElement(node)) {
+            writeArrayContent(node);
+            return;
+        }
         final Element firstChildElement = getFirstChildElement(node);
         if (firstChildElement == null) {
             writeXmlValue(node);
-        } else if (ANYXML_ARRAY_ELEMENT_ID.equals(firstChildElement.getNodeName())) {
-            writer.beginArray();
-            writeArray(firstChildElement);
-            writer.endArray();
         } else {
-            writer.beginObject();
-            writeObject(firstChildElement);
-            writer.endObject();
+            writeObjectContent(firstChildElement);
         }
     }
 
-    private void writeArray(Node node) throws IOException {
-        while (node != null) {
-            if (ELEMENT_NODE == node.getNodeType()) {
-                writeXmlNode(node);
+    private void writeArrayContent(final Node node) throws IOException {
+        writer.beginArray();
+        handleArray(node);
+        writer.endArray();
+    }
+
+    private void writeObjectContent(final Element firstChildElement) throws IOException {
+        writer.beginObject();
+        writeObject(firstChildElement);
+        writer.endObject();
+    }
+
+    private static boolean isArrayElement(final Node node) {
+        if (ELEMENT_NODE == node.getNodeType()) {
+            final String nodeName = node.getNodeName();
+            for (Node nextNode = node.getNextSibling(); nextNode != null; nextNode = nextNode.getNextSibling()) {
+                if (ELEMENT_NODE == nextNode.getNodeType() && nodeName.equals(nextNode.getNodeName())) {
+                    return true;
+                }
             }
-            node = node.getNextSibling();
+        }
+        return false;
+    }
+
+    private void handleArray(final Node node) throws IOException {
+        final Element parentNode = (Element)node.getParentNode();
+        final NodeList elementsList = parentNode.getElementsByTagName(node.getNodeName());
+        for (int i = 0, length = elementsList.getLength(); i < length; i++) {
+            final Node arrayElement = elementsList.item(i);
+            final Element parent = (Element)arrayElement.getParentNode();
+            if (parentNode.isSameNode(parent)) {
+                final Element firstChildElement = getFirstChildElement(arrayElement);
+                if (firstChildElement != null) {
+                    writeObjectContent(firstChildElement);
+                } else {
+                    // It may be scalar
+                    writeXmlValue(arrayElement);
+                }
+            }
         }
     }
 
     private void writeObject(Node node) throws IOException {
+        String previousNodeName = "";
         while (node != null) {
             if (ELEMENT_NODE == node.getNodeType()) {
-                writer.name(node.getNodeName());
-                writeXmlNode(node);
+                if (!node.getNodeName().equals(previousNodeName)) {
+                    previousNodeName = node.getNodeName();
+                    writer.name(node.getNodeName());
+                    writeXmlNode(node);
+                }
             }
             node = node.getNextSibling();
         }
