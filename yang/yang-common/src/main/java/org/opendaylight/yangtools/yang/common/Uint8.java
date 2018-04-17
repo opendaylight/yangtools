@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Variant;
 
 /**
@@ -22,8 +23,9 @@ import org.opendaylight.yangtools.concepts.Variant;
 @Beta
 @NonNullByDefault
 public class Uint8 extends Number implements CanonicalValue<Uint8> {
-    private static final class Support extends AbstractCanonicalValueSupport<Uint8> {
-        Support() {
+    @MetaInfServices(value = CanonicalValueSupport.class)
+    public static final class Support extends AbstractCanonicalValueSupport<Uint8> {
+        public Support() {
             super(Uint8.class);
         }
 

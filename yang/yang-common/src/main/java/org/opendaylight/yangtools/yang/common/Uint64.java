@@ -17,6 +17,7 @@ import com.google.common.primitives.UnsignedLong;
 import java.math.BigInteger;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Variant;
 
 /**
@@ -27,8 +28,9 @@ import org.opendaylight.yangtools.concepts.Variant;
 @Beta
 @NonNullByDefault
 public class Uint64 extends Number implements CanonicalValue<Uint64> {
-    private static final class Support extends AbstractCanonicalValueSupport<Uint64> {
-        Support() {
+    @MetaInfServices(value = CanonicalValueSupport.class)
+    public static final class Support extends AbstractCanonicalValueSupport<Uint64> {
+        public Support() {
             super(Uint64.class);
         }
 
