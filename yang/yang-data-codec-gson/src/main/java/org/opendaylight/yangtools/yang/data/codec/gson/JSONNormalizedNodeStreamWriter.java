@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream.ANYXML_ARRAY_ELEMENT_ID;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
 
@@ -279,33 +278,74 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     private void writeXmlNode(final Node node) throws IOException {
         final Element firstChildElement = getFirstChildElement(node);
-        if (firstChildElement == null) {
+        if (isArrayElement(node)) {
+            writeArrayContent(node);
+        }
+        else if (firstChildElement == null) {
             writeXmlValue(node);
-        } else if (ANYXML_ARRAY_ELEMENT_ID.equals(firstChildElement.getNodeName())) {
-            writer.beginArray();
-            writeArray(firstChildElement);
-            writer.endArray();
         } else {
-            writer.beginObject();
-            writeObject(firstChildElement);
-            writer.endObject();
+            writeObjectContent(firstChildElement);
         }
     }
 
-    private void writeArray(Node node) throws IOException {
-        while (node != null) {
-            if (ELEMENT_NODE == node.getNodeType()) {
-                writeXmlNode(node);
+    private void writeArrayContent(final Node node) throws IOException {
+        writer.beginArray();
+        handleArray(node);
+        writer.endArray();
+    }
+
+    private void writeObjectContent(final Element firstChildElement)
+         throws IOException {
+        writer.beginObject();
+        writeObject(firstChildElement);
+        writer.endObject();
+    }
+
+    private boolean isArrayElement(final Node node) {
+        if ((ELEMENT_NODE == node.getNodeType())) {
+            String nodeName = node.getNodeName();
+            Node nextNode = node.getNextSibling();
+            while (nextNode != null) {
+                if (ELEMENT_NODE == nextNode.getNodeType()) {
+                    if (nextNode.getNodeName().equals(nodeName)) {
+                        return true;
+                    }
+                }
+                nextNode = nextNode.getNextSibling();
             }
-            node = node.getNextSibling();
+        }
+        return false;
+    }
+
+    private void handleArray(final Node node) throws IOException {
+        Element parentNode = (Element)node.getParentNode();
+        NodeList elementsList = parentNode.getElementsByTagName(node.getNodeName());
+        for (int i = 0; i < elementsList.getLength(); i++) {
+            Node arrayElement = elementsList.item(i);
+            Element parent = (Element)arrayElement.getParentNode();
+            if (parent != parentNode) {
+                continue;
+            }
+            Element firstChildElement = getFirstChildElement(arrayElement);
+            if (firstChildElement != null) {
+                writeObjectContent(firstChildElement);
+            }
+            else {
+                //It may be scalar
+                writeXmlValue(arrayElement);
+            }
         }
     }
 
     private void writeObject(Node node) throws IOException {
+        String previousNodeName = "";
         while (node != null) {
             if (ELEMENT_NODE == node.getNodeType()) {
-                writer.name(node.getNodeName());
-                writeXmlNode(node);
+                if (!node.getNodeName().equals(previousNodeName)) {
+                    previousNodeName = node.getNodeName();
+                    writer.name(node.getNodeName());
+                    writeXmlNode(node);
+                }
             }
             node = node.getNextSibling();
         }
