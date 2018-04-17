@@ -1,0 +1,188 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "1eda662d_def8bf5b",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 248,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "missing braces",
+      "range": {
+        "startLine": 246,
+        "startChar": 37,
+        "endLine": 248,
+        "endChar": 11
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b5d138bf_580370a8",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 249,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "wrong identation",
+      "range": {
+        "startLine": 249,
+        "startChar": 15,
+        "endLine": 249,
+        "endChar": 16
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c4879d37_631ebd60",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 252,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "please follow checkstyle rules",
+      "range": {
+        "startLine": 251,
+        "startChar": 9,
+        "endLine": 252,
+        "endChar": 8
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "6909f5fd_f2af8600",
+        "filename": "yang/yang-data-codec-gson/src/main/java/org/opendaylight/yangtools/yang/data/codec/gson/JSONNormalizedNodeStreamWriter.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 253,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "same as above, efactor to share codepaths",
+      "range": {
+        "startLine": 252,
+        "startChar": 16,
+        "endLine": 253,
+        "endChar": 36
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d7ecaa4_3fb8ab9e",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 37,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "checkstyle: no empty lines between groups, all groups must be alpha-sorted.",
+      "range": {
+        "startLine": 19,
+        "startChar": 0,
+        "endLine": 37,
+        "endChar": 29
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "c272745a_a380bacd",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "commented-out code",
+      "range": {
+        "startLine": 122,
+        "startChar": 7,
+        "endLine": 123,
+        "endChar": 42
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "ff4bf466_ef4d7db4",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 364,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "this is slow, use @BeforeClass",
+      "range": {
+        "startLine": 364,
+        "startChar": 38,
+        "endLine": 364,
+        "endChar": 70
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b04e8220_ca83b980",
+        "filename": "yang/yang-data-codec-gson/src/test/java/org/opendaylight/yangtools/yang/data/codec/gson/AnyXmlSupportTest.java",
+        "patchSetId": 7
+      },
+      "lineNbr": 368,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-17T00:16:09Z",
+      "side": 1,
+      "message": "No System.out, use logging",
+      "range": {
+        "startLine": 368,
+        "startChar": 12,
+        "endLine": 368,
+        "endChar": 30
+      },
+      "revId": "35326db93f6d14e41e66fc50efea42254b7a395b",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
