@@ -52,13 +52,13 @@ public class EffectiveSchemaContextEmitterTest {
 
             try (OutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream)) {
-                writeModuleToOutputStream(schema, module, bufferedOutputStream, false);
-                final String output = byteArrayOutputStream.toString();
-                assertNotNull(output);
-                assertNotEquals(0, output.length());
+                    writeModuleToOutputStream(schema, module, bufferedOutputStream, false);
+                    final String output = byteArrayOutputStream.toString();
+                    assertNotNull(output);
+                    assertNotEquals(0, output.length());
 
-                final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin-effective-emitter", module);
-                assertXMLEquals(module.getName(), doc, output);
+                    final Document doc = YinExportTestUtils.loadDocument("/bugs/bug2444/yin-effective-emitter", module);
+                    assertXMLEquals(module.getName(), doc, output);
                 }
             }
         }
@@ -81,7 +81,7 @@ public class EffectiveSchemaContextEmitterTest {
         final YangModuleWriter yangSchemaWriter = SchemaToStatementWriterAdaptor.from(statementWriter);
         final Map<QName, StatementDefinition> extensions = ExtensionStatement.mapFrom(ctx.getExtensions());
         new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions, module.getYangVersion(), emitInstantiated)
-        .emitModule(module);
+            .emitModule(module);
     }
 
     private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {

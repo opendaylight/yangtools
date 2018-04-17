@@ -202,7 +202,7 @@ abstract class SchemaContextEmitter {
              * use DeclaredSchemaContextEmitter
              */
             new DeclaredSchemaContextEmitter(yangSchemaWriter, extensions, module.getYangVersion())
-            .emitModule(((EffectiveStatement<?, ?>) module).getDeclared());
+                .emitModule(((EffectiveStatement<?, ?>) module).getDeclared());
         } else {
             /*
              * if we don't have access to declared form of supplied module or we
@@ -210,7 +210,7 @@ abstract class SchemaContextEmitter {
              * by uses or augment), we use EffectiveSchemaContextEmitter.
              */
             new EffectiveSchemaContextEmitter(yangSchemaWriter, extensions, module.getYangVersion(), emitInstantiated)
-            .emitModule(module);
+                .emitModule(module);
         }
     }
 
@@ -1390,8 +1390,8 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitBase(final QName qName) {
-            super.writer.startBaseNode(qName);
+        private void emitBase(final QName qname) {
+            super.writer.startBaseNode(qname);
             super.writer.endNode();
         }
 

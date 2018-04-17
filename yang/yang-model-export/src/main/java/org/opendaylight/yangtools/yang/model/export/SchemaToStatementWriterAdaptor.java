@@ -116,15 +116,15 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startFeatureNode(final QName qName) {
+    public void startFeatureNode(final QName qname) {
         writer.startStatement(YangStmtMapping.FEATURE);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startExtensionNode(final QName qName) {
+    public void startExtensionNode(final QName qname) {
         writer.startStatement(YangStmtMapping.EXTENSION);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
@@ -140,33 +140,33 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startTypeNode(final QName qName) {
+    public void startTypeNode(final QName qname) {
         writer.startStatement(YangStmtMapping.TYPE);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startLeafNode(final QName qName) {
+    public void startLeafNode(final QName qname) {
         writer.startStatement(YangStmtMapping.LEAF);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startContainerNode(final QName qName) {
+    public void startContainerNode(final QName qname) {
         writer.startStatement(YangStmtMapping.CONTAINER);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startGroupingNode(final QName qName) {
+    public void startGroupingNode(final QName qname) {
         writer.startStatement(YangStmtMapping.GROUPING);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startRpcNode(final QName qName) {
+    public void startRpcNode(final QName qname) {
         writer.startStatement(YangStmtMapping.RPC);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
@@ -180,51 +180,51 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startLeafListNode(final QName qName) {
+    public void startLeafListNode(final QName qname) {
         writer.startStatement(YangStmtMapping.LEAF_LIST);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startListNode(final QName qName) {
+    public void startListNode(final QName qname) {
         writer.startStatement(YangStmtMapping.LIST);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startChoiceNode(final QName qName) {
+    public void startChoiceNode(final QName qname) {
         writer.startStatement(YangStmtMapping.CHOICE);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startCaseNode(final QName qName) {
+    public void startCaseNode(final QName qname) {
         writer.startStatement(YangStmtMapping.CASE);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startNotificationNode(final QName qName) {
+    public void startNotificationNode(final QName qname) {
         writer.startStatement(YangStmtMapping.NOTIFICATION);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startIdentityNode(final QName qName) {
+    public void startIdentityNode(final QName qname) {
         writer.startStatement(YangStmtMapping.IDENTITY);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startBaseNode(final QName qName) {
+    public void startBaseNode(final QName qname) {
         writer.startStatement(YangStmtMapping.BASE);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startTypedefNode(final QName qName) {
+    public void startTypedefNode(final QName qname) {
         writer.startStatement(YangStmtMapping.TYPEDEF);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
@@ -384,9 +384,9 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startAnyxmlNode(final QName qName) {
+    public void startAnyxmlNode(final QName qname) {
         writer.startStatement(YangStmtMapping.ANYXML);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
@@ -413,15 +413,15 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     }
 
     @Override
-    public void startAnydataNode(final QName qName) {
+    public void startAnydataNode(final QName qname) {
         writer.startStatement(YangStmtMapping.ANYDATA);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
-    public void startActionNode(final QName qName) {
+    public void startActionNode(final QName qname) {
         writer.startStatement(YangStmtMapping.ACTION);
-        writer.writeArgument(qName);
+        writer.writeArgument(qname);
     }
 
     @Override
