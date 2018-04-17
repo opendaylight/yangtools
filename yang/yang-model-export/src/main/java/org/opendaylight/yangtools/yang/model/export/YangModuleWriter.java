@@ -21,226 +21,225 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
 @Deprecated
 interface YangModuleWriter {
-
     void endNode();
 
-    void startModuleNode(String identifier);
+    void startActionNode(QName qname);
 
-    void startOrganizationNode(String input);
+    void startActionNode(String rawArgument);
 
-    void startContactNode(String input);
+    void startAnydataNode(QName qname);
 
-    void startDescriptionNode(String input);
+    void startAnydataNode(String rawArgument);
 
-    void startUnitsNode(String input);
+    void startAnyxmlNode(QName qname);
 
-    void startYangVersionNode(String input);
-
-    void startNamespaceNode(URI uri);
-
-    void startKeyNode(List<QName> keyList);
-
-    void startPrefixNode(String input);
-
-    void startFeatureNode(QName qName);
-
-    void startExtensionNode(QName qName);
+    void startAnyxmlNode(String rawArgument);
 
     void startArgumentNode(String input);
 
-    void startStatusNode(Status status);
+    void startAugmentNode(SchemaPath targetPath);
 
-    void startTypeNode(QName qName);
+    void startAugmentNode(String rawArgument);
 
-    void startLeafNode(QName qName);
+    void startBaseNode(QName qname);
 
-    void startContainerNode(QName qName);
+    void startBaseNode(String rawArgument);
 
-    void startGroupingNode(QName qName);
-
-    void startRpcNode(QName qName);
-
-    void startInputNode();
-
-    void startOutputNode();
-
-    void startLeafListNode(QName qName);
-
-    void startListNode(QName qName);
-
-    void startChoiceNode(QName qName);
-
-    void startCaseNode(QName qName);
-
-    void startNotificationNode(QName qName);
-
-    void startIdentityNode(QName qName);
-
-    void startBaseNode(QName qName);
-
-    void startTypedefNode(QName qName);
-
-    void startRevisionNode(Revision date);
-
-    void startDefaultNode(String string);
-
-    void startMustNode(RevisionAwareXPath xpath);
-
-    void startErrorMessageNode(String input);
-
-    void startErrorAppTagNode(String input);
-
-    void startPatternNode(String regularExpression);
-
-    void startValueNode(Integer integer);
-
-    void startEnumNode(String name);
-
-    void startRequireInstanceNode(boolean require);
-
-    void startPathNode(RevisionAwareXPath revisionAwareXPath);
+    void startBelongsToNode(String rawArgument);
 
     void startBitNode(String name);
 
-    void startPositionNode(UnsignedInteger position);
+    void startCaseNode(QName qname);
 
-    void startReferenceNode(String input);
+    void startCaseNode(String rawArgument);
 
-    void startRevisionDateNode(Revision date);
+    void startChoiceNode(QName qname);
 
-    void startImportNode(String moduleName);
-
-    void startUsesNode(QName groupingName);
-
-    void startAugmentNode(SchemaPath targetPath);
+    void startChoiceNode(String rawArgument);
 
     void startConfigNode(boolean config);
 
+    void startConfigNode(String rawArgument);
+
+    void startContactNode(String input);
+
+    void startContainerNode(QName qname);
+
+    void startContainerNode(String rawArgument);
+
+    void startDefaultNode(String string);
+
+    void startDescriptionNode(String input);
+
+    void startDeviateNode(String rawArgument);
+
+    void startDeviationNode(String rawArgument);
+
+    void startEnumNode(String name);
+
+    void startErrorAppTagNode(String input);
+
+    void startErrorMessageNode(String input);
+
+    void startExtensionNode(QName qname);
+
+    void startExtensionNode(String rawArgument);
+
+    void startFeatureNode(QName qname);
+
+    void startFeatureNode(String rawArgument);
+
+    void startFractionDigitsNode(Integer fractionDigits);
+
+    void startFractionDigitsNode(String rawArgument);
+
+    void startGroupingNode(QName qname);
+
+    void startGroupingNode(String rawArgument);
+
+    void startIdentityNode(QName qname);
+
+    void startIdentityNode(String rawArgument);
+
+    void startIfFeatureNode(String rawArgument);
+
+    void startImportNode(String moduleName);
+
+    void startIncludeNode(String rawArgument);
+
+    void startInputNode();
+
+    void startKeyNode(List<QName> keyList);
+
+    void startKeyNode(String rawArgument);
+
+    void startLeafListNode(QName qname);
+
+    void startLeafListNode(String rawArgument);
+
+    void startLeafNode(QName qname);
+
+    void startLeafNode(String rawArgument);
+
     void startLengthNode(String lengthString);
 
-    void startMaxElementsNode(Integer max);
+    void startListNode(QName qname);
 
-    void startMinElementsNode(Integer min);
-
-    void startPresenceNode(boolean presence);
-
-    void startOrderedByNode(String ordering);
-
-    void startRangeNode(String rangeString);
-
-    void startRefineNode(SchemaPath path);
+    void startListNode(String rawArgument);
 
     void startMandatoryNode(boolean mandatory);
 
-    void startAnyxmlNode(QName qName);
+    void startMandatoryNode(String rawArgument);
+
+    void startMaxElementsNode(Integer max);
+
+    void startMaxElementsNode(String rawArgument);
+
+    void startMinElementsNode(Integer min);
+
+    void startMinElementsNode(String rawArgument);
+
+    void startModifierNode(ModifierKind modifier);
+
+    void startModifierNode(String rawArgument);
+
+    void startModuleNode(String identifier);
+
+    void startMustNode(RevisionAwareXPath xpath);
+
+    void startMustNode(String rawArgument);
+
+    void startNamespaceNode(URI uri);
+
+    void startNotificationNode(QName qname);
+
+    void startNotificationNode(String rawArgument);
+
+    void startOrderedByNode(String ordering);
+
+    void startOrganizationNode(String input);
+
+    void startOutputNode();
+
+    void startPathNode(RevisionAwareXPath revisionAwareXPath);
+
+    void startPathNode(String rawArgument);
+
+    void startPatternNode(String regularExpression);
+
+    void startPositionNode(String rawArgument);
+
+    void startPositionNode(UnsignedInteger position);
+
+    void startPrefixNode(String input);
+
+    void startPresenceNode(boolean presence);
+
+    void startPresenceNode(String rawArgument);
+
+    void startRangeNode(String rangeString);
+
+    void startReferenceNode(String input);
+
+    void startRefineNode(SchemaPath path);
+
+    void startRefineNode(String rawArgument);
+
+    void startRequireInstanceNode(boolean require);
+
+    void startRequireInstanceNode(String rawArgument);
+
+    void startRevisionDateNode(Revision date);
+
+    void startRevisionDateNode(String rawArgument);
+
+    void startRevisionNode(Revision date);
+
+    void startRevisionNode(String rawArgument);
+
+    void startRpcNode(QName qname);
+
+    void startRpcNode(String rawArgument);
+
+    void startStatusNode(Status status);
+
+    void startStatusNode(String rawArgument);
+
+    void startSubmoduleNode(String rawArgument);
+
+    void startTypedefNode(QName qname);
+
+    void startTypedefNode(String rawArgument);
+
+    void startTypeNode(QName qname);
+
+    void startTypeNode(String rawArgument);
+
+    void startUniqueNode(String rawArgument);
+
+    void startUniqueNode(UniqueConstraint uniqueConstraint);
+
+    void startUnitsNode(String input);
 
     void startUnknownNode(StatementDefinition def);
 
     void startUnknownNode(StatementDefinition def, String nodeParameter);
 
-    void startFractionDigitsNode(Integer fractionDigits);
-
-    void startYinElementNode(boolean yinElement);
-
-    void startWhenNode(RevisionAwareXPath revisionAwareXPath);
-
-    void startAnydataNode(QName qName);
-
-    void startActionNode(QName qName);
-
-    void startModifierNode(ModifierKind modifier);
-
-    void startUniqueNode(UniqueConstraint uniqueConstraint);
-
-    void startRevisionNode(String rawArgument);
-
-    void startRevisionDateNode(String rawArgument);
-
-    void startExtensionNode(String rawArgument);
-
-    void startBaseNode(String rawArgument);
-
-    void startFeatureNode(String rawArgument);
-
-    void startYinElementNode(String rawArgument);
-
-    void startIdentityNode(String rawArgument);
-
-    void startTypedefNode(String rawArgument);
-
-    void startRpcNode(String rawArgument);
-
-    void startTypeNode(String rawArgument);
-
-    void startContainerNode(String rawArgument);
-
-    void startPresenceNode(String rawArgument);
-
-    void startStatusNode(String rawArgument);
-
-    void startConfigNode(String rawArgument);
-
-    void startLeafNode(String rawArgument);
-
-    void startWhenNode(String rawArgument);
-
-    void startLeafListNode(String rawArgument);
-
-    void startMustNode(String rawArgument);
-
-    void startMinElementsNode(String rawArgument);
-
-    void startMaxElementsNode(String rawArgument);
-
-    void startListNode(String rawArgument);
-
-    void startKeyNode(String rawArgument);
-
-    void startUniqueNode(String rawArgument);
-
-    void startActionNode(String rawArgument);
-
-    void startChoiceNode(String rawArgument);
-
-    void startMandatoryNode(String rawArgument);
-
-    void startAnyxmlNode(String rawArgument);
-
-    void startCaseNode(String rawArgument);
-
-    void startAnydataNode(String rawArgument);
-
-    void startGroupingNode(String rawArgument);
+    void startUsesNode(QName groupingName);
 
     void startUsesNode(String rawArgument);
 
-    void startRefineNode(String rawArgument);
-
-    void startAugmentNode(String rawArgument);
-
-    void startNotificationNode(String rawArgument);
+    void startValueNode(Integer integer);
 
     void startValueNode(String rawArgument);
 
-    void startModifierNode(String rawArgument);
+    void startWhenNode(RevisionAwareXPath revisionAwareXPath);
 
-    void startFractionDigitsNode(String rawArgument);
+    void startWhenNode(String rawArgument);
 
-    void startPathNode(String rawArgument);
+    void startYangVersionNode(String input);
 
-    void startRequireInstanceNode(String rawArgument);
+    void startYinElementNode(boolean yinElement);
 
-    void startPositionNode(String rawArgument);
-
-    void startBelongsToNode(String rawArgument);
-
-    void startIfFeatureNode(String rawArgument);
-
-    void startSubmoduleNode(String rawArgument);
-
-    void startIncludeNode(String rawArgument);
-
-    void startDeviationNode(String rawArgument);
-
-    void startDeviateNode(String rawArgument);
+    void startYinElementNode(String rawArgument);
 }

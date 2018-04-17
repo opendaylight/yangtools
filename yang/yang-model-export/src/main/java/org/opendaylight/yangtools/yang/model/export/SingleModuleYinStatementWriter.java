@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 @Deprecated
 @Beta
 @NotThreadSafe
-class SingleModuleYinStatementWriter implements StatementTextWriter {
+final class SingleModuleYinStatementWriter implements StatementTextWriter {
 
     private final XMLStreamWriter writer;
     private final URI currentModuleNs;
@@ -46,13 +46,14 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     private void initializeYinNamespaceInXml() {
-       try {
+        try {
             final String defaultNs = writer.getNamespaceContext().getNamespaceURI(XMLConstants.NULL_NS_URI);
             if (defaultNs == null) {
                 writer.setDefaultNamespace(YangConstants.RFC6020_YIN_NAMESPACE.toString());
             } else if (!YangConstants.RFC6020_YIN_NAMESPACE.toString().equals(defaultNs)) {
                 // FIXME: Implement support for exporting YIN as part of other XML document.
-                throw new UnsupportedOperationException("Not implemented support for nesting YIN in different XML element.");
+                throw new UnsupportedOperationException(
+                        "Not implemented support for nesting YIN in different XML element.");
             }
         } catch (final XMLStreamException e) {
             throw new IllegalStateException(e);
@@ -181,7 +182,7 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         String prefix = writer.getNamespaceContext().getPrefix(namespace.toString());
         if (prefix == null) {
             // FIXME: declare prefix
-            prefix =prefixToNamespace.inverse().get(namespace);
+            prefix = prefixToNamespace.inverse().get(namespace);
         }
         if (prefix == null) {
             throw new IllegalArgumentException("Namespace " + namespace + " is not bound to imported prefixes.");
@@ -208,8 +209,8 @@ class SingleModuleYinStatementWriter implements StatementTextWriter {
         writer.writeEndElement();
     }
 
-    private void writeXmlArgument(final QName qName, final String value) throws XMLStreamException {
-        writer.writeAttribute(qName.getNamespace().toString(), qName.getLocalName(), value);
+    private void writeXmlArgument(final QName qname, final String value) throws XMLStreamException {
+        writer.writeAttribute(qname.getNamespace().toString(), qname.getLocalName(), value);
     }
 
     private void writeStartXmlElement(final QName name) throws XMLStreamException {

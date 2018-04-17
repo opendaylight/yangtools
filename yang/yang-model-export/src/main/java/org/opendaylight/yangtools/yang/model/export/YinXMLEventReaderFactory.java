@@ -90,7 +90,7 @@ public final class YinXMLEventReaderFactory {
      * @throws NullPointerException if module is null
      * @throws IllegalArgumentException if the specified module does not expose declared model
      */
-    public final XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module) {
+    public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module) {
         final ModuleStatement declared = module.getDeclared();
         checkArgument(declared != null, "Module %s does not expose declared model", module);
 
@@ -106,7 +106,7 @@ public final class YinXMLEventReaderFactory {
      * @throws NullPointerException if any argument is null
      * @throws IllegalArgumentException if the specified submodule does not expose declared model
      */
-    public final XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module,
+    public XMLEventReader createXMLEventReader(final ModuleEffectiveStatement module,
             final SubmoduleEffectiveStatement submodule) {
         final SubmoduleStatement declared = submodule.getDeclared();
         checkArgument(declared != null, "Submodule %s does not expose declared model", submodule);
