@@ -17,7 +17,6 @@ import java.io.ByteArrayOutputStream;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug5531Test {
@@ -33,9 +32,9 @@ public class Bug5531Test {
         BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         // write small module of size less than 8kB
-       for (Module module : schema.getModules()) {
-           YinExportUtils.writeModuleToOutputStream(schema, module, bufferedOutputStream);
-       }
+        for (Module module : schema.getModules()) {
+            YinExportUtils.writeModuleToOutputStream(schema, module, bufferedOutputStream);
+        }
 
         String output = byteArrayOutputStream.toString();
 

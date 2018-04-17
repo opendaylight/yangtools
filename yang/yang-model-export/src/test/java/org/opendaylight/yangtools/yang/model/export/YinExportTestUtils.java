@@ -27,7 +27,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-public class YinExportTestUtils {
+public final class YinExportTestUtils {
 
     private YinExportTestUtils() {
         throw new UnsupportedOperationException("Utility class");

@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.export.YinExportUtils;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug6856Test {
