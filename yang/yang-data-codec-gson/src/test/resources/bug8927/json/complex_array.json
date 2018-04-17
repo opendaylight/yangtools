@@ -1,0 +1,23 @@
+{
+    "bug8927:foo": {
+        "alarm-information": {
+            "alarm-detail": [{
+                "alarm-time": "2017-08-02 19:03:44 UTC",
+                "alarm-class": "Minor",
+                "alarm-description": [{
+                    "test": 123
+                }, {
+                "test": 456
+                }],
+                "alarm-short-description": "gnf-creation",
+                "alarm-type": "License"
+            }, {
+            "alarm-time": "2017-07-25 16:04:31 UTC",
+            "alarm-class": ["Minor", "Minor1"],
+            "alarm-description": "VMHost RE 0 host application failed",
+            "alarm-short-description": "VMHost RE 0 host ap",
+            "alarm-type": "Chassis"
+            }]
+        }
+    }
+}

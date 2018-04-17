@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<root xmlns="complexjson">
+    <cont1 xmlns="ns:complex:json" >
+        <lf12-any>true</lf12-any>
+        <lf12-any>
+            <baz>120</baz>
+            <baz>str-val</baz>
+            <baz>false</baz>
+        </lf12-any>
+        <lf12-any>
+            <foo />
+        </lf12-any>
+        <lf13-any>
+            <anyxml-array-a>
+                <foo>true</foo>
+            </anyxml-array-a>
+            <anyxml-array-a>10</anyxml-array-a>
+            <anyxml-array-a>
+                <bar>false</bar>
+            </anyxml-array-a>
+            <anyxml-array-b>1</anyxml-array-b>
+            <anyxml-array-b>2</anyxml-array-b>
+            <anyxml-array-b>4</anyxml-array-b>
+            <anyxml-array-b>5</anyxml-array-b>
+            <anyxml-array-b>7</anyxml-array-b>
+        </lf13-any>
+        <lf14-any>
+            <anyxml-object-a>
+                <data-a1>10</data-a1>
+                <data-a2>11</data-a2>
+            </anyxml-object-a>
+            <anyxml-object-b>
+                <child-object-b1>
+                    <data-b1>5.5</data-b1>
+                </child-object-b1>
+                <child-object-b2>
+                    <data-b2>b2-val</data-b2>
+                </child-object-b2>
+            </anyxml-object-b>
+        </lf14-any>
+    </cont1>
+    <root>

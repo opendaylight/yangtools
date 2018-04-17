@@ -1,0 +1,11 @@
+{
+    "bug8927:foo": {
+        "alarm-information": {
+            "alarm-summary": {
+                "active-alarm-count": ""
+            },
+            "elmt": [1, 2, 3],
+            "test": 123
+        }
+    }
+}
