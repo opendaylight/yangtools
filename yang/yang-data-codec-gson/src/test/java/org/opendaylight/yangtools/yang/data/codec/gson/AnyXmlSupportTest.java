@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static org.junit.Assert.assertEquals;
@@ -119,7 +118,6 @@ public class AnyXmlSupportTest {
         final DOMSource Lf12AnyActualValue = getParsedAnyXmlValue(transformedInput, LF12_ANY);
         final DOMSource Lf12AnyExpectedValue = createLf12AnyXmlCompositeValue("ns:complex:json", "lf12-any");
         verifyTransformedAnyXmlNodeValue(Lf12AnyExpectedValue, Lf12AnyActualValue);
-
         // lf13-any check
         final DOMSource Lf13AnyActualValue = getParsedAnyXmlValue(transformedInput, LF13_ANY);
         final DOMSource Lf13AnyExpectedValue = createLf13AnyXmlCompositeValue("ns:complex:json", "lf13-any");
@@ -135,15 +133,37 @@ public class AnyXmlSupportTest {
                 SchemaPath.ROOT);
 
         final JsonParser parser = new JsonParser();
-        final JsonElement expected = parser.parse(inputJson);
+        final String expectedJson = loadTextFile("/bug8927/json/composite.json");
+        final JsonElement expected = parser.parse(expectedJson);
         final JsonElement actual = parser.parse(serializationResult);
         assertTrue(expected.equals(actual));
     }
 
     @Test
-    public void bug8927Test() throws Exception {
+    public void bug8927TestComplexArrayWithOthers() throws Exception {
+        executebug8927Test("/bug8927/xml/complex_array_with_other_elements.xml",
+            "/bug8927/json/complex_array_with_other_elements.json");
+    }
+
+    @Test
+    public void bug8927TestComplexArray() throws Exception {
+        executebug8927Test("/bug8927/xml/complex_array.xml", "/bug8927/json/complex_array.json");
+    }
+
+    @Test
+    public void bug8927TestScalarArrayWithOthers() throws Exception {
+        executebug8927Test("/bug8927/xml/scalar_array_with_other_elements.xml",
+            "/bug8927/json/scalar_array_with_other_elements.json");
+    }
+
+    @Test
+    public void bug8927TestScalarArray() throws Exception {
+        executebug8927Test("/bug8927/xml/scalar_array.xml", "/bug8927/json/scalar_array.json");
+    }
+
+    private void executebug8927Test(final String inputXmlFile, final String expectedJsonFile) throws Exception {
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class
-                .getResourceAsStream("/bug8927/xml/input.xml");
+                .getResourceAsStream(inputXmlFile);
         final NormalizedNodeResult result = new NormalizedNodeResult();
         loadXmlToNormalizedNodes(resourceAsStream, result, schemaContext);
 
@@ -154,12 +174,10 @@ public class AnyXmlSupportTest {
                 .getChild(new NodeIdentifier(QName.create("bug8927.test", "2017-01-01", "foo")));
         assertTrue(data.isPresent());
         final String jsonOutput = normalizedNodesToJsonString(data.get(), schemaContext, SchemaPath.ROOT);
-
         final JsonParser parser = new JsonParser();
         final JsonElement expextedJson = parser
-                .parse(new FileReader(new File(getClass().getResource("/bug8927/json/expected.json").toURI())));
+                .parse(new FileReader(new File(getClass().getResource(expectedJsonFile).toURI())));
         final JsonElement serializedJson = parser.parse(jsonOutput);
-
         assertEquals(expextedJson, serializedJson);
     }
 
