@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.data.api;
 
 import java.util.Arrays;
 
-// TODO rename to ModifyOperation
-
 /**
- * See https://tools.ietf.org/html/rfc6241#section-7.2.
+ * Edit operation, as defined by <a href="https://tools.ietf.org/html/rfc6241#section-7.2">RFC6241 section 7.2</a>.
  */
+// FIXME: 3.0.0: rename to EditOperation, consider remodeling to take into account MERGE/REPLACE/NONE versus
+//               CREATE/DELETE/REMOVE.
 public enum ModifyAction {
     MERGE(true), REPLACE(true), CREATE(false), DELETE(false), REMOVE(false), NONE(true, false);
 
@@ -49,6 +49,12 @@ public enum ModifyAction {
         this(asDefaultPermitted, true);
     }
 
+    /**
+     * Check if this operation is a candidate for {@code default-operation} argument.
+     *
+     * @return True if this operation can be used as {@code default-operation}.
+     */
+    // FIXME: 3.0.0: consider moving this somewhere else, or renaming it
     public boolean isAsDefaultPermitted() {
         return asDefaultPermitted;
     }
