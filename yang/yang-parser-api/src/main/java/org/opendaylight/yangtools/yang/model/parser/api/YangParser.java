@@ -57,7 +57,7 @@ public interface YangParser {
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    YangParser addSource(final SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    YangParser addSource(SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException;
 
     /**
      * Add main sources. All main sources are present in resulting SchemaContext.
@@ -123,7 +123,7 @@ public interface YangParser {
      *            Set of supported features in the final SchemaContext.
      *            If the set is empty, no features encountered will be supported.
      */
-    YangParser setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures);
+    YangParser setSupportedFeatures(@Nonnull Set<QName> supportedFeatures);
 
     /**
      * Set YANG modules which can be deviated by specified modules during the parsing process.
@@ -158,7 +158,7 @@ public interface YangParser {
     }
 
     /**
-     * Build effective {@link SchemaContext}
+     * Build effective {@link SchemaContext}.
      *
      * @return An effective schema context comprised of configured models.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
