@@ -74,7 +74,12 @@ public final class StringValueObjectFactory<T> {
             throw new IllegalArgumentException(String.format("%s does not have a copy constructor", clazz), e);
         }
 
-        final Field f = findValueField(clazz);
+        final Field f;
+        try {
+            f = clazz.getDeclaredField("_value");
+        } catch (NoSuchFieldException e) {
+            throw new IllegalArgumentException(String.format("%s does not have required internal field", clazz), e);
+        }
         f.setAccessible(true);
 
         final StringValueObjectFactory<T> ret;
@@ -108,24 +113,6 @@ public final class StringValueObjectFactory<T> {
         }
 
         return false;
-    }
-
-    private static Field findValueField(final Class<?> orig) {
-        NoSuchFieldException cause = null;
-        Class<?> clazz = orig;
-        do {
-            try {
-                return clazz.getDeclaredField("_value");
-            } catch (NoSuchFieldException e) {
-                if (cause != null) {
-                    e.addSuppressed(cause);
-                }
-                cause = e;
-            }
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
-
-        throw new IllegalArgumentException(orig + " nor its superclasses define required internal field _value", cause);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
