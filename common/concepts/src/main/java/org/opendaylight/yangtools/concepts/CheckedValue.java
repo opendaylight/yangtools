@@ -10,6 +10,11 @@ package org.opendaylight.yangtools.concepts;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.util.concurrent.FluentFuture;
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.SettableFuture;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -168,6 +173,12 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
         return isFirst() ? first() : supplier.get();
     }
 
+    /**
+     * Return contained value if present or throw the exception alternative.
+     *
+     * @return Contained value
+     * @throws E When there is no contained value
+     */
     public <X extends Throwable> T orElseThrow() throws E {
         if (isFirst()) {
             return first();
@@ -175,6 +186,14 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
         throw second();
     }
 
+    /**
+     * Return contained value if present or throw the exception alternative mapped through provided mapper.
+     *
+     * @param exceptionMapper Exception mapper
+     * @return Contained value
+     * @throws NullPointerException if {@code exceptionMapper} is null
+     * @throws X When there is no contained value
+     */
     public <X extends Throwable> T orElseThrow(final Function<E, X> exceptionMapper) throws X {
         requireNonNull(exceptionMapper);
         if (isFirst()) {
@@ -183,11 +202,73 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
         throw exceptionMapper.apply(second());
     }
 
+    /**
+     * Return contained value if present or throw the exception supplied by supplier.
+     *
+     * @param supplier Exception supplier
+     * @return Contained value
+     * @throws NullPointerException if {@code exceptionMapper} is null
+     * @throws X When there is no contained value
+     */
     public <X extends Throwable> T orElseThrow(final Supplier<X> supplier) throws X {
         requireNonNull(supplier);
         if (isFirst()) {
             return first();
         }
         throw supplier.get();
+    }
+
+    /**
+     * Complete target {@link CompletableFuture} either successfully or exceptionally based on the state of this object.
+     *
+     * @param future Future to complete
+     * @return True if this call has transitioned the future to a completed state, false otherwise.
+     * @throws NullPointerException if {code future} is null
+     */
+    public boolean completeFuture(final CompletableFuture<T> future) {
+        return isFirst() ? future.complete(first()) : future.completeExceptionally(second());
+    }
+
+    /**
+     * Complete target {@link SettableFuture} either successfully or exceptionally based on the state of this object.
+     *
+     * @param future Future to complete
+     * @return True if this call has transitioned the future to a completed state, false otherwise.
+     * @throws NullPointerException if {code future} is null
+     */
+    public boolean completeFuture(final SettableFuture<T> future) {
+        return isFirst() ? future.set(first()) : future.setException(second());
+    }
+
+    /**
+     * Transform this object into an immediately-completed {@link CompletableFuture}. The future will be successful
+     * if this object has a contained value or unsuccessful if this objects contains an exception.
+     *
+     * @return A {@link CompletableFuture}.
+     */
+    public CompletableFuture<T> toCompletableFuture() {
+        if (isFirst()) {
+            return CompletableFuture.completedFuture(first());
+        }
+        // FIXME: Java 9: use CompletableFuture.failedFuture()
+        final CompletableFuture<T> future = new CompletableFuture<>();
+        future.completeExceptionally(second());
+        return future;
+    }
+
+    /**
+     * Transform this object into an immediately-completed {@link FluentFuture}. The future will be successful
+     * if this object has a contained value or unsuccessful if this objects contains an exception.
+     *
+     * @return A {@link FluentFuture}.
+     */
+    public FluentFuture<T> toFluentFuture() {
+        final ListenableFuture<T> future;
+        if (isFirst()) {
+            future = Futures.immediateFuture(first());
+        } else {
+            future = Futures.immediateFailedFuture(second());
+        }
+        return FluentFuture.from(future);
     }
 }
