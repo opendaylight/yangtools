@@ -23,6 +23,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -37,7 +38,6 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     private static final String GET_IMPLEMENTED_INTERFACE = "getImplementedInterface";
     private static final String TO_STRING = "toString";
     private static final String EQUALS = "equals";
-    private static final String GET_AUGMENTATION = "getAugmentation";
     private static final String HASHCODE = "hashCode";
     private static final String AUGMENTATIONS = "augmentations";
     private static final Object NULL_VALUE = new Object();
@@ -69,7 +69,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                 return getAugmentationsImpl();
             }
             return getBindingData(method);
-        } else if (GET_AUGMENTATION.equals(method.getName())) {
+        } else if (BindingMapping.AUGMENTABLE_AUGMENTATION_NAME.equals(method.getName())) {
             return getAugmentationImpl((Class<?>) args[0]);
         } else if (EQUALS.equals(method.getName())) {
             return bindingEquals(args[0]);

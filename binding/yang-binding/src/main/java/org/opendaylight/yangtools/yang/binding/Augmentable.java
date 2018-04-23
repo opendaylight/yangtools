@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Augmentable (extensible) object which could carry additional data defined by a third-party extension, without
  * introducing conflict between various extension.
@@ -28,5 +30,5 @@ public interface Augmentable<T> {
      *            Type of augmentation to be returned.
      * @return instance of augmentation.
      */
-    <E extends Augmentation<T>> E getAugmentation(Class<E> augmentationType);
+    <E extends Augmentation<T>> @Nullable E augmentation(Class<E> augmentationType);
 }

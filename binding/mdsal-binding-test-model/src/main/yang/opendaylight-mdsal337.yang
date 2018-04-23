@@ -10,5 +10,11 @@ module opendaylight-mdsal337 {
             type string;
         }
     }
+
+    container annotation {
+        leaf annotation {
+            type string;
+        }
+    }
 }
 

@@ -8,6 +8,8 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava;
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 
 import com.google.common.base.MoreObjects
 import com.google.common.collect.ImmutableMap
@@ -52,11 +54,6 @@ import org.opendaylight.yangtools.yang.binding.Identifiable
 
 class BuilderTemplate extends BaseTemplate {
     /**
-     * Constant with the name of the concrete method.
-     */
-    val static GET_AUGMENTATION_METHOD_NAME = "getAugmentation"
-
-    /**
      * Constant with the suffix for builder classes.
      */
     val static BUILDER = 'Builder'
@@ -69,7 +66,7 @@ class BuilderTemplate extends BaseTemplate {
     /**
      * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
-    var GeneratedProperty augmentField
+    var Type augmentType
 
     /**
      * Set of class attributes (fields) which are derived from the getter methods names.
@@ -130,17 +127,11 @@ class BuilderTemplate extends BaseTemplate {
                 methods.addAll(ifc.methodDefinitions)
                 collectImplementedMethods(methods, ifc.implements)
             } else if (implementedIfc.fullyQualifiedName == Augmentable.name) {
-                for (m : Augmentable.methods) {
-                    if (m.name == GET_AUGMENTATION_METHOD_NAME) {
-                        val identifier = JavaTypeName.create(m.returnType)
-                        val tmpGenTO = new CodegenGeneratedTOBuilder(identifier)
-                        val refType = new ReferencedTypeImpl(identifier)
-                        val generic = new ReferencedTypeImpl(type.identifier)
-                        val parametrizedReturnType = Types.parameterizedTypeFor(refType, generic)
-                        tmpGenTO.addMethod(m.name).setReturnType(parametrizedReturnType)
-                        augmentField = tmpGenTO.build.methodDefinitions.first.propertyFromGetter
-                    }
-                }
+                val m = Augmentable.getDeclaredMethod(AUGMENTABLE_AUGMENTATION_NAME, Class)
+                val identifier = JavaTypeName.create(m.returnType)
+                val refType = new ReferencedTypeImpl(identifier)
+                val generic = new ReferencedTypeImpl(type.identifier)
+                augmentType = Types.parameterizedTypeFor(refType, generic)
             }
         }
     }
@@ -417,8 +408,8 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
     def private generateAugmentField(boolean isPrivate) '''
-        «IF augmentField !== null»
-            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> «augmentField.name» = «Collections.importedName».emptyMap();
+        «IF augmentType !== null»
+            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
         «ENDIF»
     '''
 
@@ -545,23 +536,23 @@ class BuilderTemplate extends BaseTemplate {
             «ENDIF»
         «ENDFOR»
 
-        «IF augmentField !== null»
-            public «type.name»«BUILDER» add«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType, «augmentField.returnType.importedName» augmentationValue) {
+        «IF augmentType !== null»
+            public «type.name»«BUILDER» add«AUGMENTATION_FIELD.toFirstUpper»(«Class.importedName»<? extends «augmentType.importedName»> augmentationType, «augmentType.importedName» augmentationValue) {
                 if (augmentationValue == null) {
-                    return remove«augmentField.name.toFirstUpper»(augmentationType);
+                    return remove«AUGMENTATION_FIELD.toFirstUpper»(augmentationType);
                 }
 
-                if (!(this.«augmentField.name» instanceof «HashMap.importedName»)) {
-                    this.«augmentField.name» = new «HashMap.importedName»<>();
+                if (!(this.«AUGMENTATION_FIELD» instanceof «HashMap.importedName»)) {
+                    this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>();
                 }
 
-                this.«augmentField.name».put(augmentationType, augmentationValue);
+                this.«AUGMENTATION_FIELD».put(augmentationType, augmentationValue);
                 return this;
             }
 
-            public «type.name»«BUILDER» remove«augmentField.name.toFirstUpper»(«Class.importedName»<? extends «augmentField.returnType.importedName»> augmentationType) {
-                if (this.«augmentField.name» instanceof «HashMap.importedName») {
-                    this.«augmentField.name».remove(augmentationType);
+            public «type.name»«BUILDER» remove«AUGMENTATION_FIELD.toFirstUpper»(«Class.importedName»<? extends «augmentType.importedName»> augmentationType) {
+                if (this.«AUGMENTATION_FIELD» instanceof «HashMap.importedName») {
+                    this.«AUGMENTATION_FIELD».remove(augmentationType);
                 }
                 return this;
             }
@@ -597,20 +588,20 @@ class BuilderTemplate extends BaseTemplate {
             «FOR field : allProps»
                 this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
-            «IF augmentField !== null»
+            «IF augmentType !== null»
                 «IF impl»
-                    this.«augmentField.name» = «ImmutableMap.importedName».copyOf(base.«augmentField.name»);
+                    this.«AUGMENTATION_FIELD» = «ImmutableMap.importedName».copyOf(base.«AUGMENTATION_FIELD»);
                 «ELSE»
                     if (base instanceof «type.name»«IMPL») {
                         «type.name»«IMPL» impl = («type.name»«IMPL») base;
-                        if (!impl.«augmentField.name».isEmpty()) {
-                            this.«augmentField.name» = new «HashMap.importedName»<>(impl.«augmentField.name»);
+                        if (!impl.«AUGMENTATION_FIELD».isEmpty()) {
+                            this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>(impl.«AUGMENTATION_FIELD»);
                         }
                     } else if (base instanceof «AugmentationHolder.importedName») {
                         @SuppressWarnings("unchecked")
                         «AugmentationHolder.importedName»<«type.importedName»> casted =(«AugmentationHolder.importedName»<«type.importedName»>) base;
                         if (!casted.augmentations().isEmpty()) {
-                            this.«augmentField.name» = new «HashMap.importedName»<>(casted.augmentations());
+                            this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>(casted.augmentations());
                         }
                     }
                 «ENDIF»
@@ -666,12 +657,12 @@ class BuilderTemplate extends BaseTemplate {
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»
-        «IF augmentField !== null»
+        «IF augmentType !== null»
 
             @SuppressWarnings("unchecked")
             «IF addOverride»@Override«ENDIF»
-            public <E extends «augmentField.returnType.importedName»> E get«augmentField.name.toFirstUpper»(«Class.importedName»<E> augmentationType) {
-                return (E) «augmentField.name».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
+            public <E extends «augmentType.importedName»> E «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E> augmentationType) {
+                return (E) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
             }
         «ENDIF»
     '''
@@ -682,7 +673,7 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
     def protected generateHashCode() '''
-        «IF !properties.empty || augmentField !== null»
+        «IF !properties.empty || augmentType !== null»
             private int hash = 0;
             private volatile boolean hashValid = false;
 
@@ -701,8 +692,8 @@ class BuilderTemplate extends BaseTemplate {
                     result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
                     «ENDIF»
                 «ENDFOR»
-                «IF augmentField !== null»
-                    result = prime * result + «Objects.importedName».hashCode(«augmentField.name»);
+                «IF augmentType !== null»
+                    result = prime * result + «Objects.importedName».hashCode(«AUGMENTATION_FIELD»);
                 «ENDIF»
 
                 hash = result;
@@ -718,7 +709,7 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with the <code>equals()</code> method definition in JAVA format
      */
     def protected generateEquals() '''
-        «IF !properties.empty || augmentField !== null»
+        «IF !properties.empty || augmentType !== null»
             @Override
             public boolean equals(«Object.importedName» obj) {
                 if (this == obj) {
@@ -741,18 +732,17 @@ class BuilderTemplate extends BaseTemplate {
                         return false;
                     }
                 «ENDFOR»
-                «IF augmentField !== null»
+                «IF augmentType !== null»
                     if (getClass() == obj.getClass()) {
                         // Simple case: we are comparing against self
                         «type.name»«IMPL» otherImpl = («type.name»«IMPL») obj;
-                        «val fieldName = augmentField.name»
-                        if (!«Objects.importedName».equals(«fieldName», otherImpl.«fieldName»)) {
+                        if (!«Objects.importedName».equals(«AUGMENTATION_FIELD», otherImpl.«AUGMENTATION_FIELD»)) {
                             return false;
                         }
                     } else {
                         // Hard case: compare our augments with presence there...
-                        for («Map.importedName».Entry<«Class.importedName»<? extends «augmentField.returnType.importedName»>, «augmentField.returnType.importedName»> e : «augmentField.name».entrySet()) {
-                            if (!e.getValue().equals(other.getAugmentation(e.getKey()))) {
+                        for («Map.importedName».Entry<«Class.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> e : «AUGMENTATION_FIELD».entrySet()) {
+                            if (!e.getValue().equals(other.«AUGMENTABLE_AUGMENTATION_NAME»(e.getKey()))) {
                                 return false;
                             }
                         }
@@ -775,8 +765,8 @@ class BuilderTemplate extends BaseTemplate {
                 «FOR property : properties»
                     «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
-                «IF augmentField !== null»
-                    «CodeHelpers.importedName».appendValue(helper, "«augmentField.name»", «augmentField.name».values());
+                «IF augmentType !== null»
+                    «CodeHelpers.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", «AUGMENTATION_FIELD».values());
                 «ENDIF»
                 return helper.toString();
             }

@@ -60,6 +60,11 @@ public final class BindingMapping {
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
     /**
+     * Name of {@link Augmentable#augmentation(Class)}.
+     */
+    public static final String AUGMENTABLE_AUGMENTATION_NAME = "augmentation";
+
+    /**
      * Name of {@link Identifiable#key()}.
      */
     public static final String IDENTIFIABLE_KEY_NAME = "key";
