@@ -436,8 +436,8 @@ abstract class BaseTemplate extends JavaFileTemplate {
         «IF c.value instanceof QName»
             «val qname = c.value as QName»
             «val rev = qname.revision»
-            public static final «c.type.importedName» «c.name» = «QName.name».create("«qname.namespace.toString»",
-                «IF rev.isPresent»"«rev.get»", «ENDIF»"«qname.localName»").intern();
+            public static final «c.type.importedName» «c.name» = «QName.importedName».create("«qname.namespace.toString
+                »", «IF rev.isPresent»"«rev.get»", «ENDIF»"«qname.localName»").intern();
         «ELSE»
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»
