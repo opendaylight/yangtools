@@ -59,6 +59,11 @@ public final class BindingMapping {
     public static final String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
+    /**
+     * Name of {@link Identifiable#key()}.
+     */
+    public static final String IDENTIFIABLE_KEY_NAME = "key";
+
     public static final String RPC_INPUT_SUFFIX = "Input";
     public static final String RPC_OUTPUT_SUFFIX = "Output";
 

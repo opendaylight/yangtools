@@ -59,7 +59,7 @@ public class EmptyLeafTest extends AbstractBindingRuntimeTest {
     @Test
     public void testCaseWithEmptyLeafType() {
         final TopLevelList withEmptyCase = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .setChoiceInList(new EmptyLeafBuilder().setEmptyType(true).build())
             .build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom = registry.toNormalizedNode(BA_TOP_LEVEL_LIST,

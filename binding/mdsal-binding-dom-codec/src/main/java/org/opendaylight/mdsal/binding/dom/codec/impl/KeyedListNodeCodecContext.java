@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import java.lang.reflect.Method;
 import java.util.List;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
@@ -30,7 +31,7 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
         this.codec = factory().getPathArgumentCodec(getBindingClass(), getSchema());
         try {
-            this.keyGetter = getBindingClass().getMethod("getKey");
+            this.keyGetter = getBindingClass().getMethod(BindingMapping.IDENTIFIABLE_KEY_NAME);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }

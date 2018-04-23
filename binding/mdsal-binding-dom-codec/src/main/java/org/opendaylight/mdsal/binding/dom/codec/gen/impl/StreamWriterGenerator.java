@@ -11,6 +11,7 @@ import org.opendaylight.mdsal.binding.dom.codec.util.AugmentableDispatchSerializ
 import org.opendaylight.mdsal.binding.dom.codec.util.ChoiceDispatchSerializer;
 import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
@@ -107,7 +108,7 @@ public final class StreamWriterGenerator extends AbstractStreamWriterGenerator {
         return new AugmentableDataNodeContainerEmitterSource(this, type, node) {
             @Override
             public CharSequence emitStartEvent() {
-                return startMapEntryNode(invoke(INPUT, "getKey"), UNKNOWN_SIZE);
+                return startMapEntryNode(invoke(INPUT, BindingMapping.IDENTIFIABLE_KEY_NAME), UNKNOWN_SIZE);
             }
         };
     }

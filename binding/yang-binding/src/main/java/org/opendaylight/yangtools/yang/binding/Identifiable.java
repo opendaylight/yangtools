@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Identifiable object, which could be identified by it's key.
@@ -21,5 +22,5 @@ public interface Identifiable<T extends Identifier<? extends Identifiable<T>>> {
      *
      * @return Key for the object
      */
-    T getKey();
+    @NonNull T key();
 }

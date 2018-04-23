@@ -61,7 +61,7 @@ public class Bug532Test extends BaseCompilationTest {
 
         // create Links object
         Object linksBuilder = linksBuilderClass.newInstance();
-        linksBuilderClass.getDeclaredMethod("setKey", linksKeyClass).invoke(linksBuilder, expectedKey);
+        linksBuilderClass.getDeclaredMethod("withKey", linksKeyClass).invoke(linksBuilder, expectedKey);
         linksBuilderClass.getDeclaredMethod("setLevel", levelClass).invoke(linksBuilder, expectedLevel);
         linksBuilderClass.getDeclaredMethod("setLinksId", Integer.class).invoke(linksBuilder, expectedLinksId);
         linksBuilderClass.getDeclaredMethod("setNode", nodeClass).invoke(linksBuilder, expectedNode);
@@ -75,7 +75,7 @@ public class Bug532Test extends BaseCompilationTest {
         Object linksBuilderTested = linksBuilderConstructor.newInstance(links);
 
         // get values from LinksBuilder
-        Object actualKey = linksBuilderClass.getDeclaredMethod("getKey").invoke(linksBuilderTested);
+        Object actualKey = linksBuilderClass.getDeclaredMethod("key").invoke(linksBuilderTested);
         Object actualId = linksBuilderClass.getDeclaredMethod("getId").invoke(linksBuilderTested);
         Object actualName = linksBuilderClass.getDeclaredMethod("getName").invoke(linksBuilderTested);
         Object actualSize = linksBuilderClass.getDeclaredMethod("getSize").invoke(linksBuilderTested);

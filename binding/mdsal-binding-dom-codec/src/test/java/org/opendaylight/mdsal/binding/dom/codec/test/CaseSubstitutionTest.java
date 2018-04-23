@@ -55,11 +55,11 @@ public class CaseSubstitutionTest extends AbstractBindingRuntimeTest {
     @Test
     public void choiceInGroupingSubstituted() {
         final TopLevelList baRpc = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .setChoiceInList(new ComplexViaUsesWithDifferentNameBuilder(createComplexData()).build())
             .build();
         final TopLevelList baTree = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .setChoiceInList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
         final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();

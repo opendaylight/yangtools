@@ -498,9 +498,9 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
     public void orderedLisToNormalized() {
         final InstanceIdentifier<TopLevelList> ii = BA_TOP_LEVEL_LIST;
         final List<NestedList> nestedLists = new ArrayList<>();
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).build());
-        final TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
+        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("foo")).build());
+        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
+        final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
             nestedLists).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> entry = registry.toNormalizedNode(ii, topLevelList);
         final MapEntryNode foo = mapEntryBuilder().withNodeIdentifier(new NodeIdentifierWithPredicates(
@@ -525,9 +525,9 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
         final Entry<InstanceIdentifier<?>, DataObject> entry = registry.fromNormalizedNode(BI_TOP_LEVEL_LIST_FOO_PATH,
             foo);
         final List<NestedList> nestedLists = new ArrayList<>();
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("foo")).build());
-        nestedLists.add(new NestedListBuilder().setKey(new NestedListKey("bar")).build());
-        final TopLevelList topLevelList = new TopLevelListBuilder().setKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
+        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("foo")).build());
+        nestedLists.add(new NestedListBuilder().withKey(new NestedListKey("bar")).build());
+        final TopLevelList topLevelList = new TopLevelListBuilder().withKey(TOP_LEVEL_LIST_FOO_KEY).setNestedList(
             nestedLists).build();
         assertEquals(topLevelList, entry.getValue());
     }

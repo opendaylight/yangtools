@@ -55,11 +55,11 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
     @Test
     public void augmentationInGroupingSubstituted() {
         final TopLevelList baRpc = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .addAugmentation(RpcComplexUsesAugment.class, new RpcComplexUsesAugmentBuilder(createComplexData()).build())
             .build();
         final TopLevelList baTree = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
                 .build())
             .build();
@@ -71,7 +71,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
     @Test
     public void copyBuilderWithAugmenationsTest() {
         final TopLevelList manuallyConstructed = new TopLevelListBuilder()
-            .setKey(TOP_FOO_KEY)
+            .withKey(TOP_FOO_KEY)
             .addAugmentation(TreeComplexUsesAugment.class, new TreeComplexUsesAugmentBuilder(createComplexData())
                 .build())
             .build();

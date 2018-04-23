@@ -49,7 +49,7 @@ public class RpcDataSerializationTest extends AbstractBindingRuntimeTest {
     @Test
     public void testRpcInputToNormalized() {
         final PutTopInputBuilder tb = new PutTopInputBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().setKey(new TopLevelListKey("test")).build()));
+        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
         final PutTopInput bindingOriginal = tb.build();
         final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);
@@ -62,7 +62,7 @@ public class RpcDataSerializationTest extends AbstractBindingRuntimeTest {
     @Test
     public void testRpcOutputToNormalized() {
         final GetTopOutputBuilder tb = new GetTopOutputBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().setKey(new TopLevelListKey("test")).build()));
+        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
         final GetTopOutput bindingOriginal = tb.build();
         final ContainerNode dom = registry.toNormalizedNodeRpcData(bindingOriginal);
         assertNotNull(dom);

@@ -91,7 +91,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
         mockedContext.includeClass(TreeLeafOnlyAugment.class);
         final TopLevelList data =
                 new TopLevelListBuilder()
-                        .setKey(TOP_FOO_KEY)
+                        .withKey(TOP_FOO_KEY)
                         .addAugmentation(TreeLeafOnlyAugment.class,
                                 new TreeLeafOnlyAugmentBuilder().setSimpleValue("foo").build()).build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> domData =

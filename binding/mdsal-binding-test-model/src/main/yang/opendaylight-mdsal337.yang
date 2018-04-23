@@ -1,0 +1,14 @@
+module opendaylight-mdsal337 {
+    namespace "urn:test:opendaylight-mdsal337";
+    prefix mdsal298;
+
+    revision 2018-04-24;
+
+    list key {
+        key key;
+        leaf key {
+            type string;
+        }
+    }
+}
+

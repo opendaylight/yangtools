@@ -41,7 +41,7 @@ public class NotificationProcessingTest extends AbstractBindingRuntimeTest {
 
     private static TwoLevelListChanged createTestData() {
         final TwoLevelListChangedBuilder tb = new TwoLevelListChangedBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().setKey(new TopLevelListKey("test")).build()));
+        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
         return tb.build();
     }
 

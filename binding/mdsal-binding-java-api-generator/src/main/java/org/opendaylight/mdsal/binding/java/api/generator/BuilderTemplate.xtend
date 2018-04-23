@@ -41,6 +41,7 @@ import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable
@@ -50,7 +51,6 @@ import org.opendaylight.yangtools.yang.binding.Identifiable
  */
 
 class BuilderTemplate extends BaseTemplate {
-
     /**
      * Constant with the name of the concrete method.
      */
@@ -62,24 +62,24 @@ class BuilderTemplate extends BaseTemplate {
     val static BUILDER = 'Builder'
 
     /**
-     * Constant with the name of the BuilderFor interface
-     */
-    val static BUILDERFOR = Builder.simpleName;
-
-    /**
      * Constant with suffix for the classes which are generated from the builder classes.
      */
     val static IMPL = 'Impl'
 
     /**
-     * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME
+     * Generated property is set if among methods is found one with the name GET_AUGMENTATION_METHOD_NAME.
      */
     var GeneratedProperty augmentField
 
     /**
-     * Set of class attributes (fields) which are derived from the getter methods names
+     * Set of class attributes (fields) which are derived from the getter methods names.
      */
     val Set<GeneratedProperty> properties
+
+    /**
+     * GeneratedType for key type, null if this type does not have a key.
+     */
+    val Type keyType
 
     private static val METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<MethodSignature>();
 
@@ -90,7 +90,7 @@ class BuilderTemplate extends BaseTemplate {
     new(GeneratedType genType) {
         super(new TopLevelJavaGeneratedType(builderName(genType), genType), genType)
         this.properties = propertiesFromMethods(createMethods)
-        addImport(Builder)
+        keyType = genType.key
     }
 
     def static builderName(GeneratedType genType) {
@@ -214,7 +214,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(type))»
-        public class «type.name»«BUILDER» implements «BUILDERFOR»<«type.importedName»> {
+        public class «type.name»«BUILDER» implements «Builder.importedName»<«type.importedName»> {
 
             «generateFields(false)»
 
@@ -411,6 +411,9 @@ class BuilderTemplate extends BaseTemplate {
                 private«IF _final» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
             «ENDFOR»
         «ENDIF»
+        «IF keyType !== null»
+            private«IF _final» final«ENDIF» «keyType.importedName» key;
+        «ENDIF»
     '''
 
     def private generateAugmentField(boolean isPrivate) '''
@@ -527,6 +530,12 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with the setter methods
      */
     def private generateSetters() '''
+        «IF keyType !== null»
+            public «type.getName»Builder withKey(final «keyType.importedName» key) {
+                this.key = key;
+                return this;
+            }
+        «ENDIF»
         «FOR property : properties»
             «IF property.returnType instanceof ParameterizedType
                     && (property.returnType as ParameterizedType).rawType.equals(Types.LIST_TYPE)»
@@ -563,20 +572,14 @@ class BuilderTemplate extends BaseTemplate {
         «IF impl»private«ELSE»public«ENDIF» «type.name»«IF impl»«IMPL»«ELSE»«BUILDER»«ENDIF»(«type.name»«IF impl»«BUILDER»«ENDIF» base) {
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(type, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), type))»
-            «val keyType = type.getKey»
             «IF isList && keyType !== null»
                 «val keyProps = new ArrayList((keyType as GeneratedTransferObject).properties)»
-                «Collections.sort(keyProps,
-                    [ p1, p2 |
-                        return p1.name.compareTo(p2.name)
-                    ])
-                »
+                «Collections.sort(keyProps, [ p1, p2 | return p1.name.compareTo(p2.name) ])»
                 «FOR field : keyProps»
                     «removeProperty(allProps, field.name)»
                 «ENDFOR»
-                «removeProperty(allProps, "key")»
-                if (base.getKey() == null) {
-                    this._key = new «keyType.importedName»(
+                if (base.«BindingMapping.IDENTIFIABLE_KEY_NAME»() == null) {
+                    this.key = new «keyType.importedName»(
                         «FOR keyProp : keyProps SEPARATOR ", "»
                             base.«keyProp.getterMethodName»()
                         «ENDFOR»
@@ -585,9 +588,9 @@ class BuilderTemplate extends BaseTemplate {
                         this.«field.fieldName» = base.«field.getterMethodName»();
                     «ENDFOR»
                 } else {
-                    this._key = base.getKey();
+                    this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
                     «FOR field : keyProps»
-                           this.«field.fieldName» = _key.«field.getterMethodName»();
+                           this.«field.fieldName» = key.«field.getterMethodName»();
                     «ENDFOR»
                 }
             «ENDIF»
@@ -624,13 +627,12 @@ class BuilderTemplate extends BaseTemplate {
         return false;
     }
 
-    private def Type getKey(GeneratedType type) {
+    private def getKey(GeneratedType type) {
         for (m : type.methodDefinitions) {
-            if ("getKey".equals(m.name)) {
+            if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(m.name)) {
                 return m.returnType;
             }
         }
-        return null;
     }
 
     private def void removeProperty(Collection<GeneratedProperty> props, String name) {
@@ -651,6 +653,13 @@ class BuilderTemplate extends BaseTemplate {
      * @return string with getter methods
      */
     def private generateGetters(boolean addOverride) '''
+        «IF keyType !== null»
+            «IF addOverride»@Override«ENDIF»
+            public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
+                return key;
+            }
+
+        «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
                 «IF addOverride»@Override«ENDIF»

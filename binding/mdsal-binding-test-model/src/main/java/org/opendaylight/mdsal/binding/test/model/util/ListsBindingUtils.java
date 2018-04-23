@@ -63,11 +63,11 @@ public final class ListsBindingUtils {
     }
 
     public static TopLevelList topLevelList(final TopLevelListKey key) {
-        return new TopLevelListBuilder().setKey(key).build();
+        return new TopLevelListBuilder().withKey(key).build();
     }
 
     public static TopLevelList topLevelList(final TopLevelListKey key, final TreeComplexUsesAugment augment) {
-        final TopLevelListBuilder builder = new TopLevelListBuilder().setKey(key);
+        final TopLevelListBuilder builder = new TopLevelListBuilder().withKey(key);
         builder.addAugmentation(TreeComplexUsesAugment.class, augment);
         return builder.build();
     }
@@ -75,7 +75,7 @@ public final class ListsBindingUtils {
     public static TreeComplexUsesAugment complexUsesAugment(final ListViaUsesKey... keys) {
         final ImmutableList.Builder<ListViaUses> listViaUses = ImmutableList.builder();
         for (final ListViaUsesKey key : keys) {
-            listViaUses.add(new ListViaUsesBuilder().setKey(key).build());
+            listViaUses.add(new ListViaUsesBuilder().withKey(key).build());
         }
         return new TreeComplexUsesAugmentBuilder().setListViaUses(listViaUses.build()).build();
     }

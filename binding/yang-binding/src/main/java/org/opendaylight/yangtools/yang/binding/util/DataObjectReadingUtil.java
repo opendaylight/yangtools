@@ -253,7 +253,7 @@ public final class DataObjectReadingUtil {
             Builder<InstanceIdentifier, DataContainer> result = ImmutableMap.builder();
             for (Identifiable item : dataList) {
                 @SuppressWarnings("unchecked")
-                InstanceIdentifier childPath = parentPath.child(getChildType(), item.getKey());
+                InstanceIdentifier childPath = parentPath.child(getChildType(), item.key());
                 result.put(childPath, (DataContainer) item);
             }
             return result.build();
@@ -265,11 +265,11 @@ public final class DataObjectReadingUtil {
                 final InstanceIdentifier parentPath) {
             final Identifier<?> key = childArgument.getKey();
             for (Identifiable item : dataList) {
-                if (key.equals(item.getKey()) && item instanceof DataContainer) {
+                if (key.equals(item.key()) && item instanceof DataContainer) {
                     checkState(childArgument.getType().isInstance(item),
                             "Found child is not instance of requested type");
                     InstanceIdentifier childPath = parentPath
-                            .child(childArgument.getType(), item.getKey());
+                            .child(childArgument.getType(), item.key());
                     return Collections.singletonMap(childPath, (DataContainer) item);
                 }
             }

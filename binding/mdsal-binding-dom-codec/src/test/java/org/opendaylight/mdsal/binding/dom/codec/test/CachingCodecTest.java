@@ -64,7 +64,7 @@ public class CachingCodecTest extends AbstractBindingRuntimeTest {
         final ImmutableList.Builder<TopLevelList> builder = ImmutableList.builder();
         for (int i = 0; i < num; i++) {
             final TopLevelListKey key = new TopLevelListKey("test-" + i);
-            builder.add(new TopLevelListBuilder().setKey(key).build());
+            builder.add(new TopLevelListBuilder().withKey(key).build());
         }
         return builder.build();
     }
