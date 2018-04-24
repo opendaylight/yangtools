@@ -68,6 +68,10 @@ class JavaFileTemplate {
         return importedName(Types.typeForClass(cls));
     }
 
+    final String importedName(final JavaTypeName intype) {
+        return javaType.getReferenceString(intype);
+    }
+
     final void addImport(final Class<?> cls) {
         javaType.getReferenceString(JavaTypeName.create(cls));
     }

@@ -56,6 +56,7 @@ public final class BindingMapping {
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
     public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
+    public static final String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
     public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
     public static final String RPC_INPUT_SUFFIX = "Input";

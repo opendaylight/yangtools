@@ -42,7 +42,7 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
         assertTrue(fooBuilder.exists());
         assertTrue(testData.exists());
         assertTrue(fooDir.exists());
-        assertFilesCount(parent, 4);
+        assertFilesCount(parent, 5);
 
         parent = new File(parent, "foo");
         File bar = new File(parent, "Bar.java");

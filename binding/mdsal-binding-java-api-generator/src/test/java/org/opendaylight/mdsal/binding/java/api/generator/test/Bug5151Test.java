@@ -36,7 +36,7 @@ public class Bug5151Test extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         final Map<String, File> generatedFiles = getFiles(sourcesOutputDir);
-        assertEquals(3, generatedFiles.size());
+        assertEquals(4, generatedFiles.size());
 
         final File fooContainerFile = generatedFiles.get("FooContainer.java");
         assertNotNull(fooContainerFile);

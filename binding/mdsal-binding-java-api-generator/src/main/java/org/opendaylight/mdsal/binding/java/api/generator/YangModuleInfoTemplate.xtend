@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODEL_BINDING_PROVIDER_CLASS_NAME
 import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODULE_INFO_CLASS_NAME
+import static org.opendaylight.yangtools.yang.binding.BindingMapping.MODULE_INFO_QNAMEOF_METHOD_NAME
 import static extension org.opendaylight.yangtools.yang.binding.BindingMapping.getClassName
 import static extension org.opendaylight.yangtools.yang.binding.BindingMapping.getRootPackageName
 
@@ -35,6 +36,11 @@ import org.opendaylight.yangtools.yang.common.Revision
 import org.opendaylight.yangtools.yang.model.api.Module
 import org.opendaylight.yangtools.yang.model.api.SchemaContext
 
+/**
+ * Template for {@link YangModuleInfo} implementation for a particular module. Aside from fulfilling that contract,
+ * this class provides a static {@code createQName(String)} method, which is used by co-generated code to initialize
+ * QNAME constants.
+ */
 class YangModuleInfoTemplate {
 
     val Module module
@@ -60,15 +66,18 @@ class YangModuleInfoTemplate {
     def String generate() {
         val body = '''
             public final class «MODULE_INFO_CLASS_NAME» extends «ResourceYangModuleInfo.importedName» {
-
+                «val rev = module.revision»
+                private static final «QName.importedName» NAME = «QName.importedName».create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
                 private static final «YangModuleInfo.importedName» INSTANCE = new «MODULE_INFO_CLASS_NAME»();
 
-                «val rev = module.revision»
-                private final «QName.importedName» name = QName.create("«module.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«module.name»").intern();
                 private final «Set.importedName»<«YangModuleInfo.importedName»> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {
                     return INSTANCE;
+                }
+
+                public static «QName.importedName» «MODULE_INFO_QNAMEOF_METHOD_NAME»(final «String.importedName» localName) {
+                    return «QName.importedName».create(NAME, localName).intern();
                 }
 
                 «classBody(module, MODULE_INFO_CLASS_NAME)»
@@ -134,7 +143,7 @@ class YangModuleInfoTemplate {
 
         @Override
         public «QName.importedName» getName() {
-            return name;
+            return NAME;
         }
 
         @Override
@@ -261,11 +270,11 @@ class YangModuleInfoTemplate {
         «FOR submodule : module.submodules»
             «val className = submodule.name.className»
             private static final class «className»Info extends «ResourceYangModuleInfo.importedName» {
-
+                «val rev = submodule.revision»
+                private final «QName.importedName» NAME = «QName.importedName».create("«
+                    submodule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF»"«submodule.name»").intern();
                 private static final «YangModuleInfo.importedName» INSTANCE = new «className»Info();
 
-                «val rev = submodule.revision»
-                private final «QName.importedName» name = QName.create("«submodule.namespace.toString»", «IF rev.present»"«rev.get.toString»", «ENDIF» "«submodule.name»").intern();
                 private final «Set.importedName»<YangModuleInfo> importedModules;
 
                 public static «YangModuleInfo.importedName» getInstance() {

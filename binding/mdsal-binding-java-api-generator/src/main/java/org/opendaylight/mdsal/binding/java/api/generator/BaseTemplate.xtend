@@ -15,6 +15,7 @@ import com.google.common.base.Splitter
 import com.google.common.collect.Iterables
 import java.util.Collection
 import java.util.List
+import java.util.Map.Entry
 import java.util.StringTokenizer
 import java.util.regex.Pattern
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
@@ -22,6 +23,7 @@ import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.api.Type
@@ -29,6 +31,7 @@ import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
 import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.common.QName
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode
@@ -433,11 +436,9 @@ abstract class BaseTemplate extends JavaFileTemplate {
     »'''
 
     def protected emitConstant(Constant c) '''
-        «IF c.value instanceof QName»
-            «val qname = c.value as QName»
-            «val rev = qname.revision»
-            public static final «c.type.importedName» «c.name» = «QName.importedName».create("«qname.namespace.toString
-                »", «IF rev.isPresent»"«rev.get»", «ENDIF»"«qname.localName»").intern();
+        «IF BindingMapping.QNAME_STATIC_FIELD_NAME.equals(c.name)»
+            «val entry = c.value as Entry<JavaTypeName, String>»
+            public static final «c.type.importedName» «c.name» = «entry.key.importedName».«BindingMapping.MODULE_INFO_QNAMEOF_METHOD_NAME»("«entry.value»");
         «ELSE»
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»

@@ -63,7 +63,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertTrue(unionExt2.exists());
         assertTrue(unionExt3.exists());
         assertTrue(unionExt4.exists());
-        CompilationTestUtils.assertFilesCount(parent, 33);
+        CompilationTestUtils.assertFilesCount(parent, 34);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);

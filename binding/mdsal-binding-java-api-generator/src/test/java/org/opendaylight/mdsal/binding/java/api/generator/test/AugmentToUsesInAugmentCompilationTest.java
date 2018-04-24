@@ -26,14 +26,14 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from 'module foo'
         File fooParent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
-        CompilationTestUtils.assertFilesCount(fooParent, 4);
+        CompilationTestUtils.assertFilesCount(fooParent, 5);
         assertTrue(new File(fooParent, "IgpLinkAttributes.java").exists());
         assertTrue(new File(fooParent, "Link1.java").exists());
         assertTrue(new File(fooParent, "Link1Builder.java").exists());
 
         // Test if all sources are generated from 'module bar'
         File barParent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAR);
-        CompilationTestUtils.assertFilesCount(barParent, 7);
+        CompilationTestUtils.assertFilesCount(barParent, 8);
         assertTrue(new File(barParent, "BarData.java").exists());
         assertTrue(new File(barParent, "NetworkTopology.java").exists());
         assertTrue(new File(barParent, "NetworkTopologyBuilder.java").exists());
@@ -56,7 +56,7 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated from 'module baz'
         File bazParent = new File(sourcesOutputDir, CompilationTestUtils.NS_BAZ);
-        CompilationTestUtils.assertFilesCount(bazParent, 4);
+        CompilationTestUtils.assertFilesCount(bazParent, 5);
         assertTrue(new File(bazParent, "IgpLinkAttributes1.java").exists());
         assertTrue(new File(bazParent, "IgpLinkAttributes1Builder.java").exists());
         assertTrue(new File(bazParent, "LinkAttributes.java").exists());
