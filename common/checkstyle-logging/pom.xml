@@ -12,13 +12,27 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>2.0.5</version>
+        <version>2.0.6</version>
         <relativePath/>
     </parent>
   <groupId>org.opendaylight.yangtools</groupId>
   <artifactId>checkstyle-logging</artifactId>
   <version>1.2.3-SNAPSHOT</version>
   <packaging>bundle</packaging>
+
+    <repositories>
+      <repository>
+        <id>odlparent-2.0.6</id>
+        <url>https://nexus.opendaylight.org/content/repositories/odlparent-1100/</url>
+      </repository>
+    </repositories>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>odlparent-2.0.6</id>
+        <url>https://nexus.opendaylight.org/content/repositories/odlparent-1100/</url>
+      </pluginRepository>
+    </pluginRepositories>
 
   <dependencies>
     <!-- This pulls in the appropriate version of checkstyle -->

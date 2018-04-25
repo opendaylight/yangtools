@@ -1,11 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>2.0.5</version>
-        <relativePath />
+        <version>2.0.6</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
@@ -13,6 +13,20 @@
     <version>1.2.3-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>YANG system test</description>
+
+    <repositories>
+      <repository>
+        <id>odlparent-2.0.6</id>
+        <url>https://nexus.opendaylight.org/content/repositories/odlparent-1100/</url>
+      </repository>
+    </repositories>
+
+    <pluginRepositories>
+      <pluginRepository>
+        <id>odlparent-2.0.6</id>
+        <url>https://nexus.opendaylight.org/content/repositories/odlparent-1100/</url>
+      </pluginRepository>
+    </pluginRepositories>
 
     <properties>
         <yang.codegen.version>0.11.3-SNAPSHOT</yang.codegen.version>
@@ -82,7 +96,7 @@
                             <executable>java</executable>
                             <arguments>
                                 <argument>-classpath</argument>
-                                <classpath />
+                                <classpath/>
                                 <argument>org.opendaylight.yangtools.yang.parser.system.test.Main</argument>
                                 <argument>./src/main/yang</argument>
                             </arguments>
