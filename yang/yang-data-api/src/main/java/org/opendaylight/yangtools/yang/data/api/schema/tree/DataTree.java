@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 /**
  * Interface representing a data tree which can be modified in an MVCC fashion.
  */
+// FIXME: 3.0.0: Consider splitting out a read-only interface, which has no means of affecting internal state
 public interface DataTree extends DataTreeTip {
     /**
      * Take a read-only point-in-time snapshot of the tree.

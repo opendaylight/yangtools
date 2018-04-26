@@ -8,13 +8,14 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
- * Read-only snapshot of a {@link DataTree}. The snapshot is stable and isolated,
- * e.g. data tree changes occurring after the snapshot has been taken are not
- * visible through the snapshot.
+ * Read-only snapshot of a {@link DataTree}. The snapshot is stable and isolated, e.g. data tree changes occurring after
+ * the snapshot has been taken are not visible through the snapshot.
  */
 public interface DataTreeSnapshot {
     /**
@@ -32,4 +33,14 @@ public interface DataTreeSnapshot {
      * @return A new data tree modification
      */
     DataTreeModification newModification();
+
+    /**
+     * Return the current {@link SchemaContext}, which is being used for operations.
+     *
+     * @return Current schema context.
+     */
+    // FIXME: 3.0.0: Make this method non-default.
+    default @NonNull SchemaContext getSchemaContext() {
+        throw new UnsupportedOperationException("Not implemented by  " + getClass());
+    }
 }

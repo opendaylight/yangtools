@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * A {@link DataTreeModification} implementation which delegates all calls to
@@ -63,5 +64,10 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     @Override
     public synchronized void applyToCursor(@Nonnull final DataTreeModificationCursor cursor) {
         delegate.applyToCursor(cursor);
+    }
+
+    @Override
+    public synchronized SchemaContext getSchemaContext() {
+        return delegate.getSchemaContext();
     }
 }

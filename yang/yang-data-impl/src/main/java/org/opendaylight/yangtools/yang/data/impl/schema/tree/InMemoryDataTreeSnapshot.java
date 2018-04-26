@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -22,9 +23,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot {
-    private final RootModificationApplyOperation applyOper;
-    private final SchemaContext schemaContext;
-    private final TreeNode rootNode;
+    private final @NonNull RootModificationApplyOperation applyOper;
+    private final @NonNull SchemaContext schemaContext;
+    private final @NonNull TreeNode rootNode;
 
     InMemoryDataTreeSnapshot(final SchemaContext schemaContext, final TreeNode rootNode,
             final RootModificationApplyOperation applyOper) {
@@ -37,7 +38,8 @@ final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements Curs
         return rootNode;
     }
 
-    SchemaContext getSchemaContext() {
+    @Override
+    public SchemaContext getSchemaContext() {
         return schemaContext;
     }
 

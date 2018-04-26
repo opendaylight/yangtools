@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +62,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     ModificationApplyOperation getStrategy() {
         return strategyTree;
+    }
+
+    @Override
+    public SchemaContext getSchemaContext() {
+        return snapshot.getSchemaContext();
     }
 
     @Override
