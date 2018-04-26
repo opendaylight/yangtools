@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0bed8fc1_3d8fbe98",
+        "filename": "yang/yang-data-codec-gson/src/test/resources/bug8927/xml/scalar_array_with_other_elements.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-04-26T15:33:11Z",
+      "side": 1,
+      "message": "Malformed XML here and in other files: is this intentional? If so, a \u003c!-- comment explaining --\u003e would be nice.",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 7
+      },
+      "revId": "622fee527f3dbc7f7d7a902f55315c0734fdde93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
