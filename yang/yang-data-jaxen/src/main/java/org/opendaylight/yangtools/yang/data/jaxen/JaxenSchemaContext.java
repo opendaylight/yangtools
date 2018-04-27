@@ -18,15 +18,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathExpression;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class JaxenSchemaContext implements XPathSchemaContext {
-    // Will be needed for compileExpression()
+    private final DataSchemaContextTree tree;
     private final SchemaContext context;
 
     JaxenSchemaContext(final SchemaContext context) {
         this.context = requireNonNull(context);
+        this.tree = DataSchemaContextTree.from(context);
     }
 
     @Nonnull
@@ -44,11 +46,6 @@ final class JaxenSchemaContext implements XPathSchemaContext {
     @Nonnull
     @Override
     public XPathDocument createDocument(@Nonnull final NormalizedNode<?, ?> documentRoot) {
-        return new JaxenDocument(this, documentRoot);
-    }
-
-    @Nonnull
-    SchemaContext getSchemaContext() {
-        return context;
+        return new JaxenDocument(context, tree, documentRoot);
     }
 }
