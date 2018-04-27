@@ -12,7 +12,6 @@ import com.google.common.base.Splitter;
 import com.google.common.base.Verify;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
@@ -207,11 +206,7 @@ final class YangFunctionContext implements FunctionContext {
                 correspondingSchemaNode);
         final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
                 schemaContext);
-
-        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
-        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
-
-        return ancestorIdentities.contains(identityArgSchemaNode);
+        return isAncestorOf(identityArgSchemaNode, currentNodeIdentitySchemaNode);
     }
 
     // derived-from-or-self(node-set nodes, string identity) function as per
@@ -250,14 +245,8 @@ final class YangFunctionContext implements FunctionContext {
                 correspondingSchemaNode);
         final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
                 schemaContext);
-        if (currentNodeIdentitySchemaNode.equals(identityArgSchemaNode)) {
-            return true;
-        }
-
-        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
-        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
-
-        return ancestorIdentities.contains(identityArgSchemaNode);
+        return currentNodeIdentitySchemaNode.equals(identityArgSchemaNode)
+                || isAncestorOf(identityArgSchemaNode, currentNodeIdentitySchemaNode);
     }
 
     // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
@@ -306,12 +295,13 @@ final class YangFunctionContext implements FunctionContext {
         return ((String) subject).matches(RegexUtils.getJavaRegexFromXSD((String) pattern));
     }
 
-    private static void collectAncestorIdentities(final IdentitySchemaNode identity,
-            final Set<IdentitySchemaNode> ancestorIdentities) {
-        for (final IdentitySchemaNode id : identity.getBaseIdentities()) {
-            collectAncestorIdentities(id, ancestorIdentities);
-            ancestorIdentities.add(id);
+    private static boolean isAncestorOf(final IdentitySchemaNode identity, final IdentitySchemaNode descendant) {
+        for (IdentitySchemaNode base : descendant.getBaseIdentities()) {
+            if (identity.equals(base) || isAncestorOf(identity, base)) {
+                return true;
+            }
         }
+        return false;
     }
 
     private static IdentitySchemaNode getIdentitySchemaNodeFromQName(final QName identityQName,
