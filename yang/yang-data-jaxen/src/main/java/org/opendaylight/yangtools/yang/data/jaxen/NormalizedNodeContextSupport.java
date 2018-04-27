@@ -27,7 +27,7 @@ final class NormalizedNodeContextSupport extends ContextSupport {
     private NormalizedNodeContextSupport(final ConverterNamespaceContext context,
             final NormalizedNodeNavigator navigator) {
         super(context, YangFunctionContext.getInstance(), new SimpleVariableContext(), navigator);
-        this.root = new NormalizedNodeContext(this, navigator.getRootNode(), null);
+        this.root = NormalizedNodeContext.forRoot(this);
     }
 
     static NormalizedNodeContextSupport create(final JaxenDocument document,
@@ -43,18 +43,17 @@ final class NormalizedNodeContextSupport extends ContextSupport {
         for (PathArgument arg : path.getPathArguments()) {
             final Optional<NormalizedNode<?, ?>> node = NormalizedNodes.getDirectChild(result.getNode(), arg);
             checkArgument(node.isPresent(), "Node %s has no child %s", result.getNode(), arg);
-            result = new NormalizedNodeContext(this, node.get(), result);
+            result = result.apply(node.get());
         }
-
         return result;
-    }
-
-    SchemaContext getSchemaContext() {
-        return getNavigator().getSchemaContext();
     }
 
     @Override
     public NormalizedNodeNavigator getNavigator() {
         return (NormalizedNodeNavigator) super.getNavigator();
+    }
+
+    SchemaContext getSchemaContext() {
+        return getNavigator().getDocument().getSchemaContext();
     }
 }

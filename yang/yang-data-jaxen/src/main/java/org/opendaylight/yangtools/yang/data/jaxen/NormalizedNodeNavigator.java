@@ -15,13 +15,13 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.BaseEncoding;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.jaxen.DefaultNavigator;
 import org.jaxen.NamedAccessNavigator;
 import org.jaxen.Navigator;
@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * A {@link Navigator} implementation for YANG XPaths instantiated on a particular root {@link NormalizedNode}.
@@ -240,16 +239,19 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
             return null;
         }
 
-        // The child may be a structural node
         final NormalizedNode<?, ?> child = maybeChild.get();
+        final Collection<? extends NormalizedNode<?, ?>> collection;
+
+        // The child may be a structural node
         if (child instanceof MapNode) {
-            return Iterators.transform(((MapNode)child).getValue().iterator(), ctx);
-        }
-        if (child instanceof LeafSetNode) {
-            return Iterators.transform(((LeafSetNode<?>)child).getValue().iterator(), ctx);
+            collection = ((MapNode)child).getValue();
+        } else if (child instanceof LeafSetNode) {
+            collection = ((LeafSetNode<?>)child).getValue();
+        } else {
+            return Iterators.singletonIterator(ctx.apply(child));
         }
 
-        return Iterators.singletonIterator(ctx.apply(child));
+        return Iterators.transform(collection.iterator(), ctx);
     }
 
     @Override
@@ -315,13 +317,8 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
         return cast(contextNode).getParent();
     }
 
-    NormalizedNode<?, ?> getRootNode() {
-        return document.getRootNode();
-    }
-
-    @Nonnull
-    SchemaContext getSchemaContext() {
-        return document.getSchemaContext();
+    JaxenDocument getDocument() {
+        return document;
     }
 
     private static final class NormalizedNodeContextIterator extends UnmodifiableIterator<NormalizedNodeContext> {

@@ -11,9 +11,6 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Verify;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -24,26 +21,22 @@ import org.jaxen.ContextSupport;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
 import org.jaxen.FunctionContext;
-import org.jaxen.JaxenRuntimeException;
 import org.jaxen.UnresolvableException;
-import org.jaxen.UnsupportedAxisException;
 import org.jaxen.XPathFunctionContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
@@ -52,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.RegexUtils;
-import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 /**
  * A {@link FunctionContext} which contains also YANG-specific functions current(), re-match(), deref(),
@@ -118,9 +110,7 @@ final class YangFunctionContext implements FunctionContext {
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
         if (!(nodeType instanceof BitsTypeDefinition)) {
@@ -157,9 +147,7 @@ final class YangFunctionContext implements FunctionContext {
 
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-                currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final Object nodeValue = currentNodeContext.getNode().getValue();
         final TypeDefinition<?> type = correspondingSchemaNode.getType();
@@ -170,15 +158,15 @@ final class YangFunctionContext implements FunctionContext {
         }
         if (type instanceof LeafrefTypeDefinition) {
             final RevisionAwareXPath xpath = ((LeafrefTypeDefinition) type).getPathStatement();
-            return getNodeReferencedByLeafref(xpath, currentNodeContext, schemaContext, correspondingSchemaNode,
-                    nodeValue);
+            return getNodeReferencedByLeafref(xpath, currentNodeContext, getSchemaContext(currentNodeContext),
+                correspondingSchemaNode, nodeValue);
         }
         return null;
     }
 
     // derived-from(node-set nodes, string identity) function as per https://tools.ietf.org/html/rfc7950#section-10.4.1
     private static boolean derivedFrom(final Context context, final List<?> args) throws FunctionCallException {
-        final Entry<IdentitySchemaNode, IdentitySchemaNode> ids =  commonDerivedFrom("derived-from", context, args);
+        final Entry<IdentitySchemaNode, IdentitySchemaNode> ids = commonDerivedFrom("derived-from", context, args);
         return ids != null && isAncestorOf(ids.getKey(), ids.getValue());
     }
 
@@ -202,10 +190,9 @@ final class YangFunctionContext implements FunctionContext {
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
+        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
         return correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition
                 && currentNodeContext.getNode().getValue() instanceof QName ? new SimpleImmutableEntry<>(
                         getIdentitySchemaNodeFromString((String) args.get(0), schemaContext, correspondingSchemaNode),
@@ -222,9 +209,7 @@ final class YangFunctionContext implements FunctionContext {
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(currentNodeContext);
 
         final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
         if (!(nodeType instanceof EnumTypeDefinition)) {
@@ -323,7 +308,7 @@ final class YangFunctionContext implements FunctionContext {
     private static NormalizedNode<?, ?> getNodeReferencedByInstanceIdentifier(final YangInstanceIdentifier path,
             final NormalizedNodeContext currentNodeContext) {
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
-        final NormalizedNode<?, ?> rootNode = navigator.getRootNode();
+        final NormalizedNode<?, ?> rootNode = navigator.getDocument().getRootNode();
         final List<PathArgument> pathArguments = path.getPathArguments();
         if (pathArguments.get(0).getNodeType().equals(rootNode.getNodeType())) {
             final List<PathArgument> relPath = pathArguments.subList(1, pathArguments.size());
@@ -361,7 +346,7 @@ final class YangFunctionContext implements FunctionContext {
                 xpath.toString(), schemaContext, correspondingSchemaNode, currentNodeContext);
         final List<PathArgument> pathArguments = builder.build();
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
-        final NormalizedNode<?, ?> rootNode = navigator.getRootNode();
+        final NormalizedNode<?, ?> rootNode = navigator.getDocument().getRootNode();
         if (pathArguments.get(0).getNodeType().equals(rootNode.getNodeType())) {
             final List<PathArgument> relPath = pathArguments.subList(1, pathArguments.size());
             final Optional<NormalizedNode<?, ?>> possibleNode = NormalizedNodes.findNode(rootNode, relPath);
@@ -438,29 +423,8 @@ final class YangFunctionContext implements FunctionContext {
         return ((NormalizedNodeContextSupport) contextSupport).getSchemaContext();
     }
 
-    private static TypedDataSchemaNode getCorrespondingTypedSchemaNode(final SchemaContext schemaContext,
-            final NormalizedNodeContext currentNodeContext) {
-        Iterator<NormalizedNodeContext> ancestorOrSelfAxisIterator;
-        try {
-            ancestorOrSelfAxisIterator = currentNodeContext.getContextSupport().getNavigator()
-                    .getAncestorOrSelfAxisIterator(currentNodeContext);
-        } catch (UnsupportedAxisException ex) {
-            throw new JaxenRuntimeException(ex);
-        }
-
-        final Deque<QName> schemaPathToCurrentNode = new ArrayDeque<>();
-        while (ancestorOrSelfAxisIterator.hasNext()) {
-            final NormalizedNode<?, ?> nextNode = ancestorOrSelfAxisIterator.next().getNode();
-            if (!(nextNode instanceof MapNode) && !(nextNode instanceof LeafSetNode)
-                    && !(nextNode instanceof AugmentationNode)) {
-                schemaPathToCurrentNode.addFirst(nextNode.getNodeType());
-            }
-        }
-
-        final SchemaNode schemaNode = SchemaContextUtil.findNodeInSchemaContext(schemaContext, schemaPathToCurrentNode);
-
-        Preconditions.checkNotNull(schemaNode, "Node %s does not have a corresponding SchemaNode in the SchemaContext.",
-                currentNodeContext.getNode());
+    private static TypedDataSchemaNode getCorrespondingTypedSchemaNode(final NormalizedNodeContext currentNodeContext) {
+        final DataSchemaNode schemaNode = currentNodeContext.getSchema().getDataSchemaNode();
         Preconditions.checkState(schemaNode instanceof TypedDataSchemaNode, "Node %s must be a leaf or a leaf-list.",
                 currentNodeContext.getNode());
         return (TypedDataSchemaNode) schemaNode;
