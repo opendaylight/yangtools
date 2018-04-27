@@ -9,28 +9,36 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 
 import static java.util.Objects.requireNonNull;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+@NonNullByDefault
 final class JaxenDocument implements XPathDocument {
+    private final DataSchemaContextNode<?> schema;
     private final NormalizedNode<?, ?> root;
     private final SchemaContext context;
 
-    JaxenDocument(final JaxenSchemaContext context, final NormalizedNode<?, ?> root) {
+    JaxenDocument(final SchemaContext context, final DataSchemaContextTree tree,
+        final NormalizedNode<?, ?> root) {
         this.root = requireNonNull(root);
-        this.context = context.getSchemaContext();
+        this.context = requireNonNull(context);
+        this.schema = requireNonNull(tree.getRoot().getChild(root.getIdentifier()));
     }
 
-    @Nonnull
     @Override
     public NormalizedNode<?, ?> getRootNode() {
         return root;
     }
 
-    @Nonnull
     SchemaContext getSchemaContext() {
         return context;
+    }
+
+    DataSchemaContextNode<?> getSchema() {
+        return schema;
     }
 }
