@@ -10,11 +10,22 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
+/**
+ * Semantic tree binding a {@link SchemaContext} to a {@link NormalizedNode} tree. Since the layout of the schema
+ * and data has differences, the mapping is not trivial -- which is where this class comes in.
+ *
+ * @author Robert Varga
+ */
+// FIXME: 3.0.0: @NonNullByDefault
 public final class DataSchemaContextTree {
     private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
@@ -34,10 +45,34 @@ public final class DataSchemaContextTree {
         return TREES.getUnchecked(ctx);
     }
 
-    public DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
+    /**
+     * Find a child node as identified by an absolute {@link YangInstanceIdentifier}.
+     *
+     * @param path Path towards the child node
+     * @return Child node if present, or empty when corresponding child is not found.
+     * @throws NullPointerException if {@code path} is null
+     */
+    public @NonNull Optional<@NonNull DataSchemaContextNode<?>> findChild(final @NonNull YangInstanceIdentifier path) {
+        return getRoot().findChild(path);
+    }
+
+    /**
+     * Get a child node as identified by an absolute {@link YangInstanceIdentifier}.
+     *
+     * @param path Path towards the child node
+     * @return Child node if present, or null when corresponding child is not found.
+     * @throws NullPointerException if {@code path} is null
+     *
+     * @deprecated Use {@link #findChild(YangInstanceIdentifier)} instead.
+     */
+    @Deprecated
+    public @Nullable DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
         DataSchemaContextNode<?> currentOp = root;
         for (PathArgument arg : path.getPathArguments()) {
             currentOp = currentOp.getChild(arg);
+            if (currentOp == null) {
+                return null;
+            }
         }
         return currentOp;
     }
