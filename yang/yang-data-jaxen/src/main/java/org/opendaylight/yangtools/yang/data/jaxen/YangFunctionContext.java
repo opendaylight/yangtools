@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import org.jaxen.Context;
 import org.jaxen.ContextSupport;
 import org.jaxen.Function;
 import org.jaxen.FunctionCallException;
@@ -61,42 +62,208 @@ final class YangFunctionContext implements FunctionContext {
 
     // Core XPath functions, as per http://tools.ietf.org/html/rfc6020#section-6.4.1
     private static final FunctionContext XPATH_FUNCTION_CONTEXT = new XPathFunctionContext(false);
+
+    // Singleton instance of reuse
+    private static final YangFunctionContext INSTANCE = new YangFunctionContext();
+
+    private YangFunctionContext() {
+    }
+
+    static YangFunctionContext getInstance() {
+        return INSTANCE;
+    }
+
+    @Override
+    public Function getFunction(final String namespaceURI, final String prefix, final String localName)
+            throws UnresolvableException {
+        if (prefix == null) {
+            switch (localName) {
+                case "bit-is-set":
+                    return YangFunctionContext::bitIsSet;
+                case "current":
+                    return YangFunctionContext::current;
+                case "deref":
+                    return YangFunctionContext::deref;
+                case "derived-from":
+                    return YangFunctionContext::derivedFrom;
+                case "derived-from-or-self":
+                    return YangFunctionContext::derivedFromOrSelf;
+                case "enum-value":
+                    return YangFunctionContext::enumValueFunction;
+                case "re-match":
+                    return YangFunctionContext::reMatch;
+                default:
+                    break;
+            }
+        }
+
+        return XPATH_FUNCTION_CONTEXT.getFunction(namespaceURI, prefix, localName);
+    }
+
+    // bit-is-set(node-set nodes, string bit-name) function as per
+    // https://tools.ietf.org/html/rfc7950#section-10.6.1
+    private static boolean bitIsSet(final Context context, final List<?> args) throws FunctionCallException {
+        if (args == null || args.size() != 1) {
+            throw new FunctionCallException("bit-is-set() takes two arguments: node-set nodes, string bit-name");
+        }
+
+        if (!(args.get(0) instanceof String)) {
+            throw new FunctionCallException("Argument bit-name of bit-is-set() function should be a String");
+        }
+
+        final String bitName = (String) args.get(0);
+
+        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+
+        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
+
+        final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
+        if (!(nodeType instanceof BitsTypeDefinition)) {
+            return false;
+        }
+
+        final Object nodeValue = currentNodeContext.getNode().getValue();
+        if (!(nodeValue instanceof Set)) {
+            return false;
+        }
+
+        final BitsTypeDefinition bitsType = (BitsTypeDefinition) nodeType;
+        Preconditions.checkState(containsBit(bitsType, bitName), "Bit %s does not belong to bits %s.", bitName,
+            bitsType);
+        return ((Set<?>)nodeValue).contains(bitName);
+    }
+
     // current() function, as per http://tools.ietf.org/html/rfc6020#section-6.4.1
-    private static final Function CURRENT_FUNCTION = (context, args) -> {
+    private static NormalizedNodeContext current(final Context context, final List<?> args)
+            throws FunctionCallException {
         if (!args.isEmpty()) {
             throw new FunctionCallException("current() takes no arguments.");
         }
 
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
         return (NormalizedNodeContext) context;
-    };
+    }
 
-    // re-match(string subject, string pattern) function as per https://tools.ietf.org/html/rfc7950#section-10.2.1
-    private static final Function REMATCH_FUNCTION = (context, args) -> {
-        if (args == null || args.size() != 2) {
-            throw new FunctionCallException("re-match() takes two arguments: string subject, string pattern.");
+    // deref(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.3.1
+    private static NormalizedNode<?, ? > deref(final Context context, final List<?> args) throws FunctionCallException {
+        if (!args.isEmpty()) {
+            throw new FunctionCallException("deref() takes only one argument: node-set nodes.");
+        }
+
+        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+                currentNodeContext);
+
+        final Object nodeValue = currentNodeContext.getNode().getValue();
+        final TypeDefinition<?> type = correspondingSchemaNode.getType();
+        if (type instanceof InstanceIdentifierTypeDefinition) {
+            return nodeValue instanceof YangInstanceIdentifier
+                    ? getNodeReferencedByInstanceIdentifier((YangInstanceIdentifier) nodeValue, currentNodeContext)
+                            : null;
+        }
+        if (type instanceof LeafrefTypeDefinition) {
+            final RevisionAwareXPath xpath = ((LeafrefTypeDefinition) type).getPathStatement();
+            return getNodeReferencedByLeafref(xpath, currentNodeContext, schemaContext, correspondingSchemaNode,
+                    nodeValue);
+        }
+        return null;
+    }
+
+    // derived-from(node-set nodes, string identity) function as per https://tools.ietf.org/html/rfc7950#section-10.4.1
+    private static boolean derivedFrom(final Context context, final List<?> args) throws FunctionCallException {
+        if (args == null || args.size() != 1) {
+            throw new FunctionCallException("derived-from() takes two arguments: node-set nodes, string identity.");
         }
 
         if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException("First argument of re-match() should be a String.");
+            throw new FunctionCallException("Argument 'identity' of derived-from() function should be a String.");
         }
 
-        if (!(args.get(1) instanceof String)) {
-            throw new FunctionCallException("Second argument of re-match() should be a String.");
+        final String identityArg = (String) args.get(0);
+
+        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+
+        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
+
+        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
+            return false;
         }
 
-        final String subject = (String) args.get(0);
-        final String rawPattern = (String) args.get(1);
+        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
+            return false;
+        }
 
-        final String pattern = RegexUtils.getJavaRegexFromXSD(rawPattern);
+        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
 
-        return (Boolean) subject.matches(pattern);
-    };
+        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
+                correspondingSchemaNode);
+        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
+                schemaContext);
 
-    // deref(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.3.1
-    private static final Function DEREF_FUNCTION = (context, args) -> {
+        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
+        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
+
+        return ancestorIdentities.contains(identityArgSchemaNode);
+    }
+
+    // derived-from-or-self(node-set nodes, string identity) function as per
+    // https://tools.ietf.org/html/rfc7950#section-10.4.2
+    private static boolean derivedFromOrSelf(final Context context, final List<?> args) throws FunctionCallException {
+        if (args == null || args.size() != 1) {
+            throw new FunctionCallException(
+                "derived-from-or-self() takes two arguments: node-set nodes, string identity");
+        }
+
+        if (!(args.get(0) instanceof String)) {
+            throw new FunctionCallException(
+                "Argument 'identity' of derived-from-or-self() function should be a String.");
+        }
+
+        final String identityArg = (String) args.get(0);
+
+        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
+
+        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
+        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
+        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
+            currentNodeContext);
+
+        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
+            return false;
+        }
+
+        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
+            return false;
+        }
+
+        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
+
+        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
+                correspondingSchemaNode);
+        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
+                schemaContext);
+        if (currentNodeIdentitySchemaNode.equals(identityArgSchemaNode)) {
+            return true;
+        }
+
+        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
+        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
+
+        return ancestorIdentities.contains(identityArgSchemaNode);
+    }
+
+    // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
+    private static Object enumValueFunction(final Context context, final List<?> args) throws FunctionCallException {
         if (!args.isEmpty()) {
-            throw new FunctionCallException("deref() takes only one argument: node-set nodes.");
+            throw new FunctionCallException("enum-value() takes one argument: node-set nodes.");
         }
 
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
@@ -104,24 +271,99 @@ final class YangFunctionContext implements FunctionContext {
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-                currentNodeContext);
+            currentNodeContext);
+
+        final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
+        if (!(nodeType instanceof EnumTypeDefinition)) {
+            return DOUBLE_NAN;
+        }
 
         final Object nodeValue = currentNodeContext.getNode().getValue();
-
-        if (correspondingSchemaNode.getType() instanceof InstanceIdentifierTypeDefinition
-                && nodeValue instanceof YangInstanceIdentifier) {
-            return getNodeReferencedByInstanceIdentifier((YangInstanceIdentifier) nodeValue, currentNodeContext);
+        if (!(nodeValue instanceof String)) {
+            return DOUBLE_NAN;
         }
 
-        if (correspondingSchemaNode.getType() instanceof LeafrefTypeDefinition) {
-            final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) correspondingSchemaNode.getType();
-            final RevisionAwareXPath xpath = leafrefType.getPathStatement();
-            return getNodeReferencedByLeafref(xpath, currentNodeContext, schemaContext, correspondingSchemaNode,
-                    nodeValue);
+        final EnumTypeDefinition enumerationType = (EnumTypeDefinition) nodeType;
+        final String enumName = (String) nodeValue;
+
+        return getEnumValue(enumerationType, enumName);
+    }
+
+    // re-match(string subject, string pattern) function as per https://tools.ietf.org/html/rfc7950#section-10.2.1
+    private static boolean reMatch(final Context context, final List<?> args) throws FunctionCallException {
+        if (args == null || args.size() != 2) {
+            throw new FunctionCallException("re-match() takes two arguments: string subject, string pattern.");
+        }
+        final Object subject = args.get(0);
+        if (!(subject instanceof String)) {
+            throw new FunctionCallException("First argument of re-match() should be a String.");
+        }
+        final Object pattern = args.get(1);
+        if (!(pattern instanceof String)) {
+            throw new FunctionCallException("Second argument of re-match() should be a String.");
         }
 
-        return null;
-    };
+        return ((String) subject).matches(RegexUtils.getJavaRegexFromXSD((String) pattern));
+    }
+
+    private static void collectAncestorIdentities(final IdentitySchemaNode identity,
+            final Set<IdentitySchemaNode> ancestorIdentities) {
+        for (final IdentitySchemaNode id : identity.getBaseIdentities()) {
+            collectAncestorIdentities(id, ancestorIdentities);
+            ancestorIdentities.add(id);
+        }
+    }
+
+    private static IdentitySchemaNode getIdentitySchemaNodeFromQName(final QName identityQName,
+            final SchemaContext schemaContext) {
+        final Optional<Module> module = schemaContext.findModule(identityQName.getModule());
+        Preconditions.checkArgument(module.isPresent(), "Module for %s not found", identityQName);
+        return findIdentitySchemaNodeInModule(module.get(), identityQName);
+    }
+
+    private static IdentitySchemaNode getIdentitySchemaNodeFromString(final String identity,
+            final SchemaContext schemaContext, final TypedDataSchemaNode correspondingSchemaNode) {
+        final List<String> identityPrefixAndName = COLON_SPLITTER.splitToList(identity);
+        final Module module = schemaContext.findModule(correspondingSchemaNode.getQName().getModule()).get();
+        if (identityPrefixAndName.size() == 2) {
+            // prefix of local module
+            if (identityPrefixAndName.get(0).equals(module.getPrefix())) {
+                return findIdentitySchemaNodeInModule(module, QName.create(module.getQNameModule(),
+                        identityPrefixAndName.get(1)));
+            }
+
+            // prefix of imported module
+            for (final ModuleImport moduleImport : module.getImports()) {
+                if (identityPrefixAndName.get(0).equals(moduleImport.getPrefix())) {
+                    final Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
+                        moduleImport.getRevision()).get();
+                    return findIdentitySchemaNodeInModule(importedModule, QName.create(
+                        importedModule.getQNameModule(), identityPrefixAndName.get(1)));
+                }
+            }
+
+            throw new IllegalArgumentException(String.format("Cannot resolve prefix '%s' from identity '%s'.",
+                    identityPrefixAndName.get(0), identity));
+        }
+
+        if (identityPrefixAndName.size() == 1) { // without prefix
+            return findIdentitySchemaNodeInModule(module, QName.create(module.getQNameModule(),
+                    identityPrefixAndName.get(0)));
+        }
+
+        throw new IllegalArgumentException(String.format("Malformed identity argument: %s.", identity));
+    }
+
+    private static IdentitySchemaNode findIdentitySchemaNodeInModule(final Module module, final QName identityQName) {
+        for (final IdentitySchemaNode id : module.getIdentities()) {
+            if (identityQName.equals(id.getQName())) {
+                return id;
+            }
+        }
+
+        throw new IllegalArgumentException(String.format("Identity %s does not have a corresponding"
+                    + " identity schema node in the module %s.", identityQName, module));
+    }
 
     private static NormalizedNode<?, ?> getNodeReferencedByInstanceIdentifier(final YangInstanceIdentifier path,
             final NormalizedNodeContext currentNodeContext) {
@@ -212,179 +454,16 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    // derived-from(node-set nodes, string identity) function as per https://tools.ietf.org/html/rfc7950#section-10.4.1
-    private static final Function DERIVED_FROM_FUNCTION = (context, args) -> {
-        if (args == null || args.size() != 1) {
-            throw new FunctionCallException("derived-from() takes two arguments: node-set nodes, string identity.");
-        }
 
-        if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException("Argument 'identity' of derived-from() function should be a String.");
-        }
-
-        final String identityArg = (String) args.get(0);
-
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
-
-        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
-            return Boolean.FALSE;
-        }
-
-        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
-            return Boolean.FALSE;
-        }
-
-        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
-
-        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
-                correspondingSchemaNode);
-        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
-                schemaContext);
-
-        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
-        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
-
-        return Boolean.valueOf(ancestorIdentities.contains(identityArgSchemaNode));
-    };
-
-    // derived-from-or-self(node-set nodes, string identity) function as per
-    // https://tools.ietf.org/html/rfc7950#section-10.4.2
-    private static final Function DERIVED_FROM_OR_SELF_FUNCTION = (context, args) -> {
-        if (args == null || args.size() != 1) {
-            throw new FunctionCallException(
-                "derived-from-or-self() takes two arguments: node-set nodes, string identity");
-        }
-
-        if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException(
-                "Argument 'identity' of derived-from-or-self() function should be a String.");
-        }
-
-        final String identityArg = (String) args.get(0);
-
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
-
-        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
-            return Boolean.FALSE;
-        }
-
-        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
-            return Boolean.FALSE;
-        }
-
-        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
-
-        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
-                correspondingSchemaNode);
-        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
-                schemaContext);
-        if (currentNodeIdentitySchemaNode.equals(identityArgSchemaNode)) {
-            return Boolean.TRUE;
-        }
-
-        final Set<IdentitySchemaNode> ancestorIdentities = new HashSet<>();
-        collectAncestorIdentities(currentNodeIdentitySchemaNode, ancestorIdentities);
-
-        return Boolean.valueOf(ancestorIdentities.contains(identityArgSchemaNode));
-    };
-
-    private static void collectAncestorIdentities(final IdentitySchemaNode identity,
-            final Set<IdentitySchemaNode> ancestorIdentities) {
-        for (final IdentitySchemaNode id : identity.getBaseIdentities()) {
-            collectAncestorIdentities(id, ancestorIdentities);
-            ancestorIdentities.add(id);
-        }
-    }
-
-    private static IdentitySchemaNode getIdentitySchemaNodeFromQName(final QName identityQName,
-            final SchemaContext schemaContext) {
-        final Optional<Module> module = schemaContext.findModule(identityQName.getModule());
-        Preconditions.checkArgument(module.isPresent(), "Module for %s not found", identityQName);
-        return findIdentitySchemaNodeInModule(module.get(), identityQName);
-    }
-
-    private static IdentitySchemaNode getIdentitySchemaNodeFromString(final String identity,
-            final SchemaContext schemaContext, final TypedDataSchemaNode correspondingSchemaNode) {
-        final List<String> identityPrefixAndName = COLON_SPLITTER.splitToList(identity);
-        final Module module = schemaContext.findModule(correspondingSchemaNode.getQName().getModule()).get();
-        if (identityPrefixAndName.size() == 2) {
-            // prefix of local module
-            if (identityPrefixAndName.get(0).equals(module.getPrefix())) {
-                return findIdentitySchemaNodeInModule(module, QName.create(module.getQNameModule(),
-                        identityPrefixAndName.get(1)));
-            }
-
-            // prefix of imported module
-            for (final ModuleImport moduleImport : module.getImports()) {
-                if (identityPrefixAndName.get(0).equals(moduleImport.getPrefix())) {
-                    final Module importedModule = schemaContext.findModule(moduleImport.getModuleName(),
-                        moduleImport.getRevision()).get();
-                    return findIdentitySchemaNodeInModule(importedModule, QName.create(
-                        importedModule.getQNameModule(), identityPrefixAndName.get(1)));
-                }
-            }
-
-            throw new IllegalArgumentException(String.format("Cannot resolve prefix '%s' from identity '%s'.",
-                    identityPrefixAndName.get(0), identity));
-        }
-
-        if (identityPrefixAndName.size() == 1) { // without prefix
-            return findIdentitySchemaNodeInModule(module, QName.create(module.getQNameModule(),
-                    identityPrefixAndName.get(0)));
-        }
-
-        throw new IllegalArgumentException(String.format("Malformed identity argument: %s.", identity));
-    }
-
-    private static IdentitySchemaNode findIdentitySchemaNodeInModule(final Module module, final QName identityQName) {
-        for (final IdentitySchemaNode id : module.getIdentities()) {
-            if (identityQName.equals(id.getQName())) {
-                return id;
+    private static boolean containsBit(final BitsTypeDefinition bitsType, final String bitName) {
+        for (BitsTypeDefinition.Bit bit : bitsType.getBits()) {
+            if (bitName.equals(bit.getName())) {
+                return true;
             }
         }
 
-        throw new IllegalArgumentException(String.format("Identity %s does not have a corresponding"
-                    + " identity schema node in the module %s.", identityQName, module));
+        return false;
     }
-
-    // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
-    private static final Function ENUM_VALUE_FUNCTION = (context, args) -> {
-        if (!args.isEmpty()) {
-            throw new FunctionCallException("enum-value() takes one argument: node-set nodes.");
-        }
-
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
-
-        final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
-        if (!(nodeType instanceof EnumTypeDefinition)) {
-            return DOUBLE_NAN;
-        }
-
-        final Object nodeValue = currentNodeContext.getNode().getValue();
-        if (!(nodeValue instanceof String)) {
-            return DOUBLE_NAN;
-        }
-
-        final EnumTypeDefinition enumerationType = (EnumTypeDefinition) nodeType;
-        final String enumName = (String) nodeValue;
-
-        return getEnumValue(enumerationType, enumName);
-    };
 
     private static int getEnumValue(final EnumTypeDefinition enumerationType, final String enumName) {
         for (final EnumTypeDefinition.EnumPair enumPair : enumerationType.getValues()) {
@@ -395,52 +474,6 @@ final class YangFunctionContext implements FunctionContext {
 
         throw new IllegalStateException(String.format("Enum %s does not belong to enumeration %s.",
                 enumName, enumerationType));
-    }
-
-    // bit-is-set(node-set nodes, string bit-name) function as per
-    // https://tools.ietf.org/html/rfc7950#section-10.6.1
-    private static final Function BIT_IS_SET_FUNCTION = (context, args) -> {
-        if (args == null || args.size() != 1) {
-            throw new FunctionCallException("bit-is-set() takes two arguments: node-set nodes, string bit-name");
-        }
-
-        if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException("Argument bit-name of bit-is-set() function should be a String");
-        }
-
-        final String bitName = (String) args.get(0);
-
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
-
-        final TypeDefinition<?> nodeType = correspondingSchemaNode.getType();
-        if (!(nodeType instanceof BitsTypeDefinition)) {
-            return Boolean.FALSE;
-        }
-
-        final Object nodeValue = currentNodeContext.getNode().getValue();
-        if (!(nodeValue instanceof Set)) {
-            return Boolean.FALSE;
-        }
-
-        final BitsTypeDefinition bitsType = (BitsTypeDefinition) nodeType;
-        Preconditions.checkState(containsBit(bitsType, bitName), "Bit %s does not belong to bits %s.", bitName,
-            bitsType);
-        return Boolean.valueOf(((Set<?>)nodeValue).contains(bitName));
-    };
-
-    private static boolean containsBit(final BitsTypeDefinition bitsType, final String bitName) {
-        for (BitsTypeDefinition.Bit bit : bitsType.getBits()) {
-            if (bitName.equals(bit.getName())) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static SchemaContext getSchemaContext(final NormalizedNodeContext normalizedNodeContext) {
@@ -476,42 +509,5 @@ final class YangFunctionContext implements FunctionContext {
         Preconditions.checkState(schemaNode instanceof TypedDataSchemaNode, "Node %s must be a leaf or a leaf-list.",
                 currentNodeContext.getNode());
         return (TypedDataSchemaNode) schemaNode;
-    }
-
-    // Singleton instance of reuse
-    private static final YangFunctionContext INSTANCE = new YangFunctionContext();
-
-    private YangFunctionContext() {
-    }
-
-    static YangFunctionContext getInstance() {
-        return INSTANCE;
-    }
-
-    @Override
-    public Function getFunction(final String namespaceURI, final String prefix, final String localName)
-            throws UnresolvableException {
-        if (prefix == null) {
-            switch (localName) {
-                case "bit-is-set":
-                    return BIT_IS_SET_FUNCTION;
-                case "current":
-                    return CURRENT_FUNCTION;
-                case "deref":
-                    return DEREF_FUNCTION;
-                case "derived-from":
-                    return DERIVED_FROM_FUNCTION;
-                case "derived-from-or-self":
-                    return DERIVED_FROM_OR_SELF_FUNCTION;
-                case "enum-value":
-                    return ENUM_VALUE_FUNCTION;
-                case "re-match":
-                    return REMATCH_FUNCTION;
-                default:
-                    break;
-            }
-        }
-
-        return XPATH_FUNCTION_CONTEXT.getFunction(namespaceURI, prefix, localName);
     }
 }
