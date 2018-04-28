@@ -21,6 +21,7 @@ import javax.xml.xpath.XPathExpressionException;
 import org.jaxen.BaseXPath;
 import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
+import org.jaxen.XPath;
 import org.jaxen.expr.Expr;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -40,10 +41,10 @@ final class JaxenXPath implements XPathExpression {
 
     private final Converter<String, QNameModule> converter;
     private final SchemaPath schemaPath;
-    private final BaseXPath xpath;
+    private final XPath xpath;
 
     private JaxenXPath(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
-            final BaseXPath xpath) {
+            final XPath xpath) {
         this.converter = requireNonNull(converter);
         this.schemaPath = requireNonNull(schemaPath);
         this.xpath = requireNonNull(xpath);
