@@ -18,11 +18,14 @@ import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
-import org.jaxen.BaseXPath;
-import org.jaxen.ContextSupport;
 import org.jaxen.JaxenException;
-import org.jaxen.XPath;
+import org.jaxen.JaxenHandler;
+import org.jaxen.XPathSyntaxException;
 import org.jaxen.expr.Expr;
+import org.jaxen.expr.XPathExpr;
+import org.jaxen.saxpath.SAXPathException;
+import org.jaxen.saxpath.XPathReader;
+import org.jaxen.saxpath.helpers.XPathReaderFactory;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathBooleanResult;
@@ -41,34 +44,39 @@ final class JaxenXPath implements XPathExpression {
 
     private final Converter<String, QNameModule> converter;
     private final SchemaPath schemaPath;
-    private final XPath xpath;
+    private final Expr expr;
 
     private JaxenXPath(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
-            final XPath xpath) {
+            final Expr expr) {
         this.converter = requireNonNull(converter);
         this.schemaPath = requireNonNull(schemaPath);
-        this.xpath = requireNonNull(xpath);
+        this.expr = requireNonNull(expr);
     }
 
     static JaxenXPath create(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
             final String xpath) throws JaxenException {
-        final BaseXPath compiled = new BaseXPath(xpath) {
-            private static final long serialVersionUID = 1L;
 
-            @Override
-            protected ContextSupport getContextSupport() {
-                throw new UnsupportedOperationException(xpath);
-            }
-        };
+        final XPathExpr parsed;
+        try {
+            final XPathReader reader = XPathReaderFactory.createReader();
+            final JaxenHandler handler = new JaxenHandler();
+            reader.setXPathHandler(handler);
+            reader.parse(xpath);
+            parsed = handler.getXPathExpr();
+        } catch (org.jaxen.saxpath.XPathSyntaxException e) {
+            throw new XPathSyntaxException(e);
+        } catch (SAXPathException e) {
+            throw new JaxenException(e);
+        }
 
-        final Expr expr = compiled.getRootExpr();
+        final Expr expr = parsed.getRootExpr();
         LOG.debug("Compiled {} to expression {}", xpath, expr);
 
         new ExprWalker(new ExprListener() {
             // FIXME: perform expression introspection to understand things like apex, etc.
         }).walk(expr);
 
-        return new JaxenXPath(converter, schemaPath, compiled);
+        return new JaxenXPath(converter, schemaPath, expr);
     }
 
     @Override
@@ -79,13 +87,7 @@ final class JaxenXPath implements XPathExpression {
         final NormalizedNodeContextSupport contextSupport = NormalizedNodeContextSupport.create(
             (JaxenDocument)document, converter);
 
-        final Object result;
-        try {
-            result = xpath.evaluate(contextSupport.createContext(path));
-        } catch (JaxenException e) {
-            throw new XPathExpressionException(e);
-        }
-
+        final Object result = evaluate(contextSupport.createContext(path));
         if (result instanceof String) {
             return Optional.of((XPathStringResult) () -> (String) result);
         } else if (result instanceof Number) {
@@ -104,6 +106,27 @@ final class JaxenXPath implements XPathExpression {
             return Lists.transform(resultList,
                 context -> new SimpleImmutableEntry<>(context.getPath(), context.getNode()));
         });
+    }
+
+    private Object evaluate(final NormalizedNodeContext context) throws XPathExpressionException {
+        final Object result;
+        try {
+            result = expr.evaluate(context);
+        } catch (JaxenException e) {
+            throw new XPathExpressionException(e);
+        }
+
+        if (result instanceof List) {
+            final List<?> list = (List<?>) result;
+            if (list.size() == 1) {
+                final Object first = list.get(0);
+                if (first instanceof String || first instanceof Number || first instanceof Boolean) {
+                    return first;
+                }
+            }
+        }
+
+        return result;
     }
 
     @Nonnull
