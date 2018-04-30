@@ -15,12 +15,10 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.BaseEncoding;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.Set;
 import org.jaxen.DefaultNavigator;
 import org.jaxen.NamedAccessNavigator;
@@ -31,12 +29,9 @@ import org.jaxen.saxpath.SAXPathException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -216,11 +211,7 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
     public Iterator<NormalizedNodeContext> getChildAxisIterator(final Object contextNode) {
         final NormalizedNodeContext ctx = cast(contextNode);
         final NormalizedNode<?, ?> node = ctx.getNode();
-        if (node instanceof DataContainerNode) {
-            return Iterators.transform(((DataContainerNode<?>) node).getValue().iterator(), ctx);
-        }
-
-        return null;
+        return node instanceof DataContainerNode ? ctx.iterateChildren((DataContainerNode<?>) node) : null;
     }
 
     @Override
@@ -228,30 +219,9 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
             final String namespacePrefix, final String namespaceURI) {
         final NormalizedNodeContext ctx = cast(contextNode);
         final NormalizedNode<?, ?> node = ctx.getNode();
-        if (!(node instanceof DataContainerNode)) {
-            return null;
-        }
-
-        final QName qname = resolveQName(node, namespacePrefix, localName);
-        @SuppressWarnings({ "unchecked", "rawtypes" })
-        final Optional<NormalizedNode<?, ?>> maybeChild = ((DataContainerNode)node).getChild(new NodeIdentifier(qname));
-        if (!maybeChild.isPresent()) {
-            return null;
-        }
-
-        final NormalizedNode<?, ?> child = maybeChild.get();
-        final Collection<? extends NormalizedNode<?, ?>> collection;
-
-        // The child may be a structural node
-        if (child instanceof MapNode) {
-            collection = ((MapNode)child).getValue();
-        } else if (child instanceof LeafSetNode) {
-            collection = ((LeafSetNode<?>)child).getValue();
-        } else {
-            return Iterators.singletonIterator(ctx.apply(child));
-        }
-
-        return Iterators.transform(collection.iterator(), ctx);
+        return node instanceof DataContainerNode
+                ? ctx.iterateChildrenNamed((DataContainerNode<?>)node, resolveQName(node, namespacePrefix, localName))
+                        : null;
     }
 
     @Override
