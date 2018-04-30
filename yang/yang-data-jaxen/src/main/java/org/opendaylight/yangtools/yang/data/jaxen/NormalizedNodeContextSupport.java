@@ -43,7 +43,7 @@ final class NormalizedNodeContextSupport extends ContextSupport {
         for (PathArgument arg : path.getPathArguments()) {
             final Optional<NormalizedNode<?, ?>> node = NormalizedNodes.getDirectChild(result.getNode(), arg);
             checkArgument(node.isPresent(), "Node %s has no child %s", result.getNode(), arg);
-            result = result.apply(node.get());
+            result = result.createChild(node.get());
         }
         return result;
     }
