@@ -18,7 +18,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>odl-yangtools-yang-parser</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>1.2.3</version>
     <packaging>feature</packaging>
 
     <name>OpenDaylight :: Yangtools :: YANG Parser</name>
