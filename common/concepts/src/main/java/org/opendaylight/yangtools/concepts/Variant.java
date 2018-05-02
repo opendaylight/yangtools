@@ -33,21 +33,21 @@ public class Variant<T, U> {
     private final @Nullable T first;
     private final @Nullable U second;
 
-    Variant(final T first) {
+    protected Variant(final T first) {
         this.first = requireNonNull(first);
         second = null;
     }
 
-    Variant(final U second, final @Nullable Void dummy) {
+    protected Variant(final U second, final @Nullable Void dummy) {
         first = null;
         this.second = requireNonNull(second);
     }
 
-    final T first() {
+    protected final T first() {
         return verifyNotNull(first);
     }
 
-    final U second() {
+    protected final U second() {
         return verifyNotNull(second);
     }
 

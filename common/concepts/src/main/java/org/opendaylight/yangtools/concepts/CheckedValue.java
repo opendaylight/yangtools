@@ -35,12 +35,12 @@ import org.eclipse.jdt.annotation.Nullable;
 @Beta
 @NonNullByDefault
 @ThreadSafe
-public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
-    private CheckedValue(final T value) {
+public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
+    protected CheckedValue(final T value) {
         super(value);
     }
 
-    private CheckedValue(final E violation, final @Nullable Void dummy) {
+    protected CheckedValue(final E violation, final @Nullable Void dummy) {
         super(violation, dummy);
     }
 
@@ -86,7 +86,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return Contained value
      * @throws IllegalStateException if an error string is present.
      */
-    public T get() {
+    public final T get() {
         if (isFirst()) {
             return first();
         }
@@ -101,7 +101,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      *         string.
      * @throws IllegalStateException if a value is present.
      */
-    public E getException() {
+    public final E getException() {
         if (isSecond()) {
             return second();
         }
@@ -113,7 +113,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      *
      * @return True if a value is present.
      */
-    public boolean isPresent() {
+    public final boolean isPresent() {
         return isFirst();
     }
 
@@ -123,7 +123,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @param consumer block to be executed if a value is present
      * @throws NullPointerException if value is present and {@code consumer} is null
      */
-    public void ifPresent(final Consumer<? super T> consumer) {
+    public final void ifPresent(final Consumer<? super T> consumer) {
         if (isFirst()) {
             consumer.accept(first());
         }
@@ -157,7 +157,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @param other Replacement value
      * @return Contained value or {code other}
      */
-    public T orElse(final T other) {
+    public final T orElse(final T other) {
         return isFirst() ? first() : other;
     }
 
@@ -168,7 +168,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return Contained value or supplier's value
      * @throws NullPointerException if {@code supplier} is null
      */
-    public T orElseGet(final Supplier<T> supplier) {
+    public final T orElseGet(final Supplier<T> supplier) {
         requireNonNull(supplier);
         return isFirst() ? first() : supplier.get();
     }
@@ -179,7 +179,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return Contained value
      * @throws E When there is no contained value
      */
-    public <X extends Throwable> T orElseThrow() throws E {
+    public final <X extends Throwable> T orElseThrow() throws E {
         if (isFirst()) {
             return first();
         }
@@ -194,7 +194,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value
      */
-    public <X extends Throwable> T orElseThrow(final Function<E, X> exceptionMapper) throws X {
+    public final <X extends Throwable> T orElseThrow(final Function<E, X> exceptionMapper) throws X {
         requireNonNull(exceptionMapper);
         if (isFirst()) {
             return first();
@@ -210,7 +210,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value
      */
-    public <X extends Throwable> T orElseThrow(final Supplier<X> supplier) throws X {
+    public final <X extends Throwable> T orElseThrow(final Supplier<X> supplier) throws X {
         requireNonNull(supplier);
         if (isFirst()) {
             return first();
@@ -225,7 +225,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return True if this call has transitioned the future to a completed state, false otherwise.
      * @throws NullPointerException if {code future} is null
      */
-    public boolean completeFuture(final CompletableFuture<T> future) {
+    public final boolean completeFuture(final CompletableFuture<T> future) {
         return isFirst() ? future.complete(first()) : future.completeExceptionally(second());
     }
 
@@ -236,7 +236,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return True if this call has transitioned the future to a completed state, false otherwise.
      * @throws NullPointerException if {code future} is null
      */
-    public boolean completeFuture(final SettableFuture<T> future) {
+    public final boolean completeFuture(final SettableFuture<T> future) {
         return isFirst() ? future.set(first()) : future.setException(second());
     }
 
@@ -246,7 +246,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      *
      * @return A {@link CompletableFuture}.
      */
-    public CompletableFuture<T> toCompletableFuture() {
+    public final CompletableFuture<T> toCompletableFuture() {
         if (isFirst()) {
             return CompletableFuture.completedFuture(first());
         }
@@ -262,7 +262,7 @@ public final class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      *
      * @return A {@link FluentFuture}.
      */
-    public FluentFuture<T> toFluentFuture() {
+    public final FluentFuture<T> toFluentFuture() {
         final ListenableFuture<T> future;
         if (isFirst()) {
             future = Futures.immediateFuture(first());
