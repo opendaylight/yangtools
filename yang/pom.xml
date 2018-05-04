@@ -39,6 +39,9 @@
         <module>yang-model-immutable</module>
         <module>yang-model-util</module>
 
+        <!-- YANG XPath API and implementation -->
+        <module>yang-xpath-api</module>
+
         <!-- End-user utility for validating YANG models -->
         <module>yang-model-validator</module>
 
