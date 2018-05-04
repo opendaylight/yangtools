@@ -40,6 +40,7 @@
 
         <!-- Experimental features -->
         <module>odl-exp-objcache</module>
+        <module>odl-yangtools-exp-xpath-api</module>
 
         <!-- Experimental feature repostitory -->
         <module>features-yangtools-experimental</module>
