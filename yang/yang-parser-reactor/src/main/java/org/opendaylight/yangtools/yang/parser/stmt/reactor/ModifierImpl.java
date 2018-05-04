@@ -90,7 +90,7 @@ final class ModifierImpl implements ModelActionBuilder {
         actionApplied = true;
     }
 
-    private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
+    private <K, C extends StmtContext<?, ?, ?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
             requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
                     final ModelProcessingPhase phase)  {
         checkNotRegistered();
@@ -101,7 +101,7 @@ final class ModifierImpl implements ModelActionBuilder {
         return addedToNs;
     }
 
-    private <K, C extends StmtContext<?,?,?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
+    private <K, C extends StmtContext<?, ?, ?>, N extends StatementNamespace<K, ?, ?>> AbstractPrerequisite<C>
             requiresCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
                     final NamespaceKeyCriterion<K> criterion, final ModelProcessingPhase phase)  {
         checkNotRegistered();
@@ -123,10 +123,9 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <K, C extends StmtContext.Mutable<?, ?, ?>,
-        N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> AbstractPrerequisite<C> mutatesCtxImpl(
-                final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key,
-                final ModelProcessingPhase phase) {
+    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            AbstractPrerequisite<C> mutatesCtxImpl(final StmtContext<?, ?, ?> context, final Class<N> namespace,
+                    final K key, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
         PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(phase);
@@ -136,7 +135,7 @@ final class ModifierImpl implements ModelActionBuilder {
         return mod;
     }
 
-    private static StatementContextBase<?,?,?> contextImpl(final Object value) {
+    private static StatementContextBase<?, ?, ?> contextImpl(final Object value) {
         Preconditions.checkArgument(value instanceof StatementContextBase,
             "Supplied context %s is not provided by this reactor.", value);
         return StatementContextBase.class.cast(value);
@@ -154,7 +153,7 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Nonnull
     @Override
-    public <C extends Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(final CT context,
+    public <C extends Mutable<?, ?, ?>, T extends C> Prerequisite<C> mutatesCtx(final T context,
             final ModelProcessingPhase phase) {
         return addMutation(new PhaseMutation<>(contextImpl(context), phase));
     }
@@ -219,7 +218,7 @@ final class ModifierImpl implements ModelActionBuilder {
     @Override
     public <K, E extends EffectiveStatement<?, ?>, N extends StatementNamespace<K, ?, ? extends E>> Prerequisite<E>
             requiresEffective(final StmtContext<?, ?, ?> context, final Class<N> namespace, final K key) {
-        final AbstractPrerequisite<StmtContext<?,?,E>> rawContext = requiresCtxImpl(context, namespace, key,
+        final AbstractPrerequisite<StmtContext<?, ?, E>> rawContext = requiresCtxImpl(context, namespace, key,
             EFFECTIVE_MODEL);
         return rawContext.transform(StmtContext::buildEffective);
     }
@@ -314,14 +313,14 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class NamespaceMutation<N extends IdentifierNamespace<?,?>>
+    private class NamespaceMutation<N extends IdentifierNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
         NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
         }
     }
 
-    private class AddedToNamespace<C extends StmtContext<?,?,?>> extends AbstractPrerequisite<C>
+    private class AddedToNamespace<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, OnPhaseFinished {
         private final ModelProcessingPhase phase;
 
@@ -348,7 +347,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class PhaseModificationInNamespace<C extends Mutable<?,?,?>> extends AbstractPrerequisite<C>
+    private class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
         private final ModelProcessingPhase modPhase;
 

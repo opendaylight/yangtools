@@ -50,9 +50,21 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         // NOOP
     }
 
+    /**
+     * Return a value associated with specified key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param <T> key type
+     * @return Value, or null if there is no element
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
     @Nonnull
-    public final <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
-            final KT key) throws NamespaceNotAvailableException {
+    public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
+            final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);
     }
 
@@ -71,14 +83,37 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
         return (Map<K, V>) namespaces.get(type);
     }
 
-    public final <K,V, KT extends K, VT extends V,N extends IdentifierNamespace<K, V>> void addToNs(final Class<N> type,
-            final KT key, final VT value) throws NamespaceNotAvailableException {
+    /**
+     * Associate a value with a key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param value value
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param <T> key type
+     * @param <U> key type
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
+    public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(
+            final Class<N> type, final T key, final U value) {
         getBehaviourRegistry().getNamespaceBehaviour(type).addTo(this,key,value);
     }
 
+    /**
+     * Associate a context with a key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param value Context value
+     * @param <K> namespace key type
+     * @param <N> namespace type
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public final <K, N extends StatementNamespace<K, ?,?>> void addContextToNamespace(final Class<N> type, final K key,
-            final StmtContext<?, ?, ?> value) throws NamespaceNotAvailableException {
+            final StmtContext<?, ?, ?> value) {
         getBehaviourRegistry().getNamespaceBehaviour((Class)type).addTo(this, key, value);
     }
 

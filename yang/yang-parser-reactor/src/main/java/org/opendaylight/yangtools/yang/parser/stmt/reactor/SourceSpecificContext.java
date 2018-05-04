@@ -294,7 +294,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return currentContext;
     }
 
-    PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) throws SourceException {
+    PhaseCompletionProgress tryToCompletePhase(final ModelProcessingPhase phase) {
         final Collection<ModifierImpl> currentPhaseModifiers = modifiers.get(phase);
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
@@ -363,7 +363,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return Optional.of(e);
     }
 
-    void loadStatements() throws SourceException {
+    void loadStatements() {
         LOG.trace("Source {} loading statements for phase {}", source, inProgressPhase);
 
         switch (inProgressPhase) {

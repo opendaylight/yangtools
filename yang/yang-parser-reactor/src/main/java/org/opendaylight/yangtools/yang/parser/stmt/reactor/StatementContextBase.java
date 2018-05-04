@@ -410,12 +410,15 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @param def definition context
      * @param ref source reference
      * @param argument statement argument
+     * @param <X> new substatement argument type
+     * @param <Y> new substatement declared type
+     * @param <Z> new substatement effective type
      * @return A new substatement
      */
     @SuppressWarnings("checkstyle:methodTypeParameterName")
-    public final <CA, CD extends DeclaredStatement<CA>, CE extends EffectiveStatement<CA, CD>>
-            StatementContextBase<CA, CD, CE> createSubstatement(final int offset,
-                    final StatementDefinitionContext<CA, CD, CE> def, final StatementSourceReference ref,
+    public final <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>>
+            StatementContextBase<X, Y, Z> createSubstatement(final int offset,
+                    final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
                     final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
         Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
@@ -427,7 +430,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     ref, argument);
         }
 
-        final StatementContextBase<CA, CD, CE> ret = new SubstatementContext<>(this, def, ref, argument);
+        final StatementContextBase<X, Y, Z> ret = new SubstatementContext<>(this, def, ref, argument);
         substatements = substatements.put(offset, ret);
         def.onStatementAdded(ret);
         return ret;
