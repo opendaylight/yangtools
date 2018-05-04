@@ -237,7 +237,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
                     sc = Optional.of(f.get());
                     break;
                 } catch (final InterruptedException e) {
-                    throw new RuntimeException("Interrupted while assembling schema context", e);
+                    throw new IllegalStateException("Interrupted while assembling schema context", e);
                 } catch (final ExecutionException e) {
                     LOG.info("Failed to fully assemble schema context for {}", sources, e);
                     final Throwable cause = e.getCause();
@@ -303,7 +303,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         try {
             return future.get();
         } catch (final InterruptedException e) {
-            throw new RuntimeException("Interrupted while waiting for SchemaContext assembly", e);
+            throw new IllegalStateException("Interrupted while waiting for SchemaContext assembly", e);
         } catch (final ExecutionException e) {
             final Throwable cause = e.getCause();
             if (cause instanceof SchemaResolutionException) {
