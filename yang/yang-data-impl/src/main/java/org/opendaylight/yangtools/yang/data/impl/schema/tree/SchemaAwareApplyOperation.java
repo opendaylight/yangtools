@@ -89,7 +89,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
         } else if (schemaNode.isUserOrdered()) {
-            op =  new OrderedMapModificationStrategy(schemaNode, treeConfig);
+            op = new OrderedMapModificationStrategy(schemaNode, treeConfig);
         } else {
             op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
         }
@@ -100,7 +100,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
             final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
-            op =  new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
+            op = new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
         } else {
             op = new UnorderedLeafSetModificationStrategy(schemaNode, treeConfig);
         }

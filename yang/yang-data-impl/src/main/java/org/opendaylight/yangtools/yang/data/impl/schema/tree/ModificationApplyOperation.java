@@ -69,7 +69,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
-     * Performs structural verification of NodeModification, such as writen values / types uses
+     * Performs structural verification of NodeModification, such as written values / types uses
      * right structural elements.
      *
      * @param modification data to be verified.
