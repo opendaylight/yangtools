@@ -132,6 +132,15 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     @Override
     protected void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
         delegate.verifyStructure(modification, verifyChildren);
+        if (verifyChildren) {
+            final int children = numOfChildrenFromValue(modification);
+            Preconditions.checkArgument(minElements <= children,
+                    "Node %s does not have enough elements (%s), needs at least %s", modification.getIdentifier(),
+                    children, minElements);
+            Preconditions.checkArgument(maxElements >= children,
+                    "Node %s has too many elements (%s), can have at most %s", modification.getIdentifier(), children,
+                    maxElements);
+        }
     }
 
     @Override
