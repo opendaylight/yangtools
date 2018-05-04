@@ -270,7 +270,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     public static String toString(final Element xml) {
         try {
-            final Transformer transformer = TransformerFactory.newInstance().newTransformer();
+            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
             final StreamResult result = new StreamResult(new StringWriter());
@@ -278,8 +278,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             transformer.transform(source, result);
 
             return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerFactoryConfigurationError | TransformerException e) {
-            throw new RuntimeException("Unable to serialize xml element " + xml, e);
+        } catch (IllegalArgumentException | TransformerException e) {
+            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
         }
     }
 
