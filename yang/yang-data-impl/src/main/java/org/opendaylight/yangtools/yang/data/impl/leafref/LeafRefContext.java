@@ -51,8 +51,10 @@ public final class LeafRefContext {
     public static LeafRefContext create(final SchemaContext ctx) {
         try {
             return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
-        } catch (IOException | LeafRefYangSyntaxErrorException e) {
-            throw new RuntimeException(e);
+        } catch (LeafRefYangSyntaxErrorException e) {
+            throw new IllegalArgumentException(e);
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
         }
     }
 
