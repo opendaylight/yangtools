@@ -45,10 +45,8 @@ public abstract class AbstractLogMessageCheck extends AbstractCheck {
             ast = ast.getFirstChild();
             if (ast != null) {
                 ast = ast.getFirstChild();
-                if (ast != null) {
-                    if (ast.getType() == TokenTypes.STRING_LITERAL) {
-                        return Optional.ofNullable(ast.getText());
-                    }
+                if (ast != null && ast.getType() == TokenTypes.STRING_LITERAL) {
+                    return Optional.ofNullable(ast.getText());
                 }
             }
         }

@@ -39,10 +39,9 @@ public class LogMessagePlaceholderCountCheck extends AbstractLogMessageCheck {
         while (parent != null && parent.getType() != TokenTypes.LITERAL_CATCH) {
             parent = parent.getParent();
         }
-        if (parent != null && parent.findFirstToken(TokenTypes.PARAMETER_DEF) != null
-                && parent.findFirstToken(TokenTypes.PARAMETER_DEF).findFirstToken(TokenTypes.IDENT).getText()
-                        .equals(argumentName)) {
-            return true;
+        if (parent != null) {
+            final DetailAST def = parent.findFirstToken(TokenTypes.PARAMETER_DEF);
+            return def != null && def.findFirstToken(TokenTypes.IDENT).getText().equals(argumentName);
         }
         return false;
     }
