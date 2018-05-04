@@ -41,6 +41,16 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     public interface Registry {
+        /**
+         * Get a namespace behavior
+         *
+         * @param type Namespace type class
+         * @param <K> key type
+         * @param <V> value type
+         * @param <N> namespace type
+         * @return Namespace behaviour
+         * @throws NamespaceNotAvailableException when the namespace is not available
+         */
         <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(Class<N> type);
     }
 

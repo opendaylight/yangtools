@@ -99,11 +99,10 @@ public interface ModelActionBuilder {
          * Invoked once all prerequisites were met and forward references were resolved and inference action should be
          * applied. Implementors may perform necessary changes to mutable objects which were declared.
          *
-         * @throws InferenceException If inference action can not be processed.
-         *      Note that this exception be used for user to debug YANG sources,
-         *      so should provide helpful context to fix issue in sources.
+         * @throws InferenceException If inference action can not be processed. Note that this exception be used for
+         *         user to debug YANG sources, so should provide helpful context to fix issue in sources.
          */
-        void apply(InferenceContext ctx) throws InferenceException;
+        void apply(InferenceContext ctx);
 
         /**
          * Invoked once one of prerequisites was not met, even after all other satisfiable inference actions were
@@ -122,7 +121,7 @@ public interface ModelActionBuilder {
          *                            by user to debug YANG sources, hence it should provide helpful context to fix
          *                            the issue in sources.
          */
-        void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed) throws InferenceException;
+        void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed);
     }
 
     /**
@@ -167,10 +166,17 @@ public interface ModelActionBuilder {
     @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
         Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
-    @Nonnull <C extends StmtContext.Mutable<?, ?, ?>, CT extends C> Prerequisite<C> mutatesCtx(CT root,
-            ModelProcessingPhase phase);
+    @Nonnull <C extends Mutable<?, ?, ?>, T extends C> Prerequisite<C> mutatesCtx(T root, ModelProcessingPhase phase);
 
-    void apply(InferenceAction action) throws InferenceException;
+    /**
+     * Apply an {@link InferenceAction} when this action's prerequisites are resolved.
+     *
+     * @param action Inference action to apply
+     * @throws InferenceException if the action fails
+     * @throws NullPointerException if {@code action is null}
+     * @throws IllegalStateException if this action has an inference action already associated.
+     */
+    void apply(InferenceAction action);
 
     /**
      * Create a requirement on specified statement context to be declared.

@@ -93,7 +93,7 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * @param <V> namespace value type
      * @param <N> namespace type
      * @param <T> key type
-     * @param <U> key type
+     * @param <U> value type
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
     public final <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(

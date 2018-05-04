@@ -68,9 +68,20 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
     boolean isEnabledSemanticVersioning();
 
+    /**
+     * Return a value associated with specified key within a namespace.
+     *
+     * @param type Namespace type
+     * @param key Key
+     * @param <K> namespace key type
+     * @param <V> namespace value type
+     * @param <N> namespace type
+     * @param <T> key type
+     * @return Value, or null if there is no element
+     * @throws NamespaceNotAvailableException when the namespace is not available.
+     */
     @Nonnull
-    <K, V, KT extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(
-            Class<N> type, KT key) throws NamespaceNotAvailableException;
+    <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key) ;
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
@@ -140,8 +151,21 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         @Override
         Mutable<?, ?, ?> getParentContext();
 
-        <K, V, KT extends K, VT extends V, N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, KT key,
-                VT value) throws NamespaceNotAvailableException;
+        /**
+         * Associate a value with a key within a namespace.
+         *
+         * @param type Namespace type
+         * @param key Key
+         * @param value value
+         * @param <K> namespace key type
+         * @param <V> namespace value type
+         * @param <N> namespace type
+         * @param <T> key type
+         * @param <U> value type
+         * @throws NamespaceNotAvailableException when the namespace is not available.
+         */
+        <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, T key,
+                U value);
 
         @Nonnull
         @Override
