@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -205,11 +207,10 @@ public class ListConstraintsValidation {
         assertTrue(leafList.get().getValue().size() == 2);
     }
 
-    @Test(expected = DataValidationFailedException.class)
-    public void minMaxLeafListFail() throws DataValidationFailedException {
+    @Test
+    public void minMaxLeafListFail() {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        final NodeWithValue<Object> fooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "foo");
         final NodeWithValue<Object> barPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "bar");
         final NodeWithValue<Object> gooPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "goo");
         final NodeWithValue<Object> fuuPath = new NodeWithValue<>(MIN_MAX_LIST_QNAME, "fuu");
@@ -232,9 +233,15 @@ public class ListConstraintsValidation {
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(barPath), barLeafSetEntry);
         modificationTree.merge(MIN_MAX_LEAF_LIST_PATH.node(gooPath), gooLeafSetEntry);
         modificationTree.write(MIN_MAX_LEAF_LIST_PATH.node(fuuPath), fuuLeafSetEntry);
-        modificationTree.ready();
 
-        inMemoryDataTree.validate(modificationTree);
+        try {
+            modificationTree.ready();
+            fail("Should have failed with IAE");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+                    + "revision=2015-02-02)min-max-leaf-list has too many elements (4), can have at most 3",
+                    e.getMessage());
+        }
     }
 
     @Test
@@ -264,8 +271,8 @@ public class ListConstraintsValidation {
         assertTrue(((UnkeyedListNode) unkeyedListRead.get()).getSize() == 1);
     }
 
-    @Test(expected = DataValidationFailedException.class)
-    public void unkeyedListTestFail() throws DataValidationFailedException {
+    @Test
+    public void unkeyedListTestFail() {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         final UnkeyedListEntryNode foo = ImmutableUnkeyedListEntryNodeBuilder.create()
@@ -282,8 +289,12 @@ public class ListConstraintsValidation {
                 .withValue(unkeyedEntries).build();
 
         modificationTree.write(UNKEYED_LIST_PATH, unkeyedListNode);
-        modificationTree.ready();
-
-        inMemoryDataTree.validate(modificationTree);
+        try {
+            modificationTree.ready();
+            fail("Should have failed with IAE");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+                    + "revision=2015-02-02)unkeyed-list has too many elements (2), can have at most 1", e.getMessage());
+        }
     }
 }
