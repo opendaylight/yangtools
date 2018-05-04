@@ -47,7 +47,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
         } catch (ExecutionException e) {
             final Throwable cause = e.getCause();
             Throwables.throwIfUnchecked(cause);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -58,7 +58,7 @@ public final class SharedCodecCache<T> extends CodecCache<T> {
         } catch (ExecutionException e) {
             final Throwable cause = e.getCause();
             Throwables.throwIfUnchecked(cause);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }
