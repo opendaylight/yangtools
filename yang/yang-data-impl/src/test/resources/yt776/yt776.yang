@@ -1,0 +1,21 @@
+module yt776 {
+    namespace yt776;
+    prefix yt776;
+
+    container box {
+        list object {
+            key object-id;
+
+            leaf object-id {
+                type string;
+            }
+
+            leaf-list attributes {
+                type string;
+                min-elements 1;
+                max-elements 2;
+            }
+        }
+    }
+}
+
