@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static junit.framework.TestCase.assertFalse;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
@@ -293,9 +295,8 @@ public class Bug4454Test {
         assertTrue(leafList.get().getValue().size() == 3);
     }
 
-
-    @Test(expected = DataValidationFailedException.class)
-    public void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
+    @Test
+    public void minMaxListDeleteExceptionTest() {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         Map<QName, Object> key = new HashMap<>();
@@ -329,11 +330,14 @@ public class Bug4454Test {
         modificationTree.delete(minMaxLeafBar);
         modificationTree.delete(minMaxLeafBaz);
 
-        modificationTree.ready();
-
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        try {
+            modificationTree.ready();
+            fail("Should have failed with IAE");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+                    + "revision=2015-02-02)min-max-list does not have enough elements (0), needs at least 1",
+                    e.getMessage());
+        }
     }
 
     @Test
