@@ -12,18 +12,26 @@ import static java.util.Objects.requireNonNull;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
-@SuppressWarnings("checkstyle:classTypeParameterName")
-public abstract class DerivedNamespaceBehaviour<K, V, DK, N extends IdentifierNamespace<K, V>,
-       DN extends IdentifierNamespace<DK, ?>> extends NamespaceBehaviour<K, V, N> {
+/**
+ * An {@link NamespaceBehaviour} which derives keys from a different namespace.
+ *
+ * @param <K> Key type
+ * @param <V> Value type
+ * @param <N> Namespace type
+ * @param <L> Original key type
+ * @param <O> Original namespace type
+ */
+public abstract class DerivedNamespaceBehaviour<K, V, L, N extends IdentifierNamespace<K, V>,
+       O extends IdentifierNamespace<L, ?>> extends NamespaceBehaviour<K, V, N> {
 
-    private final Class<DN> derivedFrom;
+    private final Class<O> derivedFrom;
 
-    protected DerivedNamespaceBehaviour(final Class<N> identifier, final Class<DN> derivedFrom) {
+    protected DerivedNamespaceBehaviour(final Class<N> identifier, final Class<O> derivedFrom) {
         super(identifier);
         this.derivedFrom = requireNonNull(derivedFrom);
     }
 
-    public Class<DN> getDerivedFrom() {
+    public Class<O> getDerivedFrom() {
         return derivedFrom;
     }
 
@@ -40,5 +48,5 @@ public abstract class DerivedNamespaceBehaviour<K, V, DK, N extends IdentifierNa
         // Intentional noop
     }
 
-    public abstract DK getSignificantKey(K key);
+    public abstract L getSignificantKey(K key);
 }

@@ -103,8 +103,14 @@ public final class SubstatementValidator {
         }
     }
 
-    public void validate(final StmtContext<?, ?, ?> ctx) throws InvalidSubstatementException,
-            MissingSubstatementException {
+    /**
+     * Validate substatements inside a context.
+     *
+     * @param ctx Context to inspect
+     * @throws InvalidSubstatementException when there is a disallowed statement present.
+     * @throws MissingSubstatementException when a mandatory statement is missing.
+     */
+    public void validate(final StmtContext<?, ?, ?> ctx) {
 
         final Map<StatementDefinition, Counter> stmtCounts = new HashMap<>();
         for (StmtContext<?, ?, ?> stmtCtx : ctx.allSubstatements()) {

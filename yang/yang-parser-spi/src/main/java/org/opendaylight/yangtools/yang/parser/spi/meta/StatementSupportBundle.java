@@ -101,7 +101,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
 
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
-            final Class<N> namespace) throws NamespaceNotAvailableException {
+            final Class<N> namespace) {
         final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);
         if (potential != null) {
             checkState(namespace.equals(potential.getIdentifier()));
