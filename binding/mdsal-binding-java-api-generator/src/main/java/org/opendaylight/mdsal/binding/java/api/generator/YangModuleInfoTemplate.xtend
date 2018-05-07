@@ -75,8 +75,10 @@ class YangModuleInfoTemplate {
             }
         '''
         return '''
-            package «packageName» ;
+            package «packageName»;
+
             «imports»
+
             «body»
         '''.toString
     }
