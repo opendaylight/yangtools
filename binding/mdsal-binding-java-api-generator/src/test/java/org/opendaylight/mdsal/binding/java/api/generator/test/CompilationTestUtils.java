@@ -446,5 +446,4 @@ public class CompilationTestUtils {
             throw new RuntimeException("Failed to clean up after test");
         }
     }
-
 }

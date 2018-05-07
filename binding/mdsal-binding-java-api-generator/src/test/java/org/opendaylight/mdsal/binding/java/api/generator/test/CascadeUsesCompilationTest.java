@@ -18,21 +18,14 @@ import static org.opendaylight.mdsal.binding.java.api.generator.test.Compilation
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.assertFilesCount;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.assertImplementsIfc;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.testCompilation;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class CascadeUsesCompilationTest extends BaseCompilationTest {
 
@@ -40,11 +33,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
     public void testCascadeUsesCompilation() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("cascade-uses");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("cascade-uses");
-        final List<File> sourceFiles = getSourceFiles("/compilation/cascade-uses");
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/cascade-uses", sourcesOutputDir);
 
         // Test if all sources are generated from module foo
         File parent = new File(sourcesOutputDir, NS_FOO);

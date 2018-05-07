@@ -11,18 +11,12 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * union constructor with indentityref
@@ -63,13 +57,5 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
         assertArrayEquals(identOneClass.toString().toCharArray(), (char[])actualValue);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
-    }
-
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir) throws Exception {
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
     }
 }

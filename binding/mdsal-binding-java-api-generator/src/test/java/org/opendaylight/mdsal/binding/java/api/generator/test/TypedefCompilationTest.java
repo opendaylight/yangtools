@@ -11,7 +11,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -23,10 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test correct code generation.
@@ -41,11 +36,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
     public void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("typedef");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("typedef");
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/typedef");
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/typedef", sourcesOutputDir);
 
         File parent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
         File bitsExt = new File(parent, "BitsExt.java");

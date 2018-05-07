@@ -13,10 +13,8 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Range;
 import java.io.File;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -25,21 +23,15 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.WildcardType;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Test correct code generation.
@@ -641,17 +633,8 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
-            throws IOException, URISyntaxException {
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
-    }
-
-    private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName, final String returnTypeStr) throws Exception {
+    private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName,
+            final String returnTypeStr) throws Exception {
         Method method;
         java.lang.reflect.Type returnType;
         try {
@@ -671,8 +654,8 @@ public class CompilationTest extends BaseCompilationTest {
         }
     }
 
-    private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz, final String methodName)
-            throws Exception {
+    private static void testReturnTypeInstanceIdentitifer(final ClassLoader loader, final Class<?> clazz,
+            final String methodName) throws Exception {
         Method method;
         Class<?> rawReturnType;
         java.lang.reflect.Type returnType;

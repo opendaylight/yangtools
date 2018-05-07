@@ -11,20 +11,12 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Maps;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * Bug5151 involves adding <code>{@literal @}return</code> annotations to accessor methods.
@@ -37,7 +29,8 @@ public class Bug5151Test extends BaseCompilationTest {
     public void test() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput(BUG_ID);
         final File compiledOutputDir = CompilationTestUtils.compilerOutput(BUG_ID);
-        generateTestSources(CompilationTestUtils.FS + "compilation" + CompilationTestUtils.FS + BUG_ID, sourcesOutputDir);
+        generateTestSources(CompilationTestUtils.FS + "compilation" + CompilationTestUtils.FS + BUG_ID,
+            sourcesOutputDir);
 
         // Test if sources are compilable
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
@@ -59,27 +52,19 @@ public class Bug5151Test extends BaseCompilationTest {
     }
 
     private static boolean findInFile(final File file, final String searchText) throws FileNotFoundException {
-        final Scanner scanner = new Scanner(file);
-        while (scanner.hasNextLine()) {
-            final String nextLine = scanner.nextLine();
-            if (nextLine.contains(searchText)) {
-                return true;
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                final String nextLine = scanner.nextLine();
+                if (nextLine.contains(searchText)) {
+                    return true;
+                }
             }
         }
         return false;
     }
 
-    private void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
-            throws IOException, URISyntaxException {
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
-    }
-
     private static Map<String, File> getFiles(final File path) {
-        return getFiles(path, Maps.newHashMap());
+        return getFiles(path, new HashMap<>());
     }
 
     private static Map<String, File> getFiles(final File path, final Map<String, File> files) {

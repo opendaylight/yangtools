@@ -9,18 +9,12 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableSet;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
-import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
 
@@ -28,11 +22,7 @@ public class AugmentToUsesInAugmentCompilationTest extends BaseCompilationTest {
     public void testAugmentToUsesInAugment() throws IOException, URISyntaxException {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("augment-uses-to-augment");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("augment-uses-to-augment");
-        final List<File> sourceFiles = CompilationTestUtils.getSourceFiles("/compilation/augment-uses-to-augment");
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources("/compilation/augment-uses-to-augment", sourcesOutputDir);
 
         // Test if all sources are generated from 'module foo'
         File fooParent = new File(sourcesOutputDir, CompilationTestUtils.NS_FOO);
