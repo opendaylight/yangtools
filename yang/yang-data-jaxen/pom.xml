@@ -103,6 +103,7 @@
                 <configuration>
                     <instructions>
                         <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
+                        <Bundle-Activator>org.opendaylight.yangtools.yang.data.jaxen.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
