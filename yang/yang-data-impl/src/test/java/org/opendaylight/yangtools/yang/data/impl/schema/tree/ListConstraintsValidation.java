@@ -104,7 +104,6 @@ public class ListConstraintsValidation {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(MIN_MAX_LIST_PATH, mapNode1);
         modificationTree.merge(MIN_MAX_LIST_PATH, mapNode2);
-        // TODO: check why write and then merge on list commits only "bar" child
         modificationTree.ready();
 
         inMemoryDataTree.validate(modificationTree);
