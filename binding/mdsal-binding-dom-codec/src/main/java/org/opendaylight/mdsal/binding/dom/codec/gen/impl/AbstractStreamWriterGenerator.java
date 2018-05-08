@@ -8,7 +8,6 @@
 package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -73,7 +72,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
     }
 
     protected AbstractStreamWriterGenerator(final JavassistUtils utils) {
-        this.javassist = Preconditions.checkNotNull(utils,"JavassistUtils instance is required.");
+        this.javassist = Preconditions.checkNotNull(utils, "JavassistUtils instance is required.");
         this.serializeArguments = new CtClass[] {
                 javassist.asCtClass(DataObjectSerializerRegistry.class),
                 javassist.asCtClass(DataObject.class),
@@ -202,8 +201,8 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
          * care of this before calling instantiatePrototype(), as that will call our customizer with the lock held,
          * hence any code generation will end up being blocked on the javassist lock.
          */
-        final String body = ClassLoaderUtils.withClassLoader(type.getClassLoader(),
-            (Supplier<String>) () -> source.getSerializerBody().toString());
+        final String body = ClassLoaderUtils.getWithClassLoader(type.getClassLoader(), source::getSerializerBody)
+                .toString();
 
         try {
             product = javassist.instantiatePrototype(DataObjectSerializerPrototype.class.getName(), serializerName,
