@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -72,13 +74,15 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
     }
 
     protected AbstractStreamWriterGenerator(final JavassistUtils utils) {
-        this.javassist = Preconditions.checkNotNull(utils, "JavassistUtils instance is required.");
-        this.serializeArguments = new CtClass[] {
-                javassist.asCtClass(DataObjectSerializerRegistry.class),
-                javassist.asCtClass(DataObject.class),
-                javassist.asCtClass(BindingStreamEventWriter.class),
-        };
-        javassist.appendClassLoaderIfMissing(DataObjectSerializerPrototype.class.getClassLoader());
+        this.javassist = requireNonNull(utils, "JavassistUtils instance is required.");
+        synchronized (javassist) {
+            this.serializeArguments = new CtClass[] {
+                    javassist.asCtClass(DataObjectSerializerRegistry.class),
+                    javassist.asCtClass(DataObject.class),
+                    javassist.asCtClass(BindingStreamEventWriter.class),
+            };
+            javassist.appendClassLoaderIfMissing(DataObjectSerializerPrototype.class.getClassLoader());
+        }
         this.implementations = CacheBuilder.newBuilder().weakKeys().build(new SerializerImplementationLoader());
     }
 
@@ -110,8 +114,8 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
         @Override
         @SuppressWarnings("unchecked")
         public DataObjectSerializerImplementation load(final Class<?> type) throws Exception {
-            Preconditions.checkArgument(BindingReflections.isBindingClass(type));
-            Preconditions.checkArgument(DataContainer.class.isAssignableFrom(type),
+            checkArgument(BindingReflections.isBindingClass(type));
+            checkArgument(DataContainer.class.isAssignableFrom(type),
                 "DataContainer is not assingnable from %s from classloader %s.", type, type.getClassLoader());
 
             final String serializerName = getSerializerName(type);
@@ -221,7 +225,7 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
                     // The prototype is not visible, so we need to take care of that
                     cls.setModifiers(Modifier.setPublic(cls.getModifiers()));
                 });
-        } catch (final NotFoundException e) {
+        } catch (NotFoundException | CannotCompileException e) {
             LOG.error("Failed to instatiate serializer {}", source, e);
             throw new LinkageError("Unexpected instantation problem: serializer prototype not found", e);
         }
