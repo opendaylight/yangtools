@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementatio
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
@@ -46,10 +45,6 @@ public final class StreamWriterGenerator extends AbstractStreamWriterGenerator {
      */
     public static DataObjectSerializerGenerator create(final JavassistUtils utils) {
         return new StreamWriterGenerator(utils);
-    }
-
-    private static CharSequence getChildSizeFromSchema(final DataNodeContainer node) {
-        return Integer.toString(node.getChildNodes().size());
     }
 
     @Override
