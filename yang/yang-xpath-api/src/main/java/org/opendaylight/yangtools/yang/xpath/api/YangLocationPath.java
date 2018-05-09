@@ -46,7 +46,7 @@ public class YangLocationPath implements YangExpr {
 
         @Override
         public final String toString() {
-            return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+            return addToStringAttributes(MoreObjects.toStringHelper(Step.class)).toString();
         }
 
         protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
@@ -405,5 +405,16 @@ public class YangLocationPath implements YangExpr {
         }
         final YangLocationPath other = (YangLocationPath) obj;
         return isAbsolute() == other.isAbsolute() && getSteps().equals(other.getSteps());
+    }
+
+    @Override
+    public final String toString() {
+        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class);
+        helper.add("absolute", isAbsolute());
+        final List<Step> steps = getSteps();
+        if (!steps.isEmpty()) {
+            helper.add("steps", steps);
+        }
+        return helper.toString();
     }
 }
