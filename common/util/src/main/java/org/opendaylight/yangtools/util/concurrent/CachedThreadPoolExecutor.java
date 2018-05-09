@@ -54,9 +54,10 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
      * @param loggerIdentity
      *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
-    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter") // due to loggerIdentity argument usage
+    // due to loggerIdentity argument usage
+    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter")
     public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix,
-            Class<?> loggerIdentity) {
+            final Class<?> loggerIdentity) {
         // We're using a custom SynchronousQueue that has a backing bounded LinkedBlockingQueue.
         // We don't specify any core threads (first parameter) so, when a task is submitted,
         // the base class will always try to offer to the queue. If there is an existing waiting
@@ -142,7 +143,8 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
 
         private static final long POLL_WAIT_TIME_IN_MS = 300;
 
-        @SuppressFBWarnings("SE_BAD_FIELD") // Runnable is not Serializable
+        @SuppressFBWarnings("SE_BAD_FIELD")
+        // Runnable is not Serializable
         private final TrackingLinkedBlockingQueue<Runnable> backingQueue;
 
         ExecutorQueue(final int maxBackingQueueSize) {

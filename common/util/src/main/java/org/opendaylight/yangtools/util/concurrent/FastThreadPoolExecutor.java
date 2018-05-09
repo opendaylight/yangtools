@@ -43,7 +43,7 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
     public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix,
-            Class<?> loggerIdentity) {
+            final Class<?> loggerIdentity) {
         this(maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
               threadPrefix, loggerIdentity);
     }
@@ -90,9 +90,10 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
      * @param loggerIdentity
      *               the class to use as logger name for logging uncaught exceptions from the threads.
      */
-    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter") // due to loggerIdentity argument usage
+    // due to loggerIdentity argument usage
+    @SuppressWarnings("checkstyle:LoggerFactoryClassParameter")
     public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
-            final TimeUnit unit, final String threadPrefix, Class<?> loggerIdentity) {
+            final TimeUnit unit, final String threadPrefix, final Class<?> loggerIdentity) {
         // We use all core threads (the first 2 parameters below equal) so, when a task is submitted,
         // if the thread limit hasn't been reached, a new thread will be spawned to execute
         // the task even if there is an existing idle thread in the pool. This is faster than
