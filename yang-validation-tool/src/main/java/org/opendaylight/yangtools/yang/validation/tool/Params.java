@@ -8,8 +8,6 @@
 package org.opendaylight.yangtools.yang.validation.tool;
 
 import java.io.File;
-import java.net.URISyntaxException;
-
 import net.sourceforge.argparse4j.ArgumentParsers;
 import net.sourceforge.argparse4j.annotation.Arg;
 import net.sourceforge.argparse4j.inf.ArgumentParser;
@@ -22,7 +20,7 @@ final class Params {
     @Arg(dest = "yang-source-dir")
     private File yangSourceDir;
 
-    static ArgumentParser getParser() throws URISyntaxException {
+    static ArgumentParser getParser() {
         final ArgumentParser parser = ArgumentParsers.newArgumentParser("jar_file_name");
         parser.description("Validation Tool for Yang Models")
             .formatUsage();

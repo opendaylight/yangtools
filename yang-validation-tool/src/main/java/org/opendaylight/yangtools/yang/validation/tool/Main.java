@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.validation.tool;
 
 import java.io.File;
-import java.net.URISyntaxException;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +19,7 @@ public final class Main {
 
     }
 
-    public static void main(final String[] args) throws URISyntaxException {
+    public static void main(final String[] args) {
         final Params params = ParamsUtil.parseArgs(args, Params.getParser());
 
         if (params.isValid()) {
