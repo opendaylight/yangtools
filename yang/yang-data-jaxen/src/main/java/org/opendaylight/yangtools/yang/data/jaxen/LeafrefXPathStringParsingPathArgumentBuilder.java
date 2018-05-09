@@ -186,7 +186,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
         final String prefix;
         final String localName;
         if (!allCharactersConsumed() && COLON == currentChar()) {
-            // previous token is prefix;
+            // previous token is prefix
             prefix = maybePrefix;
             skipCurrentChar();
             localName = nextIdentifier();
