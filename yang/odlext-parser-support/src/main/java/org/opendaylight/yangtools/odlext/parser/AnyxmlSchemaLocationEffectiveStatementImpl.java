@@ -65,15 +65,7 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
             return false;
         }
         AnyxmlSchemaLocationEffectiveStatementImpl other = (AnyxmlSchemaLocationEffectiveStatementImpl) obj;
-        if (!Objects.equals(path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(getNodeType(), other.getNodeType())) {
-            return false;
-        }
-        if (!Objects.equals(getNodeParameter(), other.getNodeParameter())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(path, other.path) && Objects.equals(getNodeType(), other.getNodeType())
+                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }
