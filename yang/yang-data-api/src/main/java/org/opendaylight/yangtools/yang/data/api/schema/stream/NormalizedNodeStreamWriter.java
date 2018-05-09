@@ -166,7 +166,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
      *             <code>choice</code> <code>unkeyed list</code> node.
      * @throws IOException if an underlying IO error occurs
      */
-    void startOrderedLeafSet(NodeIdentifier name, int childSizeHint) throws IOException, IllegalArgumentException;
+    void startOrderedLeafSet(NodeIdentifier name, int childSizeHint) throws IOException;
 
     /**
      * Emits a leaf set entry node.

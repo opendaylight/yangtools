@@ -47,7 +47,7 @@ public final class ReflectiveExceptionMapper<X extends Exception> extends Except
      * @throws SecurityException when the required constructor is not accessible
      */
     public static <X extends Exception> ReflectiveExceptionMapper<X> create(final String opName,
-            final Class<X> exceptionType) throws SecurityException {
+            final Class<X> exceptionType) {
         final Constructor<X> c;
         try {
             c = exceptionType.getConstructor(String.class, Throwable.class);

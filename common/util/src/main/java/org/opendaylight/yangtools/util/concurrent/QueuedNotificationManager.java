@@ -21,7 +21,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -165,7 +164,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
      * @see org.opendaylight.yangtools.util.concurrent.NotificationManager#addNotification(L, N)
      */
     @Override
-    public void submitNotification(final L listener, final N notification) throws RejectedExecutionException {
+    public void submitNotification(final L listener, final N notification) {
         if (notification != null) {
             submitNotifications(listener, Collections.singletonList(notification));
         }
@@ -175,8 +174,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
      * @see org.opendaylight.yangtools.util.concurrent.NotificationManager#submitNotifications(L, java.util.Collection)
      */
     @Override
-    public void submitNotifications(final L listener, final Iterable<N> notifications)
-            throws RejectedExecutionException {
+    public void submitNotifications(final L listener, final Iterable<N> notifications) {
 
         if (notifications == null || listener == null) {
             return;
