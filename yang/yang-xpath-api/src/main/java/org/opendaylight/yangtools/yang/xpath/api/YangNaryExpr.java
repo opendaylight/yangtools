@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
@@ -45,5 +46,13 @@ public abstract class YangNaryExpr implements YangExpr {
         }
         final YangNaryExpr other = (YangNaryExpr) obj;
         return getOperator().equals(other.getOperator()) && expressions.equals(other.expressions);
+    }
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(YangNaryExpr.class)
+                .add("operator", getOperator())
+                .add("expressions", getExpressions())
+                .toString();
     }
 }

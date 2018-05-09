@@ -83,7 +83,6 @@ public abstract class YangNumberExpr<T extends YangNumberExpr<T, N>, N extends N
         }
     }
 
-
     private static final long serialVersionUID = 1L;
 
     YangNumberExpr() {
