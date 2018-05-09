@@ -155,8 +155,10 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
              * it should not cause transaction to fail, since result of this merge
              * leads to same data.
              */
-            if (!original.get().getData().equals(current.get().getData())) {
-                checkNotConflicting(path, original.get(), current.get());
+            final TreeNode orig = original.get();
+            final TreeNode cur = current.get();
+            if (!orig.getData().equals(cur.getData())) {
+                checkNotConflicting(path, orig, cur);
             }
         }
     }

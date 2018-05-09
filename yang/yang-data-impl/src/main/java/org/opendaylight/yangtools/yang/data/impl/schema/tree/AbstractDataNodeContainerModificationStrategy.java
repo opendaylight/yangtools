@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -45,7 +47,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
                     }
 
                     final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
-                    Preconditions.checkArgument(child != null, "Schema %s does not have a node for child %s", schema,
+                    checkArgument(child != null, "Schema %s does not have a node for child %s", schema,
                             key.getNodeType());
                     return SchemaAwareApplyOperation.from(child, treeConfig);
                 }
@@ -56,8 +58,8 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     protected AbstractDataNodeContainerModificationStrategy(final T schema,
             final Class<? extends NormalizedNode<?, ?>> nodeClass, final DataTreeConfiguration treeConfig) {
         super(nodeClass, treeConfig);
-        this.schema = Preconditions.checkNotNull(schema,"schema");
-        this.treeConfig = Preconditions.checkNotNull(treeConfig,"treeConfig");
+        this.schema = requireNonNull(schema,"schema");
+        this.treeConfig = requireNonNull(treeConfig,"treeConfig");
     }
 
     protected final T getSchema() {
@@ -70,7 +72,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
             return Optional.ofNullable(childCache.get(identifier));
         } catch (ExecutionException | UncheckedExecutionException e) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this,
-                schema.getChildNodes(), e.getCause());
+                schema.getChildNodes(), e);
             return Optional.empty();
         }
     }
