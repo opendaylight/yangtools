@@ -41,6 +41,7 @@
 
         <!-- YANG XPath API and implementation -->
         <module>yang-xpath-api</module>
+        <module>yang-xpath-impl</module>
 
         <!-- End-user utility for validating YANG models -->
         <module>yang-model-validator</module>
