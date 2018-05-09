@@ -28,39 +28,43 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification,
-            final Optional<TreeNode> storeMeta, final Version version) {
-        throw new IllegalStateException("Schema Context is not available.");
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
+        throw ise();
     }
 
     @Override
     void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
             final Optional<TreeNode> storeMetadata, final Version version) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
     }
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
     }
 
     @Override
     void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
     }
 
     @Override
     ChildTrackingPolicy getChildPolicy() {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
     }
 
     @Override
     void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
     }
 
     @Override
     void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
+    }
+
+    private static IllegalStateException ise() {
+        return new IllegalStateException("Schema Context is not available.");
     }
 }
