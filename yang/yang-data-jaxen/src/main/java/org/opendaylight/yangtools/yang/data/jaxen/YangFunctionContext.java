@@ -336,7 +336,8 @@ final class YangFunctionContext implements FunctionContext {
                     identityPrefixAndName.get(0), identity));
         }
 
-        if (identityPrefixAndName.size() == 1) { // without prefix
+        if (identityPrefixAndName.size() == 1) {
+            // without prefix
             return findIdentitySchemaNodeInModule(module, QName.create(module.getQNameModule(),
                     identityPrefixAndName.get(0)));
         }
