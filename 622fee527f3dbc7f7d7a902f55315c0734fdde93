@@ -22,6 +22,30 @@
       "revId": "622fee527f3dbc7f7d7a902f55315c0734fdde93",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "fe43a682_bed999b4",
+        "filename": "yang/yang-data-codec-gson/src/test/resources/bug8927/xml/scalar_array_with_other_elements.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 15,
+      "author": {
+        "id": 2833
+      },
+      "writtenOn": "2018-05-14T22:07:48Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "0bed8fc1_3d8fbe98",
+      "range": {
+        "startLine": 15,
+        "startChar": 0,
+        "endLine": 15,
+        "endChar": 7
+      },
+      "revId": "622fee527f3dbc7f7d7a902f55315c0734fdde93",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
