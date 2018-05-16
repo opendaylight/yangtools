@@ -13,9 +13,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -41,8 +41,7 @@ public class StrictParsingModeTest {
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -67,8 +66,7 @@ public class StrictParsingModeTest {
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

@@ -22,12 +22,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -105,8 +105,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/baz.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -131,8 +130,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/foo.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -149,8 +147,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -170,8 +167,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-2.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -190,8 +186,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-foo-3.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -210,8 +205,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -231,8 +225,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-2.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -252,8 +245,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-4.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -273,8 +265,7 @@ public class XmlToNormalizedNodesTest {
             ParserConfigurationException, SAXException, URISyntaxException {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/invalid-baz-3.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

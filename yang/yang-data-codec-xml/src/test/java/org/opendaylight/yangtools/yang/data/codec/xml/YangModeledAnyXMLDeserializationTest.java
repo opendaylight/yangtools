@@ -18,11 +18,11 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -87,8 +87,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
                 "/anyxml-support/xml/bar.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final NormalizedNodeResult result = new NormalizedNodeResult();
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
@@ -125,8 +124,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.getDataChildByName(
                 QName.create(foo.getQNameModule(), "my-anyxml-data"));
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final NormalizedNodeResult result = new NormalizedNodeResult();
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);

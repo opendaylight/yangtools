@@ -22,8 +22,8 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWriter;
@@ -34,7 +34,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public final class TestUtils {
-
     private TestUtils() {
         throw new UnsupportedOperationException();
     }
@@ -58,8 +57,7 @@ public final class TestUtils {
 
     static void loadXmlToNormalizedNodes(final InputStream xmlInputStream, final NormalizedNodeResult result,
             final SchemaContext schemaContext) throws Exception {
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(xmlInputStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(xmlInputStream);
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, schemaContext);
         xmlParser.parse(reader);

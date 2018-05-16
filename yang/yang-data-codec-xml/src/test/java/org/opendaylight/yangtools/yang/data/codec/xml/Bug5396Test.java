@@ -16,10 +16,10 @@ import static org.junit.Assert.fail;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Optional;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -70,8 +70,7 @@ public class Bug5396Test {
                 QName.create(fooModule.getQNameModule(), "root"));
         assertNotNull(rootCont);
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
 

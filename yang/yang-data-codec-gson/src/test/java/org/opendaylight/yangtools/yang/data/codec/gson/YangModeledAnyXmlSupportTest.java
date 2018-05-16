@@ -24,12 +24,12 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.net.URISyntaxException;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -64,8 +64,7 @@ public class YangModeledAnyXmlSupportTest {
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
                 "/yang-modeled-anyxml/xml/baz.xml");
 
-        final XMLInputFactory factory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = factory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
 

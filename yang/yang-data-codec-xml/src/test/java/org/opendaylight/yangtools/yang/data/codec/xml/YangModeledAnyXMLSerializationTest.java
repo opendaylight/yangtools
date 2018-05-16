@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Optional;
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -76,8 +75,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
                 QName.create(bazModule.getQNameModule(), "baz"));
         assertNotNull(bazCont);
 
-        final XMLInputFactory inputFactory = XMLInputFactory.newInstance();
-        final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
+        final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
 
