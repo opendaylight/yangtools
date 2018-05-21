@@ -11,7 +11,6 @@ import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
@@ -75,10 +74,10 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return null;
     }
 
-    public static void checkConflicting(final YangInstanceIdentifier path, final boolean condition,
-                                        final String message) throws ConflictingModificationAppliedException {
+    static void checkConflicting(final ModificationPath path, final boolean condition, final String message)
+            throws ConflictingModificationAppliedException {
         if (!condition) {
-            throw new ConflictingModificationAppliedException(path, message);
+            throw new ConflictingModificationAppliedException(path.toInstanceIdentifier(), message);
         }
     }
 
@@ -107,7 +106,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    protected static void checkNotConflicting(final YangInstanceIdentifier path, final TreeNode original,
+    protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
             final TreeNode current) throws ConflictingModificationAppliedException {
         checkConflicting(path, original.getVersion().equals(current.getVersion()),
                 "Node was replaced by other transaction.");
@@ -122,7 +121,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final void checkApplicable(final YangInstanceIdentifier path,final NodeModification modification,
+    final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
             case DELETE:
@@ -145,7 +144,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
@@ -173,15 +172,14 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param current current node in TreeNode for modification to apply
      * @throws DataValidationFailedException when a data dependency conflict is detected
      */
-    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
-        final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+    protected void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
             checkNotConflicting(path, original.get(), current.get());
-        } else if (original.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
-        } else if (current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was created by other transaction.");
+        } else {
+            checkConflicting(path, !original.isPresent(), "Node was deleted by other transaction.");
+            checkConflicting(path, !current.isPresent(), "Node was created by other transaction.");
         }
     }
 
@@ -273,7 +271,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @throws org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException If subtree
      *         modification is not applicable (e.g. leaf node).
      */
-    protected abstract void checkTouchApplicable(YangInstanceIdentifier path, NodeModification modification,
+    protected abstract void checkTouchApplicable(ModificationPath path, NodeModification modification,
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
