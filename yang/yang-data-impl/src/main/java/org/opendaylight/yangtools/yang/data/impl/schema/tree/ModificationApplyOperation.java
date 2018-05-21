@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Deque;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -65,7 +65,7 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
      * @param version Metadata version
      * @throws DataValidationFailedException if the modification is not applicable
      */
-    abstract void checkApplicable(YangInstanceIdentifier path, NodeModification modification,
+    abstract void checkApplicable(Deque<PathArgument> path, NodeModification modification,
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
