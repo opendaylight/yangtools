@@ -12,16 +12,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
 
 /**
- * A mutable tree node. This is a transient view materialized from a pre-existing
- * node. Modifications are isolated. Once this object is {@link #seal()}-ed,
- * any interactions with it will result in undefined behavior.
+ * A mutable tree node. This is a transient view materialized from a pre-existing node. Modifications are isolated. Once
+ * this object is {@link #seal()}ed, any interactions with it will result in undefined behavior.
  */
+// FIXME: 3.0.0: Use @NonNullByDefault
 public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     /**
      * Set the data component of the node.
      *
      * @param data New data component, may not be null.
      */
+    // FIXME: 3.0.0: document NullPointerException being thrown
     void setData(NormalizedNode<?, ?> data);
 
     /**
@@ -30,6 +31,7 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      *
      * @param subtreeVersion New subtree version.
      */
+    // FIXME: 3.0.0: document NullPointerException being thrown
     void setSubtreeVersion(Version subtreeVersion);
 
     /**
@@ -38,6 +40,7 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      *
      * @param child New child node.
      */
+    // FIXME: 3.0.0: document NullPointerException being thrown
     void addChild(TreeNode child);
 
     /**
@@ -46,6 +49,7 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      *
      * @param id Child identificator.
      */
+    // FIXME: 3.0.0: document NullPointerException being thrown
     void removeChild(PathArgument id);
 
     /**
