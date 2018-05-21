@@ -40,13 +40,12 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
         if (verifyChildrenStructure && verifyChildren) {
-            final NormalizedNodeContainer container = (NormalizedNodeContainer) writtenValue;
+            final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) writtenValue;
             for (final Object child : container.getValue()) {
                 checkArgument(child instanceof NormalizedNode);
                 final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
