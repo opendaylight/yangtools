@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ public class OrderedListTest {
     private static final Logger LOG = LoggerFactory.getLogger(OrderedListTest.class);
 
     private DataTree inMemoryDataTree;
-    private SchemaContext context;
 
     private QNameModule testModule;
     private QName parentContainer;
@@ -55,7 +53,6 @@ public class OrderedListTest {
 
     @Before
     public void setup() {
-        context = YangParserTestUtils.parseYangResource("/ordered-list-modification-test.yang");
         testModule = QNameModule.create(URI.create("ordered-list-modification-test"));
         parentContainer = QName.create(testModule, "parent-container");
         childContainer = QName.create(testModule, "child-container");
@@ -65,7 +62,8 @@ public class OrderedListTest {
         childKeyLeaf = QName.create(testModule, "child-key-leaf");
         parentOrdinaryLeaf = QName.create(testModule, "parent-ordinary-leaf");
         childOrdinaryLeaf = QName.create(testModule, "child-ordinary-leaf");
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            YangParserTestUtils.parseYangResource("/ordered-list-modification-test.yang"));
     }
 
     @Test
