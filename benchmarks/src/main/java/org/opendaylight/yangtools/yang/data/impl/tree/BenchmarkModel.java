@@ -7,43 +7,38 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.tree;
 
-import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
-import org.opendaylight.yangtools.yang.parser.rfc6020.repo.YangStatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor;
-import org.opendaylight.yangtools.yang.parser.stmt.rfc6020.YangInferencePipeline;
+import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 /**
  * @author Lukas Sedlak &lt;lsedlak@cisco.com&gt;
  */
-public class BenchmarkModel {
+final class BenchmarkModel {
+    private static final QName TEST_QNAME = QName.create(
+        "urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13", "test").intern();
+    static final NodeIdentifier TEST = NodeIdentifier.create(TEST_QNAME);
+    static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.create(TEST);
 
-    public static final QName TEST_QNAME =
-            QName.create("urn:opendaylight:params:xml:ns:yang:controller:md:sal:dom:store:test", "2014-03-13", "test");
-    public static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list");
-    public static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list");
-    public static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice");
-    public static final QName ID_QNAME = QName.create(TEST_QNAME, "id");
-    public static final QName NAME_QNAME = QName.create(TEST_QNAME, "name");
-    public static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value");
+    static final QName OUTER_LIST_QNAME = QName.create(TEST_QNAME, "outer-list").intern();
+    static final NodeIdentifier OUTER_LIST = NodeIdentifier.create(OUTER_LIST_QNAME);
+    static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.create(TEST, OUTER_LIST);
 
-    public static final YangInstanceIdentifier TEST_PATH = YangInstanceIdentifier.of(TEST_QNAME);
-    public static final YangInstanceIdentifier OUTER_LIST_PATH = YangInstanceIdentifier.builder(TEST_PATH)
-            .node(OUTER_LIST_QNAME).build();
+    static final QName INNER_LIST_QNAME = QName.create(TEST_QNAME, "inner-list").intern();
+    static final NodeIdentifier INNER_LIST = NodeIdentifier.create(INNER_LIST_QNAME);
 
-    public static SchemaContext createTestContext() {
-        CrossSourceStatementReactor.BuildAction reactor = YangInferencePipeline.RFC6020_REACTOR.newBuild();
-        try {
-            reactor.addSource(YangStatementStreamSource.create(
-                YangTextSchemaSource.forResource("/odl-datastore-test.yang")));
-            return reactor.buildEffective();
-        } catch (IOException | YangSyntaxErrorException | ReactorException e) {
-            throw new IllegalStateException(e);
-        }
+    static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice").intern();
+    static final QName ID_QNAME = QName.create(TEST_QNAME, "id").intern();
+    static final QName NAME_QNAME = QName.create(TEST_QNAME, "name").intern();
+    static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value".intern());
+
+    private BenchmarkModel() {
+
+    }
+
+    static SchemaContext createTestContext() {
+        return YangParserTestUtils.parseYangResource("/odl-datastore-test.yang");
     }
 }
