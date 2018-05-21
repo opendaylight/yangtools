@@ -12,12 +12,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -132,7 +132,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
             final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
         for (final ModifiedNode mod : modifications) {
-            final YangInstanceIdentifier.PathArgument id = mod.getIdentifier();
+            final PathArgument id = mod.getIdentifier();
             final Optional<TreeNode> cm = meta.getChild(id);
 
             final Optional<TreeNode> result = resolveChildOperation(id).apply(mod, cm, nodeVersion);
@@ -275,17 +275,14 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkTouchApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
-            throw new ModifiedNodeDoesNotExistException(path,
+            throw new ModifiedNodeDoesNotExistException(YangInstanceIdentifier.create(path),
                 String.format("Node %s does not exist. Cannot apply modification to its children.", path));
         }
 
-        if (!current.isPresent()) {
-            throw new ConflictingModificationAppliedException(path, "Node was deleted by other transaction.");
-        }
-
+        checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current.get(), version);
     }
 
@@ -296,19 +293,23 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
      * @param modification current modification
      * @param current Current data tree node.
      */
-    private void checkChildPreconditions(final YangInstanceIdentifier path, final NodeModification modification,
+    private void checkChildPreconditions(final Deque<PathArgument> path, final NodeModification modification,
             final TreeNode current, final Version version) throws DataValidationFailedException {
         for (final NodeModification childMod : modification.getChildren()) {
-            final YangInstanceIdentifier.PathArgument childId = childMod.getIdentifier();
+            final PathArgument childId = childMod.getIdentifier();
             final Optional<TreeNode> childMeta = current.getChild(childId);
 
-            final YangInstanceIdentifier childPath = path.node(childId);
-            resolveChildOperation(childId).checkApplicable(childPath, childMod, childMeta, version);
+            path.push(childId);
+            try {
+                resolveChildOperation(childId).checkApplicable(path, childMod, childMeta, version);
+            } finally {
+                path.pop();
+            }
         }
     }
 
     @Override
-    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkMergeApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (current.isPresent()) {
             checkChildPreconditions(path, modification, current.get(), version);
