@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Optional;
@@ -28,24 +27,15 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug2690Test {
-    private static final String ODL_DATASTORE_TEST_YANG = "/odl-datastore-test.yang";
-    private SchemaContext schemaContext;
     private DataTree inMemoryDataTree;
 
     @Before
     public void prepare() {
-        schemaContext = createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            schemaContext);
-    }
-
-    public static SchemaContext createTestContext() {
-        return YangParserTestUtils.parseYangResource(ODL_DATASTORE_TEST_YANG);
+            YangParserTestUtils.parseYangResource("/odl-datastore-test.yang"));
     }
 
     @Test
