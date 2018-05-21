@@ -28,13 +28,11 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class Bug4295Test {
 
     private DataTree inMemoryDataTree;
-    private SchemaContext context;
     private QName root;
     private QName subRoot;
     private QName outerList;
@@ -47,7 +45,6 @@ public class Bug4295Test {
 
     @Before
     public void init() {
-        context = YangParserTestUtils.parseYangResource("/bug-4295/foo.yang");
         foo = QNameModule.create(URI.create("foo"));
         root = QName.create(foo, "root");
         subRoot = QName.create(foo, "sub-root");
@@ -57,7 +54,8 @@ public class Bug4295Test {
         iid = QName.create(foo, "i-id");
         oleaf = QName.create(foo, "o");
         ileaf = QName.create(foo, "i");
-        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
+            YangParserTestUtils.parseYangResource("/bug-4295/foo.yang"));
     }
 
     @Test
