@@ -15,13 +15,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
- * A single node within a {@link DataTreeCandidate}. The nodes are organized
- * in tree hierarchy, reflecting the modification from which this candidate
- * was created. The node itself exposes the before- and after-image of the
- * tree restricted to the modified nodes.
+ * A single node within a {@link DataTreeCandidate}. The nodes are organized in tree hierarchy, reflecting
+ * the modification from which this candidate was created. The node itself exposes the before- and after-image
+ * of the tree restricted to the modified nodes.
  */
+// FIXME: 3.0.0: Use @NonNullByDefault
 public interface DataTreeCandidateNode {
-
     /**
      * Get the node identifier.
      *
@@ -43,6 +42,8 @@ public interface DataTreeCandidateNode {
      * @param childIdentifier Identifier of child node
      * @return Modified child or null if child was not modified.
      */
+    // FIXME: 3.0.0: document NullPointerException being thrown
+    // FIXME: 3.0.0: return an Optional
     @Nullable DataTreeCandidateNode getModifiedChild(PathArgument childIdentifier);
 
     /**

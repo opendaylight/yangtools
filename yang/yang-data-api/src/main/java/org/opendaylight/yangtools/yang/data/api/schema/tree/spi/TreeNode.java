@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  */
 // FIXME: BUG-2399: clarify that versioning rules are not enforced for non-presence containers, as they are not
 //                  considered to be data nodes.
+// FIXME: 3.0.0: Use @NonNullByDefault
 public interface TreeNode extends Identifiable<PathArgument>, StoreTreeNode<TreeNode> {
     /**
      * Get the data node version. This version is updated whenever the data representation of this particular node
