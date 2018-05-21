@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -27,10 +29,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
     @Override
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification,
-            "Invalid modification class %s", modification.getClass());
-        final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
-        Preconditions.checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
+        final InMemoryDataTreeModification m = checkedCast(modification);
+        checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
         m.getStrategy().checkApplicable(YangInstanceIdentifier.EMPTY, m.getRootModification(),
             Optional.of(getTipRoot()), m.getVersion());
@@ -38,10 +38,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
 
     @Override
     public final DataTreeCandidateTip prepare(final DataTreeModification modification) {
-        Preconditions.checkArgument(modification instanceof InMemoryDataTreeModification,
-            "Invalid modification class %s", modification.getClass());
-        final InMemoryDataTreeModification m = (InMemoryDataTreeModification)modification;
-        Preconditions.checkArgument(m.isSealed(), "Attempted to prepare unsealed modification %s", m);
+        final InMemoryDataTreeModification m = checkedCast(modification);
+        checkArgument(m.isSealed(), "Attempted to prepare unsealed modification %s", m);
 
         final ModifiedNode root = m.getRootModification();
 
@@ -50,10 +48,14 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
             return new NoopDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, currentRoot);
         }
 
-        final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(),
-            Optional.of(currentRoot), m.getVersion());
-        Preconditions.checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s",
-            modification);
+        final Optional<TreeNode> newRoot = m.getStrategy().apply(m.getRootModification(), Optional.of(currentRoot),
+            m.getVersion());
+        checkState(newRoot.isPresent(), "Apply strategy failed to produce root node for modification %s", modification);
         return new InMemoryDataTreeCandidate(YangInstanceIdentifier.EMPTY, root, currentRoot, newRoot.get());
+    }
+
+    private static InMemoryDataTreeModification checkedCast(final DataTreeModification mod) {
+        checkArgument(mod instanceof InMemoryDataTreeModification, "Invalid modification class %s", mod.getClass());
+        return (InMemoryDataTreeModification)mod;
     }
 }
