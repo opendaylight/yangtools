@@ -31,6 +31,7 @@
     </scm>
 
     <modules>
+        <module>benchmarks</module>
         <module>common</module>
         <module>features</module>
         <module>yang</module>
@@ -39,16 +40,6 @@
     </modules>
 
     <profiles>
-      <profile>
-        <id>benchmarks</id>
-        <activation>
-          <activeByDefault>false</activeByDefault>
-        </activation>
-        <modules>
-          <module>benchmarks</module>
-        </modules>
-      </profile>
-
       <profile>
         <!--
             This profile is to ensure we only build javadocs reports
