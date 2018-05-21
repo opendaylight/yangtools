@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static junit.framework.TestCase.assertFalse;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -17,7 +16,9 @@ import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -98,12 +99,22 @@ public class Bug4454Test {
             .withNodeIdentifier(new NodeIdentifier(MIN_MAX_LIST_QNAME))
             .withChild(bazEntryNode).build();
 
+    private static SchemaContext schemaContext;
+
     private DataTree inMemoryDataTree;
+
+    @BeforeClass
+    public static void beforeClass() {
+        schemaContext = YangParserTestUtils.parseYangResource("/bug-4454-test.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        schemaContext = null;
+    }
 
     @Before
     public void prepare() {
-        SchemaContext schemaContext = createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree =  new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             schemaContext);
         final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -112,10 +123,6 @@ public class Bug4454Test {
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
-    }
-
-    public static SchemaContext createTestContext() {
-        return YangParserTestUtils.parseYangResource("/bug-4454-test.yang");
     }
 
     @Test
