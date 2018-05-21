@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateTip;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
@@ -27,12 +28,14 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
      */
     @Nonnull protected abstract TreeNode getTipRoot();
 
+    @NonNull abstract YangInstanceIdentifier getRootPath();
+
     @Override
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
         final InMemoryDataTreeModification m = checkedCast(modification);
         checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
-        m.getStrategy().checkApplicable(YangInstanceIdentifier.EMPTY, m.getRootModification(),
+        m.getStrategy().checkApplicable(new ModificationPath(getRootPath()), m.getRootModification(),
             Optional.of(getTipRoot()), m.getVersion());
     }
 

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -91,7 +90,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private TreeNode mutateChildren(final MutableTreeNode meta, final NormalizedNodeContainerBuilder data,
-        final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
+            final Version nodeVersion, final Iterable<ModifiedNode> modifications) {
 
         for (final ModifiedNode mod : modifications) {
             final PathArgument id = mod.getIdentifier();
@@ -128,9 +127,9 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws IncorrectDataStructureException {
-        throw new IncorrectDataStructureException(path, "Subtree modification is not allowed.");
+        throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 
     @Override
