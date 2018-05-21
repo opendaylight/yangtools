@@ -39,7 +39,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
-                + "is leaf type node. Child nodes not allowed");
+                + " is leaf type node. Child nodes not allowed");
     }
 
     @Override
@@ -48,10 +48,10 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final TreeNode applyTouch(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+    protected final TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
+            final Version version) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
-                + "is leaf type node. Subtree change is not allowed.");
+                + " is leaf type node. Subtree change is not allowed.");
     }
 
     @Override
