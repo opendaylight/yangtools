@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Deque;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -92,7 +93,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    void checkApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (modification.getOperation() == LogicalOperation.TOUCH && !current.isPresent()) {
             // Structural containers are created as needed, so we pretend this container is here

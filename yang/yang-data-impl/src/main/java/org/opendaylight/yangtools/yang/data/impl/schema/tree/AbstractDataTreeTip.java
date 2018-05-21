@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayDeque;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -20,6 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
 abstract class AbstractDataTreeTip implements DataTreeTip {
+    private static final int DEQUE_SIZE = Integer.getInteger(
+        "org.opendaylight.yangtools.yang.data.impl.schema.tree.DEQUE_SIZE", 8);
+
     /**
      * Return the current root node of this tip.
      *
@@ -32,7 +36,7 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final InMemoryDataTreeModification m = checkedCast(modification);
         checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
-        m.getStrategy().checkApplicable(YangInstanceIdentifier.EMPTY, m.getRootModification(),
+        m.getStrategy().checkApplicable(new ArrayDeque<>(DEQUE_SIZE), m.getRootModification(),
             Optional.of(getTipRoot()), m.getVersion());
     }
 
