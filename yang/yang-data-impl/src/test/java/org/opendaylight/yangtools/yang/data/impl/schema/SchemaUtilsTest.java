@@ -26,7 +26,7 @@ public class SchemaUtilsTest {
     private static final String NS = "my-namespace";
 
     @Test
-    public void test() throws Exception {
+    public void test() {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/schema-utils-test/foo.yang");
         assertTrue(SchemaUtils.findDataParentSchemaOnPath(schemaContext,
                 SchemaPath.create(true, qN("my-name"), qN("my-name-a"))) instanceof ContainerSchemaNode);
@@ -37,7 +37,7 @@ public class SchemaUtilsTest {
     }
 
     @Test
-    public void testNameConflicts() throws Exception {
+    public void testNameConflicts() {
         final SchemaContext schemaContext = YangParserTestUtils
                 .parseYangResource("/schema-utils-test/name-conflicts.yang");
         // test my-name conflicts

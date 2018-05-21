@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -44,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class ListConstraintsValidation {
-    private static final String CONSTRAINTS_VALIDATION_TEST_YANG = "/list-constraints-validation-test-model.yang";
     private static final QName MASTER_CONTAINER_QNAME = QName.create(
             "urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model", "2015-02-02",
             "master-container");
@@ -70,13 +70,22 @@ public class ListConstraintsValidation {
     private static final YangInstanceIdentifier UNKEYED_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH).node(UNKEYED_LIST_QNAME).build();
 
-    private SchemaContext schemaContext;
+    private static SchemaContext schemaContext;
+
     private DataTree inMemoryDataTree;
+
+    @BeforeClass
+    public static void beforeClass() {
+        schemaContext = YangParserTestUtils.parseYangResource("/list-constraints-validation-test-model.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        schemaContext = null;
+    }
 
     @Before
     public void prepare() {
-        schemaContext = createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
             schemaContext);
         final DataTreeSnapshot initialDataTreeSnapshot = inMemoryDataTree.takeSnapshot();
@@ -85,10 +94,6 @@ public class ListConstraintsValidation {
         modificationTree.write(MASTER_CONTAINER_PATH, ImmutableNodes.containerNode(MASTER_CONTAINER_QNAME));
         modificationTree.ready();
         inMemoryDataTree.commit(inMemoryDataTree.prepare(modificationTree));
-    }
-
-    public static SchemaContext createTestContext() {
-        return YangParserTestUtils.parseYangResource(CONSTRAINTS_VALIDATION_TEST_YANG);
     }
 
     @Test
