@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Deque;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -33,7 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
     /**
      * Fake TreeNode version used in
-     * {@link #checkApplicable(YangInstanceIdentifier, NodeModification, Optional, Version)}.
+     * {@link #checkApplicable(Deque, NodeModification, Optional, Version)}.
      * It is okay to use a global constant, as the delegate will ignore it anyway. For
      * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
      */
@@ -92,7 +92,7 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    void checkApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (modification.getOperation() == LogicalOperation.TOUCH && !current.isPresent()) {
             // Structural containers are created as needed, so we pretend this container is here

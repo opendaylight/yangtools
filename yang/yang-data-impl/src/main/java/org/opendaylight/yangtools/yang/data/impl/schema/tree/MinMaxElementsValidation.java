@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
+import java.util.Deque;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -53,20 +54,20 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         return new MinMaxElementsValidation(delegate, constraint.getMinElements(), constraint.getMaxElements());
     }
 
-    private void validateMinMaxElements(final YangInstanceIdentifier path, final PathArgument id,
+    private void validateMinMaxElements(final Deque<PathArgument> path, final PathArgument id,
             final NormalizedNode<?, ?> data) throws DataValidationFailedException {
         final int children = numOfChildrenFromValue(data);
         if (minElements > children) {
-            throw new RequiredElementCountException(path, minElements, maxElements,
+            throw new RequiredElementCountException(YangInstanceIdentifier.create(path), minElements, maxElements,
                 children, "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
         }
         if (maxElements < children) {
-            throw new RequiredElementCountException(path, minElements, maxElements,
+            throw new RequiredElementCountException(YangInstanceIdentifier.create(path), minElements, maxElements,
                 children, "%s has too many elements (%s), can have at most %s", id, children, maxElements);
         }
     }
 
-    private void checkMinMaxElements(final YangInstanceIdentifier path, final NodeModification nodeMod,
+    private void checkMinMaxElements(final Deque<PathArgument> path, final NodeModification nodeMod,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!(nodeMod instanceof ModifiedNode)) {
             LOG.debug("Could not validate {}, does not implement expected class {}", nodeMod, ModifiedNode.class);
@@ -105,21 +106,21 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected void checkTouchApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkTouchApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkTouchApplicable(path, modification, current, version);
         checkMinMaxElements(path, modification, current, version);
     }
 
     @Override
-    protected void checkMergeApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkMergeApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkMergeApplicable(path, modification, current, version);
         checkMinMaxElements(path, modification, current, version);
     }
 
     @Override
-    protected void checkWriteApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    protected void checkWriteApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate.checkWriteApplicable(path, modification, current, version);
         checkMinMaxElements(path, modification, current, version);
