@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import java.util.ArrayDeque;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -32,8 +33,8 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
         final InMemoryDataTreeModification m = checkedCast(modification);
         checkArgument(m.isSealed(), "Attempted to verify unsealed modification %s", m);
 
-        m.getStrategy().checkApplicable(YangInstanceIdentifier.EMPTY, m.getRootModification(),
-            Optional.of(getTipRoot()), m.getVersion());
+        m.getStrategy().checkApplicable(new ArrayDeque<>(), m.getRootModification(), Optional.of(getTipRoot()),
+            m.getVersion());
     }
 
     @Override
