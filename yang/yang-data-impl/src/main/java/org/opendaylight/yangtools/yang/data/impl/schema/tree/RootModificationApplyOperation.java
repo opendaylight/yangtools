@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Deque;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -67,7 +67,7 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
     }
 
     @Override
-    final void checkApplicable(final YangInstanceIdentifier path, final NodeModification modification,
+    final void checkApplicable(final Deque<PathArgument> path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         getDelegate().checkApplicable(path, modification, current, version);
     }
