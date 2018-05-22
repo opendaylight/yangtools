@@ -42,7 +42,11 @@ public final class ImmutableNodes {
     }
 
     public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final QName name) {
-        return ImmutableMapNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name));
+        return mapNodeBuilder(NodeIdentifier.create(name));
+    }
+
+    public static CollectionNodeBuilder<MapEntryNode, MapNode> mapNodeBuilder(final NodeIdentifier name) {
+        return ImmutableMapNodeBuilder.create().withNodeIdentifier(name);
     }
 
     /**
@@ -68,7 +72,7 @@ public final class ImmutableNodes {
      * @param <T> Type of leaf node value
      * @return Leaf node with supplied identifier and value
      */
-    public static <T> LeafNode<T> leafNode(final QName name,final T value) {
+    public static <T> LeafNode<T> leafNode(final QName name, final T value) {
         return leafNode(NodeIdentifier.create(name), value);
     }
 
