@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.RequiredElementCountException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -57,12 +58,12 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             final NormalizedNode<?, ?> data) throws DataValidationFailedException {
         final int children = numOfChildrenFromValue(data);
         if (minElements > children) {
-            throw new DataValidationFailedException(YangInstanceIdentifier.create(path), String.format(
-                    "%s does not have enough elements (%s), needs at least %s", id, children, minElements));
+            throw new RequiredElementCountException(YangInstanceIdentifier.create(path), minElements, maxElements,
+                children, "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
         }
         if (maxElements < children) {
-            throw new DataValidationFailedException(YangInstanceIdentifier.create(path), String.format(
-                    "%s has too many elements (%s), can have at most %s", id, children, maxElements));
+            throw new RequiredElementCountException(YangInstanceIdentifier.create(path), minElements, maxElements,
+                children, "%s has too many elements (%s), can have at most %s", id, children, maxElements);
         }
     }
 
