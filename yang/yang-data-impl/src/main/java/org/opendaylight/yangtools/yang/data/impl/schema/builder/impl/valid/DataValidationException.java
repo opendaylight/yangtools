@@ -81,17 +81,17 @@ public class DataValidationException extends RuntimeException {
     private static final class IllegalChildException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        private IllegalChildException(final PathArgument child, final DataNodeContainer schema,
+        IllegalChildException(final PathArgument child, final DataNodeContainer schema,
                 final Set<QName> childNodes, final Set<AugmentationIdentifier> augments) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a direct child. "
                     + "Direct child nodes: %s, augmented child nodes: %s", child, schema, childNodes, augments));
         }
 
-        private IllegalChildException(final PathArgument child, final ChoiceSchemaNode schema) {
+        IllegalChildException(final PathArgument child, final ChoiceSchemaNode schema) {
             super(String.format("Unknown child node: %s, not detected in choice: %s", child, schema));
         }
 
-        private IllegalChildException(final PathArgument child, final DataSchemaNode schema,
+        IllegalChildException(final PathArgument child, final DataSchemaNode schema,
                 final Set<QName> childNodes) {
             super(String.format("Unknown child node: %s, does not belong to: %s as a child. Child nodes: %s", child,
                 schema, childNodes));
