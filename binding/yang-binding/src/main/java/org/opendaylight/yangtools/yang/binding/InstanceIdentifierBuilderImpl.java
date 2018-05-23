@@ -48,34 +48,13 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
             return true;
         }
         if (obj instanceof InstanceIdentifierBuilderImpl) {
-            InstanceIdentifierBuilderImpl<T> otherBuilder = (InstanceIdentifierBuilderImpl<T>) obj;
+            @SuppressWarnings("unchecked")
+            final InstanceIdentifierBuilderImpl<T> otherBuilder = (InstanceIdentifierBuilderImpl<T>) obj;
             return wildcard == otherBuilder.wildcard && Objects.equals(basePath, otherBuilder.basePath)
                     && Objects.equals(arg, otherBuilder.arg)
                     && Objects.equals(hashBuilder.build(), otherBuilder.hashBuilder.build());
         }
         return false;
-    }
-
-    @SuppressWarnings("unchecked")
-    <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
-        arg = Item.of(container);
-        hashBuilder.addArgument(arg);
-        pathBuilder.add(arg);
-
-        if (Identifiable.class.isAssignableFrom(container)) {
-            wildcard = true;
-        }
-
-        return (InstanceIdentifierBuilderImpl<N>) this;
-    }
-
-    @SuppressWarnings("unchecked")
-    <N extends DataObject & Identifiable<K>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(
-            final Class<N> listItem, final K listKey) {
-        arg = IdentifiableItem.of(listItem, listKey);
-        hashBuilder.addArgument(arg);
-        pathBuilder.add(arg);
-        return (InstanceIdentifierBuilderImpl<N>) this;
     }
 
     @Override
@@ -84,9 +63,22 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @Override
+    public <C extends ChoiceIn<? super T> & DataObject, N extends ChildOf<? super C>> InstanceIdentifierBuilder<N>
+            child(final Class<C> caze, final Class<N> container) {
+        return addWildNode(Item.of(caze, container));
+    }
+
+    @Override
     public <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N>
             child(final Class<N> listItem, final K listKey) {
-        return addNode(listItem, listKey);
+        return addNode(IdentifiableItem.of(listItem, listKey));
+    }
+
+    @Override
+    public <C extends ChoiceIn<? super T> & DataObject, K extends Identifier<N>,
+        N extends Identifiable<K> & ChildOf<? super C>> InstanceIdentifierBuilder<N> child(final Class<C> caze,
+                final Class<N> listItem, final K listKey) {
+        return addNode(IdentifiableItem.of(caze, listItem, listKey));
     }
 
     /**
@@ -118,5 +110,24 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments,
             hashBuilder.build(), wildcard);
         return ret;
+    }
+
+    <N extends DataObject> InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
+        if (Identifiable.class.isAssignableFrom(newArg.getType())) {
+            wildcard = true;
+        }
+        return addNode(newArg);
+    }
+
+    @SuppressWarnings("unchecked")
+    <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final PathArgument newArg) {
+        arg = newArg;
+        hashBuilder.addArgument(newArg);
+        pathBuilder.add(newArg);
+        return (InstanceIdentifierBuilderImpl<N>) this;
+    }
+
+    private <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
+        return addWildNode(Item.of(container));
     }
 }
