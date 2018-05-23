@@ -336,29 +336,23 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         return true;
     }
 
-    private InstanceIdentifier<?> childIdentifier(final PathArgument arg) {
+    private <N extends DataObject> InstanceIdentifier<N> childIdentifier(final AbstractPathArgument<N> arg) {
         return trustedCreate(arg, Iterables.concat(pathArguments, Collections.singleton(arg)),
             HashCodeBuilder.nextHashCode(hash, arg), isWildcarded());
     }
 
-    @SuppressWarnings("unchecked")
     public final <N extends ChildOf<? super T>> InstanceIdentifier<N> child(final Class<N> container) {
-        final PathArgument arg = new Item<>(container);
-        return (InstanceIdentifier<N>) childIdentifier(arg);
+        return childIdentifier(new Item<>(container));
     }
 
-    @SuppressWarnings("unchecked")
     public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> KeyedInstanceIdentifier<N, K>
             child(final Class<N> listItem, final K listKey) {
-        final PathArgument arg = new IdentifiableItem<>(listItem, listKey);
-        return (KeyedInstanceIdentifier<N, K>) childIdentifier(arg);
+        return (KeyedInstanceIdentifier<N, K>) childIdentifier(new IdentifiableItem<>(listItem, listKey));
     }
 
-    @SuppressWarnings("unchecked")
     public final <N extends DataObject & Augmentation<? super T>> InstanceIdentifier<N> augmentation(
             final Class<N> container) {
-        final PathArgument arg = new Item<>(container);
-        return (InstanceIdentifier<N>) childIdentifier(arg);
+        return childIdentifier(new Item<>(container));
     }
 
     @Deprecated
@@ -517,8 +511,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    static InstanceIdentifier<?> trustedCreate(final PathArgument arg, final Iterable<PathArgument> pathArguments,
-            final int hash, boolean wildcarded) {
+    static <N extends DataObject> InstanceIdentifier<N> trustedCreate(final PathArgument arg,
+            final Iterable<PathArgument> pathArguments, final int hash, boolean wildcarded) {
         if (Identifiable.class.isAssignableFrom(arg.getType()) && !wildcarded) {
             Identifier<?> key = null;
             if (arg instanceof IdentifiableItem<?, ?>) {
