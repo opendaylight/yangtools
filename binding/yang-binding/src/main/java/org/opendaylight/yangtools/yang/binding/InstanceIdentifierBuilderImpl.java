@@ -119,15 +119,4 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
             hashBuilder.build(), wildcard);
         return ret;
     }
-
-    /**
-     * Build the resulting InstanceIdentifier.
-     *
-     * @deprecated Use #build() instead.
-     */
-    @Override
-    @Deprecated
-    public InstanceIdentifier<T> toInstance() {
-        return build();
-    }
 }

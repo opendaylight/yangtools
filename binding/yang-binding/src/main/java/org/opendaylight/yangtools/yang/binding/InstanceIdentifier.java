@@ -731,12 +731,6 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
          */
         @Override
         InstanceIdentifier<T> build();
-
-        /*
-         * @deprecated use #build()
-         */
-        @Deprecated
-        InstanceIdentifier<T> toInstance();
     }
 
     private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
