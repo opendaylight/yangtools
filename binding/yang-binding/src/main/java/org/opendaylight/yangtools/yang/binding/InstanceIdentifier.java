@@ -7,9 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
@@ -83,8 +85,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
     InstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final boolean wildcarded,
             final int hash) {
-        this.pathArguments = Preconditions.checkNotNull(pathArguments);
-        this.targetType = Preconditions.checkNotNull(type);
+        this.pathArguments = requireNonNull(pathArguments);
+        this.targetType = requireNonNull(type);
         this.wildcarded = wildcarded;
         this.hash = hash;
     }
@@ -285,7 +287,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     @Override
     public final boolean contains(final InstanceIdentifier<? extends DataObject> other) {
-        Preconditions.checkNotNull(other, "other should not be null");
+        requireNonNull(other, "other should not be null");
 
         final Iterator<?> lit = pathArguments.iterator();
         final Iterator<?> oit = other.pathArguments.iterator();
@@ -312,7 +314,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return true if this identifier contains the other object
      */
     public final boolean containsWildcarded(final InstanceIdentifier<?> other) {
-        Preconditions.checkNotNull(other, "other should not be null");
+        requireNonNull(other, "other should not be null");
 
         final Iterator<PathArgument> lit = pathArguments.iterator();
         final Iterator<PathArgument> oit = other.pathArguments.iterator();
@@ -427,15 +429,15 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @throws IllegalArgumentException if pathArguments is empty or contains a null element.
      */
     private static InstanceIdentifier<?> internalCreate(final Iterable<PathArgument> pathArguments) {
-        final Iterator<? extends PathArgument> it = Preconditions.checkNotNull(pathArguments,
-                "pathArguments may not be null").iterator();
+        final Iterator<? extends PathArgument> it = requireNonNull(pathArguments, "pathArguments may not be null")
+                .iterator();
         final HashCodeBuilder<PathArgument> hashBuilder = new HashCodeBuilder<>();
         boolean wildcard = false;
         PathArgument arg = null;
 
         while (it.hasNext()) {
             arg = it.next();
-            Preconditions.checkArgument(arg != null, "pathArguments may not contain null elements");
+            checkArgument(arg != null, "pathArguments may not contain null elements");
 
             // TODO: sanity check ChildOf<>;
             hashBuilder.addArgument(arg);
@@ -444,7 +446,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
                 wildcard = true;
             }
         }
-        Preconditions.checkArgument(arg != null, "pathArguments may not be empty");
+        checkArgument(arg != null, "pathArguments may not be empty");
 
         return trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
     }
@@ -502,8 +504,8 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     public static <N extends Identifiable<K> & DataObject, K extends Identifier<N>> K keyOf(
             final InstanceIdentifier<N> id) {
-        Preconditions.checkNotNull(id);
-        Preconditions.checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
+        requireNonNull(id);
+        checkArgument(id instanceof KeyedInstanceIdentifier, "%s does not have a key", id);
 
         @SuppressWarnings("unchecked")
         final K ret = ((KeyedInstanceIdentifier<N, K>)id).getKey();
@@ -540,7 +542,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         private final Class<T> type;
 
         protected AbstractPathArgument(final Class<T> type) {
-            this.type = Preconditions.checkNotNull(type, "Type may not be null.");
+            this.type = requireNonNull(type, "Type may not be null.");
         }
 
         @Override
@@ -607,7 +609,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
 
         public IdentifiableItem(final Class<I> type, final T key) {
             super(type);
-            this.key = Preconditions.checkNotNull(key, "Key may not be null.");
+            this.key = requireNonNull(key, "Key may not be null.");
         }
 
         public T getKey() {
