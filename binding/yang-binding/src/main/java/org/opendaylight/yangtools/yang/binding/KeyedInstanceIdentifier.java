@@ -36,8 +36,8 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
 
     @Override
     public final InstanceIdentifierBuilder<T> builder() {
-        return new InstanceIdentifierBuilderImpl<>(new InstanceIdentifier.IdentifiableItem<>(getTargetType(), key),
-                pathArguments, hashCode(), isWildcarded());
+        return new InstanceIdentifierBuilderImpl<>(IdentifiableItem.of(getTargetType(), key), pathArguments,
+                hashCode(), isWildcarded());
     }
 
     @Override

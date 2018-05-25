@@ -104,7 +104,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         }
 
         @SuppressWarnings({ "rawtypes", "unchecked" })
-        final IdentifiableItem identifiableItem = new IdentifiableItem(identifiable, identifier);
+        final IdentifiableItem identifiableItem = IdentifiableItem.of((Class) identifiable, (Identifier) identifier);
         return identifiableItem;
     }
 

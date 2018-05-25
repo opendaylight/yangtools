@@ -353,7 +353,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @throws NullPointerException if {@code container} is null
      */
     public final <N extends ChildOf<? super T>> InstanceIdentifier<N> child(final Class<N> container) {
-        return childIdentifier(new Item<>(container));
+        return childIdentifier(Item.of(container));
     }
 
     /**
@@ -370,7 +370,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     @SuppressWarnings("unchecked")
     public final <N extends Identifiable<K> & ChildOf<? super T>, K extends Identifier<N>> KeyedInstanceIdentifier<N, K>
             child(final Class<N> listItem, final K listKey) {
-        return (KeyedInstanceIdentifier<N, K>) childIdentifier(new IdentifiableItem<>(listItem, listKey));
+        return (KeyedInstanceIdentifier<N, K>) childIdentifier(IdentifiableItem.of(listItem, listKey));
     }
 
     /**
@@ -384,7 +384,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     public final <N extends DataObject & Augmentation<? super T>> InstanceIdentifier<N> augmentation(
             final Class<N> container) {
-        return childIdentifier(new Item<>(container));
+        return childIdentifier(Item.of(container));
     }
 
     @Deprecated
@@ -410,7 +410,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      * @return A builder instance
      */
     public InstanceIdentifierBuilder<T> builder() {
-        return new InstanceIdentifierBuilderImpl<>(new Item<>(targetType), pathArguments, hash, isWildcarded());
+        return new InstanceIdentifierBuilderImpl<>(Item.of(targetType), pathArguments, hash, isWildcarded());
     }
 
     /**
@@ -514,7 +514,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
      */
     @SuppressWarnings("unchecked")
     public static <T extends DataObject> InstanceIdentifier<T> create(final Class<T> type) {
-        return (InstanceIdentifier<T>) create(Collections.singletonList(new Item<>(type)));
+        return (InstanceIdentifier<T>) create(ImmutableList.of(Item.of(type)));
     }
 
     /**
@@ -613,8 +613,27 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     public static final class Item<T extends DataObject> extends AbstractPathArgument<T> {
         private static final long serialVersionUID = 1L;
 
+        /**
+         * Construct an Item.
+         *
+         * @param type Backing class
+         * @deprecated Use {@link #of(Class)} instead.
+         */
+        @Deprecated
         public Item(final Class<T> type) {
             super(type);
+        }
+
+        /**
+         * Return a PathArgument instance backed by the specified class.
+         *
+         * @param type Backing class
+         * @param <T> Item type
+         * @return A new PathArgument
+         * @throws NullPointerException if {@code} is null.
+         */
+        public static <T extends DataObject> Item<T> of(final Class<T> type) {
+            return new Item<>(type);
         }
 
         @Override
@@ -635,9 +654,32 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         private static final long serialVersionUID = 1L;
         private final T key;
 
+        /**
+         * Construct an Item.
+         *
+         * @param type Backing class
+         * @param key key
+         * @deprecated Use {@link #of(Class, Identifier)} instead.
+         */
+        @Deprecated
         public IdentifiableItem(final Class<I> type, final T key) {
             super(type);
             this.key = requireNonNull(key, "Key may not be null.");
+        }
+
+        /**
+         * Return an IdentifiableItem instance backed by the specified class with specified key.
+         *
+         * @param type Backing class
+         * @param key Key
+         * @param <T> List type
+         * @param <I> Key type
+         * @return An IdentifiableItem
+         * @throws NullPointerException if any argument is null.
+         */
+        public static <T extends Identifiable<I> & DataObject, I extends Identifier<T>> IdentifiableItem<T, I> of(
+                final Class<T> type, final I key) {
+            return new IdentifiableItem<>(type, key);
         }
 
         /**

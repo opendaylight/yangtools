@@ -48,7 +48,7 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
         }
 
         super.addYangPathArgument(arg, builder);
-        if (arg instanceof IdentifiableItem<?, ?>) {
+        if (arg instanceof IdentifiableItem) {
             builder.add(codec.serialize((IdentifiableItem<?, ?>) arg));
         } else {
             // Adding wildcarded
@@ -76,13 +76,13 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
-        return codec.serialize(new IdentifiableItem(getBindingClass(), key));
+        return codec.serialize(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
     }
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         if (arg instanceof IdentifiableItem) {
-            return codec.serialize((IdentifiableItem<?,?>) arg);
+            return codec.serialize((IdentifiableItem<?, ?>) arg);
         }
         return super.serializePathArgument(arg);
     }

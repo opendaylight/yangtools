@@ -58,7 +58,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
 
     @SuppressWarnings("unchecked")
     <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
-        arg = new Item<>(container);
+        arg = Item.of(container);
         hashBuilder.addArgument(arg);
         pathBuilder.add(arg);
 
@@ -72,7 +72,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     @SuppressWarnings("unchecked")
     <N extends DataObject & Identifiable<K>, K extends Identifier<N>> InstanceIdentifierBuilderImpl<N> addNode(
             final Class<N> listItem, final K listKey) {
-        arg = new IdentifiableItem<>(listItem, listKey);
+        arg = IdentifiableItem.of(listItem, listKey);
         hashBuilder.addArgument(arg);
         pathBuilder.add(arg);
         return (InstanceIdentifierBuilderImpl<N>) this;

@@ -237,13 +237,10 @@ public final class DataObjectReadingUtil {
             try {
                 Object potentialList = getGetterMethod().invoke(parent);
                 if (potentialList instanceof Iterable) {
-
                     final Iterable<Identifiable> dataList = (Iterable<Identifiable>) potentialList;
-                    if (childArgument instanceof IdentifiableItem<?, ?>) {
-                        return readUsingIdentifiableItem(dataList, (IdentifiableItem) childArgument, builder);
-                    } else {
-                        return readAll(dataList, builder);
-                    }
+                    return childArgument instanceof IdentifiableItem
+                            ? readUsingIdentifiableItem(dataList, (IdentifiableItem) childArgument, builder)
+                                    : readAll(dataList, builder);
                 }
             } catch (InvocationTargetException | IllegalArgumentException | IllegalAccessException e) {
                 throw new IllegalStateException(e);
@@ -290,7 +287,7 @@ public final class DataObjectReadingUtil {
         @Override
         public Map<InstanceIdentifier, DataContainer> readUsingPathArgument(final DataContainer parent,
                 final PathArgument childArgument, final InstanceIdentifier builder) {
-            checkArgument(childArgument instanceof Item<?>, "Path Argument must be Item without keys");
+            checkArgument(childArgument instanceof Item, "Path Argument must be Item without keys");
             DataContainer aug = read(parent, childArgument.getType());
             if (aug == null) {
                 return Collections.emptyMap();
