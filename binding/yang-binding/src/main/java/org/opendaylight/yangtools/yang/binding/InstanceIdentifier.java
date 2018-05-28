@@ -414,16 +414,6 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     /**
-     * Create a new InstanceIdentifierBuilder given a base InstanceIdentifier.
-     *
-     * @deprecated Use {@link #builder()} instead.
-     */
-    @Deprecated
-    public static <T extends DataObject> InstanceIdentifierBuilder<T> builder(final InstanceIdentifier<T> base) {
-        return base.builder();
-    }
-
-    /**
      * Create an InstanceIdentifierBuilder for a specific type of InstanceIdentifier as specified by container.
      *
      * @param container Base container
