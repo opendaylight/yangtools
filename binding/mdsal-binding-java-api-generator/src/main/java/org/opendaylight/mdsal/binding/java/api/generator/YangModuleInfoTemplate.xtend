@@ -16,6 +16,7 @@ import static extension org.opendaylight.yangtools.yang.binding.BindingMapping.g
 import com.google.common.base.Preconditions
 import com.google.common.collect.ImmutableSet
 import java.util.Collections
+import java.util.Comparator
 import java.util.HashSet
 import java.util.LinkedHashMap
 import java.util.Map
@@ -42,6 +43,8 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext
  * QNAME constants.
  */
 class YangModuleInfoTemplate {
+    static val Comparator<Optional<Revision>> REVISION_COMPARATOR =
+        [ Optional<Revision> first, Optional<Revision> second | Revision.compare(first, second) ]
 
     val Module module
     val SchemaContext ctx
@@ -117,7 +120,7 @@ class YangModuleInfoTemplate {
                     «val rev = imp.revision»
                     «IF !rev.present»
                         «val Set<Module> modules = ctx.modules»
-                        «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap()»
+                        «val TreeMap<Optional<Revision>, Module> sorted = new TreeMap(REVISION_COMPARATOR)»
                         «FOR module : modules»
                             «IF module.name.equals(name)»
                                 «sorted.put(module.revision, module)»
