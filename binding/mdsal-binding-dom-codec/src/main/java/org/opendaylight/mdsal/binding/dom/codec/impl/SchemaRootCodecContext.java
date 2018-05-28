@@ -175,14 +175,14 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return getOrRethrow(rpcDataByPath, notification);
     }
 
-    private DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
+    DataContainerCodecContext<?,?> createDataTreeChildContext(final Class<?> key) {
         final QName qname = BindingReflections.findQName(key);
         final DataSchemaNode childSchema = childNonNull(getSchema().getDataChildByName(qname), key,
             "%s is not top-level item.", key);
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 
-    private ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
+    ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
         Preconditions.checkArgument(DataContainer.class.isAssignableFrom(key));
         final QName qname = BindingReflections.findQName(key);
         final QNameModule module = qname.getModule();
@@ -211,7 +211,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
     }
 
-    private NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
+    NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
         Preconditions.checkArgument(Notification.class.isAssignableFrom(notificationType));
         Preconditions.checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
         final QName qname = BindingReflections.findQName(notificationType);
