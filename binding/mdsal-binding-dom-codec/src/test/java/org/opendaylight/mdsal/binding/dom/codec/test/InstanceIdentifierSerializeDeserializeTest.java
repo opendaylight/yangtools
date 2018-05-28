@@ -25,10 +25,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.aug.norev.cont.cont.choice.ContAug;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.aug.norev.root.RootAug;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.Cont;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.Root;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.ContChoice;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.cont.choice.ContBase;
 import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp.GrpCont;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.root.RootBase;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -155,13 +158,17 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingR
         assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
         final YangInstanceIdentifier contAugLegacy = registry.toYangInstanceIdentifier(
             InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
-        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
-            NodeIdentifier.create(ContChoice.QNAME),
-            NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))), contAugLegacy);
+        assertEquals(contAug, contAugLegacy);
 
-        // FIXME: root choice handling is busted
-        //      final YangInstanceIdentifier rootAugLegacy = registry.toYangInstanceIdentifier(
-        //          InstanceIdentifier.create((Class) GrpCont.class));
+        final YangInstanceIdentifier rootBase = registry.toYangInstanceIdentifier(
+            InstanceIdentifier.builder(RootBase.class, GrpCont.class).build());
+        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
+            NodeIdentifier.create(GrpCont.QNAME)), rootBase);
+
+        final YangInstanceIdentifier rootAug = registry.toYangInstanceIdentifier(
+            InstanceIdentifier.builder(RootAug.class, GrpCont.class).build());
+        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
+            NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))), rootAug);
     }
 
     @Test
@@ -175,5 +182,14 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingR
             YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME), NodeIdentifier.create(ContChoice.QNAME),
                 NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))));
         assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
+
+        final InstanceIdentifier<?> rootBase = registry.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
+        assertEquals(InstanceIdentifier.builder(RootBase.class, GrpCont.class).build(), rootBase);
+
+        final InstanceIdentifier<?> rootAug = registry.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.create(NodeIdentifier.create(Root.QNAME),
+                NodeIdentifier.create(GrpCont.QNAME.withModule(RootAug.QNAME.getModule()))));
+        assertEquals(InstanceIdentifier.builder(RootAug.class, GrpCont.class).build(), rootAug);
     }
 }

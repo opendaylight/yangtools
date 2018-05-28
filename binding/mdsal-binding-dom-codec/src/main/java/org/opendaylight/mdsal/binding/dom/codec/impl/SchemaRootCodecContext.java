@@ -10,11 +10,15 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
+import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import java.lang.reflect.Type;
+import java.util.List;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -59,6 +63,14 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @Override
                 public NotificationCodecContext<?> load(final Class<?> key) {
                     return createNotificationDataContext(key);
+                }
+            });
+
+    private final LoadingCache<Class<? extends DataObject>, ChoiceNodeCodecContext<?>> choicesByClass =
+            CacheBuilder.newBuilder().build(new CacheLoader<Class<? extends DataObject>, ChoiceNodeCodecContext<?>>() {
+                @Override
+                public ChoiceNodeCodecContext<?> load(final Class<? extends DataObject> key) {
+                    return createChoiceDataContext(key);
                 }
             });
 
@@ -217,6 +229,19 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return new NotificationCodecContext<>(notificationType, schema, factory());
     }
 
+    ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
+        final Class<?> choiceClass = findCaseChoice(caseType);
+        Preconditions.checkArgument(choiceClass != null, "Class %s is not a valid case representation", caseType);
+        final DataSchemaNode schema = factory().getRuntimeContext().getSchemaDefinition(choiceClass);
+        Preconditions.checkArgument(schema instanceof ChoiceSchemaNode, "Class %s does not refer to a choice",
+            caseType);
+
+        final DataContainerCodecContext<?, ChoiceSchemaNode> choice = DataContainerCodecPrototype.from(choiceClass,
+            (ChoiceSchemaNode)schema, factory()).get();
+        Verify.verify(choice instanceof ChoiceNodeCodecContext);
+        return (ChoiceNodeCodecContext<?>) choice;
+    }
+
     @Override
     protected Object deserializeObject(final NormalizedNode<?, ?> normalizedNode) {
         throw new UnsupportedOperationException("Unable to deserialize root");
@@ -231,6 +256,35 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
         Preconditions.checkArgument(arg == null);
+        return null;
+    }
+
+    @Override
+    public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
+            final List<PathArgument> builder) {
+        final java.util.Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
+        if (caseType.isPresent()) {
+            final Class<? extends DataObject> type = caseType.get();
+            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(type);
+            choice.addYangPathArgument(arg, builder);
+            final DataContainerCodecContext<?, ?> caze = choice.streamChild(type);
+            caze.addYangPathArgument(arg, builder);
+            return caze.bindingPathArgumentChild(arg, builder);
+        }
+
+        return super.bindingPathArgumentChild(arg, builder);
+    }
+
+    private static Class<?> findCaseChoice(final Class<? extends DataObject> caseClass) {
+        for (Type type : caseClass.getGenericInterfaces()) {
+            if (type instanceof Class) {
+                final Class<?> typeClass = (Class<?>) type;
+                if (ChoiceIn.class.isAssignableFrom(typeClass)) {
+                    return typeClass.asSubclass(ChoiceIn.class);
+                }
+            }
+        }
+
         return null;
     }
 

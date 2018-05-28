@@ -465,6 +465,22 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     }
 
     /**
+     * Create an InstanceIdentifierBuilder for a specific type of InstanceIdentifier as specified by container in
+     * a {@code grouping} used in the {@code case} statement.
+     *
+     * @param caze Choice case class
+     * @param container Base container
+     * @param <C> Case type
+     * @param <T> Type of the container
+     * @return A new {@link InstanceIdentifierBuilder}
+     * @throws NullPointerException if any argument is null
+     */
+    public static <C extends ChoiceIn<? extends DataRoot> & DataObject, T extends ChildOf<? super C>>
+            InstanceIdentifierBuilder<T> builder(final Class<C> caze, final Class<T> container) {
+        return new InstanceIdentifierBuilderImpl<T>().addWildNode(Item.of(caze, container));
+    }
+
+    /**
      * Create an InstanceIdentifierBuilder for a specific type of InstanceIdentifier which represents an
      * {@link IdentifiableItem}.
      *
@@ -478,6 +494,25 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
     public static <N extends Identifiable<K> & ChildOf<? extends DataRoot>,
             K extends Identifier<N>> InstanceIdentifierBuilder<N> builder(final Class<N> listItem, final K listKey) {
         return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(listItem, listKey));
+    }
+
+    /**
+     * Create an InstanceIdentifierBuilder for a specific type of InstanceIdentifier which represents an
+     * {@link IdentifiableItem} in a {@code grouping} used in the {@code case} statement.
+     *
+     * @param caze Choice case class
+     * @param listItem list item class
+     * @param listKey key value
+     * @param <C> Case type
+     * @param <N> List type
+     * @param <K> List key
+     * @return A new {@link InstanceIdentifierBuilder}
+     * @throws NullPointerException if any argument is null
+     */
+    public static <C extends ChoiceIn<? extends DataRoot> & DataObject,
+            N extends Identifiable<K> & ChildOf<? super C>, K extends Identifier<N>>
+            InstanceIdentifierBuilder<N> builder(final Class<C> caze, final Class<N> listItem, final K listKey) {
+        return new InstanceIdentifierBuilderImpl<N>().addNode(IdentifiableItem.of(caze, listItem, listKey));
     }
 
     /**
