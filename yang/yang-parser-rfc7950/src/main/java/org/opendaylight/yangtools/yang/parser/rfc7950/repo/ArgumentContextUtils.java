@@ -30,10 +30,6 @@ final class ArgumentContextUtils {
         throw new UnsupportedOperationException();
     }
 
-    static String stringFromStringContext(final ArgumentContext context, final StatementSourceReference ref) {
-        return stringFromStringContext(context, YangVersion.VERSION_1, ref);
-    }
-
     static String stringFromStringContext(final ArgumentContext context, final YangVersion yangVersion,
             final StatementSourceReference ref) {
         final StringBuilder sb = new StringBuilder();

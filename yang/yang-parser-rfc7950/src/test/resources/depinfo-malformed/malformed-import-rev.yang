@@ -1,0 +1,5 @@
+module malformed-import-rev {
+    namespace "urn:test:foo";
+    prefix aug;
+    import foo { revision-date; prefix foo; }
+}

@@ -78,4 +78,24 @@ public class YangModelDependencyInfoTest {
                 "/no-revision/module-without-revision.yang");
         assertNotEquals("hashcode", 31, info.hashCode());
     }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMalformedImport() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-import.yang");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMalformedImportRev() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-import-rev.yang");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMalformedModule() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-module.yang");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testMalformedRev() throws IOException, YangSyntaxErrorException {
+        YangModelDependencyInfo.forResource(getClass(), "/depinfo-malformed/malformed-rev.yang");
+    }
 }
