@@ -56,7 +56,7 @@ public final class BindingReflections {
 
     @RegEx
     private static final String ROOT_PACKAGE_PATTERN_STRING =
-            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.rev[0-9][0-9][0-1][0-9][0-3][0-9])";
+            "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);
     private static final Logger LOG = LoggerFactory.getLogger(BindingReflections.class);
 
