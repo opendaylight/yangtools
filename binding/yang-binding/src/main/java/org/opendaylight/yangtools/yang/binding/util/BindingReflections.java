@@ -407,7 +407,8 @@ public final class BindingReflections {
      */
     public static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type) {
         checkArgument(type != null, "Target type must not be null");
-        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
+        checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type %s must be derived from DataContainer",
+            type);
         Map<Class<?>, Method> ret = new HashMap<>();
         for (Method method : type.getMethods()) {
             Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
