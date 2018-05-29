@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
@@ -88,7 +90,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
             final ListMultimap<Class<? extends SchemaSourceRepresentation>, AbstractSchemaSourceRegistration<?>> srcs =
                 sources.get(id);
             if (srcs == null) {
-                return Futures.immediateFailedFuture(new MissingSchemaSourceException(
+                return immediateFailedFluentFuture(new MissingSchemaSourceException(
                     "No providers registered for source" + id, id));
             }
 
@@ -100,7 +102,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
         final Iterator<AbstractSchemaSourceRegistration<?>> regs = sortedSchemaSourceRegistrations.iterator();
         if (!regs.hasNext()) {
-            return Futures.immediateFailedFuture(new MissingSchemaSourceException(
+            return immediateFailedFluentFuture(new MissingSchemaSourceException(
                         "No providers for source " + id + " representation " + representation + " available", id));
         }
 

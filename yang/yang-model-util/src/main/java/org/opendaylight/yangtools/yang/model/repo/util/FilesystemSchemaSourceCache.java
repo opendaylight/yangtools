@@ -9,11 +9,12 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Lists;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -112,18 +113,18 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
     }
 
     @Override
-    public synchronized ListenableFuture<? extends T> getSource(
+    public synchronized FluentFuture<? extends T> getSource(
             final SourceIdentifier sourceIdentifier) {
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);
             final SchemaSourceRepresentation restored = STORAGE_ADAPTERS.get(representation).restore(sourceIdentifier,
                     file);
-            return Futures.immediateFuture(representation.cast(restored));
+            return immediateFluentFuture(representation.cast(restored));
         }
 
         LOG.debug("Source {} not found in cache as {}", sourceIdentifier, file);
-        return Futures.immediateFailedFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
+        return immediateFailedFluentFuture(new MissingSchemaSourceException("Source not found", sourceIdentifier));
     }
 
     @Override
