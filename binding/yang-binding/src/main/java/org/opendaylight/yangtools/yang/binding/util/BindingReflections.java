@@ -27,7 +27,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.ServiceLoader;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -264,7 +263,7 @@ public final class BindingReflections {
         checkArgument(cls != null);
         String packageName = getModelRootPackageName(cls.getPackage());
         final String potentialClassName = getModuleInfoClassName(packageName);
-        return ClassLoaderUtils.withClassLoader(cls.getClassLoader(), (Callable<YangModuleInfo>) () -> {
+        return ClassLoaderUtils.callWithClassLoader(cls.getClassLoader(), () -> {
             Class<?> moduleInfoClass = Thread.currentThread().getContextClassLoader().loadClass(potentialClassName);
             return (YangModuleInfo) moduleInfoClass.getMethod("getInstance").invoke(null);
         });
@@ -431,15 +430,14 @@ public final class BindingReflections {
             return Optional.of(returnType);
         } else if (List.class.isAssignableFrom(returnType)) {
             try {
-                return ClassLoaderUtils.withClassLoader(method.getDeclaringClass().getClassLoader(),
-                    (Callable<Optional<Class<? extends DataContainer>>>) () -> {
-                        Type listResult = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
-                        if (listResult instanceof Class
-                                && DataContainer.class.isAssignableFrom((Class) listResult)) {
-                            return Optional.of((Class) listResult);
-                        }
-                        return Optional.absent();
-                    });
+                return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
+                    Type listResult = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
+                    if (listResult instanceof Class
+                            && DataContainer.class.isAssignableFrom((Class) listResult)) {
+                        return Optional.of((Class) listResult);
+                    }
+                    return Optional.absent();
+                });
             } catch (Exception e) {
                 /*
                  * It is safe to log this this exception on debug, since this
@@ -588,7 +586,7 @@ public final class BindingReflections {
      * constructors, etc).
      *
      * @param potential
-     *            Class which is potential substition
+     *            Class which is potential substitution
      * @param target
      *            Class which should be used at particular subtree
      * @return true if and only if classes represents same data.
