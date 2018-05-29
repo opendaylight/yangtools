@@ -74,7 +74,8 @@ abstract class AbstractKeySet<K> extends AbstractSet<K> {
     public final Spliterator<K> spliterator() {
         // TODO: this is backed by an Iterator, we should be able to do better
         return Spliterators.spliterator(Iterators.transform(map().immutableIterator(), Entry::getKey), Long.MAX_VALUE,
-            // XXX: Distinct as far as associated Equivalence allows
-            Spliterator.DISTINCT | Spliterator.IMMUTABLE | Spliterator.NONNULL);
+            spliteratorCharacteristics());
     }
+
+    abstract int spliteratorCharacteristics();
 }

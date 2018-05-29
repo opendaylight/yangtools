@@ -20,6 +20,7 @@ import static org.opendaylight.yangtools.triemap.ImmutableTrieMap.unsupported;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Spliterator;
 
 /**
  * {@link AbstractEntrySet} implementation guarding against attempts to mutate the underlying map.
@@ -60,5 +61,10 @@ final class ImmutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
     @SuppressWarnings("checkstyle:parameterName")
     public boolean retainAll(final Collection<?> c) {
         throw unsupported();
+    }
+
+    @Override
+    int characteristics() {
+        return Spliterator.DISTINCT | Spliterator.IMMUTABLE | Spliterator.NONNULL;
     }
 }

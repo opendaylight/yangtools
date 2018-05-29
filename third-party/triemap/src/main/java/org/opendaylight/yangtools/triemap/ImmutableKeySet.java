@@ -21,6 +21,7 @@ import com.google.common.collect.Iterators;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Spliterator;
 
 /**
  * An immutable view of a TrieMap's key set.
@@ -60,5 +61,10 @@ final class ImmutableKeySet<K> extends AbstractKeySet<K> {
     @SuppressWarnings("checkstyle:parameterName")
     public boolean removeAll(final Collection<?> c) {
         throw unsupported();
+    }
+
+    @Override
+    int spliteratorCharacteristics() {
+        return Spliterator.DISTINCT | Spliterator.IMMUTABLE | Spliterator.NONNULL;
     }
 }

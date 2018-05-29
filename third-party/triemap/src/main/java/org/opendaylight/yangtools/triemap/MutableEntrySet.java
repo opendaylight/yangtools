@@ -19,6 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Spliterator;
 
 /**
  * Support for EntrySet operations required by the Map interface.
@@ -71,5 +72,10 @@ final class MutableEntrySet<K, V> extends AbstractEntrySet<K, V> {
         }
 
         return map().remove(key, value);
+    }
+
+    @Override
+    int characteristics() {
+        return Spliterator.DISTINCT | Spliterator.CONCURRENT | Spliterator.NONNULL;
     }
 }

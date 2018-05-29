@@ -16,6 +16,7 @@
 package org.opendaylight.yangtools.triemap;
 
 import java.util.Iterator;
+import java.util.Spliterator;
 
 /**
  * A mutable view of a TrieMap's key set.
@@ -59,5 +60,10 @@ final class MutableKeySet<K> extends AbstractKeySet<K> {
     @SuppressWarnings("checkstyle:parameterName")
     public boolean remove(final Object o) {
         return map().remove(o) != null;
+    }
+
+    @Override
+    int spliteratorCharacteristics() {
+        return Spliterator.DISTINCT | Spliterator.CONCURRENT | Spliterator.NONNULL;
     }
 }
