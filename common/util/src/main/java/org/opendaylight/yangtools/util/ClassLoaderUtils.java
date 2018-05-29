@@ -242,20 +242,12 @@ public final class ClassLoaderUtils {
         }
     }
 
-    public static <S,G,P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
-        return withClassLoader(scannedClass.getClassLoader(), findFirstGenericArgumentTask(scannedClass, genericType));
-    }
-
     @SuppressWarnings("unchecked")
-    private static <S, G, P> Supplier<Class<P>> findFirstGenericArgumentTask(final Class<S> scannedClass,
-            final Class<G> genericType) {
-        return () -> {
+    public static <S, G, P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
+        return getWithClassLoader(scannedClass.getClassLoader(), () -> {
             final ParameterizedType augmentationGeneric = findParameterizedType(scannedClass, genericType);
-            if (augmentationGeneric != null) {
-                return (Class<P>) augmentationGeneric.getActualTypeArguments()[0];
-            }
-            return null;
-        };
+            return augmentationGeneric != null ? (Class<P>) augmentationGeneric.getActualTypeArguments()[0] : null;
+        });
     }
 
     // FIXME: 3.0.0: Document and return Optional
