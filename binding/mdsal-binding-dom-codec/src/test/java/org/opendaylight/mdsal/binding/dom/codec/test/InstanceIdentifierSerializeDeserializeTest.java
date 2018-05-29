@@ -24,6 +24,11 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.aug.norev.cont.cont.choice.ContAug;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.Cont;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.ContChoice;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.cont.cont.choice.ContBase;
+import org.opendaylight.yang.gen.v1.urn.test.opendaylight.mdsal45.base.norev.grp.GrpCont;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -130,5 +135,45 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingR
         final PathArgument leafOnlyLastArg = registry.toYangInstanceIdentifier(BA_TREE_LEAF_ONLY).getLastPathArgument();
         assertTrue(leafOnlyLastArg instanceof AugmentationIdentifier);
         assertTrue(((AugmentationIdentifier) leafOnlyLastArg).getPossibleChildNames().contains(SIMPLE_VALUE_QNAME));
+    }
+
+    @Test
+    public void testChoiceCaseGroupingFromBinding() {
+        final YangInstanceIdentifier contBase = registry.toYangInstanceIdentifier(
+            InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build());
+        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+            NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)), contBase);
+
+        final YangInstanceIdentifier contAug = registry.toYangInstanceIdentifier(
+            InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build());
+        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+            NodeIdentifier.create(ContChoice.QNAME),
+            NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))), contAug);
+
+        // Legacy: downcast the child to Class, losing type safety but still working. Faced with ambiguity, it will
+        //         select the lexically-lower class
+        assertEquals(1, ContBase.class.getCanonicalName().compareTo(ContAug.class.getCanonicalName()));
+        final YangInstanceIdentifier contAugLegacy = registry.toYangInstanceIdentifier(
+            InstanceIdentifier.builder(Cont.class).child((Class) GrpCont.class).build());
+        assertEquals(YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+            NodeIdentifier.create(ContChoice.QNAME),
+            NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))), contAugLegacy);
+
+        // FIXME: root choice handling is busted
+        //      final YangInstanceIdentifier rootAugLegacy = registry.toYangInstanceIdentifier(
+        //          InstanceIdentifier.create((Class) GrpCont.class));
+    }
+
+    @Test
+    public void testChoiceCaseGroupingToBinding() {
+        final InstanceIdentifier<?> contBase = registry.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME),
+            NodeIdentifier.create(ContChoice.QNAME), NodeIdentifier.create(GrpCont.QNAME)));
+        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContBase.class, GrpCont.class).build(), contBase);
+
+        final InstanceIdentifier<?> contAug = registry.fromYangInstanceIdentifier(
+            YangInstanceIdentifier.create(NodeIdentifier.create(Cont.QNAME), NodeIdentifier.create(ContChoice.QNAME),
+                NodeIdentifier.create(GrpCont.QNAME.withModule(ContAug.QNAME.getModule()))));
+        assertEquals(InstanceIdentifier.builder(Cont.class).child(ContAug.class, GrpCont.class).build(), contAug);
     }
 }

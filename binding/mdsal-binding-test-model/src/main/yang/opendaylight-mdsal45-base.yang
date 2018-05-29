@@ -1,0 +1,27 @@
+module opendaylight-mdsal45-base {
+    namespace "urn:test:opendaylight-mdsal45-base";
+    prefix base;
+
+    grouping grp {
+        container grp-cont {
+            leaf grp-leaf {
+                type string;
+            }
+        }
+    }
+
+    container cont {
+        choice cont-choice {
+            case cont-base {
+                uses grp;
+            }
+        }
+    }
+
+    choice root {
+        case root-base {
+            uses grp;
+        }
+    }
+}
+

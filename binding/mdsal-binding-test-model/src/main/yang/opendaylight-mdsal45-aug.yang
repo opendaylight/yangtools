@@ -1,0 +1,19 @@
+module opendaylight-mdsal45-aug {
+    namespace "urn:test:opendaylight-mdsal45-aug";
+    prefix aug;
+
+    import opendaylight-mdsal45-base { prefix base; }
+
+    augment /base:cont/base:cont-choice {
+        case cont-aug {
+            uses base:grp;
+        }
+    }
+
+    augment /base:root {
+        case root-aug {
+            uses base:grp;
+        }
+    }
+}
+

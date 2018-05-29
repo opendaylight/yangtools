@@ -41,7 +41,6 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final T schema;
     private final QNameModule namespace;
     private final CodecContextFactory factory;
-    private final Class<?> bindingClass;
     private final Item<?> bindingArg;
     private final PathArgument yangArg;
     private final ChildAddressabilitySummary childAddressabilitySummary;
@@ -51,11 +50,15 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     @SuppressWarnings("unchecked")
     private DataContainerCodecPrototype(final Class<?> cls, final PathArgument arg, final T nodeSchema,
             final CodecContextFactory factory) {
-        this.bindingClass = cls;
+        this(Item.of((Class<? extends DataObject>) cls), arg, nodeSchema, factory);
+    }
+
+    private DataContainerCodecPrototype(final Item<?> bindingArg, final PathArgument arg, final T nodeSchema,
+            final CodecContextFactory factory) {
+        this.bindingArg = bindingArg;
         this.yangArg = arg;
         this.schema = nodeSchema;
         this.factory = factory;
-        this.bindingArg = Item.of((Class<? extends DataObject>) bindingClass);
 
         if (arg instanceof AugmentationIdentifier) {
             this.namespace = Iterables.getFirst(((AugmentationIdentifier) arg).getPossibleChildNames(), null)
@@ -152,6 +155,12 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return new DataContainerCodecPrototype(cls, NodeIdentifier.create(schema.getQName()), schema, factory);
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    static <T extends DataSchemaNode> DataContainerCodecPrototype<T> from(final Item<?> bindingArg, final T schema,
+            final CodecContextFactory factory) {
+        return new DataContainerCodecPrototype(bindingArg, NodeIdentifier.create(schema.getQName()), schema, factory);
+    }
+
     @SuppressWarnings({ "rawtypes", "unchecked" })
     static DataContainerCodecPrototype<?> from(final Class<?> augClass, final AugmentationIdentifier arg,
             final AugmentationSchemaNode schema, final CodecContextFactory factory) {
@@ -181,7 +190,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     }
 
     protected Class<?> getBindingClass() {
-        return bindingClass;
+        return bindingArg.getType();
     }
 
     protected Item<?> getBindingArg() {
@@ -224,7 +233,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         } else if (schema instanceof CaseSchemaNode) {
             return new CaseNodeCodecContext(this);
         }
-        throw new IllegalArgumentException("Unsupported type " + bindingClass + " " + schema);
+        throw new IllegalArgumentException("Unsupported type " + getBindingClass() + " " + schema);
     }
 
     boolean isChoice() {

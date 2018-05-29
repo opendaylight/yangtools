@@ -10,15 +10,24 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class CaseNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<D, CaseSchemaNode> {
     CaseNodeCodecContext(final DataContainerCodecPrototype<CaseSchemaNode> prototype) {
         super(prototype);
+    }
+
+    @Override
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    Item<?> createBindingArg(final Class<?> childClass, final DataSchemaNode childSchema) {
+        return childSchema.isAddedByUses() ? Item.of((Class)getBindingClass(), (Class)childClass)
+                : Item.of((Class<? extends DataObject>) childClass);
     }
 
     @Override

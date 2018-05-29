@@ -37,6 +37,7 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -181,8 +182,18 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
                 childNonNull(ctxProto, argType, "Class %s is not valid child of %s", argType, getBindingClass()).get();
         if (context instanceof ChoiceNodeCodecContext) {
             final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
-            final DataContainerCodecContext<?, ?> caze = choice.getCazeByChildClass(arg.getType());
             choice.addYangPathArgument(arg, builder);
+
+            final java.util.Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
+            final Class<? extends DataObject> type = arg.getType();
+            final DataContainerCodecContext<?, ?> caze;
+            if (caseType.isPresent()) {
+                // Non-ambiguous addressing this should not pose any problems
+                caze = choice.streamChild(caseType.get());
+            } else {
+                caze = choice.getCaseByChildClass(type);
+            }
+
             caze.addYangPathArgument(arg, builder);
             return caze.bindingPathArgumentChild(arg, builder);
         }
@@ -248,7 +259,12 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         }
         final DataSchemaNode nonNullChild =
                 childNonNull(childSchema, childClass, "Node %s does not have child named %s", getSchema(), childClass);
-        return DataContainerCodecPrototype.from(childClass, nonNullChild, factory());
+        return DataContainerCodecPrototype.from(createBindingArg(childClass, nonNullChild), nonNullChild, factory());
+    }
+
+    @SuppressWarnings("unchecked")
+    Item<?> createBindingArg(final Class<?> childClass, final DataSchemaNode childSchema) {
+        return Item.of((Class<? extends DataObject>) childClass);
     }
 
     private DataContainerCodecPrototype<?> yangAugmentationChild(final AugmentationIdentifier arg) {
