@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertNotNull;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
-import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
@@ -48,10 +48,10 @@ public class SharedSchemaContextFactoryTest {
         final TextToASTTransformer transformer = TextToASTTransformer.create(repository, repository);
         repository.registerSchemaSourceListener(transformer);
 
-        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source1),
+        repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source1),
             PotentialSchemaSource.create(s1, YangTextSchemaSource.class, 1));
 
-        repository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(source2),
+        repository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(source2),
             PotentialSchemaSource.create(s2, YangTextSchemaSource.class, 1));
     }
 
