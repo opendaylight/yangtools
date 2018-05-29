@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.hamcrest.CoreMatchers.both;
@@ -20,6 +19,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 import static org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter.ALWAYS_ACCEPT;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -273,7 +273,7 @@ public class SharedSchemaRepositoryTest {
 
         final SourceIdentifier runningId = RevisionSourceIdentifier.create("running", Revision.of("2012-12-12"));
 
-        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> Futures.immediateFuture(
+        sharedSchemaRepository.registerSchemaSource(sourceIdentifier -> immediateFluentFuture(
             new YangTextSchemaSource(runningId) {
                 @Override
                 protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {

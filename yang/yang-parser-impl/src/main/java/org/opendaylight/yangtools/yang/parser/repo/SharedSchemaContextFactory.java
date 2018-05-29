@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
+
 import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
@@ -16,6 +19,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.AsyncFunction;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
@@ -62,13 +66,13 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     //       (final implementation)
     @Deprecated
     SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
-        this.repository = Preconditions.checkNotNull(repository);
+        this.repository = requireNonNull(repository);
         this.config = SchemaContextFactoryConfiguration.builder().setFilter(filter).build();
     }
 
     SharedSchemaContextFactory(final SchemaRepository repository, final SchemaContextFactoryConfiguration config) {
-        this.repository = Preconditions.checkNotNull(repository);
-        this.config = Preconditions.checkNotNull(config);
+        this.repository = requireNonNull(repository);
+        this.config = requireNonNull(config);
     }
 
     @Override
@@ -98,7 +102,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         final SchemaContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
         if (existing != null) {
             LOG.debug("Returning cached context {}", existing);
-            return Futures.immediateFuture(existing);
+            return immediateFluentFuture(existing);
         }
 
         // Request all sources be loaded
@@ -157,7 +161,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         private final List<SourceIdentifier> sourceIdentifiers;
 
         SourceIdMismatchDetector(final List<SourceIdentifier> sourceIdentifiers) {
-            this.sourceIdentifiers = Preconditions.checkNotNull(sourceIdentifiers);
+            this.sourceIdentifiers = requireNonNull(sourceIdentifiers);
         }
 
         @Override
@@ -203,7 +207,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         @Override
-        public ListenableFuture<SchemaContext> apply(@Nonnull final List<ASTSchemaSource> sources)
+        public FluentFuture<SchemaContext> apply(@Nonnull final List<ASTSchemaSource> sources)
                 throws SchemaResolutionException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
@@ -228,8 +232,8 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             for (final Entry<SourceIdentifier, ASTSchemaSource> e : srcs.entrySet()) {
                 final ASTSchemaSource ast = e.getValue();
                 final ParserRuleContext parserRuleCtx = ast.getAST();
-                Preconditions.checkArgument(parserRuleCtx instanceof StatementContext,
-                        "Unsupported context class %s for source %s", parserRuleCtx.getClass(), e.getKey());
+                checkArgument(parserRuleCtx instanceof StatementContext, "Unsupported context class %s for source %s",
+                    parserRuleCtx.getClass(), e.getKey());
 
                 reactor.addSource(YangStatementStreamSource.create(e.getKey(), (StatementContext) parserRuleCtx,
                     ast.getSymbolicName().orElse(null)));
@@ -242,7 +246,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                 throw new SchemaResolutionException("Failed to resolve required models", ex.getSourceIdentifier(), ex);
             }
 
-            return Futures.immediateFuture(schemaContext);
+            return immediateFluentFuture(schemaContext);
         }
     }
 }

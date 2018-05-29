@@ -8,15 +8,15 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.Collections;
+import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 
 /**
- * A filter of schema sources. This is used to restrict which sources representation
- * instances are allowed to participate in construction of a schema context. This
- * allows, for example, to create an non-shared island, or require the sources to
- * be certified before use.
+ * A filter of schema sources. This is used to restrict which sources representation instances are allowed
+ * to participate in construction of a schema context. This allows, for example, to create an non-shared island,
+ * or require the sources to be certified before use.
  */
 @Beta
 public interface SchemaSourceFilter {
@@ -25,8 +25,7 @@ public interface SchemaSourceFilter {
      */
     SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
         private final Iterable<Class<? extends SchemaSourceRepresentation>> representations =
-                Collections.singletonList(SchemaSourceRepresentation.class);
-        private final ListenableFuture<Boolean> applyFuture = Futures.immediateFuture(Boolean.TRUE);
+                ImmutableList.of(SchemaSourceRepresentation.class);
 
         @Override
         public Iterable<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
@@ -34,8 +33,8 @@ public interface SchemaSourceFilter {
         }
 
         @Override
-        public ListenableFuture<Boolean> apply(final SchemaSourceRepresentation schemaSource) {
-            return applyFuture;
+        public FluentFuture<Boolean> apply(final SchemaSourceRepresentation schemaSource) {
+            return FluentFutures.immediateTrueFluentFuture();
         }
     };
 
@@ -57,5 +56,6 @@ public interface SchemaSourceFilter {
      * @return Promise of a filtering decision. The result should be {@link Boolean#TRUE}
      *         if the source is acceptable.
      */
+    // FIXME: 3.0.0: require FluentFuture
     ListenableFuture<Boolean> apply(SchemaSourceRepresentation schemaSource);
 }

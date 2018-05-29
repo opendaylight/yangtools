@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
+import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -16,7 +18,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
-import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.io.InputStream;
@@ -260,17 +262,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Override
-    public synchronized ListenableFuture<YangTextSchemaSource> getSource(
+    public synchronized FluentFuture<YangTextSchemaSource> getSource(
             final SourceIdentifier sourceIdentifier) {
         final Collection<YangTextSchemaSource> ret = texts.get(sourceIdentifier);
 
         LOG.debug("Lookup {} result {}", sourceIdentifier, ret);
         if (ret.isEmpty()) {
-            return Futures.immediateFailedFuture(new MissingSchemaSourceException(
-                "URL for " + sourceIdentifier + " not registered", sourceIdentifier));
+            return immediateFailedFluentFuture(new MissingSchemaSourceException("URL for " + sourceIdentifier
+                + " not registered", sourceIdentifier));
         }
 
-        return Futures.immediateFuture(ret.iterator().next());
+        return immediateFluentFuture(ret.iterator().next());
     }
 
     /**
