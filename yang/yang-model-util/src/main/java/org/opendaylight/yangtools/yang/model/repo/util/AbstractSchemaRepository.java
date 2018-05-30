@@ -14,9 +14,9 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,11 +65,11 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
-    private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(
+    private static <T extends SchemaSourceRepresentation> FluentFuture<T> fetchSource(
             final SourceIdentifier id, final Iterator<AbstractSchemaSourceRegistration<?>> it) {
         final AbstractSchemaSourceRegistration<?> reg = it.next();
 
-        return Futures.catchingAsync(((SchemaSourceProvider<T>)reg.getProvider()).getSource(id), Throwable.class,
+        return (FluentFuture<T>) ((SchemaSourceProvider<T>)reg.getProvider()).getSource(id).catchingAsync(Throwable.class,
             input -> {
                 LOG.debug("Failed to acquire source from {}", reg, input);
 
@@ -82,7 +82,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(
+    public <T extends SchemaSourceRepresentation> FluentFuture<T> getSchemaSource(
             @Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
         final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
 
@@ -106,8 +106,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
                         "No providers for source " + id + " representation " + representation + " available", id));
         }
 
-        final ListenableFuture<T> fetchSourceFuture = fetchSource(id, regs);
         // Add callback to notify cache listeners about encountered schema
+        final FluentFuture<T> fetchSourceFuture = fetchSource(id, regs);
         Futures.addCallback(fetchSourceFuture, new FutureCallback<T>() {
             @Override
             public void onSuccess(final T result) {

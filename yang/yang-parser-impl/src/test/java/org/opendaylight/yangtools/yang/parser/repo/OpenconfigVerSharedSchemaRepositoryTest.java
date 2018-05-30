@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
@@ -46,13 +45,13 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
+        final FluentFuture<SchemaContext> inetAndTopologySchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()),
                     StatementParserMode.SEMVER_MODE);
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
-        final ListenableFuture<SchemaContext> barSchemaContextFuture = fact
+        final FluentFuture<SchemaContext> barSchemaContextFuture = fact
                 .createSchemaContext(ImmutableList.of(bar.getId(), semVer.getId()), StatementParserMode.SEMVER_MODE);
         assertTrue(barSchemaContextFuture.isDone());
         assertSchemaContext(barSchemaContextFuture.get(), 2);
@@ -78,12 +77,12 @@ public class OpenconfigVerSharedSchemaRepositoryTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture =
+        final FluentFuture<SchemaContext> inetAndTopologySchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(bar.getId(), foo.getId(), semVer.getId()));
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 3);
 
-        final ListenableFuture<SchemaContext> barSchemaContextFuture =
+        final FluentFuture<SchemaContext> barSchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(bar.getId(), semVer.getId()));
         assertTrue(barSchemaContextFuture.isDone());
         assertSchemaContext(barSchemaContextFuture.get(), 2);

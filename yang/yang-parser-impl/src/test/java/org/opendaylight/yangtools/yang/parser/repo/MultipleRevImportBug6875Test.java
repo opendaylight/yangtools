@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -14,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -58,7 +57,7 @@ public class MultipleRevImportBug6875Test {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact
+        final FluentFuture<SchemaContext> schemaContextFuture = fact
                 .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId()));
         assertTrue(schemaContextFuture.isDone());
 
@@ -100,7 +99,7 @@ public class MultipleRevImportBug6875Test {
 
         final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(
                 SchemaSourceFilter.ALWAYS_ACCEPT);
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
+        final FluentFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
                 ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId()));
         assertTrue(schemaContextFuture.isDone());
 
