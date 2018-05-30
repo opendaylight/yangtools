@@ -22,7 +22,6 @@ import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -77,7 +76,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
 
     @Override
     @Deprecated
-    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+    public FluentFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
@@ -87,13 +86,13 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     @Override
-    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
+    public FluentFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
         return createSchemaContext(requiredSources,
                 config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
                 new AssembleSources(config));
     }
 
-    private ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+    private FluentFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final Cache<Collection<SourceIdentifier>, SchemaContext> cache,
             final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
         // Make sources unique
@@ -106,18 +105,16 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         // Request all sources be loaded
-        ListenableFuture<List<ASTSchemaSource>> sf = Futures.allAsList(Collections2.transform(uniqueSourceIdentifiers,
-            this::requestSource));
+        FluentFuture<List<ASTSchemaSource>> sf = FluentFuture.from(Futures.allAsList(
+            Collections2.transform(uniqueSourceIdentifiers, this::requestSource)));
 
         // Detect mismatch between requested Source IDs and IDs that are extracted from parsed source
         // Also remove duplicates if present
         // We are relying on preserved order of uniqueSourceIdentifiers as well as sf
-        sf = Futures.transform(sf, new SourceIdMismatchDetector(uniqueSourceIdentifiers),
-            MoreExecutors.directExecutor());
+        sf = sf.transform(new SourceIdMismatchDetector(uniqueSourceIdentifiers), MoreExecutors.directExecutor());
 
         // Assemble sources into a schema context
-        final ListenableFuture<SchemaContext> cf = Futures.transformAsync(sf, assembleSources,
-            MoreExecutors.directExecutor());
+        final FluentFuture<SchemaContext> cf = sf.transformAsync(assembleSources, MoreExecutors.directExecutor());
 
         // Populate cache when successful
         Futures.addCallback(cf, new FutureCallback<SchemaContext>() {
@@ -135,7 +132,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         return cf;
     }
 
-    private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
+    private FluentFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
         return repository.getSchemaSource(identifier, ASTSchemaSource.class);
     }
 
