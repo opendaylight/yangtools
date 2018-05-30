@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -56,23 +55,22 @@ public class YangTextSchemaContextResolverTest {
         assertEquals(3, yangTextSchemaContextResolver.getAvailableSources().size());
 
         final SourceIdentifier fooModuleId = RevisionSourceIdentifier.create("foo", Revision.of("2016-09-26"));
-        final ListenableFuture<YangTextSchemaSource> foo = yangTextSchemaContextResolver.getSource(fooModuleId);
+        final FluentFuture<YangTextSchemaSource> foo = yangTextSchemaContextResolver.getSource(fooModuleId);
         assertTrue(foo.isDone());
         assertEquals(fooModuleId, foo.get().getIdentifier());
 
         final SourceIdentifier barModuleId = RevisionSourceIdentifier.create("bar", Revision.of("2016-09-26"));
-        final ListenableFuture<YangTextSchemaSource> bar = yangTextSchemaContextResolver.getSource(barModuleId);
+        final FluentFuture<YangTextSchemaSource> bar = yangTextSchemaContextResolver.getSource(barModuleId);
         assertTrue(bar.isDone());
         assertEquals(barModuleId, bar.get().getIdentifier());
 
         final SourceIdentifier bazModuleId = RevisionSourceIdentifier.create("baz", Revision.of("2016-09-26"));
-        final ListenableFuture<YangTextSchemaSource> baz =
-                yangTextSchemaContextResolver.getSource(bazModuleId);
+        final FluentFuture<YangTextSchemaSource> baz = yangTextSchemaContextResolver.getSource(bazModuleId);
         assertTrue(baz.isDone());
         assertEquals(bazModuleId, baz.get().getIdentifier());
 
         final SourceIdentifier foobarModuleId = RevisionSourceIdentifier.create("foobar", Revision.of("2016-09-26"));
-        final ListenableFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
+        final FluentFuture<YangTextSchemaSource> foobar = yangTextSchemaContextResolver.getSource(foobarModuleId);
         assertTrue(foobar.isDone());
         try {
             foobar.get();
