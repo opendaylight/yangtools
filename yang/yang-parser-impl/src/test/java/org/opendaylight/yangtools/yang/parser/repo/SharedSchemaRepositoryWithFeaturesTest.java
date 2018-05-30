@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -15,7 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -46,7 +45,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+        final FluentFuture<SchemaContext> testSchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
@@ -87,7 +86,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+        final FluentFuture<SchemaContext> testSchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(foobar.getId()));
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
@@ -133,7 +132,7 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         final SchemaContextFactory fact = sharedSchemaRepository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
+        final FluentFuture<SchemaContext> testSchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);

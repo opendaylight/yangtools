@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FluentFuture;
-import com.google.common.util.concurrent.ListenableFuture;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 
 /**
@@ -56,6 +55,5 @@ public interface SchemaSourceFilter {
      * @return Promise of a filtering decision. The result should be {@link Boolean#TRUE}
      *         if the source is acceptable.
      */
-    // FIXME: 3.0.0: require FluentFuture
-    ListenableFuture<Boolean> apply(SchemaSourceRepresentation schemaSource);
+    FluentFuture<Boolean> apply(SchemaSourceRepresentation schemaSource);
 }
