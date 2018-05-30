@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import static org.hamcrest.CoreMatchers.both;
@@ -22,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Collections2;
 import com.google.common.io.Files;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -196,7 +195,7 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2013-12-12"));
-        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
+        final FluentFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         final YangTextSchemaSource checkedGet = checked.get();
         Assert.assertEquals(sourceIdentifier, checkedGet.getIdentifier());
@@ -212,7 +211,7 @@ public class FilesystemSchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2013-12-12", content);
         cache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test1", Revision.of("2012-12-12"));
-        final ListenableFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
+        final FluentFuture<? extends YangTextSchemaSource> checked = cache.getSource(sourceIdentifier);
         Assert.assertNotNull(checked);
         checked.get();
     }

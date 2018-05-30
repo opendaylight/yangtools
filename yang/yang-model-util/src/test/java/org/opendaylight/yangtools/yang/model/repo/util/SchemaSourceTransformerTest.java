@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.util;
 
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
@@ -96,11 +96,11 @@ public class SchemaSourceTransformerTest {
         final PotentialSchemaSource<?>[] potList = { foo.getPotentialSchemSource() };
         final Iterable<PotentialSchemaSource<?>> sources = Arrays.asList(potList);
         listener.schemaSourceRegistered(sources);
-        final ListenableFuture<YinXmlSchemaSource> source = this.schema.getSource(sourceIdentifier);
+        final FluentFuture<YinXmlSchemaSource> source = this.schema.getSource(sourceIdentifier);
         Assert.assertNotNull(source);
 
         listener.schemaSourceUnregistered(foo.getPotentialSchemSource());
-        final ListenableFuture<YinXmlSchemaSource> source2 = this.schema.getSource(sourceIdentifier);
+        final FluentFuture<YinXmlSchemaSource> source2 = this.schema.getSource(sourceIdentifier);
         Assert.assertNotNull(source2);
     }
 
@@ -132,11 +132,10 @@ public class SchemaSourceTransformerTest {
         }
 
         @Override
-        public ListenableFuture<? extends YangSchemaSourceRepresentation> getSource(
+        public FluentFuture<? extends YangSchemaSourceRepresentation> getSource(
                 final SourceIdentifier sourceIdentifier) {
             return SettableFuture.create();
         }
-
     }
 
     private class Provider extends AbstractSchemaRepository {
@@ -151,7 +150,6 @@ public class SchemaSourceTransformerTest {
                 @Nonnull final SchemaContextFactoryConfiguration config) {
             return null;
         }
-
     }
 
     private class Consumer extends AbstractSchemaRepository {

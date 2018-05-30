@@ -19,7 +19,6 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import com.google.common.util.concurrent.FluentFuture;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -234,7 +233,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources, statementParserMode);
+                final FluentFuture<SchemaContext> f = factory.createSchemaContext(sources, statementParserMode);
                 try {
                     sc = Optional.of(f.get());
                     break;
@@ -298,7 +297,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
     public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
-        final ListenableFuture<SchemaContext> future = repository
+        final FluentFuture<SchemaContext> future = repository
                 .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT)
                 .createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode);
 

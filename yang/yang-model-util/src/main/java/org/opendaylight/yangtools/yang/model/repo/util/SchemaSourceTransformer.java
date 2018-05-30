@@ -10,8 +10,7 @@ package org.opendaylight.yangtools.yang.model.repo.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.util.concurrent.AsyncFunction;
-import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,7 +31,7 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     public interface Transformation<S extends SchemaSourceRepresentation, D extends SchemaSourceRepresentation>
             extends AsyncFunction<S, D> {
         @Override
-        ListenableFuture<D> apply(@Nonnull S input) throws Exception;
+        FluentFuture<D> apply(@Nonnull S input) throws Exception;
     }
 
     private final Map<PotentialSchemaSource<?>, RefcountedRegistration> availableSources = new HashMap<>();
@@ -52,8 +51,8 @@ public class SchemaSourceTransformer<S extends SchemaSourceRepresentation, D ext
     }
 
     @Override
-    public ListenableFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
-        return Futures.transformAsync(provider.getSchemaSource(sourceIdentifier, srcClass), function,
+    public FluentFuture<D> getSource(final SourceIdentifier sourceIdentifier) {
+        return provider.getSchemaSource(sourceIdentifier, srcClass).transformAsync(function,
             MoreExecutors.directExecutor());
     }
 

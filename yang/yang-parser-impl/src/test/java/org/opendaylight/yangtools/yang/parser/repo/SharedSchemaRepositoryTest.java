@@ -26,9 +26,9 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -67,7 +67,7 @@ public class SharedSchemaRepositoryTest {
         final SourceIdentifier id2 = loadAndRegisterSource(sharedSchemaRepository,
             "/no-revision/imported@2012-12-12.yang");
 
-        ListenableFuture<ASTSchemaSource> source = sharedSchemaRepository.getSchemaSource(idNoRevision,
+        FluentFuture<ASTSchemaSource> source = sharedSchemaRepository.getSchemaSource(idNoRevision,
             ASTSchemaSource.class);
         assertEquals(idNoRevision, source.get().getIdentifier());
         source = sharedSchemaRepository.getSchemaSource(id2, ASTSchemaSource.class);
@@ -91,12 +91,12 @@ public class SharedSchemaRepositoryTest {
         final SettableSchemaProvider<ASTSchemaSource> remoteInetTypesYang = getImmediateYangSourceProviderFromResource(
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
-        final ListenableFuture<ASTSchemaSource> registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
+        final FluentFuture<ASTSchemaSource> registeredSourceFuture = sharedSchemaRepository.getSchemaSource(
             remoteInetTypesYang.getId(), ASTSchemaSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
         final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
-        final ListenableFuture<SchemaContext> schemaContextFuture =
+        final FluentFuture<SchemaContext> schemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
         assertFalse(schemaContextFuture.isDone());
@@ -111,7 +111,7 @@ public class SharedSchemaRepositoryTest {
         assertSchemaContext(firstSchemaContext, 1);
 
         // Try same schema second time
-        final ListenableFuture<SchemaContext> secondSchemaFuture = sharedSchemaRepository
+        final FluentFuture<SchemaContext> secondSchemaFuture = sharedSchemaRepository
                 .createSchemaContextFactory(ALWAYS_ACCEPT)
                 .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
@@ -138,12 +138,12 @@ public class SharedSchemaRepositoryTest {
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
         final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
-        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture = fact
+        final FluentFuture<SchemaContext> inetAndTopologySchemaContextFuture = fact
                 .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId(), remoteTopologyYang.getId()));
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 2);
 
-        final ListenableFuture<SchemaContext> inetAndNoRevSchemaContextFuture =
+        final FluentFuture<SchemaContext> inetAndNoRevSchemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId(), remoteModuleNoRevYang.getId()));
         assertFalse(inetAndNoRevSchemaContextFuture.isDone());
 
@@ -166,7 +166,7 @@ public class SharedSchemaRepositoryTest {
         final Throwable ex = new IllegalStateException("failed schema");
         remoteInetTypesYang.setException(ex);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
+        final FluentFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
             ImmutableList.of(remoteInetTypesYang.getId()));
 
         try {
@@ -197,7 +197,7 @@ public class SharedSchemaRepositoryTest {
 
         final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture =
+        final FluentFuture<SchemaContext> schemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
         assertSchemaContext(schemaContextFuture.get(), 1);
@@ -292,7 +292,7 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
 
         // Request schema to make repository notify the cache
-        final ListenableFuture<SchemaContext> schemaFuture = sharedSchemaRepository
+        final FluentFuture<SchemaContext> schemaFuture = sharedSchemaRepository
                 .createSchemaContextFactory(ALWAYS_ACCEPT).createSchemaContext(ImmutableList.of(runningId));
         Futures.addCallback(schemaFuture, new FutureCallback<SchemaContext>() {
             @Override

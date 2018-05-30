@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.repo;
 import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import org.junit.Before;
@@ -59,7 +59,7 @@ public class SharedSchemaContextFactoryTest {
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             filter);
-        final ListenableFuture<SchemaContext> schemaContext =
+        final FluentFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(s1, s1, s2));
         assertNotNull(schemaContext.get());
     }
@@ -84,7 +84,7 @@ public class SharedSchemaContextFactoryTest {
 
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             filter);
-        final ListenableFuture<SchemaContext> schemaContext =
+        final FluentFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(sIdWithoutRevision, provider.getId()));
         assertNotNull(schemaContext.get());
     }

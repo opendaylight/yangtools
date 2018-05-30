@@ -12,7 +12,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -79,7 +79,7 @@ public class InMemorySchemaSourceCacheTest {
         final YangTextSchemaSource source = new TestingYangSource("test", "2012-12-12", content);
         inMemorySchemaSourceCache.offer(source);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
-        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource = inMemorySchemaSourceCache
+        final FluentFuture<? extends YangSchemaSourceRepresentation> checkedSource = inMemorySchemaSourceCache
                 .getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         final YangSchemaSourceRepresentation yangSchemaSourceRepresentation = checkedSource.get();
@@ -93,7 +93,7 @@ public class InMemorySchemaSourceCacheTest {
         final InMemorySchemaSourceCache<YangSchemaSourceRepresentation> inMemorySchemaSourceCache =
             InMemorySchemaSourceCache.createSoftCache(this.registry, REPRESENTATION);
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
-        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
+        final FluentFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         checkedSource.get();
@@ -113,9 +113,9 @@ public class InMemorySchemaSourceCacheTest {
         inMemorySchemaSourceCache2.offer(source);
 
         final SourceIdentifier sourceIdentifier = RevisionSourceIdentifier.create("test", Revision.of("2012-12-12"));
-        final ListenableFuture<? extends YangSchemaSourceRepresentation> checkedSource =
+        final FluentFuture<? extends YangSchemaSourceRepresentation> checkedSource =
             inMemorySchemaSourceCache.getSource(sourceIdentifier);
-        final ListenableFuture<? extends SchemaSourceRepresentation> checkedSource2 =
+        final FluentFuture<? extends SchemaSourceRepresentation> checkedSource2 =
             inMemorySchemaSourceCache2.getSource(sourceIdentifier);
         Assert.assertNotNull(checkedSource);
         Assert.assertNotNull(checkedSource2);

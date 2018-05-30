@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +15,7 @@ import static org.junit.Assert.fail;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -65,8 +64,8 @@ public class SchemaContextFactoryDeviationsTest {
                 .put(BAR_MODULE, BAZ_MODULE)
                 .build();
 
-        final ListenableFuture<SchemaContext> lf = createSchemaContext(modulesWithSupportedDeviations, FOO, BAR, BAZ,
-                FOOBAR);
+        final FluentFuture<SchemaContext> lf = createSchemaContext(modulesWithSupportedDeviations, FOO, BAR, BAZ,
+            FOOBAR);
         assertTrue(lf.isDone());
         final SchemaContext schemaContext = lf.get();
         assertNotNull(schemaContext);
@@ -80,7 +79,7 @@ public class SchemaContextFactoryDeviationsTest {
 
     @Test
     public void testDeviationsSupportedInAllModules() throws Exception {
-        final ListenableFuture<SchemaContext> lf = createSchemaContext(null, FOO, BAR, BAZ, FOOBAR);
+        final FluentFuture<SchemaContext> lf = createSchemaContext(null, FOO, BAR, BAZ, FOOBAR);
         assertTrue(lf.isDone());
         final SchemaContext schemaContext = lf.get();
         assertNotNull(schemaContext);
@@ -94,8 +93,7 @@ public class SchemaContextFactoryDeviationsTest {
 
     @Test
     public void testDeviationsSupportedInNoModule() throws Exception {
-        final ListenableFuture<SchemaContext> lf = createSchemaContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ,
-            FOOBAR);
+        final FluentFuture<SchemaContext> lf = createSchemaContext(ImmutableSetMultimap.of(), FOO, BAR, BAZ, FOOBAR);
         assertTrue(lf.isDone());
         final SchemaContext schemaContext = lf.get();
         assertNotNull(schemaContext);
@@ -109,7 +107,7 @@ public class SchemaContextFactoryDeviationsTest {
 
     @Test
     public void shouldFailOnAttemptToDeviateTheSameModule2() throws Exception {
-        final ListenableFuture<SchemaContext> lf = createSchemaContext(null, BAR_INVALID, BAZ_INVALID);
+        final FluentFuture<SchemaContext> lf = createSchemaContext(null, BAR_INVALID, BAZ_INVALID);
         assertTrue(lf.isDone());
         try {
             lf.get();
@@ -129,7 +127,7 @@ public class SchemaContextFactoryDeviationsTest {
                 ASTSchemaSource.class);
     }
 
-    private static ListenableFuture<SchemaContext> createSchemaContext(
+    private static FluentFuture<SchemaContext> createSchemaContext(
             final SetMultimap<QNameModule, QNameModule> modulesWithSupportedDeviations, final String... resources)
             throws Exception {
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
