@@ -15,6 +15,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Spliterator;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
@@ -44,6 +45,11 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         @Override
         public Object getElement() {
             return null;
+        }
+
+        @Override
+        public Spliterator<Object> spliterator() {
+            return SingletonSpliterators.immutableOfNull();
         }
 
         @Override
@@ -80,6 +86,9 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     public final Iterator<E> iterator() {
         return Iterators.singletonIterator(getElement());
     }
+
+    @Override
+    public abstract Spliterator<E> spliterator();
 
     @Nonnull
     @Override
@@ -200,6 +209,11 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         @Override
         public String toString() {
             return "[" + element + ']';
+        }
+
+        @Override
+        public Spliterator<E> spliterator() {
+            return SingletonSpliterators.immutableOf(element);
         }
     }
 }
