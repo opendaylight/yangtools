@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.repo;
 
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -41,7 +41,7 @@ class SettableSchemaProvider<T extends SchemaSourceRepresentation> implements Sc
     }
 
     @Override
-    public ListenableFuture<T> getSource(final SourceIdentifier sourceIdentifier) {
+    public FluentFuture<T> getSource(final SourceIdentifier sourceIdentifier) {
         return future;
     }
 

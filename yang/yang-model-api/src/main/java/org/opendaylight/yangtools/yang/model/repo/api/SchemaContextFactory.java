@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import java.util.Collection;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -32,7 +32,7 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    ListenableFuture<SchemaContext> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources);
+    FluentFuture<SchemaContext> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources);
 
     /**
      * Create a new schema context containing specified sources, pulling in any
@@ -48,7 +48,7 @@ public interface SchemaContextFactory {
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    default ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+    default FluentFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode) {
         return createSchemaContext(requiredSources, statementParserMode, null);
     }
@@ -68,7 +68,7 @@ public interface SchemaContextFactory {
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    default ListenableFuture<SchemaContext> createSchemaContext(
+    default FluentFuture<SchemaContext> createSchemaContext(
             @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
@@ -90,6 +90,6 @@ public interface SchemaContextFactory {
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    ListenableFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
+    FluentFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
             StatementParserMode statementParserMode, Set<QName> supportedFeatures);
 }

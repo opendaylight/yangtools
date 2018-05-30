@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.repo.spi;
 
 import com.google.common.annotations.Beta;
-import com.google.common.util.concurrent.ListenableFuture;
+import com.google.common.util.concurrent.FluentFuture;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -45,6 +45,5 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      * @param sourceIdentifier source identifier
      * @return future source representation, if supplied YANG module is available
      */
-    // FIXME: 3.0.0: return FluentFuture
-    ListenableFuture<? extends T> getSource(SourceIdentifier sourceIdentifier);
+    FluentFuture<? extends T> getSource(SourceIdentifier sourceIdentifier);
 }
