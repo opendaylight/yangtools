@@ -33,8 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 
@@ -66,14 +64,14 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     private final LoadingCache<QName, DataContainerCodecContext<?,?>> childrenByQName = CacheBuilder.newBuilder().build(
             new CacheLoader<QName, DataContainerCodecContext<?,?>>() {
-                @SuppressWarnings("unchecked")
                 @Override
                 public DataContainerCodecContext<?,?> load(final QName qname) {
                     final DataSchemaNode childSchema = getSchema().getDataChildByName(qname);
                     childNonNull(childSchema, qname,"Argument %s is not valid child of %s", qname,getSchema());
                     if (childSchema instanceof DataNodeContainer || childSchema instanceof ChoiceSchemaNode) {
-                        @SuppressWarnings("rawtypes")
-                        final Class childCls = factory().getRuntimeContext().getClassForSchema(childSchema);
+                        @SuppressWarnings("unchecked")
+                        final Class<? extends DataObject> childCls = (Class<? extends DataObject>)
+                                factory().getRuntimeContext().getClassForSchema(childSchema);
                         return streamChild(childCls);
                     }
 
@@ -83,31 +81,24 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     private final LoadingCache<SchemaPath, RpcInputCodec<?>> rpcDataByPath = CacheBuilder.newBuilder().build(
         new CacheLoader<SchemaPath, RpcInputCodec<?>>() {
-            @SuppressWarnings({ "rawtypes", "unchecked" })
             @Override
-            public RpcInputCodec load(final SchemaPath key) {
+            public RpcInputCodec<?> load(final SchemaPath key) {
                 final ContainerSchemaNode schema = SchemaContextUtil.getRpcDataSchema(getSchema(), key);
-                if (schema instanceof EffectiveStatement
-                        && ((EffectiveStatement) schema).getDeclared().getStatementSource()
-                        != StatementSource.DECLARATION) {
-                    // This is an implicitly-defined input or output statement. We do not have a corresponding
-                    // data representation, so we hard-wire it to null.
-                    return UnmappedRpcInputCodec.getInstance();
-                }
-
-                final Class cls = factory().getRuntimeContext().getClassForSchema(schema);
+                @SuppressWarnings("unchecked")
+                final Class<? extends DataContainer> cls = (Class<? extends DataContainer>)
+                        factory().getRuntimeContext().getClassForSchema(schema);
                 return getRpc(cls);
             }
         });
 
     private final LoadingCache<SchemaPath, NotificationCodecContext<?>> notificationsByPath = CacheBuilder.newBuilder()
             .build(new CacheLoader<SchemaPath, NotificationCodecContext<?>>() {
-
-                @SuppressWarnings({ "rawtypes", "unchecked" })
                 @Override
-                public NotificationCodecContext load(final SchemaPath key) throws Exception {
+                public NotificationCodecContext<?> load(final SchemaPath key) {
                     final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(), key);
-                    final Class clz = factory().getRuntimeContext().getClassForSchema(schema);
+                    @SuppressWarnings("unchecked")
+                    final Class<? extends Notification> clz = (Class<? extends Notification>)
+                            factory().getRuntimeContext().getClassForSchema(schema);
                     return getNotification(clz);
                 }
             });
