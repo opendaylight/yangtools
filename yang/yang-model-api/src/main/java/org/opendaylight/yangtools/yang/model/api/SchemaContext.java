@@ -210,4 +210,9 @@ public interface SchemaContext extends ContainerSchemaNode {
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();
     }
+
+    @Override
+    default Optional<DataSchemaNode> findDataTreeChild(final QName name) {
+        return findModule(name.getModule()).flatMap(mod -> mod.findDataTreeChild(name));
+    }
 }
