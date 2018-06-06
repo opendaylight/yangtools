@@ -8,7 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 /**
- * Data Schema Node represents abstract supertype from which all data tree definitions are derived.
+ * Data Schema Node represents abstract supertype from which all data tree definitions are derived. Unlike what
+ * the name would suggest, this interface corresponds more to RFC7950 {@code data definition statement} than to
+ * {@code data node}, yet it notably does not include {@link UsesNode} and {@link AugmentationSchemaNode}, which are
+ * resolved separately.
  *
  * <p>
  * Common interface is composed of {@link #isConfiguration()}, governing validity in config/operation data stores

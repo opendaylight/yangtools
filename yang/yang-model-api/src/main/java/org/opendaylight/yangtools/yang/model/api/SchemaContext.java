@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.net.URI;
@@ -209,5 +210,11 @@ public interface SchemaContext extends ContainerSchemaNode {
     @Override
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();
+    }
+
+    @Beta
+    @Override
+    default Optional<DataSchemaNode> findDataTreeChild(final QName name) {
+        return findModule(name.getModule()).flatMap(mod -> mod.findDataTreeChild(name));
     }
 }
