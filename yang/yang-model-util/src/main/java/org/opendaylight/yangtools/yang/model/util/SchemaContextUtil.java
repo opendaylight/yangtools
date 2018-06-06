@@ -135,10 +135,16 @@ public final class SchemaContextUtil {
             Preconditions.checkArgument(strXPath.indexOf('[') == -1,
                     "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
-                final List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
-                if (qnamedPath != null) {
-                    return findNodeInSchemaContext(context, qnamedPath);
-                }
+                final List<QName> path = xpathToQNamePath(context, module, strXPath);
+
+                // FIXME: This entire method is ill-defined, as the resolution process depends on where on the place
+                //        where the XPath is defined -- notably RPCs, actions and notifications modify the data tree
+                //        temporarily. See https://tools.ietf.org/html/rfc7950#section-6.4.1
+                //
+                //        We therefore attempt to make a best estimate, but both methods of resolution are prone to
+                //        failure.
+                final Optional<DataSchemaNode> pureData = context.findDataTreeChild(path);
+                return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, path);
             }
         }
         return null;
@@ -194,10 +200,14 @@ public final class SchemaContextUtil {
         final SchemaPath actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
             final Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
-
-            if (qnamePath != null) {
-                return findNodeInSchemaContext(context, qnamePath);
-            }
+            // FIXME: This entire method is ill-defined, as the resolution process depends on where on the place
+            //        where the XPath is defined -- notably RPCs, actions and notifications modify the data tree
+            //        temporarily. See sections 6.4.1 and 9.9.2 of RFC7950.
+            //
+            //        We therefore attempt to make a best estimate, but both methods of resolution are prone to
+            //        failure.
+            final Optional<DataSchemaNode> pureData = context.findDataTreeChild(qnamePath);
+            return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, qnamePath);
         }
         return null;
     }
