@@ -55,6 +55,7 @@ public class SchemaContextUtilTest {
     public void testFindDummyData() {
         MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
+        doReturn(Optional.empty()).when(mockSchemaContext).findDataTreeChild(any(Iterable.class));
         doReturn(URI.create("dummy")).when(mockModule).getNamespace();
         doReturn(Optional.empty()).when(mockModule).getRevision();
 

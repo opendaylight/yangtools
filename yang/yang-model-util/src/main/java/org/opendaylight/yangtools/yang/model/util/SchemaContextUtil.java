@@ -124,6 +124,18 @@ public final class SchemaContextUtil {
      *         Non-conditional Revision Aware XPath, or <code>null</code> if the
      *         DataSchemaNode is not present in Schema Context.
      */
+    // FIXME: This entire method is ill-defined, as the resolution process depends on  where the XPath is defined --
+    //        notably RPCs, actions and notifications modify the data tree temporarily. See sections 6.4.1 and 9.9.2
+    //        of RFC7950.
+    //
+    //        Most notably we need to understand whether the XPath is being resolved in the data tree, or as part of
+    //        a notification/action/RPC, as then the SchemaContext grows tentative nodes ... which could be addressed
+    //        via a derived SchemaContext (i.e. this class would have to have a
+    //
+    //            SchemaContext notificationSchemaContext(SchemaContext delegate, NotificationDefinition notif)
+    //
+    //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
+    //        that feels like an overkill.
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
             final RevisionAwareXPath nonCondXPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
@@ -135,10 +147,12 @@ public final class SchemaContextUtil {
             Preconditions.checkArgument(strXPath.indexOf('[') == -1,
                     "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
-                final List<QName> qnamedPath = xpathToQNamePath(context, module, strXPath);
-                if (qnamedPath != null) {
-                    return findNodeInSchemaContext(context, qnamedPath);
-                }
+                final List<QName> path = xpathToQNamePath(context, module, strXPath);
+
+                // We do not have enough information about resolution context, hence cannot account for actions, RPCs
+                // and notifications. We therefore attempt to make a best estimate, but this can still fail.
+                final Optional<DataSchemaNode> pureData = context.findDataTreeChild(path);
+                return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, path);
             }
         }
         return null;
@@ -181,6 +195,18 @@ public final class SchemaContextUtil {
      *         given relative Revision Aware XPath, otherwise will return
      *         <code>null</code>.
      */
+    // FIXME: This entire method is ill-defined, as the resolution process depends on  where the XPath is defined --
+    //        notably RPCs, actions and notifications modify the data tree temporarily. See sections 6.4.1 and 9.9.2
+    //        of RFC7950.
+    //
+    //        Most notably we need to understand whether the XPath is being resolved in the data tree, or as part of
+    //        a notification/action/RPC, as then the SchemaContext grows tentative nodes ... which could be addressed
+    //        via a derived SchemaContext (i.e. this class would have to have a
+    //
+    //            SchemaContext notificationSchemaContext(SchemaContext delegate, NotificationDefinition notif)
+    //
+    //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
+    //        that feels like an overkill.
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
         Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
@@ -195,9 +221,10 @@ public final class SchemaContextUtil {
         if (actualNodePath != null) {
             final Iterable<QName> qnamePath = resolveRelativeXPath(context, module, relativeXPath, actualSchemaNode);
 
-            if (qnamePath != null) {
-                return findNodeInSchemaContext(context, qnamePath);
-            }
+            // We do not have enough information about resolution context, hence cannot account for actions, RPCs
+            // and notifications. We therefore attempt to make a best estimate, but this can still fail.
+            final Optional<DataSchemaNode> pureData = context.findDataTreeChild(qnamePath);
+            return pureData.isPresent() ? pureData.get() : findNodeInSchemaContext(context, qnamePath);
         }
         return null;
     }
