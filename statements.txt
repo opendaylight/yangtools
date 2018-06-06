@@ -1,0 +1,230 @@
+==========================
+Namespace->Node break-down
+==========================
+
+CaseEffectiveStatementNamespace
+    choice
+DataChildEffectiveStatementNamespace
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+ExtensionEffectiveStatementNamespace
+    module
+    submodule (nope, in module)
+FeatureEffectiveStatementNamespace
+    module
+    submodule (nope, in module)
+IdentityEffectiveStatementNamespace
+    module
+    submodule (nope, in module)
+TypedefEffectiveStatementNamespace
+    action
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    rpc
+    submodule
+
+=========================
+Node->Namespace breakdown
+=========================
+choice
+    CaseEffectiveStatementNamespace
+    DataChildEffectiveStatementNamespace (*)
+module (and submodule, but don't bother)
+    DataChildEffectiveStatementNamespace
+    ExtensionEffectiveStatementNamespace
+    FeatureEffectiveStatementNamespace
+    IdentityEffectiveStatementNamespace
+    TypedefEffectiveStatementNamespace
+action/rpc
+    DataChildEffectiveStatementNamespace (input/output)
+    TypedefEffectiveStatementNamespace
+augment
+    DataChildEffectiveStatementNamespace
+case
+    DataChildEffectiveStatementNamespace
+container/grouping/input/list/notification/output
+    DataChildEffectiveStatementNamespace
+    TypedefEffectiveStatementNamespace
+grouping
+    DataChildEffectiveStatementNamespace
+    TypedefEffectiveStatementNamespace
+
+===============================
+Prefix->EffectiveModule mapping
+===============================
+    leaf (default string)
+    leaf-list (default string)
+    typedef (default string)
+
+    -> these can be squashed in TypeEffectiveStatement
+
+    must (revisionawarexpath)
+    when (revisionawarexpath)
+    extension uses (?!)
+
+========================
+Child->Parent break-down
+========================
+action
+    augment
+    container
+    grouping
+    list
+
+anydata
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+anyxml
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+case
+    augment
+    choice
+
+choice
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+container
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+extension
+    module
+    submodule
+
+feature
+    module
+    submodule
+
+grouping
+    action
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    rpc
+    submodule
+
+identity
+    module
+    submodule
+
+leaf
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+leaf-list
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+list
+    augment
+    case
+    choice (*)
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    submodule
+
+notification
+    augment
+    container
+    grouping
+    list
+    module
+    submodule
+
+rpc
+    module
+    submodule
+
+typedef
+    action
+    container
+    grouping
+    input
+    list
+    module
+    notification
+    output
+    rpc
+    submodule
+
