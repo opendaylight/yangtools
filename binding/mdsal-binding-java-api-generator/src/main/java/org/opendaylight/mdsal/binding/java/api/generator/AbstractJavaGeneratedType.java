@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -20,6 +21,8 @@ import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.model.api.Enumeration;
+import org.opendaylight.mdsal.binding.model.api.Enumeration.Pair;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
@@ -48,7 +51,9 @@ abstract class AbstractJavaGeneratedType {
             b.put(type.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, type));
         }
         enclosedTypes = b.build();
-        conflictingNames = ImmutableSet.of();
+        conflictingNames = genType instanceof Enumeration
+                ? ((Enumeration) genType).getValues().stream().map(Pair::getMappedName).collect(toImmutableSet())
+                        : ImmutableSet.of();
     }
 
     AbstractJavaGeneratedType(final JavaTypeName name, final GeneratedType genType) {
@@ -59,7 +64,7 @@ abstract class AbstractJavaGeneratedType {
         // a GeneratedType for the Builder with a nested type for the implementation, which really should be
         // a different template which gets generated as an inner type.
         conflictingNames = Streams.concat(genType.getEnclosedTypes().stream(), genType.getEnumerations().stream())
-        .map(type -> type.getIdentifier().simpleName()).collect(ImmutableSet.toImmutableSet());
+        .map(type -> type.getIdentifier().simpleName()).collect(toImmutableSet());
     }
 
     final JavaTypeName getName() {

@@ -19,6 +19,7 @@ module test-imports {
                   type enumeration {
                     enum string;
                     enum int8;
+                    enum optional;
                   }
                 }
             }
