@@ -223,7 +223,7 @@ class BuilderTemplate extends BaseTemplate {
 
             «generateSetters»
 
-            @Override
+            @«Override.importedName»
             public «type.name» build() {
                 return new «type.name»«IMPL»(this);
             }
@@ -645,7 +645,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     def private generateGetters(boolean addOverride) '''
         «IF keyType !== null»
-            «IF addOverride»@Override«ENDIF»
+            «IF addOverride»@«Override.importedName»«ENDIF»
             public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
                 return key;
             }
@@ -653,14 +653,14 @@ class BuilderTemplate extends BaseTemplate {
         «ENDIF»
         «IF !properties.empty»
             «FOR field : properties SEPARATOR '\n'»
-                «IF addOverride»@Override«ENDIF»
+                «IF addOverride»@«Override.importedName»«ENDIF»
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»
         «IF augmentType !== null»
 
             @SuppressWarnings("unchecked")
-            «IF addOverride»@Override«ENDIF»
+            «IF addOverride»@«Override.importedName»«ENDIF»
             public <E extends «augmentType.importedName»> E «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E> augmentationType) {
                 return (E) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
             }
@@ -677,7 +677,7 @@ class BuilderTemplate extends BaseTemplate {
             private int hash = 0;
             private volatile boolean hashValid = false;
 
-            @Override
+            @«Override.importedName»
             public int hashCode() {
                 if (hashValid) {
                     return hash;
@@ -710,7 +710,7 @@ class BuilderTemplate extends BaseTemplate {
      */
     def protected generateEquals() '''
         «IF !properties.empty || augmentType !== null»
-            @Override
+            @«Override.importedName»
             public boolean equals(«Object.importedName» obj) {
                 if (this == obj) {
                     return true;
@@ -759,7 +759,7 @@ class BuilderTemplate extends BaseTemplate {
 
     def override generateToString(Collection<GeneratedProperty> properties) '''
         «IF properties !== null»
-            @Override
+            @«Override.importedName»
             public «String.importedName» toString() {
                 final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper("«type.name»");
                 «FOR property : properties»
@@ -774,7 +774,7 @@ class BuilderTemplate extends BaseTemplate {
     '''
 
     def implementedInterfaceGetter() '''
-    @Override
+    @«Override.importedName»
     public «Class.importedName»<«type.importedName»> getImplementedInterface() {
         return «type.importedName».class;
     }

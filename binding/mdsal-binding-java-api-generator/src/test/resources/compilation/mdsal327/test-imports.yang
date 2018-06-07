@@ -20,9 +20,14 @@ module test-imports {
                     enum string;
                     enum int8;
                     enum optional;
+                    enum override;
                   }
                 }
             }
-       }
+        }
+
+        container override {
+
+        }
     }
 }

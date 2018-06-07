@@ -100,7 +100,7 @@ class YangModuleInfoTemplate {
             package «packageName»;
 
             public final class «MODEL_BINDING_PROVIDER_CLASS_NAME» implements «YangModelBindingProvider.name» {
-                @Override
+                @«Override.importedName»
                 public «YangModuleInfo.name» getModuleInfo() {
                     return «MODULE_INFO_CLASS_NAME».getInstance();
                 }
@@ -144,17 +144,17 @@ class YangModuleInfoTemplate {
             «ENDIF»
         }
 
-        @Override
+        @«Override.importedName»
         public «QName.importedName» getName() {
             return NAME;
         }
 
-        @Override
+        @«Override.importedName»
         protected «String.importedName» resourceName() {
             return "«sourcePath(m)»";
         }
 
-        @Override
+        @«Override.importedName»
         public «Set.importedName»<«YangModuleInfo.importedName»> getImportedModules() {
             return importedModules;
         }

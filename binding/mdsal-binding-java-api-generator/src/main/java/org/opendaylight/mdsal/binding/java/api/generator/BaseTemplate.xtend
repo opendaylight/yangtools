@@ -409,7 +409,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
 
     def protected generateToString(Collection<GeneratedProperty> properties) '''
         «IF !properties.empty»
-            @Override
+            @«Override.importedName»
             public «String.importedName» toString() {
                 final «MoreObjects.importedName».ToStringHelper helper = «MoreObjects.importedName».toStringHelper(«type.importedName».class);
                 «FOR property : properties»

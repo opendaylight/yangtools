@@ -475,7 +475,7 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateHashCode() '''
         «IF !genTO.hashCodeIdentifiers.empty»
-            @Override
+            @«Override.importedName»
             public int hashCode() {
                 final int prime = 31;
                 int result = 1;
@@ -498,7 +498,7 @@ class ClassTemplate extends BaseTemplate {
      */
     def protected generateEquals() '''
         «IF !genTO.equalsIdentifiers.empty»
-            @Override
+            @«Override.importedName»
             public boolean equals(java.lang.Object obj) {
                 if (this == obj) {
                     return true;

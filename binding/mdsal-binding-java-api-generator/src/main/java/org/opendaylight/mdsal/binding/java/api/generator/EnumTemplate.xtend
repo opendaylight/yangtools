@@ -93,12 +93,12 @@ class EnumTemplate extends BaseTemplate {
                 this.name = name;
             }
 
-            @Override
+            @«Override.importedName»
             public «String.importedName» getName() {
                 return name;
             }
 
-            @Override
+            @«Override.importedName»
             public int getIntValue() {
                 return value;
             }
