@@ -71,11 +71,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
 
         checkSupportedRepresentation(representation);
 
-        if (!storageDirectory.exists()) {
-            checkArgument(storageDirectory.mkdirs(), "Unable to create cache directory at %s", storageDirectory);
-        }
-        checkArgument(storageDirectory.exists());
-        checkArgument(storageDirectory.isDirectory());
+        checkArgument(storageDirectory.mkdirs() || storageDirectory.isDirectory(),
+                "Unable to create cache directory at %s", storageDirectory);
         checkArgument(storageDirectory.canWrite());
         checkArgument(storageDirectory.canRead());
 
