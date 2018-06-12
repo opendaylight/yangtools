@@ -24,11 +24,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaTreeAwareSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement>
+final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaTreeAwareSchemaNode<RpcStatement>
         implements RpcDefinition, RpcEffectiveStatement {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
