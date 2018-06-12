@@ -25,13 +25,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaTreeAwareSchemaNode;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyHistory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaNode<ActionStatement>
+final class ActionEffectiveStatementImpl extends AbstractEffectiveSchemaTreeAwareSchemaNode<ActionStatement>
         implements ActionDefinition, ActionEffectiveStatement {
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
