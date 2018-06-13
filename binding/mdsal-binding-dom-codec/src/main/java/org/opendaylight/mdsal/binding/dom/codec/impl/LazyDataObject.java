@@ -181,18 +181,27 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     }
 
     private Object getAugmentationImpl(final Class<?> cls) {
+        Preconditions.checkNotNull(cls, "Supplied augmentation must not be null.");
+
         final ImmutableMap<Class<? extends Augmentation<?>>, Augmentation<?>> aug = cachedAugmentations;
         if (aug != null) {
             return aug.get(cls);
         }
-        Preconditions.checkNotNull(cls,"Supplied augmentation must not be null.");
 
         @SuppressWarnings({"unchecked","rawtypes"})
-        final Optional<DataContainerCodecContext<?, ?>> augCtx = context.possibleStreamChild((Class) cls);
-        if (augCtx.isPresent()) {
-            final java.util.Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.get().getDomPathArgument());
-            if (augData.isPresent()) {
-                return augCtx.get().deserialize(augData.get());
+        final Optional<DataContainerCodecContext<?, ?>> optAugCtx = context.possibleStreamChild((Class) cls);
+        if (optAugCtx.isPresent()) {
+            final DataContainerCodecContext<?, ?> augCtx = optAugCtx.get();
+            // Due to binding specification not representing grouping instantiations we can end up having the same
+            // augmentation applied to a grouping multiple times. While these augmentations have the same shape, they
+            // are still represented by distinct binding classes and therefore we need to make sure the result matches
+            // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
+            // ClassCastException.
+            if (cls.isAssignableFrom(augCtx.getBindingClass())) {
+                final java.util.Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.getDomPathArgument());
+                if (augData.isPresent()) {
+                    return augCtx.deserialize(augData.get());
+                }
             }
         }
         return null;
@@ -201,7 +210,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     public String bindingToString() {
         final ToStringHelper helper = MoreObjects.toStringHelper(context.getBindingClass()).omitNullValues();
 
-        for (final Method m :context.getHashCodeAndEqualsMethods()) {
+        for (final Method m : context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));
         }
         if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
