@@ -7,8 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
+import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.concepts.ObjectRegistration;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
@@ -19,9 +22,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.BundleTracker;
 
 public final class Activator implements BundleActivator {
+    private final List<ServiceRegistration<?>> registrations = new ArrayList<>(2);
+
     private BundleTracker<Collection<ObjectRegistration<YangModuleInfo>>> moduleInfoResolvedBundleTracker;
     private SimpleBindingRuntimeContextService service;
-    private ServiceRegistration<?> registration;
 
     @Override
     public void start(final BundleContext context) {
@@ -31,7 +35,7 @@ public final class Activator implements BundleActivator {
         service = new SimpleBindingRuntimeContextService(context, moduleInfoBackedContext, moduleInfoBackedContext);
 
         final OsgiModuleInfoRegistry registry = new OsgiModuleInfoRegistry(moduleInfoBackedContext,
-            moduleInfoBackedContext, service);
+                moduleInfoBackedContext, service);
 
         final ModuleInfoBundleTracker moduleInfoTracker = new ModuleInfoBundleTracker(registry);
         moduleInfoResolvedBundleTracker = new BundleTracker<>(context, Bundle.RESOLVED | Bundle.STARTING
@@ -40,13 +44,15 @@ public final class Activator implements BundleActivator {
         moduleInfoTracker.finishStart();
 
         service.open();
-        registration = context.registerService(BindingRuntimeContextService.class, service, null);
+        registrations.add(context.registerService(BindingRuntimeContextService.class, service, null));
+        registrations.add(context.registerService(ClassLoadingStrategy.class, moduleInfoBackedContext, null));
     }
 
     @Override
     public void stop(final BundleContext context) {
         moduleInfoResolvedBundleTracker.close();
         service.close();
-        registration.unregister();
+        registrations.forEach(ServiceRegistration::unregister);
+        registrations.clear();
     }
 }

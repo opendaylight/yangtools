@@ -75,7 +75,7 @@
                 <configuration>
                     <instructions>
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
-                        <Activator>org.opendaylight.mdsal.binding.dom.codec.osgi.impl.Activator</Activator>
+                        <Bundle-Activator>org.opendaylight.mdsal.binding.dom.codec.osgi.impl.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>
             </plugin>
