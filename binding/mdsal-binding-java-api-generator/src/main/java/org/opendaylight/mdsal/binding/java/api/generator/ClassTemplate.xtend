@@ -223,11 +223,7 @@ class ClassTemplate extends BaseTemplate {
          */
         IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
             «Objects.importedName».requireNonNull(_value, "Supplied value may not be null");
-            «FOR c : consts»
-                «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
-                «CodeHelpers.importedName».checkPattern(_value, «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
-                «ENDIF»
-            «ENDFOR»
+            «genPatternEnforcer("_value")»
         «ENDIF»
 
         «FOR p : properties»
@@ -269,6 +265,14 @@ class ClassTemplate extends BaseTemplate {
             this.«p.fieldName» = null;
         «ENDFOR»
     }
+    '''
+
+    def private genPatternEnforcer(String ref) '''
+        «FOR c : consts»
+            «IF c.name == TypeConstants.PATTERN_CONSTANT_NAME»
+            «CodeHelpers.importedName».checkPattern(«ref», «Constants.MEMBER_PATTERN_LIST», «Constants.MEMBER_REGEX_LIST»);
+            «ENDIF»
+        «ENDFOR»
     '''
 
     def private static paramValue(Type returnType, String paramName) {
@@ -318,7 +322,8 @@ class ClassTemplate extends BaseTemplate {
      * @param source Source object
      */
     public «type.name»(«genTO.superType.importedName» source) {
-            super(source);
+        super(source);
+        «genPatternEnforcer("getValue()")»
     }
     '''
 
