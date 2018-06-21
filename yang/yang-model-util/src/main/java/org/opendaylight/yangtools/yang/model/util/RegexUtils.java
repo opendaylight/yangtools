@@ -304,8 +304,10 @@ public final class RegexUtils {
                 return rawPattern;
             } catch (final PatternSyntaxException ex) {
                 LOG.debug("Invalid regex pattern syntax in: {}", rawPattern, ex);
-                if (ex.getMessage().contains("Unknown character script name")) {
-                    rawPattern = fixUnknownScripts(ex.getMessage(), rawPattern);
+                final String msg = ex.getMessage();
+                if (msg.startsWith("Unknown character script name")
+                        || msg.startsWith("Unknown character property name")) {
+                    rawPattern = fixUnknownScripts(msg, rawPattern);
                 } else {
                     return rawPattern;
                 }
@@ -320,7 +322,12 @@ public final class RegexUtils {
         StringBuilder result = new StringBuilder(rawPattern);
         final Matcher matcher = BETWEEN_CURLY_BRACES_PATTERN.matcher(exMessage);
         if (matcher.find()) {
-            final String capturedGroup = matcher.group(1);
+            String capturedGroup = matcher.group(1);
+            if (capturedGroup.startsWith("In/Is")) {
+                // Java 9 changed the reporting string
+                capturedGroup = capturedGroup.substring(5);
+            }
+
             if (JAVA_UNICODE_BLOCKS.contains(capturedGroup)) {
                 final int idx = rawPattern.indexOf("Is" + capturedGroup);
                 result = result.replace(idx, idx + 2, "In");
