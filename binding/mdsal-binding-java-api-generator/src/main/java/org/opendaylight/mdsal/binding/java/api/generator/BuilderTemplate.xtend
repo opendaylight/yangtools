@@ -528,8 +528,7 @@ class BuilderTemplate extends BaseTemplate {
             }
         «ENDIF»
         «FOR property : properties»
-            «IF property.returnType instanceof ParameterizedType
-                    && (property.returnType as ParameterizedType).rawType.equals(Types.LIST_TYPE)»
+            «IF property.returnType instanceof ParameterizedType && Types.isListType(property.returnType)»
                 «generateListSetter(property, getActualType(property.returnType as ParameterizedType))»
             «ELSE»
                 «generateSetter(property, property.returnType)»
