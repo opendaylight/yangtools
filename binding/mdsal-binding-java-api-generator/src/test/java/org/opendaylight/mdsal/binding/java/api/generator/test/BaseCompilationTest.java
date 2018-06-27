@@ -10,6 +10,8 @@ package org.opendaylight.mdsal.binding.java.api.generator.test;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Table;
+import com.google.common.collect.Table.Cell;
 import com.google.common.io.Files;
 import java.io.File;
 import java.io.IOException;
@@ -18,6 +20,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.opendaylight.mdsal.binding.generator.api.BindingGenerator;
@@ -53,7 +56,12 @@ public abstract class BaseCompilationTest {
         Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
 
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
+        final Table<?, String, Supplier<String>> generatedFiles = generator.generateFileContent(true);
+        for (Cell<?, String, Supplier<String>> cell : generatedFiles.cellSet()) {
+            final File target = new File(sourcesOutputDir, cell.getColumnKey());
+            Files.createParentDirs(target);
+            Files.asCharSink(target, StandardCharsets.UTF_8).write(cell.getValue().get());
+        }
     }
 
     protected final List<Type> generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
