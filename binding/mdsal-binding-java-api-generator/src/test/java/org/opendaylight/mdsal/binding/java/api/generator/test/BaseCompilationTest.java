@@ -48,14 +48,20 @@ public abstract class BaseCompilationTest {
         bindingGenerator = new BindingGeneratorImpl();
     }
 
-    protected final void generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
+    protected static final void generateTestSources(final List<Type> types, final File sourcesOutputDir)
+            throws IOException {
+        Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+
+        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
+        generator.generateToFile(sourcesOutputDir);
+    }
+
+    protected final List<Type> generateTestSources(final String resourceDirPath, final File sourcesOutputDir)
             throws IOException, URISyntaxException {
         final List<File> sourceFiles = CompilationTestUtils.getSourceFiles(resourceDirPath);
         final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
         final List<Type> types = bindingGenerator.generateTypes(context);
-        Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
-        final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
-        generator.generateToFile(sourcesOutputDir);
+        generateTestSources(types, sourcesOutputDir);
 
         // Also generate YangModuleInfo
         for (Module module : context.getModules()) {
@@ -67,5 +73,7 @@ public abstract class BaseCompilationTest {
                 BindingMapping.MODULE_INFO_CLASS_NAME + ".java");
             Files.asCharSink(file, StandardCharsets.UTF_8).write(template.generate());
         }
+
+        return types;
     }
 }

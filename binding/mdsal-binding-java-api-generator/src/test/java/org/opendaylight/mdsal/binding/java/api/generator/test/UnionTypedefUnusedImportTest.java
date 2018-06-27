@@ -11,7 +11,6 @@ import static org.junit.Assert.assertFalse;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.getSourceFiles;
 import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.testCompilation;
 
 import java.io.File;
@@ -21,29 +20,22 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashSet;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.GeneratorJavaFile;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
 
     @Test
     public void testUnionTypedefUnusedImport() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
-        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-typedef");
-        final List<File> sourceFiles = getSourceFiles("/compilation/union-typedef");
-        final SchemaContext context = YangParserTestUtils.parseYangFiles(sourceFiles);
-        final List<Type> types = bindingGenerator.generateTypes(context);
-        final GeneratorJavaFile generator = new GeneratorJavaFile(new HashSet<>(types));
-        generator.generateToFile(sourcesOutputDir);
+        final List<Type> types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
+
         final boolean isUsedImport = containsImport("org.opendaylight.yang.gen.v1.org.opendaylight.yangtools.union.typedef.rev130208.TypedefUnion");
         assertFalse(String.format("Class shouldn't contain import for this type '%s'", types.get(1).getName()),
                 isUsedImport);
 
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("union-typedef");
         testCompilation(sourcesOutputDir, compiledOutputDir);
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
