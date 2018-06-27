@@ -21,11 +21,13 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ListViaUses;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.put.top.input.top.level.list.choice.in.list.ComplexViaUsesWithDifferentNameBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.top.level.list.choice.in.list.ComplexViaUsesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.put.top.input.choice.list.choice.in.choice.list.ComplexViaUsesBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.top.choice.list.choice.in.choice.list.ComplexViaUsesWithDifferentNameBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.ChoiceList;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.ChoiceListBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.ChoiceListKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,8 +36,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 public class CaseSubstitutionTest extends AbstractBindingRuntimeTest {
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
+    private static final ChoiceListKey CHOICE_FOO_KEY = new ChoiceListKey("foo");
+
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
             .child(TopLevelList.class, TOP_FOO_KEY).build();
+    private static final InstanceIdentifier<ChoiceList> BA_CHOICE_LIST = InstanceIdentifier.builder(Top.class)
+            .child(ChoiceList.class, CHOICE_FOO_KEY).build();
     private static final InstanceIdentifier<TreeLeafOnlyAugment> BA_TREE_LEAF_ONLY = BA_TOP_LEVEL_LIST
             .augmentation(TreeLeafOnlyAugment.class);
     private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
@@ -54,16 +60,16 @@ public class CaseSubstitutionTest extends AbstractBindingRuntimeTest {
 
     @Test
     public void choiceInGroupingSubstituted() {
-        final TopLevelList baRpc = new TopLevelListBuilder()
-            .withKey(TOP_FOO_KEY)
-            .setChoiceInList(new ComplexViaUsesWithDifferentNameBuilder(createComplexData()).build())
+        final ChoiceList baRpc = new ChoiceListBuilder()
+            .withKey(CHOICE_FOO_KEY)
+            .setChoiceInChoiceList(new ComplexViaUsesWithDifferentNameBuilder(createComplexData()).build())
             .build();
-        final TopLevelList baTree = new TopLevelListBuilder()
-            .withKey(TOP_FOO_KEY)
-            .setChoiceInList(new ComplexViaUsesBuilder(createComplexData()).build())
+        final ChoiceList baTree = new ChoiceListBuilder()
+            .withKey(CHOICE_FOO_KEY)
+            .setChoiceInChoiceList(new ComplexViaUsesBuilder(createComplexData()).build())
             .build();
-        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baTree).getValue();
-        final NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_TOP_LEVEL_LIST, baRpc).getValue();
+        final NormalizedNode<?, ?> domTreeEntry = registry.toNormalizedNode(BA_CHOICE_LIST, baTree).getValue();
+        final NormalizedNode<?, ?> domRpcEntry = registry.toNormalizedNode(BA_CHOICE_LIST, baRpc).getValue();
         assertEquals(domTreeEntry, domRpcEntry);
     }
 

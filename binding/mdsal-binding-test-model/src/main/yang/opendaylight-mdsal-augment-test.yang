@@ -127,9 +127,6 @@ module opendaylight-mdsal-augment-test {
         case simple-via-uses {
             uses leaf-from-grouping;
         }
-        case complex-via-uses {
-            uses complex-from-grouping;
-        }
         case empty-leaf {
             leaf empty-type {
                 type empty;
@@ -141,7 +138,16 @@ module opendaylight-mdsal-augment-test {
         case simple-via-uses {
             uses leaf-from-grouping;
         }
+    }
+
+    augment "/test:top/test:choice-list/test:choice-in-choice-list" {
         case complex-via-uses-with-different-name {
+            uses complex-from-grouping;
+        }
+    }
+
+    augment "/test:put-top/test:input/test:choice-list/test:choice-in-choice-list" {
+        case complex-via-uses {
             uses complex-from-grouping;
         }
     }

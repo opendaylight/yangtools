@@ -77,6 +77,17 @@ module opendaylight-mdsal-binding-test {
             type string;
             ordered-by user;
         }
+
+        list choice-list {
+            key "name";
+            leaf name {
+                type string;
+            }
+
+            choice choice-in-choice-list {
+
+            }
+        }
     }
 
     grouping choice {
