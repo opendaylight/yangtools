@@ -213,13 +213,6 @@ public final class GeneratorJavaFile {
             throw new IllegalArgumentException("Package Name cannot be NULL!");
         }
 
-        final String[] subDirNames = packageName.split("\\.");
-        final StringBuilder dirPathBuilder = new StringBuilder();
-        dirPathBuilder.append(subDirNames[0]);
-        for (int i = 1; i < subDirNames.length; ++i) {
-            dirPathBuilder.append(File.separator);
-            dirPathBuilder.append(subDirNames[i]);
-        }
-        return new File(parentDirectory, dirPathBuilder.toString());
+        return new File(parentDirectory, packageName.replace('.', File.separatorChar));
     }
 }
