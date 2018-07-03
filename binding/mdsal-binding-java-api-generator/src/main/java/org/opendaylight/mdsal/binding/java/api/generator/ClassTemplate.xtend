@@ -40,7 +40,7 @@ class ClassTemplate extends BaseTemplate {
     protected val List<GeneratedProperty> properties
     protected val List<GeneratedProperty> finalProperties
     protected val List<GeneratedProperty> parentProperties
-    protected val Iterable<GeneratedProperty> allProperties;
+    protected val Iterable<GeneratedProperty> allProperties
     protected val Restrictions restrictions
 
     /**
@@ -53,9 +53,9 @@ class ClassTemplate extends BaseTemplate {
      */
     protected val List<Constant> consts
 
-    protected val GeneratedTransferObject genTO;
+    protected val GeneratedTransferObject genTO
 
-    private val AbstractRangeGenerator<?> rangeGenerator
+    val AbstractRangeGenerator<?> rangeGenerator
 
     /**
      * Creates instance of this class with concrete <code>genType</code>.

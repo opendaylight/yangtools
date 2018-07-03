@@ -24,7 +24,7 @@ class UnionBuilderTemplate extends ClassTemplate {
         super(genType)
     }
 
-    def override body() '''
+    override body() '''
         «wrapToDocumentation(formatDataForJavaDoc(type, getClarification()))»
         public class «type.name» {
             private «type.name»() {

@@ -173,7 +173,7 @@ class UnionTemplate extends ClassTemplate {
         '''
     }
 
-    override def isReadOnly(GeneratedProperty field) {
+    override isReadOnly(GeneratedProperty field) {
         return !"value".equals(field.name) && super.isReadOnly(field)
     }
 
