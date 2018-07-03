@@ -13,6 +13,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -276,8 +277,9 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
-            throw new ModifiedNodeDoesNotExistException(path.toInstanceIdentifier(),
-                String.format("Node %s does not exist. Cannot apply modification to its children.", path));
+            final YangInstanceIdentifier id = path.toInstanceIdentifier();
+            throw new ModifiedNodeDoesNotExistException(id,
+                String.format("Node %s does not exist. Cannot apply modification to its children.", id));
         }
 
         checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
