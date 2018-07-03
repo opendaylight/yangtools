@@ -78,9 +78,18 @@ class UnionTemplate extends ClassTemplate {
                     «ENDFOR»
                 }
             «ELSE»
+                «val actualType = property.returnType»
+                «val restrictions = restrictionsForSetter(actualType)»
+                «IF restrictions !== null»
+                    «generateCheckers(property, restrictions, actualType)»
+
+                «ENDIF»
                 «val propertyAndTopParentProperties = parentProperties + #[property]»
                 public «type.name»(«propertyAndTopParentProperties.asArgumentsDeclaration») {
                     super(«parentProperties.asArguments»);
+                    «IF restrictions !== null»
+                        «checkArgument(property, restrictions, actualType, property.fieldName.toString)»
+                    «ENDIF»
                     this.«property.fieldName» = «property.fieldName»;
                     «FOR other : finalProperties»
                         «IF property != other && !"value".equals(other.name)»

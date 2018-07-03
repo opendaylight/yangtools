@@ -27,7 +27,6 @@ import java.util.Map
 import java.util.Objects
 import java.util.Set
 import java.util.regex.Pattern
-import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
@@ -35,7 +34,6 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType
-import org.opendaylight.mdsal.binding.model.api.Restrictions
 import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder
@@ -433,48 +431,6 @@ class BuilderTemplate extends BaseTemplate {
         «ENDFOR»
     '''
 
-    def private generateCheckers(GeneratedProperty field, Restrictions restrictions, Type actualType) '''
-       «IF restrictions.rangeConstraint.present»
-           «AbstractRangeGenerator.forType(actualType).generateRangeChecker(field.name.toFirstUpper,
-               restrictions.rangeConstraint.get, this)»
-       «ENDIF»
-       «IF restrictions.lengthConstraint.present»
-           «LengthGenerator.generateLengthChecker(field.fieldName.toString, actualType, restrictions.lengthConstraint.get, this)»
-       «ENDIF»
-    '''
-
-    def private checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType) '''
-       «IF restrictions.getRangeConstraint.isPresent»
-           «IF actualType instanceof ConcreteType»
-               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, "value")»
-           «ELSE»
-               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, "value.getValue()")»
-           «ENDIF»
-       «ENDIF»
-       «IF restrictions.getLengthConstraint.isPresent»
-           «IF actualType instanceof ConcreteType»
-               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, "value")»
-           «ELSE»
-               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, "value.getValue()")»
-           «ENDIF»
-       «ENDIF»
-
-       «val fieldUpperCase = property.fieldName.toString.toUpperCase()»
-       «FOR currentConstant : type.getConstantDefinitions»
-           «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
-               && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
-           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«property.fieldName», «Constants.MEMBER_REGEX_LIST»«property.fieldName»);
-           «ENDIF»
-       «ENDFOR»
-    '''
-
-    def private Restrictions restrictionsForSetter(Type actualType) {
-        if (actualType instanceof GeneratedType) {
-            return null;
-        }
-        return actualType.restrictions;
-    }
-
     def private generateListSetter(GeneratedProperty field, Type actualType) '''
         «val restrictions = restrictionsForSetter(actualType)»
         «IF restrictions !== null»
@@ -484,7 +440,7 @@ class BuilderTemplate extends BaseTemplate {
         «IF restrictions !== null»
             if (values != null) {
                for («actualType.getFullyQualifiedName» value : values) {
-                   «checkArgument(field, restrictions, actualType)»
+                   «checkArgument(field, restrictions, actualType, "value")»
                }
             }
         «ENDIF»
@@ -503,7 +459,7 @@ class BuilderTemplate extends BaseTemplate {
         public «type.getName»Builder set«field.getName.toFirstUpper»(final «field.returnType.importedName» value) {
         «IF restrictions !== null»
             if (value != null) {
-                «checkArgument(field, restrictions, actualType)»
+                «checkArgument(field, restrictions, actualType, "value")»
             }
         «ENDIF»
             this.«field.fieldName.toString» = value;

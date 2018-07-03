@@ -30,6 +30,7 @@ import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.api.TypeMember
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Single
 import org.opendaylight.mdsal.binding.model.api.YangSourceDefinition.Multiple
+import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
@@ -443,6 +444,48 @@ abstract class BaseTemplate extends JavaFileTemplate {
             public static final «c.type.importedName» «c.name» = «c.value»;
         «ENDIF»
     '''
+
+    def protected generateCheckers(GeneratedProperty field, Restrictions restrictions, Type actualType) '''
+       «IF restrictions.rangeConstraint.present»
+           «AbstractRangeGenerator.forType(actualType).generateRangeChecker(field.name.toFirstUpper,
+               restrictions.rangeConstraint.get, this)»
+       «ENDIF»
+       «IF restrictions.lengthConstraint.present»
+           «LengthGenerator.generateLengthChecker(field.fieldName.toString, actualType, restrictions.lengthConstraint.get, this)»
+       «ENDIF»
+    '''
+
+    def protected checkArgument(GeneratedProperty property, Restrictions restrictions, Type actualType, String value) '''
+       «IF restrictions.getRangeConstraint.isPresent»
+           «IF actualType instanceof ConcreteType»
+               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, value)»
+           «ELSE»
+               «AbstractRangeGenerator.forType(actualType).generateRangeCheckerCall(property.getName.toFirstUpper, value + ".getValue()")»
+           «ENDIF»
+       «ENDIF»
+       «IF restrictions.getLengthConstraint.isPresent»
+           «IF actualType instanceof ConcreteType»
+               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, value)»
+           «ELSE»
+               «LengthGenerator.generateLengthCheckerCall(property.fieldName.toString, value + ".getValue()")»
+           «ENDIF»
+       «ENDIF»
+
+       «val fieldUpperCase = property.fieldName.toString.toUpperCase()»
+       «FOR currentConstant : type.getConstantDefinitions»
+           «IF currentConstant.getName.startsWith(TypeConstants.PATTERN_CONSTANT_NAME)
+               && fieldUpperCase.equals(currentConstant.getName.substring(TypeConstants.PATTERN_CONSTANT_NAME.length))»
+           «CodeHelpers.importedName».checkPattern(value, «Constants.MEMBER_PATTERN_LIST»«property.fieldName», «Constants.MEMBER_REGEX_LIST»«property.fieldName»);
+           «ENDIF»
+       «ENDFOR»
+    '''
+
+    def protected Restrictions restrictionsForSetter(Type actualType) {
+        if (actualType instanceof GeneratedType) {
+            return null;
+        }
+        return actualType.restrictions;
+    }
 
     def static Restrictions getRestrictions(Type type) {
         if (type instanceof ConcreteType) {
