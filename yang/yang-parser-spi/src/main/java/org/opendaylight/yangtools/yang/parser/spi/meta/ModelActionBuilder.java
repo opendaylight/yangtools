@@ -143,7 +143,8 @@ public interface ModelActionBuilder {
         Prerequisite<D> requiresDeclared(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
     /**
-     * Action requires that the specified context completes specified phase.
+     * Action requires that the specified context completes specified phase before {@link #apply(InferenceAction)}
+     * may be invoked.
      *
      * @param context Statement context which needs to complete the transition.
      * @param phase ModelProcessingPhase which must have completed
@@ -159,14 +160,29 @@ public interface ModelActionBuilder {
             StmtContext<?, ?, ?> context, Class<N> namespace, NamespaceKeyCriterion<K> criterion,
             ModelProcessingPhase phase);
 
-    default @Nonnull <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T stmt) {
-        return mutatesCtx(stmt, EFFECTIVE_MODEL);
+    /**
+     * Action mutates the effective model of specified statement. This is a shorthand for
+     * {@code mutatesCtx(context, EFFECTIVE_MODEL}.
+     *
+     * @param context Target statement context
+     * @return A {@link Prerequisite} returning the requested context.
+     */
+    default @Nonnull <T extends Mutable<?, ?, ?>> Prerequisite<T> mutatesEffectiveCtx(final T context) {
+        return mutatesCtx(context, EFFECTIVE_MODEL);
     }
 
     @Nonnull <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
         Prerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(StmtContext<?, ?, ?> context, Class<N> namespace, K key);
 
-    @Nonnull <C extends Mutable<?, ?, ?>, T extends C> Prerequisite<C> mutatesCtx(T root, ModelProcessingPhase phase);
+    /**
+     * Action mutates the specified statement in the specified phase. Target statement cannot complete specified
+     * phase before this action is applier.
+     *
+     * @param context Target statement context
+     * @return A {@link Prerequisite} returning the requested context.
+     */
+    @Nonnull <C extends Mutable<?, ?, ?>, T extends C> Prerequisite<C> mutatesCtx(T context,
+            ModelProcessingPhase phase);
 
     /**
      * Apply an {@link InferenceAction} when this action's prerequisites are resolved.
