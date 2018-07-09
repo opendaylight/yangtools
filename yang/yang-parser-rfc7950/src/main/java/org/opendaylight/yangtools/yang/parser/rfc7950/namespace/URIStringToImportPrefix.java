@@ -19,5 +19,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 @Beta
 public interface URIStringToImportPrefix extends IdentifierNamespace<String, String> {
     NamespaceBehaviour<String, String, @NonNull URIStringToImportPrefix> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(URIStringToImportPrefix.class);
+            NamespaceBehaviour.rootStatementLocal(URIStringToImportPrefix.class);
 }

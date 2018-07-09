@@ -37,7 +37,23 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, V>> implements Identifiable<Class<N>> {
 
     public enum StorageNodeType {
-        GLOBAL, SOURCE_LOCAL_SPECIAL, STATEMENT_LOCAL, ROOT_STATEMENT_LOCAL
+        /**
+         * Global storage, visible from all sources.
+         */
+        GLOBAL,
+        /**
+         * Storage of the root statement of a particular source and any sources it is importing.
+         */
+        // FIXME: 3.0.0: this is a misnomer and should be renamed
+        SOURCE_LOCAL_SPECIAL,
+        /**
+         * Storage of a single statement.
+         */
+        STATEMENT_LOCAL,
+        /**
+         * Storage of the root statement of a particular source.
+         */
+        ROOT_STATEMENT_LOCAL
     }
 
     public interface Registry {
@@ -138,6 +154,23 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> statementLocal(
            final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
+    }
+
+    /**
+     * Creates a root-statement-local namespace behaviour for supplied namespace type. Root-statement-local namespace
+     * behaviour stores and loads all values from closest {@link NamespaceStorageNode} ancestor with type
+     * of {@link StorageNodeType#ROOT_STATEMENT_LOCAL}.
+     *
+     * @param identifier
+     *            Namespace identifier.
+     * @param <K> type parameter
+     * @param <V> type parameter
+     * @param <N> type parameter
+     * @return root-statement-local namespace behaviour for supplied namespace type.
+     */
+    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> rootStatementLocal(
+            final Class<N> identifier) {
+        return new StorageSpecific<>(identifier, StorageNodeType.ROOT_STATEMENT_LOCAL);
     }
 
     /**

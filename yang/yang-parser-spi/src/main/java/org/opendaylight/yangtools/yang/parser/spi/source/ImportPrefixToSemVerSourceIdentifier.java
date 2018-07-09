@@ -20,6 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 public interface ImportPrefixToSemVerSourceIdentifier
     extends IdentifierNamespace<String, SemVerSourceIdentifier> {
     NamespaceBehaviour<String, SemVerSourceIdentifier, @NonNull ImportPrefixToSemVerSourceIdentifier> BEHAVIOUR =
-        NamespaceBehaviour.sourceLocal(ImportPrefixToSemVerSourceIdentifier.class);
+        NamespaceBehaviour.rootStatementLocal(ImportPrefixToSemVerSourceIdentifier.class);
 
 }

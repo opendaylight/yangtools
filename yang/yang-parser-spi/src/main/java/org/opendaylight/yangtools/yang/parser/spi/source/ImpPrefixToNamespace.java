@@ -17,5 +17,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
  */
 public interface ImpPrefixToNamespace extends IdentifierNamespace<String, URI> {
     NamespaceBehaviour<String, URI, @NonNull ImpPrefixToNamespace> BEHAVIOUR =
-            NamespaceBehaviour.sourceLocal(ImpPrefixToNamespace.class);
+            NamespaceBehaviour.rootStatementLocal(ImpPrefixToNamespace.class);
 }
