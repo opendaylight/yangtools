@@ -21,6 +21,10 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <odlparent.spotbugs.enforce>false</odlparent.spotbugs.enforce>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -29,6 +33,10 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc7952-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
         </dependency>
 
         <dependency>
@@ -52,6 +60,23 @@
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.model.util</Automatic-Module-Name>
                     </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>src/main/antlr</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/parser/org/opendaylight/yangtools/yang/model/util/regex</outputDirectory>
+                    <visitor>false</visitor>
+                    <listener>false</listener>
                 </configuration>
             </plugin>
         </plugins>
