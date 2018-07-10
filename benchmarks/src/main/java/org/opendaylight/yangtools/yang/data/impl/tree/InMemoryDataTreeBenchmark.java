@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.tree;
 
 import com.google.common.collect.Streams;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -108,7 +107,7 @@ public class InMemoryDataTreeBenchmark {
 
     private DataTree datastore;
 
-    public static void main(final String... args) throws IOException, RunnerException {
+    public static void main(final String... args) throws RunnerException {
         Options opt = new OptionsBuilder()
             .include(".*" + InMemoryDataTreeBenchmark.class.getSimpleName() + ".*")
             .forks(1)

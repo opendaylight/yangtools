@@ -140,12 +140,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getName());
-        result = prime * result + Objects.hashCode(getYangVersion());
-        result = prime * result + Objects.hashCode(qnameModule);
-        return result;
+        return Objects.hash(getName(), getYangVersion(), qnameModule);
     }
 
     @Override
@@ -157,15 +152,7 @@ final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleS
             return false;
         }
         ModuleEffectiveStatementImpl other = (ModuleEffectiveStatementImpl) obj;
-        if (!Objects.equals(getName(), other.getName())) {
-            return false;
-        }
-        if (!qnameModule.equals(other.qnameModule)) {
-            return false;
-        }
-        if (!Objects.equals(getYangVersion(), other.getYangVersion())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(getName(), other.getName()) && qnameModule.equals(other.qnameModule)
+                && Objects.equals(getYangVersion(), other.getYangVersion());
     }
 }

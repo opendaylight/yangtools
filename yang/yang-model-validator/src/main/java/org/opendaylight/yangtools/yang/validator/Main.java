@@ -12,7 +12,6 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import com.google.common.base.Stopwatch;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -99,7 +98,7 @@ public final class Main {
         return options;
     }
 
-    public static void main(final String[] args) throws IOException {
+    public static void main(final String[] args) {
         final HelpFormatter formatter = new HelpFormatter();
         final Options options = createOptions();
         final CommandLine arguments = parseArguments(args, options, formatter);
@@ -138,7 +137,7 @@ public final class Main {
         LOG_ROOT.getLoggerContext().reset();
     }
 
-    private static void setOutput(final String... paths) throws IOException {
+    private static void setOutput(final String... paths) {
         LOG_ROOT.getLoggerContext().reset();
 
         final PatternLayoutEncoder encoder = new PatternLayoutEncoder();

@@ -188,10 +188,9 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         if (attributes != null) {
             for (int i = 0, len = attributes.getLength(); i < len; ++i) {
                 final Attr attr = (Attr) attributes.item(i);
-                if (allAttrs || !isArgument(argName, attr)) {
-                    if (!processAttribute(childCounter++, attr, writer, stmtDef, ref)) {
-                        fullyDefined = false;
-                    }
+                if ((allAttrs || !isArgument(argName, attr))
+                        && !processAttribute(childCounter++, attr, writer, stmtDef, ref)) {
+                    fullyDefined = false;
                 }
             }
         }
@@ -200,12 +199,9 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         final NodeList children = element.getChildNodes();
         for (int i = 0, len = children.getLength(); i < len; ++i) {
             final Node child = children.item(i);
-            if (child.getNodeType() == Node.ELEMENT_NODE) {
-                if (allElements || !isArgument(argName, child)) {
-                    if (!processElement(childCounter++, (Element) child, writer, stmtDef)) {
-                        fullyDefined = false;
-                    }
-                }
+            if (child.getNodeType() == Node.ELEMENT_NODE && (allElements || !isArgument(argName, child))
+                    && !processElement(childCounter++, (Element) child, writer, stmtDef)) {
+                fullyDefined = false;
             }
         }
 

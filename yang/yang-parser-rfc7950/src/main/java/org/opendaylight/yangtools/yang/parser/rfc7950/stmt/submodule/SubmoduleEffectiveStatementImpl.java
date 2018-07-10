@@ -47,12 +47,7 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getName());
-        result = prime * result + Objects.hashCode(getYangVersion());
-        result = prime * result + Objects.hashCode(qnameModule);
-        return result;
+        return Objects.hash(getName(), getYangVersion(), qnameModule);
     }
 
     @Override
@@ -60,23 +55,11 @@ final class SubmoduleEffectiveStatementImpl extends AbstractEffectiveModule<Subm
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof SubmoduleEffectiveStatementImpl)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        SubmoduleEffectiveStatementImpl other = (SubmoduleEffectiveStatementImpl) obj;
-        if (!Objects.equals(getName(), other.getName())) {
-            return false;
-        }
-        if (!qnameModule.equals(other.qnameModule)) {
-            return false;
-        }
-        if (!Objects.equals(getYangVersion(), other.getYangVersion())) {
-            return false;
-        }
-        return true;
+        final SubmoduleEffectiveStatementImpl other = (SubmoduleEffectiveStatementImpl) obj;
+        return Objects.equals(getName(), other.getName()) && qnameModule.equals(other.qnameModule)
+                && Objects.equals(getYangVersion(), other.getYangVersion());
     }
-
 }

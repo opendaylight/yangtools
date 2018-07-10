@@ -42,12 +42,7 @@ final class OpenConfigVersionEffectiveStatementImpl extends
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(path);
-        result = prime * result + Objects.hashCode(getNodeType());
-        result = prime * result + Objects.hashCode(getNodeParameter());
-        return result;
+        return Objects.hash(path, getNodeType(), getNodeParameter());
     }
 
     @Override
@@ -55,22 +50,11 @@ final class OpenConfigVersionEffectiveStatementImpl extends
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof OpenConfigVersionEffectiveStatementImpl)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        OpenConfigVersionEffectiveStatementImpl other = (OpenConfigVersionEffectiveStatementImpl) obj;
-        if (!Objects.equals(path, other.path)) {
-            return false;
-        }
-        if (!Objects.equals(getNodeType(), other.getNodeType())) {
-            return false;
-        }
-        if (!Objects.equals(getNodeParameter(), other.getNodeParameter())) {
-            return false;
-        }
-        return true;
+        final OpenConfigVersionEffectiveStatementImpl other = (OpenConfigVersionEffectiveStatementImpl) obj;
+        return Objects.equals(path, other.path) && Objects.equals(getNodeType(), other.getNodeType())
+                && Objects.equals(getNodeParameter(), other.getNodeParameter());
     }
 }

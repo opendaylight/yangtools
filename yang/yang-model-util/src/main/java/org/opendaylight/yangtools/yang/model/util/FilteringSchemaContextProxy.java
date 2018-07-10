@@ -176,24 +176,16 @@ public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
 
     //check for any dependency regarding given string
     private boolean checkModuleDependency(final Module module, final Collection<ModuleId> rootModules) {
-
         for (ModuleId rootModule : rootModules) {
-
             if (rootModule.equals(new ModuleId(module.getName(), module.getRevision()))) {
                 return true;
             }
 
             //handling/checking imports regarding root modules
             for (ModuleImport moduleImport : module.getImports()) {
-
                 if (moduleImport.getModuleName().equals(rootModule.getName())) {
-
-                    if (moduleImport.getRevision().isPresent()
-                            && !moduleImport.getRevision().equals(rootModule.getRev())) {
-                        return false;
-                    }
-
-                    return true;
+                    return !moduleImport.getRevision().isPresent()
+                            || moduleImport.getRevision().equals(rootModule.getRev());
                 }
             }
 

@@ -44,7 +44,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
-        throws IOException {
+            throws IOException {
         writeElement(name.getNodeType(), value, attributes, null);
     }
 
@@ -55,7 +55,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
-        throws IOException {
+            throws IOException {
         writeElement(name, value, attributes, null);
     }
 
@@ -70,8 +70,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint)
-            throws IOException, IllegalArgumentException {
+    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
         containerTypeStack.push(ContainerType.LEAF_SET);
     }
 
@@ -104,8 +103,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     @Override
     protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value,
-            final Object context)
-            throws XMLStreamException {
+            final Object context) throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }
 

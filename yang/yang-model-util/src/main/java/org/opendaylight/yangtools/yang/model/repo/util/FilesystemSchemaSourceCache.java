@@ -100,18 +100,15 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         try {
             Files.walkFileTree(storageDirectory.toPath(), fileVisitor);
         } catch (final IOException e) {
-            LOG.warn("Unable to restore cache from {}. Starting with empty cache", storageDirectory);
+            LOG.warn("Unable to restore cache from {}. Starting with an empty cache", storageDirectory, e);
             return;
         }
 
-        for (final SourceIdentifier cachedSchema : fileVisitor.getCachedSchemas()) {
-            register(cachedSchema);
-        }
+        fileVisitor.getCachedSchemas().stream().forEach(this::register);
     }
 
     @Override
-    public synchronized FluentFuture<? extends T> getSource(
-            final SourceIdentifier sourceIdentifier) {
+    public synchronized FluentFuture<? extends T> getSource(final SourceIdentifier sourceIdentifier) {
         final File file = sourceIdToFile(sourceIdentifier, storageDirectory);
         if (file.exists() && file.canRead()) {
             LOG.trace("Source {} found in cache as {}", sourceIdentifier, file);

@@ -45,12 +45,10 @@ public final class ParserStreamUtils {
                     childChoices.add((ChoiceSchemaNode) childNode);
                 } else {
                     final QName childQName = childNode.getQName();
-
-                    if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)) {
-                        if (potentialChildNode == null || Revision.compare(childQName.getRevision(),
-                            potentialChildNode.getQName().getRevision()) > 0) {
-                            potentialChildNode = childNode;
-                        }
+                    if (childQName.getLocalName().equals(childName) && childQName.getNamespace().equals(namespace)
+                            && (potentialChildNode == null || Revision.compare(childQName.getRevision(),
+                                potentialChildNode.getQName().getRevision()) > 0)) {
+                        potentialChildNode = childNode;
                     }
                 }
             }

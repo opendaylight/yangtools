@@ -80,13 +80,7 @@ final class DeviationEffectiveStatementImpl
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(targetPath);
-        result = prime * result + Objects.hashCode(deviateDefinitions);
-        result = prime * result + Objects.hashCode(description);
-        result = prime * result + Objects.hashCode(reference);
-        return result;
+        return Objects.hash(targetPath, deviateDefinitions, description, reference);
     }
 
     @Override
@@ -94,26 +88,13 @@ final class DeviationEffectiveStatementImpl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
+        if (!(obj instanceof DeviationEffectiveStatementImpl)) {
             return false;
         }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
-        if (!Objects.equals(targetPath, other.targetPath)) {
-            return false;
-        }
-        if (!Objects.equals(deviateDefinitions, other.deviateDefinitions)) {
-            return false;
-        }
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        return true;
+        final DeviationEffectiveStatementImpl other = (DeviationEffectiveStatementImpl) obj;
+        return Objects.equals(targetPath, other.targetPath)
+                && Objects.equals(deviateDefinitions, other.deviateDefinitions)
+                && Objects.equals(description, other.description) && Objects.equals(reference, other.reference);
     }
 
     @Override

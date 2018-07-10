@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -160,6 +159,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
+    // FIXME: 3.0.0 remove ParserConfigurationException
     public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
             IOException, ParserConfigurationException, SAXException {
         if (reader.hasNext()) {
@@ -208,6 +208,7 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              if an error occurs while parsing the value of an anyxml node
      */
     @Beta
+    // FIXME: 3.0.0 remove ParserConfigurationException
     public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException,
         IOException, ParserConfigurationException, SAXException {
         return parse(new DOMSourceXMLStreamReader(src));
@@ -262,7 +263,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private void read(final XMLStreamReader in, final AbstractNodeDataWithSchema parent, final String rootElement)
-            throws XMLStreamException, URISyntaxException, ParserConfigurationException, SAXException, IOException {
+            throws XMLStreamException, URISyntaxException, SAXException, IOException {
         if (!in.hasNext()) {
             return;
         }
@@ -417,7 +418,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private void setValue(final AbstractNodeDataWithSchema parent, final String value, final NamespaceContext nsContext)
-            throws ParserConfigurationException, SAXException, IOException {
+            throws SAXException, IOException {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
         final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
@@ -428,7 +429,7 @@ public final class XmlParserStream implements Closeable, Flushable {
     }
 
     private Object translateValueByType(final String value, final DataSchemaNode node,
-            final NamespaceContext namespaceCtx) throws IOException, SAXException, ParserConfigurationException {
+            final NamespaceContext namespaceCtx) throws IOException, SAXException {
         if (node instanceof AnyXmlSchemaNode) {
             /*
              *  FIXME: Figure out some YANG extension dispatch, which will

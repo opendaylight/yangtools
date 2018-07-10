@@ -342,15 +342,8 @@ public abstract class YangModelDependencyInfo {
      * Dependency information for YANG module.
      */
     public static final class ModuleDependencyInfo extends YangModelDependencyInfo {
-        private ModuleDependencyInfo(final String name, final String latestRevision,
-                final ImmutableSet<ModuleImport> imports, final ImmutableSet<ModuleImport> includes) {
-            super(name, latestRevision, imports, includes);
-        }
-
-        private ModuleDependencyInfo(final String name, final String latestRevision,
-                final ImmutableSet<ModuleImport> imports,
-                final ImmutableSet<ModuleImport> includes,
-                final Optional<SemVer> semVer) {
+        ModuleDependencyInfo(final String name, final String latestRevision, final ImmutableSet<ModuleImport> imports,
+                final ImmutableSet<ModuleImport> includes, final Optional<SemVer> semVer) {
             super(name, latestRevision, imports, includes, semVer);
         }
 
@@ -454,32 +447,12 @@ public abstract class YangModelDependencyInfo {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (!(obj instanceof ModuleImportImpl)) {
                 return false;
             }
             final ModuleImportImpl other = (ModuleImportImpl) obj;
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
-                return false;
-            }
-            if (revision == null) {
-                if (other.revision != null) {
-                    return false;
-                }
-            } else if (!revision.equals(other.revision)) {
-                return false;
-            }
-
-            if (!Objects.equals(getSemanticVersion(), other.getSemanticVersion())) {
-                return false;
-            }
-            return true;
+            return name.equals(other.name) && Objects.equals(revision, other.revision)
+                    && Objects.equals(getSemanticVersion(), other.getSemanticVersion());
         }
 
         @Override

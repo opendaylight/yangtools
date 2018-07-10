@@ -133,23 +133,12 @@ final class AugmentEffectiveStatementImpl
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof AugmentEffectiveStatementImpl)) {
             return false;
         }
         final AugmentEffectiveStatementImpl other = (AugmentEffectiveStatementImpl) obj;
-        if (!Objects.equals(targetPath, other.targetPath)) {
-            return false;
-        }
-        if (!Objects.equals(whenCondition, other.whenCondition)) {
-            return false;
-        }
-        if (!getChildNodes().equals(other.getChildNodes())) {
-            return false;
-        }
-        return true;
+        return Objects.equals(targetPath, other.targetPath) && Objects.equals(whenCondition, other.whenCondition)
+                && getChildNodes().equals(other.getChildNodes());
     }
 
     @Override

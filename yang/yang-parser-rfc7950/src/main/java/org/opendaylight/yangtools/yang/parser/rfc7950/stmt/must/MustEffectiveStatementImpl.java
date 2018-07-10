@@ -65,12 +65,7 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(xpath);
-        result = prime * result + Objects.hashCode(description);
-        result = prime * result + Objects.hashCode(reference);
-        return result;
+        return Objects.hash(xpath, description, reference);
     }
 
     @Override
@@ -78,23 +73,12 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof MustEffectiveStatementImpl)) {
             return false;
         }
         final MustEffectiveStatementImpl other = (MustEffectiveStatementImpl) obj;
-        if (!Objects.equals(xpath, other.xpath)) {
-            return false;
-        }
-        if (!Objects.equals(description, other.description)) {
-            return false;
-        }
-        if (!Objects.equals(reference, other.reference)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(xpath, other.xpath) && Objects.equals(description, other.description)
+                && Objects.equals(reference, other.reference);
     }
 
     @Override

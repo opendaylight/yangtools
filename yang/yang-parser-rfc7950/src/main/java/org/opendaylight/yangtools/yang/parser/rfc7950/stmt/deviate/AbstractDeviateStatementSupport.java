@@ -148,7 +148,7 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
 
         deviateAction.apply(new InferenceAction() {
             @Override
-            public void apply(final InferenceContext ctx) throws InferenceException {
+            public void apply(final InferenceContext ctx) {
                 // FIXME once BUG-7760 gets fixed, there will be no need for these dirty casts
                 final StatementContextBase<?, ?, ?> sourceNodeStmtCtx =
                         (StatementContextBase<?, ?, ?>) sourceCtxPrerequisite.resolve(ctx);

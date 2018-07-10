@@ -164,7 +164,7 @@ public final class ClassLoaderUtils {
 
     // FIXME: 3.0.0: Remove or improve this to be an explicit cast to a receiver <T>?
     public static Object construct(final Constructor<?> constructor, final List<Object> objects)
-            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+            throws InstantiationException, IllegalAccessException, InvocationTargetException {
         final Object[] initargs = objects.toArray();
         return constructor.newInstance(initargs);
     }
