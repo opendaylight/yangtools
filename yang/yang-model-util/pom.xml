@@ -41,6 +41,10 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>yang-model-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
@@ -57,6 +61,23 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>antlr4</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <sourceDirectory>src/main/antlr</sourceDirectory>
+                    <outputDirectory>${project.build.directory}/generated-sources/parser/org/opendaylight/yangtools/yang/model/util/regex</outputDirectory>
+                    <visitor>false</visitor>
+                    <listener>false</listener>
+                </configuration>
+            </plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
@@ -68,6 +89,7 @@
                 <artifactId>spotbugs-maven-plugin</artifactId>
                 <configuration>
                     <failOnError>true</failOnError>
+                    <excludeFilterFile>spotbugs-excludes.xml</excludeFilterFile>
                 </configuration>
             </plugin>
         </plugins>
