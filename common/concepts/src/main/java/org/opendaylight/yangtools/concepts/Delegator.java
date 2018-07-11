@@ -8,14 +8,15 @@
 package org.opendaylight.yangtools.concepts;
 
 /**
- * Implementation of this interface delegates all it's calls
- * to the delegator if not specified otherwise.
- *
+ * Implementation of this interface delegates all it's calls to the delegate if not specified otherwise.
  *
  * @param <T> Type of delegate
  */
 public interface Delegator<T> {
-
+    /**
+     * Return underlying delegate.
+     *
+     * @return underlying delegate.
+     */
     T getDelegate();
-
 }
