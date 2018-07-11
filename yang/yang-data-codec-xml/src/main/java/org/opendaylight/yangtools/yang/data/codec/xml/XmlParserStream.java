@@ -289,7 +289,8 @@ public final class XmlParserStream implements Closeable, Flushable {
             String xmlElementName = in.getLocalName();
             while (xmlElementName.equals(parent.getSchema().getQName().getLocalName())) {
                 read(in, newEntryNode(parent), rootElement);
-                if (in.getEventType() == XMLStreamConstants.END_DOCUMENT) {
+                if (in.getEventType() == XMLStreamConstants.END_DOCUMENT
+                        || in.getEventType() == XMLStreamConstants.END_ELEMENT) {
                     break;
                 }
                 xmlElementName = in.getLocalName();

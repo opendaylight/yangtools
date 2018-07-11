@@ -1,0 +1,54 @@
+module foo {
+    yang-version 1;
+    namespace "foo";
+    prefix "foo";
+
+    revision "2018-07-10" {
+    }
+
+    grouping path-outgoing-labels_config {
+        description "Path outgoing labels grouping";
+        leaf index {
+              type uint8 {
+                range "0..255";
+              }
+              description "Index of the label. Index 0 indicates top of the label stack";
+        }
+        leaf label {
+          type uint32;
+          description "The outgoing MPLS labels to impose";
+        }
+    }
+
+    grouping path-outgoing-labels {
+        description "Path outgoing labels grouping";
+        container outgoing-labels {
+            description "List of outgoing labels";
+            list outgoing-labels {
+                key "index";
+                description "Outgoing label list";
+                leaf index {
+                    type leafref {
+                        path "../config/index";
+                    }
+                    description
+                    "Index of the label. Index 0 indicates
+                     top of the label stack";
+                }
+                container config {
+                    description "Configuration intended parameters";
+                    uses path-outgoing-labels_config;
+                }
+                container state {
+                    config false;
+                    description "Configuration applied parameters and state";
+                    uses path-outgoing-labels_config;
+                }
+            }
+        }
+    }
+
+    container root {
+        uses path-outgoing-labels;
+    }
+}
