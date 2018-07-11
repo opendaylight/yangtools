@@ -7,14 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.Arrays;
 import org.junit.Test;
 
 /**
@@ -62,18 +58,9 @@ public class Bug1276Test extends BaseCompilationTest {
         // test IpAddress with Ipv4Address argument
         Object ipv4address = ipv4addressConstructor.newInstance("192.168.0.1");
         Object ipAddress = ipAddressConstructor.newInstance(ipv4address);
-        Method getValue = ipAddressClass.getDeclaredMethod("getValue");
-        char[] expected = "192.168.0.1".toCharArray();
-        Object actual = getValue.invoke(ipAddress);
-        assertTrue(actual instanceof char[]);
-        assertTrue(Arrays.equals(expected, (char[]) actual));
 
         // test Host with IpAddress argument
         Object host = hostConstructor.newInstance(ipAddress);
-        getValue = hostClass.getDeclaredMethod("getValue");
-        actual = getValue.invoke(host);
-        assertTrue(actual instanceof char[]);
-        assertTrue(Arrays.equals(expected, (char[]) actual));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

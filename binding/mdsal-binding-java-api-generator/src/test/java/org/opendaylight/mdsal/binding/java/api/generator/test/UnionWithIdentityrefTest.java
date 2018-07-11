@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator.test;
 
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -51,10 +50,6 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
         Method getIdentityref = unionTypeClass.getDeclaredMethod("getIdentityref");
         Object actualIdentityref = getIdentityref.invoke(unionType);
         assertEquals(identOneClass, actualIdentityref);
-
-        Method getValue = unionTypeClass.getDeclaredMethod("getValue");
-        Object actualValue = getValue.invoke(unionType);
-        assertArrayEquals(identOneClass.toString().toCharArray(), (char[])actualValue);
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
