@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root xmlns="foo">
+    <outgoing-labels>
+        <outgoing-labels>
+            <index>0</index>
+            <config>
+                <index>0</index>
+                <label>103</label>
+            </config>
+        </outgoing-labels>
+        <outgoing-labels>
+            <index>1</index>
+            <config>
+                <index>1</index>
+                <label>104</label>
+            </config>
+        </outgoing-labels>
+    </outgoing-labels>
+</root>
