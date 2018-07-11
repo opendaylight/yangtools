@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -188,9 +189,13 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
         Preconditions.checkArgument(DataContainer.class.isAssignableFrom(key));
         final QName qname = BindingReflections.findQName(key);
-        final QNameModule module = qname.getModule();
+        final QNameModule qnameModule = qname.getModule();
+        final Module module = getSchema().findModule(qnameModule)
+                .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
+        final String className = BindingMapping.getClassName(qname);
+
         RpcDefinition rpc = null;
-        for (final RpcDefinition potential : getSchema().getOperations()) {
+        for (final RpcDefinition potential : module.getRpcs()) {
             final QName potentialQName = potential.getQName();
             /*
              * Check if rpc and class represents data from same module and then
@@ -201,9 +206,7 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
              * FIXME: Rework this to have more precise logic regarding Binding
              * Specification.
              */
-            if (module.equals(potentialQName.getModule())
-                    && key.getSimpleName().equals(
-                            BindingMapping.getClassName(potentialQName) + BindingMapping.getClassName(qname))) {
+            if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
                 rpc = potential;
                 break;
             }
