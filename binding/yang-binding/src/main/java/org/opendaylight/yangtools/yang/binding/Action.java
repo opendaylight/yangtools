@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.binding;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import javax.annotation.CheckReturnValue;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.RpcResult;
  */
 @Beta
 @FunctionalInterface
-@NonNullByDefault
 public interface Action<P extends DataObject, I extends RpcInput, O extends RpcOutput> {
     /**
      * Invoke the action.
@@ -31,5 +30,5 @@ public interface Action<P extends DataObject, I extends RpcInput, O extends RpcO
      * @throws NullPointerException if any of the arguments are null
      */
     @CheckReturnValue
-    FluentFuture<RpcResult<O>> invoke(InstanceIdentifier<P> path, I input);
+    @NonNull FluentFuture<@NonNull RpcResult<@NonNull O>> invoke(@NonNull InstanceIdentifier<P> path, @NonNull I input);
 }
