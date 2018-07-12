@@ -8,14 +8,21 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
 import com.google.common.annotations.Beta;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 /**
@@ -59,6 +66,54 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
                 value.getRoot().getStatementArgument(), key, prev.getStatementArgument(),
                 prev.getStatementSourceReference());
         }
+    }
+
+    /**
+     * Find statement context identified by interpreting specified {@link SchemaNodeIdentifier} starting at specified
+     * {@link StmtContext}.
+     *
+     * @param root Search root context
+     * @param identifier {@link SchemaNodeIdentifier} relative to search root
+     * @return Matching statement context, if present.
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static Optional<StmtContext<?, ?, ?>> findNode(final StmtContext<?, ?, ?> root,
+            final SchemaNodeIdentifier identifier) {
+        final Iterator<QName> iterator = identifier.getPathFromRoot().iterator();
+        if (!iterator.hasNext()) {
+            return Optional.of((Mutable<?, ?, EffectiveStatement<?, ?>>) root);
+        }
+
+        QName nextPath = iterator.next();
+        Mutable<?, ?, EffectiveStatement<?, ?>> current = root.getFromNamespace(ChildSchemaNodeNamespace.class,
+            nextPath);
+        if (current == null) {
+            return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(),
+                (Mutable<?, ?, EffectiveStatement<?, ?>>) root));
+        }
+        while (current != null && iterator.hasNext()) {
+            nextPath = iterator.next();
+            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current.getFromNamespace(
+                ChildSchemaNodeNamespace.class,nextPath);
+            if (nextNodeCtx == null) {
+                return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
+            }
+            current = nextNodeCtx;
+        }
+        return Optional.ofNullable(current);
+    }
+
+    @SuppressWarnings("unchecked")
+    static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
+            final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
+        final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
+            current, UnknownStatement.class);
+        for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
+            if (localName.equals(unknownSubstatement.rawStatementArgument())) {
+                return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
+            }
+        }
+        return null;
     }
 
     private static NamespaceStorageNode globalOrStatementSpecific(final NamespaceStorageNode storage) {
