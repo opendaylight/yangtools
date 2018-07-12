@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Implementation of the {@link Map} interface which stores a set of immutable mappings using a key-to-offset map and
@@ -122,21 +123,12 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> map) {
-        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
-        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
-            return map;
-        }
-
-        // Familiar and efficient to copy
-        if (map instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
+        final Map<K, V> common = commonCopy(map);
+        if (common != null) {
+            return common;
         }
 
         final int size = map.size();
-        if (size == 0) {
-            // Shares a single object
-            return ImmutableMap.of();
-        }
         if (size == 1) {
             // Efficient single-entry implementation
             final Entry<K, V> e = map.entrySet().iterator().next();
@@ -169,21 +161,12 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @return An isolated, immutable copy of the input map
      */
     @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> map) {
-        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
-        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
-            return map;
-        }
-
-        // Familiar and efficient to copy
-        if (map instanceof MutableOffsetMap) {
-            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
+        final Map<K, V> common = commonCopy(map);
+        if (common != null) {
+            return common;
         }
 
         final int size = map.size();
-        if (size == 0) {
-            // Shares a single object
-            return ImmutableMap.of();
-        }
         if (size == 1) {
             // Efficient single-entry implementation
             final Entry<K, V> e = map.entrySet().iterator().next();
@@ -198,6 +181,25 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         }
 
         return new Unordered<>(offsets, array);
+    }
+
+    private static <K, V> @Nullable Map<K, V> commonCopy(@Nonnull final Map<K, V> map) {
+        // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
+        if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
+            return map;
+        }
+
+        // Familiar and efficient to copy
+        if (map instanceof MutableOffsetMap) {
+            return ((MutableOffsetMap<K, V>) map).toUnmodifiableMap();
+        }
+
+        if (map.isEmpty()) {
+            // Shares a single object
+            return ImmutableMap.of();
+        }
+
+        return null;
     }
 
     @Override
