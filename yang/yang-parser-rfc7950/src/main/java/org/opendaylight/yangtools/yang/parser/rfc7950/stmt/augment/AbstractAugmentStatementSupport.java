@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
@@ -95,8 +96,8 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>>> sourceCtxPrereq =
                 augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
-                augmentAction.mutatesEffectiveCtx(getSearchRoot(augmentNode),
-                    SchemaNodeIdentifierBuildNamespace.class, augmentNode.getStatementArgument());
+                augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
+                    ChildSchemaNodeNamespace.class, augmentNode.getStatementArgument().getPathFromRoot());
 
         augmentAction.apply(new ModelActionBuilder.InferenceAction() {
             @Override
