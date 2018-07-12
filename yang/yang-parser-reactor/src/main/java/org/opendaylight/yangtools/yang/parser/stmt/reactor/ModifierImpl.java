@@ -128,9 +128,7 @@ final class ModifierImpl implements ModelActionBuilder {
                     final K key, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(phase);
-        addReq(mod);
-        addMutation(mod);
+        PhaseModificationInNamespace<C> mod = createModification(phase);
         contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
         return mod;
     }
@@ -244,6 +242,54 @@ final class ModifierImpl implements ModelActionBuilder {
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtx(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final K key) {
         return mutatesCtxImpl(context, namespace, key, EFFECTIVE_MODEL);
+    }
+
+    @Nonnull
+    @Override
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
+                    final Class<N> namespace, final Iterable<K> keys) {
+        final Iterator<K> it = keys.iterator();
+        Preconditions.checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
+        checkNotRegistered();
+
+        final PhaseModificationInNamespace<Mutable<?, ?, E>> ret = createModification(EFFECTIVE_MODEL);
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, it.next(),
+            (parent, ns, foundKey, foundValue) -> {
+                checkResult((Mutable<?, ?, E>)foundValue, namespace, it, ret);
+            });
+        return ret;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            void mutateNextKey(final StmtContext<?, ?, ?> context, final Class<N> namespace,
+                    final Iterator<K> it, final AbstractPrerequisite<C> result) {
+        final PhaseModificationInNamespace<C> mod = createModification(EFFECTIVE_MODEL);
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, it.next(),
+            (parent, ns, foundKey, foundValue) -> {
+                checkResult((C) foundValue, namespace, it, result);
+                mod.resolvePrereq((C) foundValue);
+            });
+    }
+
+    private <C extends Mutable<?, ?, ?>> PhaseModificationInNamespace<C> createModification(
+            final ModelProcessingPhase phase) {
+        final PhaseModificationInNamespace<C> ret = new PhaseModificationInNamespace<>(EFFECTIVE_MODEL);
+        addReq(ret);
+        addMutation(ret);
+        return ret;
+    }
+
+    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
+            void checkResult(final C context, final Class<N> namespace, final Iterator<K> it,
+                    final AbstractPrerequisite<C> result) {
+        if (it.hasNext()) {
+            mutateNextKey(context, namespace, it, result);
+        } else {
+            result.resolvePrereq(context);
+        }
     }
 
     @Override
