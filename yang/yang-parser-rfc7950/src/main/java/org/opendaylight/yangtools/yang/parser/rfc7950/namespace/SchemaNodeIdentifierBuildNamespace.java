@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import javax.annotation.Nonnull;
@@ -18,14 +15,18 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.DerivedNamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
-import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
+/**
+ * Legacy namespace for looking up nodes by their Schema Tree identifier.
+ *
+ * @deprecated Use path-based utilities provided around {@link ChildSchemaNodeNamespace} instead.
+ */
 @Beta
+@Deprecated
 public final class SchemaNodeIdentifierBuildNamespace
         extends DerivedNamespaceBehaviour<SchemaNodeIdentifier, Mutable<?, ?, EffectiveStatement<?, ?>>, QName,
                 SchemaNodeIdentifierBuildNamespace, ChildSchemaNodeNamespace<?, ?>>
@@ -44,11 +45,12 @@ public final class SchemaNodeIdentifierBuildNamespace
      * @param identifier {@link SchemaNodeIdentifier} relative to search root
      * @return Matching statement context, if present.
      * @throws NullPointerException if any of the arguments is null
+     * @deprecated Use {@link ChildSchemaNodeNamespace#findNode(StmtContext, SchemaNodeIdentifier)} instead.
      */
+    @Deprecated
     public static Optional<StmtContext<?, ?, ?>> findNode(final StmtContext<?, ?, ?> root,
             final SchemaNodeIdentifier identifier) {
-        return Optional.ofNullable(root.getFromNamespace(SchemaNodeIdentifierBuildNamespace.class,
-            requireNonNull(identifier)));
+        return ChildSchemaNodeNamespace.findNode(root, identifier);
     }
 
     @Override
@@ -77,7 +79,7 @@ public final class SchemaNodeIdentifierBuildNamespace
         Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage.getFromLocalStorage(
             ChildSchemaNodeNamespace.class,nextPath);
         if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
-            return tryToFindUnknownStatement(nextPath.getLocalName(),
+            return ChildSchemaNodeNamespace.tryToFindUnknownStatement(nextPath.getLocalName(),
                 (Mutable<?, ?, EffectiveStatement<?, ?>>) lookupStartStorage);
         }
         while (current != null && iterator.hasNext()) {
@@ -85,24 +87,11 @@ public final class SchemaNodeIdentifierBuildNamespace
             final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current.getFromNamespace(
                 ChildSchemaNodeNamespace.class,nextPath);
             if (nextNodeCtx == null) {
-                return tryToFindUnknownStatement(nextPath.getLocalName(), current);
+                return ChildSchemaNodeNamespace.tryToFindUnknownStatement(nextPath.getLocalName(), current);
             }
             current = nextNodeCtx;
         }
         return current;
-    }
-
-    @SuppressWarnings("unchecked")
-    private static Mutable<?, ?, EffectiveStatement<?, ?>> tryToFindUnknownStatement(final String localName,
-            final Mutable<?, ?, EffectiveStatement<?, ?>> current) {
-        final Collection<? extends StmtContext<?, ?, ?>> unknownSubstatements = StmtContextUtils.findAllSubstatements(
-            current, UnknownStatement.class);
-        for (final StmtContext<?, ?, ?> unknownSubstatement : unknownSubstatements) {
-            if (localName.equals(unknownSubstatement.rawStatementArgument())) {
-                return (Mutable<?, ?, EffectiveStatement<?, ?>>) unknownSubstatement;
-            }
-        }
-        return null;
     }
 
     @Override
