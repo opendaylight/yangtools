@@ -1,0 +1,30 @@
+module actions {
+    yang-version 1.1;
+    prefix act;
+    namespace "urn:odl:actions";
+
+    container cont {
+        action foo {
+        
+        }
+    }
+
+    grouping grp {
+        action bar {
+
+        }
+    }
+
+    grouping other {
+        uses grp;
+    }
+
+    container grpcont {
+        uses grp;
+    }
+
+    container othercont {
+        uses other;
+    }
+}
+
