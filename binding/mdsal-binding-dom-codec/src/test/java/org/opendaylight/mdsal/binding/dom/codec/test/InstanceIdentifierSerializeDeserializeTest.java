@@ -13,12 +13,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.Iterables;
-import javassist.ClassPool;
-import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
@@ -41,7 +36,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingRuntimeTest {
+public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingCodecTest {
     public static final String TOP_LEVEL_LIST_KEY_VALUE = "foo";
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
@@ -62,17 +57,6 @@ public class InstanceIdentifierSerializeDeserializeTest extends AbstractBindingR
     public static final YangInstanceIdentifier BI_TOP_LEVEL_LIST_1_PATH = BI_TOP_LEVEL_LIST_PATH
             .node(new NodeIdentifierWithPredicates(TOP_LEVEL_LIST_QNAME, TOP_LEVEL_LIST_KEY,
                 TOP_LEVEL_LIST_KEY_VALUE));
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    @Before
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void testYangIIToBindingAwareII() {

@@ -11,11 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 import com.google.common.base.Optional;
 import java.util.Collections;
-import javassist.ClassPool;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.RpcComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
@@ -31,7 +27,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
+public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
     private static final InstanceIdentifier<TopLevelList> BA_TOP_LEVEL_LIST = InstanceIdentifier.builder(Top.class)
@@ -41,16 +37,6 @@ public class AugmentationSubstitutionTest extends AbstractBindingRuntimeTest {
     private static final InstanceIdentifier<TreeComplexUsesAugment> BA_TREE_COMPLEX_USES = BA_TOP_LEVEL_LIST
             .augmentation(TreeComplexUsesAugment.class);
     private static final QName SIMPLE_VALUE_QNAME = QName.create(TreeComplexUsesAugment.QNAME, "simple-value");
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void augmentationInGroupingSubstituted() {

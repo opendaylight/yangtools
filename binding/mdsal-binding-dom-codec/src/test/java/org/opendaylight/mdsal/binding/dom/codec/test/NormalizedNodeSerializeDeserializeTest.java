@@ -30,12 +30,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javassist.ClassPool;
-import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment1Builder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TopChoiceAugment2;
@@ -89,7 +84,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 
-public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRuntimeTest {
+public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodecTest {
 
     public static final String TOP_LEVEL_LIST_FOO_KEY_VALUE = "foo";
     public static final TopLevelListKey TOP_LEVEL_LIST_FOO_KEY = new TopLevelListKey(TOP_LEVEL_LIST_FOO_KEY_VALUE);
@@ -123,17 +118,6 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingRunti
                 TOP_LEVEL_LIST_KEY_QNAME, TOP_LEVEL_LIST_FOO_KEY_VALUE));
     public static final YangInstanceIdentifier BI_CHOICE_CONTAINER_PATH = YangInstanceIdentifier.of(
         CHOICE_CONTAINER_QNAME);
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    @Before
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void containerToNormalized() {

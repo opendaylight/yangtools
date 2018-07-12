@@ -9,30 +9,16 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import static org.junit.Assert.assertEquals;
 
-import javassist.ClassPool;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.md.sal.test.top.via.uses.rev151112.container.top.ContainerTop;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-public class TopLevelContainerViaUsesTest extends AbstractBindingRuntimeTest {
+public class TopLevelContainerViaUsesTest extends AbstractBindingCodecTest {
 
     private static final InstanceIdentifier<ContainerTop> TOP_LEVEL_CONTAINER_FROM_USES =
             InstanceIdentifier.create(ContainerTop.class);
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void testBindingToDomFirst() {

@@ -11,12 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.util.Map.Entry;
-import javassist.ClassPool;
-import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.Cont.Ref;
 import org.opendaylight.yang.gen.v1.bug8449.rev170516.ContBuilder;
@@ -28,18 +23,7 @@ import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public class LeafrefSerializeDeserializeTest extends AbstractBindingRuntimeTest {
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    @Before
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        this.registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        this.registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
+public class LeafrefSerializeDeserializeTest extends AbstractBindingCodecTest {
 
     @Test
     public void listReferenceTest() {

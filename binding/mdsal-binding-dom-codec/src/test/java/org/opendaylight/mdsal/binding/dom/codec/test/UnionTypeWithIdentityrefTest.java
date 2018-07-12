@@ -12,11 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map.Entry;
-import javassist.ClassPool;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.IdentOne;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.UnionNode;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.bug._6006.rev160607.UnionNodeBuilder;
@@ -28,21 +24,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-public class UnionTypeWithIdentityrefTest extends AbstractBindingRuntimeTest {
+public class UnionTypeWithIdentityrefTest extends AbstractBindingCodecTest {
     private static final String IDENT_ONE_STRING = "IdentOne";
     public static final QName NODE_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:mdsal:test:bug:6066",
         "2016-06-07", "union-node");
     public static final QName NODE_LEAF_QNAME = QName.create(NODE_QNAME, "value");
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    public void setup() {
-        super.setup();
-        JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     private DataObject createValueNode(final String valueString) {
         UnionType unionType = UnionTypeBuilder.getDefaultInstance(valueString);

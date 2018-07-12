@@ -12,12 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Map.Entry;
-import javassist.ClassPool;
 import org.junit.Assert;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.bug5446.rev151105.IpAddressBinary;
 import org.opendaylight.yang.gen.v1.bug5446.rev151105.IpAddressBinaryBuilder;
 import org.opendaylight.yang.gen.v1.bug5446.rev151105.Root;
@@ -35,23 +31,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 
-public class UnionTypeTest extends AbstractBindingRuntimeTest {
+public class UnionTypeTest extends AbstractBindingCodecTest {
 
     private static final String TEST_STRING = "testtesttest";
 
     public static final QName WRAPPER_QNAME = QName.create("urn:opendaylight:params:xml:ns:yang:yangtools:test:union",
         "2015-01-21", "wrapper");
     public static final QName WRAP_LEAF_QNAME = QName.create(WRAPPER_QNAME, "wrap");
-
-    private BindingNormalizedNodeCodecRegistry registry;
-
-    @Override
-    public void setup() {
-        super.setup();
-        JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void unionTest() {

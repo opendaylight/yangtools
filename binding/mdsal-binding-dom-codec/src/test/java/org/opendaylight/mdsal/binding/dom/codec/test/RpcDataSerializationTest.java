@@ -11,12 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import com.google.common.collect.ImmutableList;
-import javassist.ClassPool;
-import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
-import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.GetTopOutput;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.GetTopOutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.PutTopInput;
@@ -28,23 +23,13 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-public class RpcDataSerializationTest extends AbstractBindingRuntimeTest {
+public class RpcDataSerializationTest extends AbstractBindingCodecTest {
 
-    private BindingNormalizedNodeCodecRegistry registry;
     private static final QName PUT_TOP = QName.create(PutTopInput.QNAME, "put-top");
     private static final QName GET_TOP = QName.create(GetTopOutput.QNAME, "get-top");
 
     private static final SchemaPath PUT_TOP_INPUT = SchemaPath.create(true, PUT_TOP, PutTopInput.QNAME);
     private static final SchemaPath GET_TOP_OUTPUT = SchemaPath.create(true, GET_TOP, GetTopOutput.QNAME);
-
-    @Override
-    @Before
-    public void setup() {
-        super.setup();
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(getRuntimeContext());
-    }
 
     @Test
     public void testRpcInputToNormalized() {
