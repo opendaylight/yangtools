@@ -7,8 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+
 import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Throwables;
 import com.google.common.base.Verify;
 import com.google.common.cache.CacheBuilder;
@@ -17,18 +19,23 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
 import java.lang.reflect.Type;
 import java.util.List;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.RpcInput;
+import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -48,6 +55,14 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 @Override
                 public DataContainerCodecContext<?,?> load(final Class<?> key) {
                     return createDataTreeChildContext(key);
+                }
+            });
+
+    private final LoadingCache<Class<? extends Action<?, ?, ?>>, ActionCodecContext> actionsByClass = CacheBuilder
+            .newBuilder().build(new CacheLoader<Class<? extends Action<?, ?, ?>>, ActionCodecContext>() {
+                @Override
+                public ActionCodecContext load(final Class<? extends Action<?, ?, ?>> key) {
+                    return createActionContext(key);
                 }
             });
 
@@ -163,6 +178,10 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         throw new UnsupportedOperationException("Could not create Binding data representation for root");
     }
 
+    ActionCodecContext getAction(final Class<? extends Action<?, ?, ?>> action) {
+        return getOrRethrow(actionsByClass, action);
+    }
+
     NotificationCodecContext<?> getNotification(final Class<? extends Notification> notification) {
         return getOrRethrow(notificationsByClass, notification);
     }
@@ -186,8 +205,23 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
         return DataContainerCodecPrototype.from(key, childSchema, factory()).get();
     }
 
+    ActionCodecContext createActionContext(final Class<? extends Action<?, ?, ?>> action) {
+        final Type[] args = ClassLoaderUtils.findParameterizedType(action, Action.class).getActualTypeArguments();
+        checkArgument(args.length == 3, "Unexpected (%s) Action generatic arguments", args.length);
+
+        final ActionDefinition schema = factory().getRuntimeContext().getActionDefinition(action);
+        return new ActionCodecContext(
+            DataContainerCodecPrototype.from(asClass(args[1], RpcInput.class), schema.getInput(), factory()).get(),
+            DataContainerCodecPrototype.from(asClass(args[2], RpcOutput.class), schema.getOutput(), factory()).get());
+    }
+
+    private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
+        verify(type instanceof Class, "Type %s is not a class", type);
+        return ((Class<?>) type).asSubclass(target);
+    }
+
     ContainerNodeCodecContext<?> createRpcDataContext(final Class<?> key) {
-        Preconditions.checkArgument(DataContainer.class.isAssignableFrom(key));
+        checkArgument(DataContainer.class.isAssignableFrom(key));
         final QName qname = BindingReflections.findQName(key);
         final QNameModule qnameModule = qname.getModule();
         final Module module = getSchema().findModule(qnameModule)
@@ -211,15 +245,15 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 break;
             }
         }
-        Preconditions.checkArgument(rpc != null, "Supplied class %s is not valid RPC class.", key);
+        checkArgument(rpc != null, "Supplied class %s is not valid RPC class.", key);
         final ContainerSchemaNode schema = SchemaNodeUtils.getRpcDataSchema(rpc, qname);
-        Preconditions.checkArgument(schema != null, "Schema for %s does not define input / output.", rpc.getQName());
+        checkArgument(schema != null, "Schema for %s does not define input / output.", rpc.getQName());
         return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
     }
 
     NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
-        Preconditions.checkArgument(Notification.class.isAssignableFrom(notificationType));
-        Preconditions.checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
+        checkArgument(Notification.class.isAssignableFrom(notificationType));
+        checkArgument(notificationType.isInterface(), "Supplied class must be interface.");
         final QName qname = BindingReflections.findQName(notificationType);
         /**
          *  FIXME: After Lithium cleanup of yang-model-api, use direct call on schema context
@@ -227,17 +261,16 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
          */
         final NotificationDefinition schema = SchemaContextUtil.getNotificationSchema(getSchema(),
                 SchemaPath.create(true, qname));
-        Preconditions.checkArgument(schema != null, "Supplied %s is not valid notification", notificationType);
+        checkArgument(schema != null, "Supplied %s is not valid notification", notificationType);
 
         return new NotificationCodecContext<>(notificationType, schema, factory());
     }
 
     ChoiceNodeCodecContext<?> createChoiceDataContext(final Class<? extends DataObject> caseType) {
         final Class<?> choiceClass = findCaseChoice(caseType);
-        Preconditions.checkArgument(choiceClass != null, "Class %s is not a valid case representation", caseType);
+        checkArgument(choiceClass != null, "Class %s is not a valid case representation", caseType);
         final DataSchemaNode schema = factory().getRuntimeContext().getSchemaDefinition(choiceClass);
-        Preconditions.checkArgument(schema instanceof ChoiceSchemaNode, "Class %s does not refer to a choice",
-            caseType);
+        checkArgument(schema instanceof ChoiceSchemaNode, "Class %s does not refer to a choice", caseType);
 
         final DataContainerCodecContext<?, ChoiceSchemaNode> choice = DataContainerCodecPrototype.from(choiceClass,
             (ChoiceSchemaNode)schema, factory()).get();
@@ -252,13 +285,13 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(arg == null);
+        checkArgument(arg == null);
         return null;
     }
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(arg == null);
+        checkArgument(arg == null);
         return null;
     }
 

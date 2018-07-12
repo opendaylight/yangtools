@@ -5,13 +5,21 @@ module actions {
 
     container cont {
         action foo {
-        
+            input {
+                leaf xyzzy {
+                    type string;
+                }
+            }
         }
     }
 
     grouping grp {
         action bar {
-
+            output {
+                leaf xyzzy {
+                    type string;
+                }
+            }
         }
     }
 

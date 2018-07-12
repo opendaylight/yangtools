@@ -30,6 +30,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -219,6 +220,10 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     RpcInputCodec<?> getRpcInputCodec(final SchemaPath path) {
         return root.getRpc(path);
+    }
+
+    ActionCodecContext getActionCodec(final Class<? extends Action<?, ?, ?>> action) {
+        return root.getAction(action);
     }
 
     @Override

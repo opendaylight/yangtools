@@ -50,6 +50,7 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
         this.context = context;
     }
 
+    @Override
     public final @NonNull T getDataObject() {
         return bindingData;
     }
@@ -87,6 +88,23 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     @Override
     public Optional<DataContainerChild<? extends PathArgument, ?>> getChild(final PathArgument child) {
         return delegate().getChild(child);
+    }
+
+    @Override
+    public int hashCode() {
+        return delegate().hashCode();
+    }
+
+    @Override
+    public boolean equals(final @Nullable Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof ContainerNode)) {
+            return false;
+        }
+        final ContainerNode other = (ContainerNode) obj;
+        return delegate().equals(obj);
     }
 
     @Override

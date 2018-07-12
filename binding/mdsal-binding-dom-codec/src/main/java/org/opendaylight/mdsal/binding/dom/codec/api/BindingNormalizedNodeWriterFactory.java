@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -93,5 +94,29 @@ public interface BindingNormalizedNodeWriterFactory {
      */
     @Nonnull
     BindingStreamEventWriter newNotificationWriter(@Nonnull Class<? extends Notification> notification,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
+
+    /**
+     * Creates a {@link BindingStreamEventWriter} for action input which will translate to NormalizedNode model
+     * and invoke proper events on supplied {@link NormalizedNodeStreamWriter}.
+     *
+     * @param action Binding class representing action for which writer should be instantiated
+     * @param domWriter Stream writer on which events will be invoked.
+     * @return {@link BindingStreamEventWriter} which will write to supplied {@link NormalizedNodeStreamWriter}.
+     */
+    @Nonnull
+    BindingStreamEventWriter newActionInputWriter(@Nonnull Class<? extends Action<?, ?, ?>> action,
+            @Nonnull NormalizedNodeStreamWriter domWriter);
+
+    /**
+     * Creates a {@link BindingStreamEventWriter} for action output which will translate to NormalizedNode model
+     * and invoke proper events on supplied {@link NormalizedNodeStreamWriter}.
+     *
+     * @param action Binding class representing action for which writer should be instantiated
+     * @param domWriter Stream writer on which events will be invoked.
+     * @return {@link BindingStreamEventWriter} which will write to supplied {@link NormalizedNodeStreamWriter}.
+     */
+    @Nonnull
+    BindingStreamEventWriter newActionOutputWriter(@Nonnull Class<? extends Action<?, ?, ?>> action,
             @Nonnull NormalizedNodeStreamWriter domWriter);
 }
