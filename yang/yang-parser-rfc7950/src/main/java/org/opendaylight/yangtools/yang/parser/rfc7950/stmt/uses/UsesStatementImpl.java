@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.RefineStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
@@ -145,7 +145,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
             subStmtCtx.getStatementSourceReference(),
             "Invalid refine argument %s. It must be instance of SchemaNodeIdentifier.", refineArgument);
 
-        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = SchemaNodeIdentifierBuildNamespace.findNode(
+        final Optional<StmtContext<?, ?, ?>> optRefineTargetCtx = ChildSchemaNodeNamespace.findNode(
             usesParentCtx, (SchemaNodeIdentifier) refineArgument);
         InferenceException.throwIf(!optRefineTargetCtx.isPresent(), subStmtCtx.getStatementSourceReference(),
             "Refine target node %s not found.", refineArgument);
