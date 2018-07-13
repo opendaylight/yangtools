@@ -71,7 +71,7 @@ final class ProcessorModuleReactor {
 
                 for (Module sub : module.getSubmodules()) {
                     final SourceIdentifier subId = Util.moduleToIdentifier(sub);
-                    if (modelsInProject.containsKey(subId)) {
+                    if (!modelsInProject.containsKey(subId)) {
                         LOG.warn("Submodule {} not found in input files", sub);
                     }
                 }
