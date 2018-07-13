@@ -467,21 +467,23 @@ public final class BindingReflections {
          */
         private static Optional<QName> resolveQNameNoCache(final Class<?> key) {
             try {
-                Field field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
-                Object obj = field.get(null);
+                final Field field;
+                try {
+                    field = key.getField(BindingMapping.QNAME_STATIC_FIELD_NAME);
+                } catch (NoSuchFieldException e) {
+                    LOG.debug("{} does not have a {} field, falling back to computation", key,
+                        BindingMapping.QNAME_STATIC_FIELD_NAME, e);
+                    return Optional.of(computeQName(key));
+                }
+
+                final Object obj = field.get(null);
                 if (obj instanceof QName) {
                     return Optional.of((QName) obj);
                 }
-
-            } catch (NoSuchFieldException e) {
-                return Optional.of(computeQName(key));
-
             } catch (SecurityException | IllegalArgumentException | IllegalAccessException e) {
                 /*
-                 *
-                 * It is safe to log this this exception on debug, since this method
-                 * should not fail. Only failures are possible if the runtime /
-                 * backing.
+                 * It is safe to log this this exception on debug, since this method should not fail. Only failures are
+                 * possible if the runtime / backing is inconsistent.
                  */
                 LOG.debug("Unexpected exception during extracting QName for {}", key, e);
             }
@@ -613,8 +615,7 @@ public final class BindingReflections {
                     return false;
                 }
             } catch (NoSuchMethodException e) {
-                // Counterpart method is missing, so classes could not be
-                // substituted.
+                // Counterpart method is missing, so classes could not be substituted.
                 return false;
             } catch (SecurityException e) {
                 throw new IllegalStateException("Could not compare methods", e);
