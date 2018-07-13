@@ -11,11 +11,15 @@ import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
+/**
+ * This is an old tagging interface, which is not used anywhere right now.
+ *
+ * @deprecated This slated for removal unless we find a use for it.
+ */
+@Deprecated
 public interface RpcImplementation {
 
-    // FIXME: Change to RpcInput
-    Set<Class<? extends DataContainer>> getSupportedInputs();
+    Set<Class<? extends RpcInput>> getSupportedInputs();
 
-    // FIXME: Change to RpcInput
-    <T extends DataContainer> ListenableFuture<RpcResult<?>> invoke(Class<T> type, T input);
+    <I extends RpcInput, O extends RpcOutput> ListenableFuture<RpcResult<O>> invoke(Class<I> type, I input);
 }
