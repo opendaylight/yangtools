@@ -11,6 +11,6 @@ package org.opendaylight.yangtools.yang.binding;
  * Marker interface for all interfaces generated for {@code input} statement within an {@code action} or an {@code rpc}
  * statement.
  */
-public interface RpcInput extends DataContainer {
+public interface RpcInput extends DataObject {
 
 }

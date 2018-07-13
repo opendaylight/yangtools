@@ -16,6 +16,6 @@ import com.google.common.annotations.Beta;
  * @author Robert Varga
  */
 @Beta
-public interface RpcOutput extends DataContainer {
+public interface RpcOutput extends DataObject {
 
 }
