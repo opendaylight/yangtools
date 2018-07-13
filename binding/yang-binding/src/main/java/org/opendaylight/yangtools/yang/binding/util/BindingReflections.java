@@ -32,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
+import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
@@ -228,7 +229,8 @@ public final class BindingReflections {
 
     @SuppressWarnings("checkstyle:illegalCatch")
     public static QNameModule getQNameModule(final Class<?> clz) {
-        if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)) {
+        if (DataContainer.class.isAssignableFrom(clz) || BaseIdentity.class.isAssignableFrom(clz)
+                || Action.class.isAssignableFrom(clz)) {
             return findQName(clz).getModule();
         }
         try {
