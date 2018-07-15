@@ -88,12 +88,6 @@ final class BuiltinTypeStatement implements TypeStatement {
 
     @Nonnull
     @Override
-    public String getName() {
-        return argument;
-    }
-
-    @Nonnull
-    @Override
     public StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
     }

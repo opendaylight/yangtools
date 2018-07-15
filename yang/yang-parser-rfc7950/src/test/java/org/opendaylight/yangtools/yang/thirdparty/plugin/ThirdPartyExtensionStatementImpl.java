@@ -20,9 +20,4 @@ final class ThirdPartyExtensionStatementImpl extends AbstractDeclaredStatement<S
     ThirdPartyExtensionStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public String getArgument() {
-        return argument();
-    }
 }

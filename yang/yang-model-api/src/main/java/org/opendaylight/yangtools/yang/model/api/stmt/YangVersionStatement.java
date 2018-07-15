@@ -12,7 +12,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
-
-    @Nonnull YangVersion getValue();
+    default @Nonnull YangVersion getValue() {
+        return argument();
+    }
 }
 

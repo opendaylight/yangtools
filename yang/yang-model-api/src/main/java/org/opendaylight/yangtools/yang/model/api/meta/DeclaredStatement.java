@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -31,19 +32,33 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     @Nullable String rawArgument();
 
     /**
-     * Returns collection of explicitly declared child statements, while preserving its original
-     * ordering from original source.
+     * Returns collection of explicitly declared child statements, while preserving its original ordering from original
+     * source.
      *
-     * @return Collection of statements, which were explicitly declared in
-     *         source of model.
+     * @return Collection of statements, which were explicitly declared in source of model.
      */
     @Nonnull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
+
+    /**
+     * Returns collection of explicitly declared child statements, while preserving its original ordering from original
+     * source.
+     *
+     * @param type {@link DeclaredStatement} type
+     * @return Collection of statements, which were explicitly declared in source of model.
+     * @throws NullPointerException if {@code type} is null
+     */
+    default <S extends DeclaredStatement<?>> @NonNull Collection<? extends S> declaredSubstatements(
+            final Class<S> type) {
+        requireNonNull(type);
+        return Collections2.transform(Collections2.filter(declaredSubstatements(), type::isInstance), type::cast);
+    }
 
     /**
      * Find the first effective substatement of specified type.
      *
      * @param type {@link DeclaredStatement} type
      * @return First declared substatement, or empty if no match is found.
+     * @throws NullPointerException if {@code type} is null
      */
     @Beta
     default <T extends DeclaredStatement<?>> @NonNull Optional<T> findFirstDeclaredSubstatement(

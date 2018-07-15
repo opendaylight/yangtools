@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface BaseStatement extends DeclaredStatement<QName> {
-
-    @Nonnull QName getName();
+    default @Nonnull QName getName() {
+        return argument();
+    }
 }
-

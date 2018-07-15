@@ -11,8 +11,11 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 public interface UsesStatement extends DataDefinitionStatement {
+    default @Nonnull Collection<? extends RefineStatement> getRefines() {
+        return declaredSubstatements(RefineStatement.class);
+    }
 
-    @Nonnull Collection<? extends RefineStatement> getRefines();
-
-    @Nonnull Collection<? extends AugmentStatement> getAugments();
+    default @Nonnull Collection<? extends AugmentStatement> getAugments() {
+        return declaredSubstatements(AugmentStatement.class);
+    }
 }

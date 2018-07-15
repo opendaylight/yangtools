@@ -12,8 +12,9 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PathStatement extends DeclaredStatement<RevisionAwareXPath> {
-
     // FIXME: Introduce proper type representing parsed leafref
-    @Nonnull String getValue();
+    default @Nonnull String getValue() {
+        return rawArgument();
+    }
 }
 

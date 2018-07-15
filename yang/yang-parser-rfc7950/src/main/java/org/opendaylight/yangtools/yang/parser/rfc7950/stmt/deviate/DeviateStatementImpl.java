@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.DeviateKind;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -16,11 +15,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class DeviateStatementImpl extends AbstractDeclaredStatement<DeviateKind> implements DeviateStatement {
     DeviateStatementImpl(final StmtContext<DeviateKind, DeviateStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public DeviateKind getValue() {
-        return argument();
     }
 }

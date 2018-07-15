@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface EnumStatement extends DeclaredStatement<String>, DocumentationGroup.WithStatus, ConditionalFeature {
+public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>,
+        ConditionalDeclaredStatement<String> {
+    default @Nonnull String getName() {
+        return argument();
+    }
 
-    @Nonnull
-    String getName();
-
-    @Nullable
-    ValueStatement getValue();
+    default @Nullable ValueStatement getValue() {
+        final Optional<ValueStatement> opt = findFirstDeclaredSubstatement(ValueStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }

@@ -10,16 +10,19 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface IdentityStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
-
-    @Nonnull QName getName();
+public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+        ConditionalDeclaredStatement<QName> {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 
     /**
      * Returns the base identities of this identity.
      *
      * @return base identities, empty if there are none.
      */
-    @Nonnull Collection<? extends BaseStatement> getBases();
+    default @Nonnull Collection<? extends BaseStatement> getBases() {
+        return declaredSubstatements(BaseStatement.class);
+    }
 }

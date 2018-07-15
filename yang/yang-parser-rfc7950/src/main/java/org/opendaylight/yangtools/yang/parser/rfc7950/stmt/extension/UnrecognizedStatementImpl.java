@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -15,11 +14,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class UnrecognizedStatementImpl extends AbstractDeclaredStatement<String> implements UnrecognizedStatement {
     UnrecognizedStatementImpl(final StmtContext<String, ?, ?> context) {
         super(context);
-    }
-
-    @Nullable
-    @Override
-    public String getArgument() {
-        return argument();
     }
 }

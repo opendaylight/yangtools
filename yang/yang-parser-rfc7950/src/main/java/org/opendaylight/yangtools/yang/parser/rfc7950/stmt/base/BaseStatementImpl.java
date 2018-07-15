@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -16,11 +15,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class BaseStatementImpl extends AbstractDeclaredStatement<QName> implements BaseStatement {
     BaseStatementImpl(final StmtContext<QName, BaseStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public QName getName() {
-        return argument();
     }
 }

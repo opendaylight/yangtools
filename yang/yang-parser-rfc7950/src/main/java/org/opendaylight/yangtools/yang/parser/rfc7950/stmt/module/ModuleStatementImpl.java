@@ -7,11 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.module;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractRootStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -19,28 +15,4 @@ final class ModuleStatementImpl extends AbstractRootStatement<ModuleStatement> i
     ModuleStatementImpl(final StmtContext<String, ModuleStatement,?> context) {
         super(context);
     }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return rawArgument();
-    }
-
-    @Override
-    public YangVersionStatement getYangVersion() {
-        return firstDeclared(YangVersionStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public NamespaceStatement getNamespace() {
-        return firstDeclared(NamespaceStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public PrefixStatement getPrefix() {
-        return firstDeclared(PrefixStatement.class);
-    }
-
 }

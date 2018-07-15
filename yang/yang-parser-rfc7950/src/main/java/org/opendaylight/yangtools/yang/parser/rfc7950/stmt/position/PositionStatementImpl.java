@@ -15,9 +15,4 @@ final class PositionStatementImpl extends AbstractDeclaredStatement<Long> implem
     PositionStatementImpl(final StmtContext<Long, PositionStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public long getValue() {
-        return argument();
-    }
 }

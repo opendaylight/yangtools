@@ -15,9 +15,4 @@ final class YinElementStatementImpl extends AbstractDeclaredStatement<Boolean> i
     YinElementStatementImpl(final StmtContext<Boolean, YinElementStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public boolean getValue() {
-        return argument().booleanValue();
-    }
 }
