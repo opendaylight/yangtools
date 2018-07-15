@@ -11,7 +11,6 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
@@ -57,11 +56,6 @@ final class ContainerStatementImpl extends AbstractDeclaredStatement<QName> impl
     @Override
     public PresenceStatement getPresence() {
         return firstDeclared(PresenceStatement.class);
-    }
-
-    @Override
-    public ConfigStatement getConfig() {
-        return firstDeclared(ConfigStatement.class);
     }
 
     @Override

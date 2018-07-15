@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup,
-        ConfigStatementContainer, MustStatementContainer {
+        ConfigStatementContainerDeclaredStatement<QName>, MustStatementContainer {
     /**
      * Return default statements defined in this leaf-list. For RFC6020 semantics, this method returns an empty
      * collection.

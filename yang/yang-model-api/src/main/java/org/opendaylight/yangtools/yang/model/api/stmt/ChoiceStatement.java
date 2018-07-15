@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.yang.common.QName;
 
-public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementContainer, DefaultStatementContainer,
-        MandatoryStatementContainer {
+public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementContainerDeclaredStatement<QName>,
+        DefaultStatementContainer, MandatoryStatementContainer {
 
     @Nonnull Collection<? extends CaseStatement> getCases();
 }

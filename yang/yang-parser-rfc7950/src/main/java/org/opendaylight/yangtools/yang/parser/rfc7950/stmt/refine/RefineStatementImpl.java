@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
@@ -63,12 +62,6 @@ final class RefineStatementImpl extends AbstractDeclaredStatement<SchemaNodeIden
     @Override
     public Collection<? extends DefaultStatement> getDefaults() {
         return allDeclared(DefaultStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ConfigStatement getConfig() {
-        return firstDeclared(ConfigStatement.class);
     }
 
     @Nullable

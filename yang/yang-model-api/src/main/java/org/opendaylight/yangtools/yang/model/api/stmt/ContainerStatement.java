@@ -8,9 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public interface ContainerStatement extends DataDefinitionStatement, DataDefinitionContainer.WithReusableDefinitions,
-        ActionStatementContainer, ConfigStatementContainer, NotificationStatementContainer, MustStatementContainer {
+        ActionStatementContainer, ConfigStatementContainerDeclaredStatement<QName>, NotificationStatementContainer,
+        MustStatementContainer {
 
     @Nullable PresenceStatement getPresence();
 }

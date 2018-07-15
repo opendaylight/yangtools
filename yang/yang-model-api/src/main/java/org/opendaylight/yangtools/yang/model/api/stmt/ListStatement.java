@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.opendaylight.yangtools.yang.common.QName;
 
 public interface ListStatement extends DataDefinitionStatement, MultipleElementsGroup,
-        DataDefinitionContainer.WithReusableDefinitions, ConfigStatementContainer, ActionStatementContainer,
-        MustStatementContainer, NotificationStatementContainer {
+        DataDefinitionContainer.WithReusableDefinitions, ConfigStatementContainerDeclaredStatement<QName>,
+        ActionStatementContainer, MustStatementContainer, NotificationStatementContainer {
 
     @Nullable KeyStatement getKey();
 
