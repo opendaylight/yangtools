@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface ImportStatement extends DeclaredStatement<String>, DocumentationGroup {
+public interface ImportStatement extends DocumentedDeclaredStatement<String> {
 
     @Nonnull String getModule();
 

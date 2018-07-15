@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface NotificationStatement extends DeclaredStatement<QName>,
-       DataDefinitionContainer.WithReusableDefinitions, DocumentationGroup.WithStatus, ConditionalFeature,
-       MustStatementContainer {
+public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+       DataDefinitionContainer.WithReusableDefinitions, ConditionalFeature, MustStatementContainer {
 
     @Nonnull QName getName();
 }

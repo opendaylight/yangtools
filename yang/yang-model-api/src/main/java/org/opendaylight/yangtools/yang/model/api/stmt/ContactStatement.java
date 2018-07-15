@@ -12,6 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface ContactStatement extends DeclaredStatement<String> {
 
-    @Nonnull String getText();
+    default @Nonnull String getText() {
+        return rawArgument();
+    }
 }
 

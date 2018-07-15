@@ -14,12 +14,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
@@ -27,12 +23,6 @@ final class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         implements ChoiceStatement {
     ChoiceStatementImpl(final StmtContext<QName, ChoiceStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public QName getName() {
-        return argument();
     }
 
     @Nullable
@@ -53,32 +43,9 @@ final class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
         return allDeclared(CaseStatement.class);
     }
 
-    @Override
-    public WhenStatement getWhenStatement() {
-        return firstDeclared(WhenStatement.class);
-    }
-
     @Nonnull
     @Override
     public Collection<? extends IfFeatureStatement> getIfFeatures() {
         return allDeclared(IfFeatureStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public StatusStatement getStatus() {
-        return firstDeclared(StatusStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

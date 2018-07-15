@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface BitStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
+public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<QName>, ConditionalFeature {
 
     @Nonnull
     String getName();

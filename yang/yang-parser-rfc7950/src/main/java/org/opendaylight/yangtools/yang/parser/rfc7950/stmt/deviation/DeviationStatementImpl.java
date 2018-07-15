@@ -9,11 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviation;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviateStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DeviationStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -28,18 +25,6 @@ final class DeviationStatementImpl extends AbstractDeclaredStatement<SchemaNodeI
     @Override
     public SchemaNodeIdentifier getTargetNode() {
         return argument();
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 
     @Nonnull

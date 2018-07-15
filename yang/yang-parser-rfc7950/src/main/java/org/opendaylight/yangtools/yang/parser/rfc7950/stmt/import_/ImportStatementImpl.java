@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -37,15 +35,5 @@ final class ImportStatementImpl extends AbstractDeclaredStatement<String> implem
     @Override
     public RevisionDateStatement getRevisionDate() {
         return firstDeclared(RevisionDateStatement.class);
-    }
-
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

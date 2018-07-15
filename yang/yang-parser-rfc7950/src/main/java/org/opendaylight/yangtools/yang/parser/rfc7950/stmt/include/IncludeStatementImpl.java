@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionDateStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -29,15 +27,5 @@ final class IncludeStatementImpl extends AbstractDeclaredStatement<String> imple
     @Override
     public RevisionDateStatement getRevisionDate() {
         return firstDeclared(RevisionDateStatement.class);
-    }
-
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface EnumStatement extends DeclaredStatement<String>, DocumentationGroup.WithStatus, ConditionalFeature {
+public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>, ConditionalFeature {
 
     @Nonnull
     String getName();
