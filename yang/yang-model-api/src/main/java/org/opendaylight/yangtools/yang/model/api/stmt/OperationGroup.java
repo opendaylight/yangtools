@@ -16,7 +16,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Common interface for action and rpc statements.
+ *
+ * @deprecated Use {@link OperationDeclaredStatement} instead.
  */
+@Deprecated
 @Beta
 public interface OperationGroup extends DocumentationGroup.WithStatus, ConditionalFeature {
 

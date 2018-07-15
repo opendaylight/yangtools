@@ -7,16 +7,22 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface ImportStatement extends DeclaredStatement<String>, DocumentationGroup {
+public interface ImportStatement extends DocumentedDeclaredStatement<String> {
+    default @Nonnull String getModule() {
+        return rawArgument();
+    }
 
-    @Nonnull String getModule();
+    default @Nonnull PrefixStatement getPrefix() {
+        final Optional<PrefixStatement> opt = findFirstDeclaredSubstatement(PrefixStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 
-    @Nonnull PrefixStatement getPrefix();
-
-    @Nullable RevisionDateStatement getRevisionDate();
+    default @Nullable RevisionDateStatement getRevisionDate() {
+        final Optional<RevisionDateStatement> opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }
-

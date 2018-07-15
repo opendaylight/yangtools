@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Statement that defines new data nodes.
@@ -20,8 +21,15 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Defined in: <a href="https://tools.ietf.org/html/rfc6020#section-3">RFC6020, Section 3</a>
  */
 @Rfc6020AbnfRule("data-def-stmt")
-public interface DataDefinitionStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus,
-       ConditionalDataDefinition {
+public interface DataDefinitionStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+        ConditionalDataDefinition {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 
-    @Nonnull QName getName();
+    @Override
+    default @Nullable WhenStatement getWhenStatement() {
+        final Optional<WhenStatement> opt = findFirstDeclaredSubstatement(WhenStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }

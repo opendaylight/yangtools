@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -15,10 +14,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements MandatoryStatement {
     MandatoryStatementImpl(final StmtContext<Boolean, MandatoryStatement, ?> context) {
         super(context);
-    }
-
-    @Override
-    @Nonnull public Boolean getValue() {
-        return argument();
     }
 }

@@ -11,8 +11,9 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface RefineStatement extends ConfigStatementContainerDeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup,
-        ConditionalFeature, MandatoryStatementContainer, MustStatementContainer {
+public interface RefineStatement extends ConfigStatementContainerDeclaredStatement<SchemaNodeIdentifier>,
+        DocumentedDeclaredStatement<SchemaNodeIdentifier>, ConditionalFeature, MandatoryStatementContainer,
+        MustStatementContainer {
     String getTargetNode();
 
     @Nonnull

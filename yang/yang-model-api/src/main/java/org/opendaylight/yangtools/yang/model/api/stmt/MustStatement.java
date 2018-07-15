@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface MustStatement extends DeclaredStatement<RevisionAwareXPath>, DocumentedConstraintGroup {
-
-    @Nonnull RevisionAwareXPath getCondition();
+public interface MustStatement extends ConstrainedDocumentedDeclaredStatement<RevisionAwareXPath> {
+    default @Nonnull RevisionAwareXPath getCondition() {
+        return argument();
+    }
 }

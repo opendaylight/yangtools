@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.default_;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -16,11 +15,5 @@ final class DefaultStatementImpl extends AbstractDeclaredStatement<String> imple
         DefaultStatement {
     DefaultStatementImpl(final StmtContext<String, DefaultStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public String getValue() {
-        return rawArgument();
     }
 }

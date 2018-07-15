@@ -11,7 +11,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface MandatoryStatement extends DeclaredStatement<Boolean> {
-
-    @Nonnull Boolean getValue();
+    default @Nonnull Boolean getValue() {
+        return argument();
+    }
 }
 
