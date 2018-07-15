@@ -10,10 +10,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RefineStatement extends DeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup,
-        ConditionalFeature, ConfigStatementContainer, MandatoryStatementContainer, MustStatementContainer {
+public interface RefineStatement extends ConfigStatementContainerDeclaredStatement<SchemaNodeIdentifier>,
+        DocumentationGroup, ConditionalFeature, MandatoryStatementContainer, MustStatementContainer {
     String getTargetNode();
 
     @Nonnull

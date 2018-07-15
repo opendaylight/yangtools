@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-public interface LeafStatement extends DataDefinitionStatement, TypeGroup, ConfigStatementContainer,
-        DefaultStatementContainer, MandatoryStatementContainer, MustStatementContainer {
+import org.opendaylight.yangtools.yang.common.QName;
+
+public interface LeafStatement extends DataDefinitionStatement, TypeGroup,
+        ConfigStatementContainerDeclaredStatement<QName>, DefaultStatementContainer, MandatoryStatementContainer,
+        MustStatementContainer {
 
 }

@@ -13,7 +13,6 @@ import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
@@ -40,12 +39,6 @@ final class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
     @Override
     public DefaultStatement getDefault() {
         return firstDeclared(DefaultStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ConfigStatement getConfig() {
-        return firstDeclared(ConfigStatement.class);
     }
 
     @Nullable

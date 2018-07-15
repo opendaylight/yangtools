@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
@@ -49,11 +48,6 @@ final class AnydataStatementImpl extends AbstractDeclaredStatement<QName> implem
     @Override
     public Collection<? extends MustStatement> getMusts() {
         return allDeclared(MustStatement.class);
-    }
-
-    @Override
-    public ConfigStatement getConfig() {
-        return firstDeclared(ConfigStatement.class);
     }
 
     @Override

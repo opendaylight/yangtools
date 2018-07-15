@@ -12,7 +12,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ActionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
@@ -41,12 +40,6 @@ final class ListStatementImpl extends AbstractDeclaredStatement<QName> implement
     @Override
     public QName getName() {
         return argument();
-    }
-
-    @Nullable
-    @Override
-    public ConfigStatement getConfig() {
-        return firstDeclared(ConfigStatement.class);
     }
 
     @Override
