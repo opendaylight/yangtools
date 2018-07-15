@@ -8,15 +8,17 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface ListStatement extends DataDefinitionStatement, MultipleElementsGroup,
+public interface ListStatement extends MultipleElementsDeclaredStatement,
         DataDefinitionContainer.WithReusableDefinitions, ConfigStatementContainerDeclaredStatement<QName>,
         ActionStatementContainer, MustStatementContainer, NotificationStatementContainer {
-
-    @Nullable KeyStatement getKey();
+    default KeyStatement getKey() {
+        final Optional<KeyStatement> opt = findFirstDeclaredSubstatement(KeyStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 
     @Nonnull Collection<? extends UniqueStatement> getUnique();
 }

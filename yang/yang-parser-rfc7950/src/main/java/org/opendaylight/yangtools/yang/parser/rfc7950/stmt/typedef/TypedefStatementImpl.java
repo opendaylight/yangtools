@@ -11,9 +11,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.DefaultStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
@@ -23,24 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
     TypedefStatementImpl(final StmtContext<QName, TypedefStatement, ?> context) {
         super(context);
-    }
-
-    @Nullable
-    @Override
-    public StatusStatement getStatus() {
-        return firstDeclared(StatusStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 
     @Nonnull

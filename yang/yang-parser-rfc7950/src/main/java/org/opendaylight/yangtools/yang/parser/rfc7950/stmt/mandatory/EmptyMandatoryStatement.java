@@ -20,9 +20,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 
 abstract class EmptyMandatoryStatement implements MandatoryStatement {
     static final MandatoryStatement FALSE = new EmptyMandatoryStatement() {
-        @Nonnull
         @Override
-        public Boolean getValue() {
+        public Boolean argument() {
             return Boolean.FALSE;
         }
 
@@ -33,9 +32,8 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
     };
 
     static final MandatoryStatement TRUE = new EmptyMandatoryStatement() {
-        @Nonnull
         @Override
-        public Boolean getValue() {
+        public Boolean argument() {
             return Boolean.TRUE;
         }
 
@@ -62,11 +60,6 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
     @Override
     public final String rawArgument() {
         return getValue().toString();
-    }
-
-    @Override
-    public final Boolean argument() {
-        return getValue();
     }
 
     @Nonnull

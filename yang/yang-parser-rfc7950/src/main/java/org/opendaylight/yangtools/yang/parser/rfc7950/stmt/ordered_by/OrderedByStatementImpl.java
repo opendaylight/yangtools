@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -15,11 +14,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class OrderedByStatementImpl extends AbstractDeclaredStatement<String> implements OrderedByStatement {
     OrderedByStatementImpl(final StmtContext<String, OrderedByStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public String getValue() {
-        return argument();
     }
 }

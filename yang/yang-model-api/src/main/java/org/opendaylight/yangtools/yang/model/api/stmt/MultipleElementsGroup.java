@@ -9,6 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nullable;
 
+/**
+ * Common statements of collection-like statements.
+ *
+ * @deprecated Use {@link MultipleElementsDeclaredStatement} instead.
+ */
+@Deprecated
 public interface MultipleElementsGroup {
 
     @Nullable MinElementsStatement getMinElements();

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.modifier;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModifierStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -21,11 +20,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class ModifierStatementImpl extends AbstractDeclaredStatement<ModifierKind> implements ModifierStatement {
     ModifierStatementImpl(final StmtContext<ModifierKind, ModifierStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public ModifierKind getValue() {
-        return argument();
     }
 }

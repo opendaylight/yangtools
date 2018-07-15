@@ -7,11 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface ModuleStatement extends DeclaredStatement<String>, ModuleHeaderGroup, LinkageGroup, MetaGroup,
-        RevisionGroup, BodyGroup {
+public interface ModuleStatement extends MetaDeclaredStatement<String>, ModuleHeaderGroup, LinkageGroup, RevisionGroup,
+        BodyGroup {
+    default @Nonnull String getName() {
+        return rawArgument();
+    }
 
-    @Nonnull String getName();
+    @Override
+    default YangVersionStatement getYangVersion() {
+        final Optional<YangVersionStatement> opt = findFirstDeclaredSubstatement(YangVersionStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
+
+    @Nonnull
+    @Override
+    default NamespaceStatement getNamespace() {
+        final Optional<NamespaceStatement> opt = findFirstDeclaredSubstatement(NamespaceStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
+
+    @Override
+    default PrefixStatement getPrefix() {
+        final Optional<PrefixStatement> opt = findFirstDeclaredSubstatement(PrefixStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }
