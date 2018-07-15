@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface ExtensionStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus {
-
-    @Nullable ArgumentStatement getArgument();
+public interface ExtensionStatement extends DocumentedDeclaredStatement.WithStatus<QName> {
+    default @Nullable ArgumentStatement getArgument() {
+        final Optional<ArgumentStatement> opt = findFirstDeclaredSubstatement(ArgumentStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }

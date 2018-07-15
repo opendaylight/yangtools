@@ -9,6 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nullable;
 
+/**
+ * Documented constraints.
+ *
+ * @deprecated Use {@link ConstrainedDocumentedDeclaredStatement} instead.
+ */
+@Deprecated
 public interface DocumentedConstraintGroup extends DocumentationGroup {
 
     @Nullable ErrorAppTagStatement getErrorAppTagStatement();

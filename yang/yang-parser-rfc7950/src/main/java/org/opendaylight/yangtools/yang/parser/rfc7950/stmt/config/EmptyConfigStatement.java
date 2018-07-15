@@ -21,8 +21,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 abstract class EmptyConfigStatement implements ConfigStatement {
     static final ConfigStatement FALSE = new EmptyConfigStatement() {
         @Override
-        public boolean getValue() {
-            return false;
+        public Boolean argument() {
+            return Boolean.FALSE;
         }
 
         @Override
@@ -33,8 +33,8 @@ abstract class EmptyConfigStatement implements ConfigStatement {
 
     static final ConfigStatement TRUE = new EmptyConfigStatement() {
         @Override
-        public boolean getValue() {
-            return true;
+        public Boolean argument() {
+            return Boolean.TRUE;
         }
 
         @Override
@@ -60,11 +60,6 @@ abstract class EmptyConfigStatement implements ConfigStatement {
     @Override
     public final String rawArgument() {
         return Boolean.toString(getValue());
-    }
-
-    @Override
-    public final Boolean argument() {
-        return Boolean.valueOf(getValue());
     }
 
     @Nonnull

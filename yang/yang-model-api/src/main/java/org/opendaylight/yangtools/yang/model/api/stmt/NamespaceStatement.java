@@ -12,7 +12,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface NamespaceStatement extends DeclaredStatement<URI> {
-
-    @Nonnull URI getUri();
+    default @Nonnull URI getUri() {
+        return argument();
+    }
 }
 

@@ -15,9 +15,4 @@ final class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> imple
     ConfigStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public boolean getValue() {
-        return argument().booleanValue();
-    }
 }

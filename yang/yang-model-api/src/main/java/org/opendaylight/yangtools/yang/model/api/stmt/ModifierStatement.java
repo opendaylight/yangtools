@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  */
 @Beta
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
-
-    @Nonnull ModifierKind getValue();
+    default @Nonnull ModifierKind getValue() {
+        return argument();
+    }
 }

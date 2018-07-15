@@ -8,10 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -25,17 +22,5 @@ final class RevisionStatementImpl extends AbstractDeclaredStatement<Revision> im
     @Override
     public Revision getDate() {
         return argument();
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

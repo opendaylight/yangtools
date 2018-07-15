@@ -9,14 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.case_;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.CaseStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.WhenStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -24,12 +20,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class CaseStatementImpl extends AbstractDeclaredStatement<QName> implements CaseStatement {
     CaseStatementImpl(final StmtContext<QName, CaseStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public QName getName() {
-        return argument();
     }
 
     @Override
@@ -47,23 +37,5 @@ final class CaseStatementImpl extends AbstractDeclaredStatement<QName> implement
     @Override
     public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return allDeclared(DataDefinitionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public StatusStatement getStatus() {
-        return firstDeclared(StatusStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

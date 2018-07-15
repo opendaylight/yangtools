@@ -11,7 +11,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface MinElementsStatement extends DeclaredStatement<Integer> {
-
-    @Nonnull Integer getValue();
+    default @Nonnull Integer getValue() {
+        return argument();
+    }
 }
 

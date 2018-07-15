@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface IdentityStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, ConditionalFeature {
-
-    @Nonnull QName getName();
+public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>, ConditionalFeature {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 
     /**
      * Returns the base identities of this identity.

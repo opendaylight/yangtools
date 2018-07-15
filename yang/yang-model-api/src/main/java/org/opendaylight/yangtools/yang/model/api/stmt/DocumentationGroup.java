@@ -11,7 +11,10 @@ import javax.annotation.Nullable;
 
 /**
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
+ *
+ * @deprecated Use {@link DocumentedDeclaredStatement} instead.
  */
+@Deprecated
 public interface DocumentationGroup {
     /**
      * Return description statement, if available.
