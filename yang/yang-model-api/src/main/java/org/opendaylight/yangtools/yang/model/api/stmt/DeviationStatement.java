@@ -9,11 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface DeviationStatement extends DeclaredStatement<SchemaNodeIdentifier>, DocumentationGroup {
+public interface DeviationStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier> {
+    default @Nonnull SchemaNodeIdentifier getTargetNode() {
+        return argument();
+    }
 
-    @Nonnull SchemaNodeIdentifier getTargetNode();
-
-    @Nonnull Collection<? extends DeviateStatement> getDeviateStatements();
+    default @Nonnull Collection<? extends DeviateStatement> getDeviateStatements() {
+        return declaredSubstatements(DeviateStatement.class);
+    }
 }

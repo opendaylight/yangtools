@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nullable;
 
+@Deprecated
 public interface ConditionalDataDefinition extends ConditionalFeature {
 
     @Nullable WhenStatement getWhenStatement();

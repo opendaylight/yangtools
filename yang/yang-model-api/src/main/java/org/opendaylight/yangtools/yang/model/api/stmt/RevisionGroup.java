@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 @Rfc6020AbnfRule("revision-stmts")
+@Deprecated
 public interface RevisionGroup {
 
     @Nonnull Collection<? extends RevisionStatement> getRevisions();

@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-public interface PatternStatement extends DeclaredStatement<PatternConstraint>, DocumentedConstraintGroup {
-
-    @Nonnull
-    PatternConstraint getValue();
+public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint> {
+    default @Nonnull PatternConstraint getValue() {
+        return argument();
+    }
 
     /**
      * Return a modifier statement, if present. In RFC6020 semantics, there are no modifiers and this methods always
@@ -23,5 +23,8 @@ public interface PatternStatement extends DeclaredStatement<PatternConstraint>, 
      *
      * @return modifier statement, nul if not present.
      */
-    @Nullable ModifierStatement getModifierStatement();
+    default @Nullable ModifierStatement getModifierStatement() {
+        final Optional<ModifierStatement> opt = findFirstDeclaredSubstatement(ModifierStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }

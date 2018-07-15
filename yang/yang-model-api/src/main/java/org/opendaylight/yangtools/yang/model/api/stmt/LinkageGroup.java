@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 @Rfc6020AbnfRule("linkage-stms")
+@Deprecated
 public interface LinkageGroup {
 
     @Nonnull Collection<? extends ImportStatement> getImports();

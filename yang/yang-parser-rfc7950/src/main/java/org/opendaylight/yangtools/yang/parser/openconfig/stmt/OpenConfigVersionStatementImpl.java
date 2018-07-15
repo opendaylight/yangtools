@@ -17,9 +17,4 @@ final class OpenConfigVersionStatementImpl extends AbstractDeclaredStatement<Sem
     OpenConfigVersionStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public SemVer getArgument() {
-        return argument();
-    }
 }

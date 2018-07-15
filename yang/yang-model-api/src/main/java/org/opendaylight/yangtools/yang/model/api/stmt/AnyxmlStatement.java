@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementContainerDeclaredStatement<QName>,
-        MandatoryStatementContainer, MustStatementContainer {
+public interface AnyxmlStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
+    MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
 
 }

@@ -7,14 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface IncludeStatement extends DeclaredStatement<String>, DocumentationGroup {
+public interface IncludeStatement extends DocumentedDeclaredStatement<String> {
+    default @Nonnull String getModule() {
+        return argument();
+    }
 
-    @Nonnull String getModule();
-
-    @Nullable RevisionDateStatement getRevisionDate();
+    default @Nullable RevisionDateStatement getRevisionDate() {
+        final Optional<RevisionDateStatement> opt = findFirstDeclaredSubstatement(RevisionDateStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }
 

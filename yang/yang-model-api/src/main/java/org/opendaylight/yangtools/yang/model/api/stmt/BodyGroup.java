@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 @Rfc6020AbnfRule("body-stmts")
+@Deprecated
 public interface BodyGroup extends DataDefinitionContainer.WithReusableDefinitions, NotificationStatementContainer {
 
     @Nonnull Collection<? extends ExtensionStatement> getExtensions();

@@ -7,49 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorAppTagStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
     MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public RevisionAwareXPath getCondition() {
-        return argument();
-    }
-
-    @Nullable
-    @Override
-    public ErrorAppTagStatement getErrorAppTagStatement() {
-        return firstDeclared(ErrorAppTagStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ErrorMessageStatement getErrorMessageStatement() {
-        return firstDeclared(ErrorMessageStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public DescriptionStatement getDescription() {
-        return firstDeclared(DescriptionStatement.class);
-    }
-
-    @Nullable
-    @Override
-    public ReferenceStatement getReference() {
-        return firstDeclared(ReferenceStatement.class);
     }
 }

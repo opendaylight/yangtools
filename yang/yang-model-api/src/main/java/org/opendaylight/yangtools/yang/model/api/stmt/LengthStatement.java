@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.List;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface LengthStatement extends DeclaredStatement<List<ValueRange>>, DocumentedConstraintGroup {
+public interface LengthStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>> {
     @Nonnull
     @Override
     List<ValueRange> argument();

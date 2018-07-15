@@ -13,7 +13,10 @@ import javax.annotation.Nonnull;
 /**
  * Marker interface for statements which may contain a 'must' statement, as defined in RFC7950. There is a significant
  * difference RFC6020 (YANG 1) and RFC7590 (YANG 1.1) in which statements sport this feature.
+ *
+ * @deprecated Use {@link MustStatementAwareDeclaredStatement} instead.
  */
+@Deprecated
 public interface MustStatementContainer {
     /**
      * Return collection of {@link MustStatement}. For RFC6020, this method returns an empty collection for statements

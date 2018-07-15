@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2018 Pantheon Technoglogies, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import java.util.Optional;
+import java.util.Collection;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface ConfigStatementContainerDeclaredStatement<A> extends DeclaredStatement<A>, ConfigStatementContainer {
+public interface RevisionAwareDeclaredStatement extends DeclaredStatement<String>, RevisionGroup {
     @Override
-    default ConfigStatement getConfig() {
-        final Optional<ConfigStatement> opt = findFirstDeclaredSubstatement(ConfigStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @Nonnull Collection<? extends RevisionStatement> getRevisions() {
+        return declaredSubstatements(RevisionStatement.class);
     }
 }

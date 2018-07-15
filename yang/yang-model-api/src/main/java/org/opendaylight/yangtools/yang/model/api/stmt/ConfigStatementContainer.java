@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 /**
  * Marker interface for statements which may contain a 'config' statement, as defined in RFC7950.
  *
- * @deprecated Use {@link ConfigStatementContainerDeclaredStatement} instead.
+ * @deprecated Use {@link ConfigStatementAwareDeclaredStatement} instead.
  */
 @Deprecated
 public interface ConfigStatementContainer {

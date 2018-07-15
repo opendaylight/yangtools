@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.common.QName;
  * of this document.
  */
 @Beta
-public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementContainerDeclaredStatement<QName>,
-        MandatoryStatementContainer, MustStatementContainer {
+public interface AnydataStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
+    MandatoryStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
 
 }
