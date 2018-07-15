@@ -12,7 +12,8 @@ import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface StatusStatement extends DeclaredStatement<Status> {
-
-    @Nonnull Status getValue();
+    default @Nonnull Status getValue() {
+        return argument();
+    }
 }
 

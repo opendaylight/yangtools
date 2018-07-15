@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface TypedefStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus, TypeGroup,
-    DefaultStatementContainer {
-
-    @Nonnull QName getName();
+public interface TypedefStatement extends DocumentedDeclaredStatement.WithStatus<QName>, TypeDeclaredStatement,
+        DefaultStatementContainerDeclaredStatement {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 }
 

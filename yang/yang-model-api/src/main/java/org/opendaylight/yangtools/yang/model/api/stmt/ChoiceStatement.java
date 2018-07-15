@@ -12,7 +12,7 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementContainerDeclaredStatement<QName>,
-        DefaultStatementContainer, MandatoryStatementContainer {
+        DefaultStatementContainerDeclaredStatement, MandatoryStatementContainerDeclaredStatement<QName> {
 
     @Nonnull Collection<? extends CaseStatement> getCases();
 }

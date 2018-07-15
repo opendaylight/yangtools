@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.presence;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.PresenceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -15,11 +14,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class PresenceStatementImpl extends AbstractDeclaredStatement<String> implements PresenceStatement {
     PresenceStatementImpl(final StmtContext<String, PresenceStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public String getValue() {
-        return argument();
     }
 }

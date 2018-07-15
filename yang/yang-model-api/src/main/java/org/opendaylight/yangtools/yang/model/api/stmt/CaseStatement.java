@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface CaseStatement extends DeclaredStatement<QName>, DataDefinitionContainer,
-       DocumentationGroup.WithStatus, ConditionalDataDefinition {
-
-    @Nonnull QName getName();
+public interface CaseStatement extends DocumentedDeclaredStatement.WithStatus<QName>, DataDefinitionContainer,
+        ConditionalDeclaredStatement<QName> {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 }

@@ -21,12 +21,6 @@ public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> imp
 
     @Nonnull
     @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Nonnull
-    @Override
     public Collection<? extends BitStatement> getBits() {
         return allDeclared(BitStatement.class);
     }

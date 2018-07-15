@@ -21,12 +21,6 @@ final class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<Strin
 
     @Nonnull
     @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Nonnull
-    @Override
     public Collection<? extends BaseStatement> getBases() {
         return allDeclared(BaseStatement.class);
     }

@@ -7,13 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface BelongsToStatement extends DeclaredStatement<String> {
+    default @Nonnull String getModule() {
+        return argument();
+    }
 
-    @Nonnull String getModule();
-
-    @Nonnull PrefixStatement getPrefix();
+    default @Nonnull PrefixStatement getPrefix() {
+        final Optional<PrefixStatement> opt = findFirstDeclaredSubstatement(PrefixStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }
 

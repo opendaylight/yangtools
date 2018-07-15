@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  */
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
-
-    @Nullable A getArgument();
+    default @Nullable A getArgument() {
+        return argument();
+    }
 }

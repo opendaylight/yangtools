@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import java.util.Collection;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.LengthStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -20,17 +19,6 @@ final class StringRestrictionsImpl extends AbstractDeclaredStatement<String> imp
         TypeStatement.StringRestrictions {
     StringRestrictionsImpl(final StmtContext<String, StringRestrictions, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Override
-    public LengthStatement getLength() {
-        return firstDeclared(LengthStatement.class);
     }
 
     @Nonnull

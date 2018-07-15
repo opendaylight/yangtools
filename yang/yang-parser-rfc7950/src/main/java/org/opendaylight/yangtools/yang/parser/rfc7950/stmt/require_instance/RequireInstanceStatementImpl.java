@@ -16,9 +16,4 @@ final class RequireInstanceStatementImpl extends AbstractDeclaredStatement<Boole
     RequireInstanceStatementImpl(final StmtContext<Boolean, RequireInstanceStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public boolean getValue() {
-        return argument().booleanValue();
-    }
 }

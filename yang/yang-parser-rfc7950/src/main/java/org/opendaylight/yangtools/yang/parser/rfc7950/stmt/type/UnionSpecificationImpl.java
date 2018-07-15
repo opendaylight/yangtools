@@ -21,14 +21,7 @@ final class UnionSpecificationImpl extends AbstractDeclaredStatement<String> imp
 
     @Nonnull
     @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Nonnull
-    @Override
     public Collection<? extends TypeStatement> getTypes() {
         return allDeclared(TypeStatement.class);
     }
-
 }

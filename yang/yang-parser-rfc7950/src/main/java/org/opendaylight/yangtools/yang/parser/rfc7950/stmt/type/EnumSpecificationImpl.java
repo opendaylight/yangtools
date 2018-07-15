@@ -21,12 +21,6 @@ final class EnumSpecificationImpl extends AbstractDeclaredStatement<String> impl
 
     @Nonnull
     @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Nonnull
-    @Override
     public Collection<? extends EnumStatement> getEnums() {
         return allDeclared(EnumStatement.class);
     }

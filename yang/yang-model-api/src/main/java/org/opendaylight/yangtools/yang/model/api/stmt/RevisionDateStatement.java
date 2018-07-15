@@ -11,7 +11,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface RevisionDateStatement extends DeclaredStatement<Revision> {
-
-    Revision getDate();
+    default Revision getDate() {
+        return argument();
+    }
 }
-

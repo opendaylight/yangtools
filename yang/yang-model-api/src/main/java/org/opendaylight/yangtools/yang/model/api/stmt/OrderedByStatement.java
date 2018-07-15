@@ -11,7 +11,8 @@ import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface OrderedByStatement extends DeclaredStatement<String> {
-
-    @Nonnull String getValue();
+    default @Nonnull String getValue() {
+        return argument();
+    }
 }
 

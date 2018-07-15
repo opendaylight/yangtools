@@ -9,8 +9,6 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Represents YANG action statement.
@@ -22,6 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * detailed action information.  The argument is the name of the action.
  */
 @Beta
-public interface ActionStatement extends DeclaredStatement<QName>, OperationGroup {
+public interface ActionStatement extends OperationDeclaredStatement {
 
 }
