@@ -7,9 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.annotations.Beta;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Represents declared statement.
@@ -17,7 +23,6 @@ import javax.annotation.Nullable;
  * @param <A> Argument type ({@link Void} if statement does not have argument.)
  */
 public interface DeclaredStatement<A> extends ModelStatement<A> {
-
     /**
      * Returns statement argument as was present in original source.
      *
@@ -33,4 +38,42 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      *         source of model.
      */
     @Nonnull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
+
+    /**
+     * Find the first effective substatement of specified type.
+     *
+     * @param type {@link DeclaredStatement} type
+     * @return First declared substatement, or empty if no match is found.
+     */
+    @Beta
+    default <T extends DeclaredStatement<?>> @NonNull Optional<T> findFirstDeclaredSubstatement(
+            @NonNull final Class<T> type) {
+        requireNonNull(type);
+        return streamDeclaredSubstatements(type).filter(type::isInstance).findFirst().map(type::cast);
+    }
+
+    /**
+     * Find the first declared substatement of specified type and return its value.
+     *
+     * @return First declared substatement's argument, or empty if no match is found.
+     * @throws NullPointerException if {@code type} is null
+     */
+    @Beta
+    default <V, T extends DeclaredStatement<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
+            @NonNull final Class<T> type) {
+        return findFirstDeclaredSubstatement(type).map(DeclaredStatement::argument);
+    }
+
+    /**
+     * Find all declared substatements of specified type and return them as a stream.
+     *
+     * @return A stream of all declared substatements of specified type.
+     * @throws NullPointerException if {@code type} is null
+     */
+    @Beta
+    default <T extends DeclaredStatement<?>> @NonNull Stream<T> streamDeclaredSubstatements(
+            @NonNull final Class<T> type) {
+        requireNonNull(type);
+        return declaredSubstatements().stream().filter(type::isInstance).map(type::cast);
+    }
 }

@@ -41,8 +41,16 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
             StmtContext::buildDeclared));
     }
 
+    /**
+     * Find first declared substatement of a particular type.
+     *
+     * @param type {@link DeclaredStatement} type
+     * @return First effective substatement, or null if no match is found.
+     * @deprecated Use {@link #findFirstDeclaredSubstatement(Class)} instead.
+     */
+    @Deprecated
     protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
-        return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
+        return findFirstDeclaredSubstatement(type).orElse(null);
     }
 
     @Override
