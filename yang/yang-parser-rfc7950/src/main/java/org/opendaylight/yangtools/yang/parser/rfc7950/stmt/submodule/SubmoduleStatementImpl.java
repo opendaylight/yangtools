@@ -7,32 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.submodule;
 
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractRootStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class SubmoduleStatementImpl extends AbstractRootStatement<SubmoduleStatement> implements SubmoduleStatement {
     SubmoduleStatementImpl(final StmtContext<String, SubmoduleStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return rawArgument();
-    }
-
-    @Override
-    public YangVersionStatement getYangVersion() {
-        return firstDeclared(YangVersionStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public BelongsToStatement getBelongsTo() {
-        return firstDeclared(BelongsToStatement.class);
     }
 }

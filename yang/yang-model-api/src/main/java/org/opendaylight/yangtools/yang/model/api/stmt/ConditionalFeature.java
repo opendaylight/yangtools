@@ -11,6 +11,7 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 
 @Rfc6020AbnfRule("*(if-feature-stmt)")
+@Deprecated
 public interface ConditionalFeature {
 
     /**

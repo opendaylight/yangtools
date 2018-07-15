@@ -8,22 +8,34 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-public interface RefineStatement extends ConfigStatementContainerDeclaredStatement<SchemaNodeIdentifier>,
-        DocumentationGroup, ConditionalFeature, MandatoryStatementContainer, MustStatementContainer {
-    String getTargetNode();
+public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
+        DocumentedDeclaredStatement<SchemaNodeIdentifier>, IfFeatureAwareDeclaredStatement<SchemaNodeIdentifier>,
+        MandatoryStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
+        MustStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+    default @Nonnull String getTargetNode() {
+        return rawArgument();
+    }
 
-    @Nonnull
-    Collection<? extends DefaultStatement> getDefaults();
+    default @Nonnull Collection<? extends DefaultStatement> getDefaults() {
+        return declaredSubstatements(DefaultStatement.class);
+    }
 
-    @Nullable
-    PresenceStatement getPresence();
+    default @Nullable PresenceStatement getPresence() {
+        final Optional<PresenceStatement> opt = findFirstDeclaredSubstatement(PresenceStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 
-    @Nullable
-    MinElementsStatement getMinElements();
+    default @Nullable MinElementsStatement getMinElements() {
+        final Optional<MinElementsStatement> opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 
-    @Nullable
-    MaxElementsStatement getMaxElements();
+    default @Nullable MaxElementsStatement getMaxElements() {
+        final Optional<MaxElementsStatement> opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
+        return opt.isPresent() ? opt.get() : null;
+    }
 }

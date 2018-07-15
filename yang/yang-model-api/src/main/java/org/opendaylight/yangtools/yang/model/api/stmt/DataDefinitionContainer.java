@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import java.util.Collection;
 import javax.annotation.Nonnull;
 
+@Deprecated
 public interface DataDefinitionContainer {
 
     @Nonnull Collection<? extends DataDefinitionStatement> getDataDefinitions();

@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import java.util.Collection;
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.UnionSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -18,17 +15,4 @@ final class UnionSpecificationImpl extends AbstractDeclaredStatement<String> imp
     UnionSpecificationImpl(final StmtContext<String, UnionSpecification, ?> context) {
         super(context);
     }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Nonnull
-    @Override
-    public Collection<? extends TypeStatement> getTypes() {
-        return allDeclared(TypeStatement.class);
-    }
-
 }

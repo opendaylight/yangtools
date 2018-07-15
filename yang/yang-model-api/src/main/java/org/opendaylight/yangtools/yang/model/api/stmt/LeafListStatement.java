@@ -11,13 +11,15 @@ import java.util.Collection;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
-public interface LeafListStatement extends DataDefinitionStatement, MultipleElementsGroup, TypeGroup,
-        ConfigStatementContainerDeclaredStatement<QName>, MustStatementContainer {
+public interface LeafListStatement extends MultipleElementsDeclaredStatement, TypeAwareDeclaredStatement,
+        ConfigStatementAwareDeclaredStatement<QName>, MustStatementAwareDeclaredStatement<QName> {
     /**
      * Return default statements defined in this leaf-list. For RFC6020 semantics, this method returns an empty
      * collection.
      *
      * @return collection of default statements
      */
-    @Nonnull Collection<? extends DefaultStatement> getDefaults();
+    default @Nonnull Collection<? extends DefaultStatement> getDefaults() {
+        return declaredSubstatements(DefaultStatement.class);
+    }
 }

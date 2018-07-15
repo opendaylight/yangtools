@@ -11,7 +11,10 @@ import javax.annotation.Nullable;
 
 /**
  * Marker interface for statements which may contain a 'default' statement, as defined in RFC7950.
+ *
+ * @deprecated Use {@link DefaultStatementAwareDeclaredStatement} instead.
  */
+@Deprecated
 public interface DefaultStatementContainer {
     /**
      * Return a {@link DefaultStatement} child, if present.

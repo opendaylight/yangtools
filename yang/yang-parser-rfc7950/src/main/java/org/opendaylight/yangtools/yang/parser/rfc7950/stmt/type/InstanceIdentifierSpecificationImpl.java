@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -17,16 +15,5 @@ final class InstanceIdentifierSpecificationImpl extends AbstractDeclaredStatemen
         implements InstanceIdentifierSpecification {
     InstanceIdentifierSpecificationImpl(final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
         super(ctx);
-    }
-
-    @Nonnull
-    @Override
-    public String getName() {
-        return argument();
-    }
-
-    @Override
-    public RequireInstanceStatement getRequireInstance() {
-        return firstDeclared(RequireInstanceStatement.class);
     }
 }

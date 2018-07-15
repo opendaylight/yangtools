@@ -16,9 +16,4 @@ final class RevisionDateStatementImpl extends AbstractDeclaredStatement<Revision
     RevisionDateStatementImpl(final StmtContext<Revision, RevisionDateStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public Revision getDate() {
-        return argument();
-    }
 }

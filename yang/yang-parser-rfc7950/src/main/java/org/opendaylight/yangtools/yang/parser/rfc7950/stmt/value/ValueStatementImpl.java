@@ -15,9 +15,4 @@ final class ValueStatementImpl extends AbstractDeclaredStatement<Integer> implem
     ValueStatementImpl(final StmtContext<Integer, ValueStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public int getValue() {
-        return argument();
-    }
 }

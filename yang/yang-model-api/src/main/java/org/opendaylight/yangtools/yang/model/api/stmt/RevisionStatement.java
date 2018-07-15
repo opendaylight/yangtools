@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface RevisionStatement extends DeclaredStatement<Revision>, DocumentationGroup {
-
-    @Nonnull Revision getDate();
+public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
+    default @Nonnull Revision getDate() {
+        return argument();
+    }
 }

@@ -81,7 +81,17 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         return source;
     }
 
+    /**
+     * Returns collection of explicitly declared child statements, while preserving its original ordering from original
+     * source.
+     *
+     * @param type {@link DeclaredStatement} type
+     * @return Collection of statements, which were explicitly declared in source of model.
+     * @throws NullPointerException if {@code type} is null
+     * @deprecated Use {@link #declaredSubstatements(Class)} instead.
+     */
+    @Deprecated
     protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(final Class<S> type) {
-        return Collections2.transform(Collections2.filter(substatements, type::isInstance), type::cast);
+        return declaredSubstatements(type);
     }
 }

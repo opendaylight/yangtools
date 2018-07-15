@@ -7,26 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class ArgumentStatementImpl extends AbstractDeclaredStatement<QName> implements ArgumentStatement {
     ArgumentStatementImpl(final StmtContext<QName, ArgumentStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public QName getName() {
-        return argument();
-    }
-
-    @Override
-    public YinElementStatement getYinElement() {
-        return firstDeclared(YinElementStatement.class);
     }
 }

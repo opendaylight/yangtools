@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
 import java.net.URI;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -16,11 +15,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> implements NamespaceStatement {
     NamespaceStatementImpl(final StmtContext<URI, NamespaceStatement,?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public URI getUri() {
-        return argument();
     }
 }

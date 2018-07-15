@@ -7,43 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.input;
 
-import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.stmt.DataDefinitionStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.InputStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class InputStatementImpl extends AbstractDeclaredStatement<QName> implements InputStatement {
     InputStatementImpl(final StmtContext<QName, InputStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public Collection<? extends TypedefStatement> getTypedefs() {
-        return allDeclared(TypedefStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public Collection<? extends GroupingStatement> getGroupings() {
-        return allDeclared(GroupingStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public Collection<? extends DataDefinitionStatement> getDataDefinitions() {
-        return allDeclared(DataDefinitionStatement.class);
-    }
-
-    @Nonnull
-    @Override
-    public Collection<? extends MustStatement> getMusts() {
-        return allDeclared(MustStatement.class);
     }
 }

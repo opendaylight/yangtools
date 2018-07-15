@@ -9,10 +9,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public interface GroupingStatement extends DeclaredStatement<QName>, DocumentationGroup.WithStatus,
-        DataDefinitionContainer.WithReusableDefinitions, NotificationStatementContainer, ActionStatementContainer {
-
-    @Nonnull QName getName();
+public interface GroupingStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
+        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
+        NotificationStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName> {
+    default @Nonnull QName getName() {
+        return argument();
+    }
 }

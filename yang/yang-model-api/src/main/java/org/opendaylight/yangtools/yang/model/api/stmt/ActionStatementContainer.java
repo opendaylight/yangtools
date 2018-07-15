@@ -15,6 +15,7 @@ import javax.annotation.Nonnull;
  * Statement which can contain action statements.
  */
 @Beta
+@Deprecated
 public interface ActionStatementContainer {
     /**
      * Return actions in this container. Since actions were introduced in RFC7950, hence RFC6020 semantics always

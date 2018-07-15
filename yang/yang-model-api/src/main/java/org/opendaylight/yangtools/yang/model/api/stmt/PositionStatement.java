@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PositionStatement extends DeclaredStatement<Long> {
-
-    long getValue();
+    default long getValue() {
+        return argument().longValue();
+    }
 }

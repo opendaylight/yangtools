@@ -10,8 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import javax.annotation.Nullable;
 
 /**
- * Marker interface for statements which may contain a 'mandaotry' statement, as defined in RFC7950.
+ * Marker interface for statements which may contain a 'mandatory' statement, as defined in RFC7950.
+ *
+ * @deprecated Use {@link MandatoryStatementAwareDeclaredStatement} instead.
  */
+@Deprecated
 public interface MandatoryStatementContainer {
     /**
      * Return a {@link MandatoryStatement} child, if present.

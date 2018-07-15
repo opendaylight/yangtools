@@ -15,9 +15,4 @@ final class FractionDigitsStatementImpl extends AbstractDeclaredStatement<Intege
     FractionDigitsStatementImpl(final StmtContext<Integer, FractionDigitsStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public int getValue() {
-        return argument();
-    }
 }
