@@ -242,7 +242,7 @@ public class DerivedFromXPathFunctionTest {
             derivedFromFunction.call(mockedContext, ImmutableList.of("some-identity", "should not be here"));
             fail("Function call should have failed on invalid number of arguments.");
         } catch (final FunctionCallException ex) {
-            assertEquals("derived-from() takes two arguments: node-set nodes, string identity.", ex.getMessage());
+            assertEquals("derived-from() takes two arguments: node-set nodes, string identity", ex.getMessage());
         }
     }
 
