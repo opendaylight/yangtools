@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.base.Verify;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import org.jaxen.Context;
@@ -175,78 +177,41 @@ final class YangFunctionContext implements FunctionContext {
 
     // derived-from(node-set nodes, string identity) function as per https://tools.ietf.org/html/rfc7950#section-10.4.1
     private static boolean derivedFrom(final Context context, final List<?> args) throws FunctionCallException {
-        if (args == null || args.size() != 1) {
-            throw new FunctionCallException("derived-from() takes two arguments: node-set nodes, string identity.");
-        }
-
-        if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException("Argument 'identity' of derived-from() function should be a String.");
-        }
-
-        final String identityArg = (String) args.get(0);
-
-        Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
-
-        final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
-        final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
-        final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
-            currentNodeContext);
-
-        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
-            return false;
-        }
-
-        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
-            return false;
-        }
-
-        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
-
-        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
-                correspondingSchemaNode);
-        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
-                schemaContext);
-        return isAncestorOf(identityArgSchemaNode, currentNodeIdentitySchemaNode);
+        return commonDerivedFrom("derived-from", context, args)
+                .map(ids -> isAncestorOf(ids.getKey(), ids.getValue()))
+                .orElse(Boolean.FALSE);
     }
 
     // derived-from-or-self(node-set nodes, string identity) function as per
     // https://tools.ietf.org/html/rfc7950#section-10.4.2
     private static boolean derivedFromOrSelf(final Context context, final List<?> args) throws FunctionCallException {
+        return commonDerivedFrom("derived-from-or-self", context, args)
+                .map(ids -> ids.getValue().equals(ids.getKey()) || isAncestorOf(ids.getKey(), ids.getValue()))
+                .orElse(Boolean.FALSE);
+    }
+
+    private static Optional<Entry<IdentitySchemaNode, IdentitySchemaNode>> commonDerivedFrom(final String functionName,
+            final Context context, final List<?> args) throws FunctionCallException {
         if (args == null || args.size() != 1) {
-            throw new FunctionCallException(
-                "derived-from-or-self() takes two arguments: node-set nodes, string identity");
+            throw new FunctionCallException(functionName + "() takes two arguments: node-set nodes, string identity");
         }
-
         if (!(args.get(0) instanceof String)) {
-            throw new FunctionCallException(
-                "Argument 'identity' of derived-from-or-self() function should be a String.");
+            throw new FunctionCallException( "Argument 'identity' of " + functionName
+                + "() function should be a String.");
         }
-
-        final String identityArg = (String) args.get(0);
-
         Verify.verify(context instanceof NormalizedNodeContext, "Unhandled context %s", context.getClass());
 
         final NormalizedNodeContext currentNodeContext = (NormalizedNodeContext) context;
         final SchemaContext schemaContext = getSchemaContext(currentNodeContext);
         final TypedDataSchemaNode correspondingSchemaNode = getCorrespondingTypedSchemaNode(schemaContext,
             currentNodeContext);
-
-        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)) {
-            return false;
+        if (!(correspondingSchemaNode.getType() instanceof IdentityrefTypeDefinition)
+                || !(currentNodeContext.getNode().getValue() instanceof QName)) {
+            return Optional.empty();
         }
-
-        if (!(currentNodeContext.getNode().getValue() instanceof QName)) {
-            return false;
-        }
-
-        final QName currentNodeValue = (QName) currentNodeContext.getNode().getValue();
-
-        final IdentitySchemaNode identityArgSchemaNode = getIdentitySchemaNodeFromString(identityArg, schemaContext,
-                correspondingSchemaNode);
-        final IdentitySchemaNode currentNodeIdentitySchemaNode = getIdentitySchemaNodeFromQName(currentNodeValue,
-                schemaContext);
-        return currentNodeIdentitySchemaNode.equals(identityArgSchemaNode)
-                || isAncestorOf(identityArgSchemaNode, currentNodeIdentitySchemaNode);
+        return Optional.of(new SimpleImmutableEntry<>(
+                getIdentitySchemaNodeFromString((String) args.get(0), schemaContext, correspondingSchemaNode),
+                getIdentitySchemaNodeFromQName((QName) currentNodeContext.getNode().getValue(), schemaContext)));
     }
 
     // enum-value(node-set nodes) function as per https://tools.ietf.org/html/rfc7950#section-10.5.1
