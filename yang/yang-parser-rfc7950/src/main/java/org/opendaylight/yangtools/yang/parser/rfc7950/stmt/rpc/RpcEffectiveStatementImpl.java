@@ -7,120 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.rpc;
 
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableSet;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Objects;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.InputEffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.OutputEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RpcStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.TypedefEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveSchemaNode;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.EffectiveStmtUtils;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.AbstractEffectiveOperationDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RpcEffectiveStatementImpl extends AbstractEffectiveSchemaNode<RpcStatement>
+final class RpcEffectiveStatementImpl extends AbstractEffectiveOperationDefinition<RpcStatement>
         implements RpcDefinition, RpcEffectiveStatement {
-    private final ContainerSchemaNode input;
-    private final ContainerSchemaNode output;
-    private final Set<TypeDefinition<?>> typeDefinitions;
-    private final Set<GroupingDefinition> groupings;
-
     RpcEffectiveStatementImpl(final StmtContext<QName, RpcStatement,
             EffectiveStatement<QName, RpcStatement>> ctx) {
         super(ctx);
-        input = findAsContainer(this, InputEffectiveStatement.class);
-        output = findAsContainer(this, OutputEffectiveStatement.class);
-
-        // initSubstatements
-        Set<GroupingDefinition> groupingsInit = new HashSet<>();
-        Set<TypeDefinition<?>> mutableTypeDefinitions = new LinkedHashSet<>();
-        for (EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
-            if (effectiveStatement instanceof GroupingDefinition) {
-                GroupingDefinition groupingDefinition = (GroupingDefinition) effectiveStatement;
-                groupingsInit.add(groupingDefinition);
-            }
-            if (effectiveStatement instanceof TypedefEffectiveStatement) {
-                TypedefEffectiveStatement typeDef = (TypedefEffectiveStatement) effectiveStatement;
-                TypeDefinition<?> type = typeDef.getTypeDefinition();
-                if (!mutableTypeDefinitions.contains(type)) {
-                    mutableTypeDefinitions.add(type);
-                } else {
-                    throw EffectiveStmtUtils.createNameCollisionSourceException(ctx, effectiveStatement);
-                }
-            }
-        }
-        this.groupings = ImmutableSet.copyOf(groupingsInit);
-        this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
-    }
-
-    private static ContainerSchemaNode findAsContainer(final EffectiveStatement<?, ?> parent,
-            final Class<? extends EffectiveStatement<QName, ?>> statementType) {
-        final EffectiveStatement<?, ?> statement = parent.findFirstEffectiveSubstatement(statementType).get();
-        Verify.verify(statement instanceof ContainerSchemaNode, "Child statement %s is not a ContainerSchemaNode");
-        return (ContainerSchemaNode) statement;
-    }
-
-    @Override
-    public ContainerSchemaNode getInput() {
-        return input;
-    }
-
-    @Override
-    public ContainerSchemaNode getOutput() {
-        return output;
-    }
-
-    @Override
-    public Set<TypeDefinition<?>> getTypeDefinitions() {
-        return typeDefinitions;
-    }
-
-    @Override
-    public Set<GroupingDefinition> getGroupings() {
-        return groupings;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Objects.hashCode(getQName());
-        result = prime * result + Objects.hashCode(getPath());
-        return result;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RpcEffectiveStatementImpl other = (RpcEffectiveStatementImpl) obj;
-        return Objects.equals(getQName(), other.getQName()) && Objects.equals(getPath(), other.getPath());
-    }
-
-    @Override
-    public String toString() {
-        return RpcEffectiveStatementImpl.class.getSimpleName() + "["
-                + "qname=" + getQName()
-                + ", path=" +  getPath()
-                + ", input=" + input
-                + ", output=" + output
-                + "]";
     }
 }
