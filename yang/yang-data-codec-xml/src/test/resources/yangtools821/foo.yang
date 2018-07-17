@@ -1,0 +1,41 @@
+module foo {
+    namespace "urn:opendaylight:params:xml:ns:yang:foo";
+    prefix foo;
+
+    revision 2018-07-18;
+
+    container root {
+        list foo {
+            key name;
+            leaf name {
+                type string;
+            }
+        }
+        list bar {
+            key name;
+            leaf name {
+                type string;
+            }
+            container container-in-list {
+            }
+        }
+    }
+
+    augment /root/bar/container-in-list {
+        leaf ref-from-aug {
+            type leafref {
+                path "/root/foo/name";
+            }
+        }
+    }
+
+    augment /root/bar/ {
+        container container-from-aug {
+            leaf ref-in-container {
+                type leafref {
+                    path "/root/foo/name";
+                }
+            }
+        }
+    }
+}

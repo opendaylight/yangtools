@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -220,7 +221,13 @@ public final class LeafRefValidatation {
             final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
 
             for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
+                if (child instanceof AugmentationNode) {
+                    validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current
+                        .node(child.getIdentifier()));
+                    return;
+                }
                 final QName qname = child.getNodeType();
+
 
                 final LeafRefContext childReferencedByCtx;
                 if (referencedByCtx != null) {
@@ -249,6 +256,11 @@ public final class LeafRefValidatation {
             for (final MapEntryNode mapEntry : map.getValue()) {
                 final YangInstanceIdentifier mapEntryYangInstanceIdentifier = current.node(mapEntry.getIdentifier());
                 for (final DataContainerChild<? extends PathArgument, ?> mapEntryNode : mapEntry.getValue()) {
+                    if (mapEntryNode instanceof AugmentationNode) {
+                        validateNodeData(mapEntryNode, referencedByCtx, referencingCtx, modificationType, current
+                            .node(mapEntryNode.getIdentifier()));
+                        return;
+                    }
                     final QName qname = mapEntryNode.getNodeType();
 
                     final LeafRefContext childReferencedByCtx;
