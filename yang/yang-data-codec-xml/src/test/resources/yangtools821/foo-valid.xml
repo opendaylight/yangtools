@@ -1,0 +1,11 @@
+<root xmlns="urn:opendaylight:params:xml:ns:yang:foo">
+    <foo>
+        <name>foo1</name>
+    </foo>
+    <bar>
+        <name>bar1</name>
+        <container-in-list>
+            <ref-from-aug>foo1</ref-from-aug>
+        </container-in-list>
+    </bar>
+</root>
