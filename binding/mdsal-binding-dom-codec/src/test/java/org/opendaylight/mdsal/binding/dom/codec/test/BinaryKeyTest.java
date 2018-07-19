@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
-import com.google.common.base.Optional;
+import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryList;
 import org.opendaylight.yang.gen.v1.odl.test.binary.key.rev160101.BinaryListBuilder;

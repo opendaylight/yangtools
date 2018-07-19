@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -20,6 +19,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.BiFunction;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
@@ -321,7 +321,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         @SuppressWarnings("unchecked")
         @Override
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
-            return input.transform(data -> (T) ctx.deserialize(data));
+            return input.map(data -> (T) ctx.deserialize(data));
         }
     }
 
