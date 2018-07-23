@@ -14,6 +14,7 @@ import java.lang.reflect.Proxy;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -21,7 +22,6 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
-import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

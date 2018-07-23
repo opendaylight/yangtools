@@ -5,14 +5,14 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding.util;
+package org.opendaylight.mdsal.binding.spec.reflect;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.yangtools.yang.binding.util.AugmentationFieldGetter.getGetter;
+import static org.opendaylight.mdsal.binding.spec.reflect.AugmentationFieldGetter.getGetter;
 
 import java.util.HashMap;
 import java.util.Map;

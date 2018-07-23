@@ -5,9 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding.util;
+package org.opendaylight.mdsal.binding.spec.reflect;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -24,7 +25,6 @@ import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Deprecated
 abstract class AugmentationFieldGetter {
 
     private static final Logger LOG = LoggerFactory.getLogger(AugmentationFieldGetter.class);
@@ -91,7 +91,7 @@ abstract class AugmentationFieldGetter {
         private final MethodHandle fieldGetter;
 
         ReflectionAugmentationFieldGetter(final MethodHandle mh) {
-            this.fieldGetter = Preconditions.checkNotNull(mh);
+            this.fieldGetter = requireNonNull(mh);
         }
 
         @Override

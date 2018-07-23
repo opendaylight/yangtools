@@ -9,9 +9,9 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.base.Preconditions;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
-import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
 
 final class IdentityCodec implements Codec<QName, Class<?>> {
