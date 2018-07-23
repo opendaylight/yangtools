@@ -25,8 +25,8 @@ import org.slf4j.LoggerFactory;
  * Provides single method invocation of RPCs on supplied instance.
  *
  * <p>
- * RPC Service invoker provides common invocation interface for any subtype of {@link RpcService}.
- * via {@link #invokeRpc(RpcService, QName, DataObject)} method.
+ * RPC Service invoker provides common invocation interface for any subtype of {@link RpcService} via
+ * {@link #invokeRpc(RpcService, QName, DataObject)} method.
  */
 public abstract class RpcServiceInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(RpcServiceInvoker.class);
@@ -45,7 +45,7 @@ public abstract class RpcServiceInvoker {
      * Creates an RPCServiceInvoker for specified QName-&lt;Method mapping.
      *
      * @param qnameToMethod translation mapping, must not be null nor empty.
-     * @return An {@link RpcMethodInvoker} instance.
+     * @return An {@link RpcServiceInvoker} instance.
      */
     public static RpcServiceInvoker from(final Map<QName, Method> qnameToMethod) {
         Preconditions.checkArgument(!qnameToMethod.isEmpty());
