@@ -38,11 +38,10 @@ public final class NotificationListenerInvoker {
     private static final Lookup LOOKUP = MethodHandles.publicLookup();
 
     private static final LoadingCache<Class<? extends NotificationListener>, NotificationListenerInvoker> INVOKERS =
-            CacheBuilder .newBuilder().weakKeys()
+            CacheBuilder.newBuilder().weakKeys()
             .build(new CacheLoader<Class<? extends NotificationListener>, NotificationListenerInvoker>() {
-
-                private NotificationListenerInvoker createInvoker(
-                        final Class<? extends NotificationListener> key) {
+                @Override
+                public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) {
                     return new NotificationListenerInvoker(createInvokerMap(key));
                 }
 
@@ -66,17 +65,11 @@ public final class NotificationListenerInvoker {
                     }
                     return ret.build();
                 }
-
-                @Override
-                public NotificationListenerInvoker load(final Class<? extends NotificationListener> key) {
-                    return createInvoker(key);
-                }
-
             });
 
     private final Map<QName, MethodHandle> methodInvokers;
 
-    public NotificationListenerInvoker(final Map<QName, MethodHandle> map) {
+    NotificationListenerInvoker(final Map<QName, MethodHandle> map) {
         this.methodInvokers = map;
     }
 
@@ -97,13 +90,9 @@ public final class NotificationListenerInvoker {
     /**
      * Invokes supplied RPC on provided implementation of RPC Service.
      *
-     * @param impl
-     *            Imlementation on which notifiaction callback should be
-     *            invoked.
-     * @param rpcName
-     *            Name of RPC to be invoked.
-     * @param input
-     *            Input data for RPC.
+     * @param impl Implementation on which notification callback should be invoked.
+     * @param rpcName Name of RPC to be invoked.
+     * @param input Input data for RPC.
      */
     @SuppressWarnings("checkstyle:illegalCatch")
     public void invokeNotification(@Nonnull final NotificationListener impl, @Nonnull final QName rpcName,
