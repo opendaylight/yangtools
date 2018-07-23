@@ -1,0 +1,67 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7d2d5ac2_9e5af89b",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 7,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-07-23T15:36:09Z",
+      "side": 1,
+      "message": "This should be just above Change-Id: in the format:\n\nJIRA: YANGTOOLS-821",
+      "range": {
+        "startLine": 7,
+        "startChar": 0,
+        "endLine": 7,
+        "endChar": 14
+      },
+      "revId": "7ed6ec68677d9f350e9ed375791f7b18e9a38df5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "50602994_5d151ebb",
+        "filename": "/COMMIT_MSG",
+        "patchSetId": 1
+      },
+      "lineNbr": 8,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-07-23T15:36:09Z",
+      "side": 1,
+      "message": "Please add a longer description of what the problem was.",
+      "revId": "7ed6ec68677d9f350e9ed375791f7b18e9a38df5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "b205ee7f_b73f6aba",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/leafref/LeafRefValidatation.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 230,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-07-23T15:36:09Z",
+      "side": 1,
+      "message": "whitespace:\n\nqname should be separated from previous block, and not from childReferencedByCtx",
+      "range": {
+        "startLine": 229,
+        "startChar": 0,
+        "endLine": 230,
+        "endChar": 0
+      },
+      "revId": "7ed6ec68677d9f350e9ed375791f7b18e9a38df5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
