@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.binding.util;
+package org.opendaylight.mdsal.binding.spec.util;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.opendaylight.yangtools.yang.binding.util.DataObjectReadingUtil.readData;
+import static org.opendaylight.mdsal.binding.spec.util.DataObjectReadingUtil.readData;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
@@ -28,8 +28,6 @@ import org.mockito.MockitoAnnotations;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.test.mock.Node;
-import org.opendaylight.yangtools.yang.binding.test.mock.Nodes;
 
 public class DataObjectReadingUtilTest {
 
