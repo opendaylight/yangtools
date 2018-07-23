@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static extension org.apache.commons.text.StringEscapeUtils.escapeJava;
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.AUGMENTATION_FIELD
-import static org.opendaylight.yangtools.yang.binding.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
+import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 
 import com.google.common.base.MoreObjects
 import com.google.common.collect.ImmutableMap
@@ -38,10 +38,10 @@ import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl
 import org.opendaylight.mdsal.binding.model.util.Types
 import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
 import org.opendaylight.yangtools.yang.binding.Augmentable
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import org.opendaylight.yangtools.yang.binding.BindingMapping
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
 import org.opendaylight.yangtools.yang.binding.Identifiable

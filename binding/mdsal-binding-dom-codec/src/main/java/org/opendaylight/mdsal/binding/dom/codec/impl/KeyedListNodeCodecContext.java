@@ -9,8 +9,8 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.lang.reflect.Method;
 import java.util.List;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;

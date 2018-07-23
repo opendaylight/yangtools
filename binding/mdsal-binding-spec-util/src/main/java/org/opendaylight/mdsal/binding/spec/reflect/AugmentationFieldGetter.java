@@ -19,9 +19,9 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Map;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
-import org.opendaylight.yangtools.yang.binding.BindingMapping;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

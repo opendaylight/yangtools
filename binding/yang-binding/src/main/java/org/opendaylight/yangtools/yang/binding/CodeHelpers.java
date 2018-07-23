@@ -125,7 +125,7 @@ public final class CodeHelpers {
      */
     public static void checkPattern(final String value, final Pattern pattern, final String regex) {
         if (!pattern.matcher(value).matches()) {
-            final String match = BindingMapping.isNegatedPattern(pattern) ? "matches forbidden"
+            final String match = RegexPatterns.isNegatedPattern(pattern) ? "matches forbidden"
                 : "does not match required";
             throw new IllegalArgumentException("Supplied value \"" + value + "\" " + match + " pattern \""
                     + regex + "\"");

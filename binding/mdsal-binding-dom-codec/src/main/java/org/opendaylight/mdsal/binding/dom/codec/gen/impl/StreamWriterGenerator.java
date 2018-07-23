@@ -11,7 +11,7 @@ import org.opendaylight.mdsal.binding.dom.codec.util.AugmentableDispatchSerializ
 import org.opendaylight.mdsal.binding.dom.codec.util.ChoiceDispatchSerializer;
 import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.yangtools.yang.binding.BindingMapping;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
