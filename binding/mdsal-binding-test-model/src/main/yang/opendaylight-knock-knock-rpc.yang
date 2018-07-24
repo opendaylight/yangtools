@@ -1,0 +1,29 @@
+module opendaylight-knock-knock-rpc {
+    namespace "urn:opendaylight:params:xml:ns:yang:md:sal:knock-knock";
+    prefix knock-knock;
+
+    import yang-ext {prefix ext;}
+    import opendaylight-test-routed-rpc {prefix routed;}
+
+    revision 2018-07-23 {
+    }
+
+    rpc knock-knock {
+        input {
+            leaf knocker-id {
+                ext:context-reference routed:test-context;
+                type instance-identifier;
+            }
+
+            leaf question {
+                type string;
+            }
+        }
+
+        output {
+            leaf answer {
+                type string;
+            }
+        }
+    }
+}

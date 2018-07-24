@@ -134,23 +134,4 @@ module opendaylight-of-migration-test-model {
             type string;
         }
     }
-
-    rpc knock-knock {
-        input {
-            leaf knocker-id {
-                ext:context-reference routed:test-context;
-                type instance-identifier;
-            }
-
-            leaf question {
-                type string;
-            }
-        }
-
-        output {
-            leaf answer {
-                type string;
-            }
-        }
-    }
 }
