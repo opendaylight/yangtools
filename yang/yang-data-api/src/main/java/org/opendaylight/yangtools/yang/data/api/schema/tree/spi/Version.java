@@ -13,9 +13,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
  * same.
  */
 public final class Version {
-    private Version() {
 
-    }
+    private Version() { }
 
     /**
      * Create a new version, distinct from any other version.
@@ -34,5 +33,10 @@ public final class Version {
      */
     public static Version initial() {
         return new Version();
+    }
+
+    @Override
+    public String toString() {
+        return Integer.toHexString(hashCode());
     }
 }
