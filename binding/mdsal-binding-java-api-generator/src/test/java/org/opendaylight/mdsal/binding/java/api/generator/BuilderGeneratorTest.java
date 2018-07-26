@@ -12,12 +12,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
@@ -126,16 +123,9 @@ public class BuilderGeneratorTest {
         return genType;
     }
 
-    @SuppressWarnings("unchecked")
     private static CharSequence genToString(final GeneratedType genType) {
-        try {
-            final BuilderTemplate bt = new BuilderTemplate(genType);
-            final Field propertiesField = bt.getClass().getDeclaredField(PROPERTIES_FIELD_NAME);
-            propertiesField.setAccessible(true);
-            return bt.generateToString((Collection<GeneratedProperty>) propertiesField.get(bt));
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException e) {
-            throw new RuntimeException(e);
-        }
+        final BuilderTemplate bt = BuilderGenerator.templateForType(genType);
+        return bt.generateToString(bt.properties);
     }
 
     private static GeneratedType mockGenType(final String methodeName) {

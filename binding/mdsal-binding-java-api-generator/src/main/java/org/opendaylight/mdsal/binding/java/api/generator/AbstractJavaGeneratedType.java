@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Streams;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,21 +49,29 @@ abstract class AbstractJavaGeneratedType {
         for (GeneratedType type : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
             b.put(type.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, type));
         }
+        collectInheritedEnclosedTypes(b, genType);
+
         enclosedTypes = b.build();
-        conflictingNames = genType instanceof Enumeration
-                ? ((Enumeration) genType).getValues().stream().map(Pair::getMappedName).collect(toImmutableSet())
-                        : ImmutableSet.of();
+
+        if (genType instanceof Enumeration) {
+            conflictingNames = ((Enumeration) genType).getValues().stream().map(Pair::getMappedName)
+                    .collect(toImmutableSet());
+        } else {
+            conflictingNames = ImmutableSet.of();
+        }
     }
 
-    AbstractJavaGeneratedType(final JavaTypeName name, final GeneratedType genType) {
-        this.name = requireNonNull(name);
-        enclosedTypes = ImmutableMap.of();
-
-        // This is a workaround for BuilderTemplate, which does not model itself correctly -- it should generate
-        // a GeneratedType for the Builder with a nested type for the implementation, which really should be
-        // a different template which gets generated as an inner type.
-        conflictingNames = Streams.concat(genType.getEnclosedTypes().stream(), genType.getEnumerations().stream())
-        .map(type -> type.getIdentifier().simpleName()).collect(toImmutableSet());
+    private void collectInheritedEnclosedTypes(Builder<String, NestedJavaGeneratedType> builder,
+            GeneratedType type) {
+        for (Type impl : type.getImplements()) {
+            if (impl instanceof GeneratedType) {
+                final GeneratedType genType = (GeneratedType) impl;
+                for (GeneratedType inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
+                    builder.put(inner.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, inner));
+                }
+                collectInheritedEnclosedTypes(builder, genType);
+            }
+        }
     }
 
     final JavaTypeName getName() {

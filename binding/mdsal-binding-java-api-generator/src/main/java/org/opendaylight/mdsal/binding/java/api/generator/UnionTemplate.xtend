@@ -114,10 +114,9 @@ class UnionTemplate extends ClassTemplate {
                 return new «String.importedName»(«field»);
                 «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration
                         || propRet.fullyQualifiedName.startsWith("java.math")»
-                   ««« type int*, uint, decimal64 or enumeration*
+                    ««« type int*, uint, decimal64 or enumeration*
                 return «field».toString();
-                «ELSEIF propRet instanceof GeneratedTransferObject
-                        && (propRet as GeneratedTransferObject).unionType»
+                «ELSEIF propRet instanceof GeneratedTransferObject && (propRet as GeneratedTransferObject).unionType»
                     ««« union type
                 return «field».stringValue();
                 «ELSEIF propRet instanceof GeneratedTransferObject // Is it a GeneratedTransferObject

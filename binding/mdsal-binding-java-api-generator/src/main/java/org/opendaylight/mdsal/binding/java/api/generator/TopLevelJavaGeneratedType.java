@@ -30,10 +30,6 @@ final class TopLevelJavaGeneratedType extends AbstractJavaGeneratedType {
         super(genType);
     }
 
-    TopLevelJavaGeneratedType(final JavaTypeName name, final GeneratedType genType) {
-        super(name, genType);
-    }
-
     @Override
     String localTypeName(@NonNull final JavaTypeName type) {
         // Locally-anchored type, this is simple: just strip the first local name component and concat the others

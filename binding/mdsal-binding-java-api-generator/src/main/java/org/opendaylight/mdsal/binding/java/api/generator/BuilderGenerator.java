@@ -7,10 +7,34 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableSortedSet;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.opendaylight.mdsal.binding.model.api.CodeGenerator;
+import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.MethodSignature;
+import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTOBuilder;
+import org.opendaylight.mdsal.binding.model.api.type.builder.GeneratedTypeBuilder;
+import org.opendaylight.mdsal.binding.model.util.ReferencedTypeImpl;
+import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTOBuilder;
+import org.opendaylight.mdsal.binding.model.util.generated.type.builder.CodegenGeneratedTypeBuilder;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 
@@ -22,11 +46,19 @@ import org.opendaylight.yangtools.yang.binding.Augmentation;
  *
  */
 public final class BuilderGenerator implements CodeGenerator {
+    private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
+    private static final Type AUGMENTATION_RET_TYPE;
 
-    /**
-     * Constant used as sufix for builder name.
-     */
-    public static final String BUILDER = "Builder";
+    static {
+        final Method m;
+        try {
+            m = Augmentable.class.getDeclaredMethod(AUGMENTABLE_AUGMENTATION_NAME, Class.class);
+        } catch (NoSuchMethodException e) {
+            throw new ExceptionInInitializerError(e);
+        }
+
+        AUGMENTATION_RET_TYPE = new ReferencedTypeImpl(JavaTypeName.create(m.getReturnType()));
+    }
 
     /**
      * Passes via list of implemented types in <code>type</code>.
@@ -60,16 +92,134 @@ public final class BuilderGenerator implements CodeGenerator {
     @Override
     public String generate(Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
-            final GeneratedType genType = (GeneratedType) type;
-            final BuilderTemplate template = new BuilderTemplate(genType);
-            return template.generate();
+            return templateForType((GeneratedType) type).generate();
         }
         return "";
     }
 
     @Override
     public String getUnitName(Type type) {
-        return type.getName() + BUILDER;
+        return type.getName() + BuilderTemplate.BUILDER;
     }
 
+    @VisibleForTesting
+    static BuilderTemplate templateForType(GeneratedType type) {
+        final GeneratedType genType = type;
+        final JavaTypeName origName = genType.getIdentifier();
+
+        final Set<MethodSignature> methods = new LinkedHashSet<>();
+        final Type augmentType = createMethods(genType, methods);
+        final Set<MethodSignature> sortedMethods = ImmutableSortedSet.orderedBy(METHOD_COMPARATOR)
+                .addAll(methods).build();
+
+        final GeneratedTypeBuilder builderTypeBuilder = new CodegenGeneratedTypeBuilder(
+            origName.createSibling(origName.simpleName() + BuilderTemplate.BUILDER));
+
+        final GeneratedTOBuilder implTypeBuilder = builderTypeBuilder.addEnclosingTransferObject(
+            origName.simpleName() + "Impl");
+        implTypeBuilder.addImplementsType(genType);
+
+        return new BuilderTemplate(builderTypeBuilder.build(), genType, propertiesFromMethods(sortedMethods),
+            augmentType, getKey(genType));
+    }
+
+    private static Type getKey(GeneratedType type) {
+        for (MethodSignature m : type.getMethodDefinitions()) {
+            if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(m.getName())) {
+                return m.getReturnType();
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns set of method signature instances which contains all the methods of the <code>genType</code>
+     * and all the methods of the implemented interfaces.
+     *
+     * @returns set of method signature instances
+     */
+    private static ParameterizedType createMethods(GeneratedType type, Set<MethodSignature> methods) {
+        methods.addAll(type.getMethodDefinitions());
+        return collectImplementedMethods(type, methods, type.getImplements());
+    }
+
+    /**
+     * Adds to the <code>methods</code> set all the methods of the <code>implementedIfcs</code>
+     * and recursively their implemented interfaces.
+     *
+     * @param methods set of method signatures
+     * @param implementedIfcs list of implemented interfaces
+     */
+    private static ParameterizedType collectImplementedMethods(GeneratedType type, Set<MethodSignature> methods,
+            List<Type> implementedIfcs) {
+        if (implementedIfcs == null || implementedIfcs.isEmpty()) {
+            return null;
+        }
+
+        ParameterizedType augmentType = null;
+        for (Type implementedIfc : implementedIfcs) {
+            if (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject)) {
+                final GeneratedType ifc = (GeneratedType) implementedIfc;
+                methods.addAll(ifc.getMethodDefinitions());
+
+                final ParameterizedType t = collectImplementedMethods(type, methods, ifc.getImplements());
+                if (t != null && augmentType == null) {
+                    augmentType = t;
+                }
+            } else if (Augmentable.class.getName().equals(implementedIfc.getFullyQualifiedName())) {
+                augmentType = Types.parameterizedTypeFor(AUGMENTATION_RET_TYPE,
+                    new ReferencedTypeImpl(type.getIdentifier()));
+            }
+        }
+
+        return augmentType;
+    }
+
+    /**
+     * Creates set of generated property instances from getter <code>methods</code>.
+     *
+     * @param set of method signature instances which should be transformed to list of properties
+     * @return set of generated property instances which represents the getter <code>methods</code>
+     */
+    private static Set<GeneratedProperty> propertiesFromMethods(Collection<MethodSignature> methods) {
+        if (methods == null || methods.isEmpty()) {
+            return Collections.emptySet();
+        }
+        final Set<GeneratedProperty> result = new LinkedHashSet<>();
+        for (MethodSignature m : methods) {
+            final GeneratedProperty createdField = propertyFromGetter(m);
+            if (createdField != null) {
+                result.add(createdField);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Creates generated property instance from the getter <code>method</code> name and return type.
+     *
+     * @param method method signature from which is the method name and return type obtained
+     * @return generated property instance for the getter <code>method</code>
+     * @throws IllegalArgumentException<ul>
+     *  <li>if the <code>method</code> equals <code>null</code></li>
+     *  <li>if the name of the <code>method</code> equals <code>null</code></li>
+     *  <li>if the name of the <code>method</code> is empty</li>
+     *  <li>if the return type of the <code>method</code> equals <code>null</code></li>
+     * </ul>
+     */
+    private static GeneratedProperty propertyFromGetter(MethodSignature method) {
+        checkArgument(method != null);
+        checkArgument(method.getReturnType() != null);
+        checkArgument(method.getName() != null);
+        checkArgument(!method.getName().isEmpty());
+        final String prefix = Types.BOOLEAN.equals(method.getReturnType()) ? "is" : "get";
+        if (!method.getName().startsWith(prefix)) {
+            return null;
+        }
+
+        final String fieldName = StringExtensions.toFirstLower(method.getName().substring(prefix.length()));
+        final GeneratedTOBuilder tmpGenTO = new CodegenGeneratedTOBuilder(JavaTypeName.create("foo", "foo"));
+        tmpGenTO.addProperty(fieldName).setReturnType(method.getReturnType());
+        return tmpGenTO.build().getProperties().get(0);
+    }
 }

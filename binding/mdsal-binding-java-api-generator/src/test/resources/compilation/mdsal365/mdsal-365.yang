@@ -1,0 +1,21 @@
+module mdsal-365 {
+    namespace "mdsal-365";
+    prefix "mdsal365";
+
+    grouping special-next-hop-grouping {
+        leaf special-next-hop {
+            type enumeration {
+                enum blackhole {
+                    description "Silently discard the packet.";
+                }
+            }
+        }
+    }
+
+    choice next-hop-options {
+        case special-next-hop {
+            uses special-next-hop-grouping;
+        }
+    }
+}
+
