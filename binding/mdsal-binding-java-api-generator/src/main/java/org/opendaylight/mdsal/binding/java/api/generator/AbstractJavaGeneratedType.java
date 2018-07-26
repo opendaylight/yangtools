@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import static com.google.common.collect.ImmutableSet.toImmutableSet;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
@@ -15,6 +14,7 @@ import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
@@ -49,27 +49,26 @@ abstract class AbstractJavaGeneratedType {
         for (GeneratedType type : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
             b.put(type.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, type));
         }
-        collectInheritedEnclosedTypes(b, genType);
-
         enclosedTypes = b.build();
 
+        final Set<String> cb = new HashSet<>();
         if (genType instanceof Enumeration) {
-            conflictingNames = ((Enumeration) genType).getValues().stream().map(Pair::getMappedName)
-                    .collect(toImmutableSet());
-        } else {
-            conflictingNames = ImmutableSet.of();
+            ((Enumeration) genType).getValues().stream().map(Pair::getMappedName).forEach(cb::add);
         }
+        // TODO: perhaps we can do something smarter to actually access the types
+        collectAccessibleTypes(cb, genType);
+
+        conflictingNames = ImmutableSet.copyOf(cb);
     }
 
-    private void collectInheritedEnclosedTypes(Builder<String, NestedJavaGeneratedType> builder,
-            GeneratedType type) {
+    private void collectAccessibleTypes(Set<String> set, GeneratedType type) {
         for (Type impl : type.getImplements()) {
             if (impl instanceof GeneratedType) {
                 final GeneratedType genType = (GeneratedType) impl;
                 for (GeneratedType inner : Iterables.concat(genType.getEnclosedTypes(), genType.getEnumerations())) {
-                    builder.put(inner.getIdentifier().simpleName(), new NestedJavaGeneratedType(this, inner));
+                    set.add(inner.getIdentifier().simpleName());
                 }
-                collectInheritedEnclosedTypes(builder, genType);
+                collectAccessibleTypes(set, genType);
             }
         }
     }
