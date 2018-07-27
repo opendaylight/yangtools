@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import org.mockito.Mockito;
 import org.mockito.internal.stubbing.answers.ThrowsException;
-import org.mockito.internal.stubbing.answers.ThrowsExceptionClass;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
@@ -31,7 +30,6 @@ import org.mockito.stubbing.Answer;
  * @see Mockito#mock(Class, Answer)
  *
  * @see ThrowsException
- * @see ThrowsExceptionClass
  *
  * @author Michael Vorburger
  */
@@ -45,7 +43,7 @@ public final class ThrowsMethodExceptionAnswer implements Answer<Object>, Serial
     }
 
     @Override
-    public Void answer(final InvocationOnMock invocation) throws Throwable {
+    public Void answer(final InvocationOnMock invocation) {
         throw new UnstubbedMethodException(invocation.getMethod());
     }
 
