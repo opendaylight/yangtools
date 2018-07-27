@@ -12,7 +12,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -66,7 +67,7 @@ public class DataTreeCandidatesTest {
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
         DataTreeCandidates.applyToCursor(mockedCursor, mockedDataTreeCandidate);
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedCursor, times(1)).delete(isNull());
     }
 
     @Test
@@ -77,15 +78,15 @@ public class DataTreeCandidatesTest {
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
-        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(any(YangInstanceIdentifier.class));
+        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(isNull());
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
 
         DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
-        verify(mockedModification, times(1)).openCursor(any(YangInstanceIdentifier.class));
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedModification, times(1)).openCursor(isNull());
+        verify(mockedCursor, times(1)).delete(isNull());
 
         doReturn(Boolean.TRUE).when(mockedRootPath).isEmpty();
         try {

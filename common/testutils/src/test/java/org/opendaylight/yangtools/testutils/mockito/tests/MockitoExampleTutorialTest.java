@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.testutils.mockito.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -60,9 +60,7 @@ public class MockitoExampleTutorialTest {
     public void usingMockitoToStubComplexCase() {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenAnswer(invocation -> {
-            // Urgh! This is ugly.. (Mockito 2.0 may be better,
-            // see http://site.mockito.org/mockito/docs/current/org/mockito/ArgumentMatcher.html)
-            File file = invocation.getArgumentAt(0, File.class);
+            File file = invocation.getArgument(0);
             return "hello.txt".equals(file.getName()) ? 123 : 0;
         });
         assertEquals(0, service.foobar(new File("belo.txt")));
@@ -92,9 +90,7 @@ public class MockitoExampleTutorialTest {
     public void usingMockitoToStubComplexCaseAndExceptionIfNotStubbed() {
         SomeService service = mock(SomeService.class, exception());
         doAnswer(invocation -> {
-            // Urgh! This is ugly. Mockito may be better,
-            // see http://site.mockito.org/mockito/docs/current/org/mockito/ArgumentMatcher.html
-            File file = (File) invocation.getArguments()[0];
+            File file = invocation.getArgument(0);
             return "hello.txt".equals(file.getName()) ? 123 : 0;
         }).when(service).foobar(any());
         assertEquals(123, service.foobar(new File("hello.txt")));

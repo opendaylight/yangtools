@@ -22,7 +22,7 @@ import java.util.SortedMap;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -55,9 +55,7 @@ public class DataNodeIteratorTest {
     }
 
     private static <T extends OperationDefinition> T mockOperationDefinition(final T mock) {
-        doReturn(Collections.emptySet()).when(mock).getGroupings();
         doReturn(Collections.emptySet()).when(mock).getTypeDefinitions();
-        doReturn(mockDataNodeContainer(ContainerSchemaNode.class)).when(mock).getInput();
         doReturn(mockDataNodeContainer(ContainerSchemaNode.class)).when(mock).getOutput();
         return mock;
     }

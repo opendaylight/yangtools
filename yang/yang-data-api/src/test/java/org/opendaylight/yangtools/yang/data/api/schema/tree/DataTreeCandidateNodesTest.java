@@ -11,7 +11,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -45,7 +46,7 @@ public class DataTreeCandidateNodesTest {
         final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).write(any(PathArgument.class), any(NormalizedNode.class));
+        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
     }
 
     @Test
@@ -55,7 +56,7 @@ public class DataTreeCandidateNodesTest {
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedCursor, times(1)).delete(isNull());
     }
 
     @Test
@@ -84,9 +85,9 @@ public class DataTreeCandidateNodesTest {
         doReturn(childNodes).when(mockedDataTreeCandidateNode).getChildNodes();
 
         DataTreeCandidateNodes.applyToCursor(mockedCursor, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(2)).enter(any(PathArgument.class));
-        verify(mockedCursor, times(2)).delete(any(PathArgument.class));
-        verify(mockedCursor, times(1)).write(any(PathArgument.class), any(NormalizedNode.class));
+        verify(mockedCursor, times(2)).enter((PathArgument) isNull());
+        verify(mockedCursor, times(2)).delete(isNull());
+        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
     }
 
     @Test
@@ -113,7 +114,7 @@ public class DataTreeCandidateNodesTest {
         final NormalizedNode<?, ?> mockedNormalizedNode = mock(NormalizedNode.class);
         doReturn(Optional.of(mockedNormalizedNode)).when(mockedDataTreeCandidateNode).getDataAfter();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, mockedRootPath, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).write(any(PathArgument.class), any(NormalizedNode.class));
+        verify(mockedCursor, times(1)).write(isNull(), any(NormalizedNode.class));
     }
 
     @Test
@@ -124,7 +125,7 @@ public class DataTreeCandidateNodesTest {
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, mockedRootPath, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedCursor, times(1)).delete(isNull());
     }
 
     @Test
@@ -140,8 +141,8 @@ public class DataTreeCandidateNodesTest {
         doReturn(Collections.singletonList(mockedChildNode1)).when(mockedDataTreeCandidateNode).getChildNodes();
 
         DataTreeCandidateNodes.applyRootedNodeToCursor(mockedCursor, mockedRootPath, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).enter(any(PathArgument.class));
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedCursor, times(1)).enter((PathArgument) isNull());
+        verify(mockedCursor, times(1)).delete(isNull());
     }
 
     @Test
@@ -171,7 +172,7 @@ public class DataTreeCandidateNodesTest {
         doReturn(Collections.singletonList(mockedChildNode1)).when(mockedDataTreeCandidateNode).getChildNodes();
 
         DataTreeCandidateNodes.applyRootToCursor(mockedCursor, mockedDataTreeCandidateNode);
-        verify(mockedCursor, times(1)).delete(any(PathArgument.class));
+        verify(mockedCursor, times(1)).delete(isNull());
     }
 
     @Test
