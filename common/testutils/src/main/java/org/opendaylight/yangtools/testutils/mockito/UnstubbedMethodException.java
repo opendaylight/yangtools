@@ -24,6 +24,6 @@ public class UnstubbedMethodException extends UnsupportedOperationException {
 
     public UnstubbedMethodException(final Method method, final Object mockAbstractFakeObject) {
         super(MethodExtensions.toString(method) + " is not implemented in "
-                + new MockUtil().getMockName(mockAbstractFakeObject).toString());
+                + MockUtil.getMockName(mockAbstractFakeObject).toString());
     }
 }
