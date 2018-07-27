@@ -17,7 +17,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Supplier;
@@ -53,7 +52,7 @@ public abstract class BaseCompilationTest {
 
     protected static final void generateTestSources(final List<Type> types, final File sourcesOutputDir)
             throws IOException {
-        Collections.sort(types, (o1, o2) -> o2.getName().compareTo(o1.getName()));
+        types.sort((o1, o2) -> o2.getName().compareTo(o1.getName()));
 
         final GeneratorJavaFile generator = new GeneratorJavaFile(ImmutableSet.copyOf(types));
         final Table<?, String, Supplier<String>> generatedFiles = generator.generateFileContent(true);

@@ -61,7 +61,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
     private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class, InvocationHandler.class);
-    private static final Comparator<Method> METHOD_BY_ALPHABET = (o1, o2) -> o1.getName().compareTo(o2.getName());
+    private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
 
     private final ImmutableMap<String, LeafNodeCodecContext<?>> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
