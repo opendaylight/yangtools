@@ -8,7 +8,7 @@
 package org.mockito.configuration;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
