@@ -12,10 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
+import org.opendaylight.mdsal.binding.model.api.Restrictions;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.model.util.Types;
 
@@ -80,5 +82,30 @@ class JavaFileTemplate {
     boolean isLocalInnerClass(final JavaTypeName name) {
         final Optional<JavaTypeName> optEnc = name.immediatelyEnclosingClass();
         return optEnc.isPresent() && type.getIdentifier().equals(optEnc.get());
+    }
+
+    final CharSequence generateInnerClass(final GeneratedType innerClass) {
+        if (!(innerClass instanceof GeneratedTransferObject)) {
+            return "";
+        }
+
+        final GeneratedTransferObject gto = (GeneratedTransferObject) innerClass;
+        final NestedJavaGeneratedType innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
+        return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
+                : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
+    }
+
+    static final Restrictions restrictionsForSetter(final Type actualType) {
+        return actualType instanceof GeneratedType ? null : getRestrictions(actualType);
+    }
+
+    static final Restrictions getRestrictions(final Type type) {
+        if (type instanceof ConcreteType) {
+            return ((ConcreteType) type).getRestrictions();
+        }
+        if (type instanceof GeneratedTransferObject) {
+            return ((GeneratedTransferObject) type).getRestrictions();
+        }
+        return null;
     }
 }

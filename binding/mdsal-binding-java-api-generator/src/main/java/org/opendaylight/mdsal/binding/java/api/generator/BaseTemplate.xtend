@@ -177,7 +177,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         '''
     }
 
-    def String wrapToDocumentation(String text) {
+    def static String wrapToDocumentation(String text) {
         if (text.empty)
             return ""
 
@@ -314,7 +314,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return sb.toString();
     }
 
-    def protected String formatDataForJavaDoc(TypeMember type, String additionalComment) {
+    def protected static String formatDataForJavaDoc(TypeMember type, String additionalComment) {
         val StringBuilder typeDescriptionBuilder = new StringBuilder();
         if (!type.comment.nullOrEmpty) {
             typeDescriptionBuilder.append(formatToParagraph(type.comment))
@@ -356,7 +356,7 @@ abstract class BaseTemplate extends JavaFileTemplate {
         return sb.toString
     }
 
-    protected def formatToParagraph(String text) {
+    protected static def formatToParagraph(String text) {
         if(text === null || text.isEmpty)
             return text
 
@@ -479,32 +479,4 @@ abstract class BaseTemplate extends JavaFileTemplate {
            «ENDIF»
        «ENDFOR»
     '''
-
-    def protected Restrictions restrictionsForSetter(Type actualType) {
-        if (actualType instanceof GeneratedType) {
-            return null;
-        }
-        return actualType.restrictions;
-    }
-
-    def protected generateInnerClass(GeneratedType innerClass) '''
-        «IF innerClass instanceof GeneratedTransferObject»
-            «val innerJavaType = javaType.getEnclosedType(innerClass.identifier)»
-            «IF innerClass.unionType»
-                «new UnionTemplate(innerJavaType, innerClass).generateAsInnerClass»
-            «ELSE»
-                «new ClassTemplate(innerJavaType, innerClass).generateAsInnerClass»
-            «ENDIF»
-        «ENDIF»
-    '''
-
-    def static Restrictions getRestrictions(Type type) {
-        if (type instanceof ConcreteType) {
-            return type.restrictions
-        }
-        if (type instanceof GeneratedTransferObject) {
-            return type.restrictions
-        }
-        return null
-    }
 }
