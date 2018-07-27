@@ -184,9 +184,7 @@ class ClassTemplate extends BaseTemplate {
     def protected innerClassesDeclarations() '''
         «IF !type.enclosedTypes.empty»
             «FOR innerClass : type.enclosedTypes SEPARATOR "\n"»
-                «IF (innerClass instanceof GeneratedTransferObject)»
-                    «new ClassTemplate(javaType.getEnclosedType(innerClass.identifier), innerClass).generateAsInnerClass»
-                «ENDIF»
+                «generateInnerClass(innerClass)»
             «ENDFOR»
         «ENDIF»
     '''

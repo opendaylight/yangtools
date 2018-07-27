@@ -11,7 +11,6 @@ import java.util.List
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
@@ -122,17 +121,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateInnerClasses() '''
         «IF !enclosedGeneratedTypes.empty»
             «FOR innerClass : enclosedGeneratedTypes SEPARATOR "\n"»
-                «IF (innerClass instanceof GeneratedTransferObject)»
-                    «val innerJavaType = javaType.getEnclosedType(innerClass.identifier)»
-                    «IF innerClass.unionType»
-                        «val unionTemplate = new UnionTemplate(innerJavaType, innerClass)»
-                        «unionTemplate.generateAsInnerClass»
-                    «ELSE»
-                        «val classTemplate = new ClassTemplate(innerJavaType, innerClass)»
-                        «classTemplate.generateAsInnerClass»
-                    «ENDIF»
-
-                «ENDIF»
+                «generateInnerClass(innerClass)»
             «ENDFOR»
         «ENDIF»
     '''
