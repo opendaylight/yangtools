@@ -19,7 +19,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -45,10 +45,8 @@ public class ModuleDependencySortTest {
     @Before
     public void before() {
         doReturn("foo").when(fooNoRev).getName();
-        doReturn(FOO_MODULE).when(fooNoRev).getQNameModule();
         doReturn(FOO_MODULE.getNamespace()).when(fooNoRev).getNamespace();
         doReturn(FOO_MODULE.getRevision()).when(fooNoRev).getRevision();
-        doReturn(YangVersion.VERSION_1).when(fooNoRev).getYangVersion();
         doReturn(ImmutableSet.of()).when(fooNoRev).getImports();
         doReturn(ImmutableSet.of()).when(fooNoRev).getSubmodules();
 
@@ -56,19 +54,13 @@ public class ModuleDependencySortTest {
         doReturn(Optional.empty()).when(fooNoRevImport).getRevision();
 
         doReturn("bar").when(bar).getName();
-        doReturn(BAR_MODULE).when(bar).getQNameModule();
         doReturn(BAR_MODULE.getNamespace()).when(bar).getNamespace();
         doReturn(BAR_MODULE.getRevision()).when(bar).getRevision();
         doReturn(YangVersion.VERSION_1).when(bar).getYangVersion();
         doReturn(ImmutableSet.of()).when(bar).getImports();
         doReturn(ImmutableSet.of(barSubmodule)).when(bar).getSubmodules();
 
-        doReturn("bar-submodule").when(barSubmodule).getName();
-        doReturn(BAR_MODULE).when(barSubmodule).getQNameModule();
-        doReturn(BAR_MODULE.getNamespace()).when(barSubmodule).getNamespace();
-        doReturn(BAR_MODULE.getRevision()).when(barSubmodule).getRevision();
         doReturn(ImmutableSet.of(fooNoRevImport)).when(barSubmodule).getImports();
-        doReturn(ImmutableSet.of()).when(barSubmodule).getSubmodules();
     }
 
     @Test
