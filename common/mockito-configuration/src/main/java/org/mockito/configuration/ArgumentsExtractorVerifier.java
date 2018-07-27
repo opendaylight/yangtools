@@ -10,6 +10,7 @@ package org.mockito.configuration;
 import java.util.List;
 import org.mockito.exceptions.base.MockitoException;
 import org.mockito.internal.invocation.InvocationsFinder;
+import org.mockito.internal.verification.VerificationModeFactory;
 import org.mockito.internal.verification.api.VerificationData;
 import org.mockito.invocation.Invocation;
 import org.mockito.verification.VerificationMode;
@@ -22,8 +23,8 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
 
     @Override
     public void verify(final VerificationData data) {
-        InvocationsFinder finder = new InvocationsFinder();
-        List<Invocation> actualInvocations = finder.findInvocations(data.getAllInvocations(), data.getWanted());
+        List<Invocation> actualInvocations =
+            InvocationsFinder.findInvocations(data.getAllInvocations(), data.getWanted());
         if (actualInvocations.size() != 1) {
             throw new MockitoException("This verifier can only be used with 1 invocation, got "
                     + actualInvocations.size());
@@ -32,6 +33,11 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
         arguments = invocation.getArguments();
         invocation.markVerified();
 
+    }
+
+    @Override
+    public VerificationMode description(String description) {
+        return VerificationModeFactory.description(this, description);
     }
 
     public Object[] getArguments() {
