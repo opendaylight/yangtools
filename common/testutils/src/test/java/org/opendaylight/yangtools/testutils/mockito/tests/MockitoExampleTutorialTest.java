@@ -60,9 +60,7 @@ public class MockitoExampleTutorialTest {
     public void usingMockitoToStubComplexCase() {
         SomeService service = mock(SomeService.class);
         when(service.foobar(any())).thenAnswer(invocation -> {
-            // Urgh! This is ugly.. (Mockito 2.0 may be better,
-            // see http://site.mockito.org/mockito/docs/current/org/mockito/ArgumentMatcher.html)
-            File file = invocation.getArgumentAt(0, File.class);
+            File file = invocation.getArgument(0);
             return "hello.txt".equals(file.getName()) ? 123 : 0;
         });
         assertEquals(0, service.foobar(new File("belo.txt")));
