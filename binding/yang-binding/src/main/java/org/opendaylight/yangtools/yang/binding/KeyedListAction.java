@@ -10,25 +10,18 @@ package org.opendaylight.yangtools.yang.binding;
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.FluentFuture;
 import javax.annotation.CheckReturnValue;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**
- * Interface extended by all interfaces generated for a YANG {@code action}.
+ * Interface extended by all interfaces generated for a YANG {@code action} instantiated in keyed lists.
  *
  * @author Robert Varga
  */
 @Beta
 @FunctionalInterface
-public interface Action<P extends InstanceIdentifier<?>, I extends RpcInput, O extends RpcOutput> {
-    /**
-     * Invoke the action.
-     *
-     * @param path Invocation path
-     * @param input Input argument
-     * @return Future result of invocation
-     * @throws NullPointerException if any of the arguments are null
-     */
+public interface KeyedListAction<K extends Identifier<T>, T extends DataObject & Identifiable<K>,
+        I extends RpcInput, O extends RpcOutput> extends Action<KeyedInstanceIdentifier<T, K>, I, O> {
+    @Override
     @CheckReturnValue
-    @NonNull FluentFuture<@NonNull RpcResult<@NonNull O>> invoke(@NonNull P path, @NonNull I input);
+    FluentFuture<RpcResult<O>> invoke(KeyedInstanceIdentifier<T, K> path, I input);
 }
