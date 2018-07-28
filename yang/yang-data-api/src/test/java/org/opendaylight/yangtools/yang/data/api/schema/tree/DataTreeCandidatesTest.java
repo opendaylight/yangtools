@@ -77,14 +77,14 @@ public class DataTreeCandidatesTest {
         final YangInstanceIdentifier mockedRootPath = mock(YangInstanceIdentifier.class);
         doReturn(mockedRootPath).when(mockedDataTreeCandidate).getRootPath();
         final DataTreeModificationCursor mockedCursor = mock(DataTreeModificationCursor.class);
-        doReturn(mockedCursor).when(mockedModification).createCursor(any(YangInstanceIdentifier.class));
+        doReturn(Optional.of(mockedCursor)).when(mockedModification).openCursor(any(YangInstanceIdentifier.class));
         final DataTreeCandidateNode mockedDataTreeCandidateNode = mock(DataTreeCandidateNode.class);
         doReturn(mockedDataTreeCandidateNode).when(mockedDataTreeCandidate).getRootNode();
 
         doReturn(ModificationType.DELETE).when(mockedDataTreeCandidateNode).getModificationType();
 
         DataTreeCandidates.applyToModification(mockedModification, mockedDataTreeCandidate);
-        verify(mockedModification, times(1)).createCursor(any(YangInstanceIdentifier.class));
+        verify(mockedModification, times(1)).openCursor(any(YangInstanceIdentifier.class));
         verify(mockedCursor, times(1)).delete(any(PathArgument.class));
 
         doReturn(Boolean.TRUE).when(mockedRootPath).isEmpty();
