@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -24,8 +25,32 @@ public interface CursorAwareDataTreeSnapshot extends DataTreeSnapshot {
      * @param path Path at which the cursor is to be anchored
      * @return A new cursor, or null if the path does not exist.
      * @throws IllegalStateException if there is another cursor currently open.
+     * @deprecated Use {@link #openCursor(YangInstanceIdentifier)} instead.
      */
+    @Deprecated
     @Nullable DataTreeSnapshotCursor createCursor(@Nonnull YangInstanceIdentifier path);
+
+    /**
+     * Create a new {@link DataTreeSnapshotCursor} at specified path. May fail
+     * if specified path does not exist.
+     *
+     * @param path Path at which the cursor is to be anchored
+     * @return A new cursor, or empty if the path does not exist.
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    default Optional<? extends DataTreeSnapshotCursor> openCursor(@Nonnull final YangInstanceIdentifier path) {
+        return Optional.ofNullable(createCursor(path));
+    }
+
+    /**
+     * Create a new {@link DataTreeSnapshotCursor} at the root of the modification.
+     *
+     * @return A new cursor
+     * @throws IllegalStateException if there is another cursor currently open.
+     */
+    default DataTreeSnapshotCursor openCursor() {
+        return openCursor(YangInstanceIdentifier.EMPTY).get();
+    }
 
     @Override
     CursorAwareDataTreeModification newModification();

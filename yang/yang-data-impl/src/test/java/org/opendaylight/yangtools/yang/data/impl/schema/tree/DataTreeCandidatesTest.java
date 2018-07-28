@@ -13,7 +13,6 @@ import static org.junit.Assert.fail;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -52,7 +51,7 @@ public class DataTreeCandidatesTest {
 
         final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) dataTree.takeSnapshot()
                 .newModification();
-        final DataTreeModificationCursor cursor = modification.createCursor(YangInstanceIdentifier.EMPTY);
+        final DataTreeModificationCursor cursor = modification.openCursor();
         cursor.write(TestModel.TEST_PATH.getLastPathArgument(), testContainer);
         modification.ready();
 
