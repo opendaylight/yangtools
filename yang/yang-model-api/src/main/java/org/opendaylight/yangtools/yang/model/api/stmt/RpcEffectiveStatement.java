@@ -12,6 +12,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
 public interface RpcEffectiveStatement extends SchemaTreeEffectiveStatement<RpcStatement>,
-    DataTreeAwareEffectiveStatement<QName, RpcStatement> {
+    SchemaTreeAwareEffectiveStatement<QName, RpcStatement> {
 
 }

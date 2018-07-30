@@ -48,6 +48,7 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      * @return Schema tree child, or empty
      * @throws NullPointerException if {@code qname} is null
      */
+    // FIXME: make sure this namespace is populated
     default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
             final @NonNull QName qname) {
         return Optional.ofNullable(get(Namespace.class, requireNonNull(qname)));

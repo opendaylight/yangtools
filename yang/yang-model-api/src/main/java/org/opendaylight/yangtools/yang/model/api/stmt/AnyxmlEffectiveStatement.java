@@ -10,6 +10,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 
 @Beta
-public interface AnyxmlEffectiveStatement extends DataTreeEffectiveStatement<AnyxmlStatement> {
+public interface AnyxmlEffectiveStatement extends SchemaTreeEffectiveStatement<AnyxmlStatement> {
 
 }

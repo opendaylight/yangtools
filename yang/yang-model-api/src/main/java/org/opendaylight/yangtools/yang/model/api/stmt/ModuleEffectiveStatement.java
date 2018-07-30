@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 //               an ordinary String. We really want this to be a QName, so that we do not need the localQNameModule
 //               bit, but that may be problematic with ModuleStatement, which is getting created before we even know
 //               the namespace :( A type capture of the string may just be sufficient.
-public interface ModuleEffectiveStatement extends DataTreeAwareEffectiveStatement<String, ModuleStatement> {
+public interface ModuleEffectiveStatement extends SchemaTreeAwareEffectiveStatement<String, ModuleStatement> {
     /**
      * Namespace mapping all known prefixes in a module to their modules. Note this namespace includes the module
      * in which it is instantiated.

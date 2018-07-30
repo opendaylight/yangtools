@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
-public interface ListEffectiveStatement extends DataTreeEffectiveStatement<ListStatement>,
-    DataTreeAwareEffectiveStatement<QName, ListStatement> {
+public interface ListEffectiveStatement extends SchemaTreeEffectiveStatement<ListStatement>,
+    SchemaTreeAwareEffectiveStatement<QName, ListStatement> {
 
 }
