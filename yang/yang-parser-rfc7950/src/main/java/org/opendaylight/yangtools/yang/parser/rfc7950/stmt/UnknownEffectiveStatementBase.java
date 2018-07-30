@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatement<A>>
-        extends AbstractSchemaEffectiveDocumentedNode<A, D> implements UnknownSchemaNode {
+        extends AbstractEffectiveDocumentedNode<A, D> implements UnknownSchemaNode {
 
     private final boolean addedByUses;
     private final boolean addedByAugmentation;

@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
 
 public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
-        extends AbstractSchemaEffectiveDocumentedNode<A, D> implements DataNodeContainer {
+        extends AbstractEffectiveDocumentedNode<A, D> implements DataNodeContainer {
 
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;

@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 @Beta
-public interface ChoiceEffectiveStatement extends SchemaTreeEffectiveStatement<ChoiceStatement>,
-    SchemaTreeAwareEffectiveStatement<QName, ChoiceStatement> {
+public interface ChoiceEffectiveStatement extends EffectiveStatement<QName, ChoiceStatement> {
 
 }

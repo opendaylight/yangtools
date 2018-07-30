@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QName>> extends
-        AbstractSchemaEffectiveDocumentedNode<QName, D> implements SchemaNode {
+        AbstractEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
     private final SchemaPath path;
     private final List<UnknownSchemaNode> unknownNodes;

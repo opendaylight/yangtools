@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.common.QName;
 
 @Beta
-public interface CaseEffectiveStatement extends SchemaTreeEffectiveStatement<CaseStatement>,
-    SchemaTreeAwareEffectiveStatement<QName, CaseStatement> {
+public interface CaseEffectiveStatement extends NamespacedEffectiveStatement<CaseStatement> {
 
 }

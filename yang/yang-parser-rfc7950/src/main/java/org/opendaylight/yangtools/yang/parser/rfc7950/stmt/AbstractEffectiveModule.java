@@ -69,7 +69,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
-        AbstractSchemaEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
+        AbstractEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
     private final String name;
     private final String prefix;
     private final YangVersion yangVersion;
