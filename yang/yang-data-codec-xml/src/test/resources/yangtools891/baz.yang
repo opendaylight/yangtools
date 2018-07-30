@@ -1,0 +1,23 @@
+module baz {
+    namespace "urn:opendaylight:params:xml:ns:yang:baz";
+    prefix baz;
+
+    revision 2018-07-27;
+
+    grouping grouping-with-leafref {
+        leaf ref {
+            type leafref {
+                path "/baz-top/list-in-container/name";
+            }
+        }
+    }
+
+    container baz-top {
+        list list-in-container {
+            key "name";
+            leaf name {
+                type string;
+            }
+        }
+    }
+}

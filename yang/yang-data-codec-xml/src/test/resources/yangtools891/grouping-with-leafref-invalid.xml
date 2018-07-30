@@ -1,0 +1,3 @@
+<root xmlns="urn:opendaylight:params:xml:ns:yang:foo">
+    <ref>name3</ref>
+</root>
