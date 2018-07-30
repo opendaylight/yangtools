@@ -1,0 +1,22 @@
+module bar {
+    namespace "urn:opendaylight:params:xml:ns:yang:bar";
+    prefix bar;
+
+    revision 2018-07-27;
+
+    grouping grouping-with-list {
+        list list-in-grouping {
+            key "name";
+            leaf name {
+                type leafref {
+                    path "../container-in-list/name";
+                }
+            }
+            container container-in-list {
+                leaf name {
+                    type string;
+                }
+            }
+        }
+    }
+}
