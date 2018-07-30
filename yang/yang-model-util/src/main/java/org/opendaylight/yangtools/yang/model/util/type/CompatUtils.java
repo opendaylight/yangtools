@@ -13,6 +13,7 @@ import java.util.Optional;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.DecimalTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -118,7 +119,7 @@ public final class CompatUtils {
      * @param leaf Leaf for which we are acquiring the type
      * @return Potentially base type of the leaf type.
      */
-    @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
+    @Nonnull public static TypeDefinition<?> compatType(@Nonnull final TypedDataSchemaNode leaf) {
         final TypeDefinition<?> leafType = leaf.getType();
         Preconditions.checkNotNull(leafType);
 
@@ -166,6 +167,10 @@ public final class CompatUtils {
             // Other types cannot be constrained, return the base type
             return baseType;
         }
+    }
+
+    @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
+        return compatType(leaf);
     }
 
     private static BinaryTypeDefinition baseTypeIfNotConstrained(final BinaryTypeDefinition type) {
