@@ -1,0 +1,18 @@
+module foo {
+    namespace "urn:opendaylight:params:xml:ns:yang:foo";
+    prefix foo;
+
+    import bar {
+        prefix bar;
+    }
+    import baz {
+        prefix baz;
+    }
+
+    revision 2018-07-27;
+
+    container foo-top {
+        uses bar:grouping-with-list;
+        uses baz:grouping-with-leafref;
+    }
+}

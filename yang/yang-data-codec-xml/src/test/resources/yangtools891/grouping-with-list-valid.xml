@@ -1,0 +1,8 @@
+<foo-top xmlns="urn:opendaylight:params:xml:ns:yang:foo">
+    <list-in-grouping>
+        <name>name1</name>
+        <container-in-list>
+            <name>name1</name>
+        </container-in-list>
+    </list-in-grouping>
+</foo-top>

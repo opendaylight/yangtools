@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.collect.Lists;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -36,6 +35,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
     private final List<QNameWithPredicateBuilder> leafRefPathQnameList = new ArrayList<>();
     private final SchemaContext schemaContext;
     private final Module module;
+    private final Module leafrefModule;
     // FIXME: use for identifier path completion
     private final SchemaNode node;
 
@@ -52,10 +52,11 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         LEAF_REF_PATH, PATH_PREDICATE, PREDICATE_PATH_EQUALITY_EXPR, PATH_KEY_EXPR
     }
 
-    LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module currentModule,
+    LeafRefPathParserListenerImpl(final SchemaContext schemaContext, final Module leafrefModule,
             final SchemaNode currentNode) {
         this.schemaContext = schemaContext;
-        this.module = currentModule;
+        this.module = schemaContext.findModule(currentNode.getQName().getModule()).get();
+        this.leafrefModule = leafrefModule;
         this.node = currentNode;
     }
 
@@ -115,13 +116,13 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
     @Override
     public void enterPrefix(final PrefixContext ctx) {
         final String prefix = ctx.getText();
-        if (!module.getPrefix().equals(prefix)) {
-            final Optional<QNameModule> qnameModuleOpt = getQNameModuleForImportPrefix(prefix);
+        if (!leafrefModule.getPrefix().equals(prefix)) {
+            final Optional<QNameModule> qnameModuleOpt = getQNameModuleForImportPrefix(leafrefModule, prefix);
             checkArgument(qnameModuleOpt.isPresent(), "No module import for prefix: %s in module: %s", prefix,
-                module.getName());
+                leafrefModule.getName());
             currentQnameModule = qnameModuleOpt.get();
         } else {
-            currentQnameModule = module.getQNameModule();
+            currentQnameModule = leafrefModule.getQNameModule();
         }
     }
 
@@ -139,7 +140,11 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
     @Override
     public void exitNode_identifier(final Node_identifierContext ctx) {
         if (currentQnameModule == null) {
-            currentQnameModule = module.getQNameModule();
+            if (relativePath) {
+                currentQnameModule = module.getQNameModule();
+            } else {
+                currentQnameModule = leafrefModule.getQNameModule();
+            }
         }
 
         if (currentParsingState == ParsingState.PREDICATE_PATH_EQUALITY_EXPR) {
@@ -163,13 +168,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         return leafRefPath;
     }
 
-    private URI getNamespaceForImportPrefix(final String prefix) {
-        final ModuleImport moduleImport = getModuleImport(prefix);
-        return schemaContext.findModule(moduleImport.getModuleName(), moduleImport.getRevision()).get().getNamespace();
-    }
-
-    private Optional<QNameModule> getQNameModuleForImportPrefix(final String prefix) {
-        final ModuleImport moduleImport = getModuleImport(prefix);
+    private Optional<QNameModule> getQNameModuleForImportPrefix(final Module targetModule, final String prefix) {
+        final ModuleImport moduleImport = getModuleImport(targetModule, prefix);
         if (moduleImport == null) {
             return Optional.empty();
         }
@@ -179,7 +179,8 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         return schemaContext.findModule(moduleName, revision).map(Module::getQNameModule);
     }
 
-    private ModuleImport getModuleImport(final String prefix) {
-        return module.getImports().stream().filter(imp -> prefix.equals(imp.getPrefix())).findFirst().orElse(null);
+    private ModuleImport getModuleImport(final Module targetModule, final String prefix) {
+        return targetModule.getImports().stream()
+            .filter(imp -> prefix.equals(imp.getPrefix())).findFirst().orElse(null);
     }
 }
