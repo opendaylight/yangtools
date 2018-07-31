@@ -176,7 +176,7 @@ public interface ModelActionBuilder {
 
     default @Nonnull <K, E extends EffectiveStatement<?, ?>,
             N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> Prerequisite<Mutable<?, ?, E>>
-                mutatesEffectiveCtxPath(StmtContext<?, ?, ?> context, Class<N> namespace, Iterable<K> keys) {
+                mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context, final Class<N> namespace, final Iterable<K> keys) {
         throw new UnsupportedOperationException(getClass() + " does not implement mutatesEffectiveCtxPath()");
     }
 
