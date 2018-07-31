@@ -12,7 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import com.puppycrawl.tools.checkstyle.api.DetailAST;
 import com.puppycrawl.tools.checkstyle.api.FullIdent;
 import com.puppycrawl.tools.checkstyle.api.TokenTypes;
-import com.puppycrawl.tools.checkstyle.utils.CheckUtils;
+import com.puppycrawl.tools.checkstyle.utils.CheckUtil;
 import java.util.Set;
 import org.slf4j.Logger;
 
@@ -30,7 +30,7 @@ public final class CheckLoggingUtil {
     }
 
     public static String getTypeName(final DetailAST ast) {
-        final FullIdent ident = CheckUtils.createFullType(ast.findFirstToken(TokenTypes.TYPE));
+        final FullIdent ident = CheckUtil.createFullType(ast.findFirstToken(TokenTypes.TYPE));
         return ident.getText();
     }
 
