@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
@@ -303,7 +301,7 @@ public class Bug4454Test {
     }
 
     @Test
-    public void minMaxListDeleteExceptionTest() {
+    public void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         Map<QName, Object> key = new HashMap<>();
@@ -337,14 +335,18 @@ public class Bug4454Test {
         modificationTree.delete(minMaxLeafBar);
         modificationTree.delete(minMaxLeafBaz);
 
-        try {
-            modificationTree.ready();
-            fail("Should have failed with IAE");
-        } catch (IllegalArgumentException e) {
-            assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)min-max-list does not have enough elements (0), needs at least 1",
-                    e.getMessage());
-        }
+        // This is expected to succeed, simply because the failure should be detected by root mandatory leaf enforcer,
+        // yet we are masking it (due to how the tree is constructed).
+        modificationTree.ready();
+        inMemoryDataTree.validate(modificationTree);
+        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare);
+
+        final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
+        final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MASTER_CONTAINER_PATH);
+
+        // Empty list should have disappeared
+        assertFalse(minMaxListRead.isPresent());
     }
 
     @Test
@@ -386,8 +388,9 @@ public class Bug4454Test {
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
+
+        // Empty list should have disappeared
+        assertFalse(minMaxListRead.isPresent());
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
