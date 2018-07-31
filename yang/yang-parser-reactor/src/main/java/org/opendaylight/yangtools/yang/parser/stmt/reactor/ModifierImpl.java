@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -58,7 +59,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private void checkNotRegistered() {
-        Preconditions.checkState(action == null, "Action was already registered.");
+        checkState(action == null, "Action was already registered.");
     }
 
     private boolean removeSatisfied() {
@@ -85,7 +86,7 @@ final class ModifierImpl implements ModelActionBuilder {
     }
 
     private void applyAction() {
-        Preconditions.checkState(!actionApplied);
+        checkState(!actionApplied);
         action.apply(ctx);
         actionApplied = true;
     }
@@ -128,19 +129,21 @@ final class ModifierImpl implements ModelActionBuilder {
                     final K key, final ModelProcessingPhase phase) {
         checkNotRegistered();
 
-        PhaseModificationInNamespace<C> mod = createModification(phase);
+        final PhaseModificationInNamespace<C> mod = new PhaseModificationInNamespace<>(EFFECTIVE_MODEL);
+        addReq(mod);
+        addMutation(mod);
         contextImpl(context).onNamespaceItemAddedAction((Class) namespace, key, mod);
         return mod;
     }
 
     private static StatementContextBase<?, ?, ?> contextImpl(final Object value) {
-        Preconditions.checkArgument(value instanceof StatementContextBase,
-            "Supplied context %s is not provided by this reactor.", value);
+        checkArgument(value instanceof StatementContextBase, "Supplied context %s is not provided by this reactor.",
+            value);
         return StatementContextBase.class.cast(value);
     }
 
     boolean tryApply() {
-        Preconditions.checkState(action != null, "Action was not defined yet.");
+        checkState(action != null, "Action was not defined yet.");
 
         if (removeSatisfied()) {
             applyAction();
@@ -250,53 +253,22 @@ final class ModifierImpl implements ModelActionBuilder {
     public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final Iterable<K> keys) {
-        final Iterator<K> it = keys.iterator();
-        Preconditions.checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
         checkNotRegistered();
 
-        final PhaseModificationInNamespace<Mutable<?, ?, E>> ret = createModification(EFFECTIVE_MODEL);
-        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, it.next(),
-            (parent, ns, foundKey, foundValue) -> {
-                checkResult((Mutable<?, ?, E>)foundValue, namespace, it, ret);
-            });
-        return ret;
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
-            void mutateNextKey(final StmtContext<?, ?, ?> context, final Class<N> namespace,
-                    final Iterator<K> it, final AbstractPrerequisite<C> result) {
-        final PhaseModificationInNamespace<C> mod = createModification(EFFECTIVE_MODEL);
-        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, it.next(),
-            (parent, ns, foundKey, foundValue) -> {
-                checkResult((C) foundValue, namespace, it, result);
-                mod.resolvePrereq((C) foundValue);
-            });
-    }
-
-    private <C extends Mutable<?, ?, ?>> PhaseModificationInNamespace<C> createModification(
-            final ModelProcessingPhase phase) {
-        final PhaseModificationInNamespace<C> ret = new PhaseModificationInNamespace<>(EFFECTIVE_MODEL);
+        final PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N> ret = new PhaseModificationInNamespacePath<>(
+                EFFECTIVE_MODEL, namespace, keys);
         addReq(ret);
         addMutation(ret);
-        return ret;
-    }
 
-    private <K, C extends Mutable<?, ?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
-            void checkResult(final C context, final Class<N> namespace, final Iterator<K> it,
-                    final AbstractPrerequisite<C> result) {
-        if (it.hasNext()) {
-            mutateNextKey(context, namespace, it, result);
-        } else {
-            result.resolvePrereq(context);
-        }
+        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, ret.nextKey(), ret);
+        return ret;
     }
 
     @Override
     @SuppressWarnings("checkstyle:hiddenField")
     public void apply(final InferenceAction action) {
-        Preconditions.checkState(this.action == null, "Action already defined to %s", this.action);
-        this.action = Preconditions.checkNotNull(action);
+        checkState(this.action == null, "Action already defined to %s", this.action);
+        this.action = requireNonNull(action);
     }
 
     private abstract class AbstractPrerequisite<T> implements Prerequisite<T> {
@@ -306,8 +278,8 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         @SuppressWarnings("checkstyle:hiddenField")
         public final T resolve(final InferenceContext ctx) {
-            Preconditions.checkState(done);
-            Preconditions.checkArgument(ctx == ModifierImpl.this.ctx);
+            checkState(done);
+            checkArgument(ctx == ModifierImpl.this.ctx);
             return value;
         }
 
@@ -336,7 +308,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
+    private final class PhaseMutation<C> extends AbstractPrerequisite<C> implements ContextMutation {
         @SuppressWarnings("unchecked")
         PhaseMutation(final StatementContextBase<?, ?, ?> context, final ModelProcessingPhase phase) {
             context.addMutation(phase, this);
@@ -349,7 +321,7 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
+    private final class PhaseFinished<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnPhaseFinished {
         @SuppressWarnings("unchecked")
         @Override
@@ -359,14 +331,14 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class NamespaceMutation<N extends IdentifierNamespace<?, ?>>
+    private final class NamespaceMutation<N extends IdentifierNamespace<?, ?>>
             extends AbstractPrerequisite<Mutable<?, ?, ?>>  {
         NamespaceMutation(final StatementContextBase<?, ?, ?> ctx, final Class<N> namespace) {
             resolvePrereq(ctx);
         }
     }
 
-    private class AddedToNamespace<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
+    private final class AddedToNamespace<C extends StmtContext<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, OnPhaseFinished {
         private final ModelProcessingPhase phase;
 
@@ -393,12 +365,12 @@ final class ModifierImpl implements ModelActionBuilder {
         }
     }
 
-    private class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
+    private final class PhaseModificationInNamespace<C extends Mutable<?, ?, ?>> extends AbstractPrerequisite<C>
             implements OnNamespaceItemAdded, ContextMutation {
         private final ModelProcessingPhase modPhase;
 
         PhaseModificationInNamespace(final ModelProcessingPhase phase) {
-            Preconditions.checkArgument(phase != null, "Model processing phase must not be null");
+            checkArgument(phase != null, "Model processing phase must not be null");
             this.modPhase = phase;
         }
 
@@ -414,6 +386,46 @@ final class ModifierImpl implements ModelActionBuilder {
         @Override
         public boolean isFinished() {
             return isApplied();
+        }
+    }
+
+    private final class PhaseModificationInNamespacePath<C extends Mutable<?, ?, ?>, K,
+            N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>> extends AbstractPrerequisite<C>
+            implements OnNamespaceItemAdded, ContextMutation {
+        private final ModelProcessingPhase modPhase;
+        private final Class<N> namespace;
+        private final Iterable<K> keys;
+        private final Iterator<K> it;
+
+        PhaseModificationInNamespacePath(final ModelProcessingPhase phase, final Class<N> namespace,
+            final Iterable<K> keys) {
+            this.modPhase = requireNonNull(phase);
+            this.namespace = requireNonNull(namespace);
+            this.keys = requireNonNull(keys);
+            it = keys.iterator();
+            checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
+        }
+
+        K nextKey() {
+            return it.next();
+        }
+
+        @Override
+        public boolean isFinished() {
+            return isApplied();
+        }
+
+        @Override
+        public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
+                final Object key, final Object value) {
+            LOG.debug("Action for {} got key {}", keys, key);
+            if (!it.hasNext()) {
+                resolvePrereq((C) value);
+                return;
+            }
+
+            final K next = nextKey();
+            contextImpl(value).onNamespaceItemAddedAction((Class) namespace, next, this);
         }
     }
 }
