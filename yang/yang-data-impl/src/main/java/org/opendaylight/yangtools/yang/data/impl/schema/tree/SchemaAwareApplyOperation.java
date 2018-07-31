@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -47,7 +49,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
             }
 
-            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
+            return new StructuralContainerModificationStrategy(new ContainerModificationStrategy(containerSchema,
+                treeConfig), ImmutableNodes.containerNode(containerSchema.getQName()));
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
@@ -81,18 +84,23 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation op;
+        final NormalizedNode<?, ?> emptyNode;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
+            emptyNode = ImmutableNodes.listNode(schemaNode.getQName());
         } else if (schemaNode.isUserOrdered()) {
             op = new OrderedMapModificationStrategy(schemaNode, treeConfig);
+            emptyNode = ImmutableNodes.orderedMapNode(schemaNode.getQName());
         } else {
             op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
+            emptyNode = ImmutableNodes.mapNode(schemaNode.getQName());
         }
-        return MinMaxElementsValidation.from(op, schemaNode);
+
+        return new StructuralContainerModificationStrategy(MinMaxElementsValidation.from(op, schemaNode), emptyNode);
     }
 
     private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
