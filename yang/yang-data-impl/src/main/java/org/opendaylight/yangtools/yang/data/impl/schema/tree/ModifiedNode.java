@@ -276,11 +276,16 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
             case WRITE:
                 // A WRITE can collapse all of its children
                 if (!children.isEmpty()) {
-                    value = schema.apply(this, getOriginal(), version).get().getData();
+                    value = schema.apply(this, getOriginal(), version).map(TreeNode::getData).orElse(null);
                     children.clear();
                 }
 
-                schema.verifyStructure(value, true);
+                if (value == null) {
+                    // The write has ended up being empty, such as a write of an empty list.
+                    updateOperationType(LogicalOperation.DELETE);
+                } else {
+                    schema.verifyStructure(value, true);
+                }
                 break;
             default:
                 break;
