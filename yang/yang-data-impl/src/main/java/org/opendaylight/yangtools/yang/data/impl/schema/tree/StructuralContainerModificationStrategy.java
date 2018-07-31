@@ -7,19 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
  * Structural containers are special in that they appear when implied by child nodes and disappear whenever they are
@@ -28,6 +27,10 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * logic, but wrap it so we only call out into it. We do not use {@link PresenceContainerModificationStrategy} because
  * it enforces presence of mandatory leaves, which is not something we want here, as structural containers are not
  * root anchors for that validation.
+ *
+ * <p>
+ * This behavior is also applicable to lists, hence we use this as a wrapper around the various list modification
+ * strategies.
  */
 final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
     /**
@@ -37,16 +40,17 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
      * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
      */
     private static final Version FAKE_VERSION = Version.initial();
-    private final ContainerModificationStrategy delegate;
+    private final ModificationApplyOperation delegate;
+    private final NormalizedNode<?, ?> emptyNode;
 
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode,
-        final DataTreeConfiguration treeConfig) {
-        this.delegate = new ContainerModificationStrategy(schemaNode, treeConfig);
+    StructuralContainerModificationStrategy(final ModificationApplyOperation delegate,
+            final NormalizedNode<?, ?> emptyNode) {
+        this.delegate = requireNonNull(delegate);
+        this.emptyNode = requireNonNull(emptyNode);
     }
 
     private Optional<TreeNode> fakeMeta(final Version version) {
-        final ContainerNode container = ImmutableNodes.containerNode(delegate.getSchema().getQName());
-        return Optional.of(TreeNodeFactory.createTreeNode(container, version));
+        return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
     }
 
     @Override
@@ -82,12 +86,17 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
          * our job. Check if there are any child nodes left. If there are none, remove this container and turn the
          * modification into a DISAPPEARED.
          */
-        if (((NormalizedNodeContainer<?, ?, ?>) ret.get().getData()).getValue().isEmpty()) {
-            modification.resolveModificationType(ModificationType.DISAPPEARED);
-            return Optional.empty();
+        final NormalizedNode<?, ?> data = ret.get().getData();
+        final boolean empty;
+        if (data instanceof NormalizedNodeContainer) {
+            empty = ((NormalizedNodeContainer<?, ?, ?>) data).getValue().isEmpty();
+        } else if (data instanceof OrderedNodeContainer) {
+            empty = ((OrderedNodeContainer<?>) data).getSize() == 0;
+        } else {
+            throw new IllegalStateException("Unhandled data " + data);
         }
 
-        return ret;
+        return empty ? Optional.empty() : ret;
     }
 
     @Override
