@@ -29,8 +29,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -43,13 +45,14 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     // FIXME: enforce leaves not coming from two case statements at the same time
     private final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final Map<PathArgument, CaseEnforcer> caseEnforcers;
+    private final ChoiceNode emptyNode;
 
-    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
+    ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(ChoiceNode.class, treeConfig);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
-        for (final CaseSchemaNode caze : schemaNode.getCases().values()) {
+        for (final CaseSchemaNode caze : schema.getCases().values()) {
             final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
                 for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {
@@ -72,6 +75,21 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                 Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
         }
         exclusions = ImmutableMap.copyOf(exclusionsBuilder);
+        emptyNode = ImmutableNodes.choiceNode(schema.getQName());
+    }
+
+
+    @Override
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
+        return AutomaticStructuralSupport.apply(super::apply, emptyNode, modification, storeMeta, version);
+    }
+
+    @Override
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        AutomaticStructuralSupport.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
+            version);
     }
 
     @Override

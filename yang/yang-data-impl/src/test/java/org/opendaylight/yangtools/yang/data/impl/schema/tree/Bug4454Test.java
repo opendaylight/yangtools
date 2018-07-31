@@ -386,8 +386,9 @@ public class Bug4454Test {
 
         final DataTreeSnapshot snapshotAfterCommit = inMemoryDataTree.takeSnapshot();
         final Optional<NormalizedNode<?, ?>> minMaxListRead = snapshotAfterCommit.readNode(MIN_MAX_LIST_NO_MINMAX_PATH);
-        assertTrue(minMaxListRead.isPresent());
-        assertTrue(((NormalizedNodeContainer<?, ?, ?>) minMaxListRead.get()).getValue().size() == 0);
+
+        // Empty list should have disappeared
+        assertFalse(minMaxListRead.isPresent());
     }
 
     private static void testLoop(final DataTreeSnapshot snapshot, final String first, final String second) {
