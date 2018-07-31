@@ -43,11 +43,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
         if (schemaNode instanceof ContainerSchemaNode) {
             final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
-            if (containerSchema.isPresenceContainer()) {
-                return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
-            }
-
-            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
+            return containerSchema.isPresenceContainer()
+                    ? new PresenceContainerModificationStrategy(containerSchema, treeConfig)
+                            : new StructuralContainerModificationStrategy(containerSchema, treeConfig);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
@@ -81,7 +79,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation op;
@@ -92,6 +90,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         } else {
             op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
         }
+
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
@@ -121,7 +120,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final void checkApplicable(final ModificationPath path, final NodeModification modification,
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
             case DELETE:
@@ -196,7 +195,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         switch (modification.getOperation()) {
             case DELETE:
