@@ -36,7 +36,7 @@ final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implement
 
     @Override
     public Optional<String> getSymbolicName() {
-        return Optional.of(delegate.toString());
+        return Optional.of("[" + delegate.toString() + "]");
     }
 
     @Override

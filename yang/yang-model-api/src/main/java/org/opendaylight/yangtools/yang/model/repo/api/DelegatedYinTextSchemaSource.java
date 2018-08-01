@@ -37,7 +37,7 @@ final class DelegatedYinTextSchemaSource extends YinTextSchemaSource
 
     @Override
     public Optional<String> getSymbolicName() {
-        return Optional.of(delegate.toString());
+        return Optional.of("[" + delegate.toString() + "]");
     }
 
     @Override
