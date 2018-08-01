@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ * Copyright (c) 2018 Pantheon Technologies, s.r.o. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -16,10 +16,11 @@ import java.io.InputStream;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Delegator;
 
-final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
+final class DelegatedYinTextSchemaSource extends YinTextSchemaSource
+        implements Delegator<ByteSource> {
     private final ByteSource delegate;
 
-    DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
+    DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
         super(identifier);
         this.delegate = requireNonNull(delegate);
     }
