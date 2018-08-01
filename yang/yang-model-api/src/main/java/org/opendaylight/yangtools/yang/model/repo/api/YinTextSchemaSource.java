@@ -16,12 +16,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
@@ -108,30 +106,5 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
         return new ResourceYinTextSchemaSource(identifier, url);
-    }
-
-    private static final class DelegatedYinTextSchemaSource extends YinTextSchemaSource
-            implements Delegator<ByteSource> {
-        private final ByteSource delegate;
-
-        private DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
-            super(identifier);
-            this.delegate = requireNonNull(delegate);
-        }
-
-        @Override
-        public ByteSource getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public InputStream openStream() throws IOException {
-            return delegate.openStream();
-        }
-
-        @Override
-        protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-            return toStringHelper.add("delegate", delegate);
-        }
     }
 }
