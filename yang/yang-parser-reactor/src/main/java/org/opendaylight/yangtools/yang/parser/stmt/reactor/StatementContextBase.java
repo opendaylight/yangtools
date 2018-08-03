@@ -26,8 +26,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -104,9 +104,9 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private StatementMap substatements = StatementMap.empty();
 
     private boolean isSupportedToBuildEffective = true;
-    private ModelProcessingPhase completedPhase = null;
-    private D declaredInstance;
-    private E effectiveInstance;
+    private @Nullable ModelProcessingPhase completedPhase;
+    private @Nullable D declaredInstance;
+    private @Nullable E effectiveInstance;
 
     // BooleanFields value
     private byte supportedByFeatures;
@@ -498,7 +498,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *            to be executed (completed)
      * @return if phase was successfully completed
      * @throws SourceException
-     *             when an error occured in source parsing
+     *             when an error occurred in source parsing
      */
     boolean tryToCompletePhase(final ModelProcessingPhase phase) {
 
