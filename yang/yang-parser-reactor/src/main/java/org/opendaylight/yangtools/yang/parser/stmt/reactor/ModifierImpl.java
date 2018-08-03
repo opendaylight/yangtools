@@ -399,6 +399,13 @@ final class ModifierImpl implements ModelActionBuilder {
             LOG.debug("Action for {} got key {}", keys, key);
 
             final StatementContextBase<?, ?, ?> target = contextImpl(value);
+            if (!target.isSupportedByFeatures()) {
+                LOG.debug("Key {} in {} is not supported", key, keys);
+                resolvePrereq(null);
+                action.prerequisiteUnavailable(this);
+                return;
+            }
+
             if (!it.hasNext()) {
                 target.addMutation(modPhase, this);
                 resolvePrereq((C) value);
