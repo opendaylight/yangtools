@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -48,6 +50,15 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
         }
 
         this.mappedChildSchemas = ImmutableMap.copyOf(m);
+    }
+
+    public static AugmentationSchemaNode create(final AugmentationSchemaNode augmentation,
+            final DataNodeContainer schema) {
+        Set<DataSchemaNode> children = new HashSet<>();
+        for (DataSchemaNode augNode : augmentation.getChildNodes()) {
+            children.add(schema.getDataChildByName(augNode.getQName()));
+        }
+        return new EffectiveAugmentationSchema(augmentation, children);
     }
 
     @Override

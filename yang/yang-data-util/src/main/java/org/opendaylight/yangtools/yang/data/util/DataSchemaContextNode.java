@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -147,13 +146,10 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
+    // FIXME: 3.0.0: remove this method
+    public static AugmentationSchemaNode augmentationProxy(final AugmentationSchemaNode augmentation,
             final DataNodeContainer schema) {
-        Set<DataSchemaNode> children = new HashSet<>();
-        for (DataSchemaNode augNode : augmentation.getChildNodes()) {
-            children.add(schema.getDataChildByName(augNode.getQName()));
-        }
-        return new EffectiveAugmentationSchema(augmentation, children);
+        return EffectiveAugmentationSchema.create(augmentation, schema);
     }
 
     /**

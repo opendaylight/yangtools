@@ -14,12 +14,14 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationContextNode extends
         DataContainerContextNode<AugmentationIdentifier> {
 
     AugmentationContextNode(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-        super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema), null);
+        super(augmentationIdentifierFrom(augmentation), EffectiveAugmentationSchema.create(augmentation, schema),
+            null);
     }
 
     @Override
@@ -31,7 +33,7 @@ final class AugmentationContextNode extends
     protected DataSchemaContextNode<?> fromLocalSchemaAndQName(final DataNodeContainer schema, final QName child) {
         DataSchemaNode result = findChildSchemaNode(schema, child);
         // We try to look up if this node was added by augmentation
-        if ((schema instanceof DataSchemaNode) && result.isAugmenting()) {
+        if (schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
         }
         return fromDataSchemaNode(result);
