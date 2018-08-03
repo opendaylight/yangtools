@@ -26,8 +26,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -105,8 +105,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private boolean isSupportedToBuildEffective = true;
     private ModelProcessingPhase completedPhase = null;
-    private D declaredInstance;
-    private E effectiveInstance;
+    private @Nullable D declaredInstance = null;
+    private @Nullable E effectiveInstance = null;
 
     // BooleanFields value
     private byte supportedByFeatures;
