@@ -29,6 +29,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -397,9 +398,17 @@ public final class SchemaUtils {
         return null;
     }
 
+    /**
+     * Create AugmentationIdentifier from an AugmentationSchemaNode.
+     *
+     * @param schema Augmentation schema
+     * @return AugmentationIdentifier for the schema
+     * @throws NullPointerException if {@code schema} is null
+     * @deprecated Use {@link DataSchemaContextNode#augmentationIdentifierFrom(AugmentationSchemaNode)} instead.
+     */
+    @Deprecated
     public static AugmentationIdentifier getNodeIdentifierForAugmentation(final AugmentationSchemaNode schema) {
-        return new AugmentationIdentifier(ImmutableSet.copyOf(Collections2.transform(schema.getChildNodes(),
-            DataSchemaNode::getQName)));
+        return DataSchemaContextNode.augmentationIdentifierFrom(schema);
     }
 
     /**

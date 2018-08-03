@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -35,7 +35,7 @@ public class DataNodeContainerValidator {
 
         if (schema instanceof AugmentationTarget) {
             for (AugmentationSchemaNode augmentation : ((AugmentationTarget) schema).getAvailableAugmentations()) {
-                augments.add(SchemaUtils.getNodeIdentifierForAugmentation(augmentation));
+                augments.add(DataSchemaContextNode.augmentationIdentifierFrom(augmentation));
             }
         }
     }

@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
@@ -138,12 +139,16 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return null;
     }
 
-    public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode augmentation) {
-        ImmutableSet.Builder<QName> potentialChildren = ImmutableSet.builder();
-        for (DataSchemaNode child : augmentation.getChildNodes()) {
-            potentialChildren.add(child.getQName());
-        }
-        return new AugmentationIdentifier(potentialChildren.build());
+    /**
+     * Create AugmentationIdentifier from an AugmentationSchemaNode.
+     *
+     * @param schema Augmentation schema
+     * @return AugmentationIdentifier for the schema
+     * @throws NullPointerException if {@code schema} is null
+     */
+    public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode schema) {
+        return new AugmentationIdentifier(schema.getChildNodes().stream().map(DataSchemaNode::getQName)
+            .collect(Collectors.toSet()));
     }
 
     /**
