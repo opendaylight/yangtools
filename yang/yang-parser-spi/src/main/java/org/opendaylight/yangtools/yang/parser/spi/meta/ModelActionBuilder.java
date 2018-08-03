@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 
+import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -122,6 +124,21 @@ public interface ModelActionBuilder {
          *                            the issue in sources.
          */
         void prerequisiteFailed(Collection<? extends Prerequisite<?>> failed);
+
+        /**
+         * Invoked once the prerequisite is deemed unavailable due to conformance reasons. This typically happens when
+         * a feature-dependent prerequisite does not have the appropriate feature activated.
+         *
+         * <p>
+         * The default implementation invokes {@link #prerequisiteFailed(Collection)}, implementations should override
+         * this method if they wish, for example, to ignore the missing prerequisite.
+         *
+         * @param unavail Unavailable prerequisite
+         */
+        @Beta
+        default void prerequisiteUnavailable(final Prerequisite<?> unavail) {
+            prerequisiteFailed(ImmutableList.of(unavail));
+        }
     }
 
     /**
