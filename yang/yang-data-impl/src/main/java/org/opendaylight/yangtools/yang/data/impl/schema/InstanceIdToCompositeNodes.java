@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,17 +56,8 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * Base strategy for converting an instance identifier into a normalized node structure for container-like types.
  */
 abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
-
-    protected InstanceIdToCompositeNodes(final T identifier) {
+    InstanceIdToCompositeNodes(final T identifier) {
         super(identifier);
-    }
-
-    private static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode augmentation) {
-        final ImmutableSet.Builder<QName> potentialChildren = ImmutableSet.builder();
-        for (final DataSchemaNode child : augmentation.getChildNodes()) {
-            potentialChildren.add(child.getQName());
-        }
-        return new AugmentationIdentifier(potentialChildren.build());
     }
 
     @Override
@@ -256,7 +246,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
         AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-            super(augmentationIdentifierFrom(augmentation),
+            super(DataSchemaContextNode.augmentationIdentifierFrom(augmentation),
                 DataSchemaContextNode.augmentationProxy(augmentation, schema));
         }
 
