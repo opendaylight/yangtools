@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -19,6 +20,7 @@ import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
@@ -48,6 +50,22 @@ public final class EffectiveAugmentationSchema implements AugmentationSchemaNode
         }
 
         this.mappedChildSchemas = ImmutableMap.copyOf(m);
+    }
+
+    /**
+     * Returns an AugmentationSchemaNode as effective in a parent node.
+     *
+     * @param schema Augmentation schema
+     * @param parent Parent schema
+     * @return Adjusted Augmentation schema
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static AugmentationSchemaNode create(final AugmentationSchemaNode schema, final DataNodeContainer parent) {
+        Set<DataSchemaNode> children = new HashSet<>();
+        for (DataSchemaNode augNode : schema.getChildNodes()) {
+            children.add(parent.getDataChildByName(augNode.getQName()));
+        }
+        return new EffectiveAugmentationSchema(schema, children);
     }
 
     @Override
