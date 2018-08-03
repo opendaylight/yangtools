@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.EFFECTIVE_MODEL;
 import static org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase.FULL_DECLARATION;
@@ -266,7 +267,7 @@ final class ModifierImpl implements ModelActionBuilder {
         public final T resolve(final InferenceContext ctx) {
             checkState(done);
             checkArgument(ctx == ModifierImpl.this.ctx);
-            return value;
+            return verifyNotNull(value, "Attempted to access unavailable prerequisite %s", this);
         }
 
         final boolean isDone() {
@@ -399,6 +400,13 @@ final class ModifierImpl implements ModelActionBuilder {
             LOG.debug("Action for {} got key {}", keys, key);
 
             final StatementContextBase<?, ?, ?> target = contextImpl(value);
+            if (!target.isSupportedByFeatures()) {
+                LOG.debug("Key {} in {} is not supported", key, keys);
+                resolvePrereq(null);
+                action.prerequisiteUnavailable(this);
+                return;
+            }
+
             if (!it.hasNext()) {
                 target.addMutation(modPhase, this);
                 resolvePrereq((C) value);
