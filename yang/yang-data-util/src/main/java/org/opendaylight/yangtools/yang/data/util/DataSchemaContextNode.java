@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -78,7 +77,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      * Find a child node identifier by its {@link PathArgument}.
      *
      * @param child Child path argument
-     * @return
+     * @return A child node, or null if not found
      */
     @Nullable public abstract DataSchemaContextNode<?> getChild(PathArgument child);
 
@@ -147,13 +146,19 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
-            final DataNodeContainer schema) {
-        Set<DataSchemaNode> children = new HashSet<>();
-        for (DataSchemaNode augNode : augmentation.getChildNodes()) {
-            children.add(schema.getDataChildByName(augNode.getQName()));
-        }
-        return new EffectiveAugmentationSchema(augmentation, children);
+    /**
+     * Returns an AugmentationSchemaNode as effective in a parent node.
+     *
+     * @param schema Augmentation schema
+     * @param parent Parent schema
+     * @return Adjusted Augmentation schema
+     * @throws NullPointerException if any of the arguments is null
+     * @deprecated Use {@link EffectiveAugmentationSchema#create(AugmentationSchemaNode, DataNodeContainer)} instead.
+     */
+    @Deprecated
+    public static AugmentationSchemaNode augmentationProxy(final AugmentationSchemaNode schema,
+            final DataNodeContainer parent) {
+        return EffectiveAugmentationSchema.create(schema, parent);
     }
 
     /**

@@ -16,12 +16,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -70,15 +68,6 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             potentialChildren.add(child.getQName());
         }
         return new AugmentationIdentifier(potentialChildren.build());
-    }
-
-    private static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
-            final DataNodeContainer schema) {
-        final Set<DataSchemaNode> children = new HashSet<>();
-        for (final DataSchemaNode augNode : augmentation.getChildNodes()) {
-            children.add(schema.getDataChildByName(augNode.getQName()));
-        }
-        return new EffectiveAugmentationSchema(augmentation, children);
     }
 
     @Override
@@ -267,7 +256,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
         AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-            super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema));
+            super(augmentationIdentifierFrom(augmentation), EffectiveAugmentationSchema.create(augmentation, schema));
         }
 
         @Override
