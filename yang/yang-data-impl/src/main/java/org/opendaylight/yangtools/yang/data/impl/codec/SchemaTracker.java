@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.Optional;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -228,11 +227,8 @@ public final class SchemaTracker {
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
         final AugmentationSchemaNode schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
             identifier.getPossibleChildNames());
-        final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for (final DataSchemaNode child : schema.getChildNodes()) {
-            realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
-        }
-        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);
+        final AugmentationSchemaNode resolvedSchema = EffectiveAugmentationSchema.create(schema,
+            (DataNodeContainer) parent);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
     }
