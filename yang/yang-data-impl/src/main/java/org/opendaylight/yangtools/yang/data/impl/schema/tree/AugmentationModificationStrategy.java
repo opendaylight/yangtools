@@ -9,9 +9,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
@@ -20,9 +25,27 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
 final class AugmentationModificationStrategy
         extends AbstractDataNodeContainerModificationStrategy<AugmentationSchemaNode> {
+    private final AugmentationNode emptyNode;
+
     AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
         super(DataSchemaContextNode.augmentationProxy(schema, resolved), AugmentationNode.class, treeConfig);
+        emptyNode = Builders.augmentationBuilder()
+                .withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
+                .build();
+    }
+
+    @Override
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
+        return AutomaticLifecycleMixin.apply(super::apply, emptyNode, modification, storeMeta, version);
+    }
+
+    @Override
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
+            version);
     }
 
     @Override
