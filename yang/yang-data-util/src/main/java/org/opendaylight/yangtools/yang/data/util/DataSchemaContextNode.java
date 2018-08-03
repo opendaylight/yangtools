@@ -147,7 +147,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return new AugmentationIdentifier(potentialChildren.build());
     }
 
-    static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
+    public static AugmentationSchemaNode augmentationProxy(final AugmentationSchemaNode augmentation,
             final DataNodeContainer schema) {
         Set<DataSchemaNode> children = new HashSet<>();
         for (DataSchemaNode augNode : augmentation.getChildNodes()) {

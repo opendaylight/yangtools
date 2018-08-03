@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import java.util.HashSet;
 import java.util.Optional;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -24,6 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -228,11 +227,8 @@ public final class SchemaTracker {
         checkArgument(parent instanceof DataNodeContainer, "Augmentation allowed only in DataNodeContainer", parent);
         final AugmentationSchemaNode schema = SchemaUtils.findSchemaForAugment((AugmentationTarget) parent,
             identifier.getPossibleChildNames());
-        final HashSet<DataSchemaNode> realChildSchemas = new HashSet<>();
-        for (final DataSchemaNode child : schema.getChildNodes()) {
-            realChildSchemas.add(((DataNodeContainer) parent).getDataChildByName(child.getQName()));
-        }
-        final AugmentationSchemaNode resolvedSchema = new EffectiveAugmentationSchema(schema, realChildSchemas);
+        final AugmentationSchemaNode resolvedSchema = DataSchemaContextNode.augmentationProxy(schema,
+            (DataNodeContainer) parent);
         schemaStack.push(resolvedSchema);
         return resolvedSchema;
     }

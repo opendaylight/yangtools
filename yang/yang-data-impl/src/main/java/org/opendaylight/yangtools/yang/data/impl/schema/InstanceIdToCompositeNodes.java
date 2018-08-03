@@ -16,12 +16,10 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -45,6 +43,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -53,7 +52,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Base strategy for converting an instance identifier into a normalized node structure for container-like types.
@@ -70,15 +68,6 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
             potentialChildren.add(child.getQName());
         }
         return new AugmentationIdentifier(potentialChildren.build());
-    }
-
-    private static DataNodeContainer augmentationProxy(final AugmentationSchemaNode augmentation,
-            final DataNodeContainer schema) {
-        final Set<DataSchemaNode> children = new HashSet<>();
-        for (final DataSchemaNode augNode : augmentation.getChildNodes()) {
-            children.add(schema.getDataChildByName(augNode.getQName()));
-        }
-        return new EffectiveAugmentationSchema(augmentation, children);
     }
 
     @Override
@@ -267,7 +256,8 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
 
     static final class AugmentationNormalization extends DataContainerNormalizationOperation<AugmentationIdentifier> {
         AugmentationNormalization(final AugmentationSchemaNode augmentation, final DataNodeContainer schema) {
-            super(augmentationIdentifierFrom(augmentation), augmentationProxy(augmentation, schema));
+            super(augmentationIdentifierFrom(augmentation),
+                DataSchemaContextNode.augmentationProxy(augmentation, schema));
         }
 
         @Override
