@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Multimap;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -202,7 +199,8 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
             final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
                 // FIXME: can we get the augmentation schema?
-                writer.startAugmentationNode(getNodeIdentifierForAugmentation(augmentationToChild.getKey()));
+                writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
+                    augmentationToChild.getKey()));
 
                 for (AbstractNodeDataWithSchema nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer);
@@ -234,9 +232,17 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return null;
     }
 
+    /**
+     * Create AugmentationIdentifier from an AugmentationSchemaNode.
+     *
+     * @param schema Augmentation schema
+     * @return AugmentationIdentifier for the schema
+     * @throws NullPointerException if {@code schema} is null
+     * @deprecated Use {@link DataSchemaContextNode#augmentationIdentifierFrom(AugmentationSchemaNode)} instead.
+     */
+    @Deprecated
     public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(
             final AugmentationSchemaNode schema) {
-        final Collection<QName> qnames = Collections2.transform(schema.getChildNodes(), DataSchemaNode::getQName);
-        return new YangInstanceIdentifier.AugmentationIdentifier(ImmutableSet.copyOf(qnames));
+        return DataSchemaContextNode.augmentationIdentifierFrom(schema);
     }
 }
