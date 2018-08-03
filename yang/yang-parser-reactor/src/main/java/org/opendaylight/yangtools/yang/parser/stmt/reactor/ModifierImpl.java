@@ -249,18 +249,17 @@ final class ModifierImpl implements ModelActionBuilder {
 
     @Nonnull
     @Override
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     public <K, E extends EffectiveStatement<?, ?>, N extends IdentifierNamespace<K, ? extends StmtContext<?, ?, ?>>>
             AbstractPrerequisite<Mutable<?, ?, E>> mutatesEffectiveCtxPath(final StmtContext<?, ?, ?> context,
                     final Class<N> namespace, final Iterable<K> keys) {
         checkNotRegistered();
 
         final PhaseModificationInNamespacePath<Mutable<?, ?, E>, K, N> ret = new PhaseModificationInNamespacePath<>(
-                EFFECTIVE_MODEL, namespace, keys);
+                EFFECTIVE_MODEL, keys);
         addReq(ret);
         addMutation(ret);
 
-        contextImpl(context).onNamespaceItemAddedAction((Class) namespace, ret.nextKey(), ret);
+        ret.hookOnto(context, namespace);
         return ret;
     }
 
@@ -396,16 +395,10 @@ final class ModifierImpl implements ModelActionBuilder {
         private final Iterable<K> keys;
         private final Iterator<K> it;
 
-        PhaseModificationInNamespacePath(final ModelProcessingPhase phase, final Class<N> namespace,
-            final Iterable<K> keys) {
+        PhaseModificationInNamespacePath(final ModelProcessingPhase phase, final Iterable<K> keys) {
             this.modPhase = requireNonNull(phase);
             this.keys = requireNonNull(keys);
             it = keys.iterator();
-            checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
-        }
-
-        K nextKey() {
-            return it.next();
         }
 
         @Override
@@ -417,13 +410,25 @@ final class ModifierImpl implements ModelActionBuilder {
         public void namespaceItemAdded(final StatementContextBase<?, ?, ?> context, final Class<?> namespace,
                 final Object key, final Object value) {
             LOG.debug("Action for {} got key {}", keys, key);
+
+            final StatementContextBase<?, ?, ?> target = contextImpl(value);
             if (!it.hasNext()) {
+                target.addMutation(modPhase, this);
                 resolvePrereq((C) value);
                 return;
             }
 
-            final K next = nextKey();
-            contextImpl(value).onNamespaceItemAddedAction((Class) namespace, next, this);
+            hookOnto(target, namespace, it.next());
+        }
+
+        void hookOnto(final StmtContext<?, ?, ?> context, final Class<?> namespace) {
+            checkArgument(it.hasNext(), "Namespace %s keys may not be empty", namespace);
+            hookOnto(contextImpl(context), namespace, it.next());
+        }
+
+        @SuppressWarnings("unchecked")
+        private void hookOnto(final StatementContextBase<?, ?, ?> context, final Class<?> namespace, final K key) {
+            context.onNamespaceItemAddedAction((Class) namespace, requireNonNull(key), this);
         }
     }
 }
