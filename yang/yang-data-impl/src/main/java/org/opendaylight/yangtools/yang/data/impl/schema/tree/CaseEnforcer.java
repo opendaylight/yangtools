@@ -11,11 +11,9 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -23,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
-import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -54,7 +52,7 @@ final class CaseEnforcer implements Immutable {
             for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
                 if (augment.getChildNodes().stream()
                         .anyMatch(child -> SchemaAwareApplyOperation.belongsToTree(type, child))) {
-                    augmentationsBuilder.put(SchemaUtils.getNodeIdentifierForAugmentation(augment), augment);
+                    augmentationsBuilder.put(DataSchemaContextNode.augmentationIdentifierFrom(augment), augment);
                 }
             }
         }
