@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -463,12 +463,12 @@ public final class SchemaUtils {
         if (node instanceof ChoiceSchemaNode) {
             return ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
         }
-        if (node instanceof RpcDefinition) {
+        if (node instanceof OperationDefinition) {
             switch (qname.getLocalName()) {
                 case "input":
-                    return ((RpcDefinition) node).getInput();
+                    return ((OperationDefinition) node).getInput();
                 case "output":
-                    return ((RpcDefinition) node).getOutput();
+                    return ((OperationDefinition) node).getOutput();
                 default:
                     return null;
             }
