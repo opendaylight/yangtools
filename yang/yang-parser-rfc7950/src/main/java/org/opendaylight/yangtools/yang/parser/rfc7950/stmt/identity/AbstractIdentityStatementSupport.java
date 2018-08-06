@@ -15,37 +15,17 @@ import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 abstract class AbstractIdentityStatementSupport
         extends AbstractQNameStatementSupport<IdentityStatement, EffectiveStatement<QName, IdentityStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractIdentityStatementSupport.class);
 
     AbstractIdentityStatementSupport() {
         super(YangStmtMapping.IDENTITY);
     }
 
     @Override
-    @SuppressWarnings({ "checkstyle:illegalCatch", "checkstyle:avoidHidingCauseException" })
     public final QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        try {
-            return StmtContextUtils.parseIdentifier(ctx, value);
-        } catch (SourceException e) {
-            // FIXME: YANGTOOLS-867: remove this workaround
-            final QName ret;
-            try {
-                ret = StmtContextUtils.qnameFromArgument(ctx, value);
-            } catch (RuntimeException re) {
-                // Lenient parsing failed, report the original exception
-                LOG.debug("Lenient identity parsing failed", re);
-                throw e;
-            }
-
-            LOG.warn("Worked around illegal identity argument '{}' using lenient parsing", value, e);
-            return ret;
-        }
+        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
