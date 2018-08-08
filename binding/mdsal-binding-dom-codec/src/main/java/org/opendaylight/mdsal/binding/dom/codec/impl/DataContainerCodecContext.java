@@ -7,11 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
@@ -125,7 +125,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
      * must issue getChild(ChoiceClass).getChild(CaseClass).
      *
      * @param childClass child class
-     * @return Context of child or Optional absent is supplied class is not applicable in context.
+     * @return Context of child or Optional.empty is supplied class is not applicable in context.
      */
     @Override
     public abstract <C extends DataObject> Optional<DataContainerCodecContext<C,?>> possibleStreamChild(

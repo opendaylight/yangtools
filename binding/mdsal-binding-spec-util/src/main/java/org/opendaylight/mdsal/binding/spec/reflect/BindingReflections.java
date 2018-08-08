@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.base.Optional;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -26,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -119,7 +119,7 @@ public final class BindingReflections {
      *         have name. May return null if QName is not present.
      */
     public static QName findQName(final Class<?> dataType) {
-        return CLASS_TO_QNAME.getUnchecked(dataType).orNull();
+        return CLASS_TO_QNAME.getUnchecked(dataType).orElse(null);
     }
 
     /**
@@ -144,7 +144,7 @@ public final class BindingReflections {
      *
      * @param targetMethod
      *            method to scan
-     * @return Optional.absent() if result type could not be get, or return type is Void.
+     * @return Optional.empty() if result type could not be get, or return type is Void.
      */
     @SuppressWarnings("rawtypes")
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
@@ -155,7 +155,7 @@ public final class BindingReflections {
         if (rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
             return Optional.of((Class) rpcResultArgument);
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     /**
@@ -163,7 +163,7 @@ public final class BindingReflections {
      *
      * @param targetMethod
      *            method to scan
-     * @return Optional.absent() if RPC has no input, RPC input type otherwise.
+     * @return Optional.empty() if RPC has no input, RPC input type otherwise.
      */
     @SuppressWarnings("rawtypes")
     public static Optional<Class<? extends DataContainer>> resolveRpcInputClass(final Method targetMethod) {
@@ -172,7 +172,7 @@ public final class BindingReflections {
                 return Optional.of(clazz);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public static QName getQName(final Class<? extends BaseIdentity> context) {
@@ -425,7 +425,7 @@ public final class BindingReflections {
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
         if ("getClass".equals(method.getName()) || !method.getName().startsWith("get")
                 || method.getParameterTypes().length > 0) {
-            return Optional.absent();
+            return Optional.empty();
         }
 
         Class returnType = method.getReturnType();
@@ -439,7 +439,7 @@ public final class BindingReflections {
                             && DataContainer.class.isAssignableFrom((Class) listResult)) {
                         return Optional.of((Class) listResult);
                     }
-                    return Optional.absent();
+                    return Optional.empty();
                 });
             } catch (Exception e) {
                 /*
@@ -450,7 +450,7 @@ public final class BindingReflections {
                 LOG.debug("Unable to find YANG modeled return type for {}", method, e);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private static class ClassToQNameLoader extends CacheLoader<Class<?>, Optional<QName>> {
@@ -487,7 +487,7 @@ public final class BindingReflections {
                  */
                 LOG.debug("Unexpected exception during extracting QName for {}", key, e);
             }
-            return Optional.absent();
+            return Optional.empty();
         }
 
         /**

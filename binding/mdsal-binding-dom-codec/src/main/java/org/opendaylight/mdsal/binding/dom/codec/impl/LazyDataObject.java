@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationHandler;
@@ -19,6 +18,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;

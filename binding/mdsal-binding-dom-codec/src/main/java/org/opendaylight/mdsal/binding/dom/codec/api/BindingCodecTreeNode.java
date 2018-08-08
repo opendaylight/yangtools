@@ -8,9 +8,9 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableCollection;
 import java.util.List;
+import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -57,7 +57,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * same data was supplied and does not represent augmentation of this node.
      *
      * @param childClass
-     * @return Context of child or Optional absent is supplied class is not
+     * @return Context of child or Optional.empty is supplied class is not
      *         applicable in context.
      */
     <E extends DataObject> Optional<? extends BindingCodecTreeNode<E>> possibleStreamChild(

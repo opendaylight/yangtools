@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
@@ -25,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.annotation.Nonnull;
@@ -202,7 +202,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         if (child != null) {
             return Optional.of((DataContainerCodecContext<C, ?>) child.get());
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     Iterable<Class<?>> getCaseChildrenClasses() {
