@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -49,4 +50,9 @@ public abstract class DerivedNamespaceBehaviour<K, V, L, N extends IdentifierNam
     }
 
     public abstract L getSignificantKey(K key);
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("derivedFrom", derivedFrom.getName());
+    }
 }

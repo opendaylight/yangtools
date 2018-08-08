@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -114,5 +115,10 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
     @Override
     public Map<K, V> getAllFrom(final NamespaceStorageNode storage) {
         return delegate.getAllFrom(storage);
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper).add("delegate", delegate);
     }
 }

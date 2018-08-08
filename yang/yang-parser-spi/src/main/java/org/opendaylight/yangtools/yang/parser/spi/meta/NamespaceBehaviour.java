@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -296,6 +298,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             NamespaceStorageNode current = findClosestTowardsRoot(storage, storageType);
             addToStorage(current, key, value);
         }
+
+        @Override
+        protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper.add("type", storageType));
+        }
     }
 
     static final class TreeScoped<K, V, N extends IdentifierNamespace<K, V>> extends NamespaceBehaviour<K, V, N> {
@@ -344,5 +351,15 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
             current = current.getParentNamespaceStorage();
         }
         return current;
+    }
+
+    @Override
+    // FIXME: 3.0.0: make this final
+    public String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
+
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("identifier", identifier.getName());
     }
 }
