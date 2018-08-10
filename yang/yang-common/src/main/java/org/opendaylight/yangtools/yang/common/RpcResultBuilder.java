@@ -398,7 +398,7 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
      *
      * @param rpcErrors the list of RpcErrors
      */
-    public RpcResultBuilder<T> withRpcErrors(final Collection<RpcError> rpcErrors) {
+    public RpcResultBuilder<T> withRpcErrors(final Collection<? extends RpcError> rpcErrors) {
         if (rpcErrors != null) {
             for (RpcError error : rpcErrors) {
                 addError(error);
