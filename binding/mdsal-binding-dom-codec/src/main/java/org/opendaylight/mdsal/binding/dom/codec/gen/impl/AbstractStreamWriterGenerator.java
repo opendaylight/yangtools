@@ -147,9 +147,9 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
                     type.getTypeName(), type.getClassLoader(), serializerName);
             final DataObjectSerializerSource source = generateEmitterSource(type, serializerName);
             final CtClass poolClass = generateEmitter0(type, source, serializerName);
-            @SuppressWarnings("unchecked")
-            final Class<? extends DataObjectSerializerImplementation> cls = poolClass.toClass(type.getClassLoader(),
-                type.getProtectionDomain());
+            final Class<? extends DataObjectSerializerImplementation> cls =
+                    poolClass.toClass(type.getClassLoader(), type.getProtectionDomain())
+                    .asSubclass(DataObjectSerializerImplementation.class);
 
             /*
              * Due to OSGi class loader rules we cannot initialize the fields during
