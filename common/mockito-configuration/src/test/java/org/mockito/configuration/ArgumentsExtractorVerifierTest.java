@@ -13,7 +13,6 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
-
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,7 +25,7 @@ public class ArgumentsExtractorVerifierTest {
     @Test
     public void test() {
         MockitoAnnotations.initMocks(this);
-        doReturn(true).when(this.mockedList).add(any(String.class));
+        doReturn(Boolean.TRUE).when(this.mockedList).add(any(String.class));
         final String argument = "something";
         this.mockedList.add(argument);
         // retrieve argument
@@ -34,5 +33,4 @@ public class ArgumentsExtractorVerifierTest {
         verify(this.mockedList, argumentsExtractorVerifier).add(any(String.class));
         assertArrayEquals(new Object[] { argument }, argumentsExtractorVerifier.getArguments());
     }
-
 }

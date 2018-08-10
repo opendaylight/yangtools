@@ -19,7 +19,7 @@
  * <p>TODO Point to the "other/new artifact with more sane Mockito helper, with
  * explicit API.
  *
- * @see MockitoConfiguration
+ * @see org.mockito.configuration.MockitoConfiguration
  * @see org.mockito.configuration.IMockitoConfiguration
  */
 package org.mockito.configuration;

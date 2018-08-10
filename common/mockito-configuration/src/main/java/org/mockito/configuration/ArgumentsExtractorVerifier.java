@@ -24,7 +24,7 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
     @Override
     public void verify(final VerificationData data) {
         List<Invocation> actualInvocations =
-            InvocationsFinder.findInvocations(data.getAllInvocations(), data.getWanted());
+            InvocationsFinder.findInvocations(data.getAllInvocations(), data.getTarget());
         if (actualInvocations.size() != 1) {
             throw new MockitoException("This verifier can only be used with 1 invocation, got "
                     + actualInvocations.size());
@@ -36,7 +36,7 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
     }
 
     @Override
-    public VerificationMode description(String description) {
+    public VerificationMode description(final String description) {
         return VerificationModeFactory.description(this, description);
     }
 

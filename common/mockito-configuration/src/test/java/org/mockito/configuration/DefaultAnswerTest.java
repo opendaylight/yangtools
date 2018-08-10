@@ -9,17 +9,16 @@ package org.mockito.configuration;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.mock;
 
 import java.io.Closeable;
 import java.io.IOException;
-
 import org.junit.Test;
-import org.mockito.Mockito;
 
 public class DefaultAnswerTest {
     @Test
     public void testAnswering() throws IOException {
-        Closeable mock = Mockito.mock(Closeable.class);
+        Closeable mock = mock(Closeable.class);
         try {
             mock.close();
             fail();
