@@ -179,7 +179,7 @@ public class InstanceIdentifierTest {
         final InstanceIdentifier<Node> instanceIdentifier =
                 InstanceIdentifier.builder(Nodes.class).child(Node.class,new NodeKey(10)).build();
         final InstanceIdentifier<DataObject> instanceIdentifier1 = InstanceIdentifier.create(DataObject.class);
-        assertNotNull(instanceIdentifier.firstKeyOf(Node.class, null));
+        assertNotNull(instanceIdentifier.firstKeyOf(Node.class));
         assertNull(instanceIdentifier1.firstKeyOf(Node.class));
     }
 
@@ -233,9 +233,9 @@ public class InstanceIdentifierTest {
         assertFalse(builder3.equals(builder4));
         assertFalse(builder4.equals(builder3));
 
-        InstanceIdentifierBuilder<Nodes> iib1 = new InstanceIdentifierBuilderImpl(null, null, 31, true);
-        InstanceIdentifierBuilder<Nodes> iib2 = new InstanceIdentifierBuilderImpl(null, null, 31, false);
-        InstanceIdentifierBuilder<Nodes> iib3 = new InstanceIdentifierBuilderImpl(null, null, 31, true);
+        InstanceIdentifierBuilder<Nodes> iib1 = new InstanceIdentifierBuilderImpl<>(null, null, 31, true);
+        InstanceIdentifierBuilder<Nodes> iib2 = new InstanceIdentifierBuilderImpl<>(null, null, 31, false);
+        InstanceIdentifierBuilder<Nodes> iib3 = new InstanceIdentifierBuilderImpl<>(null, null, 31, true);
         assertFalse(iib1.equals(iib2));
         assertFalse(iib2.equals(iib1));
         assertTrue(iib1.equals(iib3));
