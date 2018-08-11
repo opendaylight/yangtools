@@ -15,13 +15,10 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-import java.io.IOException;
+import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -62,28 +59,17 @@ import org.opendaylight.yangtools.util.HashCodeBuilder;
  */
 public class InstanceIdentifier<T extends DataObject> implements Path<InstanceIdentifier<? extends DataObject>>,
         Immutable, Serializable {
-    private static final Field PATHARGUMENTS_FIELD;
-    private static final long serialVersionUID = 2L;
+    private static final long serialVersionUID = 3L;
+
     /*
-     * Protected to differentiate internal and external access. Internal
-     * access is required never to modify the contents. References passed
-     * to outside entities have to be wrapped in an unmodifiable view.
+     * Protected to differentiate internal and external access. Internal access is required never to modify
+     * the contents. References passed to outside entities have to be wrapped in an unmodifiable view.
      */
-    protected final transient Iterable<PathArgument> pathArguments;
+    final Iterable<PathArgument> pathArguments;
+
     private final Class<T> targetType;
     private final boolean wildcarded;
     private final int hash;
-
-    static {
-        final Field f;
-        try {
-            f = InstanceIdentifier.class.getDeclaredField("pathArguments");
-        } catch (NoSuchFieldException | SecurityException e) {
-            throw new ExceptionInInitializerError(e);
-        }
-        f.setAccessible(true);
-        PATHARGUMENTS_FIELD = f;
-    }
 
     InstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final boolean wildcarded,
             final int hash) {
@@ -910,27 +896,7 @@ public class InstanceIdentifier<T extends DataObject> implements Path<InstanceId
         InstanceIdentifier<T> build();
     }
 
-    private void writeObject(final java.io.ObjectOutputStream out) throws IOException {
-        out.defaultWriteObject();
-        out.writeInt(Iterables.size(pathArguments));
-        for (Object o : pathArguments) {
-            out.writeObject(o);
-        }
-    }
-
-    private void readObject(final java.io.ObjectInputStream in) throws IOException, ClassNotFoundException {
-        in.defaultReadObject();
-
-        final int size = in.readInt();
-        final List<PathArgument> args = new ArrayList<>(size);
-        for (int i = 0; i < size; ++i) {
-            args.add((PathArgument) in.readObject());
-        }
-
-        try {
-            PATHARGUMENTS_FIELD.set(this, ImmutableList.copyOf(args));
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            throw new IOException(e);
-        }
+    private Object writeReplace() throws ObjectStreamException {
+        return new InstanceIdentifierV3<>(this);
     }
 }

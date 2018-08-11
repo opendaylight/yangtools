@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import java.io.ObjectStreamException;
+
 /**
  * An {@link InstanceIdentifier}, which has a list key attached at its last path element.
  *
@@ -15,7 +17,7 @@ package org.opendaylight.yangtools.yang.binding;
  */
 public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K extends Identifier<T>>
         extends InstanceIdentifier<T> {
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 2L;
     private final K key;
 
     KeyedInstanceIdentifier(final Class<T> type, final Iterable<PathArgument> pathArguments, final boolean wildcarded,
@@ -50,5 +52,9 @@ public class KeyedInstanceIdentifier<T extends Identifiable<K> & DataObject, K e
          * end up running that equals anyway, so do not bother here.
          */
         return key == null != (kii.key == null);
+    }
+
+    private Object writeReplace() throws ObjectStreamException {
+        return new KeyedInstanceIdentifierV2<>(this);
     }
 }
