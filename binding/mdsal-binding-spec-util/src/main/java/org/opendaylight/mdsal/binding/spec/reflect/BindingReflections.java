@@ -241,20 +241,6 @@ public final class BindingReflections {
     }
 
     /**
-     * Extract a QNameModule from YangModuleInfo.
-     *
-     * @param modInfo Module info
-     * @return QNameModule for the module
-     * @throws NullPointerException in modInfo is null
-     *
-     * @deprecated Use {@code YangModuleInfo.getName().getModule()} instead.
-     */
-    @Deprecated
-    public static QNameModule getQNameModule(final YangModuleInfo modInfo) {
-        return modInfo.getName().getModule();
-    }
-
-    /**
      * Returns instance of {@link YangModuleInfo} of declaring model for specific class.
      *
      * @param cls data object class
@@ -538,22 +524,6 @@ public final class BindingReflections {
              */
             return module;
         }
-    }
-
-    /**
-     * Given a {@link YangModuleInfo}, create a QName representing it. The QName is formed by reusing the module's
-     * namespace and revision using the module's name as the QName's local name.
-     *
-     * @param moduleInfo
-     *            module information
-     * @return QName representing the module
-     *
-     * @deprecated Use {@link YangModuleInfo#getName()} instead.
-     */
-    @Deprecated
-    public static QName getModuleQName(final YangModuleInfo moduleInfo) {
-        checkArgument(moduleInfo != null, "moduleInfo must not be null.");
-        return moduleInfo.getName();
     }
 
     /**
