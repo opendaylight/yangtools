@@ -390,9 +390,13 @@ public final class LeafRefValidation {
             final YangInstanceIdentifier current) {
         final Optional<DataContainerChild<?, ?>> child = parent.getChild(arg);
         if (!child.isPresent()) {
-            for (final DataContainerChild<?, ?> choice : parent.getValue()) {
-                if (choice instanceof ChoiceNode) {
-                    addValues(values, choice, nodePredicates, path, current);
+            // FIXME: YANGTOOLS-901. We have SchemaContext nearby, hence we should be able to cache how to get
+            //        to the leaf with with specified QName, without having to iterate through Choices/Augmentations.
+            //        That perhaps means we should not have QNameWithPredicates, but NodeIdentifierWithPredicates as
+            //        the path specification.
+            for (final DataContainerChild<?, ?> mixin : parent.getValue()) {
+                if (mixin instanceof AugmentationNode || mixin instanceof ChoiceNode) {
+                    addValues(values, mixin, nodePredicates, path, current);
                 }
             }
         } else {
