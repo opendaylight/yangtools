@@ -1,0 +1,38 @@
+<network-instances xmlns="urn:opendaylight:params:xml:ns:yang:test:network:instance">
+    <network-instance>
+        <name>global-bgp</name>
+        <config>
+            <name>global-bgp</name>
+        </config>
+        <protocols>
+            <protocol>
+                <identifier xmlns:x="urn:opendaylight:params:xml:ns:yang:test:policy:types">x:BGP</identifier>
+                <name>test-bgp-instance</name>
+                <config>
+                    <name>test-bgp-instance</name>
+                    <identifier xmlns:x="urn:opendaylight:params:xml:ns:yang:test:policy:types">x:BGP</identifier>
+                </config>
+                <bgp xmlns="urn:opendaylight:params:xml:ns:yang:bgp:test:extensions">
+                    <neighbors>
+                        <neighbor>
+                            <neighbor-address>10.25.1.9</neighbor-address>
+                            <config>
+                                <peer-group>application-peers</peer-group>
+                            </config>
+                            <afi-safis>
+                                <afi-safi>
+                                    <afi-safi-name xmlns:x="urn:opendaylight:params:xml:ns:yang:test:bgp:types">x:IPV4-UNICAST</afi-safi-name>
+                                    <config>
+                                        <afi-safi-name xmlns:x="urn:opendaylight:params:xml:ns:yang:test:bgp:types">x:IPV4-UNICAST</afi-safi-name>
+                                    </config>
+                                    <receive>true</receive>
+                                    <send-max>0</send-max>
+                                </afi-safi>
+                            </afi-safis>
+                        </neighbor>
+                    </neighbors>
+                </bgp>
+            </protocol>
+        </protocols>
+    </network-instance>
+</network-instances>
