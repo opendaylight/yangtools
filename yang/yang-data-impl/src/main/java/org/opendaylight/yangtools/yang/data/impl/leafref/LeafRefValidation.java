@@ -391,7 +391,7 @@ public final class LeafRefValidation {
         final Optional<DataContainerChild<?, ?>> child = parent.getChild(arg);
         if (!child.isPresent()) {
             for (final DataContainerChild<?, ?> choice : parent.getValue()) {
-                if (choice instanceof ChoiceNode) {
+                if (choice instanceof AugmentationNode || choice instanceof ChoiceNode) {
                     addValues(values, choice, nodePredicates, path, current);
                 }
             }

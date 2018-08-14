@@ -1,0 +1,27 @@
+module bgp-test-extensions {
+    yang-version 1;
+    namespace "urn:opendaylight:params:xml:ns:yang:bgp:test:extensions";
+    prefix "odl-oc-ext";
+
+    import test-bgp-types { prefix bgp-types; }
+    import test-network-instance { prefix netinst; }
+    import test-bgp { prefix test-bgp; }
+
+    revision 2018-08-14;
+
+    augment /netinst:network-instances/netinst:network-instance/netinst:protocols/netinst:protocol {
+        uses test-bgp:bgp-top {
+            augment bgp/neighbors/neighbor/afi-safis/afi-safi {
+                uses test-bgp:bgp-neighbor-add-paths_config;
+            }
+
+            augment bgp/neighbors/neighbor/config {
+                description
+                    "Augmentation to allow association of a neighbor with a
+                     peer-group";
+                uses test-bgp:bgp-neighbor-peer-group_config;
+            }
+        }
+    }
+
+}
