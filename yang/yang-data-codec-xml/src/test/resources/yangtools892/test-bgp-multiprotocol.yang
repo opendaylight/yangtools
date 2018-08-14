@@ -1,0 +1,33 @@
+module test-bgp-multiprotocol {
+    yang-version "1";
+    namespace "urn:opendaylight:params:xml:ns:yang:test:bgp:multiprotocol";
+    prefix "bgp-mp";
+
+    import test-bgp-types { prefix bgp-types; }
+
+    revision "2018-08-14";
+
+    grouping bgp-afi-safi_config {
+        leaf afi-safi-name {
+            type identityref {
+                base bgp-types:afi-safi-type;
+            }
+        }
+    }
+
+    grouping bgp-common-afi-safi-list {
+        list afi-safi {
+            key "afi-safi-name";
+
+            leaf afi-safi-name {
+                type leafref {
+                    path "../config/afi-safi-name";
+                }
+            }
+
+            container config {
+                uses bgp-afi-safi_config;
+            }
+        }
+    }
+}
