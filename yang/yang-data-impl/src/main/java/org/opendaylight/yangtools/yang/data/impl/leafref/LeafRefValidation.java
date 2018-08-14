@@ -390,9 +390,9 @@ public final class LeafRefValidation {
             final YangInstanceIdentifier current) {
         final Optional<DataContainerChild<?, ?>> child = parent.getChild(arg);
         if (!child.isPresent()) {
-            for (final DataContainerChild<?, ?> choice : parent.getValue()) {
-                if (choice instanceof ChoiceNode) {
-                    addValues(values, choice, nodePredicates, path, current);
+            for (final DataContainerChild<?, ?> mixin : parent.getValue()) {
+                if (mixin instanceof AugmentationNode || mixin instanceof ChoiceNode) {
+                    addValues(values, mixin, nodePredicates, path, current);
                 }
             }
         } else {
