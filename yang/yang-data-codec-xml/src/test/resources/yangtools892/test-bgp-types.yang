@@ -1,0 +1,23 @@
+module test-bgp-types {
+    yang-version "1";
+    namespace "urn:opendaylight:params:xml:ns:yang:test:bgp:types";
+    prefix "bgp-types";
+
+    revision "2018-08-14";
+
+    typedef peer-type {
+        type enumeration {
+            enum INTERNAL {
+            }
+            enum EXTERNAL {
+            }
+        }
+    }
+
+    identity afi-safi-type {
+    }
+
+    identity IPV4-UNICAST {
+        base afi-safi-type;
+    }
+}
