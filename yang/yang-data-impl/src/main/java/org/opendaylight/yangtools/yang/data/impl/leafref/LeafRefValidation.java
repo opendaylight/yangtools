@@ -379,8 +379,8 @@ public final class LeafRefValidation {
             if (child.isPresent()) {
                 addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
             } else {
-                forEachChoice(dataContainerNode,
-                    choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
+                forEachMixin(dataContainerNode,
+                    mixin -> addValues(values, mixin, next.getQNamePredicates(), path, current));
             }
         } else if (node instanceof MapNode) {
             Stream<MapEntryNode> entries = ((MapNode) node).getValue().stream();
@@ -393,8 +393,8 @@ public final class LeafRefValidation {
                 if (child.isPresent()) {
                     addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
                 } else {
-                    forEachChoice(mapEntryNode,
-                        choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
+                    forEachMixin(mapEntryNode,
+                        mixin -> addValues(values, mixin, next.getQNamePredicates(), path, current));
                 }
             });
         }
@@ -430,10 +430,10 @@ public final class LeafRefValidation {
         }
     }
 
-    private static void forEachChoice(final DataContainerNode<?> node, final Consumer<ChoiceNode> consumer) {
+    private static void forEachMixin(final DataContainerNode<?> node, final Consumer<NormalizedNode<?, ?>> consumer) {
         for (final DataContainerChild<?, ?> child : node.getValue()) {
-            if (child instanceof ChoiceNode) {
-                consumer.accept((ChoiceNode) child);
+            if (child instanceof ChoiceNode || child instanceof AugmentationNode) {
+                consumer.accept(child);
             }
         }
     }
