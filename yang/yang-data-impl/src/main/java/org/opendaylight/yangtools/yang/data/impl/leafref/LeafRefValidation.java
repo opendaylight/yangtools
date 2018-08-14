@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -374,29 +373,31 @@ public final class LeafRefValidation {
         final QName qname = next.getQName();
         final PathArgument pathArgument = new NodeIdentifier(qname);
         if (node instanceof DataContainerNode) {
-            final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
-            final Optional<DataContainerChild<?, ?>> child = dataContainerNode.getChild(pathArgument);
-            if (child.isPresent()) {
-                addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
-            } else {
-                forEachChoice(dataContainerNode,
-                    choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
-            }
+            processChildNode(values, (DataContainerNode<?>) node, pathArgument, next.getQNamePredicates(), path,
+                current);
         } else if (node instanceof MapNode) {
             Stream<MapEntryNode> entries = ((MapNode) node).getValue().stream();
             if (!nodePredicates.isEmpty() && current != null) {
                 entries = entries.filter(createMapEntryPredicate(nodePredicates, current));
             }
 
-            entries.forEach(mapEntryNode -> {
-                final Optional<DataContainerChild<?, ?>> child = mapEntryNode.getChild(pathArgument);
-                if (child.isPresent()) {
-                    addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
-                } else {
-                    forEachChoice(mapEntryNode,
-                        choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
+            entries.forEach(entry -> processChildNode(values, entry, pathArgument, next.getQNamePredicates(), path,
+                current));
+        }
+    }
+
+    private void processChildNode(final Set<Object> values, final DataContainerNode<?> parent,
+            final PathArgument arg, final List<QNamePredicate> nodePredicates, final Deque<QNameWithPredicate> path,
+            final YangInstanceIdentifier current) {
+        final Optional<DataContainerChild<?, ?>> child = parent.getChild(arg);
+        if (!child.isPresent()) {
+            for (final DataContainerChild<?, ?> mixin : parent.getValue()) {
+                if (mixin instanceof ChoiceNode || mixin instanceof AugmentationNode) {
+                    addValues(values, mixin, nodePredicates, path, current);
                 }
-            });
+            }
+        } else {
+            addNextValues(values, child.get(), nodePredicates, path, current);
         }
     }
 
@@ -427,14 +428,6 @@ public final class LeafRefValidation {
             addValues(values, node, nodePredicates, path, current);
         } finally {
             path.push(element);
-        }
-    }
-
-    private static void forEachChoice(final DataContainerNode<?> node, final Consumer<ChoiceNode> consumer) {
-        for (final DataContainerChild<?, ?> child : node.getValue()) {
-            if (child instanceof ChoiceNode) {
-                consumer.accept((ChoiceNode) child);
-            }
         }
     }
 
