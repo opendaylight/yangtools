@@ -1,0 +1,7 @@
+<bgp xmlns="urn:opendaylight:params:xml:ns:yang:test:bgp">
+    <peer-groups>
+        <peer-group>
+            <peer-group-name>application-peers</peer-group-name>
+        </peer-group>
+    </peer-groups>
+</bgp>
