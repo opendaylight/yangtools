@@ -1,0 +1,70 @@
+module test-network-instance {
+    yang-version "1";
+    namespace "urn:opendaylight:params:xml:ns:yang:test:network:instance";
+    prefix netinst;
+
+    import test-policy-types { prefix "pt"; }
+
+    revision 2018-08-14;
+
+    grouping network-instance-top {
+        container network-instances {
+            list network-instance {
+                key "name";
+
+                leaf name {
+                    type leafref {
+                        path "../config/name";
+                    }
+                }
+
+                container config {
+                    uses network-instance-config;
+                }
+
+                container protocols {
+                    list protocol {
+                        key "identifier name";
+
+                        leaf identifier {
+                            type leafref {
+                                path "../config/identifier";
+                            }
+                        }
+
+                        leaf name {
+                            type leafref {
+                                path "../config/name";
+                            }
+                        }
+
+                        container config {
+                            uses protocols-config;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    grouping network-instance-config {
+        leaf name {
+            type string;
+        }
+    }
+
+    grouping protocols-config {
+        leaf identifier {
+            type identityref {
+                base "pt:install-protocol-type";
+            }
+        }
+
+        leaf name {
+            type string;
+        }
+    }
+
+    uses network-instance-top;
+}
+
