@@ -1,0 +1,14 @@
+module test-policy-types {
+    yang-version "1";
+    namespace "urn:opendaylight:params:xml:ns:yang:test:policy:types";
+    prefix "ptypes";
+
+    revision "2018-08-14";
+
+    identity install-protocol-type {
+    }
+
+    identity BGP {
+        base install-protocol-type;
+    }
+}
