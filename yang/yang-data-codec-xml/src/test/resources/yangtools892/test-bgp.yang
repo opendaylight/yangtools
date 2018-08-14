@@ -1,0 +1,111 @@
+module test-bgp {
+    yang-version "1";
+    namespace "urn:opendaylight:params:xml:ns:yang:test:bgp";
+    prefix "bgp";
+
+    import test-bgp-multiprotocol { prefix bgp-mp; }
+    import test-bgp-types { prefix bgp-types; }
+
+    revision "2018-08-14";
+
+    grouping bgp-neighbor_config {
+        leaf peer-type {
+            type bgp-types:peer-type;
+        }
+    }
+
+    grouping bgp-neighbor-add-paths_config {
+        leaf receive {
+            type boolean;
+            default false;
+        }
+
+        leaf send-max {
+            type uint8;
+        }
+    }
+
+    grouping bgp-neighbor-peer-group_config {
+        leaf peer-group {
+            type leafref {
+                path "/bgp/peer-groups/peer-group/peer-group-name";
+            }
+        }
+    }
+
+    grouping bgp-neighbors {
+        list neighbor {
+            key "neighbor-address";
+
+            leaf neighbor-address {
+                type string;
+            }
+
+            uses bgp-neighbor-group;
+        }
+    }
+
+    grouping bgp-peer-group {
+        list peer-group {
+            key "peer-group-name";
+
+            leaf peer-group-name {
+                type string;
+            }
+
+            uses bgp-neighbor-group;
+
+        }
+    }
+
+    grouping bgp-neighbor-group {
+        container config {
+            uses bgp-neighbor_config;
+        }
+
+        container afi-safis {
+            uses bgp-mp:bgp-common-afi-safi-list;
+        }
+    }
+
+    grouping bgp-neighbor-neighbor-address_config {
+        leaf neighbor-address {
+            type string;
+        }
+    }
+
+    grouping bgp-peer-group-peer-group-name_config {
+        leaf peer-group-name {
+            type string;
+        }
+    }
+
+    augment /bgp/neighbors/neighbor/config {
+        uses bgp-neighbor-peer-group_config;
+    }
+
+    augment /bgp/neighbors/neighbor/config {
+        uses bgp-neighbor-neighbor-address_config;
+    }
+
+    augment /bgp/peer-groups/peer-group/config {
+        uses bgp-peer-group-peer-group-name_config;
+    }
+
+    grouping bgp-top {
+        container bgp {
+            presence "Container for BGP protocol hierarchy";
+
+            container neighbors {
+                uses bgp-neighbors;
+            }
+
+            container peer-groups {
+                uses bgp-peer-group;
+            }
+        }
+    }
+
+    uses bgp-top;
+}
+
