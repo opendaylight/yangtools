@@ -7,11 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
@@ -26,7 +28,14 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class UniqueStatementSupport
         extends AbstractStatementSupport<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement,
                 EffectiveStatement<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement>> {
-    private static final Splitter SPACE_SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
+    /**
+     * Support 'sep' ABNF rule in RFC7950 section 14. CRLF pattern is used to squash line-break from CRLF to LF form
+     * and then we use SEP_SPLITTER, which can operate on single characters.
+     */
+    private static final Pattern CRLF_PATTERN = Pattern.compile("\r\n", Pattern.LITERAL);
+    private static final Splitter SEP_SPLITTER = Splitter.on(CharMatcher.anyOf(" \t\n").precomputed())
+            .omitEmptyStrings();
+
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.UNIQUE)
         .build();
@@ -70,7 +79,11 @@ public final class UniqueStatementSupport
     private static Collection<SchemaNodeIdentifier.Relative> parseUniqueConstraintArgument(
             final StmtContext<?, ?, ?> ctx, final String argumentValue) {
         final Set<SchemaNodeIdentifier.Relative> uniqueConstraintNodes = new HashSet<>();
-        for (final String uniqueArgToken : SPACE_SPLITTER.split(argumentValue)) {
+
+        // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
+        final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
+
+        for (final String uniqueArgToken : SEP_SPLITTER.split(nocrlf)) {
             final SchemaNodeIdentifier nodeIdentifier = ArgumentUtils.nodeIdentifierFromPath(ctx, uniqueArgToken);
             SourceException.throwIf(nodeIdentifier.isAbsolute(), ctx.getStatementSourceReference(),
                     "Unique statement argument '%s' contains schema node identifier '%s' "
