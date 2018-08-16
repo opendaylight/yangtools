@@ -1,0 +1,15 @@
+module ht {
+    namespace "urn:ht";
+    prefix ht;
+
+    list foo {
+        unique "a	b";
+
+        leaf a {
+            type string;
+        }
+        leaf b {
+            type string;
+        }
+    }
+}
