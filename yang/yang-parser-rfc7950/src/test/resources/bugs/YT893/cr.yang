@@ -1,0 +1,15 @@
+module cr {
+    namespace "urn:cr";
+    prefix cr;
+
+    list foo {
+        unique "ab";
+
+        leaf a {
+            type string;
+        }
+        leaf b {
+            type string;
+        }
+    }
+}

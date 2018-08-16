@@ -1,0 +1,16 @@
+module crlf {
+    namespace "urn:crlf";
+    prefix crlf;
+
+    list foo {
+        unique "a
+                b";
+
+        leaf a {
+            type string;
+        }
+        leaf b {
+            type string;
+        }
+    }
+}
