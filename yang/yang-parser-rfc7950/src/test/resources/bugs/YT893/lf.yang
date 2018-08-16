@@ -1,0 +1,16 @@
+module lf {
+    namespace "urn:lf";
+    prefix lf;
+
+    list foo {
+        unique "a
+                b";
+
+        leaf a {
+            type string;
+        }
+        leaf b {
+            type string;
+        }
+    }
+}
