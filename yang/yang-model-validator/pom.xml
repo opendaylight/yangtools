@@ -38,7 +38,7 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.github.spotbugs</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
             </plugin>
             <plugin>
@@ -51,7 +51,7 @@
                 <extensions>true</extensions>
             </plugin>
             <plugin>
-                <groupId>org.codehaus.mojo</groupId>
+                <groupId>com.github.spotbugs</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
                 <executions>
                     <execution>
