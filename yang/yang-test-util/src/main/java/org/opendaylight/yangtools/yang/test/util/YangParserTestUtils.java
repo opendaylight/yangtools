@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,7 +44,8 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 public final class YangParserTestUtils {
 
     private static final FileFilter YANG_FILE_FILTER = file -> {
-        final String name = file.getName().toLowerCase();
+        // Locale keeps SpotBugs happy. It should not matter that much anyway.
+        final String name = file.getName().toLowerCase(Locale.ENGLISH);
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
