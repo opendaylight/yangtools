@@ -66,8 +66,8 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             return;
         }
 
-        checkState(keyDef.size() == qnameToKeys.size(), "Input is missing some of the keys of %s",
-                getSchema().getQName());
+        checkState(keyDef.size() == qnameToKeys.size(),
+                "Map entry corresponding to %s is missing some of required keys %s", getSchema().getQName(), keyDef);
 
         // Need to restore schema order...
         final Map<QName, Object> predicates = new LinkedHashMap<>();
