@@ -39,7 +39,11 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
 
     @Override
     protected ToStringHelper addToStringAttributes(final ToStringHelper toStringHelper) {
-        return super.addToStringAttributes(toStringHelper).add("attributes", attributes);
+        super.addToStringAttributes(toStringHelper);
+        if (!attributes.isEmpty()) {
+            toStringHelper.add("attributes", attributes);
+        }
+        return toStringHelper;
     }
 
     @Override
