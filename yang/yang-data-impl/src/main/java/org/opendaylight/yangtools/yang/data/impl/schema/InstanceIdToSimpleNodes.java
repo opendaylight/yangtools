@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,17 +29,15 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 */
 abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceIdToNodes<T> {
 
-    protected InstanceIdToSimpleNodes(final T identifier) {
+    InstanceIdToSimpleNodes(final T identifier) {
         super(identifier);
     }
 
     @Override
-    public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId,
+    final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
             final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Entry<QName, ModifyAction>> operation) {
-        checkNotNull(instanceId);
-        final PathArgument pathArgument = instanceId.getPathArguments().get(0);
         final NormalizedNodeAttrBuilder<? extends PathArgument, Object,
-                ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(pathArgument);
+                ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
 
         if (deepestChild.isPresent()) {
             builder.withValue(deepestChild.get().getValue());
@@ -50,13 +47,18 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         return builder.build();
     }
 
-    protected abstract NormalizedNodeAttrBuilder<? extends PathArgument, Object,
-            ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
-
     @Override
-    public InstanceIdToNodes<?> getChild(final PathArgument child) {
+    final InstanceIdToNodes<?> getChild(final PathArgument child) {
         return null;
     }
+
+    @Override
+    final boolean isMixin() {
+        return false;
+    }
+
+    abstract NormalizedNodeAttrBuilder<? extends PathArgument, Object,
+            ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
 
     static final class LeafNormalization extends InstanceIdToSimpleNodes<NodeIdentifier> {
         LeafNormalization(final LeafSchemaNode potential) {
@@ -64,14 +66,8 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(
-                final PathArgument node) {
+        NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
             return Builders.leafBuilder().withNodeIdentifier(getIdentifier());
-        }
-
-        @Override
-        boolean isMixin() {
-            return false;
         }
     }
 
@@ -81,16 +77,10 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
 
         @Override
-        protected NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(
-                final PathArgument node) {
+        NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final PathArgument node) {
             checkArgument(node instanceof NodeWithValue);
             return Builders.leafSetEntryBuilder().withNodeIdentifier((NodeWithValue<?>) node)
                     .withValue(((NodeWithValue<?>) node).getValue());
-        }
-
-        @Override
-        boolean isMixin() {
-            return false;
         }
     }
 }
