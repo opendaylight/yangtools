@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -17,7 +18,6 @@ import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
@@ -44,16 +44,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * Use provided static methods for generic YangInstanceIdentifier -> NormalizedNode translation in ImmutableNodes.
  */
 abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable<T> {
-
     private final T identifier;
+
+    InstanceIdToNodes(final T identifier) {
+        this.identifier = identifier;
+    }
 
     @Override
     public final T getIdentifier() {
         return identifier;
-    }
-
-    protected InstanceIdToNodes(final T identifier) {
-        this.identifier = identifier;
     }
 
     /**
@@ -72,12 +71,12 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      * @param operation Optional modify operation to be set on the last child
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
-    abstract NormalizedNode<?, ?> create(YangInstanceIdentifier instanceId, Optional<NormalizedNode<?, ?>> deepestChild,
-            Optional<Entry<QName,ModifyAction>> operation);
+    abstract NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
+            Optional<NormalizedNode<?, ?>> deepestChild, Optional<Entry<QName, ModifyAction>> operation);
 
     abstract boolean isMixin();
 
-    public void addModifyOpIfPresent(final Optional<Entry<QName,ModifyAction>> operation,
+    void addModifyOpIfPresent(final Optional<Entry<QName, ModifyAction>> operation,
             final AttributesBuilder<?> builder) {
         if (operation.isPresent()) {
             builder.withAttributes(Collections.singletonMap(operation.get().getKey(),
@@ -85,7 +84,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
     }
 
-    public static String modifyOperationToXmlString(final ModifyAction operation) {
+    private static String modifyOperationToXmlString(final ModifyAction operation) {
         return operation.name().toLowerCase();
     }
 
@@ -128,7 +127,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
         }
 
         @Override
-        public NormalizedNode<?, ?> create(final YangInstanceIdentifier instanceId,
+        NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
                 final Optional<NormalizedNode<?, ?>> deepestChild,
                 final Optional<Entry<QName,ModifyAction>> operation) {
             if (deepestChild.isPresent()) {
