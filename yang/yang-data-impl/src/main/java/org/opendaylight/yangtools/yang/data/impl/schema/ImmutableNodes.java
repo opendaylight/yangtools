@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkNotNull;
+
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -192,12 +195,13 @@ public final class ImmutableNodes {
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
             final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Entry<QName, ModifyAction>> operation) {
-        final YangInstanceIdentifier.PathArgument topLevelElement = id.getPathArguments().get(0);
+        final Iterator<PathArgument> it = id.getPathArguments().iterator();
+        final PathArgument topLevelElement = it.next();
         final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
-        Preconditions.checkNotNull(dataChildByName,
+        checkNotNull(dataChildByName,
             "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
         final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx,
             topLevelElement.getNodeType());
-        return instanceIdToNodes.create(id, deepestElement, operation);
+        return instanceIdToNodes.create(topLevelElement, it, deepestElement, operation);
     }
 }
