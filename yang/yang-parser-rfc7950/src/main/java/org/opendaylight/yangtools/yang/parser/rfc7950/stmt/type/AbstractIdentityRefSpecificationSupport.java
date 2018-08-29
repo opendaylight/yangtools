@@ -50,7 +50,7 @@ abstract class AbstractIdentityRefSpecificationSupport
         super.onFullDefinitionDeclared(stmt);
 
         final Collection<StmtContext<QName, BaseStatement, ?>> baseStatements =
-                StmtContextUtils.<QName, BaseStatement>findAllDeclaredSubstatements(stmt, BaseStatement.class);
+                StmtContextUtils.findAllDeclaredSubstatements(stmt, BaseStatement.class);
         for (StmtContext<QName, BaseStatement, ?> baseStmt : baseStatements) {
             final QName baseIdentity = baseStmt.getStatementArgument();
             final StmtContext<?, ?, ?> stmtCtx = stmt.getFromNamespace(IdentityNamespace.class, baseIdentity);
