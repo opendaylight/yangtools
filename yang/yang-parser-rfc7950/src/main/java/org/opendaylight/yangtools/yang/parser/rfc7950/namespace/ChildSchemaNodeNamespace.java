@@ -81,7 +81,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
             final SchemaNodeIdentifier identifier) {
         final Iterator<QName> iterator = identifier.getPathFromRoot().iterator();
         if (!iterator.hasNext()) {
-            return Optional.of((Mutable<?, ?, EffectiveStatement<?, ?>>) root);
+            return Optional.of(root);
         }
 
         QName nextPath = iterator.next();

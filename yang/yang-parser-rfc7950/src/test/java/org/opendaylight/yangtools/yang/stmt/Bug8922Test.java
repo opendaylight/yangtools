@@ -31,7 +31,7 @@ public class Bug8922Test {
         assertNotNull(context);
         final SchemaNode findNode = findNode(context, qN("target"), qN("my-con"));
         assertTrue(findNode instanceof ContainerSchemaNode);
-        assertEquals(Optional.of("New description"), ((ContainerSchemaNode) findNode).getDescription());
+        assertEquals(Optional.of("New description"), findNode.getDescription());
     }
 
     @Test

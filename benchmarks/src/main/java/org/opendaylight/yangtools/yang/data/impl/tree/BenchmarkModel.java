@@ -32,7 +32,7 @@ final class BenchmarkModel {
     static final QName OUTER_CHOICE_QNAME = QName.create(TEST_QNAME, "outer-choice").intern();
     static final QName ID_QNAME = QName.create(TEST_QNAME, "id").intern();
     static final QName NAME_QNAME = QName.create(TEST_QNAME, "name").intern();
-    static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value".intern());
+    static final QName VALUE_QNAME = QName.create(TEST_QNAME, "value").intern();
 
     private BenchmarkModel() {
 

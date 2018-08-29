@@ -54,6 +54,6 @@ public interface DataTreeAwareEffectiveStatement<A, D extends DeclaredStatement<
      */
     default <E extends DataTreeEffectiveStatement<?>> @NonNull Optional<E> findDataTreeNode(
             final @NonNull QName qname) {
-        return Optional.ofNullable((E)get(Namespace.class, requireNonNull(qname)));
+        return Optional.ofNullable(get(Namespace.class, requireNonNull(qname)));
     }
 }
