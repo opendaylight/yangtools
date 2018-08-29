@@ -63,7 +63,7 @@ final class ArgumentContextUtils {
                  * According to RFC6020 a single quote character cannot occur in
                  * a single-quoted string, even when preceded by a backslash.
                  */
-                sb.append(str.substring(1, str.length() - 1));
+                sb.append(str, 1, str.length() - 1);
             } else {
                 checkUnquotedString(str, yangVersion, ref);
                 sb.append(str);

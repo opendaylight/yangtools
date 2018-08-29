@@ -41,19 +41,19 @@ public class TopologicalSortTest {
     public void testValidSimple() throws Exception {
         Set<Node> nodes = new HashSet<>();
 
-        Node node1 = new NodeImpl();
+        NodeImpl node1 = new NodeImpl();
         nodes.add(node1);
-        Node node2 = new NodeImpl();
+        NodeImpl node2 = new NodeImpl();
         nodes.add(node2);
-        Node node3 = new NodeImpl();
+        NodeImpl node3 = new NodeImpl();
         nodes.add(node3);
         Node node4 = new NodeImpl();
         nodes.add(node4);
 
-        ((NodeImpl) node1).addEdge(node2);
-        ((NodeImpl) node1).addEdge(node3);
-        ((NodeImpl) node2).addEdge(node4);
-        ((NodeImpl) node3).addEdge(node2);
+        node1.addEdge(node2);
+        node1.addEdge(node3);
+        node2.addEdge(node4);
+        node3.addEdge(node2);
 
         List<Node> sorted = TopologicalSort.sort(nodes);
 
