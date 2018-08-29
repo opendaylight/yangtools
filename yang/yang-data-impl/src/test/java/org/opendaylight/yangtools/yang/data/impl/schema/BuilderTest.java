@@ -312,7 +312,7 @@ public class BuilderTest {
     }
 
     private static LeafSetNode<?> getImmutableLeafSetNode() {
-        final ListNodeBuilder<String, LeafSetEntryNode<String>> leafSetBuilder = Builders.<String>leafSetBuilder();
+        final ListNodeBuilder<String, LeafSetEntryNode<String>> leafSetBuilder = Builders.leafSetBuilder();
         leafSetBuilder.withNodeIdentifier(NODE_IDENTIFIER_LEAF_LIST);
         leafSetBuilder.addChild(LEAF_SET_ENTRY_NODE);
         return leafSetBuilder.build();

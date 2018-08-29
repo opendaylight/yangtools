@@ -120,7 +120,7 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
 
     @SuppressWarnings("unchecked")
     public final <T> Collection<T> allSubstatementsOfType(final Class<T> type) {
-        return Collection.class.cast(Collections2.filter(substatements, type::isInstance));
+        return (Collection) Collections2.filter(substatements, type::isInstance);
     }
 
     @Nullable protected final <T> T firstSubstatementOfType(final Class<T> type) {

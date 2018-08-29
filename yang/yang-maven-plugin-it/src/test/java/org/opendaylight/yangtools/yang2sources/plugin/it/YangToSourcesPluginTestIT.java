@@ -63,7 +63,6 @@ public class YangToSourcesPluginTestIT {
             fail("Verification exception should have been thrown");
         } catch (VerificationException e) {
             assertVerificationException(e, "Imported module [unknownDep] was not found.");
-            return;
         }
     }
 
