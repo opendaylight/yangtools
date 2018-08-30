@@ -1,0 +1,73 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "458e7ab9_8814bbb9",
+        "filename": "benchmarks/src/main/java/org/opendaylight/yangtools/yang/data/impl/tree/BenchmarkModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-08-30T08:47:45Z",
+      "side": 1,
+      "message": "this is a typo, .intern() should be called on QName",
+      "range": {
+        "startLine": 35,
+        "startChar": 61,
+        "endLine": 35,
+        "endChar": 70
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "9e7ff4a7_c74dce03",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-08-30T08:47:45Z",
+      "side": 1,
+      "message": "this results in a raw type warning, unlike the class.cast() approach",
+      "range": {
+        "startLine": 142,
+        "startChar": 15,
+        "endLine": 142,
+        "endChar": 37
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "a8ef272b_550600f1",
+        "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/EffectiveStatementBase.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 123,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-08-30T08:47:45Z",
+      "side": 1,
+      "message": "same as previous one: this is causing a raw type warning",
+      "range": {
+        "startLine": 123,
+        "startChar": 15,
+        "endLine": 123,
+        "endChar": 27
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
