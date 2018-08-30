@@ -96,6 +96,30 @@
     },
     {
       "key": {
+        "uuid": "70681c5a_1fef8302",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-08-30T10:35:00Z",
+      "side": 1,
+      "message": "Eclipse warns about it.",
+      "parentUuid": "13403f1d_960c7533",
+      "range": {
+        "startLine": 142,
+        "startChar": 15,
+        "endLine": 142,
+        "endChar": 37
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "a8ef272b_550600f1",
         "filename": "yang/yang-parser-rfc7950/src/main/java/org/opendaylight/yangtools/yang/parser/rfc7950/stmt/EffectiveStatementBase.java",
         "patchSetId": 1
