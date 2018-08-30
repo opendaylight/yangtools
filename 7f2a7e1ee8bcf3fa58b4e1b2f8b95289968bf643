@@ -25,6 +25,30 @@
     },
     {
       "key": {
+        "uuid": "67e0888a_70b1ea06",
+        "filename": "benchmarks/src/main/java/org/opendaylight/yangtools/yang/data/impl/tree/BenchmarkModel.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 35,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2018-08-30T09:44:50Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "458e7ab9_8814bbb9",
+      "range": {
+        "startLine": 35,
+        "startChar": 61,
+        "endLine": 35,
+        "endChar": 70
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "9e7ff4a7_c74dce03",
         "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
         "patchSetId": 1
@@ -36,6 +60,30 @@
       "writtenOn": "2018-08-30T08:47:45Z",
       "side": 1,
       "message": "this results in a raw type warning, unlike the class.cast() approach",
+      "range": {
+        "startLine": 142,
+        "startChar": 15,
+        "endLine": 142,
+        "endChar": 37
+      },
+      "revId": "7f2a7e1ee8bcf3fa58b4e1b2f8b95289968bf643",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "13403f1d_960c7533",
+        "filename": "yang/yang-parser-reactor/src/main/java/org/opendaylight/yangtools/yang/parser/stmt/reactor/ModifierImpl.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 142,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2018-08-30T09:44:50Z",
+      "side": 1,
+      "message": "Which JDK are you building with? I don\u0027t get a warning with OpenJDK 1.8.0_181 or 9.0.4, even with -Xlint:unchecked...",
+      "parentUuid": "9e7ff4a7_c74dce03",
       "range": {
         "startLine": 142,
         "startChar": 15,
