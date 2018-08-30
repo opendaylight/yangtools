@@ -39,7 +39,6 @@
         <module>features-yangtools</module>
 
         <!-- Experimental features -->
-        <module>odl-exp-objcache</module>
         <module>odl-yangtools-exp-xpath-api</module>
         <module>odl-yangtools-exp-xpath-impl</module>
 
