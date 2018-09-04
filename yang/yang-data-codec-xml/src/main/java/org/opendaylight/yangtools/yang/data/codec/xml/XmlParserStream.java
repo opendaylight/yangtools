@@ -344,15 +344,17 @@ public final class XmlParserStream implements Closeable, Flushable {
                     if (parentSchema instanceof YangModeledAnyXmlSchemaNode) {
                         parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
+					
+					final String xmlElementNamespace = in.getNamespaceURI();
 
-                    if (!namesakes.add(xmlElementName)) {
+                    if (!namesakes.add(xmlElementName+xmlElementNamespace)) {
                         final Location loc = in.getLocation();
                         throw new IllegalStateException(String.format(
                                 "Duplicate element \"%s\" in XML input at: line %s column %s", xmlElementName,
                                 loc.getLineNumber(), loc.getColumnNumber()));
                     }
 
-                    final String xmlElementNamespace = in.getNamespaceURI();
+                    
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName,
                                     new URI(xmlElementNamespace));
