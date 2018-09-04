@@ -23,5 +23,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relat
  */
 @Beta
 public interface UniqueConstraint {
+    // FIXME: 3.0.0: return Set<Relative>
     @Nonnull Collection<Relative> getTag();
 }

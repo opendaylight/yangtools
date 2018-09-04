@@ -49,8 +49,8 @@ public final class UniqueStatementSupport extends AbstractStatementSupport<Colle
     }
 
     @Override
-    public Collection<Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        final Collection<Relative> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
+    public Set<Relative> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        final Set<Relative> uniqueConstraints = parseUniqueConstraintArgument(ctx, value);
         SourceException.throwIf(uniqueConstraints.isEmpty(), ctx.getStatementSourceReference(),
                 "Invalid argument value '%s' of unique statement. The value must contains at least "
                         + "one descendant schema node identifier.", value);
@@ -74,7 +74,7 @@ public final class UniqueStatementSupport extends AbstractStatementSupport<Colle
         return SUBSTATEMENT_VALIDATOR;
     }
 
-    private static Collection<Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
+    private static Set<Relative> parseUniqueConstraintArgument(final StmtContext<?, ?, ?> ctx,
             final String argumentValue) {
         // deal with 'line-break' rule, which is either "\n" or "\r\n", but not "\r"
         final String nocrlf = CRLF_PATTERN.matcher(argumentValue).replaceAll("\n");
