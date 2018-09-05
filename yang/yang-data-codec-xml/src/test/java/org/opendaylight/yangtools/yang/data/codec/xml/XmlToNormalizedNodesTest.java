@@ -157,9 +157,9 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate leaf.");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Duplicate element \"decimal64-leaf\" in XML input"));
+            assertEquals("Duplicate namespace \"foo-namespace\" element \"decimal64-leaf\" in XML input at: line 7 "
+                    + "column 25", ex.getMessage());
         }
-
     }
 
     @Test
@@ -177,7 +177,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate anyxml");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Duplicate element \"my-anyxml\" in XML input"));
+            assertEquals("Duplicate namespace \"foo-namespace\" element \"my-anyxml\" in XML input at: line 19 "
+                    + "column 20", ex.getMessage());
         }
     }
 
@@ -196,7 +197,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate container");
         } catch (IllegalStateException ex) {
-            assertTrue(ex.getMessage().contains("Duplicate element \"leaf-container\" in XML input"));
+            assertEquals("Duplicate namespace \"foo-namespace\" element \"leaf-container\" in XML input at: line 13 "
+                    + "column 21", ex.getMessage());
         }
     }
 

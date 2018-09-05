@@ -20,10 +20,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
@@ -318,7 +320,8 @@ public final class XmlParserStream implements Closeable, Flushable {
 
         switch (in.nextTag()) {
             case XMLStreamConstants.START_ELEMENT:
-                final Set<String> namesakes = new HashSet<>();
+                // FIXME: why do we even need this tracker? either document it or remove it
+                final Set<Entry<String, String>> namesakes = new HashSet<>();
                 while (in.hasNext()) {
                     final String xmlElementName = in.getLocalName();
 
@@ -345,14 +348,14 @@ public final class XmlParserStream implements Closeable, Flushable {
                         parentSchema = ((YangModeledAnyXmlSchemaNode) parentSchema).getSchemaOfAnyXmlData();
                     }
 
-                    if (!namesakes.add(xmlElementName)) {
+                    final String xmlElementNamespace = in.getNamespaceURI();
+                    if (!namesakes.add(new SimpleImmutableEntry<>(xmlElementNamespace, xmlElementName))) {
                         final Location loc = in.getLocation();
                         throw new IllegalStateException(String.format(
-                                "Duplicate element \"%s\" in XML input at: line %s column %s", xmlElementName,
-                                loc.getLineNumber(), loc.getColumnNumber()));
+                                "Duplicate namespace \"%s\" element \"%s\" in XML input at: line %s column %s",
+                                xmlElementNamespace, xmlElementName, loc.getLineNumber(), loc.getColumnNumber()));
                     }
 
-                    final String xmlElementNamespace = in.getNamespaceURI();
                     final Deque<DataSchemaNode> childDataSchemaNodes =
                             ParserStreamUtils.findSchemaNodeByNameAndNamespace(parentSchema, xmlElementName,
                                     new URI(xmlElementNamespace));
