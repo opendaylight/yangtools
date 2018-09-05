@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -350,18 +351,16 @@ public final class LeafRefValidatation {
     }
 
     private Set<Object> extractRootValues(final LeafRefContext context) {
-        final Set<Object> values = new HashSet<>();
-        addValues(values, tree.getRootNode().getDataAfter(), context.getLeafRefNodePath().getPathFromRoot(), null,
-            QNameWithPredicate.ROOT);
-        return values;
+        return tree.getRootNode().getDataAfter()
+                .map(root -> computeValues(root, context.getLeafRefNodePath().getPathFromRoot(), null))
+                .orElse(ImmutableSet.of());
     }
 
     private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
             final ModificationType modificationType, final YangInstanceIdentifier current) {
-        final HashSet<Object> values = new HashSet<>();
-        addValues(values, tree.getRootNode().getDataAfter(),
-            referencingCtx.getAbsoluteLeafRefTargetPath().getPathFromRoot(), current, QNameWithPredicate.ROOT);
-
+        final Set<Object> values = tree.getRootNode().getDataAfter().map(
+            root -> computeValues(root, referencingCtx.getAbsoluteLeafRefTargetPath().getPathFromRoot(), current))
+                .orElse(ImmutableSet.of());
         if (values.contains(leaf.getValue())) {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
                 referencingCtx.getNodeName(), leaf.getValue(), SUCCESS);
@@ -377,14 +376,16 @@ public final class LeafRefValidatation {
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
-    private void addValues(final Set<Object> values, final Optional<? extends NormalizedNode<?, ?>> optDataNode,
+    private Set<Object> computeValues(final NormalizedNode<?, ?> node, final Iterable<QNameWithPredicate> path,
+            final YangInstanceIdentifier current) {
+        final HashSet<Object> values = new HashSet<>();
+        addValues(values, node, path, current, QNameWithPredicate.ROOT);
+        return values;
+    }
+
+    private void addValues(final Set<Object> values, final NormalizedNode<?, ?> node,
             final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current,
             final QNameWithPredicate previousQName) {
-
-        if (!optDataNode.isPresent()) {
-            return;
-        }
-        final NormalizedNode<?, ?> node = optDataNode.get();
         if (node instanceof ValueNode) {
             values.add(node.getValue());
             return;
@@ -410,11 +411,10 @@ public final class LeafRefValidatation {
                     .getChild(pathArgument);
 
             if (child.isPresent()) {
-                addValues(values, child, nextLevel(path), current, qnameWithPredicate);
+                addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
             } else {
                 for (final ChoiceNode choiceNode : getChoiceNodes(dataContainerNode)) {
-                    addValues(values, Optional.of(choiceNode), path, current,
-                            qnameWithPredicate);
+                    addValues(values, choiceNode, path, current, qnameWithPredicate);
                 }
             }
 
@@ -428,10 +428,10 @@ public final class LeafRefValidatation {
                             .getChild(pathArgument);
 
                     if (child.isPresent()) {
-                        addValues(values, child, nextLevel(path), current, qnameWithPredicate);
+                        addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
                     } else {
                         for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                            addValues(values, Optional.of(choiceNode), path, current, qnameWithPredicate);
+                            addValues(values, choiceNode, path, current, qnameWithPredicate);
                         }
                     }
                 }
@@ -442,11 +442,8 @@ public final class LeafRefValidatation {
                 while (predicates.hasNext()) {
                     final QNamePredicate predicate = predicates.next();
                     final QName identifier = predicate.getIdentifier();
-                    final LeafRefPath predicatePathKeyExpression = predicate
-                            .getPathKeyExpression();
-
-                    final Set<?> pathKeyExprValues = getPathKeyExpressionValues(
-                            predicatePathKeyExpression, current);
+                    final LeafRefPath predicatePathKeyExpression = predicate.getPathKeyExpression();
+                    final Set<?> pathKeyExprValues = getPathKeyExpressionValues(predicatePathKeyExpression, current);
 
                     keyValues.put(identifier, pathKeyExprValues);
                 }
@@ -457,10 +454,10 @@ public final class LeafRefValidatation {
                                 .getChild(pathArgument);
 
                         if (child.isPresent()) {
-                            addValues(values, child, nextLevel(path), current, qnameWithPredicate);
+                            addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
                         } else {
                             for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                                addValues(values, Optional.of(choiceNode),  path, current, qnameWithPredicate);
+                                addValues(values, choiceNode,  path, current, qnameWithPredicate);
                             }
                         }
                     }
@@ -493,12 +490,9 @@ public final class LeafRefValidatation {
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
             final YangInstanceIdentifier current) {
-        final Optional<NormalizedNode<?, ?>> parent = findParentNode(tree.getRootNode().getDataAfter(), current);
-        final Set<Object> values = new HashSet<>();
-        addValues(values, parent, nextLevel(predicatePathKeyExpression.getPathFromRoot()), null,
-            QNameWithPredicate.ROOT);
-
-        return values;
+        return findParentNode(tree.getRootNode().getDataAfter(), current)
+                .map(parent -> computeValues(parent, nextLevel(predicatePathKeyExpression.getPathFromRoot()), null))
+                .orElse(ImmutableSet.of());
     }
 
     private static Optional<NormalizedNode<?, ?>> findParentNode(
