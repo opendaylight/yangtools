@@ -19,13 +19,11 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 public abstract class LeafRefPath implements Immutable {
-
     /**
      * An absolute LeafRefPath.
      */
     private static final class AbsoluteLeafRefPath extends LeafRefPath {
-        private AbsoluteLeafRefPath(final LeafRefPath parent,
-                final QNameWithPredicate qname) {
+        private AbsoluteLeafRefPath(final LeafRefPath parent, final QNameWithPredicate qname) {
             super(parent, qname);
         }
 
@@ -35,8 +33,7 @@ public abstract class LeafRefPath implements Immutable {
         }
 
         @Override
-        protected LeafRefPath createInstance(final LeafRefPath newParent,
-                final QNameWithPredicate newQname) {
+        protected LeafRefPath createInstance(final LeafRefPath newParent, final QNameWithPredicate newQname) {
             return new AbsoluteLeafRefPath(newParent, newQname);
         }
     }
@@ -45,8 +42,7 @@ public abstract class LeafRefPath implements Immutable {
      * A relative LeafRefPath.
      */
     private static final class RelativeLeafRefPath extends LeafRefPath {
-        private RelativeLeafRefPath(final LeafRefPath parent,
-                final QNameWithPredicate qname) {
+        private RelativeLeafRefPath(final LeafRefPath parent, final QNameWithPredicate qname) {
             super(parent, qname);
         }
 
@@ -56,8 +52,7 @@ public abstract class LeafRefPath implements Immutable {
         }
 
         @Override
-        protected LeafRefPath createInstance(final LeafRefPath newParent,
-                final QNameWithPredicate newQname) {
+        protected LeafRefPath createInstance(final LeafRefPath newParent, final QNameWithPredicate newQname) {
             return new RelativeLeafRefPath(newParent, newQname);
         }
     }
@@ -92,8 +87,7 @@ public abstract class LeafRefPath implements Immutable {
     private final int hash;
 
     /**
-     * Cached legacy path, filled-in when {@link #getPathFromRoot()} or
-     * {@link #getPathTowardsRoot()} is invoked.
+     * Cached legacy path, filled-in when {@link #getPathFromRoot()} or {@link #getPathTowardsRoot()} is invoked.
      */
     private volatile ImmutableList<QNameWithPredicate> legacyPath;
 
@@ -122,17 +116,11 @@ public abstract class LeafRefPath implements Immutable {
     /**
      * Constructs new instance of this class with the concrete path.
      *
-     * @param path
-     *            list of QNameWithPredicate instances which specifies exact
-     *            path to the module node
-     * @param absolute
-     *            boolean value which specifies if the path is absolute or
-     *            relative
-     *
+     * @param path list of QNameWithPredicate instances which specifies exact path to the module node
+     * @param absolute boolean value which specifies if the path is absolute or relative
      * @return A LeafRefPath instance.
      */
-    public static LeafRefPath create(final Iterable<QNameWithPredicate> path,
-            final boolean absolute) {
+    public static LeafRefPath create(final Iterable<QNameWithPredicate> path, final boolean absolute) {
         final LeafRefPath parent = absolute ? ROOT : SAME;
         return parent.createChild(path);
     }
@@ -140,38 +128,27 @@ public abstract class LeafRefPath implements Immutable {
     /**
      * Constructs new instance of this class with the concrete path.
      *
-     * @param absolute
-     *            boolean value which specifies if the path is absolute or
-     *            relative
-     * @param path
-     *            one or more QNameWithPredicate instances which specifies exact
-     *            path to the module node
-     *
+     * @param absolute boolean value which specifies if the path is absolute or relative
+     * @param path one or more QNameWithPredicate instances which specifies exact path to the module node
      * @return A LeafRefPath instance.
      */
-    public static LeafRefPath create(final boolean absolute,
-            final QNameWithPredicate... path) {
+    public static LeafRefPath create(final boolean absolute, final QNameWithPredicate... path) {
         return create(Arrays.asList(path), absolute);
     }
 
     /**
      * Create a new instance.
      *
-     * @param newParent
-     *            Parent LeafRefPath
-     * @param newQname
-     *            next path element
+     * @param newParent Parent LeafRefPath
+     * @param newQname next path element
      * @return A new LeafRefPath instance
      */
-    protected abstract LeafRefPath createInstance(LeafRefPath newParent,
-            QNameWithPredicate newQname);
+    protected abstract LeafRefPath createInstance(LeafRefPath newParent, QNameWithPredicate newQname);
 
     /**
-     * Create a child path based on concatenation of this path and a relative
-     * path.
+     * Create a child path based on concatenation of this path and a relative path.
      *
-     * @param relative
-     *            Relative path
+     * @param relative Relative path
      * @return A new child path
      */
     public LeafRefPath createChild(final Iterable<QNameWithPredicate> relative) {
@@ -188,11 +165,9 @@ public abstract class LeafRefPath implements Immutable {
     }
 
     /**
-     * Create a child path based on concatenation of this path and a relative
-     * path.
+     * Create a child path based on concatenation of this path and a relative path.
      *
-     * @param relative
-     *            Relative LeafRefPath
+     * @param relative Relative LeafRefPath
      * @return A new child path
      */
     public LeafRefPath createChild(final LeafRefPath relative) {
@@ -207,11 +182,9 @@ public abstract class LeafRefPath implements Immutable {
     }
 
     /**
-     * Create a child path based on concatenation of this path and additional
-     * path elements.
+     * Create a child path based on concatenation of this path and additional path elements.
      *
-     * @param elements
-     *            Relative LeafRefPath elements
+     * @param elements Relative LeafRefPath elements
      * @return A new child path
      */
     public LeafRefPath createChild(final QNameWithPredicate... elements) {
@@ -219,23 +192,20 @@ public abstract class LeafRefPath implements Immutable {
     }
 
     /**
-     * Returns the list of nodes which need to be traversed to get from the
-     * starting point (root for absolute LeafRefPaths) to the node represented
-     * by this object.
+     * Returns the list of nodes which need to be traversed to get from the starting point (root for absolute
+     * LeafRefPaths) to the node represented by this object.
      *
-     * @return list of <code>qname</code> instances which represents path from
-     *         the root to the schema node.
+     * @return list of {@code qname} instances which represents path from the root to the schema node.
      */
     public Iterable<QNameWithPredicate> getPathFromRoot() {
         return getLegacyPath();
     }
 
     /**
-     * Returns the list of nodes which need to be traversed to get from this
-     * node to the starting point (root for absolute LeafRefPaths).
+     * Returns the list of nodes which need to be traversed to get from this node to the starting point (root
+     * for absolute LeafRefPaths).
      *
-     * @return list of <code>qname</code> instances which represents path from
-     *         the schema node towards the root.
+     * @return list of {@code qname} instances which represents path from the schema node towards the root.
      */
     public Iterable<QNameWithPredicate> getPathTowardsRoot() {
         return () -> new Iterator<QNameWithPredicate>() {
@@ -285,8 +255,7 @@ public abstract class LeafRefPath implements Immutable {
     /**
      * Describes whether schema path is|isn't absolute.
      *
-     * @return boolean value which is <code>true</code> if schema path is
-     *         absolute.
+     * @return boolean value which is {@code true} if schema path is  absolute.
      */
     public abstract boolean isAbsolute();
 
@@ -300,10 +269,7 @@ public abstract class LeafRefPath implements Immutable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (obj == null || getClass() != obj.getClass()) {
             return false;
         }
         final LeafRefPath other = (LeafRefPath) obj;
@@ -322,15 +288,4 @@ public abstract class LeafRefPath implements Immutable {
 
         return sb.toString();
     }
-
-    // @Override
-    // public final String toString() {
-    // return addToStringAttributes(Objects.toStringHelper(this)).toString();
-    // }
-    //
-    // protected ToStringHelper addToStringAttributes(final ToStringHelper
-    // toStringHelper) {
-    // return toStringHelper.add("path", getPathFromRoot());
-    // }
-
 }
