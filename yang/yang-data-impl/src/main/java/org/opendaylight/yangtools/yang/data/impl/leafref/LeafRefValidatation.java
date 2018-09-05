@@ -37,7 +37,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -320,33 +319,26 @@ public final class LeafRefValidatation {
             return;
         }
 
-        final Map<QName, LeafRefContext> allReferencedByLeafRefCtxs = referencedByCtx.getAllReferencedByLeafRefCtxs();
-        for (final LeafRefContext leafRefContext : allReferencedByLeafRefCtxs.values()) {
+        for (final LeafRefContext leafRefContext : referencedByCtx.getAllReferencedByLeafRefCtxs().values()) {
             if (leafRefContext.isReferencing()) {
-                final Set<Object> values = new HashSet<>();
-
-                final SchemaPath leafRefNodeSchemaPath = leafRefContext.getCurrentNodePath();
-                final LeafRefPath leafRefNodePath = LeafRefUtils.schemaPathToLeafRefPath(leafRefNodeSchemaPath,
-                                leafRefContext.getLeafRefContextModule());
-                final Iterable<QNameWithPredicate> pathFromRoot = leafRefNodePath.getPathFromRoot();
-                addValues(values, tree.getRootNode().getDataAfter(), pathFromRoot, null, QNameWithPredicate.ROOT);
-                leafRefsValues.put(leafRefContext, values);
+                leafRefsValues.put(leafRefContext, extractRootValues(leafRefContext));
             }
         }
 
         if (!leafRefsValues.isEmpty()) {
-            final Set<Object> leafRefTargetNodeValues = new HashSet<>();
-            final SchemaPath nodeSchemaPath = referencedByCtx.getCurrentNodePath();
-            final LeafRefPath nodePath = LeafRefUtils.schemaPathToLeafRefPath(nodeSchemaPath, referencedByCtx
-                    .getLeafRefContextModule());
-            addValues(leafRefTargetNodeValues, tree.getRootNode().getDataAfter(), nodePath.getPathFromRoot(), null,
-                    QNameWithPredicate.ROOT);
-            leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, leafRefsValues,
-                    leafRefTargetNodeValues);
+            final Set<Object> values = extractRootValues(referencedByCtx);
+            leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, leafRefsValues, values);
         } else {
             leafRefTargetNodeDataLog(leaf, referencedByCtx, modificationType, null, null);
         }
         validatedLeafRefCtx.add(referencedByCtx);
+    }
+
+    private Set<Object> extractRootValues(final LeafRefContext context) {
+        final Set<Object> values = new HashSet<>();
+        final Iterable<QNameWithPredicate> pathFromRoot = context.getLeafRefNodePath().getPathFromRoot();
+        addValues(values, tree.getRootNode().getDataAfter(), pathFromRoot, null, QNameWithPredicate.ROOT);
+        return values;
     }
 
     private void leafRefTargetNodeDataLog(final NormalizedNode<?, ?> leaf, final LeafRefContext referencedByCtx,
