@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +33,7 @@ final class LeafRefContextTreeBuilder {
         this.schemaContext = schemaContext;
     }
 
-    LeafRefContext buildLeafRefContextTree() throws IOException, LeafRefYangSyntaxErrorException {
+    LeafRefContext buildLeafRefContextTree() throws LeafRefYangSyntaxErrorException {
         final LeafRefContextBuilder rootBuilder = new LeafRefContextBuilder(schemaContext.getQName(),
             schemaContext.getPath(), schemaContext);
 
@@ -68,7 +65,7 @@ final class LeafRefContextTreeBuilder {
     }
 
     private LeafRefContext buildLeafRefContextReferencingTree(final DataSchemaNode node, final Module currentModule)
-            throws IOException, LeafRefYangSyntaxErrorException {
+            throws LeafRefYangSyntaxErrorException {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
             node.getPath(), schemaContext);
 
@@ -97,17 +94,13 @@ final class LeafRefContextTreeBuilder {
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
                 final String leafRefPathString = leafrefType.getPathStatement().toString();
-
-                currentLeafRefContextBuilder.setLeafRefTargetPathString(leafRefPathString);
-                currentLeafRefContextBuilder.setReferencing(true);
-
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(schemaContext,
                         checkNotNull(getBaseTypeModule(leafrefType), "Unable to find base module for leafref %s", node),
                         node);
+                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPath(leafRefPathString);
 
-                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPathSourceToSchemaPath(
-                    new ByteArrayInputStream(leafRefPathString.getBytes(StandardCharsets.UTF_8)));
-
+                currentLeafRefContextBuilder.setLeafRefTargetPathString(leafRefPathString);
+                currentLeafRefContextBuilder.setReferencing(true);
                 currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 
                 final LeafRefContext currentLeafRefContext = currentLeafRefContextBuilder.build();
@@ -132,7 +125,7 @@ final class LeafRefContextTreeBuilder {
     }
 
     private LeafRefContext buildLeafRefContextReferencedByTree(final DataSchemaNode node, final Module currentModule)
-            throws IOException,LeafRefYangSyntaxErrorException {
+            throws LeafRefYangSyntaxErrorException {
         final LeafRefContextBuilder currentLeafRefContextBuilder = new LeafRefContextBuilder(node.getQName(),
             node.getPath(), schemaContext);
         if (node instanceof DataNodeContainer) {

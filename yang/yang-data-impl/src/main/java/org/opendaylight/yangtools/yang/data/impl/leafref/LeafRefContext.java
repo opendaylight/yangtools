@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
 import com.google.common.collect.ImmutableMap;
-import java.io.IOException;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -53,8 +52,6 @@ public final class LeafRefContext {
             return new LeafRefContextTreeBuilder(ctx).buildLeafRefContextTree();
         } catch (LeafRefYangSyntaxErrorException e) {
             throw new IllegalArgumentException(e);
-        } catch (IOException e) {
-            throw new IllegalStateException(e);
         }
     }
 

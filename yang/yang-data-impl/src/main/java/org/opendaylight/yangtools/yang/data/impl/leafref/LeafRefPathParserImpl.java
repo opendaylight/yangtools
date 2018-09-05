@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import java.io.IOException;
-import java.io.InputStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -28,9 +26,8 @@ final class LeafRefPathParserImpl {
         this.node = currentNode;
     }
 
-    public LeafRefPath parseLeafRefPathSourceToSchemaPath(final InputStream stream) throws IOException,
-            LeafRefYangSyntaxErrorException {
-        final Path_argContext pathCtx = parseLeafRefPathSource(stream);
+    LeafRefPath parseLeafRefPath(final String path) throws LeafRefYangSyntaxErrorException {
+        final Path_argContext pathCtx = parseLeafRefPathSource(path);
 
         final ParseTreeWalker walker = new ParseTreeWalker();
         final LeafRefPathParserListenerImpl leafRefPathParserListenerImpl = new LeafRefPathParserListenerImpl(
@@ -40,9 +37,8 @@ final class LeafRefPathParserImpl {
         return leafRefPathParserListenerImpl.getLeafRefPath();
     }
 
-    private Path_argContext parseLeafRefPathSource(final InputStream stream) throws IOException,
-            LeafRefYangSyntaxErrorException {
-        final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromStream(stream));
+    private Path_argContext parseLeafRefPathSource(final String path) throws LeafRefYangSyntaxErrorException {
+        final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(path));
         final CommonTokenStream tokens = new CommonTokenStream(lexer);
         final LeafRefPathParser parser = new LeafRefPathParser(tokens);
         parser.removeErrorListeners();
