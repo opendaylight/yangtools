@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
@@ -381,13 +382,13 @@ public final class LeafRefValidatation {
     private Set<Object> computeValues(final NormalizedNode<?, ?> node, final Iterable<QNameWithPredicate> path,
             final YangInstanceIdentifier current) {
         final HashSet<Object> values = new HashSet<>();
-        addValues(values, node, path, current, QNameWithPredicate.ROOT);
+        addValues(values, node, ImmutableList.of(), path, current);
         return values;
     }
 
     private void addValues(final Set<Object> values, final NormalizedNode<?, ?> node,
-            final Iterable<QNameWithPredicate> path, final YangInstanceIdentifier current,
-            final QNameWithPredicate previousQName) {
+            final List<QNamePredicate> nodePredicates, final Iterable<QNameWithPredicate> path,
+            final YangInstanceIdentifier current) {
         if (node instanceof ValueNode) {
             values.add(node.getValue());
             return;
@@ -403,46 +404,42 @@ public final class LeafRefValidatation {
         if (!iterator.hasNext()) {
             return;
         }
-        final QNameWithPredicate qnameWithPredicate = iterator.next();
-        final QName qName = qnameWithPredicate.getQName();
-        final PathArgument pathArgument = new NodeIdentifier(qName);
 
+        final QNameWithPredicate next = iterator.next();
+        final QName qname = next.getQName();
+        final PathArgument pathArgument = new NodeIdentifier(qname);
         if (node instanceof DataContainerNode) {
             final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
             final Optional<DataContainerChild<? extends PathArgument, ?>> child = dataContainerNode
                     .getChild(pathArgument);
 
             if (child.isPresent()) {
-                addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
+                addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
             } else {
                 for (final ChoiceNode choiceNode : getChoiceNodes(dataContainerNode)) {
-                    addValues(values, choiceNode, path, current, qnameWithPredicate);
+                    addValues(values, choiceNode, next.getQNamePredicates(), path, current);
                 }
             }
 
         } else if (node instanceof MapNode) {
             final MapNode map = (MapNode) node;
-            final List<QNamePredicate> qNamePredicates = previousQName.getQNamePredicates();
-            if (qNamePredicates.isEmpty() || current == null) {
+            if (nodePredicates.isEmpty() || current == null) {
                 final Iterable<MapEntryNode> value = map.getValue();
                 for (final MapEntryNode mapEntryNode : value) {
                     final Optional<DataContainerChild<? extends PathArgument, ?>> child = mapEntryNode
                             .getChild(pathArgument);
 
                     if (child.isPresent()) {
-                        addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
+                        addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
                     } else {
                         for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                            addValues(values, choiceNode, path, current, qnameWithPredicate);
+                            addValues(values, choiceNode, next.getQNamePredicates(), path, current);
                         }
                     }
                 }
             } else {
                 final Map<QName, Set<?>> keyValues = new HashMap<>();
-
-                final Iterator<QNamePredicate> predicates = qNamePredicates.iterator();
-                while (predicates.hasNext()) {
-                    final QNamePredicate predicate = predicates.next();
+                for (QNamePredicate predicate : nodePredicates) {
                     final QName identifier = predicate.getIdentifier();
                     final LeafRefPath predicatePathKeyExpression = predicate.getPathKeyExpression();
                     final Set<?> pathKeyExprValues = getPathKeyExpressionValues(predicatePathKeyExpression, current);
@@ -456,10 +453,10 @@ public final class LeafRefValidatation {
                                 .getChild(pathArgument);
 
                         if (child.isPresent()) {
-                            addValues(values, child.get(), nextLevel(path), current, qnameWithPredicate);
+                            addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
                         } else {
                             for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                                addValues(values, choiceNode,  path, current, qnameWithPredicate);
+                                addValues(values, choiceNode,  next.getQNamePredicates(), path, current);
                             }
                         }
                     }
