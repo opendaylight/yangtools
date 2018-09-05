@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -17,15 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-class LeafRefContextBuilder implements Builder<LeafRefContext> {
+final class LeafRefContextBuilder implements Builder<LeafRefContext> {
 
     private final Map<QName, LeafRefContext> referencingChildren = new HashMap<>();
     private final Map<QName, LeafRefContext> referencedByChildren = new HashMap<>();
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx = new HashMap<>();
 
-    private QName currentNodeQName;
-    private SchemaPath currentNodePath;
-    private SchemaContext schemaContext;
+    private final QName currentNodeQName;
+    private final SchemaPath currentNodePath;
+    private final SchemaContext schemaContext;
 
     private LeafRefPath leafRefTargetPath = null;
     private LeafRefPath absoluteLeafRefTargetPath = null;
@@ -36,8 +38,9 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
 
     LeafRefContextBuilder(final QName currentNodeQName, final SchemaPath currentNodePath,
         final SchemaContext schemaContext) {
-        this.currentNodeQName = currentNodeQName;
-        this.currentNodePath = currentNodePath;
+        this.currentNodeQName = requireNonNull(currentNodeQName);
+        this.currentNodePath = requireNonNull(currentNodePath);
+        // FIXME: requireNonNull
         this.schemaContext = schemaContext;
     }
 
@@ -53,99 +56,67 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return leafRefContext;
     }
 
-    public boolean hasLeafRefContextChild() {
-        return hasReferencedByChild() || hasReferencingChild();
-    }
-
-    public boolean hasReferencedByChild() {
-        return !referencedByChildren.isEmpty();
-    }
-
-    public boolean hasReferencingChild() {
-        return !referencingChildren.isEmpty();
-    }
-
-    public boolean isReferencedBy() {
+    boolean isReferencedBy() {
         return isReferencedBy;
     }
 
-    public void setReferencedBy(final boolean referencedBy) {
+    void setReferencedBy(final boolean referencedBy) {
         this.isReferencedBy = referencedBy;
     }
 
-    public boolean isReferencing() {
+    boolean isReferencing() {
         return isReferencing;
     }
 
-    public void setReferencing(final boolean referencing) {
+    void setReferencing(final boolean referencing) {
         this.isReferencing = referencing;
     }
 
-    public void addReferencingChild(final LeafRefContext child, final QName childQName) {
+    void addReferencingChild(final LeafRefContext child, final QName childQName) {
         referencingChildren.put(childQName, child);
     }
 
-    public LeafRefContext getReferencingChildByName(final QName name) {
-        return referencingChildren.get(name);
-    }
-
-    public Map<QName, LeafRefContext> getReferencingChilds() {
+    Map<QName, LeafRefContext> getReferencingChilds() {
         return referencingChildren;
     }
 
-    public void addReferencedByChild(final LeafRefContext child, final QName childQName) {
+    void addReferencedByChild(final LeafRefContext child, final QName childQName) {
         referencedByChildren.put(childQName, child);
     }
 
-    public LeafRefContext getReferencedByChildByName(final QName name) {
-        return referencedByChildren.get(name);
-    }
-
-    public Map<QName, LeafRefContext> getReferencedByChilds() {
+    Map<QName, LeafRefContext> getReferencedByChilds() {
         return referencedByChildren;
     }
 
-    public SchemaPath getCurrentNodePath() {
+    SchemaPath getCurrentNodePath() {
         return currentNodePath;
     }
 
-    public void setCurrentNodePath(final SchemaPath currentNodePath) {
-        this.currentNodePath = currentNodePath;
-    }
-
-    public LeafRefPath getLeafRefTargetPath() {
+    LeafRefPath getLeafRefTargetPath() {
         return leafRefTargetPath;
     }
 
-    public void setLeafRefTargetPath(final LeafRefPath leafRefPath) {
+    void setLeafRefTargetPath(final LeafRefPath leafRefPath) {
         this.leafRefTargetPath = leafRefPath;
     }
 
-    public String getLeafRefTargetPathString() {
+    String getLeafRefTargetPathString() {
         return leafRefTargetPathString;
     }
 
-    public void setLeafRefTargetPathString(final String leafRefPathString) {
+    void setLeafRefTargetPathString(final String leafRefPathString) {
         this.leafRefTargetPathString = leafRefPathString;
     }
 
-    public QName getCurrentNodeQName() {
+    QName getCurrentNodeQName() {
         return currentNodeQName;
     }
 
-    public void setCurrentNodeQName(final QName currentNodeQName) {
-        this.currentNodeQName = currentNodeQName;
-    }
-
-    public SchemaContext getSchemaContext() {
+    SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
-    public void setSchemaContext(final SchemaContext schemaContext) {
-        this.schemaContext = schemaContext;
-    }
-
-    public LeafRefPath getAbsoluteLeafRefTargetPath() {
+    LeafRefPath getAbsoluteLeafRefTargetPath() {
         if (isReferencing && absoluteLeafRefTargetPath == null) {
             if (leafRefTargetPath.isAbsolute()) {
                 absoluteLeafRefTargetPath = leafRefTargetPath;
@@ -158,21 +129,21 @@ class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return absoluteLeafRefTargetPath;
     }
 
-    public Module getLeafRefContextModule() {
+    Module getLeafRefContextModule() {
         final Iterator<QName> it = currentNodePath.getPathFromRoot().iterator();
         final QNameModule qnameModule = it.hasNext() ? it.next().getModule() : currentNodeQName.getModule();
         return schemaContext.findModule(qnameModule).orElse(null);
     }
 
-    public void addReferencedByLeafRefCtx(final QName qname, final LeafRefContext leafRef) {
+    void addReferencedByLeafRefCtx(final QName qname, final LeafRefContext leafRef) {
         referencedByLeafRefCtx.put(qname, leafRef);
     }
 
-    public LeafRefContext getReferencedByLeafRefCtxByName(final QName qname) {
+    LeafRefContext getReferencedByLeafRefCtxByName(final QName qname) {
         return referencedByLeafRefCtx.get(qname);
     }
 
-    public Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs() {
+    Map<QName, LeafRefContext> getAllReferencedByLeafRefCtxs() {
         return referencedByLeafRefCtx;
     }
 }
