@@ -11,9 +11,11 @@ import com.google.common.collect.ImmutableList;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.Revision;
 
 final class QNameWithPredicateImpl implements Immutable, Serializable, QNameWithPredicate {
 
@@ -76,7 +78,10 @@ final class QNameWithPredicateImpl implements Immutable, Serializable, QNameWith
 
         if (moduleQname != null) {
             sb.append('(').append(moduleQname.getNamespace());
-            sb.append("?revision=").append(moduleQname.getRevision());
+            final Optional<Revision> rev = moduleQname.getRevision();
+            if (rev.isPresent()) {
+                sb.append("?revision=").append(rev.get());
+            }
             sb.append(')');
         }
 
