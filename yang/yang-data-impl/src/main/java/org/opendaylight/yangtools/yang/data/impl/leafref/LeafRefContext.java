@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
+// FIXME: 3.0.0 hide this class
 public final class LeafRefContext {
 
     private final QName currentNodeQName;
@@ -22,7 +23,7 @@ public final class LeafRefContext {
     private final Module module;
 
     private final LeafRefPath leafRefTargetPath;
-    private final LeafRefPath absoluteLeafRefTargetPath ;
+    private final LeafRefPath absoluteLeafRefTargetPath;
     private final String leafRefTargetPathString;
 
     private final boolean isReferencedBy;
@@ -31,6 +32,12 @@ public final class LeafRefContext {
     private final Map<QName, LeafRefContext> referencingChilds;
     private final Map<QName, LeafRefContext> referencedByChilds;
     private final Map<QName, LeafRefContext> referencedByLeafRefCtx;
+
+    // FIXME: this looks like it's related to absoluteLeafRefTargetPath, but the original use in LeafRefValidation
+    //        fast path did not make it clear. Analyze the relationship between this field, absoluteLeafRefTargetPath
+    //        and isReferencing. If there is a strong enough binding, consider subclassing the 'isReferencing' case
+    //        as that is the only time when this field is accessed.
+    private volatile LeafRefPath leafRefNodePath = null;
 
     LeafRefContext(final LeafRefContextBuilder leafRefContextBuilder) {
         this.currentNodeQName = leafRefContextBuilder.getCurrentNodeQName();
@@ -127,4 +134,16 @@ public final class LeafRefContext {
         return referencedByLeafRefCtx;
     }
 
+    LeafRefPath getLeafRefNodePath() {
+        LeafRefPath ret = leafRefNodePath;
+        if (ret == null) {
+            synchronized (this) {
+                ret = leafRefNodePath;
+                if (ret == null) {
+                    ret = leafRefNodePath = LeafRefUtils.schemaPathToLeafRefPath(currentNodePath, module);
+                }
+            }
+        }
+        return ret;
+    }
 }

@@ -325,9 +325,7 @@ public final class LeafRefValidatation {
             if (leafRefContext.isReferencing()) {
                 final Set<Object> values = new HashSet<>();
 
-                final SchemaPath leafRefNodeSchemaPath = leafRefContext.getCurrentNodePath();
-                final LeafRefPath leafRefNodePath = LeafRefUtils.schemaPathToLeafRefPath(leafRefNodeSchemaPath,
-                                leafRefContext.getLeafRefContextModule());
+                final LeafRefPath leafRefNodePath = leafRefContext.getLeafRefNodePath();
                 final Iterable<QNameWithPredicate> pathFromRoot = leafRefNodePath.getPathFromRoot();
                 addValues(values, tree.getRootNode().getDataAfter(), pathFromRoot, null, QNameWithPredicate.ROOT);
                 leafRefsValues.put(leafRefContext, values);
