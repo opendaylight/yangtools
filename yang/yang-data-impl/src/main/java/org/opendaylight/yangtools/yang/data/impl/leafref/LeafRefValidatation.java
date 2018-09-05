@@ -50,19 +50,23 @@ public final class LeafRefValidatation {
 
     private final Set<LeafRefContext> validatedLeafRefCtx = new HashSet<>();
     private final List<String> errorsMessages = new ArrayList<>();
-    private final DataTreeCandidate tree;
+    private final NormalizedNode<?, ?> root;
 
-    private LeafRefValidatation(final DataTreeCandidate tree) {
-        this.tree = tree;
+    private LeafRefValidatation(final NormalizedNode<?, ?> root) {
+        this.root = root;
     }
 
     public static void validate(final DataTreeCandidate tree, final LeafRefContext rootLeafRefCtx)
             throws LeafRefDataValidationFailedException {
-        new LeafRefValidatation(tree).validate0(rootLeafRefCtx);
+        final Optional<NormalizedNode<?, ?>> root = tree.getRootNode().getDataAfter();
+        if (root.isPresent()) {
+            new LeafRefValidatation(root.get()).validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
+        }
     }
 
-    private void validate0(final LeafRefContext rootLeafRefCtx) throws LeafRefDataValidationFailedException {
-        for (final DataTreeCandidateNode dataTreeCandidateNode : tree.getRootNode().getChildNodes()) {
+    private void validateChildren(final LeafRefContext rootLeafRefCtx, final Collection<DataTreeCandidateNode> children)
+            throws LeafRefDataValidationFailedException {
+        for (final DataTreeCandidateNode dataTreeCandidateNode : children) {
             if (dataTreeCandidateNode.getModificationType() != ModificationType.UNMODIFIED) {
                 final PathArgument identifier = dataTreeCandidateNode.getIdentifier();
                 final QName childQName = identifier.getNodeType();
@@ -351,16 +355,13 @@ public final class LeafRefValidatation {
     }
 
     private Set<Object> extractRootValues(final LeafRefContext context) {
-        return tree.getRootNode().getDataAfter()
-                .map(root -> computeValues(root, context.getLeafRefNodePath().getPathFromRoot(), null))
-                .orElse(ImmutableSet.of());
+        return computeValues(root, context.getLeafRefNodePath().getPathFromRoot(), null);
     }
 
     private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
             final ModificationType modificationType, final YangInstanceIdentifier current) {
-        final Set<Object> values = tree.getRootNode().getDataAfter().map(
-            root -> computeValues(root, referencingCtx.getAbsoluteLeafRefTargetPath().getPathFromRoot(), current))
-                .orElse(ImmutableSet.of());
+        final Set<Object> values = computeValues(root, referencingCtx.getAbsoluteLeafRefTargetPath().getPathFromRoot(),
+            current);
         if (values.contains(leaf.getValue())) {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
                 referencingCtx.getNodeName(), leaf.getValue(), SUCCESS);
@@ -490,7 +491,7 @@ public final class LeafRefValidatation {
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
             final YangInstanceIdentifier current) {
-        return findParentNode(tree.getRootNode().getDataAfter(), current)
+        return findParentNode(Optional.of(root), current)
                 .map(parent -> computeValues(parent, nextLevel(predicatePathKeyExpression.getPathFromRoot()), null))
                 .orElse(ImmutableSet.of());
     }
