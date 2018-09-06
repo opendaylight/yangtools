@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -20,10 +25,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -40,6 +46,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,17 +60,20 @@ public final class LeafRefValidatation {
 
     private final Set<LeafRefContext> validatedLeafRefCtx = new HashSet<>();
     private final List<String> errorsMessages = new ArrayList<>();
+    private final DataSchemaContextNode<?> rootContextNode;
     private final NormalizedNode<?, ?> root;
 
-    private LeafRefValidatation(final NormalizedNode<?, ?> root) {
-        this.root = root;
+    private LeafRefValidatation(final NormalizedNode<?, ?> root, final DataSchemaContextNode<?> rootContextNode) {
+        this.root = requireNonNull(root);
+        this.rootContextNode = requireNonNull(rootContextNode);
     }
 
     public static void validate(final DataTreeCandidate tree, final LeafRefContext rootLeafRefCtx)
             throws LeafRefDataValidationFailedException {
         final Optional<NormalizedNode<?, ?>> root = tree.getRootNode().getDataAfter();
         if (root.isPresent()) {
-            new LeafRefValidatation(root.get()).validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
+            new LeafRefValidatation(root.get(), DataSchemaContextTree.from(rootLeafRefCtx.getSchemaContext()).getRoot())
+            .validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
         }
     }
 
@@ -357,13 +368,13 @@ public final class LeafRefValidatation {
     }
 
     private Set<Object> extractRootValues(final LeafRefContext context) {
-        return computeValues(root, context.getLeafRefNodePath().getPathFromRoot(), null);
+        return computeValues(root, rootContextNode, createPath(context.getLeafRefNodePath()), null);
     }
 
     private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
             final ModificationType modificationType, final YangInstanceIdentifier current) {
-        final Set<Object> values = computeValues(root, referencingCtx.getAbsoluteLeafRefTargetPath().getPathFromRoot(),
-            current);
+        final Set<Object> values = computeValues(root, rootContextNode,
+            createPath(referencingCtx.getAbsoluteLeafRefTargetPath()), current);
         if (values.contains(leaf.getValue())) {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
                 referencingCtx.getNodeName(), leaf.getValue(), SUCCESS);
@@ -379,16 +390,16 @@ public final class LeafRefValidatation {
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
-    private Set<Object> computeValues(final NormalizedNode<?, ?> node, final Iterable<QNameWithPredicate> path,
-            final YangInstanceIdentifier current) {
+    private Set<Object> computeValues(final NormalizedNode<?, ?> node, final DataSchemaContextNode<?> nodeContext,
+            final Deque<QNameWithPredicate> iterator, final YangInstanceIdentifier current) {
         final HashSet<Object> values = new HashSet<>();
-        addValues(values, node, ImmutableList.of(), path, current);
+        addValues(values, node, nodeContext, ImmutableList.of(), iterator, current);
         return values;
     }
 
     private void addValues(final Set<Object> values, final NormalizedNode<?, ?> node,
-            final List<QNamePredicate> nodePredicates, final Iterable<QNameWithPredicate> path,
-            final YangInstanceIdentifier current) {
+            final DataSchemaContextNode<?> nodeContext, final List<QNamePredicate> nodePredicates,
+            final Deque<QNameWithPredicate> path, final YangInstanceIdentifier current) {
         if (node instanceof ValueNode) {
             values.add(node.getValue());
             return;
@@ -400,116 +411,107 @@ public final class LeafRefValidatation {
             return;
         }
 
-        final Iterator<QNameWithPredicate> iterator = path.iterator();
-        if (!iterator.hasNext()) {
+        if (path.isEmpty()) {
             return;
         }
 
-        final QNameWithPredicate next = iterator.next();
-        final QName qname = next.getQName();
-        final PathArgument pathArgument = new NodeIdentifier(qname);
-        if (node instanceof DataContainerNode) {
-            final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
-            final Optional<DataContainerChild<? extends PathArgument, ?>> child = dataContainerNode
-                    .getChild(pathArgument);
+        final QNameWithPredicate next = path.pop();
+        try {
+            final QName qname = next.getQName();
+            final DataSchemaContextNode<?> nextContext = verifyNotNull(nodeContext.getChild(qname));
 
-            if (child.isPresent()) {
-                addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
-            } else {
-                for (final ChoiceNode choiceNode : getChoiceNodes(dataContainerNode)) {
-                    addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                }
+            if (node instanceof DataContainerNode) {
+                addValues(values, node, nextContext, qname, next.getQNamePredicates(), path, current);
+                return;
             }
-
-        } else if (node instanceof MapNode) {
-            final MapNode map = (MapNode) node;
-            if (nodePredicates.isEmpty() || current == null) {
-                final Iterable<MapEntryNode> value = map.getValue();
-                for (final MapEntryNode mapEntryNode : value) {
-                    final Optional<DataContainerChild<? extends PathArgument, ?>> child = mapEntryNode
-                            .getChild(pathArgument);
-
-                    if (child.isPresent()) {
-                        addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
-                    } else {
-                        for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                            addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                        }
-                    }
-                }
-            } else {
-                final Map<QName, Set<?>> keyValues = new HashMap<>();
-                for (QNamePredicate predicate : nodePredicates) {
-                    final QName identifier = predicate.getIdentifier();
-                    final LeafRefPath predicatePathKeyExpression = predicate.getPathKeyExpression();
-                    final Set<?> pathKeyExprValues = getPathKeyExpressionValues(predicatePathKeyExpression, current);
-
-                    keyValues.put(identifier, pathKeyExprValues);
+            if (node instanceof MapNode) {
+                final MapNode map = (MapNode) node;
+                Stream<MapEntryNode> entries = map.getValue().stream();
+                if (!nodePredicates.isEmpty() && current != null) {
+                    entries = entries.filter(createPredicate(nodePredicates, current));
                 }
 
-                for (final MapEntryNode mapEntryNode : map.getValue()) {
-                    if (isMatchingPredicate(mapEntryNode, keyValues)) {
-                        final Optional<DataContainerChild<? extends PathArgument, ?>> child = mapEntryNode
-                                .getChild(pathArgument);
-
-                        if (child.isPresent()) {
-                            addValues(values, child.get(), next.getQNamePredicates(), nextLevel(path), current);
-                        } else {
-                            for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                                addValues(values, choiceNode,  next.getQNamePredicates(), path, current);
-                            }
-                        }
-                    }
-                }
+                entries.forEach(entry -> addValues(values, entry, nextContext, qname, next.getQNamePredicates(), path,
+                    current));
             }
+        } finally {
+            path.push(next);
         }
     }
 
-    private static Iterable<ChoiceNode> getChoiceNodes(final DataContainerNode<?> dataContainerNode) {
-        final List<ChoiceNode> choiceNodes = new ArrayList<>();
-        for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
-            if (child instanceof ChoiceNode) {
-                choiceNodes.add((ChoiceNode) child);
+    private void addValues(final Set<Object> values, final NormalizedNode<?, ?> parent,
+            final DataSchemaContextNode<?> nextContext, final QName nextQName,
+            final List<QNamePredicate> nextPredicates, final Deque<QNameWithPredicate> iterator,
+            final YangInstanceIdentifier current) {
+        Optional<NormalizedNode<?, ?>> optChild = NormalizedNodes.findNode(parent, nextContext.getIdentifier());
+        DataSchemaContextNode<?> childContext = nextContext;
+        if (nextContext.isMixin()) {
+            final DataSchemaContextNode<?> unmasked = verifyNotNull(nextContext.getChild(nextQName));
+            if (!unmasked.isKeyedEntry()) {
+                childContext = unmasked;
+                optChild = NormalizedNodes.findNode(optChild, childContext.getIdentifier());
             }
         }
-        return choiceNodes;
+        if (optChild.isPresent()) {
+            addValues(values, optChild.get(), childContext, nextPredicates, iterator, current);
+        }
     }
 
-    private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
-            final Map<QName, Set<?>> allowedKeyValues) {
-        for (final Entry<QName, Object> entryKeyValue : mapEntryNode.getIdentifier().getKeyValues().entrySet()) {
-            final Set<?> allowedValues = allowedKeyValues.get(entryKeyValue.getKey());
-            if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
-                return false;
-            }
+    private Predicate<MapEntryNode> createPredicate(final List<QNamePredicate> predicates,
+            final YangInstanceIdentifier current) {
+        final Map<QName, Set<?>> keyValues = new HashMap<>();
+        for (QNamePredicate predicate : predicates) {
+            keyValues.put(predicate.getIdentifier(), getPathKeyExpressionValues(
+                predicate.getPathKeyExpression(), current));
         }
 
-        return true;
+        return entry -> {
+            for (final Entry<QName, Object> entryKeyValue : entry.getIdentifier().getKeyValues().entrySet()) {
+                final Set<?> allowedValues = keyValues.get(entryKeyValue.getKey());
+                if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
+                    return false;
+                }
+            }
+
+            return true;
+        };
     }
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
             final YangInstanceIdentifier current) {
-        return findParentNode(Optional.of(root), current)
-                .map(parent -> computeValues(parent, nextLevel(predicatePathKeyExpression.getPathFromRoot()), null))
-                .orElse(ImmutableSet.of());
-    }
+        NormalizedNode<?, ?> node = root;
+        DataSchemaContextNode<?> context = rootContextNode;
 
-    private static Optional<NormalizedNode<?, ?>> findParentNode(
-            final Optional<NormalizedNode<?, ?>> root, final YangInstanceIdentifier path) {
-        Optional<NormalizedNode<?, ?>> currentNode = root;
-        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
-        while (pathIterator.hasNext()) {
-            final PathArgument childPathArgument = pathIterator.next();
-            if (pathIterator.hasNext() && currentNode.isPresent()) {
-                currentNode = NormalizedNodes.getDirectChild(currentNode.get(), childPathArgument);
-            } else {
-                return currentNode;
+        if (!current.isEmpty()) {
+            final Iterator<PathArgument> it = current.getPathArguments().iterator();
+            while (true) {
+                final PathArgument arg = it.next();
+                if (!it.hasNext()) {
+                    break;
+                }
+
+                final DataSchemaContextNode<?> nextContext = context.getChild(arg);
+                checkArgument(nextContext != null, "Failed to find context node for %s (%s is missing %s)", current,
+                        context.getIdentifier(), arg);
+                final Optional<NormalizedNode<?, ?>> nextNode = NormalizedNodes.getDirectChild(node, arg);
+                if (!nextNode.isPresent()) {
+                    LOG.debug("Node %s is not present", current);
+                    return ImmutableSet.of();
+                }
+
+                context = nextContext;
+                node = nextNode.get();
             }
         }
-        return Optional.empty();
+
+        final Deque<QNameWithPredicate> path = createPath(predicatePathKeyExpression);
+        path.pollFirst();
+        return computeValues(node, context, path, null);
     }
 
-    private static Iterable<QNameWithPredicate> nextLevel(final Iterable<QNameWithPredicate> path) {
-        return Iterables.skip(path, 1);
+    private static Deque<QNameWithPredicate> createPath(final LeafRefPath path) {
+        final Deque<QNameWithPredicate> ret = new ArrayDeque<>();
+        path.getPathTowardsRoot().forEach(ret::push);
+        return ret;
     }
 }
