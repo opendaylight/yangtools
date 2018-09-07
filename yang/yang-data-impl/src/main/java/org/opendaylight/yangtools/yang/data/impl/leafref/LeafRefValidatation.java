@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -420,39 +422,42 @@ public final class LeafRefValidatation {
             }
         } else if (node instanceof MapNode) {
             final MapNode map = (MapNode) node;
-            if (nodePredicates.isEmpty() || current == null) {
-                final Iterable<MapEntryNode> value = map.getValue();
-                for (final MapEntryNode mapEntryNode : value) {
-                    final Optional<DataContainerChild<?, ?>> child = mapEntryNode.getChild(pathArgument);
-                    if (child.isPresent()) {
-                        addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
-                    } else {
-                        for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                            addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                        }
-                    }
-                }
-            } else {
-                final Map<QName, Set<?>> keyValues = new HashMap<>();
-                for (QNamePredicate predicate : nodePredicates) {
-                    keyValues.put(predicate.getIdentifier(),
-                        getPathKeyExpressionValues(predicate.getPathKeyExpression(), current));
-                }
+            Stream<MapEntryNode> entries = map.getValue().stream();
 
-                for (final MapEntryNode mapEntryNode : map.getValue()) {
-                    if (isMatchingPredicate(mapEntryNode, keyValues)) {
-                        final Optional<DataContainerChild<?, ?>> child = mapEntryNode.getChild(pathArgument);
-                        if (child.isPresent()) {
-                            addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
-                        } else {
-                            for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                                addValues(values, choiceNode,  next.getQNamePredicates(), path, current);
-                            }
-                        }
+            if (!nodePredicates.isEmpty() && current != null) {
+                entries = entries.filter(createMapEntryPredicate(nodePredicates, current));
+            }
+
+            entries.forEach(mapEntryNode -> {
+                final Optional<DataContainerChild<?, ?>> child = mapEntryNode.getChild(pathArgument);
+                if (child.isPresent()) {
+                    addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
+                } else {
+                    for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
+                        addValues(values, choiceNode, next.getQNamePredicates(), path, current);
                     }
+                }
+            });
+        }
+    }
+
+    private Predicate<MapEntryNode> createMapEntryPredicate(final List<QNamePredicate> nodePredicates,
+            final YangInstanceIdentifier current) {
+        final Map<QName, Set<?>> keyValues = new HashMap<>();
+        for (QNamePredicate predicate : nodePredicates) {
+            keyValues.put(predicate.getIdentifier(), getPathKeyExpressionValues(predicate.getPathKeyExpression(),
+                current));
+        }
+
+        return mapEntry -> {
+            for (final Entry<QName, Object> entryKeyValue : mapEntry.getIdentifier().getKeyValues().entrySet()) {
+                final Set<?> allowedValues = keyValues.get(entryKeyValue.getKey());
+                if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
+                    return false;
                 }
             }
-        }
+            return true;
+        };
     }
 
     private void addNextValues(final Set<Object> values, final NormalizedNode<?, ?> node,
@@ -474,18 +479,6 @@ public final class LeafRefValidatation {
             }
         }
         return choiceNodes;
-    }
-
-    private static boolean isMatchingPredicate(final MapEntryNode mapEntryNode,
-            final Map<QName, Set<?>> allowedKeyValues) {
-        for (final Entry<QName, Object> entryKeyValue : mapEntryNode.getIdentifier().getKeyValues().entrySet()) {
-            final Set<?> allowedValues = allowedKeyValues.get(entryKeyValue.getKey());
-            if (allowedValues != null && !allowedValues.contains(entryKeyValue.getValue())) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
