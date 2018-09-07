@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
+import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
@@ -69,7 +69,7 @@ public class Yangtools891Test {
         writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidatation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
         dataTree.commit(writeContributorsCandidate);
     }
 
@@ -81,7 +81,7 @@ public class Yangtools891Test {
         writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidatation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
     }
 
     @Test
@@ -94,7 +94,7 @@ public class Yangtools891Test {
         writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidatation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
     }
 
     @Test(expected = LeafRefDataValidationFailedException.class)
@@ -107,7 +107,7 @@ public class Yangtools891Test {
         writeModification.ready();
         final DataTreeCandidate writeContributorsCandidate = dataTree.prepare(writeModification);
 
-        LeafRefValidatation.validate(writeContributorsCandidate, leafRefContext);
+        LeafRefValidation.validate(writeContributorsCandidate, leafRefContext);
     }
 
     private NormalizedNode<?, ?> readNode(final String filename, final ContainerSchemaNode node) throws Exception {
