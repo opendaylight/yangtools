@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayDeque;
@@ -44,6 +47,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,17 +59,20 @@ public final class LeafRefValidation {
 
     private final Set<LeafRefContext> validatedLeafRefCtx = new HashSet<>();
     private final List<String> errorsMessages = new ArrayList<>();
+    private final DataSchemaContextNode<?> rootContext;
     private final NormalizedNode<?, ?> root;
 
-    private LeafRefValidation(final NormalizedNode<?, ?> root) {
-        this.root = root;
+    private LeafRefValidation(final DataSchemaContextNode<?> rootContext, final NormalizedNode<?, ?> root) {
+        this.rootContext = requireNonNull(rootContext);
+        this.root = requireNonNull(root);
     }
 
     public static void validate(final DataTreeCandidate tree, final LeafRefContext rootLeafRefCtx)
             throws LeafRefDataValidationFailedException {
         final Optional<NormalizedNode<?, ?>> root = tree.getRootNode().getDataAfter();
         if (root.isPresent()) {
-            new LeafRefValidation(root.get()).validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
+            new LeafRefValidation(DataSchemaContextTree.from(rootLeafRefCtx.getSchemaContext()).getRoot(), root.get())
+            .validateChildren(rootLeafRefCtx, tree.getRootNode().getChildNodes());
         }
     }
 
@@ -352,13 +360,13 @@ public final class LeafRefValidation {
     }
 
     private Set<Object> extractRootValues(final LeafRefContext context) {
-        return computeValues(root, createPath(context.getLeafRefNodePath()), null);
+        return computeValues(root, rootContext, createPath(context.getLeafRefNodePath()), null);
     }
 
     private void validateLeafRefNodeData(final NormalizedNode<?, ?> leaf, final LeafRefContext referencingCtx,
             final ModificationType modificationType, final YangInstanceIdentifier current) {
-        final Set<Object> values = computeValues(root, createPath(referencingCtx.getAbsoluteLeafRefTargetPath()),
-            current);
+        final Set<Object> values = computeValues(root, rootContext,
+            createPath(referencingCtx.getAbsoluteLeafRefTargetPath()), current);
         if (values.contains(leaf.getValue())) {
             LOG.debug("Operation [{}] validate data of LEAFREF node: name[{}] = value[{}] {}", modificationType,
                 referencingCtx.getNodeName(), leaf.getValue(), SUCCESS);
@@ -374,8 +382,8 @@ public final class LeafRefValidation {
                 referencingCtx.getAbsoluteLeafRefTargetPath()));
     }
 
-    private Set<Object> computeValues(final NormalizedNode<?, ?> node, final Deque<QNameWithPredicate> path,
-            final YangInstanceIdentifier current) {
+    private Set<Object> computeValues(final NormalizedNode<?, ?> node, final DataSchemaContextNode<?> nodeContext,
+            final Deque<QNameWithPredicate> path, final YangInstanceIdentifier current) {
         final HashSet<Object> values = new HashSet<>();
         addValues(values, node, ImmutableList.of(), path, current);
         return values;
@@ -469,26 +477,33 @@ public final class LeafRefValidation {
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
             final YangInstanceIdentifier current) {
-        return findParentNode(Optional.of(root), current).map(parent -> {
-            final Deque<QNameWithPredicate> path = createPath(predicatePathKeyExpression);
-            path.pollFirst();
-            return computeValues(parent, path, null);
-        }).orElse(ImmutableSet.of());
-    }
+        NormalizedNode<?, ?> node = root;
+        DataSchemaContextNode<?> context = rootContext;
+        if (!current.isEmpty()) {
+            final Iterator<PathArgument> it = current.getPathArguments().iterator();
+            while (true) {
+                final PathArgument arg = it.next();
+                if (!it.hasNext()) {
+                    break;
+                }
 
-    private static Optional<NormalizedNode<?, ?>> findParentNode(
-            final Optional<NormalizedNode<?, ?>> root, final YangInstanceIdentifier path) {
-        Optional<NormalizedNode<?, ?>> currentNode = root;
-        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
-        while (pathIterator.hasNext()) {
-            final PathArgument childPathArgument = pathIterator.next();
-            if (pathIterator.hasNext() && currentNode.isPresent()) {
-                currentNode = NormalizedNodes.getDirectChild(currentNode.get(), childPathArgument);
-            } else {
-                return currentNode;
+                final DataSchemaContextNode<?> nextContext = context.getChild(arg);
+                checkArgument(nextContext != null, "Failed to find context node for %s (%s is missing %s)", current,
+                        context.getIdentifier(), arg);
+                final Optional<NormalizedNode<?, ?>> nextNode = NormalizedNodes.getDirectChild(node, arg);
+                if (!nextNode.isPresent()) {
+                    LOG.debug("Node %s is not present", current);
+                    return ImmutableSet.of();
+                }
+
+                context = nextContext;
+                node = nextNode.get();
             }
         }
-        return Optional.empty();
+
+        final Deque<QNameWithPredicate> path = createPath(predicatePathKeyExpression);
+        path.pollFirst();
+        return computeValues(node, context, path, null);
     }
 
     private static Deque<QNameWithPredicate> createPath(final LeafRefPath path) {
