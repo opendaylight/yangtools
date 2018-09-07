@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefDataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidatation;
+import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
@@ -162,7 +162,7 @@ public class DataTreeCandidateValidatorTest2 {
 
         boolean exception = false;
         try {
-            LeafRefValidatation.validate(writeDevicesCandidate, rootLeafRefContext);
+            LeafRefValidation.validate(writeDevicesCandidate, rootLeafRefContext);
         } catch (final LeafRefDataValidationFailedException e) {
             LOG.debug("All validation errors:{}{}", NEW_LINE, e.getMessage());
 
