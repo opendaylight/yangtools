@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -416,9 +417,8 @@ public final class LeafRefValidatation {
             if (child.isPresent()) {
                 addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
             } else {
-                for (final ChoiceNode choiceNode : getChoiceNodes(dataContainerNode)) {
-                    addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                }
+                forEachChoice(dataContainerNode,
+                    choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
             }
         } else if (node instanceof MapNode) {
             final MapNode map = (MapNode) node;
@@ -433,9 +433,8 @@ public final class LeafRefValidatation {
                 if (child.isPresent()) {
                     addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
                 } else {
-                    for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                        addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                    }
+                    forEachChoice(mapEntryNode,
+                        choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
                 }
             });
         }
@@ -471,14 +470,12 @@ public final class LeafRefValidatation {
         }
     }
 
-    private static Iterable<ChoiceNode> getChoiceNodes(final DataContainerNode<?> dataContainerNode) {
-        final List<ChoiceNode> choiceNodes = new ArrayList<>();
-        for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
+    private static void forEachChoice(final DataContainerNode<?> node, final Consumer<ChoiceNode> consumer) {
+        for (final DataContainerChild<? extends PathArgument, ?> child : node.getValue()) {
             if (child instanceof ChoiceNode) {
-                choiceNodes.add((ChoiceNode) child);
+                consumer.accept((ChoiceNode) child);
             }
         }
-        return choiceNodes;
     }
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
