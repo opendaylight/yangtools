@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -79,9 +80,8 @@ public final class LeafRefValidatation {
                 final LeafRefContext referencedByCtx = rootLeafRefCtx.getReferencedChildByName(childQName);
                 final LeafRefContext referencingCtx = rootLeafRefCtx.getReferencingChildByName(childQName);
                 if (referencedByCtx != null || referencingCtx != null) {
-                    final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier
-                            .create(dataTreeCandidateNode.getIdentifier());
-                    validateNode(dataTreeCandidateNode, referencedByCtx, referencingCtx, yangInstanceIdentifier);
+                    validateNode(dataTreeCandidateNode, referencedByCtx, referencingCtx,
+                        YangInstanceIdentifier.create(identifier));
                 }
             }
         }
@@ -101,30 +101,24 @@ public final class LeafRefValidatation {
         final LeafRefContext referencingCtx, final YangInstanceIdentifier current) {
 
         if (node.getModificationType() == ModificationType.WRITE && node.getDataAfter().isPresent()) {
-            final Optional<NormalizedNode<?, ?>> dataAfter = node.getDataAfter();
-            final NormalizedNode<?, ?> normalizedNode = dataAfter.get();
-            validateNodeData(normalizedNode, referencedByCtx, referencingCtx,
-                    node.getModificationType(), current);
+            validateNodeData(node.getDataAfter().get(), referencedByCtx, referencingCtx, node.getModificationType(),
+                current);
             return;
         }
 
         if (node.getModificationType() == ModificationType.DELETE && referencedByCtx != null) {
-            final Optional<NormalizedNode<?, ?>> dataBefor = node.getDataBefore();
-            final NormalizedNode<?, ?> normalizedNode = dataBefor.get();
-            validateNodeData(normalizedNode, referencedByCtx, null,
-                    node.getModificationType(), current);
+            validateNodeData(node.getDataBefore().get(), referencedByCtx, null, node.getModificationType(), current);
             return;
         }
 
-        final Collection<DataTreeCandidateNode> childNodes = node.getChildNodes();
-        for (final DataTreeCandidateNode childNode : childNodes) {
+        for (final DataTreeCandidateNode childNode : node.getChildNodes()) {
             if (childNode.getModificationType() != ModificationType.UNMODIFIED) {
                 final LeafRefContext childReferencedByCtx = getReferencedByCtxChild(referencedByCtx, childNode);
                 final LeafRefContext childReferencingCtx = getReferencingCtxChild(referencingCtx, childNode);
 
                 if (childReferencedByCtx != null || childReferencingCtx != null) {
-                    final YangInstanceIdentifier childYangInstanceIdentifier = current.node(childNode.getIdentifier());
-                    validateNode(childNode, childReferencedByCtx,childReferencingCtx, childYangInstanceIdentifier);
+                    validateNode(childNode, childReferencedByCtx,childReferencingCtx,
+                        current.node(childNode.getIdentifier()));
                 }
             }
         }
@@ -416,9 +410,8 @@ public final class LeafRefValidatation {
             if (child.isPresent()) {
                 addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
             } else {
-                for (final ChoiceNode choiceNode : getChoiceNodes(dataContainerNode)) {
-                    addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                }
+                forEachChoice(dataContainerNode,
+                    choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
             }
         } else if (node instanceof MapNode) {
             Stream<MapEntryNode> entries = ((MapNode) node).getValue().stream();
@@ -431,9 +424,8 @@ public final class LeafRefValidatation {
                 if (child.isPresent()) {
                     addNextValues(values, child.get(), next.getQNamePredicates(), path, current);
                 } else {
-                    for (final ChoiceNode choiceNode : getChoiceNodes(mapEntryNode)) {
-                        addValues(values, choiceNode, next.getQNamePredicates(), path, current);
-                    }
+                    forEachChoice(mapEntryNode,
+                        choice -> addValues(values, choice, next.getQNamePredicates(), path, current));
                 }
             });
         }
@@ -469,14 +461,12 @@ public final class LeafRefValidatation {
         }
     }
 
-    private static Iterable<ChoiceNode> getChoiceNodes(final DataContainerNode<?> dataContainerNode) {
-        final List<ChoiceNode> choiceNodes = new ArrayList<>();
-        for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
+    private static void forEachChoice(final DataContainerNode<?> node, final Consumer<ChoiceNode> consumer) {
+        for (final DataContainerChild<? extends PathArgument, ?> child : node.getValue()) {
             if (child instanceof ChoiceNode) {
-                choiceNodes.add((ChoiceNode) child);
+                consumer.accept((ChoiceNode) child);
             }
         }
-        return choiceNodes;
     }
 
     private Set<?> getPathKeyExpressionValues(final LeafRefPath predicatePathKeyExpression,
