@@ -16,8 +16,7 @@ import java.io.InputStream;
 import java.util.Optional;
 import org.opendaylight.yangtools.concepts.Delegator;
 
-final class DelegatedYinTextSchemaSource extends YinTextSchemaSource
-        implements Delegator<ByteSource> {
+final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements Delegator<ByteSource> {
     private final ByteSource delegate;
 
     DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {

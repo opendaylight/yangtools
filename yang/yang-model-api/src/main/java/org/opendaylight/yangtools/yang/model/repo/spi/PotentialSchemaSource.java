@@ -59,7 +59,7 @@ public final class PotentialSchemaSource<T extends SchemaSourceRepresentation> {
         /**
          * The the cost value.
          *
-         * @return Const constant.
+         * @return A constant cost.
          */
         public int getValue() {
             return value;
