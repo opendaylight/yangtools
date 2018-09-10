@@ -15,10 +15,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.opendaylight.yangtools.triemap.MutableTrieMap;
-import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.pantheon.triemap.MutableTrieMap;
+import tech.pantheon.triemap.TrieMap;
 
 /**
  * A simple layer on top of maps, which performs snapshot mediation and optimization of

@@ -19,8 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import org.junit.Test;
-import org.opendaylight.yangtools.triemap.MutableTrieMap;
-import org.opendaylight.yangtools.triemap.TrieMap;
+import tech.pantheon.triemap.MutableTrieMap;
+import tech.pantheon.triemap.TrieMap;
 
 public class ReadWriteTrieMapTest {
 

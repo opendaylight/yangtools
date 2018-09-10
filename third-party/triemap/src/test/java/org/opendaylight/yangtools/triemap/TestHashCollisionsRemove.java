@@ -21,6 +21,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Map;
 import org.junit.Test;
 
+@Deprecated
 public class TestHashCollisionsRemove {
     private static final int COUNT = 50000;
 
