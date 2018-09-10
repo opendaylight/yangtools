@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
 
+@Deprecated
 public class TestHashCollisions {
     @Test
     public void testHashCollisions() {

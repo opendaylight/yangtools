@@ -12,10 +12,10 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ForwardingMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import org.opendaylight.yangtools.triemap.ImmutableTrieMap;
-import org.opendaylight.yangtools.triemap.MutableTrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.pantheon.triemap.ImmutableTrieMap;
+import tech.pantheon.triemap.MutableTrieMap;
 
 /**
  * A read-only facade in front of a TrieMap. This is what we give out from

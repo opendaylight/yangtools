@@ -31,6 +31,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class TestMultiThreadMapIterator {
     private static final Logger LOG = LoggerFactory.getLogger(TestMultiThreadMapIterator.class);
     private static final int NTHREADS = 7;
