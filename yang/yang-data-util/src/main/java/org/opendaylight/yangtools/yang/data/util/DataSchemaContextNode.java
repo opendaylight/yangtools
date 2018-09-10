@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -108,17 +108,13 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     }
 
     static DataSchemaNode findChildSchemaNode(final DataNodeContainer parent, final QName child) {
-        DataSchemaNode potential = parent.getDataChildByName(child);
-        if (potential == null) {
-            Iterable<ChoiceSchemaNode> choices = FluentIterable.from(
-                    parent.getChildNodes()).filter(ChoiceSchemaNode.class);
-            potential = findChoice(choices, child);
-        }
-        return potential;
+        final DataSchemaNode potential = parent.getDataChildByName(child);
+        return potential == null ? findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child)
+                : potential;
     }
 
     static DataSchemaContextNode<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
-        DataSchemaNode result = findChildSchemaNode(schema, child);
+        final DataSchemaNode result = findChildSchemaNode(schema, child);
         // We try to look up if this node was added by augmentation
         if (result != null && schema instanceof DataSchemaNode && result.isAugmenting()) {
             return fromAugmentation(schema, (AugmentationTarget) schema, result);
