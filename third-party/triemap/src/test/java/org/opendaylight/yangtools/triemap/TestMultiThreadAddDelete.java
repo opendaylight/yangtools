@@ -27,6 +27,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class TestMultiThreadAddDelete {
     private static final Logger LOG = LoggerFactory.getLogger(TestMultiThreadAddDelete.class);
     private static final int RETRIES = 1;
@@ -81,19 +82,16 @@ public class TestMultiThreadAddDelete {
                 final ExecutorService es = Executors.newFixedThreadPool(N_THREADS);
                 for (int i = 0; i < N_THREADS; i++) {
                     final int threadNo = i;
-                    es.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (int j = 0; j < COUNT; j++) {
-                                if (j % N_THREADS == threadNo) {
-                                    bt.put(Integer.valueOf(j), Integer.valueOf(j));
-                                    if (!bt.containsKey(Integer.valueOf(j))) {
-                                        LOG.error("Key {} not present", j);
-                                    }
-                                    bt.remove(Integer.valueOf(j));
-                                    if (bt.containsKey(Integer.valueOf(j))) {
-                                        LOG.error("Key {} is still present", j);
-                                    }
+                    es.execute(() -> {
+                        for (int j1 = 0; j1 < COUNT; j1++) {
+                            if (j1 % N_THREADS == threadNo) {
+                                bt.put(Integer.valueOf(j1), Integer.valueOf(j1));
+                                if (!bt.containsKey(Integer.valueOf(j1))) {
+                                    LOG.error("Key {} not present", j1);
+                                }
+                                bt.remove(Integer.valueOf(j1));
+                                if (bt.containsKey(Integer.valueOf(j1))) {
+                                    LOG.error("Key {} is still present", j1);
                                 }
                             }
                         }
