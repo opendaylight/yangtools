@@ -16,15 +16,15 @@
 package org.opendaylight.yangtools.triemap;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.triemap.LookupResult.RESTART;
 
-import com.google.common.annotations.Beta;
-import java.io.ObjectStreamException;
+import com.google.common.collect.ForwardingObject;
 import java.io.Serializable;
-import java.util.AbstractMap;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 /**
  * This is a port of Scala's TrieMap class from the Scala Collections library. This implementation does not support
@@ -36,22 +36,20 @@ import java.util.concurrent.ConcurrentMap;
  *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
+ * @deprecated use {@link tech.pantheon.triemap.TrieMap} instead.
  */
-@Beta
-public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements ConcurrentMap<K,V>, Serializable {
+@Deprecated
+public abstract class TrieMap<K, V> extends ForwardingObject implements ConcurrentMap<K,V>, Serializable {
     private static final long serialVersionUID = 1L;
 
-    private final Equivalence<? super K> equiv;
+    private final tech.pantheon.triemap.TrieMap<K, V> delegate;
 
-    private AbstractEntrySet<K, V> entrySet;
-    private AbstractKeySet<K> keySet;
-
-    TrieMap(final Equivalence<? super K> equiv) {
-        this.equiv = equiv;
+    TrieMap(final tech.pantheon.triemap.TrieMap<K, V> delegate) {
+        this.delegate = requireNonNull(delegate);
     }
 
     public static <K, V> MutableTrieMap<K, V> create() {
-        return new MutableTrieMap<>(Equivalence.equals());
+        return new MutableTrieMap<>(tech.pantheon.triemap.TrieMap.create());
     }
 
     /**
@@ -91,138 +89,118 @@ public abstract class TrieMap<K, V> extends AbstractMap<K, V> implements Concurr
 
     @Override
     public final boolean containsKey(final Object key) {
-        return get(key) != null;
+        return delegate.containsKey(key);
     }
 
     @Override
     public final boolean containsValue(final Object value) {
-        return super.containsValue(requireNonNull(value));
+        return delegate.containsValue(delegate);
     }
 
     @Override
     public final Set<Entry<K, V>> entrySet() {
-        final AbstractEntrySet<K, V> ret;
-        return (ret = entrySet) != null ? ret : (entrySet = createEntrySet());
+        return delegate.entrySet();
     }
 
     @Override
     public final Set<K> keySet() {
-        final AbstractKeySet<K> ret;
-        return (ret = keySet) != null ? ret : (keySet = createKeySet());
+        return delegate.keySet();
     }
 
     @Override
     public final V get(final Object key) {
-        @SuppressWarnings("unchecked")
-        final K k = (K) requireNonNull(key);
-        return lookuphc(k, computeHash(k));
+        return delegate.get(key);
     }
 
     @Override
-    public abstract void clear();
+    public final void clear() {
+        delegate.clear();
+    }
 
     @Override
-    public abstract V put(K key, V value);
+    public final V put(final K key, final V value) {
+        return delegate.put(key, value);
+    }
 
     @Override
-    public abstract V putIfAbsent(K key, V value);
+    public final V putIfAbsent(final K key, final V value) {
+        return delegate.putIfAbsent(key, value);
+    }
 
     @Override
-    public abstract V remove(Object key);
+    public final V remove(final Object key) {
+        return delegate.remove(key);
+    }
 
     @Override
-    public abstract boolean remove(Object key, Object value);
+    public final boolean remove(final Object key, final Object value) {
+        return delegate.remove(key, value);
+    }
 
     @Override
-    public abstract boolean replace(K key, V oldValue, V newValue);
+    public final boolean replace(final K key, final V oldValue, final V newValue) {
+        return delegate.replace(key, oldValue, newValue);
+    }
 
     @Override
-    public abstract V replace(K key, V value);
+    public final V replace(final K key, final V value) {
+        return delegate.replace(key, value);
+    }
 
     @Override
-    public abstract int size();
-
-    /* internal methods implemented by subclasses */
-
-    abstract AbstractEntrySet<K, V> createEntrySet();
-
-    abstract AbstractKeySet<K> createKeySet();
-
-    abstract boolean isReadOnly();
-
-    abstract INode<K, V> RDCSS_READ_ROOT(boolean abort);
-
-    /**
-     * Return an iterator over a TrieMap.
-     *
-     * <p>
-     * If this is a read-only snapshot, it would return a read-only iterator.
-     *
-     * <p>
-     * If it is the original TrieMap or a non-readonly snapshot, it would return
-     * an iterator that would allow for updates.
-     *
-     * @return An iterator.
-     */
-    abstract AbstractIterator<K, V> iterator();
-
-    /* internal methods provided for subclasses */
-
-    /**
-     * Return an iterator over a TrieMap. This is a read-only iterator.
-     *
-     * @return A read-only iterator.
-     */
-    final ImmutableIterator<K, V> immutableIterator() {
-        return new ImmutableIterator<>(immutableSnapshot());
+    public final int size() {
+        return delegate.size();
     }
 
-    @SuppressWarnings("null")
-    static <V> V toNullable(final Optional<V> opt) {
-        return opt.orElse(null);
+    @Override
+    public final boolean isEmpty() {
+        return delegate.isEmpty();
     }
 
-    final int computeHash(final K key) {
-        return equiv.hash(key);
+    @Override
+    public final void putAll(final Map<? extends K, ? extends V> m) {
+        delegate.putAll(m);
     }
 
-    final Object writeReplace() throws ObjectStreamException {
-        return new SerializationProxy(immutableSnapshot(), isReadOnly());
+    @Override
+    public final Collection<V> values() {
+        return delegate.values();
     }
 
-    /* package-protected utility methods */
-
-    final Equivalence<? super K> equiv() {
-        return equiv;
+    @Override
+    public final V compute(final K key, final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        return delegate.compute(key, remappingFunction);
     }
 
-    final INode<K, V> readRoot() {
-        return RDCSS_READ_ROOT(false);
+    @Override
+    public final V computeIfAbsent(final K key, final Function<? super K, ? extends V> mappingFunction) {
+        return delegate.computeIfAbsent(key, mappingFunction);
     }
 
-    // FIXME: abort = false by default
-    final INode<K, V> readRoot(final boolean abort) {
-        return RDCSS_READ_ROOT(abort);
+    @Override
+    public final V computeIfPresent(final K key,
+            final BiFunction<? super K, ? super V, ? extends V> remappingFunction) {
+        return delegate.computeIfPresent(key, remappingFunction);
     }
 
-    final INode<K, V> RDCSS_READ_ROOT() {
-        return RDCSS_READ_ROOT(false);
+    @Override
+    public final V merge(final K key, final V value,
+            final BiFunction<? super V, ? super V, ? extends V> remappingFunction) {
+        return delegate.merge(key, value, remappingFunction);
     }
 
-    final boolean equal(final K k1, final K k2) {
-        return equiv.equivalent(k1, k2);
+    @Override
+    public final int hashCode() {
+        return delegate.hashCode();
     }
 
-    /* private implementation methods */
+    @Override
+    public final boolean equals(final Object o) {
+        return delegate.equals(o);
+    }
 
-    @SuppressWarnings("unchecked")
-    private V lookuphc(final K key, final int hc) {
-        Object res;
-        do {
-            // Keep looping as long as RESTART is being indicated
-            res = RDCSS_READ_ROOT().recLookup(key, hc, 0, null, this);
-        } while (res == RESTART);
-
-        return (V) res;
+    @Override
+    protected final tech.pantheon.triemap.TrieMap<K, V> delegate() {
+        return delegate;
     }
 }
