@@ -23,6 +23,7 @@ import java.io.ObjectOutputStream;
 import org.junit.Assert;
 import org.junit.Test;
 
+@Deprecated
 public class TestSerialization {
     @Test
     public void testSerialization() throws IOException, ClassNotFoundException {

@@ -15,10 +15,10 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.triemap.MutableTrieMap;
-import org.opendaylight.yangtools.triemap.TrieMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tech.pantheon.triemap.MutableTrieMap;
+import tech.pantheon.triemap.TrieMap;
 
 /**
  * A TrieMap facade tracking modifications. Since we change structures based on
