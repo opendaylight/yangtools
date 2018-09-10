@@ -51,10 +51,10 @@ public final class LeafInterner {
             final T ret = (T) INTERNER.intern(sample);
             LOG.trace("Interned object {} to {}", sample, ret);
             return ret;
-        } else {
-            // Non-empty attributes, do not intern
-            return sample;
         }
+
+        // Non-empty attributes, do not intern
+        return sample;
     }
 
     /**
