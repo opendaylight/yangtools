@@ -461,7 +461,7 @@ public final class SchemaUtils {
             return child;
         }
         if (node instanceof ChoiceSchemaNode) {
-            return ((ChoiceSchemaNode) node).getCaseNodeByName(qname);
+            return ((ChoiceSchemaNode) node).getCases().get(qname);
         }
         if (node instanceof OperationDefinition) {
             switch (qname.getLocalName()) {

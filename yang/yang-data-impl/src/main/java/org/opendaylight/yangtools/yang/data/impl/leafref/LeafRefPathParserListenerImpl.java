@@ -179,7 +179,7 @@ final class LeafRefPathParserListenerImpl extends LeafRefPathParserBaseListener 
         return schemaContext.findModule(moduleName, revision).map(Module::getQNameModule);
     }
 
-    private ModuleImport getModuleImport(final Module targetModule, final String prefix) {
+    private static ModuleImport getModuleImport(final Module targetModule, final String prefix) {
         return targetModule.getImports().stream()
             .filter(imp -> prefix.equals(imp.getPrefix())).findFirst().orElse(null);
     }
