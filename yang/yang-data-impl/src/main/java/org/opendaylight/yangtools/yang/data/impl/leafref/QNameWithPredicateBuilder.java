@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import org.opendaylight.yangtools.concepts.Builder;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
@@ -25,6 +26,10 @@ class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
             return QNameWithPredicate.UP_PARENT;
         }
     };
+
+    QNameWithPredicateBuilder(final QName qname) {
+        this(qname.getModule(), qname.getLocalName());
+    }
 
     QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
         this.moduleQname = moduleQname;

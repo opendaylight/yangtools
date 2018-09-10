@@ -36,7 +36,6 @@ public final class LeafRefUtils {
     public static LeafRefPath createAbsoluteLeafRefPath(
             final LeafRefPath leafRefPath, final SchemaPath contextNodeSchemaPath,
             final Module module) {
-
         if (leafRefPath.isAbsolute()) {
             return leafRefPath;
         }
@@ -57,50 +56,34 @@ public final class LeafRefUtils {
         return LeafRefPath.create(absoluteLeafRefTargetPathList, true);
     }
 
-    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(
-            final SchemaPath nodePath, final Module module) {
-
+    private static Deque<QNameWithPredicate> schemaPathToXPathQNames(final SchemaPath nodePath, final Module module) {
         final Deque<QNameWithPredicate> xpath = new LinkedList<>();
-
-        final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot()
-                .iterator();
+        final Iterator<QName> nodePathIterator = nodePath.getPathFromRoot().iterator();
 
         DataNodeContainer currenDataNodeContainer = module;
         while (nodePathIterator.hasNext()) {
             final QName qname = nodePathIterator.next();
-            final DataSchemaNode child = currenDataNodeContainer
-                    .getDataChildByName(qname);
+            final DataSchemaNode child = currenDataNodeContainer.getDataChildByName(qname);
 
             if (child instanceof DataNodeContainer) {
                 if (!(child instanceof CaseSchemaNode)) {
-                    final QNameWithPredicate newQName = new QNameWithPredicateBuilder(
-                            qname.getModule(), qname.getLocalName()).build();
-                    xpath.add(newQName);
+                    xpath.add(new QNameWithPredicateBuilder(qname).build());
                 }
                 currenDataNodeContainer = (DataNodeContainer) child;
             } else if (child instanceof ChoiceSchemaNode) {
                 if (nodePathIterator.hasNext()) {
-                    currenDataNodeContainer = ((ChoiceSchemaNode) child)
-                            .getCaseNodeByName(nodePathIterator.next());
+                    currenDataNodeContainer = ((ChoiceSchemaNode) child).getCases().get(nodePathIterator.next());
                 } else {
                     break;
                 }
-            } else if (child instanceof LeafSchemaNode
-                    || child instanceof LeafListSchemaNode) {
-
-                final QNameWithPredicate newQName = new QNameWithPredicateBuilder(
-                        qname.getModule(), qname.getLocalName()).build();
-                xpath.add(newQName);
+            } else if (child instanceof LeafSchemaNode || child instanceof LeafListSchemaNode) {
+                xpath.add(new QNameWithPredicateBuilder(qname).build());
                 break;
-
             } else if (child == null) {
-                throw new IllegalArgumentException("No child " + qname
-                        + " found in node container " + currenDataNodeContainer
-                        + " in module " + module.getName());
+                throw new IllegalArgumentException("No child " + qname + " found in node container "
+                        + currenDataNodeContainer + " in module " + module.getName());
             } else {
-                throw new IllegalStateException(
-                        "Illegal schema node type in the path: "
-                                + child.getClass());
+                throw new IllegalStateException("Illegal schema node type in the path: " + child.getClass());
             }
         }
 
