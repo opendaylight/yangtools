@@ -161,27 +161,37 @@ public final class LeafRefValidation {
     private void validateNodeData(final NormalizedNode<?, ?> node, final LeafRefContext referencedByCtx,
             final LeafRefContext referencingCtx, final ModificationType modificationType,
             final YangInstanceIdentifier current) {
-
         if (node instanceof LeafNode) {
-            final LeafNode<?> leaf = (LeafNode<?>) node;
-
-            if (referencedByCtx != null && referencedByCtx.isReferenced()) {
-                validateLeafRefTargetNodeData(leaf, referencedByCtx, modificationType);
-            }
-            if (referencingCtx != null && referencingCtx.isReferencing()) {
-                validateLeafRefNodeData(leaf, referencingCtx, modificationType, current);
-            }
-
-            return;
+            validateLeafNodeData((LeafNode<?>) node, referencedByCtx, referencingCtx, modificationType, current);
+        } else if (node instanceof LeafSetNode) {
+            validateLeafSetNodeData((LeafSetNode<?>) node, referencedByCtx, referencingCtx, modificationType, current);
+        } else if (node instanceof ChoiceNode) {
+            validateChoiceNodeData((ChoiceNode) node, referencedByCtx, referencingCtx, modificationType, current);
+        } else if (node instanceof DataContainerNode) {
+            validateDataContainerNodeData((DataContainerNode<?>) node, referencedByCtx, referencingCtx,
+                modificationType, current);
+        } else if (node instanceof MapNode) {
+            validateMapNodeData((MapNode) node, referencedByCtx, referencingCtx, modificationType, current);
         }
+        // FIXME: check UnkeyedListNode case
+    }
 
-        if (node instanceof LeafSetNode) {
-            if (referencedByCtx == null && referencingCtx == null) {
-                return;
-            }
+    private void validateLeafNodeData(final LeafNode<?> node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        if (referencedByCtx != null && referencedByCtx.isReferenced()) {
+            validateLeafRefTargetNodeData(node, referencedByCtx, modificationType);
+        }
+        if (referencingCtx != null && referencingCtx.isReferencing()) {
+            validateLeafRefNodeData(node, referencingCtx, modificationType, current);
+        }
+    }
 
-            final LeafSetNode<?> leafSet = (LeafSetNode<?>) node;
-            for (final NormalizedNode<?, ?> leafSetEntry : leafSet.getValue()) {
+    private void validateLeafSetNodeData(final LeafSetNode<?> node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        if (referencedByCtx != null || referencingCtx != null) {
+            for (final NormalizedNode<?, ?> leafSetEntry : node.getValue()) {
                 if (referencedByCtx != null && referencedByCtx.isReferenced()) {
                     validateLeafRefTargetNodeData(leafSetEntry, referencedByCtx, modificationType);
                 }
@@ -189,128 +199,89 @@ public final class LeafRefValidation {
                     validateLeafRefNodeData(leafSetEntry, referencingCtx, modificationType, current);
                 }
             }
-
-            return;
         }
+    }
 
-        if (node instanceof ChoiceNode) {
-            final ChoiceNode choice = (ChoiceNode) node;
-            for (final DataContainerChild<? extends PathArgument, ?> dataContainerChild : choice.getValue()) {
-                final QName qname = dataContainerChild.getNodeType();
-
-                final LeafRefContext childReferencedByCtx;
-                if (referencedByCtx != null) {
-                    childReferencedByCtx = findReferencedByCtxUnderChoice(referencedByCtx, qname);
-                } else {
-                    childReferencedByCtx = null;
-                }
-
-                final LeafRefContext childReferencingCtx;
-                if (referencingCtx != null) {
-                    childReferencingCtx = findReferencingCtxUnderChoice(referencingCtx, qname);
-                } else {
-                    childReferencingCtx = null;
-                }
-
-                if (childReferencedByCtx != null || childReferencingCtx != null) {
-                    final YangInstanceIdentifier childYangInstanceIdentifier = current
-                            .node(dataContainerChild.getIdentifier());
-                    validateNodeData(dataContainerChild, childReferencedByCtx,
-                            childReferencingCtx, modificationType, childYangInstanceIdentifier);
-                }
+    private void validateChoiceNodeData(final ChoiceNode node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        for (final DataContainerChild<?, ?> child : node.getValue()) {
+            final QName qname = child.getNodeType();
+            final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
+                    : findReferencedByCtxUnderChoice(referencedByCtx, qname);
+            final LeafRefContext childReferencingCtx = referencingCtx == null ? null
+                    : findReferencingCtxUnderChoice(referencingCtx, qname);
+            if (childReferencedByCtx != null || childReferencingCtx != null) {
+                validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType,
+                    current.node(child.getIdentifier()));
             }
-        } else if (node instanceof DataContainerNode) {
-            final DataContainerNode<?> dataContainerNode = (DataContainerNode<?>) node;
+        }
+    }
 
-            for (final DataContainerChild<? extends PathArgument, ?> child : dataContainerNode.getValue()) {
+    private void validateDataContainerNodeData(final DataContainerNode<?> node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        for (final DataContainerChild<?, ?> child : node.getValue()) {
+            if (child instanceof AugmentationNode) {
+                validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current.node(
+                    child.getIdentifier()));
+                return;
+            }
+
+            validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, current);
+        }
+    }
+
+    private void validateMapNodeData(final MapNode node, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        for (final MapEntryNode mapEntry : node.getValue()) {
+            final YangInstanceIdentifier mapEntryIdentifier = current.node(mapEntry.getIdentifier());
+            for (final DataContainerChild<?, ?> child : mapEntry.getValue()) {
                 if (child instanceof AugmentationNode) {
-                    validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current
-                        .node(child.getIdentifier()));
+                    validateNodeData(child, referencedByCtx, referencingCtx, modificationType, current.node(
+                        child.getIdentifier()));
                     return;
                 }
 
-                final QName qname = child.getNodeType();
-                final LeafRefContext childReferencedByCtx;
-                if (referencedByCtx != null) {
-                    childReferencedByCtx = referencedByCtx.getReferencedChildByName(qname);
-                } else {
-                    childReferencedByCtx = null;
-                }
-
-                final LeafRefContext childReferencingCtx;
-                if (referencingCtx != null) {
-                    childReferencingCtx = referencingCtx.getReferencingChildByName(qname);
-                } else {
-                    childReferencingCtx = null;
-                }
-
-                if (childReferencedByCtx != null || childReferencingCtx != null) {
-                    final YangInstanceIdentifier childYangInstanceIdentifier = current
-                            .node(child.getIdentifier());
-                    validateNodeData(child, childReferencedByCtx,
-                            childReferencingCtx, modificationType, childYangInstanceIdentifier);
-                }
-            }
-        } else if (node instanceof MapNode) {
-            final MapNode map = (MapNode) node;
-
-            for (final MapEntryNode mapEntry : map.getValue()) {
-                final YangInstanceIdentifier mapEntryYangInstanceIdentifier = current.node(mapEntry.getIdentifier());
-                for (final DataContainerChild<? extends PathArgument, ?> mapEntryNode : mapEntry.getValue()) {
-                    if (mapEntryNode instanceof AugmentationNode) {
-                        validateNodeData(mapEntryNode, referencedByCtx, referencingCtx, modificationType, current
-                            .node(mapEntryNode.getIdentifier()));
-                        return;
-                    }
-
-                    final QName qname = mapEntryNode.getNodeType();
-                    final LeafRefContext childReferencedByCtx;
-                    if (referencedByCtx != null) {
-                        childReferencedByCtx = referencedByCtx.getReferencedChildByName(qname);
-                    } else {
-                        childReferencedByCtx = null;
-                    }
-
-                    final LeafRefContext childReferencingCtx;
-                    if (referencingCtx != null) {
-                        childReferencingCtx = referencingCtx.getReferencingChildByName(qname);
-                    } else {
-                        childReferencingCtx = null;
-                    }
-
-                    if (childReferencedByCtx != null || childReferencingCtx != null) {
-                        validateNodeData(mapEntryNode, childReferencedByCtx, childReferencingCtx, modificationType,
-                                mapEntryYangInstanceIdentifier.node(mapEntryNode.getIdentifier()));
-                    }
-                }
+                validateChildNodeData(child, referencedByCtx, referencingCtx, modificationType, mapEntryIdentifier);
             }
         }
-        // FIXME: check UnkeyedListNode case
     }
 
-    private static LeafRefContext findReferencingCtxUnderChoice(
-            final LeafRefContext referencingCtx, final QName qname) {
+    private void validateChildNodeData(final DataContainerChild<?, ?> child, final LeafRefContext referencedByCtx,
+            final LeafRefContext referencingCtx, final ModificationType modificationType,
+            final YangInstanceIdentifier current) {
+        final QName qname = child.getNodeType();
+        final LeafRefContext childReferencedByCtx = referencedByCtx == null ? null
+                : referencedByCtx.getReferencedChildByName(qname);
+        final LeafRefContext childReferencingCtx = referencingCtx == null ? null
+                : referencingCtx.getReferencingChildByName(qname);
+        if (childReferencedByCtx != null || childReferencingCtx != null) {
+            validateNodeData(child, childReferencedByCtx, childReferencingCtx, modificationType, current.node(
+                child.getIdentifier()));
+        }
+    }
 
+    private static LeafRefContext findReferencingCtxUnderChoice(final LeafRefContext referencingCtx,
+            final QName qname) {
         for (final LeafRefContext child : referencingCtx.getReferencingChilds().values()) {
             final LeafRefContext referencingChildByName = child.getReferencingChildByName(qname);
             if (referencingChildByName != null) {
                 return referencingChildByName;
             }
         }
-
         return null;
     }
 
-    private static LeafRefContext findReferencedByCtxUnderChoice(
-            final LeafRefContext referencedByCtx, final QName qname) {
-
+    private static LeafRefContext findReferencedByCtxUnderChoice(final LeafRefContext referencedByCtx,
+            final QName qname) {
         for (final LeafRefContext child : referencedByCtx.getReferencedByChilds().values()) {
             final LeafRefContext referencedByChildByName = child.getReferencedChildByName(qname);
             if (referencedByChildByName != null) {
                 return referencedByChildByName;
             }
         }
-
         return null;
     }
 
@@ -460,7 +431,7 @@ public final class LeafRefValidation {
     }
 
     private static void forEachChoice(final DataContainerNode<?> node, final Consumer<ChoiceNode> consumer) {
-        for (final DataContainerChild<? extends PathArgument, ?> child : node.getValue()) {
+        for (final DataContainerChild<?, ?> child : node.getValue()) {
             if (child instanceof ChoiceNode) {
                 consumer.accept((ChoiceNode) child);
             }
