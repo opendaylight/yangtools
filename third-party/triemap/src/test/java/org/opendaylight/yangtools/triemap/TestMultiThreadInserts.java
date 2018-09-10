@@ -22,6 +22,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import org.junit.Test;
 
+@Deprecated
 public class TestMultiThreadInserts {
     @Test
     public void testMultiThreadInserts() throws InterruptedException {

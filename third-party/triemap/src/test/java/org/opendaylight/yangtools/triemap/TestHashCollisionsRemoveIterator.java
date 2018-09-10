@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.junit.Test;
 
+@Deprecated
 public class TestHashCollisionsRemoveIterator {
     private static final int COUNT = 50000;
 

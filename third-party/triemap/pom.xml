@@ -49,6 +49,10 @@
             <groupId>tech.pantheon.triemap</groupId>
             <artifactId>triemap</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
