@@ -21,6 +21,7 @@ import static org.junit.Assert.assertSame;
 import java.util.Map;
 import org.junit.Test;
 
+@Deprecated
 public class TestCNodeFlagCollision {
     @Test
     public void testCNodeFlagCollision() {
