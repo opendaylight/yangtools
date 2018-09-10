@@ -27,10 +27,6 @@ class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
         }
     };
 
-    QNameWithPredicateBuilder(final QName qname) {
-        this(qname.getModule(), qname.getLocalName());
-    }
-
     QNameWithPredicateBuilder(final QNameModule moduleQname, final String localName) {
         this.moduleQname = moduleQname;
         this.localName = localName;
@@ -38,8 +34,12 @@ class QNameWithPredicateBuilder implements Builder<QNameWithPredicate> {
 
     @Override
     public QNameWithPredicate build() {
-        final QNameWithPredicateImpl qNameWithPredicateImpl = new QNameWithPredicateImpl(
-                moduleQname, localName, qnamePredicates);
+        if (qnamePredicates.isEmpty() && moduleQname != null && localName != null) {
+            return new SimpleQNameWithPredicate(QName.create(moduleQname, localName));
+        }
+
+        final QNameWithPredicateImpl qNameWithPredicateImpl = new QNameWithPredicateImpl(moduleQname, localName,
+            qnamePredicates);
 
         // QNameWithPredicateImpl has taken a copy
         qnamePredicates.clear();

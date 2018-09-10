@@ -67,7 +67,7 @@ public final class LeafRefUtils {
 
             if (child instanceof DataNodeContainer) {
                 if (!(child instanceof CaseSchemaNode)) {
-                    xpath.add(new QNameWithPredicateBuilder(qname).build());
+                    xpath.add(new SimpleQNameWithPredicate(qname));
                 }
                 currenDataNodeContainer = (DataNodeContainer) child;
             } else if (child instanceof ChoiceSchemaNode) {
@@ -77,7 +77,7 @@ public final class LeafRefUtils {
                     break;
                 }
             } else if (child instanceof LeafSchemaNode || child instanceof LeafListSchemaNode) {
-                xpath.add(new QNameWithPredicateBuilder(qname).build());
+                xpath.add(new SimpleQNameWithPredicate(qname));
                 break;
             } else if (child == null) {
                 throw new IllegalArgumentException("No child " + qname + " found in node container "
