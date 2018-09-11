@@ -58,7 +58,7 @@
                 <configuration>
                     <failOnError>true</failOnError>
                 </configuration>
-           </plugin>
+            </plugin>
         </plugins>
     </build>
 </project>
