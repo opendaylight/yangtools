@@ -21,6 +21,11 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
+    <properties>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.base.directory}/../../target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -82,14 +87,22 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>prepare-ut-agent</id>
-                        <phase>process-test-classes</phase>
+                        <id>pre-unit-test</id>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${sonar.jacoco.reportPath}</destFile>
-                            <propertyName>jacoco.agent.ut.arg</propertyName>
+                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
+                            <propertyName>jacoco.agent.it.arg</propertyName>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/code-coverage/jacoco.exec</dataFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -99,7 +112,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${sonar.jacoco.itReportPath}</destFile>
+                            <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
                             <propertyName>jacoco.agent.it.arg</propertyName>
                         </configuration>
                     </execution>
