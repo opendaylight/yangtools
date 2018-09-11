@@ -63,7 +63,7 @@ public class Bug3874ExtensionTest {
         QName myContainer2QName = QName.create(foo, "my-container-2");
         QName myAnyXmlDataQName = QName.create(foo, "my-anyxml-data");
 
-        DataSchemaNode dataChildByName = context.getDataChildByName(myAnyXmlDataQName);
+        DataSchemaNode dataChildByName = context.findDataChildByName(myAnyXmlDataQName).get();
         assertTrue(dataChildByName instanceof YangModeledAnyXmlSchemaNode);
         YangModeledAnyXmlSchemaNode yangModeledAnyXml = (YangModeledAnyXmlSchemaNode) dataChildByName;
 

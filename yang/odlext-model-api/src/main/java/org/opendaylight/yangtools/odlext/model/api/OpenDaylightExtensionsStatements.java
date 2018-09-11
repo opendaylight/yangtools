@@ -43,16 +43,6 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     }
 
     @Nonnull
-    private static QName createQName(final String namespace, final String localName) {
-        return QName.create(namespace, localName).intern();
-    }
-
-    @Nonnull
-    private static QName createQName(final String namespace, final String revision, final String localName) {
-        return QName.create(namespace, revision, localName).intern();
-    }
-
-    @Nonnull
     @Override
     public QName getStatementName() {
         return statementName;

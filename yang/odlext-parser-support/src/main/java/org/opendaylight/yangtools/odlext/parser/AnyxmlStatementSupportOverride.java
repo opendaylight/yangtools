@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
+import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml.AnyxmlStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ForwardingStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -69,7 +69,7 @@ public final class AnyxmlStatementSupportOverride
     private static Optional<ContainerSchemaNode> getAnyXmlSchema(
             final StmtContext<QName, AnyxmlStatement, AnyxmlEffectiveStatement> ctx,
             final SchemaNodeIdentifier contentSchemaPath) {
-        return SchemaNodeIdentifierBuildNamespace.findNode(ctx.getRoot(), contentSchemaPath)
+        return ChildSchemaNodeNamespace.findNode(ctx.getRoot(), contentSchemaPath)
                 .map(StmtContext::buildEffective)
                 .filter(ContainerSchemaNode.class::isInstance).map(ContainerSchemaNode.class::cast);
     }
