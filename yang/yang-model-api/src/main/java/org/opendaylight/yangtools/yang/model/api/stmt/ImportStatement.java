@@ -17,8 +17,7 @@ public interface ImportStatement extends DocumentedDeclaredStatement<String> {
     }
 
     default @Nonnull PrefixStatement getPrefix() {
-        final Optional<PrefixStatement> opt = findFirstDeclaredSubstatement(PrefixStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {

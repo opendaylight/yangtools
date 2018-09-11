@@ -22,16 +22,13 @@ public interface ModuleStatement extends MetaDeclaredStatement<String>, ModuleHe
         return opt.isPresent() ? opt.get() : null;
     }
 
-    @Nonnull
     @Override
     default NamespaceStatement getNamespace() {
-        final Optional<NamespaceStatement> opt = findFirstDeclaredSubstatement(NamespaceStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        return findFirstDeclaredSubstatement(NamespaceStatement.class).get();
     }
 
     @Override
     default PrefixStatement getPrefix() {
-        final Optional<PrefixStatement> opt = findFirstDeclaredSubstatement(PrefixStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+        return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 }
