@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -25,8 +26,9 @@ public abstract class CachingDerivedString<T extends CachingDerivedString<T>> ex
 
     private transient volatile @Nullable String str;
 
+    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     protected CachingDerivedString() {
-
+        this.str = null;
     }
 
     protected CachingDerivedString(final String str) {

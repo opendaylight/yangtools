@@ -35,7 +35,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     //Nullable
     private final Revision revision;
 
-    private transient int hash;
+    private transient int hash = 0;
 
     private QNameModule(final @NonNull URI namespace, final Revision revision) {
         this.namespace = requireNonNull(namespace);
