@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
@@ -32,7 +34,11 @@ final class StackedYangInstanceIdentifier extends YangInstanceIdentifier impleme
         } catch (NoSuchFieldException | SecurityException e) {
             throw new ExceptionInInitializerError(e);
         }
-        f.setAccessible(true);
+
+        AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+            f.setAccessible(true);
+            return null;
+        });
 
         PARENT_FIELD = f;
     }

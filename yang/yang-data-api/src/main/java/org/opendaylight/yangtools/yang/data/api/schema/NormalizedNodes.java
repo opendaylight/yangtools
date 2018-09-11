@@ -96,7 +96,7 @@ public final class NormalizedNodes {
             return (Optional) ((DataContainerNode<?>) node).getChild(pathArg);
         } else if (node instanceof MapNode && pathArg instanceof NodeIdentifierWithPredicates) {
             return (Optional) ((MapNode) node).getChild((NodeIdentifierWithPredicates) pathArg);
-        } else if (node instanceof LeafSetNode<?>) {
+        } else if (node instanceof LeafSetNode<?> && pathArg instanceof NodeWithValue) {
             return (Optional) ((LeafSetNode<?>) node).getChild((NodeWithValue) pathArg);
         }
         return Optional.empty();
