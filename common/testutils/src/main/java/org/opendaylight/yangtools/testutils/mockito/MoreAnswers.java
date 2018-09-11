@@ -27,6 +27,8 @@ public final class MoreAnswers {
     /**
      * Returns Mockito Answer (default) which forwards method calls or throws an UnstubbedMethodException.
      *
+     * @param <T> answer type
+     * @return An answer
      * @see CallsRealOrExceptionAnswer
      */
     public static <T> Answer<T> realOrException() {
@@ -36,6 +38,8 @@ public final class MoreAnswers {
     /**
      * Returns Mockito Answer (default) which throws an UnstubbedMethodException.
      *
+     * @param <T> answer type
+     * @return An answer
      * @see ThrowsMethodExceptionAnswer
      */
     public static <T> Answer<T> exception() {
