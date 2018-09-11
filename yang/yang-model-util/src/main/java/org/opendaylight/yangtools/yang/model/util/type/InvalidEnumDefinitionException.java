@@ -9,11 +9,14 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 @Beta
 public class InvalidEnumDefinitionException extends IllegalArgumentException {
     private static final long serialVersionUID = 1L;
+
+    @SuppressFBWarnings("SE_BAD_FIELD")
     private final EnumPair offendingEnum;
 
     protected InvalidEnumDefinitionException(final EnumPair offendingEnum, final String message) {

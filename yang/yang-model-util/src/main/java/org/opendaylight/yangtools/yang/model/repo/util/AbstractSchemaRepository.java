@@ -18,6 +18,7 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.MoreExecutors;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -202,12 +203,18 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
         return ret;
     }
 
-    private static class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>> {
-        public static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
+    private static class SchemaProviderCostComparator implements Comparator<AbstractSchemaSourceRegistration<?>>,
+            Serializable {
+        static final SchemaProviderCostComparator INSTANCE = new SchemaProviderCostComparator();
+        private static final long serialVersionUID = 1L;
 
         @Override
         public int compare(final AbstractSchemaSourceRegistration<?> o1, final AbstractSchemaSourceRegistration<?> o2) {
             return o1.getInstance().getCost() - o2.getInstance().getCost();
+        }
+
+        private Object readResolve() {
+            return INSTANCE;
         }
     }
 }

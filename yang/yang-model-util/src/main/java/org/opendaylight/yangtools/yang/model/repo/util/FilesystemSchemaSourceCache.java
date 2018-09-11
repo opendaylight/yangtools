@@ -15,6 +15,7 @@ import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediate
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.Lists;
 import com.google.common.util.concurrent.FluentFuture;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -151,6 +152,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         return file;
     }
 
+    @SuppressFBWarnings(value = "NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE",
+            justification = "listFiles is analyzed to return null")
     private static File findFileWithNewestRev(final SourceIdentifier identifier, final File storageDirectory) {
         File[] files = storageDirectory.listFiles(new FilenameFilter() {
             final Pattern pat = Pattern.compile(Pattern.quote(identifier.getName())
