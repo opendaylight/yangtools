@@ -44,6 +44,7 @@
 
     <properties>
         <it-project.version>${project.version}</it-project.version>
+        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
     </properties>
 
     <build>
@@ -125,6 +126,21 @@
                 <configuration>
                     <failOnError>true</failOnError>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
