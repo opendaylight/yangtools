@@ -88,6 +88,7 @@ public class CheckedValueTest {
     @Test
     public void testIfPresent() {
         final String foo = "foo";
+        @SuppressWarnings("unchecked")
         final Consumer<Object> consumer = mock(Consumer.class);
         doNothing().when(consumer).accept(any(Object.class));
         CheckedValue.ofValue(foo).ifPresent(consumer);
@@ -96,6 +97,7 @@ public class CheckedValueTest {
 
     @Test
     public void testThrowableIfPresent() {
+        @SuppressWarnings("unchecked")
         final Consumer<Object> consumer = mock(Consumer.class);
         doNothing().when(consumer).accept(any(Object.class));
         CheckedValue.ofException(new NullPointerException()).ifPresent(consumer);
@@ -115,6 +117,7 @@ public class CheckedValueTest {
         final String foo = "foo";
         final String bar = "bar";
         final CheckedValue<Object, ?> errVal = CheckedValue.ofValue(foo);
+        @SuppressWarnings("unchecked")
         final Function<Object, Object> mapper = mock(Function.class);
         doReturn(bar).when(mapper).apply(any(Object.class));
         assertSame(bar, errVal.map(mapper).get());
@@ -124,6 +127,7 @@ public class CheckedValueTest {
     @Test
     public void testExceptionMap() {
         final CheckedValue<Object, ?> errVal = CheckedValue.ofException(new NullPointerException());
+        @SuppressWarnings("unchecked")
         final Function<Object, Object> mapper = mock(Function.class);
         doReturn(null).when(mapper).apply(any(Object.class));
         assertSame(errVal, errVal.map(mapper));
@@ -147,6 +151,7 @@ public class CheckedValueTest {
     @Test
     public void testOrElseGet() {
         final String foo = "foo";
+        @SuppressWarnings("unchecked")
         final Supplier<String> supplier = mock(Supplier.class);
         doReturn(null).when(supplier).get();
         assertSame(foo, CheckedValue.ofValue(foo).orElseGet(supplier));
@@ -156,6 +161,7 @@ public class CheckedValueTest {
     @Test
     public void testExceptionOrElseGet() {
         final String bar = "bar";
+        @SuppressWarnings("unchecked")
         final Supplier<Object> supplier = mock(Supplier.class);
         doReturn(bar).when(supplier).get();
 

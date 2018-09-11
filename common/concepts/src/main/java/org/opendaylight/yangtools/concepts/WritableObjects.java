@@ -176,7 +176,7 @@ public final class WritableObjects {
      * @throws NullPointerException if input is null
      */
     public static long readSecondLong(final @Nonnull DataInput in, final byte header) throws IOException {
-        return WritableObjects.readLongBody(in, (byte)(header >>> 4));
+        return WritableObjects.readLongBody(in, (byte)(header >> 4));
     }
 
     private static void writeValue(final DataOutput out, final long value, final int bytes) throws IOException {

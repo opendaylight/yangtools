@@ -48,6 +48,8 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * Create a new instance containing an {@link Exception}.
      *
      * @param cause Throwable
+     * @param <T> Value type
+     * @param <E> Exception type
      * @return A new instance
      * @throws NullPointerException if {@code cause} is null
      */
@@ -59,6 +61,8 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * Create a new instance containing specified value.
      *
      * @param value Value
+     * @param <T> Value type
+     * @param <E> Exception type
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
@@ -70,13 +74,17 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * Convert a Variant into a {@link CheckedValue}, converting the second value into an exception.
      *
      * @param variant Input variant
+     * @param mapper Mapping function from second alternative to an exception
+     * @param <T> First alternative type
+     * @param <U> Second alternative type
+     * @param <E> Exception type
      * @return Resulting {@link CheckedValue}
      */
     public static <T, U, E extends Exception> CheckedValue<T, E> ofVariant(final Variant<T, U> variant,
             final Function<U, E> mapper) {
         requireNonNull(mapper);
-        return variant.isFirst() ? new CheckedValue(variant.first())
-                : new CheckedValue(mapper.apply(variant.second()), null);
+        return variant.isFirst() ? new CheckedValue<>(variant.first())
+                : new CheckedValue<>(mapper.apply(variant.second()), null);
     }
 
     /**
@@ -179,7 +187,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * @return Contained value
      * @throws E When there is no contained value
      */
-    public final <X extends Throwable> T orElseThrow() throws E {
+    public final T orElseThrow() throws E {
         if (isFirst()) {
             return first();
         }
@@ -190,6 +198,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * Return contained value if present or throw the exception alternative mapped through provided mapper.
      *
      * @param exceptionMapper Exception mapper
+     * @param <X> Thrown exception type
      * @return Contained value
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value
@@ -206,6 +215,7 @@ public class CheckedValue<T, E extends Exception> extends Variant<T, E> {
      * Return contained value if present or throw the exception supplied by supplier.
      *
      * @param supplier Exception supplier
+     * @param <X> Thrown exception type
      * @return Contained value
      * @throws NullPointerException if {@code exceptionMapper} is null
      * @throws X When there is no contained value

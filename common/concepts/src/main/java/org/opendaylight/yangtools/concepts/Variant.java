@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.concurrent.ThreadSafe;
@@ -33,11 +34,13 @@ public class Variant<T, U> {
     private final @Nullable T first;
     private final @Nullable U second;
 
+    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     protected Variant(final T first) {
         this.first = requireNonNull(first);
         second = null;
     }
 
+    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     protected Variant(final U second, final @Nullable Void dummy) {
         first = null;
         this.second = requireNonNull(second);
@@ -55,6 +58,8 @@ public class Variant<T, U> {
      * Create a new instance containing specified value.
      *
      * @param value Value
+     * @param <T> First alternative type
+     * @param <U> Second alternative type
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
@@ -66,6 +71,8 @@ public class Variant<T, U> {
      * Create a new instance containing specified value.
      *
      * @param value Value
+     * @param <T> First alternative type
+     * @param <U> Second alternative type
      * @return A new instance
      * @throws NullPointerException if {@code value} is null
      */
