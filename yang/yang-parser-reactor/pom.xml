@@ -24,6 +24,10 @@
     <name>${project.artifactId}</name>
     <description>YANG parser</description>
 
+    <properties>
+        <sonar.jacoco.reportPath>${project.base.directory}/../../target/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -75,6 +79,30 @@
                 <configuration>
                     <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>pre-unit-test</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                        <configuration>
+                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>post-unit-test</id>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <dataFile>${project.build.directory}/code-coverage/jacoco.exec</dataFile>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
