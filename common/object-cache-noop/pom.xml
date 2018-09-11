@@ -60,7 +60,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
-					<propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
+                    <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
                 </configuration>
             </plugin>
         </plugins>
