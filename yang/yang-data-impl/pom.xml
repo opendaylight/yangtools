@@ -21,10 +21,6 @@
     <name>${project.artifactId}</name>
     <description>${project.artifactId}</description>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -86,22 +82,14 @@
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>pre-unit-test</id>
+                        <id>prepare-ut-agent</id>
+                        <phase>process-test-classes</phase>
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
+                            <destFile>${sonar.jacoco.reportPath}</destFile>
                             <propertyName>jacoco.agent.ut.arg</propertyName>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>post-unit-test</id>
-                        <goals>
-                            <goal>report</goal>
-                        </goals>
-                        <configuration>
-                            <dataFile>${project.build.directory}/code-coverage/jacoco.exec</dataFile>
                         </configuration>
                     </execution>
                     <execution>
@@ -111,7 +99,7 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
+                            <destFile>${sonar.jacoco.itReportPath}</destFile>
                             <propertyName>jacoco.agent.it.arg</propertyName>
                         </configuration>
                     </execution>
