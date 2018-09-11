@@ -18,6 +18,7 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -79,10 +80,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 // FIXME: 3.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
+// FIXME: FixedYangInstanceIdentifier needs YangInstanceIdentifier initialized, but that includes initializing
+//        this field. Figure out a way out of this pickle.
+@SuppressFBWarnings("IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION")
 public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
     /**
-     * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual
-     * root of the YANG namespace.
+     * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
      */
     public static final YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
 
