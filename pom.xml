@@ -30,6 +30,11 @@
         <tag>HEAD</tag>
     </scm>
 
+    <properties>
+        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
+        <sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+    </properties>
+
     <modules>
         <module>artifacts</module>
         <module>benchmarks</module>
@@ -40,42 +45,52 @@
         <module>third-party</module>
     </modules>
 
-    <profiles>
-      <profile>
-        <!--
-            This profile is to ensure we only build javadocs reports
-            when we plan to deploy Maven site for our project.
-        -->
-        <id>maven-site</id>
-        <activation>
-          <file>
-            <exists>${user.dir}/deploy-site.xml</exists>
-          </file>
-        </activation>
-
-        <build>
-          <plugins>
+    <build>
+        <plugins>
             <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <inherited>false</inherited>
-              <executions>
-                <execution>
-                  <id>aggregate</id>
-                  <goals>
-                    <goal>aggregate</goal>
-                  </goals>
-                  <phase>package</phase>
-                  <configuration>
-                    <!-- Xerces-J has non-compliant javadocs -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                  </configuration>
-              </execution>
-              </executions>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>package</phase>
+                        <configuration>
+                            <!-- Xerces-J has non-compliant javadocs -->
+                            <additionalparam>-Xdoclint:none</additionalparam>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
-          </plugins>
-        </build>
-      </profile>
-    </profiles>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>merge</id>
+                        <goals>
+                            <goal>merge</goal>
+                        </goals>
+                        <phase>generate-resources</phase>
+                        <configuration>
+                            <fileSets>
+                                <fileSet>
+                                    <directory>${project.basedir}</directory>
+                                    <includes>
+                                        <include>common/*/target/code-coverage/*.exec</include>
+                                        <include>third-party/*/target/code-coverage/*.exec</include>
+                                        <include>yang/*/target/code-coverage/*.exec</include>
+                                    </includes>
+                                </fileSet>
+                            </fileSets>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
