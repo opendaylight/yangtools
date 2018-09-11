@@ -129,12 +129,12 @@ public class YangDataExtensionTest {
         final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
         assertNotNull(contInYangData);
         assertTrue(contInYangData.isConfiguration());
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(baz.getQNameModule(), "inner-cont"));
+        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
+                QName.create(baz.getQNameModule(), "inner-cont")).get();
         assertNotNull(innerCont);
         assertTrue(innerCont.isConfiguration());
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(baz.getQNameModule(), "grp-cont"));
+        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
+                QName.create(baz.getQNameModule(), "grp-cont")).get();
         assertNotNull(grpCont);
         assertTrue(grpCont.isConfiguration());
     }
@@ -156,11 +156,11 @@ public class YangDataExtensionTest {
 
         final ContainerSchemaNode contInYangData = myYangDataNode.getContainerSchemaNode();
         assertNotNull(contInYangData);
-        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(foobar.getQNameModule(), "inner-cont"));
+        final ContainerSchemaNode innerCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
+                QName.create(foobar.getQNameModule(), "inner-cont")).get();
         assertNotNull(innerCont);
-        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.getDataChildByName(
-                QName.create(foobar.getQNameModule(), "grp-cont"));
+        final ContainerSchemaNode grpCont = (ContainerSchemaNode) contInYangData.findDataChildByName(
+                QName.create(foobar.getQNameModule(), "grp-cont")).get();
         assertNotNull(grpCont);
     }
 
@@ -173,8 +173,8 @@ public class YangDataExtensionTest {
         assertNotNull(schemaContext);
 
         final Module bar = schemaContext.findModule("bar", REVISION).get();
-        final ContainerSchemaNode cont = (ContainerSchemaNode) bar.getDataChildByName(
-                QName.create(bar.getQNameModule(), "cont"));
+        final ContainerSchemaNode cont = (ContainerSchemaNode) bar.findDataChildByName(
+                QName.create(bar.getQNameModule(), "cont")).get();
         assertNotNull(cont);
 
         final Set<ExtensionDefinition> extensions = schemaContext.getExtensions();
