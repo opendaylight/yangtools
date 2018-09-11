@@ -73,7 +73,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
 
     private final @NonNull QNameModule module;
     private final @NonNull String localName;
-    private transient int hash;
+    private transient int hash = 0;
 
     private QName(final QNameModule module, final String localName) {
         this.module = requireNonNull(module);

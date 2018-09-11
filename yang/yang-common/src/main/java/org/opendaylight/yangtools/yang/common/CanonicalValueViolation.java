@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
@@ -56,6 +57,7 @@ public abstract class CanonicalValueViolation implements Serializable {
         }
     }
 
+    @SuppressFBWarnings("NM_CLASS_NOT_EXCEPTION")
     public static class WithException extends CanonicalValueViolation {
         private static final long serialVersionUID = 1L;
 
@@ -66,6 +68,7 @@ public abstract class CanonicalValueViolation implements Serializable {
         }
 
         @Override
+        @SuppressFBWarnings("NP_NONNULL_RETURN_VIOLATION")
         @Nullable String appTag() {
             return null;
         }
