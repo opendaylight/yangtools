@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import static java.util.Objects.requireNonNull;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -19,6 +20,7 @@ import javax.annotation.Nullable;
 public class SourceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
+    @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Interface-specified member")
     private final StatementSourceReference sourceRef;
 
     /**
