@@ -796,7 +796,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             final CopyType typeOfCopy, final QNameModule newQNameModule, final Collection<Mutable<?, ?, ?>> buffer) {
         if (needToCopyByUses(stmtContext)) {
             final Mutable<?, ?, ?> copy = target.childCopyOf(stmtContext, typeOfCopy, newQNameModule);
-            LOG.debug("Copying substatement {} for {} as", stmtContext, this, copy);
+            LOG.debug("Copying substatement {} for {} as {}", stmtContext, this, copy);
             buffer.add(copy);
         } else if (isReusedByUses(stmtContext)) {
             LOG.debug("Reusing substatement {} for {}", stmtContext, this);
