@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
 import java.util.Set;
 
@@ -40,6 +41,7 @@ public enum YangNaryOperator {
      */
     UNION("|");
 
+    @SuppressFBWarnings(value = "SE_INNER_CLASS", justification = "Outer class is a retained enumeration")
     private final class Expr extends YangNaryExpr {
         private static final long serialVersionUID = 1L;
 
