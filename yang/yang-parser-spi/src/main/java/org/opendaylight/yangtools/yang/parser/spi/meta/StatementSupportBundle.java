@@ -100,6 +100,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> getNamespaceBehaviour(
             final Class<N> namespace) {
         final NamespaceBehaviour<?, ?, ?> potential = namespaceDefinitions.get(namespace);

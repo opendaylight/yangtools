@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,6 +84,8 @@ public class YangLocationPath implements YangExpr {
             return getAxis().equals(other.getAxis()) && getPredicates().equals(other.getPredicates());
         }
 
+        @SuppressFBWarnings(value = "SE_PRIVATE_READ_RESOLVE_NOT_INHERITED",
+                justification = "We have only one subclass, and that does not want to inherit this")
         private Object readResolve() {
             return getAxis().asStep();
         }
@@ -235,6 +238,8 @@ public class YangLocationPath implements YangExpr {
         }
     }
 
+    @SuppressFBWarnings(value = "EQ_DOESNT_OVERRIDE_EQUALS",
+            justification = "https://github.com/spotbugs/spotbugs/issues/511")
     static final class NodeTypeStepWithPredicates extends NodeTypeStep {
         private static final long serialVersionUID = 1L;
 

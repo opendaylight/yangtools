@@ -255,7 +255,9 @@ public final class StmtContextUtils {
         for (final StmtContext<?, ?, ?> stmt : stmtContext.declaredSubstatements()) {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
                 containsIfFeature = true;
-                if (((Predicate<Set<QName>>) stmt.getStatementArgument()).test(supportedFeatures)) {
+                @SuppressWarnings("unchecked")
+                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.getStatementArgument();
+                if (argument.test(supportedFeatures)) {
                     isSupported = true;
                 } else {
                     isSupported = false;
