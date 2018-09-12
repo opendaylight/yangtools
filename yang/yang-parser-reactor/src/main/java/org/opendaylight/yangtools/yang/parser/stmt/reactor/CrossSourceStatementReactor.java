@@ -63,7 +63,7 @@ public final class CrossSourceStatementReactor {
      * @throws NullPointerException if statementParserMode is null
      */
     public BuildAction newBuild(final StatementParserMode statementParserMode) {
-        return new BuildAction(statementParserMode);
+        return new BuildAction(supportedTerminology, supportedValidation, statementParserMode);
     }
 
     public static class Builder implements org.opendaylight.yangtools.concepts.Builder<CrossSourceStatementReactor> {
@@ -88,12 +88,14 @@ public final class CrossSourceStatementReactor {
         }
     }
 
-    public class BuildAction {
+    public static class BuildAction {
         private final BuildGlobalContext context;
         private boolean supportedFeaturesSet = false;
         private boolean modulesDeviatedByModulesSet = false;
 
-        BuildAction(@Nonnull final StatementParserMode statementParserMode) {
+        BuildAction(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
+                final Map<ValidationBundleType, Collection<?>> supportedValidation,
+                @Nonnull final StatementParserMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation,
                 requireNonNull(statementParserMode));
         }
