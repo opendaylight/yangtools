@@ -338,13 +338,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
 
                 int count = 1;
                 for (final Throwable t : suppressed) {
-                    // FIXME: this should be configured in the appender, really
-                    if (LOG.isDebugEnabled()) {
-                        LOG.error("Error {}: {}", count, t.getMessage(), t);
-                    } else {
-                        LOG.error("Error {}: {}", count, t.getMessage());
-                    }
-
+                    LOG.error("Error {}: {}", count, t.getMessage());
                     count++;
                 }
             }
