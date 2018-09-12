@@ -110,7 +110,7 @@ abstract class StatementMap {
 
         @Override
         Collection<StatementContextBase<?, ?, ?>> values() {
-            return new RegularAsCollection<>(elements);
+            return new RegularAsCollection<>(elements, size);
         }
 
         @Override
@@ -134,10 +134,11 @@ abstract class StatementMap {
 
     private static final class RegularAsCollection<T> extends AbstractCollection<T> {
         private final T[] elements;
-        private int size;
+        private final int size;
 
-        RegularAsCollection(final T[] elements) {
+        RegularAsCollection(final T[] elements, final int size) {
             this.elements = Preconditions.checkNotNull(elements);
+            this.size = size;
         }
 
         @Override
