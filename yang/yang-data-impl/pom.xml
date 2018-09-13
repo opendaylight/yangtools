@@ -91,7 +91,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/code-coverage/jacoco.exec</destFile>
                             <propertyName>jacoco.agent.ut.arg</propertyName>
                         </configuration>
                     </execution>
@@ -102,7 +101,6 @@
                             <goal>prepare-agent</goal>
                         </goals>
                         <configuration>
-                            <destFile>${project.build.directory}/code-coverage/jacoco-it.exec</destFile>
                             <propertyName>jacoco.agent.it.arg</propertyName>
                         </configuration>
                     </execution>
