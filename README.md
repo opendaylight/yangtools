@@ -1,3 +1,5 @@
+[![License](https://img.shields.io/badge/License-EPL%201.0-blue.svg)](https://opensource.org/licenses/EPL-1.0)
+
 # YANG Tools
 
 YANG Tools is to develop necessary tooling and libraries to provide Java runtime
