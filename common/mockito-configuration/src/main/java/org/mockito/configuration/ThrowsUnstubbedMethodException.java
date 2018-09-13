@@ -7,6 +7,7 @@
  */
 package org.mockito.configuration;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -14,6 +15,7 @@ import org.mockito.stubbing.Answer;
 /**
  * Answer that throws {@link UnstubbedMethodException}.
  */
+@SuppressFBWarnings("NM_CLASS_NOT_EXCEPTION")
 public class ThrowsUnstubbedMethodException implements Answer<Object>, Serializable {
     private static final long serialVersionUID = 1L;
 

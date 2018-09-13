@@ -19,7 +19,7 @@ import org.mockito.verification.VerificationMode;
  * Verifier that extracts arguments from actual invocation. Useful when deeper validation of arguments is needed.
  */
 public class ArgumentsExtractorVerifier implements VerificationMode {
-    private Object[] arguments;
+    private Object[] arguments = null;
 
     @Override
     public void verify(final VerificationData data) {
@@ -32,7 +32,6 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
         Invocation invocation = actualInvocations.get(0);
         arguments = invocation.getArguments();
         invocation.markVerified();
-
     }
 
     @Override
@@ -41,6 +40,6 @@ public class ArgumentsExtractorVerifier implements VerificationMode {
     }
 
     public Object[] getArguments() {
-        return arguments;
+        return arguments == null ? null : arguments.clone();
     }
 }
