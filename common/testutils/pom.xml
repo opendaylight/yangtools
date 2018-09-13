@@ -14,10 +14,6 @@
     <version>2.1.0-SNAPSHOT</version>
     <!-- Currently not needed, maybe later: <packaging>bundle</packaging> -->
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

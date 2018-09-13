@@ -24,10 +24,6 @@
     <name>${project.artifactId}</name>
     <description>Common concepts</description>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

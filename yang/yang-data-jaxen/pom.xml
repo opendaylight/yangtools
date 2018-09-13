@@ -24,10 +24,6 @@
     <description>${project.artifactId}</description>
     <packaging>bundle</packaging>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

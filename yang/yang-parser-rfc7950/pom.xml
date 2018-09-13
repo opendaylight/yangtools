@@ -24,10 +24,6 @@
     <name>${project.artifactId}</name>
     <description>RFC6020/RFC7950 parser support</description>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

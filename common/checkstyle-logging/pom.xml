@@ -21,10 +21,6 @@
     <version>2.1.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencies>
         <!-- This pulls in the appropriate version of checkstyle -->
         <dependency>

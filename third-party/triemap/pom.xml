@@ -32,10 +32,6 @@
 
     <description>Java implementation of a concurrent trie hash map from Scala collections library</description>
 
-    <properties>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -42,11 +42,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <it-project.version>${project.version}</it-project.version>
-        <sonar.jacoco.reportPath>${project.basedir}/../../target/jacoco.exec</sonar.jacoco.reportPath>
-    </properties>
-
     <build>
       <testResources>
         <testResource>
