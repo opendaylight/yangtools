@@ -44,70 +44,77 @@
         <module>third-party</module>
     </modules>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>merge</id>
-                        <goals>
-                            <goal>merge</goal>
-                        </goals>
-                        <phase>generate-resources</phase>
-                        <configuration>
-                            <fileSets>
-                                <fileSet>
-                                    <directory>${project.basedir}</directory>
-                                    <includes>
-                                        <include>**/target/code-coverage/*.exec</include>
-                                    </includes>
-                                </fileSet>
-                            </fileSets>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
-      <profile>
-        <!--
-            This profile is to ensure we only build javadocs reports
-            when we plan to deploy Maven site for our project.
-        -->
-        <id>maven-site</id>
-        <activation>
-          <file>
-            <exists>${user.dir}/deploy-site.xml</exists>
-          </file>
-        </activation>
+        <profile>
+            <id>sonar-jacoco-aggregate</id>
+            <activation>
 
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <inherited>false</inherited>
-              <executions>
-                <execution>
-                  <id>aggregate</id>
-                  <goals>
-                    <goal>aggregate</goal>
-                  </goals>
-                  <phase>package</phase>
-                  <configuration>
-                    <!-- Xerces-J has non-compliant javadocs -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                  </configuration>
-              </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>merge</id>
+                                <goals>
+                                    <goal>merge</goal>
+                                </goals>
+                                <phase>generate-resources</phase>
+                                <configuration>
+                                    <destFile>${odl.jacoco.aggregateFile}</destFile>
+                                    <fileSets>
+                                        <fileSet>
+                                            <directory>${project.basedir}</directory>
+                                            <includes>
+                                                <include>**/target/code-coverage/*.exec</include>
+                                            </includes>
+                                        </fileSet>
+                                    </fileSets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <!--
+                This profile is to ensure we only build javadocs reports
+                when we plan to deploy Maven site for our project.
+            -->
+            <id>maven-site</id>
+            <activation>
+                <file>
+                    <exists>${user.dir}/deploy-site.xml</exists>
+                </file>
+            </activation>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>aggregate</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <!-- Xerces-J has non-compliant javadocs -->
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
 
 </project>
