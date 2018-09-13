@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "95c09955_66281e43",
+        "filename": "yang/yang-model-validator/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 41,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-09-13T18:20:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "73eb2b43_185d7d3f",
+      "revId": "43337e2d359cd936dc43c612d475c0882e44e827",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "491f0649_47655d30",
         "filename": "yang/yang-parser-impl/pom.xml",
         "patchSetId": 4
@@ -36,6 +54,24 @@
     },
     {
       "key": {
+        "uuid": "287c7f30_0dcb9661",
+        "filename": "yang/yang-parser-impl/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 138,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-09-13T18:20:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "491f0649_47655d30",
+      "revId": "43337e2d359cd936dc43c612d475c0882e44e827",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "6bd7a08e_fdd2e4d2",
         "filename": "yang/yang-parser-rfc7950/pom.xml",
         "patchSetId": 4
@@ -47,6 +83,24 @@
       "writtenOn": "2018-09-13T17:41:40Z",
       "side": 1,
       "message": "... and this one.",
+      "revId": "43337e2d359cd936dc43c612d475c0882e44e827",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "03ebf3ec_d70e3835",
+        "filename": "yang/yang-parser-rfc7950/pom.xml",
+        "patchSetId": 4
+      },
+      "lineNbr": 113,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2018-09-13T18:20:43Z",
+      "side": 1,
+      "message": "Done",
+      "parentUuid": "6bd7a08e_fdd2e4d2",
       "revId": "43337e2d359cd936dc43c612d475c0882e44e827",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
