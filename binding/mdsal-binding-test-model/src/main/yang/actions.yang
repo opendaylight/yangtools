@@ -23,6 +23,25 @@ module actions {
         }
     }
 
+    list lstio {
+        key keyio;
+        leaf keyio {
+            type string;
+        }
+        action fooio {
+            input {
+                leaf fooi {
+                    type string;
+                }
+            }
+            output {
+                leaf fooo {
+                    type string;
+                }
+            }
+        }
+    }
+
     grouping grp {
         action bar {
             output {

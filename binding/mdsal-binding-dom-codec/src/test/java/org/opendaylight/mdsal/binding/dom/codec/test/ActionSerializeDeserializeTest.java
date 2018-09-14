@@ -18,6 +18,7 @@ import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.Foo;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.foo.InputBuilder;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.cont.foo.OutputBuilder;
 import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grpcont.Bar;
+import org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.Fooio;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -47,10 +48,25 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     private static final RpcOutput BINDING_BAR_OUTPUT =
             new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.grp.bar.OutputBuilder().setXyzzy("xyzzy").build();
 
+    private static final NodeIdentifier FOOIO_INPUT = NodeIdentifier.create(operationInputQName(Fooio.QNAME
+            .getModule()));
+    private static final NodeIdentifier FOOIO_OUTPUT = NodeIdentifier.create(operationOutputQName(Fooio.QNAME
+            .getModule()));
+    private static final NodeIdentifier FOOIO_I = NodeIdentifier.create(QName.create(Fooio.QNAME, "fooi"));
+    private static final NodeIdentifier FOOIO_O = NodeIdentifier.create(QName.create(Fooio.QNAME, "fooo"));
+    private static final ContainerNode DOM_FOOIO_INPUT = containerBuilder().withNodeIdentifier(FOOIO_INPUT).withChild(
+            leafBuilder().withNodeIdentifier(FOOIO_I).withValue("ifoo").build()).build();
+    private static final ContainerNode DOM_FOOIO_OUTPUT = containerBuilder().withNodeIdentifier(FOOIO_OUTPUT).withChild(
+            leafBuilder().withNodeIdentifier(FOOIO_O).withValue("ofoo").build()).build();
+    private static final RpcInput BINDING_FOOIO_INPUT =
+            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.fooio.InputBuilder().setFooi("ifoo").build();
+    private static final RpcOutput BINDING_FOOIO_OUTPUT =
+            new org.opendaylight.yang.gen.v1.urn.odl.actions.norev.lstio.fooio.OutputBuilder().setFooo("ofoo").build();
+
     @Test
     public void testSerialization() {
         assertEquals(DOM_FOO_INPUT, registry.toLazyNormalizedNodeActionInput(Foo.class, BINDING_FOO_INPUT)
-            .getDelegate());
+                .getDelegate());
         assertEquals(DOM_BAR_INPUT, registry.toLazyNormalizedNodeActionInput(Bar.class, BINDING_BAR_INPUT)
                 .getDelegate());
         assertEquals(DOM_FOO_OUTPUT, registry.toLazyNormalizedNodeActionOutput(Foo.class, BINDING_FOO_OUTPUT)
@@ -60,10 +76,24 @@ public class ActionSerializeDeserializeTest extends AbstractBindingCodecTest {
     }
 
     @Test
+    public void testKeyedListActionSerialization() {
+        assertEquals(DOM_FOOIO_INPUT, registry.toLazyNormalizedNodeActionInput(Fooio.class, BINDING_FOOIO_INPUT)
+                .getDelegate());
+        assertEquals(DOM_FOOIO_OUTPUT, registry.toLazyNormalizedNodeActionOutput(Fooio.class, BINDING_FOOIO_OUTPUT)
+                .getDelegate());
+    }
+
+    @Test
     public void testDeserialization() {
         assertEquals(BINDING_FOO_INPUT, registry.fromNormalizedNodeActionInput(Foo.class, DOM_FOO_INPUT));
         assertEquals(BINDING_BAR_INPUT, registry.fromNormalizedNodeActionInput(Bar.class, DOM_FOO_INPUT));
         assertEquals(BINDING_FOO_OUTPUT, registry.fromNormalizedNodeActionOutput(Foo.class, DOM_FOO_OUTPUT));
         assertEquals(BINDING_BAR_OUTPUT, registry.fromNormalizedNodeActionOutput(Bar.class, DOM_FOO_INPUT));
+    }
+
+    @Test
+    public void testKeyedListActionDeserialization() {
+        assertEquals(BINDING_FOOIO_INPUT, registry.fromNormalizedNodeActionInput(Fooio.class, DOM_FOOIO_INPUT));
+        assertEquals(BINDING_FOOIO_OUTPUT, registry.fromNormalizedNodeActionOutput(Fooio.class, DOM_FOOIO_OUTPUT));
     }
 }

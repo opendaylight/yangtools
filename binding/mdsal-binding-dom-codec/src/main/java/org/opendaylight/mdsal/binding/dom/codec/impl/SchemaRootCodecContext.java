@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Verify.verify;
 
 import com.google.common.base.Throwables;
@@ -16,6 +17,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.util.concurrent.UncheckedExecutionException;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Optional;
@@ -27,6 +29,7 @@ import org.opendaylight.yangtools.yang.binding.ChoiceIn;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.KeyedListAction;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.binding.RpcInput;
 import org.opendaylight.yangtools.yang.binding.RpcOutput;
@@ -206,13 +209,26 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     ActionCodecContext createActionContext(final Class<? extends Action<?, ?, ?>> action) {
-        final Type[] args = ClassLoaderUtils.findParameterizedType(action, Action.class).getActualTypeArguments();
-        checkArgument(args.length == 3, "Unexpected (%s) Action generatic arguments", args.length);
+        if (KeyedListAction.class.isAssignableFrom(action)) {
+            return prepareActionContext(2, 3, 4, action, KeyedListAction.class);
+        } else if (Action.class.isAssignableFrom(action)) {
+            return prepareActionContext(1, 2, 3, action, Action.class);
+        }
+        throw new IllegalArgumentException("The specific action type does not exist for action " + action.getName());
+    }
 
+    private ActionCodecContext prepareActionContext(final int inputOffset, final int outputOffset,
+            final int expectedArgsLength, final Class<? extends Action<?, ?, ?>> action, final Class<?> actionType) {
+        final ParameterizedType paramType = checkNotNull(ClassLoaderUtils.findParameterizedType(action, actionType),
+            "There does not exist any ParameterType in %s", action);
+        final Type[] args = paramType.getActualTypeArguments();
+        checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments", args.length);
         final ActionDefinition schema = factory().getRuntimeContext().getActionDefinition(action);
         return new ActionCodecContext(
-            DataContainerCodecPrototype.from(asClass(args[1], RpcInput.class), schema.getInput(), factory()).get(),
-            DataContainerCodecPrototype.from(asClass(args[2], RpcOutput.class), schema.getOutput(), factory()).get());
+                DataContainerCodecPrototype.from(asClass(args[inputOffset], RpcInput.class), schema.getInput(),
+                        factory()).get(),
+                DataContainerCodecPrototype.from(asClass(args[outputOffset], RpcOutput.class), schema.getOutput(),
+                        factory()).get());
     }
 
     private static <T extends DataObject> Class<? extends T> asClass(final Type type, final Class<T> target) {
