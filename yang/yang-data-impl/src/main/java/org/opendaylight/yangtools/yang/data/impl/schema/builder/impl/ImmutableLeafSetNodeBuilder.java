@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -115,7 +114,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     protected static final class ImmutableLeafSetNode<T> extends
             AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
-            Immutable, LeafSetNode<T> {
+            LeafSetNode<T> {
 
         private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 

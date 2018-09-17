@@ -13,7 +13,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -117,7 +116,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
     }
 
     protected static final class EmptyImmutableUnkeyedListNode extends
-            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements Immutable,
+            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<UnkeyedListEntryNode>> implements
             UnkeyedListNode {
         protected EmptyImmutableUnkeyedListNode(final NodeIdentifier nodeIdentifier) {
             super(nodeIdentifier);
@@ -151,7 +150,7 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
 
     protected static final class ImmutableUnkeyedListNode extends
             AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<UnkeyedListEntryNode>>
-            implements Immutable, UnkeyedListNode {
+            implements UnkeyedListNode {
 
         private final ImmutableList<UnkeyedListEntryNode> children;
 

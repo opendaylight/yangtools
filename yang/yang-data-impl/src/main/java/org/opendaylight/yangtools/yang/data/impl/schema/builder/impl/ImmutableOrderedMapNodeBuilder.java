@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -126,7 +125,7 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
 
     protected static final class ImmutableOrderedMapNode
             extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<MapEntryNode>>
-            implements Immutable, OrderedMapNode {
+            implements OrderedMapNode {
 
         private final Map<NodeIdentifierWithPredicates, MapEntryNode> children;
 
