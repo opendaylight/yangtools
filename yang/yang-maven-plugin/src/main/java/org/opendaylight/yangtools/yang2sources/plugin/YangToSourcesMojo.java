@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -65,6 +66,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
      */
     @Parameter(required = false)
     // defaults to ${basedir}/src/main/yang
+    @SuppressFBWarnings("UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR")
     private String yangFilesRootDir;
 
     @Parameter(required = false)
