@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -41,6 +42,7 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
     public void addChild(final AbstractNodeDataWithSchema newChild) {
         final DataSchemaNode childSchema = newChild.getSchema();
         if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode) childSchema)) {
+            verify(newChild instanceof SimpleNodeDataWithSchema);
             qnameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
         }
         super.addChild(newChild);

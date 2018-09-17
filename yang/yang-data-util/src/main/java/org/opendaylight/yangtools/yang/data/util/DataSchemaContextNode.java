@@ -173,16 +173,10 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      */
     @Nullable static DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
-        AugmentationSchemaNode augmentation = null;
         for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
-            DataSchemaNode potential = aug.getDataChildByName(child.getQName());
-            if (potential != null) {
-                augmentation = aug;
-                break;
+            if (aug.findDataChildByName(child.getQName()).isPresent()) {
+                return new AugmentationContextNode(aug, parent);
             }
-        }
-        if (augmentation != null) {
-            return new AugmentationContextNode(augmentation, parent);
         }
         return fromDataSchemaNode(child);
     }
