@@ -12,6 +12,7 @@ import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.FileAppender;
 import com.google.common.base.Stopwatch;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -159,6 +160,7 @@ public final class Main {
         }
     }
 
+    @SuppressFBWarnings({ "DM_EXIT", "DM_GC" })
     @SuppressWarnings("checkstyle:illegalCatch")
     private static void runSystemTest(final List<String> yangLibDirs, final List<String> yangFiles,
             final Set<QName> supportedFeatures, final boolean recursiveSearch) {
@@ -216,6 +218,7 @@ public final class Main {
         return qnames;
     }
 
+    @SuppressFBWarnings("DM_EXIT")
     private static CommandLine parseArguments(final String[] args, final Options options,
             final HelpFormatter formatter) {
         final CommandLineParser parser = new DefaultParser();
