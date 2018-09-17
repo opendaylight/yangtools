@@ -9,6 +9,7 @@
 package org.opendaylight.yangtools.yang.validator;
 
 import com.google.common.base.Preconditions;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -53,7 +55,7 @@ final class SystemTestUtils {
     }
 
     static final FileFilter YANG_FILE_FILTER = file -> {
-        final String name = file.getName().toLowerCase();
+        final String name = file.getName().toLowerCase(Locale.ENGLISH);
         return name.endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION) && file.isFile();
     };
 
@@ -122,6 +124,7 @@ final class SystemTestUtils {
         return new String(Files.readAllBytes(Paths.get(path)), StandardCharsets.UTF_8);
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private static Collection<File> getYangFiles(final String yangSourcesDirectoryPath, final boolean recursiveSearch)
             throws FileNotFoundException {
         final File testSourcesDir = new File(yangSourcesDirectoryPath);
@@ -133,6 +136,7 @@ final class SystemTestUtils {
             : Arrays.asList(testSourcesDir.listFiles(YANG_FILE_FILTER));
     }
 
+    @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private static List<File> searchYangFiles(final File dir) {
         Preconditions.checkNotNull(dir);
         Preconditions.checkArgument(dir.isDirectory(), "File %s is not a directory", dir.getPath());
@@ -142,7 +146,7 @@ final class SystemTestUtils {
             if (file.isDirectory()) {
                 yangFiles.addAll(searchYangFiles(file));
             } else if (file.isFile()
-                    && file.getName().toLowerCase().endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
+                    && file.getName().toLowerCase(Locale.ENGLISH).endsWith(YangConstants.RFC6020_YANG_FILE_EXTENSION)) {
                 yangFiles.add(file);
             }
         }
