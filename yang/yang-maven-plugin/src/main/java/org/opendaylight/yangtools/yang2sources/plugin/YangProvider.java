@@ -31,11 +31,11 @@ abstract class YangProvider {
             // copy project's src/main/yang/*.yang to ${project.builddir}/generated-sources/yang/META-INF/yang/
             // This honors setups like a Eclipse-profile derived one
             final File withMetaInf = new File(generatedYangDir, YangToSourcesProcessor.META_INF_YANG_STRING);
-            withMetaInf.mkdirs();
 
             for (YangTextSchemaSource source : modelsInProject) {
                 final String fileName = source.getIdentifier().toYangFilename();
                 final File file = new File(withMetaInf, fileName);
+                Files.createParentDirs(file);
 
                 source.copyTo(Files.asByteSink(file));
                 LOG.debug("Created file {} for {}", file, source.getIdentifier());

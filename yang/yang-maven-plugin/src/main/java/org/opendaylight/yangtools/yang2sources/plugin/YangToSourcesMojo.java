@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang2sources.plugin;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,9 +95,6 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "yang.skip")
     private String yangSkip;
 
-    public YangToSourcesMojo() {
-    }
-
     public void setProject(final MavenProject project) {
         this.project = project;
     }
@@ -107,6 +105,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
     }
 
     @Override
+    @SuppressFBWarnings(value = "UWF_FIELD_NOT_INITIALIZED_IN_CONSTRUCTOR", justification = "yangFilesRootDir")
     public void execute() throws MojoExecutionException, MojoFailureException {
         Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
 
