@@ -65,7 +65,7 @@ public final class YangToSourcesMojo extends AbstractMojo {
      */
     @Parameter(required = false)
     // defaults to ${basedir}/src/main/yang
-    private String yangFilesRootDir;
+    private String yangFilesRootDir = null;
 
     @Parameter(required = false)
     private String[] excludeFiles;

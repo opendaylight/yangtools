@@ -40,6 +40,8 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserFactory;
+import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
@@ -283,9 +285,9 @@ class YangToSourcesProcessor {
             LOG.info("{} Project model files found: {}", LOG_PREFIX, yangFilesInProject.size());
 
             final ProcessorModuleReactor reactor = new ProcessorModuleReactor(parser, sourcesInProject, dependencies);
-            LOG.debug("Initialized reactor {}", reactor, yangFilesInProject);
+            LOG.debug("Initialized reactor {} with {}", reactor, yangFilesInProject);
             return Optional.of(reactor);
-        } catch (Exception e) {
+        } catch (IOException | SchemaSourceException | YangSyntaxErrorException | RuntimeException e) {
             // MojoExecutionException is thrown since execution cannot continue
             LOG.error("{} Unable to parse YANG files from {}", LOG_PREFIX, yangFilesRootDir, e);
             Throwable rootCause = Throwables.getRootCause(e);
@@ -335,9 +337,10 @@ class YangToSourcesProcessor {
         }
 
         if (!thrown.isEmpty()) {
-            String message = " One or more code generators failed, including failed list(generatorClass=exception) ";
-            LOG.error("{}{}{}", LOG_PREFIX, message, thrown.toString());
-            throw new MojoFailureException(LOG_PREFIX + message + thrown.toString());
+            LOG.error("{} One or more code generators failed, including failed list(generatorClass=exception) {}",
+                LOG_PREFIX, thrown);
+            throw new MojoFailureException(LOG_PREFIX
+                + " One or more code generators failed, including failed list(generatorClass=exception) " + thrown);
         }
     }
 
