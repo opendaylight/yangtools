@@ -23,8 +23,10 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -176,10 +178,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        // FIXME: this code ignores presence for containers, but datastore does as well and it needs be fixed first
-        // FIXME: the above is incorrect: the data store is already fixed
-        tracker.startContainerNode(name);
-        context = new JSONStreamWriterNamedObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS);
+        final SchemaNode schema = tracker.startContainerNode(name);
+        final boolean isPresence = schema instanceof ContainerSchemaNode
+            ? ((ContainerSchemaNode) schema).isPresenceContainer() : DEFAULT_EMIT_EMPTY_CONTAINERS;
+        context = new JSONStreamWriterNamedObjectContext(context, name, isPresence);
     }
 
     @Override
