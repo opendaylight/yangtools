@@ -44,7 +44,9 @@
         <profile>
             <id>sonar-jacoco-aggregate</id>
             <activation>
-
+                <property>
+                    <name>odl.jacoco.aggregateFile</name>
+                </property>
             </activation>
             <build>
                 <plugins>
