@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -365,8 +364,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
 
         if (namespace == null) {
-            Set<URI> potentialUris = Collections.emptySet();
-            potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
+            final Set<URI> potentialUris = resolveAllPotentialNamespaces(nodeNamePart, dataSchemaNode);
             if (potentialUris.contains(getCurrentNamespace())) {
                 namespace = getCurrentNamespace();
             } else if (potentialUris.size() == 1) {

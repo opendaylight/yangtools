@@ -23,10 +23,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
-import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -176,13 +174,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      * Warning suppressed due to static final constant which triggers a warning
      * for the call to schema.isPresenceContainer().
      */
-    @SuppressWarnings("unused")
     @Override
     public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        final SchemaNode schema = tracker.startContainerNode(name);
-
-        // FIXME this code ignores presence for containers
-        // but datastore does as well and it needs be fixed first (2399)
+        // FIXME: this code ignores presence for containers, but datastore does as well and it needs be fixed first
+        // FIXME: the above is incorrect: the data store is already fixed
+        tracker.startContainerNode(name);
         context = new JSONStreamWriterNamedObjectContext(context, name, DEFAULT_EMIT_EMPTY_CONTAINERS);
     }
 
@@ -231,9 +227,8 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public final void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        @SuppressWarnings("unused")
-        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         // FIXME: should have a codec based on this :)
+        tracker.anyxmlNode(name);
 
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
