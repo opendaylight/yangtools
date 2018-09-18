@@ -24,6 +24,7 @@
 
     <modules>
         <module>triemap</module>
+        <module>xsd-regex</module>
     </modules>
 
 </project>
