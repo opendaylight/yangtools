@@ -5,9 +5,9 @@
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -19,7 +19,7 @@ package org.opendaylight.yangtools.xsd.regex;
 
 /**
  * @xerces.internal
- * 
+ *
  * @version $Id: CaseInsensitiveMap.java 834653 2009-11-10 20:32:39Z mrglavas $
  */
 final class CaseInsensitiveMap {
@@ -30,7 +30,7 @@ final class CaseInsensitiveMap {
     private static final int INITIAL_CHUNK_COUNT = 64;   /* up to 0xFFFF */
 
     private static final int[][][] caseInsensitiveMap;
-    
+
     private static final int LOWER_CASE_MATCH = 1;
     private static final int UPPER_CASE_MATCH = 2;
 
@@ -45,10 +45,10 @@ final class CaseInsensitiveMap {
     private static int[] getMapping(int codePoint) {
         int chunk = codePoint >>> CHUNK_SHIFT;
         int offset = codePoint & CHUNK_MASK;
-        
+
         return caseInsensitiveMap[chunk][offset];
     }
-    
+
     static {
         caseInsensitiveMap = new int[INITIAL_CHUNK_COUNT][CHUNK_SIZE][];
         int lc, uc;
@@ -69,7 +69,7 @@ final class CaseInsensitiveMap {
                         map = updateMap(i, map, lc, lcMap, LOWER_CASE_MATCH);
                     }
                 }
-                
+
                 if (uc != i) {
                     if (index == map.length) {
                         map = expandMap(map, 2);
@@ -81,24 +81,24 @@ final class CaseInsensitiveMap {
                         map = updateMap(i, map, uc, ucMap, UPPER_CASE_MATCH);
                     }
                 }
-                
+
                 set(i, map);
             }
         }
     }
-    
+
     private static int[] expandMap(int[] srcMap, int expandBy) {
         final int oldLen = srcMap.length;
         int[] newMap = new int[oldLen + expandBy];
-        
+
         System.arraycopy(srcMap, 0, newMap, 0, oldLen);
         return newMap;
     }
-    
+
     private static void set(int codePoint, int[] map) {
         int chunk = codePoint >>> CHUNK_SHIFT;
         int offset = codePoint & CHUNK_MASK;
-        
+
         caseInsensitiveMap[chunk][offset] = map;
     }
 
@@ -119,7 +119,7 @@ final class CaseInsensitiveMap {
                 }
             }
         }
-        
+
         if (!contains(ciCodePointMap, codePoint)) {
             ciCodePointMap = expandAndAdd(ciCodePointMap, codePoint, matchType);
             set(ciCodePoint, ciCodePointMap);
@@ -127,7 +127,7 @@ final class CaseInsensitiveMap {
 
         return codePointMap;
     }
-    
+
     private static boolean contains(int[] map, int codePoint) {
         for (int i=0; i<map.length; i += 2) {
             if (map[i] == codePoint) {
@@ -145,11 +145,11 @@ final class CaseInsensitiveMap {
         }
         return false;
     }
-    
+
     private static int[] expandAndAdd(int[] srcMap, int codePoint, int matchType) {
         final int oldLen = srcMap.length;
         int[] newMap = new int[oldLen + 2];
-        
+
         System.arraycopy(srcMap, 0, newMap, 0, oldLen);
         newMap[oldLen] = codePoint;
         newMap[oldLen+1] = matchType;
