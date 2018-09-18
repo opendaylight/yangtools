@@ -2134,9 +2134,6 @@ public class RegularExpression implements java.io.Serializable {
      * Prepares for matching.  This method is called just before starting matching.
      */
     void prepare() {
-        if (Op.COUNT) {
-            Op.nofinstances = 0;
-        }
         this.compile(this.tokentree);
         /*
         if  (this.operations.type == Op.CLOSURE && this.operations.getChild().type == Op.DOT) { // .*
@@ -2145,9 +2142,6 @@ public class RegularExpression implements java.io.Serializable {
             this.operations = anchor;
         }
         */
-        if (Op.COUNT) {
-            System.err.println("DEBUG: The number of operations: "+Op.nofinstances);
-        }
 
         this.minlength = this.tokentree.getMinLength();
 
