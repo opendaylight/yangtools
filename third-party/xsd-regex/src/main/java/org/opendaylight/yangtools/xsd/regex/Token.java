@@ -29,9 +29,6 @@ class Token implements java.io.Serializable {
 
     private static final long serialVersionUID = 8484976002585487481L;
 
-    static final boolean COUNTTOKENS = true;
-    static int tokens = 0;
-
     static final int CHAR = 0;                  // Literal char
     static final int DOT = 11;                  // .
     static final int CONCAT = 1;                // XY
@@ -111,97 +108,52 @@ class Token implements java.io.Serializable {
     }
 
     static Token.ParenToken createLook(int type, Token child) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ParenToken(type, child, 0);
     }
     static Token.ParenToken createParen(Token child, int pnumber) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ParenToken(Token.PAREN, child, pnumber);
     }
     static Token.ClosureToken createClosure(Token tok) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ClosureToken(Token.CLOSURE, tok);
     }
     static Token.ClosureToken createNGClosure(Token tok) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ClosureToken(Token.NONGREEDYCLOSURE, tok);
     }
     static Token.ConcatToken createConcat(Token tok1, Token tok2) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ConcatToken(tok1, tok2);
     }
     static Token.UnionToken createConcat() {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.UnionToken(Token.CONCAT); // *** It is not a bug.
     }
     static Token.UnionToken createUnion() {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.UnionToken(Token.UNION);
     }
     static Token createEmpty() {
         return Token.token_empty;
     }
     static RangeToken createRange() {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new RangeToken(Token.RANGE);
     }
     static RangeToken createNRange() {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new RangeToken(Token.NRANGE);
     }
     static Token.CharToken createChar(int ch) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.CharToken(Token.CHAR, ch);
     }
     static private Token.CharToken createAnchor(int ch) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.CharToken(Token.ANCHOR, ch);
     }
     static Token.StringToken createBackReference(int refno) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.StringToken(Token.BACKREFERENCE, null, refno);
     }
     static Token.StringToken createString(String str) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.StringToken(Token.STRING, str, 0);
     }
     static Token.ModifierToken createModifierGroup(Token child, int add, int mask) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ModifierToken(child, add, mask);
     }
     static Token.ConditionToken createCondition(int refno, Token condition,
                                                 Token yespat, Token nopat) {
-        if (COUNTTOKENS) {
-            Token.tokens ++;
-        }
         return new Token.ConditionToken(refno, condition, yespat, nopat);
     }
 
