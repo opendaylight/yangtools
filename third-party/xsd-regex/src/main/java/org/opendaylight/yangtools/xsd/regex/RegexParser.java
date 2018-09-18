@@ -25,8 +25,6 @@ import java.util.Vector;
 /**
  * A Regular Expression Parser.
  *
- * @xerces.internal
- *
  * @version $Id: RegexParser.java 1129306 2011-05-30 19:18:04Z sandygao $
  */
 class RegexParser {

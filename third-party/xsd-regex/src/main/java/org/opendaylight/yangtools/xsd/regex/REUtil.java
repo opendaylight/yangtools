@@ -20,8 +20,6 @@ package org.opendaylight.yangtools.xsd.regex;
 import java.text.CharacterIterator;
 
 /**
- * @xerces.internal
- *
  * @version $Id: REUtil.java 828015 2009-10-21 13:56:13Z knoaman $
  */
 public final class REUtil {
@@ -220,7 +218,7 @@ public final class REUtil {
 
     /**
      * Sample entry.
-     * <div>Usage: <KBD>org.apache.xerces.utils.regex.REUtil &lt;regex&gt; &lt;string&gt;</KBD></div>
+     * <div>Usage: <code>org.apache.xerces.utils.regex.REUtil &lt;regex&gt; &lt;string&gt;</code></div>
      */
     public static void main(String[] argv) {
         String pattern = null;
