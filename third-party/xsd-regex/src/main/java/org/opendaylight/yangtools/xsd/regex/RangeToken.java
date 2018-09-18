@@ -20,8 +20,6 @@ package org.opendaylight.yangtools.xsd.regex;
 /**
  * This class represents a character class such as [a-z] or a period.
  *
- * @xerces.internal
- *
  * @version $Id: RangeToken.java 965250 2010-07-18 16:04:58Z mrglavas $
  */
 final class RangeToken extends Token implements java.io.Serializable {

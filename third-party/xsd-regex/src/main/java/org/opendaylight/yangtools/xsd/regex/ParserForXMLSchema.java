@@ -23,8 +23,6 @@ import java.util.Locale;
 /**
  * A regular expression parser for the XML Schema.
  *
- * @xerces.internal
- *
  * @author TAMURA Kent &lt;kent@trl.ibm.co.jp&gt;
  * @version $Id: ParserForXMLSchema.java 1638344 2014-11-11 20:15:46Z mrglavas $
  */

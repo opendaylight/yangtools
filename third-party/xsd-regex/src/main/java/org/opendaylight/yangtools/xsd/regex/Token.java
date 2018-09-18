@@ -23,8 +23,6 @@ import java.util.Vector;
 /**
  * This class represents a node in parse tree.
  *
- * @xerces.internal
- *
  * @version $Id: Token.java 1638344 2014-11-11 20:15:46Z mrglavas $
  */
 class Token implements java.io.Serializable {
