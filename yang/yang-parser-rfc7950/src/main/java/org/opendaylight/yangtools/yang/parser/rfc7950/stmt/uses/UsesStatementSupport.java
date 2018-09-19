@@ -24,14 +24,10 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
-import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class UsesStatementSupport extends
         AbstractQNameStatementSupport<UsesStatement, EffectiveStatement<QName, UsesStatement>> {
-    private static final Logger LOG = LoggerFactory.getLogger(UsesStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .USES)
         .addAny(YangStmtMapping.AUGMENT)
@@ -82,14 +78,9 @@ public final class UsesStatementSupport extends
                 final StatementContextBase<?, ?, ?> sourceGrpStmtCtx =
                         (StatementContextBase<?, ?, ?>) sourceGroupingPre.resolve(ctx);
 
-                try {
-                    UsesStatementImpl.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
-                    UsesStatementImpl.resolveUsesNode(usesNode, targetNodeStmtCtx);
-                    StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
-                } catch (final SourceException e) {
-                    LOG.warn(e.getMessage(), e);
-                    throw e;
-                }
+                UsesStatementImpl.copyFromSourceToTarget(sourceGrpStmtCtx, targetNodeStmtCtx, usesNode);
+                UsesStatementImpl.resolveUsesNode(usesNode, targetNodeStmtCtx);
+                StmtContextUtils.validateIfFeatureAndWhenOnListKeys(usesNode);
             }
 
             @Override
