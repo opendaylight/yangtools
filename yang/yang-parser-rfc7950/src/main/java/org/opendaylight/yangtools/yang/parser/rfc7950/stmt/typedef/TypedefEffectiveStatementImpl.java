@@ -42,7 +42,7 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
 
     private final TypeDefinition<?> typeDefinition;
 
-    private TypeEffectiveStatement<TypeStatement> typeStatement;
+    private volatile TypeEffectiveStatement<TypeStatement> typeStatement;
 
     TypedefEffectiveStatementImpl(final StmtContext<QName, TypedefStatement, ?> ctx) {
         super(ctx);
@@ -95,8 +95,7 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
             synchronized (this) {
                 ret = typeStatement;
                 if (ret == null) {
-                    ret = new ProxyTypeEffectiveStatement();
-                    typeStatement = ret;
+                    typeStatement = ret = new ProxyTypeEffectiveStatement();
                 }
             }
         }
