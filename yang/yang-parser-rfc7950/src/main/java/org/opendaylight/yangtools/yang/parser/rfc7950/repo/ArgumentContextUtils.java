@@ -125,9 +125,8 @@ final class ArgumentContextUtils {
 
         // Loop over inner strings
         while (brk != -1) {
-            final int end = brk != -1 ? brk : length;
-            trimLeadingAndAppend(sb, dquot, str, start, trimTrailing(str, start, end)).append('\n');
-            start = end + 1;
+            trimLeadingAndAppend(sb, dquot, str, start, trimTrailing(str, start, brk)).append('\n');
+            start = brk + 1;
             brk = str.indexOf('\n', start);
         }
 
