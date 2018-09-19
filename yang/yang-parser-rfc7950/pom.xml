@@ -110,6 +110,23 @@
                     <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <failOnError>true</failOnError>
+                    <excludeFilterFile>spotbugs-excludes.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <configuration>
+                    <excludePackageNames>
+                        *.opendaylight.yangtools.antlrv4.code.gen
+                    </excludePackageNames>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
