@@ -50,6 +50,8 @@ public interface SchemaTreeAwareEffectiveStatement<A, D extends DeclaredStatemen
      */
     default <E extends SchemaTreeEffectiveStatement<?>> @NonNull Optional<E> findSchemaTreeNode(
             final @NonNull QName qname) {
-        return Optional.ofNullable(get(Namespace.class, requireNonNull(qname)));
+        @SuppressWarnings("unchecked")
+        final E result = (E) get(Namespace.class, requireNonNull(qname));
+        return Optional.ofNullable(result);
     }
 }

@@ -85,7 +85,8 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
         }
 
         QName nextPath = iterator.next();
-        Mutable<?, ?, EffectiveStatement<?, ?>> current = root.getFromNamespace(ChildSchemaNodeNamespace.class,
+        @SuppressWarnings("unchecked")
+        Mutable<?, ?, EffectiveStatement<?, ?>> current = (Mutable)root.getFromNamespace(ChildSchemaNodeNamespace.class,
             nextPath);
         if (current == null) {
             return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(),
@@ -93,8 +94,9 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current.getFromNamespace(
-                ChildSchemaNodeNamespace.class,nextPath);
+            @SuppressWarnings("unchecked")
+            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (Mutable)current.getFromNamespace(
+                ChildSchemaNodeNamespace.class, nextPath);
             if (nextNodeCtx == null) {
                 return Optional.ofNullable(tryToFindUnknownStatement(nextPath.getLocalName(), current));
             }

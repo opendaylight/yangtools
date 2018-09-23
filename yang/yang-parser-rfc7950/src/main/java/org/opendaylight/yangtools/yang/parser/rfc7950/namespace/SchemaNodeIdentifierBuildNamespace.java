@@ -58,7 +58,6 @@ public final class SchemaNodeIdentifierBuildNamespace
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Mutable<?, ?, EffectiveStatement<?, ?>> getFrom(final NamespaceStorageNode storage,
             final SchemaNodeIdentifier key) {
@@ -76,7 +75,8 @@ public final class SchemaNodeIdentifierBuildNamespace
             return null;
         }
         QName nextPath = iterator.next();
-        Mutable<?, ?, EffectiveStatement<?, ?>> current = lookupStartStorage.getFromLocalStorage(
+        @SuppressWarnings("unchecked")
+        Mutable<?, ?, EffectiveStatement<?, ?>> current = (Mutable)lookupStartStorage.getFromLocalStorage(
             ChildSchemaNodeNamespace.class,nextPath);
         if (current == null && lookupStartStorage instanceof StmtContext<?, ?, ?>) {
             return ChildSchemaNodeNamespace.tryToFindUnknownStatement(nextPath.getLocalName(),
@@ -84,7 +84,8 @@ public final class SchemaNodeIdentifierBuildNamespace
         }
         while (current != null && iterator.hasNext()) {
             nextPath = iterator.next();
-            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = current.getFromNamespace(
+            @SuppressWarnings("unchecked")
+            final Mutable<?, ?, EffectiveStatement<?, ?>> nextNodeCtx = (Mutable)current.getFromNamespace(
                 ChildSchemaNodeNamespace.class,nextPath);
             if (nextNodeCtx == null) {
                 return ChildSchemaNodeNamespace.tryToFindUnknownStatement(nextPath.getLocalName(), current);
