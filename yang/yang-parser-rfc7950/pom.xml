@@ -116,15 +116,6 @@
                     <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <configuration>
-                    <excludePackageNames>
-                        *.opendaylight.yangtools.antlrv4.code.gen
-                    </excludePackageNames>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 
