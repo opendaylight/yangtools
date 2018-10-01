@@ -12,6 +12,8 @@ import java.util.EventListener;
 /**
  * Class representing a {@link Registration} of an {@link EventListener}. This interface provides the additional
  * guarantee that the process of unregistration cannot fail for predictable reasons.
+ *
+ * @param <T> Type of registered listener
  */
 public interface ListenerRegistration<T extends EventListener> extends ObjectRegistration<T> {
     /**

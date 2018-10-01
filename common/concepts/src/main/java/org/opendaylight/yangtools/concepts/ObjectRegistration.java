@@ -13,6 +13,8 @@ import javax.annotation.Nonnull;
  * Class representing a registration of an object. Such a registration is a proper resource and should be cleaned up
  * when no longer required, so references to the object can be removed. This mechanism lies above the usual Java
  * reference mechanism, as the entity where the object is registered may reside outside of the Java Virtual Machine.
+ *
+ * @param <T> Type of registered object
  */
 public interface ObjectRegistration<T> extends Registration {
     /**
@@ -21,7 +23,4 @@ public interface ObjectRegistration<T> extends Registration {
      * @return Registered object.
      */
     @Nonnull T getInstance();
-
-    @Override
-    void close();
 }
