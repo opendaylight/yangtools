@@ -6,23 +6,19 @@
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import com.google.common.collect.ImmutableSet;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -53,45 +49,21 @@ public class ScannedDependencyTest {
         assertEquals(2, files.size());
     }
 
-    private static URL makeMetaInf() throws Exception {
-        final String path = ScannedDependencyTest.class.getResource("/").getPath();
-        final String metaInfPath = path + "tests/META-INF/yang";
-        final Path createDirectories = Files.createDirectories(Paths.get(metaInfPath));
-        assertNotNull(createDirectories);
-        assertEquals(metaInfPath, createDirectories.toString());
-        Runtime.getRuntime().exec("cp " + path + "/test.yang " + metaInfPath + "/");
-        Runtime.getRuntime().exec("cp " + path + "/test2.yang " + metaInfPath + "/");
-        return ScannedDependencyTest.class.getResource("/tests");
-    }
-
     private static void prepareProject(final MavenProject project) throws Exception {
-        URL url = ScannedDependencyTest.class.getResource("/tests");
-        if (url == null) {
-            url = makeMetaInf();
-        }
-        assertNotNull(url);
-        final File testFile = new File(ScannedDependencyTest.class.getResource("/tests").toURI());
-        File testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
-        testFile2.createNewFile();
-        testFile2 = new File(ScannedDependencyTest.class.getResource("/test.jar").getFile());
-
         final Manifest manifest = new Manifest();
         manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        final File testFile2 = new File(ScannedDependencyTest.class.getResource("/").getPath(), "test.jar");
         final JarOutputStream target = new JarOutputStream(new FileOutputStream(testFile2), manifest);
         addSourceFileToTargetJar(new File(ScannedDependencyTest.class.getResource("/tests/META-INF").getPath()),
             target);
         target.close();
 
         final Artifact artifact = mock(Artifact.class);
+        when(artifact.getFile()).thenReturn(new File(ScannedDependencyTest.class.getResource("/tests").toURI()));
+
         final Artifact artifact2 = mock(Artifact.class);
-
-        final Set<Artifact> artifacts = new HashSet<>();
-        artifacts.add(artifact);
-        artifacts.add(artifact2);
-
-        when(project.getArtifacts()).thenReturn(artifacts);
-        when(artifact.getFile()).thenReturn(testFile);
         when(artifact2.getFile()).thenReturn(testFile2);
+        when(project.getArtifacts()).thenReturn(ImmutableSet.of(artifact, artifact2));
     }
 
     private static void addSourceFileToTargetJar(final File source, final JarOutputStream target) throws IOException {
