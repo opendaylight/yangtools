@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
@@ -26,7 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A mutable version of {@link ImmutableOffsetMap}. It inherits the set of mappings from the immutable version and
@@ -318,15 +320,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
     }
 
-    @Nonnull
     @Override
-    public final Set<Entry<K, V>> entrySet() {
+    public final @NonNull Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
-    @Nonnull
     @Override
-    public Map<K, V> toUnmodifiableMap() {
+    public @NonNull Map<K, V> toUnmodifiableMap() {
         if (removed == 0 && newKeys.isEmpty()) {
             // Make sure next modification clones the array, as we leak it to the map we return.
             needClone = true;
@@ -478,9 +478,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return true;
     }
 
-    @Nonnull
     @Override
-    public final Set<K> keySet() {
+    public final @NonNull Set<K> keySet() {
         return new KeySet();
     }
 
@@ -500,9 +499,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
-        @Nonnull
         @Override
-        public Iterator<Entry<K, V>> iterator() {
+        public @NonNull Iterator<Entry<K, V>> iterator() {
             return new AbstractSetIterator<Entry<K, V>>() {
                 @Override
                 public Entry<K, V> next() {
@@ -569,9 +567,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class KeySet extends AbstractSet<K> {
-        @Nonnull
         @Override
-        public Iterator<K> iterator() {
+        public @NonNull Iterator<K> iterator() {
             return new AbstractSetIterator<K>() {
                 @Override
                 public K next() {
@@ -590,8 +587,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         private final Iterator<Entry<K, Integer>> oldIterator = offsets.entrySet().iterator();
         private final Iterator<K> newIterator = newKeys.keySet().iterator();
         private int expectedModCount = modCount;
-        private K currentKey;
-        private K nextKey;
+        private @Nullable K currentKey = null;
+        private @Nullable K nextKey;
 
         AbstractSetIterator() {
             updateNextKey();
@@ -624,9 +621,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         @Override
         public final void remove() {
-            requireNonNull(currentKey != null);
-
             checkModCount();
+            checkArgument(currentKey != null);
             final Integer offset = offsets.get(currentKey);
             if (offset != null) {
                 cloneArray();
