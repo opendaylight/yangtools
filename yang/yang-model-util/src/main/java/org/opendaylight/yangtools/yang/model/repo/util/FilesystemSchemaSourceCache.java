@@ -237,6 +237,8 @@ public final class FilesystemSchemaSourceCache<T extends SchemaSourceRepresentat
         }
 
         @Override
+        @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
+            justification = "https://github.com/spotbugs/spotbugs/issues/600")
         protected void storeAsType(final File file, final YangTextSchemaSource cast) {
             try (InputStream castStream = cast.openStream()) {
                 Files.copy(castStream, file.toPath(), StandardCopyOption.REPLACE_EXISTING);
