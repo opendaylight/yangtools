@@ -12,12 +12,14 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A single version according to <a href="http://semver.org/">Semantic Versioning</a>.
  */
 @Beta
+@NonNullByDefault
 public final class SemVer implements Comparable<SemVer>, Serializable {
     private static final long serialVersionUID = 1L;
     private final int major;
@@ -45,7 +47,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         return new SemVer(major, minor, patch);
     }
 
-    public static SemVer valueOf(@Nonnull final String str) {
+    public static SemVer valueOf(final String str) {
         final int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
             return create(Integer.parseInt(str));
@@ -91,7 +93,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     }
 
     @Override
-    public int compareTo(@Nonnull final SemVer other) {
+    public int compareTo(final SemVer other) {
         int cmp = Integer.compare(major, other.major);
         if (cmp == 0) {
             cmp = Integer.compare(minor, other.minor);
@@ -109,7 +111,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }

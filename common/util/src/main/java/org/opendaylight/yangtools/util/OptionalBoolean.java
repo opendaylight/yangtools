@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Utility class for storing an optional boolean in a single byte value. This cuts down the memory requirement quite
@@ -22,6 +23,7 @@ import javax.annotation.Nullable;
  * @author Robert Varga
  */
 @Beta
+@NonNullByDefault
 public final class OptionalBoolean {
     private static final byte ABSENT = 0;
     private static final byte FALSE = 1;

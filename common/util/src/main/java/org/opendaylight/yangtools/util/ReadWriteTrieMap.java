@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.pantheon.triemap.MutableTrieMap;
@@ -89,7 +88,7 @@ final class ReadWriteTrieMap<K, V> extends ForwardingMap<K, V> {
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
+    public void putAll(final Map<? extends K, ? extends V> m) {
         for (Entry<? extends K, ? extends V> e : m.entrySet()) {
             put(e.getKey(), e.getValue());
         }
