@@ -12,7 +12,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import javax.annotation.Nonnegative;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A single version according to <a href="http://semver.org/">Semantic Versioning</a>.
@@ -33,19 +34,20 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         this.patch = patch;
     }
 
-    public static SemVer create(final int major) {
+    public static @NonNull SemVer create(final @Nonnegative int major) {
         return create(major, 0);
     }
 
-    public static SemVer create(final int major, final int minor) {
+    public static @NonNull SemVer create(final @Nonnegative int major, final @Nonnegative int minor) {
         return create(major, minor, 0);
     }
 
-    public static SemVer create(final int major, final int minor, final int patch) {
+    public static @NonNull  SemVer create(final @Nonnegative int major, final @Nonnegative int minor,
+            final @Nonnegative int patch) {
         return new SemVer(major, minor, patch);
     }
 
-    public static SemVer valueOf(@Nonnull final String str) {
+    public static @NonNull SemVer valueOf(final @NonNull String str) {
         final int minorIdx = str.indexOf('.');
         if (minorIdx == -1) {
             return create(Integer.parseInt(str));
@@ -91,7 +93,7 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
     }
 
     @Override
-    public int compareTo(@Nonnull final SemVer other) {
+    public int compareTo(final SemVer other) {
         int cmp = Integer.compare(major, other.major);
         if (cmp == 0) {
             cmp = Integer.compare(minor, other.minor);
