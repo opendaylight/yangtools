@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -63,7 +63,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     };
 
     @SuppressWarnings("unchecked")
-    public static <E> SingletonSet<E> of(@Nonnull final E element) {
+    public static <E> SingletonSet<E> of(final E element) {
         if (element == null) {
             return (SingletonSet<E>) NULL_SINGLETON;
         }
@@ -90,16 +90,14 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     @Override
     public abstract Spliterator<E> spliterator();
 
-    @Nonnull
     @Override
-    public final Object[] toArray() {
+    public final @NonNull Object[] toArray() {
         return new Object[] { getElement() };
     }
 
-    @Nonnull
     @SuppressWarnings({ "unchecked", "checkstyle:parameterName" })
     @Override
-    public final <T> T[] toArray(@Nonnull final T[] a) {
+    public final <T> @NonNull T[] toArray(final T[] a) {
         if (a.length > 0) {
             a[0] = (T)getElement();
             return a;
@@ -122,7 +120,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean containsAll(@Nonnull final Collection<?> c) {
+    public final boolean containsAll(final Collection<?> c) {
         if (c.isEmpty()) {
             return true;
         }
@@ -135,19 +133,19 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean addAll(@Nonnull final Collection<? extends E> c) {
+    public final boolean addAll(final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean retainAll(@Nonnull final Collection<?> c) {
+    public final boolean retainAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean removeAll(@Nonnull final Collection<?> c) {
+    public final boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

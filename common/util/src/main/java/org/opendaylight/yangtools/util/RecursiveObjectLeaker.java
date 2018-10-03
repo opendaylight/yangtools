@@ -14,8 +14,8 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map.Entry;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -107,7 +107,7 @@ public final class RecursiveObjectLeaker {
     // BEWARE: this method returns incpmpletely-initialized objects (that is the purpose of this class).
     //
     //         BE VERY CAREFUL WHAT OBJECT STATE YOU TOUCH
-    public static @Nullable <T> T lookup(final Object key, final Class<T> requiredClass) {
+    public static <T> @Nullable T lookup(final Object key, final Class<T> requiredClass) {
         final Deque<Entry<?, Object>> stack = STACK.get();
         if (stack != null) {
             for (Entry<?, Object> e : stack) {
