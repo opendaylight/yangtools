@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
 
 final class OffsetMapCache {
     /*
@@ -33,7 +32,7 @@ final class OffsetMapCache {
     private static final LoadingCache<List<?>, Map<?, Integer>> ORDERED_CACHE =
             CacheBuilder.newBuilder().weakValues().build(new CacheLoader<List<?>, Map<?, Integer>>() {
                 @Override
-                public Map<?, Integer> load(@Nonnull final List<?> key) {
+                public Map<?, Integer> load(final List<?> key) {
                     return createMap(key);
                 }
             });
