@@ -18,9 +18,9 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.RegEx;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated object identifying a YANG module revision.
@@ -38,6 +38,7 @@ import javax.annotation.RegEx;
  *
  * @author Robert Varga
  */
+@NonNullByDefault
 public final class Revision implements Comparable<Revision>, Serializable {
     // Note: since we are using writeReplace() this version is not significant.
     private static final long serialVersionUID = 1L;
@@ -78,7 +79,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @throws DateTimeParseException if the string format does not conform specification.
      * @throws NullPointerException if the string is null
      */
-    public static Revision of(@Nonnull final String str) {
+    public static Revision of(final String str) {
         return new Revision(str);
     }
 
@@ -138,7 +139,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof Revision && str.equals(((Revision)obj).str);
     }
 
@@ -154,7 +155,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
     private static final class Proxy implements Externalizable {
         private static final long serialVersionUID = 1L;
 
-        private String str;
+        private @Nullable String str;
 
         @SuppressWarnings("checkstyle:redundantModifier")
         public Proxy() {
@@ -166,17 +167,17 @@ public final class Revision implements Comparable<Revision>, Serializable {
         }
 
         @Override
-        public void writeExternal(final ObjectOutput out) throws IOException {
+        public void writeExternal(final @Nullable ObjectOutput out) throws IOException {
             out.writeObject(str);
         }
 
         @Override
-        public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        public void readExternal(final @Nullable ObjectInput in) throws IOException, ClassNotFoundException {
             str = (String) in.readObject();
         }
 
         private Object readResolve() {
-            return Revision.of(str);
+            return Revision.of(requireNonNull(str));
         }
     }
 }
