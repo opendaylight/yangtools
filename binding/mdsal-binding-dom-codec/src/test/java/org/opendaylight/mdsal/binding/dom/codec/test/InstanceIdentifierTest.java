@@ -10,16 +10,23 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import com.google.common.collect.ImmutableMap;
 import org.junit.Test;
+import org.opendaylight.yang.gen.v1.mdsal._355.norev.OspfStatLsdbBrief;
+import org.opendaylight.yang.gen.v1.mdsal._355.norev.OspfStatLsdbBriefKey;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.KeyedInstanceIdentifier;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public class InstanceIdentifierTest extends AbstractBindingCodecTest {
@@ -49,4 +56,17 @@ public class InstanceIdentifierTest extends AbstractBindingCodecTest {
         assertTrue(((AugmentationIdentifier) leafOnlyLastArg).getPossibleChildNames().contains(SIMPLE_VALUE_QNAME));
     }
 
+    @Test
+    public void testCamelCaseKeys() {
+        final InstanceIdentifier<?> result = registry.fromYangInstanceIdentifier(YangInstanceIdentifier.create(
+            NodeIdentifier.create(OspfStatLsdbBrief.QNAME),
+            new NodeIdentifierWithPredicates(OspfStatLsdbBrief.QNAME, ImmutableMap.of(
+                QName.create(OspfStatLsdbBrief.QNAME, "AreaIndex"), 1,
+                QName.create(OspfStatLsdbBrief.QNAME, "LsaType"), (short) 2,
+                QName.create(OspfStatLsdbBrief.QNAME, "LsId"), 3,
+                QName.create(OspfStatLsdbBrief.QNAME, "AdvRtr"), "foo"))));
+        assertTrue(result instanceof KeyedInstanceIdentifier);
+        final Identifier<?> key = ((KeyedInstanceIdentifier<?, ?>) result).getKey();
+        assertEquals(new OspfStatLsdbBriefKey("foo", 1, 3, (short)2), key);
+    }
 }

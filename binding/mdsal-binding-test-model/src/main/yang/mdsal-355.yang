@@ -1,0 +1,13 @@
+module mdsal-355 {
+	namespace "mdsal-355";
+	prefix "mdsal355";
+
+    list OspfStatLsdbBrief {
+        key "AreaIndex LsaType LsId AdvRtr";
+        leaf AreaIndex { type int32; description "Area Index"; }
+        leaf LsaType { type uint8; description "LSA Type"; }
+        leaf LsId { type int32; description "LSA ID"; }
+        leaf AdvRtr { type string; description "Advertised Router"; }
+    }
+}
+

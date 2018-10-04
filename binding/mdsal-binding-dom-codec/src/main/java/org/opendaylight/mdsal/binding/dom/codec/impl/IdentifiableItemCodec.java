@@ -14,10 +14,12 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
@@ -63,7 +65,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
          *
          * We do not have to perform a sort if the source collection has less than two
          * elements.
-
+         *
          * We always perform an ImmutableList.copyOf(), as that will turn into a no-op
          * if the source is already immutable. It will also produce optimized implementations
          * for empty and singleton collections.
@@ -74,7 +76,8 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         final List<QName> sortedKeys;
         if (unsortedKeys.size() > 1) {
             final List<QName> tmp = new ArrayList<>(unsortedKeys);
-            tmp.sort((q1, q2) -> q1.getLocalName().compareToIgnoreCase(q2.getLocalName()));
+            // This is not terribly efficient but gets the job done
+            tmp.sort(Comparator.comparing(qname -> BindingMapping.getPropertyName(qname.getLocalName())));
             sortedKeys = tmp;
         } else {
             sortedKeys = unsortedKeys;
