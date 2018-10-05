@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anyxml;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class AnyxmlStatementImpl extends AbstractDeclaredStatement<QName> implements AnyxmlStatement {
+final class AnyxmlStatementImpl extends WithArgument<QName> implements AnyxmlStatement {
     AnyxmlStatementImpl(final StmtContext<QName, AnyxmlStatement, ?> context) {
         super(context);
     }

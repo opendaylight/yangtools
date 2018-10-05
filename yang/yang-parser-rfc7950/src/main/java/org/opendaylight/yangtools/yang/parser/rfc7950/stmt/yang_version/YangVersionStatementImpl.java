@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class YangVersionStatementImpl extends AbstractDeclaredStatement<YangVersion> implements YangVersionStatement {
+final class YangVersionStatementImpl extends WithArgument<YangVersion> implements YangVersionStatement {
     YangVersionStatementImpl(final StmtContext<YangVersion, YangVersionStatement, ?> context) {
         super(context);
     }

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.base;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.BaseStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BaseStatementImpl extends AbstractDeclaredStatement<QName> implements BaseStatement {
+final class BaseStatementImpl extends WithArgument<QName> implements BaseStatement {
     BaseStatementImpl(final StmtContext<QName, BaseStatement, ?> context) {
         super(context);
     }

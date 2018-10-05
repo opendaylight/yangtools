@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class EnumStatementImpl extends AbstractDeclaredStatement<String> implements EnumStatement {
+final class EnumStatementImpl extends WithArgument<String> implements EnumStatement {
     EnumStatementImpl(final StmtContext<String, EnumStatement, ?> context) {
         super(context);
     }
