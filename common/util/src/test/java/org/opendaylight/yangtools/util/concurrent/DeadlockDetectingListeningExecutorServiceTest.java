@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertEquals;
@@ -30,7 +29,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,7 +124,7 @@ public class DeadlockDetectingListeningExecutorServiceTest {
 
             @Override
             @SuppressWarnings("checkstyle:parameterName")
-            public void onFailure(@Nonnull final Throwable t) {
+            public void onFailure(final Throwable t) {
                 caughtEx.set(t);
                 futureCompletedLatch.countDown();
             }

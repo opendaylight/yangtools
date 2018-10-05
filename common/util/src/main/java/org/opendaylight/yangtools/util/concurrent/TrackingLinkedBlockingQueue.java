@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import com.google.common.annotations.Beta;
@@ -13,7 +12,7 @@ import java.util.Collection;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A {@link LinkedBlockingQueue} that tracks the largest queue size for debugging.
@@ -45,7 +44,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
      * See {@link LinkedBlockingQueue#LinkedBlockingQueue(Collection)}.
      */
     @SuppressWarnings("checkstyle:parameterName")
-    public TrackingLinkedBlockingQueue(final Collection<? extends E> c) {
+    public TrackingLinkedBlockingQueue(final @NonNull Collection<? extends E> c) {
         super(c);
     }
 
@@ -79,7 +78,7 @@ public class TrackingLinkedBlockingQueue<E> extends LinkedBlockingQueue<E> {
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean offer(@Nonnull final E e) {
+    public boolean offer(final E e) {
         if (super.offer(e)) {
             updateLargestQueueSize();
             return true;
