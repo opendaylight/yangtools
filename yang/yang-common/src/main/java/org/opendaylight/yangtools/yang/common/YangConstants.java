@@ -8,10 +8,12 @@
 package org.opendaylight.yangtools.yang.common;
 
 import java.net.URI;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Constant definitions present in RFC documents related to the YANG language.
  */
+@NonNullByDefault
 public final class YangConstants {
     /**
      * YANG File Extension, as defined in https://tools.ietf.org/html/rfc6020#section-14.1.
@@ -99,6 +101,7 @@ public final class YangConstants {
      *
      * @param module Desired module
      * @return A QName representing action or RPC input.
+     * @throws NullPointerException if {@code module} is null
      */
     public static QName operationInputQName(final QNameModule module) {
         return DUMMY_OPERATION_INPUT.withModule(module);
@@ -110,6 +113,7 @@ public final class YangConstants {
      *
      * @param module Desired module
      * @return A QName representing action or RPC output.
+     * @throws NullPointerException if {@code module} is null
      */
     public static QName operationOutputQName(final QNameModule module) {
         return DUMMY_OPERATION_OUTPUT.withModule(module);
