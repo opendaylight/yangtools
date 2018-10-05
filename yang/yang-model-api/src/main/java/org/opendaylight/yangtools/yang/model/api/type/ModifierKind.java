@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Enum describing the effect of a YANG modifier statement.
@@ -24,6 +24,7 @@ import javax.annotation.Nonnull;
  * is "invert-match". If there are more possible values added in the future,
  * this enum can be extended with more enum constants.
  */
+@NonNullByDefault
 public enum ModifierKind {
     INVERT_MATCH("invert-match");
 
@@ -41,7 +42,7 @@ public enum ModifierKind {
      *
      * @return String that corresponds to the YANG keyword.
      */
-    public @Nonnull String getKeyword() {
+    public String getKeyword() {
         return keyword;
     }
 

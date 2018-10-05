@@ -8,14 +8,18 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface DeviationStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier> {
-    default @Nonnull SchemaNodeIdentifier getTargetNode() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull SchemaNodeIdentifier argument();
+
+    default @NonNull SchemaNodeIdentifier getTargetNode() {
         return argument();
     }
 
-    default @Nonnull Collection<? extends DeviateStatement> getDeviateStatements() {
+    default @NonNull Collection<? extends DeviateStatement> getDeviateStatements() {
         return declaredSubstatements(DeviateStatement.class);
     }
 }

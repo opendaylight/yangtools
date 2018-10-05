@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Rfc6020AbnfRule("revision-stmts")
 @Deprecated
 public interface RevisionGroup {
 
-    @Nonnull Collection<? extends RevisionStatement> getRevisions();
+    @NonNull Collection<? extends RevisionStatement> getRevisions();
 }

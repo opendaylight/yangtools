@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull QName getName() {
+    default @NonNull QName getName() {
         return argument();
     }
 }
