@@ -75,7 +75,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private final @NonNull String localName;
     private transient int hash = 0;
 
-    private QName(final QNameModule module, final String localName) {
+    private QName(final @NonNull QNameModule module, final @NonNull String localName) {
         this.module = requireNonNull(module);
         this.localName = requireNonNull(localName);
     }
@@ -88,11 +88,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @param localName
      *            YANG schema identifier
      */
-    private QName(final URI namespace, final String localName) {
+    private QName(final @NonNull URI namespace, final @NonNull String localName) {
         this(QNameModule.create(namespace), checkLocalName(localName));
     }
 
-    private static String checkLocalName(final String localName) {
+    private static @NonNull String checkLocalName(final @NonNull String localName) {
         checkArgument(localName != null, "Parameter 'localName' may not be null.");
         checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
 
@@ -105,7 +105,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         return localName;
     }
 
-    public static QName create(final String input) {
+    public static @NonNull QName create(final @NonNull String input) {
         Matcher matcher = QNAME_PATTERN_FULL.matcher(input);
         if (matcher.matches()) {
             final String namespace = matcher.group(1);
@@ -122,7 +122,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         throw new IllegalArgumentException("Invalid input: " + input);
     }
 
-    public static QName create(final QName base, final String localName) {
+    public static @NonNull QName create(final @NonNull QName base, final @NonNull String localName) {
         return create(base.getModule(), localName);
     }
 
@@ -135,111 +135,88 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *            Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final QNameModule qnameModule, final String localName) {
+    public static @NonNull QName create(final @NonNull QNameModule qnameModule, final @NonNull String localName) {
         return new QName(requireNonNull(qnameModule, "module may not be null"), checkLocalName(localName));
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
-     * @param revision
-     *            Revision of namespace or null if revision is unspecified.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace or null if revision is unspecified.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, final @Nullable Revision revision, final String localName) {
+    public static @NonNull QName create(final @NonNull URI namespace, final @Nullable Revision revision,
+            final @NonNull String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
-     * @param revision
-     *            Revision of namespace.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final URI namespace, final Optional<Revision> revision, final String localName) {
+    public static QName create(final @NonNull URI namespace, final @NonNull Optional<Revision> revision,
+            final @NonNull String localName) {
         return create(QNameModule.create(namespace, revision), localName);
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
-     * @param revision
-     *            Revision of namespace or null if revision is unspecified.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace or null if revision is unspecified.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
-    public static QName create(final String namespace, final String localName, final Revision revision) {
-        final URI namespaceUri = parseNamespace(namespace);
-        return create(QNameModule.create(namespaceUri, revision), localName);
+    public static @NonNull QName create(final @NonNull String namespace, final @NonNull String localName,
+            final Revision revision) {
+        return create(QNameModule.create(parseNamespace(namespace), revision), localName);
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName, MUST NOT BE Null.
-     * @param revision
-     *            Revision of namespace / YANG module. MUST NOT BE null, MUST BE
-     *            in format <code>YYYY-mm-dd</code>.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName, MUST NOT BE Null.
+     * @param revision Revision of namespace / YANG module. MUST NOT BE null, MUST BE in format {@code YYYY-mm-dd}.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return A new QName
-     * @throws NullPointerException
-     *             If any of parameters is null.
-     * @throws IllegalArgumentException
-     *             If <code>namespace</code> is not valid URI or
-     *             <code>revision</code> is not according to format
-     *             <code>YYYY-mm-dd</code>.
+     * @throws NullPointerException If any of parameters is null.
+     * @throws IllegalArgumentException If {@code namespace} is not valid URI or {@code revision} does not conform
+     *         to {@code YYYY-mm-dd}.
      */
-    public static QName create(final String namespace, final String revision, final String localName) {
-        final URI namespaceUri = parseNamespace(namespace);
-        final Revision revisionDate = Revision.of(revision);
-        return create(namespaceUri, revisionDate, localName);
+    public static @NonNull QName create(final @NonNull String namespace, final @NonNull String revision,
+            final @NonNull String localName) {
+        return create(parseNamespace(namespace), Revision.of(revision), localName);
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName, MUST NOT BE Null.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName, MUST NOT BE Null.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return A new QName
-     * @throws NullPointerException
-     *             If any of parameters is null.
-     * @throws IllegalArgumentException
-     *             If <code>namespace</code> is not valid URI.
+     * @throws NullPointerException If any of parameters is null.
+     * @throws IllegalArgumentException If {@code namespace} is not valid URI.
      */
-    public static QName create(final String namespace, final String localName) {
+    public static @NonNull QName create(final @NonNull String namespace, final @NonNull String localName) {
         return create(parseNamespace(namespace), localName);
     }
 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName, MUST NOT BE null.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName, MUST NOT BE null.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return A new QName
-     * @throws NullPointerException
-     *             If any of parameters is null.
-     * @throws IllegalArgumentException
-     *             If <code>namespace</code> is not valid URI.
+     * @throws NullPointerException If any of parameters is null.
+     * @throws IllegalArgumentException If <code>namespace</code> is not valid URI.
      */
-    public static QName create(final URI namespace, final String localName) {
+    public static @NonNull QName create(final @NonNull URI namespace, final @NonNull String localName) {
         return new QName(namespace, localName);
     }
 
@@ -250,7 +227,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @return A QName instance
      * @throws IOException if I/O error occurs
      */
-    public static QName readFrom(final DataInput in) throws IOException {
+    public static QName readFrom(final @NonNull DataInput in) throws IOException {
         final QNameModule module = QNameModule.readFrom(in);
         return new QName(module, checkLocalName(in.readUTF()));
     }
@@ -260,7 +237,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      * @return Module component
      */
-    public QNameModule getModule() {
+    public @NonNull QNameModule getModule() {
         return module;
     }
 
@@ -269,7 +246,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      * @return XMLNamespace assigned to the YANG module.
      */
-    public URI getNamespace() {
+    public @NonNull URI getNamespace() {
         return module.getNamespace();
     }
 
@@ -280,7 +257,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @return YANG schema identifier which were defined for this node in the
      *         YANG module
      */
-    public String getLocalName() {
+    public @NonNull String getLocalName() {
         return localName;
     }
 
@@ -289,7 +266,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      * @return revision of the YANG module if the module has defined revision.
      */
-    public Optional<Revision> getRevision() {
+    public @NonNull Optional<Revision> getRevision() {
         return module.getRevision();
     }
 
@@ -298,7 +275,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      * @return Interned reference, or this object if it was interned.
      */
-    public QName intern() {
+    public @NonNull QName intern() {
         // We also want to make sure we keep the QNameModule cached
         final QNameModule cacheMod = module.intern();
 
@@ -319,14 +296,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
-     * Compares the specified object with this list for equality.  Returns
-     * <tt>true</tt> if and only if the specified object is also instance of
-     * {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
+     * Compares the specified object with this list for equality.  Returns <tt>true</tt> if and only if the specified
+     * object is also instance of {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
      * {@link #getRevision()} are equals to same properties of this instance.
      *
      * @param obj the object to be compared for equality with this QName
      * @return <tt>true</tt> if the specified object is equal to this QName
-     *
      */
     @Override
     public boolean equals(final Object obj) {
@@ -340,7 +315,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         return Objects.equals(localName, other.localName) && module.equals(other.module);
     }
 
-    private static URI parseNamespace(final String namespace) {
+    private static @NonNull URI parseNamespace(final @NonNull String namespace) {
         try {
             return new URI(namespace);
         } catch (final URISyntaxException ue) {
@@ -349,7 +324,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         final StringBuilder sb = new StringBuilder();
         if (getNamespace() != null) {
             sb.append(QNAME_LEFT_PARENTHESIS).append(getNamespace());
@@ -370,33 +345,31 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @param newModule New QNameModule to use
      * @return a QName with specified QNameModule and same local name as this one
      */
-    public QName withModule(@NonNull final QNameModule newModule) {
+    public @NonNull QName withModule(final @NonNull QNameModule newModule) {
         return new QName(newModule, localName);
     }
 
     /**
      * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
-     * a Revision, this object is retured.
+     * a Revision, this object is returned.
      *
      * @return a QName with the same namespace and local name, but with no revision.
      */
-    public QName withoutRevision() {
+    public @NonNull QName withoutRevision() {
         return getRevision().isPresent() ? new QName(module.withoutRevision(), localName) : this;
     }
 
     /**
-     * Formats {@link Revision} representing revision to format <code>YYYY-mm-dd</code>
+     * Formats {@link Revision} representing revision to format {@code YYYY-mm-dd}
      *
      * <p>
-     * YANG Specification defines format for <code>revision</code> as
-     * YYYY-mm-dd. This format for revision is reused accross multiple places
-     * such as capabilities URI, YANG modules, etc.
+     * YANG Specification defines format for {@code revision<} as YYYY-mm-dd. This format for revision is reused across
+     * multiple places such as capabilities URI, YANG modules, etc.
      *
-     * @param revision
-     *            Date object to format
+     * @param revision Date object to format
      * @return String representation or null if the input was null.
      */
-    public static String formattedRevision(final Optional<Revision> revision) {
+    public static @Nullable String formattedRevision(final @NonNull Optional<Revision> revision) {
         return revision.map(Revision::toString).orElse(null);
     }
 
@@ -404,18 +377,14 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * Compares this QName to other, without comparing revision.
      *
      * <p>
-     * Compares instance of this to other instance of QName and returns true if
-     * both instances have equal <code>localName</code> ({@link #getLocalName()}
-     * ) and <code>namespace</code> ({@link #getNamespace()}).
+     * Compares instance of this to other instance of QName and returns true if both instances have equal
+     * {@code localName} ({@link #getLocalName()}) and @{code namespace} ({@link #getNamespace()}).
      *
-     * @param other
-     *            Other QName. Must not be null.
-     * @return true if this instance and other have equals localName and
-     *         namespace.
-     * @throws NullPointerException
-     *             if <code>other</code> is null.
+     * @param other Other QName. Must not be null.
+     * @return true if this instance and other have equals localName and namespace.
+     * @throws NullPointerException if {@code other} is null.
      */
-    public boolean isEqualWithoutRevision(final QName other) {
+    public boolean isEqualWithoutRevision(final @NonNull QName other) {
         return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
 

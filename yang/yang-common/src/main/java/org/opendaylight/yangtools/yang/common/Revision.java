@@ -18,14 +18,13 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.RegEx;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Dedicated object identifying a YANG module revision.
  *
- * <p>
  * <h3>API design note</h3>
  * This class defines the contents of a revision statement, but modules do not require to have a revision (e.g. they
  * have not started to keep track of revisions).
@@ -53,9 +52,9 @@ public final class Revision implements Comparable<Revision>, Serializable {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    private final String str;
+    private final @NonNull String str;
 
-    private Revision(final String str) {
+    private Revision(final @NonNull String str) {
         /*
          * According to RFC7950 (https://tools.ietf.org/html/rfc7950#section-7.1.9):
          *
@@ -78,7 +77,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @throws DateTimeParseException if the string format does not conform specification.
      * @throws NullPointerException if the string is null
      */
-    public static Revision of(@Nonnull final String str) {
+    public static @NonNull Revision of(final @NonNull String str) {
         return new Revision(str);
     }
 
@@ -89,7 +88,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @return An optional Revision instance.
      * @throws DateTimeParseException if the string format does not conform specification.
      */
-    public static Optional<Revision> ofNullable(@Nullable final String str) {
+    public static Optional<Revision> ofNullable(final @Nullable String str) {
         return str == null ? Optional.empty() : Optional.of(new Revision(str));
     }
 
@@ -102,7 +101,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @param second Second optional revision
      * @return Positive, zero, or negative integer.
      */
-    public static int compare(final Optional<Revision> first, final Optional<Revision> second) {
+    public static int compare(final @NonNull Optional<Revision> first, final @NonNull Optional<Revision> second) {
         if (first.isPresent()) {
             return second.isPresent() ? first.get().compareTo(second.get()) : 1;
         }
@@ -117,7 +116,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @param second Second revision
      * @return Positive, zero, or negative integer.
      */
-    public static int compare(@Nullable final Revision first, @Nullable final Revision second) {
+    public static int compare(final @Nullable Revision first, final @Nullable Revision second) {
         if (first != null) {
             return second != null ? first.compareTo(second) : 1;
         }
@@ -176,7 +175,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
         }
 
         private Object readResolve() {
-            return Revision.of(str);
+            return Revision.of(requireNonNull(str));
         }
     }
 }
