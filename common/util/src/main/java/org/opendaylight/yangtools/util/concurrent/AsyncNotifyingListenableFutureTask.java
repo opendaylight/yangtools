@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static java.util.Objects.requireNonNull;
@@ -16,8 +15,8 @@ import com.google.common.util.concurrent.ListenableFutureTask;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,7 +67,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         }
 
         @Override
-        public void addListener(@Nonnull final Runnable listener, @Nonnull final Executor executor) {
+        public void addListener(final Runnable listener,  final Executor executor) {
             // Wrap the listener Runnable in a DelegatingRunnable. If the specified executor is one that
             // runs tasks in the same thread as the caller submitting the task
             // (e.g. {@link com.google.common.util.concurrent.MoreExecutors#sameThreadExecutor}) and the
@@ -123,7 +122,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
         super(callable);
     }
 
-    private AsyncNotifyingListenableFutureTask(final Runnable runnable, final V result) {
+    private AsyncNotifyingListenableFutureTask(final Runnable runnable, final @Nullable V result) {
         super(runnable, result);
     }
 
@@ -135,7 +134,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      * @param listenerExecutor the executor used to run listener callbacks asynchronously.
      *                         If null, no executor is used.
      */
-    public static <V> AsyncNotifyingListenableFutureTask<V> create(final Callable<V> callable,
+    public static <V> @NonNull AsyncNotifyingListenableFutureTask<V> create(final Callable<V> callable,
             @Nullable final Executor listenerExecutor) {
         if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(callable);
@@ -153,8 +152,8 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
      * @param listenerExecutor the executor used to run listener callbacks asynchronously.
      *                         If null, no executor is used.
      */
-    public static <V> AsyncNotifyingListenableFutureTask<V> create(final Runnable runnable, @Nullable final V result,
-            @Nullable final Executor listenerExecutor) {
+    public static <V> @NonNull AsyncNotifyingListenableFutureTask<V> create(final Runnable runnable,
+            @Nullable final V result, @Nullable final Executor listenerExecutor) {
         if (listenerExecutor == null) {
             return new AsyncNotifyingListenableFutureTask<>(runnable, result);
         }
@@ -162,7 +161,7 @@ public class AsyncNotifyingListenableFutureTask<V> extends FutureTask<V> impleme
     }
 
     @Override
-    public void addListener(@Nonnull final Runnable listener, @Nonnull final Executor executor) {
+    public void addListener(final Runnable listener, final Executor executor) {
         executionList.add(listener, executor);
     }
 
