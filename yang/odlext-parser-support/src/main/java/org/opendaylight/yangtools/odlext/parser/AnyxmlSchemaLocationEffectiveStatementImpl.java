@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -31,13 +30,11 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return getNodeType();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.odlext.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
+@NonNullByDefault
 public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     // FIXME: this extension is not present in yang-ext.yang as published by mdsal
     ANYXML_SCHEMA_LOCATION(QName.create(OpenDaylightExtensionsConstants.ORIGINAL_MODULE, "anyxml-schema-location"),
@@ -42,25 +42,21 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
     }
 
-    @Nonnull
     @Override
     public QName getStatementName() {
         return statementName;
     }
 
     @Override
-    @Nullable
     public QName getArgumentName() {
         return argumentName;
     }
 
     @Override
-    @Nonnull
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
 
-    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveRepresentation;
