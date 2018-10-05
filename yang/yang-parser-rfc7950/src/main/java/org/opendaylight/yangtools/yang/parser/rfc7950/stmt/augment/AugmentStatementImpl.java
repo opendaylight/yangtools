@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.augment;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.AugmentStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class AugmentStatementImpl extends AbstractDeclaredStatement<SchemaNodeIdentifier> implements AugmentStatement {
+final class AugmentStatementImpl extends WithArgument<SchemaNodeIdentifier> implements AugmentStatement {
     AugmentStatementImpl(final StmtContext<SchemaNodeIdentifier, AugmentStatement, ?> context) {
         super(context);
     }

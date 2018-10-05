@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.choice;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ChoiceStatementImpl extends AbstractDeclaredStatement<QName>
-        implements ChoiceStatement {
+final class ChoiceStatementImpl extends WithArgument<QName> implements ChoiceStatement {
     ChoiceStatementImpl(final StmtContext<QName, ChoiceStatement, ?> context) {
         super(context);
     }

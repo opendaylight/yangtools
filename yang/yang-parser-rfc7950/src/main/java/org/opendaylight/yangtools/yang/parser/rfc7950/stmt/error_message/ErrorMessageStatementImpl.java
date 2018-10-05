@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ErrorMessageStatementImpl extends AbstractDeclaredStatement<String> implements ErrorMessageStatement {
+final class ErrorMessageStatementImpl extends WithArgument<String> implements ErrorMessageStatement {
     ErrorMessageStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> context) {
         super(context);
     }

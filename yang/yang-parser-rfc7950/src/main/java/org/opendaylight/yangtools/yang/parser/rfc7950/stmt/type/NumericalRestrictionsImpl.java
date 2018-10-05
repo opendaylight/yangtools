@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.NumericalRestrictions;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 // FIXME: this class is not used anywhere, decide its future
-final class NumericalRestrictionsImpl extends AbstractDeclaredStatement<String> implements NumericalRestrictions {
+final class NumericalRestrictionsImpl extends WithArgument<String> implements NumericalRestrictions {
     NumericalRestrictionsImpl(final StmtContext<String, NumericalRestrictions, ?> context) {
         super(context);
     }
