@@ -23,7 +23,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -53,6 +53,7 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * affect equality and identity of two QNames and carry only information
  * which may be useful for serializers / deserializers.
  */
+@NonNullByDefault
 public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 5398411242927766414L;
@@ -71,8 +72,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
 
     private static final char[] ILLEGAL_CHARACTERS = { '?', '(', ')', '&', ':' };
 
-    private final @NonNull QNameModule module;
-    private final @NonNull String localName;
+    private final QNameModule module;
+    private final String localName;
     private transient int hash = 0;
 
     private QName(final QNameModule module, final String localName) {
@@ -129,10 +130,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     /**
      * Creates new QName.
      *
-     * @param qnameModule
-     *            Namespace and revision enclosed as a QNameModule
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param qnameModule Namespace and revision enclosed as a QNameModule
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
     public static QName create(final QNameModule qnameModule, final String localName) {
@@ -142,12 +141,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
-     * @param revision
-     *            Revision of namespace or null if revision is unspecified.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace or null if revision is unspecified.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final @Nullable Revision revision, final String localName) {
@@ -157,12 +153,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName or null if namespace is undefined.
-     * @param revision
-     *            Revision of namespace.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName or null if namespace is undefined.
+     * @param revision Revision of namespace.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return Instance of QName
      */
     public static QName create(final URI namespace, final Optional<Revision> revision, final String localName) {
@@ -212,15 +205,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName, MUST NOT BE Null.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName, MUST NOT BE Null.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return A new QName
-     * @throws NullPointerException
-     *             If any of parameters is null.
-     * @throws IllegalArgumentException
-     *             If <code>namespace</code> is not valid URI.
+     * @throws NullPointerException If any of parameters is null.
+     * @throws IllegalArgumentException If <code>namespace</code> is not valid URI.
      */
     public static QName create(final String namespace, final String localName) {
         return create(parseNamespace(namespace), localName);
@@ -229,15 +218,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     /**
      * Creates new QName.
      *
-     * @param namespace
-     *            Namespace of QName, MUST NOT BE null.
-     * @param localName
-     *            Local name part of QName. MUST NOT BE null.
+     * @param namespace Namespace of QName, MUST NOT BE null.
+     * @param localName Local name part of QName. MUST NOT BE null.
      * @return A new QName
-     * @throws NullPointerException
-     *             If any of parameters is null.
-     * @throws IllegalArgumentException
-     *             If <code>namespace</code> is not valid URI.
+     * @throws NullPointerException If any of parameters is null.
+     * @throws IllegalArgumentException If <code>namespace</code> is not valid URI.
      */
     public static QName create(final URI namespace, final String localName) {
         return new QName(namespace, localName);
@@ -329,7 +314,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }
@@ -370,13 +355,13 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @param newModule New QNameModule to use
      * @return a QName with specified QNameModule and same local name as this one
      */
-    public QName withModule(@NonNull final QNameModule newModule) {
+    public QName withModule(final QNameModule newModule) {
         return new QName(newModule, localName);
     }
 
     /**
      * Returns a QName with the same namespace and local name, but with no revision. If this QName does not have
-     * a Revision, this object is retured.
+     * a Revision, this object is returned.
      *
      * @return a QName with the same namespace and local name, but with no revision.
      */
