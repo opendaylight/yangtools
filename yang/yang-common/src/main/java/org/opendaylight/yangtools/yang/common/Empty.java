@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.annotations.Beta;
 import java.io.Serializable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -17,6 +18,7 @@ import org.opendaylight.yangtools.concepts.Immutable;
  * @author Robert Varga
  */
 @Beta
+@NonNullByDefault
 public final class Empty implements Immutable, Serializable {
     private static final long serialVersionUID = 1L;
     private static final Empty INSTANCE = new Empty();
