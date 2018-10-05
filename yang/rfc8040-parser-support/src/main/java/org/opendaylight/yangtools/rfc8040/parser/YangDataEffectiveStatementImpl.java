@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
@@ -50,13 +49,11 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         Verify.verify(container instanceof ContainerSchemaNode);
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return maybeQNameArgument;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;
@@ -67,7 +64,6 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         return container;
     }
 
-    @Nonnull
     @Override
     public ContainerSchemaNode getContainerSchemaNode() {
         // Verified in the constructor
