@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
@@ -24,7 +24,10 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  */
 @Beta
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
-    default @Nonnull ModifierKind getValue() {
+    @Override
+    @NonNull ModifierKind argument();
+
+    default @NonNull ModifierKind getValue() {
         return argument();
     }
 }

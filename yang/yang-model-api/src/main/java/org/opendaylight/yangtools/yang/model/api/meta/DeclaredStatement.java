@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -14,9 +15,8 @@ import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Represents declared statement.
@@ -37,7 +37,7 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      *
      * @return Collection of statements, which were explicitly declared in source of model.
      */
-    @Nonnull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
+    @NonNull Collection<? extends DeclaredStatement<?>> declaredSubstatements();
 
     /**
      * Returns collection of explicitly declared child statements, while preserving its original ordering from original
@@ -76,7 +76,8 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
     @Beta
     default <V, T extends DeclaredStatement<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
             @NonNull final Class<T> type) {
-        return findFirstDeclaredSubstatement(type).map(DeclaredStatement::argument);
+        // FIXME: YANGTOOLS-908: T should imply non-null argument
+        return findFirstDeclaredSubstatement(type).map(stmt -> verifyNotNull(stmt.argument()));
     }
 
     /**

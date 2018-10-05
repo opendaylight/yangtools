@@ -9,27 +9,31 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Rfc6020AbnfRule("type-stmt")
 public interface TypeStatement extends DeclaredStatement<String> {
-    default @Nonnull String getName() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getName() {
         return argument();
     }
 
     @Rfc6020AbnfRule("numerical-restrictions")
     interface NumericalRestrictions extends TypeStatement {
 
-        default @Nonnull RangeStatement getRange() {
+        default @NonNull RangeStatement getRange() {
             return findFirstDeclaredSubstatement(RangeStatement.class).get();
         }
     }
 
     @Rfc6020AbnfRule("decimal64-specification")
     interface Decimal64Specification extends TypeStatement {
-        default @Nonnull FractionDigitsStatement getFractionDigits() {
+        default @NonNull FractionDigitsStatement getFractionDigits() {
             return findFirstDeclaredSubstatement(FractionDigitsStatement.class).get();
         }
 
@@ -46,22 +50,21 @@ public interface TypeStatement extends DeclaredStatement<String> {
             return opt.isPresent() ? opt.get() : null;
         }
 
-        default @Nonnull Collection<? extends PatternStatement> getPatterns() {
+        default @NonNull Collection<? extends PatternStatement> getPatterns() {
             return declaredSubstatements(PatternStatement.class);
         }
     }
 
     @Rfc6020AbnfRule("enum-specification")
     interface EnumSpecification extends TypeStatement {
-
-        default @Nonnull Collection<? extends EnumStatement> getEnums() {
+        default @NonNull Collection<? extends EnumStatement> getEnums() {
             return declaredSubstatements(EnumStatement.class);
         }
     }
 
     @Rfc6020AbnfRule("leafref-specification")
     interface LeafrefSpecification extends TypeStatement {
-        default @Nonnull PathStatement getPath() {
+        default @NonNull PathStatement getPath() {
             return findFirstDeclaredSubstatement(PathStatement.class).get();
         }
 
@@ -101,28 +104,28 @@ public interface TypeStatement extends DeclaredStatement<String> {
          * @return collection of base statements (in YANG 1.1 models) or a collection containing just one base
          *         statement (in YANG 1.0 models)
          */
-        default @Nonnull Collection<? extends BaseStatement> getBases() {
+        default @NonNull Collection<? extends BaseStatement> getBases() {
             return declaredSubstatements(BaseStatement.class);
         }
     }
 
     @Rfc6020AbnfRule("bits-specification")
     interface BitsSpecification extends TypeStatement {
-        default @Nonnull Collection<? extends BitStatement> getBits() {
+        default @NonNull Collection<? extends BitStatement> getBits() {
             return declaredSubstatements(BitStatement.class);
         }
     }
 
     @Rfc6020AbnfRule("union-specification")
     interface UnionSpecification extends TypeStatement {
-        default @Nonnull Collection<? extends TypeStatement> getTypes() {
+        default @NonNull Collection<? extends TypeStatement> getTypes() {
             return declaredSubstatements(TypeStatement.class);
         }
     }
 
     @Rfc6020AbnfRule("binary-specification")
     interface BinarySpecification extends TypeStatement {
-        default @Nonnull Collection<? extends LengthStatement> getLength() {
+        default @NonNull Collection<? extends LengthStatement> getLength() {
             return declaredSubstatements(LengthStatement.class);
         }
     }
