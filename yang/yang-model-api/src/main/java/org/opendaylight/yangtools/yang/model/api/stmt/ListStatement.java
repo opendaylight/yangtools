@@ -9,19 +9,20 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface ListStatement extends MultipleElementsDeclaredStatement,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>,
         ConfigStatementAwareDeclaredStatement<QName>, ActionStatementAwareDeclaredStatement<QName>,
         MustStatementAwareDeclaredStatement<QName>, NotificationStatementAwareDeclaredStatement<QName> {
-    default KeyStatement getKey() {
+    default @Nullable KeyStatement getKey() {
         final Optional<KeyStatement> opt = findFirstDeclaredSubstatement(KeyStatement.class);
         return opt.isPresent() ? opt.get() : null;
     }
 
-    default @Nonnull Collection<? extends UniqueStatement> getUnique() {
+    default @NonNull Collection<? extends UniqueStatement> getUnique() {
         return declaredSubstatements(UniqueStatement.class);
     }
 }

@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface BelongsToStatement extends DeclaredStatement<String> {
-    default @Nonnull String getModule() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getModule() {
         return argument();
     }
 
-    default @Nonnull PrefixStatement getPrefix() {
+    default @NonNull PrefixStatement getPrefix() {
         return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 }
-

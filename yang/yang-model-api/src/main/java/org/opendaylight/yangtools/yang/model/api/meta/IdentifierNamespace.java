@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Model specific namespace which allows access to specific
@@ -28,5 +28,5 @@ public interface IdentifierNamespace<K, V> {
      * @param identifier Identifier of value
      * @return value or null, if identifier is not present in namespace.
      */
-    @Nullable V get(@Nonnull K identifier);
+    @Nullable V get(@NonNull K identifier);
 }

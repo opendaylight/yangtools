@@ -17,7 +17,7 @@ import com.google.common.collect.SetMultimap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -120,7 +120,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          *            inclusion in the SchemaContext it produces.
          * @return this builder
          */
-        public Builder setFilter(@Nonnull final SchemaSourceFilter filter) {
+        public Builder setFilter(final @NonNull SchemaSourceFilter filter) {
             this.filter = requireNonNull(filter);
             return this;
         }
@@ -132,7 +132,7 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
          *            mode of yang statement parser
          * @return this builder
          */
-        public Builder setStatementParserMode(@Nonnull final StatementParserMode statementParserMode) {
+        public Builder setStatementParserMode(final @NonNull StatementParserMode statementParserMode) {
             this.statementParserMode = requireNonNull(statementParserMode);
             return this;
         }

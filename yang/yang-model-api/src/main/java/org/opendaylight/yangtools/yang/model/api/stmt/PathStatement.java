@@ -7,14 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PathStatement extends DeclaredStatement<RevisionAwareXPath> {
     // FIXME: Introduce proper type representing parsed leafref
-    default @Nonnull String getValue() {
+    @Override
+    @NonNull String rawArgument();
+
+    // FIXME: Introduce proper type representing parsed leafref
+    default @NonNull String getValue() {
         return rawArgument();
     }
 }
-

@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface NotificationNodeContainer {
-
     /**
      * Return the set of notifications in this container, keyed by QName. RFC7950 specifies that
      * {@link AugmentationSchemaNode}s, {@link GroupingDefinition}s, {@link ListSchemaNode}s and
@@ -20,5 +18,5 @@ public interface NotificationNodeContainer {
       *
      * @return set of notification nodes
      */
-    @Nonnull Set<NotificationDefinition> getNotifications();
+    @NonNull Set<NotificationDefinition> getNotifications();
 }

@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface MinElementsStatement extends DeclaredStatement<Integer> {
-    default @Nonnull Integer getValue() {
+    @Override
+    @NonNull Integer argument();
+
+    default @NonNull Integer getValue() {
         return argument();
     }
 }

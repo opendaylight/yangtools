@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 public interface WhenStatement extends DocumentedDeclaredStatement<RevisionAwareXPath> {
-    default @Nonnull RevisionAwareXPath getCondition() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull RevisionAwareXPath argument();
+
+    default @NonNull RevisionAwareXPath getCondition() {
         return argument();
     }
 }
-
