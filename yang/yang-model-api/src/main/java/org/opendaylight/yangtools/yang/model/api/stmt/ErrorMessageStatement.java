@@ -7,11 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface ErrorMessageStatement extends DeclaredStatement<String> {
-    default @Nonnull String getValue() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getValue() {
         return argument();
     }
 }

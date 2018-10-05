@@ -8,21 +8,17 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull QName getName() {
-        return argument();
-    }
-
     /**
      * Returns the base identities of this identity.
      *
      * @return base identities, empty if there are none.
      */
-    default @Nonnull Collection<? extends BaseStatement> getBases() {
+    default @NonNull Collection<? extends BaseStatement> getBases() {
         return declaredSubstatements(BaseStatement.class);
     }
 }

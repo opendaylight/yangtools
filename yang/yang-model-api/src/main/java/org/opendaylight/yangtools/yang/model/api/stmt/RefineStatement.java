@@ -9,18 +9,21 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         DocumentedDeclaredStatement<SchemaNodeIdentifier>, IfFeatureAwareDeclaredStatement<SchemaNodeIdentifier>,
         MandatoryStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         MustStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
-    default @Nonnull String getTargetNode() {
+    @Override
+    @NonNull String rawArgument();
+
+    default @NonNull String getTargetNode() {
         return rawArgument();
     }
 
-    default @Nonnull Collection<? extends DefaultStatement> getDefaults() {
+    default @NonNull Collection<? extends DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
     }
 

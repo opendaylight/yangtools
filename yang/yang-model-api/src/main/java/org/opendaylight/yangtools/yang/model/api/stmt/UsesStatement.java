@@ -8,14 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface UsesStatement extends DataDefinitionStatement {
-    default @Nonnull Collection<? extends RefineStatement> getRefines() {
+    default @NonNull Collection<? extends RefineStatement> getRefines() {
         return declaredSubstatements(RefineStatement.class);
     }
 
-    default @Nonnull Collection<? extends AugmentStatement> getAugments() {
+    default @NonNull Collection<? extends AugmentStatement> getAugments() {
         return declaredSubstatements(AugmentStatement.class);
     }
 }

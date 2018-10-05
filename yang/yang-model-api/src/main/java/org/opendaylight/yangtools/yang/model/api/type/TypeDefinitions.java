@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Objects;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 final class TypeDefinitions {
@@ -42,8 +42,8 @@ final class TypeDefinitions {
         return toStringHelper(type).toString();
     }
 
-    @Nullable
-    static <T extends TypeDefinition<T>> T castIfEquals(final Class<T> clazz, final T type, final Object obj) {
+    static <T extends TypeDefinition<T>> @Nullable T castIfEquals(final Class<T> clazz, final T type,
+            final Object obj) {
         if (!clazz.isInstance(obj)) {
             return null;
         }
