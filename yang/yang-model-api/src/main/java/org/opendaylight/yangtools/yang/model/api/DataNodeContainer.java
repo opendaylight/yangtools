@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -65,7 +65,7 @@ public interface DataNodeContainer {
      * @throws NullPointerException if {@code name} is null
      */
     @Deprecated
-    @Nullable default DataSchemaNode getDataChildByName(final QName name) {
+    default @Nullable DataSchemaNode getDataChildByName(final QName name) {
         return findDataChildByName(name).orElse(null);
     }
 

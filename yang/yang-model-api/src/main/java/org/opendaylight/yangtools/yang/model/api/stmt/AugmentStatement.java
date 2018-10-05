@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.DocumentedDeclaredStatement.WithStatus;
 
 public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
@@ -16,12 +16,15 @@ public interface AugmentStatement extends WithStatus<SchemaNodeIdentifier>,
         NotificationStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         ActionStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         WhenStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull SchemaNodeIdentifier argument();
 
-    default @Nonnull SchemaNodeIdentifier getTargetNode() {
+    default @NonNull SchemaNodeIdentifier getTargetNode() {
         return argument();
     }
 
-    default @Nonnull Collection<? extends CaseStatement> getCases() {
+    default @NonNull Collection<? extends CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }
 }

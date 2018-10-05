@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -20,10 +20,10 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
     /**
      * Returns all bit values.
      *
-     * @return list of <code>Bit</code> type instastances with data about all
-     *         individual bits of <code>bits</code> YANG built-in type
+     * @return list of <code>Bit</code> type instances with data about all individual bits of <code>bits</code> YANG
+     *         built-in type
      */
-    @Nonnull List<Bit> getBits();
+    @NonNull List<Bit> getBits();
 
     static int hashCode(final BitsTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
@@ -53,7 +53,7 @@ public interface BitsTypeDefinition extends TypeDefinition<BitsTypeDefinition> {
          *
          * @return string with the name of the concrete bit
          */
-        @Nonnull String getName();
+        @NonNull String getName();
 
         /**
          * The position value MUST be in the range 0 to 4294967295, and it MUST

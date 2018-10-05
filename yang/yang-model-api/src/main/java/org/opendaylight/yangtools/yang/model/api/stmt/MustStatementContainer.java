@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Marker interface for statements which may contain a 'must' statement, as defined in RFC7950. There is a significant
@@ -24,5 +24,5 @@ public interface MustStatementContainer {
      *
      * @return collection of must statements
      */
-    @Nonnull Collection<? extends MustStatement> getMusts();
+    @NonNull Collection<? extends MustStatement> getMusts();
 }

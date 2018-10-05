@@ -8,21 +8,21 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Rfc6020AbnfRule("body-stmts")
 @Deprecated
 public interface BodyGroup extends DataDefinitionContainer.WithReusableDefinitions, NotificationStatementContainer {
 
-    @Nonnull Collection<? extends ExtensionStatement> getExtensions();
+    @NonNull Collection<? extends ExtensionStatement> getExtensions();
 
-    @Nonnull Collection<? extends FeatureStatement> getFeatures();
+    @NonNull Collection<? extends FeatureStatement> getFeatures();
 
-    @Nonnull Collection<? extends IdentityStatement> getIdentities();
+    @NonNull Collection<? extends IdentityStatement> getIdentities();
 
-    @Nonnull Collection<? extends AugmentStatement> getAugments();
+    @NonNull Collection<? extends AugmentStatement> getAugments();
 
-    @Nonnull Collection<? extends RpcStatement> getRpcs();
+    @NonNull Collection<? extends RpcStatement> getRpcs();
 
-    @Nonnull Collection<? extends DeviationStatement> getDeviations();
+    @NonNull Collection<? extends DeviationStatement> getDeviations();
 }

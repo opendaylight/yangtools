@@ -7,12 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PrefixStatement extends DeclaredStatement<String> {
-    default @Nonnull String getValue() {
+    @Override
+    @NonNull String rawArgument();
+
+    default @NonNull String getValue() {
         return rawArgument();
     }
 }
-

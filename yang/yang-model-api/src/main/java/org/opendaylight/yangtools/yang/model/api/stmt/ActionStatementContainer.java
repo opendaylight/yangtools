@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Statement which can contain action statements.
@@ -23,5 +23,5 @@ public interface ActionStatementContainer {
      *
      * @return collection of action statements
      */
-    @Nonnull Collection<? extends ActionStatement> getActions();
+    @NonNull Collection<? extends ActionStatement> getActions();
 }
