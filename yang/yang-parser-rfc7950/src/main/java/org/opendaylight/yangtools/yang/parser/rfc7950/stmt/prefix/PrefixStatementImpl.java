@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class PrefixStatementImpl extends AbstractDeclaredStatement<String> implements PrefixStatement {
+final class PrefixStatementImpl extends WithArgument<String> implements PrefixStatement {
     PrefixStatementImpl(final StmtContext<String, PrefixStatement,?> context) {
         super(context);
     }

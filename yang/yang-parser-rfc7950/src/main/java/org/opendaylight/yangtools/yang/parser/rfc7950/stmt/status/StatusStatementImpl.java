@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status;
 
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class StatusStatementImpl extends AbstractDeclaredStatement<Status> implements StatusStatement {
+final class StatusStatementImpl extends WithArgument<Status> implements StatusStatement {
     StatusStatementImpl(final StmtContext<Status, StatusStatement, ?> context) {
         super(context);
     }
