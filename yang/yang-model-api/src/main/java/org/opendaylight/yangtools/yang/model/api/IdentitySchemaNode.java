@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface describing YANG 'identity' statement.
@@ -30,7 +30,7 @@ public interface IdentitySchemaNode extends SchemaNode {
      * @return set of existing identities from which the new identity is derived or an empty Set if the identity is
      *         a root identity.
      */
-    @Nonnull Set<IdentitySchemaNode> getBaseIdentities();
+    @NonNull Set<IdentitySchemaNode> getBaseIdentities();
 
     /**
      * Get identities derived from this identity.

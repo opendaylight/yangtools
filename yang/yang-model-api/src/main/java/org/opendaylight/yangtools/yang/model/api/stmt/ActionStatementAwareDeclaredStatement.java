@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 @Beta
 public interface ActionStatementAwareDeclaredStatement<A> extends DeclaredStatement<A>, ActionStatementContainer {
     @Override
-    default @Nonnull Collection<? extends ActionStatement> getActions() {
+    default @NonNull Collection<? extends ActionStatement> getActions() {
         return declaredSubstatements(ActionStatement.class);
     }
 }

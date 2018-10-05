@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface OrganizationStatement extends DeclaredStatement<String> {
-    default @Nonnull String getText() {
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getText() {
         return argument();
     }
 }

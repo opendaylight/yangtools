@@ -8,12 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull String getName() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
+    default @NonNull String getName() {
         return argument().getLocalName();
     }
 

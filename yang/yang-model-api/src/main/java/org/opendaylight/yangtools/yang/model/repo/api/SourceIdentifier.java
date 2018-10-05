@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -31,11 +32,12 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
+@NonNullByDefault
 public abstract class SourceIdentifier implements Identifier, Immutable {
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 2L;
 
-    private final Revision revision;
+    private final @Nullable Revision revision;
     private final String name;
 
     /**
@@ -56,7 +58,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @param revision
      *            Revision of source, may be null
      */
-    SourceIdentifier(final String name, @Nullable final Revision revision) {
+    SourceIdentifier(final String name, final @Nullable Revision revision) {
         this.name = requireNonNull(name);
         this.revision = revision;
     }
@@ -70,7 +72,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *            Revision of source, possibly not present
      */
     SourceIdentifier(final String name, final Optional<Revision> revision) {
-        this(name, revision.orElse(null));
+        this(name, revision.isPresent() ? revision.get() : null);
     }
 
     /**
@@ -97,7 +99,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @return revision of source or null if revision was not supplied.
      */
     public Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
+        final Revision rev = revision;
+        return rev == null ? Optional.empty() : Optional.of(rev);
     }
 
     /**
@@ -113,7 +116,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * @return Filename for this source identifier.
      */
     public String toYangFilename() {
-        return toYangFileName(name, Optional.ofNullable(revision));
+        return toYangFileName(name, getRevision());
     }
 
     /**

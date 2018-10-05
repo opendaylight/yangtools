@@ -15,7 +15,7 @@ import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Collection;
 import java.util.Collections;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
 /**
@@ -29,27 +29,27 @@ public class SchemaResolutionException extends SchemaSourceException {
     private final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
     private final Collection<SourceIdentifier> resolvedSources;
 
-    public SchemaResolutionException(@Nonnull final String message) {
+    public SchemaResolutionException(@NonNull final String message) {
         this(message, null);
     }
 
-    public SchemaResolutionException(@Nonnull final String message, final Throwable cause) {
+    public SchemaResolutionException(@NonNull final String message, final Throwable cause) {
         this(message, null, cause, Collections.emptySet(), ImmutableMultimap.of());
     }
 
-    public SchemaResolutionException(@Nonnull final String message, final SourceIdentifier failedSource,
+    public SchemaResolutionException(@NonNull final String message, final SourceIdentifier failedSource,
             final Throwable cause) {
         this(message, failedSource, cause, Collections.emptySet(), ImmutableMultimap.of());
     }
 
-    public SchemaResolutionException(@Nonnull final String message, final Collection<SourceIdentifier> resolvedSources,
-            final @Nonnull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+    public SchemaResolutionException(@NonNull final String message, final Collection<SourceIdentifier> resolvedSources,
+            final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
         this(message, null, null, resolvedSources, unsatisfiedImports);
     }
 
-    public SchemaResolutionException(@Nonnull final String message, final SourceIdentifier failedSource,
-            final Throwable cause, @Nonnull final Collection<SourceIdentifier> resolvedSources,
-            @Nonnull final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
+    public SchemaResolutionException(@NonNull final String message, final SourceIdentifier failedSource,
+            final Throwable cause, @NonNull final Collection<SourceIdentifier> resolvedSources,
+            @NonNull final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports) {
         super(formatMessage(message, failedSource, resolvedSources, unsatisfiedImports), cause);
         this.failedSource = failedSource;
         this.unsatisfiedImports = ImmutableMultimap.copyOf(unsatisfiedImports);
@@ -81,7 +81,6 @@ public class SchemaResolutionException extends SchemaSourceException {
     public final Multimap<SourceIdentifier, ModuleImport> getUnsatisfiedImports() {
         return unsatisfiedImports;
     }
-
 
     // FIXME: should be leak actual mapping?
     public final Collection<SourceIdentifier> getResolvedSources() {

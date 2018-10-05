@@ -8,15 +8,18 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface ImportStatement extends DocumentedDeclaredStatement<String> {
-    default @Nonnull String getModule() {
+    @Override
+    @NonNull String rawArgument();
+
+    default @NonNull String getModule() {
         return rawArgument();
     }
 
-    default @Nonnull PrefixStatement getPrefix() {
+    default @NonNull PrefixStatement getPrefix() {
         return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 

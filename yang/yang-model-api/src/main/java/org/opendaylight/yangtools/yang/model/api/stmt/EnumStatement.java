@@ -8,12 +8,16 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>,
         IfFeatureAwareDeclaredStatement<String> {
-    default @Nonnull String getName() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getName() {
         return argument();
     }
 

@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 
 @Beta
 public interface WhenStatementAwareDeclaredStatement<A> extends IfFeatureAwareDeclaredStatement<A>,

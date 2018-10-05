@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface YangVersionStatement extends DeclaredStatement<YangVersion> {
-    default @Nonnull YangVersion getValue() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull YangVersion argument();
+
+    default @NonNull YangVersion getValue() {
         return argument();
     }
 }
-

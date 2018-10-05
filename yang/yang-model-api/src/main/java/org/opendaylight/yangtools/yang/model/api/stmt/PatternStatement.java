@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
 public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint> {
-    default @Nonnull PatternConstraint getValue() {
+    @Override
+    @NonNull PatternConstraint argument();
+
+    default @NonNull PatternConstraint getValue() {
         return argument();
     }
 

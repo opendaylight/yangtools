@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 
 /**
@@ -24,5 +24,5 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relat
 @Beta
 public interface UniqueConstraint {
     // FIXME: 3.0.0: return Set<Relative>
-    @Nonnull Collection<Relative> getTag();
+    @NonNull Collection<Relative> getTag();
 }

@@ -21,7 +21,6 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
@@ -120,7 +119,6 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
         return identifier;
     }
 
-    @Nonnull
     @Override
     public Class<? extends YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;

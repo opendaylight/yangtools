@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.net.URI;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface NamespaceStatement extends DeclaredStatement<URI> {
-    default @Nonnull URI getUri() {
+    @Override
+    @NonNull URI argument();
+
+    default @NonNull URI getUri() {
         return argument();
     }
 }
-

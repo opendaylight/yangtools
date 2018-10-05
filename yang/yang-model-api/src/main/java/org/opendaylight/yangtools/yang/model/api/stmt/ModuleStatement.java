@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface ModuleStatement extends MetaDeclaredStatement<String>, ModuleHeaderGroup, LinkageDeclaredStatement,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
-    default @Nonnull String getName() {
+    @Override
+    @NonNull String rawArgument();
+
+    default @NonNull String getName() {
         return rawArgument();
     }
 

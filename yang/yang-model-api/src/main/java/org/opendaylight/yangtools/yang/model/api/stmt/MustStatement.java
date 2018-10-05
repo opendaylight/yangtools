@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 public interface MustStatement extends ConstrainedDocumentedDeclaredStatement<RevisionAwareXPath> {
-    default @Nonnull RevisionAwareXPath getCondition() {
+    @Override
+    @NonNull RevisionAwareXPath argument();
+
+    default @NonNull RevisionAwareXPath getCondition() {
         return argument();
     }
 }

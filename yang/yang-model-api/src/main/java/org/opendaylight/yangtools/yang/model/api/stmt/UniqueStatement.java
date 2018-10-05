@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface UniqueStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> {
 
-    @Nonnull Collection<SchemaNodeIdentifier.Relative> getTag();
+    @NonNull Collection<SchemaNodeIdentifier.Relative> getTag();
 }
-

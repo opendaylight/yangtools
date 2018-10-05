@@ -8,12 +8,15 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface SubmoduleStatement extends MetaDeclaredStatement<String>, LinkageDeclaredStatement,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
-    default @Nonnull String getName() {
+    @Override
+    @NonNull String rawArgument();
+
+    default @NonNull String getName() {
         return rawArgument();
     }
 
@@ -22,7 +25,7 @@ public interface SubmoduleStatement extends MetaDeclaredStatement<String>, Linka
         return opt.isPresent() ? opt.get() : null;
     }
 
-    default @Nonnull BelongsToStatement getBelongsTo() {
+    default @NonNull BelongsToStatement getBelongsTo() {
         return findFirstDeclaredSubstatement(BelongsToStatement.class).get();
     }
 }

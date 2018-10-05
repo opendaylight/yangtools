@@ -14,8 +14,8 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -104,7 +104,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final URI namespace, @Nullable final Revision revision) {
+    default Optional<Module> findModule(final URI namespace, final @Nullable Revision revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 
@@ -146,7 +146,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>name</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final String name, @Nullable final Revision revision) {
+    default Optional<Module> findModule(final String name, final @Nullable Revision revision) {
         return findModule(name, Optional.ofNullable(revision));
     }
 

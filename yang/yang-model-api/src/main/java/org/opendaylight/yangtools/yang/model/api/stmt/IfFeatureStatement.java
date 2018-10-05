@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Set;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -28,6 +28,5 @@ public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QNam
      * @return Predicate on a collection of QNames against which to evaluate
      */
     @Beta
-    @Nonnull
-    Predicate<Set<QName>> getIfFeaturePredicate();
+    @NonNull Predicate<Set<QName>> getIfFeaturePredicate();
 }

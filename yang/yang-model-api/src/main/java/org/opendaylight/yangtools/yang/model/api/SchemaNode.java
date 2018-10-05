@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -19,7 +19,7 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *
      * @return QName with the name of the schema node
      */
-    @Nonnull QName getQName();
+    @NonNull QName getQName();
 
     /**
      * Returns the schema path of the instance of the type
@@ -27,5 +27,5 @@ public interface SchemaNode extends DocumentedNode.WithStatus {
      *
      * @return schema path of the schema node
      */
-    @Nonnull SchemaPath getPath();
+    @NonNull SchemaPath getPath();
 }

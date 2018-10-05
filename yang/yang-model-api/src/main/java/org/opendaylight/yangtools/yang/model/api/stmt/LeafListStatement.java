@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface LeafListStatement extends MultipleElementsDeclaredStatement, TypeAwareDeclaredStatement,
@@ -19,7 +19,7 @@ public interface LeafListStatement extends MultipleElementsDeclaredStatement, Ty
      *
      * @return collection of default statements
      */
-    default @Nonnull Collection<? extends DefaultStatement> getDefaults() {
+    default @NonNull Collection<? extends DefaultStatement> getDefaults() {
         return declaredSubstatements(DefaultStatement.class);
     }
 }

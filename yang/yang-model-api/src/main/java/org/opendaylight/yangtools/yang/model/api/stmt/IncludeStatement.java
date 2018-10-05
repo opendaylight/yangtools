@@ -8,11 +8,14 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface IncludeStatement extends DocumentedDeclaredStatement<String> {
-    default @Nonnull String getModule() {
+    @Override
+    @NonNull String argument();
+
+    default @NonNull String getModule() {
         return argument();
     }
 

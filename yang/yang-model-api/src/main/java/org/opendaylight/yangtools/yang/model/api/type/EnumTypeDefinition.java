@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -47,7 +47,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      *         data about all individual enumeration pairs of
      *         <code>enumeration</code> YANG built-in type
      */
-    @Nonnull List<EnumPair> getValues();
+    @NonNull List<EnumPair> getValues();
 
     static boolean equals(final EnumTypeDefinition type, final Object obj) {
         if (type == obj) {

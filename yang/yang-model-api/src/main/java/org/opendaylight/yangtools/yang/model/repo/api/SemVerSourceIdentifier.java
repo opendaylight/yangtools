@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
 
@@ -38,6 +40,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
+@NonNullByDefault
 public final class SemVerSourceIdentifier extends SourceIdentifier {
     private static final long serialVersionUID = 1L;
     private final SemVer semVer;
@@ -100,9 +103,10 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
      * @param semVer
      *            semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName, final Revision revision,
+    public static SemVerSourceIdentifier create(final String moduleName, final @Nullable Revision revision,
             final SemVer semVer) {
-        return new SemVerSourceIdentifier(moduleName, Optional.ofNullable(revision), semVer);
+        return revision == null ? create(moduleName, Optional.empty(), semVer)
+                : create(moduleName, Optional.of(revision), semVer);
     }
 
     /**
@@ -131,7 +135,7 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }

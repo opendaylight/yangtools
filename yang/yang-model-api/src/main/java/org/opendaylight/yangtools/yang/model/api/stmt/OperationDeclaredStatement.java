@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -19,8 +19,12 @@ import org.opendaylight.yangtools.yang.common.QName;
 @Beta
 public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>, OperationGroup,
         IfFeatureAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
     @Override
-    default @Nonnull QName getName() {
+    @NonNull QName argument();
+
+    @Override
+    default QName getName() {
         return argument();
     }
 
@@ -37,12 +41,12 @@ public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.
     }
 
     @Override
-    default @Nonnull Collection<? extends TypedefStatement> getTypedefs() {
+    default Collection<? extends TypedefStatement> getTypedefs() {
         return declaredSubstatements(TypedefStatement.class);
     }
 
     @Override
-    default @Nonnull Collection<? extends GroupingStatement> getGroupings() {
+    default Collection<? extends GroupingStatement> getGroupings() {
         return declaredSubstatements(GroupingStatement.class);
     }
 }

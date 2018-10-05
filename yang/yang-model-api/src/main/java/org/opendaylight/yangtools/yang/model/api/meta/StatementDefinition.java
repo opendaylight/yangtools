@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -32,26 +32,21 @@ public interface StatementDefinition extends Immutable {
     @NonNull QName getStatementName();
 
     /**
-     * Returns name of statement argument or null, if statement does not have
-     * argument.
+     * Returns name of statement argument or null, if statement does not have argument.
      *
      * @return argument name or null, if statement does not take argument.
      */
     // FIXME: 3.0.0: make this return an Optional<StatementArgumentDefinition>, which will include the boolean value
     //               of isArgumentYinElement()
-    @Nullable
-    QName getArgumentName();
+    @Nullable QName getArgumentName();
 
     /**
-     * Returns class which represents declared version of statement associated
-     * with this definition.
+     * Returns class which represents declared version of statement associated with this definition.
      *
      * <p>
-     * This class should be interface, which provides convenience access to
-     * declared substatements.
+     * This class should be interface, which provides convenience access to declared substatements.
      *
-     * @return class which represents declared version of statement associated
-     *         with this definition.
+     * @return class which represents declared version of statement associated with this definition.
      */
     @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
 
@@ -59,21 +54,18 @@ public interface StatementDefinition extends Immutable {
      * Returns class which represents derived behaviour from supplied statement.
      *
      * <p>
-     * This class should be interface, which defines convenience access to
-     * statement properties, namespace items and substatements.
+     * This class should be interface, which defines convenience access to statement properties, namespace items and
+     * substatements.
      *
-     * @return class which represents effective version of statement associated
-     *         with this definition
+     * @return class which represents effective version of statement associated with this definition
      */
     @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
 
     /**
-     * Returns true, if argument of statement is represented as value of yin
-     * element. If argument of statement is represented as argument of yin
-     * element, returns false.
+     * Returns true, if argument of statement is represented as value of yin element. If argument of statement is
+     * represented as argument of yin element, returns false.
      *
-     * @return returns true, if statement argument is represented as value of
-     *         yin element, otherwise returns false.
+     * @return returns true, if statement argument is represented as value of yin element, otherwise returns false.
      */
     // FIXME: 3.0.0: integrate this with getArgumentName()
     boolean isArgumentYinElement();

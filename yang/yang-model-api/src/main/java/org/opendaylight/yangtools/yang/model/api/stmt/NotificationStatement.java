@@ -7,13 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
         MustStatementAwareDeclaredStatement<QName> {
-    default @Nonnull QName getName() {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
+    default @NonNull QName getName() {
         return argument();
     }
 }

@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface MandatoryStatement extends DeclaredStatement<Boolean> {
-    default @Nonnull Boolean getValue() {
+    @Override
+    @NonNull Boolean argument();
+
+    default @NonNull Boolean getValue() {
         return argument();
     }
 }
