@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +30,7 @@ public final class ObjectRegistry<T> {
     private final Set<ObjectRegistration<? extends T>> unmodifiableView;
     private final String name;
 
-    private ObjectRegistry(final String name, Set<ObjectRegistration<? extends T>> objects) {
+    private ObjectRegistry(final String name, final Set<ObjectRegistration<? extends T>> objects) {
         this.name = requireNonNull(name);
         this.objects = requireNonNull(objects);
         this.unmodifiableView = Collections.unmodifiableSet(objects);
@@ -71,7 +72,7 @@ public final class ObjectRegistry<T> {
     }
 
     private static final class Reg<T> extends AbstractObjectRegistration<T> {
-        private @Nullable @javax.annotation.Nullable Consumer<ObjectRegistration<? super T>> removeCall;
+        private @Nullable Consumer<ObjectRegistration<? super T>> removeCall;
 
         Reg(final T instance, final Consumer<ObjectRegistration<? super T>> removeCall) {
             super(instance);
@@ -79,6 +80,7 @@ public final class ObjectRegistry<T> {
         }
 
         @Override
+        @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
         protected void removeRegistration() {
             removeCall.accept(this);
             // Do not retail reference to that state
