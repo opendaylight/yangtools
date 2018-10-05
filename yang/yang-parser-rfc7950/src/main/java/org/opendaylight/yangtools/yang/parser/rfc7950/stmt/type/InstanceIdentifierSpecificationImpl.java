@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.InstanceIdentifierSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class InstanceIdentifierSpecificationImpl extends AbstractDeclaredStatement<String>
+final class InstanceIdentifierSpecificationImpl extends WithArgument<String>
         implements InstanceIdentifierSpecification {
     InstanceIdentifierSpecificationImpl(final StmtContext<String, InstanceIdentifierSpecification, ?> ctx) {
         super(ctx);

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.include;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.IncludeStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IncludeStatementImpl extends AbstractDeclaredStatement<String> implements IncludeStatement {
+final class IncludeStatementImpl extends WithArgument<String> implements IncludeStatement {
     IncludeStatementImpl(final StmtContext<String, IncludeStatement, ?> context) {
         super(context);
     }

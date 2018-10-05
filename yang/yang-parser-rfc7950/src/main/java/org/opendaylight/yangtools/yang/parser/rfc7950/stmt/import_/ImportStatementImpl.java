@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.import_;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ImportStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ImportStatementImpl extends AbstractDeclaredStatement<String> implements ImportStatement {
+final class ImportStatementImpl extends WithArgument<String> implements ImportStatement {
     ImportStatementImpl(final StmtContext<String, ImportStatement,?> context) {
         super(context);
     }

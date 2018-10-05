@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.LeafrefSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class LeafrefSpecificationImpl extends AbstractDeclaredStatement<String> implements LeafrefSpecification {
+final class LeafrefSpecificationImpl extends WithArgument<String> implements LeafrefSpecification {
     LeafrefSpecificationImpl(final StmtContext<String, LeafrefSpecification, ?> context) {
         super(context);
     }

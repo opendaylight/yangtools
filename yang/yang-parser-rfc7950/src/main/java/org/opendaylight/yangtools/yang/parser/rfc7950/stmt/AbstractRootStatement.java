@@ -12,11 +12,11 @@ import org.opendaylight.yangtools.yang.model.api.stmt.BodyDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.LinkageDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MetaDeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionAwareDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractRootStatement<T extends DeclaredStatement<String>>
-        extends AbstractDeclaredStatement<String> implements LinkageDeclaredStatement, MetaDeclaredStatement<String>,
+        extends WithArgument<String> implements LinkageDeclaredStatement, MetaDeclaredStatement<String>,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
 
     protected AbstractRootStatement(final StmtContext<String, T,?> context) {

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IdentityStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IdentityStatementImpl extends AbstractDeclaredStatement<QName> implements IdentityStatement {
+final class IdentityStatementImpl extends WithArgument<QName> implements IdentityStatement {
     IdentityStatementImpl(final StmtContext<QName, IdentityStatement, ?> context) {
         super(context);
     }

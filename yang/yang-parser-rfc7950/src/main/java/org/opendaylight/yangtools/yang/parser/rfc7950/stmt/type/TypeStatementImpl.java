@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class TypeStatementImpl extends AbstractDeclaredStatement<String> implements TypeStatement {
+final class TypeStatementImpl extends WithArgument<String> implements TypeStatement {
     TypeStatementImpl(final StmtContext<String, TypeStatement, ?> context) {
         super(context);
     }

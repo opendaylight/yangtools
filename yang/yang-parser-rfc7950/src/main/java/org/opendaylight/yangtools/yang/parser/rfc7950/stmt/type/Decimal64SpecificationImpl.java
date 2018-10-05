@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.Decimal64Specification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class Decimal64SpecificationImpl extends AbstractDeclaredStatement<String> implements Decimal64Specification {
+final class Decimal64SpecificationImpl extends WithArgument<String> implements Decimal64Specification {
     Decimal64SpecificationImpl(final StmtContext<String, Decimal64Specification, ?> context) {
         super(context);
     }

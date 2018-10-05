@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -39,19 +39,16 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return context of parent of statement, or null if this is the root statement.
      */
-    @Nullable
-    StmtContext<?, ?, ?> getParentContext();
+    @Nullable StmtContext<?, ?, ?> getParentContext();
 
     /**
      * Return the statement argument in literal format.
      *
      * @return raw statement argument string
      */
-    @Nullable
-    String rawStatementArgument();
+    @Nullable String rawStatementArgument();
 
-    @Nullable
-    A getStatementArgument();
+    @Nullable A getStatementArgument();
 
     /**
      * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
@@ -77,7 +74,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    @NonNull <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key) ;
+    <K, V, T extends K, N extends IdentifierNamespace<K, V>> @NonNull V getFromNamespace(Class<N> type, T key) ;
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);

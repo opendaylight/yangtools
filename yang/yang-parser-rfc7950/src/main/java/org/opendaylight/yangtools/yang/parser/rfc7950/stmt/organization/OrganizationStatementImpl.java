@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OrganizationStatementImpl extends AbstractDeclaredStatement<String> implements OrganizationStatement {
+final class OrganizationStatementImpl extends WithArgument<String> implements OrganizationStatement {
     OrganizationStatementImpl(final StmtContext<String, OrganizationStatement, ?> context) {
         super(context);
     }

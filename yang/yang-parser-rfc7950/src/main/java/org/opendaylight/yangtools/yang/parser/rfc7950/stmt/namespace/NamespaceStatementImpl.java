@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.namespace;
 
 import java.net.URI;
 import org.opendaylight.yangtools.yang.model.api.stmt.NamespaceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class NamespaceStatementImpl extends AbstractDeclaredStatement<URI> implements NamespaceStatement {
+final class NamespaceStatementImpl extends WithArgument<URI> implements NamespaceStatement {
     NamespaceStatementImpl(final StmtContext<URI, NamespaceStatement,?> context) {
         super(context);
     }

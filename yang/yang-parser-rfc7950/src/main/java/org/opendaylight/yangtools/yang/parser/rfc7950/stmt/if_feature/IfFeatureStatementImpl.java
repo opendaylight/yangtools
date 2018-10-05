@@ -11,10 +11,10 @@ import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<Set<QName>>>
+final class IfFeatureStatementImpl extends WithArgument<Predicate<Set<QName>>>
         implements IfFeatureStatement {
     IfFeatureStatementImpl(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> context) {
         super(context);

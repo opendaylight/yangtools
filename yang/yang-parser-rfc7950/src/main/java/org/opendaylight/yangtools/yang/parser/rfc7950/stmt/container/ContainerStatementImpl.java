@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.container;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ContainerStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ContainerStatementImpl extends AbstractDeclaredStatement<QName> implements ContainerStatement {
+final class ContainerStatementImpl extends WithArgument<QName> implements ContainerStatement {
     ContainerStatementImpl(final StmtContext<QName, ContainerStatement,?> context) {
         super(context);
     }

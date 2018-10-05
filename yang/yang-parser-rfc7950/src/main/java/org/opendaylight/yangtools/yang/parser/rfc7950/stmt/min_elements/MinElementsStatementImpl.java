@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.min_elements;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MinElementsStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MinElementsStatementImpl extends AbstractDeclaredStatement<Integer> implements MinElementsStatement {
+final class MinElementsStatementImpl extends WithArgument<Integer> implements MinElementsStatement {
     MinElementsStatementImpl(final StmtContext<Integer, MinElementsStatement, ?> context) {
         super(context);
     }

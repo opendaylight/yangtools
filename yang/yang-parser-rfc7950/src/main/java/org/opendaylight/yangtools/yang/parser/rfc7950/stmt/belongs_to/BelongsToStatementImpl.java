@@ -8,11 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.belongs_to;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.BelongsToStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BelongsToStatementImpl extends AbstractDeclaredStatement<String>
-        implements BelongsToStatement {
+final class BelongsToStatementImpl extends WithArgument<String> implements BelongsToStatement {
     BelongsToStatementImpl(final StmtContext<String, BelongsToStatement, ?> context) {
         super(context);
     }

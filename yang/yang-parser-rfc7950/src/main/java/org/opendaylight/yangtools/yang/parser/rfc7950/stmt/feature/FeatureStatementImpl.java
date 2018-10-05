@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.feature;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class FeatureStatementImpl extends AbstractDeclaredStatement<QName> implements FeatureStatement {
+final class FeatureStatementImpl extends WithArgument<QName> implements FeatureStatement {
     FeatureStatementImpl(final StmtContext<QName, FeatureStatement, ?> context) {
         super(context);
     }

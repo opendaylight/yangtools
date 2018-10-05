@@ -9,11 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.GroupingStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class GroupingStatementImpl extends AbstractDeclaredStatement<QName>
-        implements GroupingStatement {
+public class GroupingStatementImpl extends WithArgument<QName> implements GroupingStatement {
     GroupingStatementImpl(final StmtContext<QName, GroupingStatement, ?> context) {
         super(context);
     }

@@ -58,7 +58,7 @@ public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchem
         for (final EffectiveStatement<?, ?> stmt : effectiveSubstatements()) {
             if (stmt instanceof DefaultEffectiveStatement) {
                 dflt = ((DefaultEffectiveStatement)stmt).argument();
-                builder.setDefaultValue(stmt.argument());
+                builder.setDefaultValue(dflt);
             } else if (stmt instanceof DescriptionEffectiveStatement) {
                 builder.setDescription(((DescriptionEffectiveStatement)stmt).argument());
             } else if (stmt instanceof ReferenceEffectiveStatement) {

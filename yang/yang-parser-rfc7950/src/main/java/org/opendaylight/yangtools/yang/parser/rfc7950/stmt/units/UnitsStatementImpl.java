@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UnitsStatementImpl extends AbstractDeclaredStatement<String> implements UnitsStatement {
+final class UnitsStatementImpl extends WithArgument<String> implements UnitsStatement {
     UnitsStatementImpl(final StmtContext<String, UnitsStatement, ?> context) {
         super(context);
     }
