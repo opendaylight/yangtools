@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.odlext.model.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -34,6 +34,5 @@ public interface YangModeledAnyXmlSchemaNode extends AnyXmlSchemaNode {
      *
      * @return DataSchemaNode - schema of contained XML data
      */
-    @Nonnull
-    ContainerSchemaNode getSchemaOfAnyXmlData();
+    @NonNull ContainerSchemaNode getSchemaOfAnyXmlData();
 }
