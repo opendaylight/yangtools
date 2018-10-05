@@ -85,16 +85,6 @@
                     <failOnError>true</failOnError>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <!-- Required to suppress immutables.org fallout -->
-                        <Import-Package>!javax.annotation,*</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
 

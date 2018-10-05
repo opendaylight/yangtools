@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * An unmodifiable view over a {@link Collection}. Unlike the view returned via
@@ -57,9 +57,8 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
      *
      * @param collection Target collection
      * @return An unmodifiable view of the collection
-     * @throws NullPointerException if {@code collection} is null
      */
-    public static <T> Collection<T> create(final @NonNull Collection<T> collection) {
+    public static <T> Collection<T> create(@Nonnull final Collection<T> collection) {
         if (collection instanceof UnmodifiableCollection || collection instanceof ImmutableCollection
                 || Collections.EMPTY_LIST == collection || Collections.EMPTY_SET == collection
                 || UNMODIFIABLE_COLLECTION_CLASS.isInstance(collection)
@@ -70,8 +69,9 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
         return new UnmodifiableCollection<>(collection);
     }
 
+    @Nonnull
     @Override
-    public @NonNull Iterator<E> iterator() {
+    public Iterator<E> iterator() {
         return Iterators.unmodifiableIterator(delegate.iterator());
     }
 
@@ -98,13 +98,13 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public <T> T[] toArray(final T[] a) {
+    public <T> T[] toArray(@Nonnull final T[] a) {
         return delegate.toArray(a);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean containsAll(final Collection<?> c) {
+    public boolean containsAll(@Nonnull final Collection<?> c) {
         return delegate.containsAll(c);
     }
 
@@ -116,7 +116,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean addAll(final Collection<? extends E> c) {
+    public boolean addAll(@Nonnull final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -128,13 +128,13 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean removeAll(final Collection<?> c) {
+    public boolean removeAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean retainAll(final Collection<?> c) {
+    public boolean retainAll(@Nonnull final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

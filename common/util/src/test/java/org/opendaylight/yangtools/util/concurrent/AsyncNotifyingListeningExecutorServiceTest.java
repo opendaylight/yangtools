@@ -5,6 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.util.concurrent;
 
 import static org.junit.Assert.assertSame;
@@ -30,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import javax.annotation.Nonnull;
 import org.junit.After;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.concurrent.CommonTestUtils.Invoker;
@@ -148,7 +150,7 @@ public class AsyncNotifyingListeningExecutorServiceTest {
 
             @Override
             @SuppressWarnings("checkstyle:parameterName")
-            public void onFailure(final Throwable t) {
+            public void onFailure(@Nonnull final Throwable t) {
                 // Shouldn't happen
                 fail("Unexpected failure " + t);
             }

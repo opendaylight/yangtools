@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -26,5 +26,5 @@ public interface UnmodifiableMapPhase<K, V> extends Map<K, V>, Immutable {
      *
      * @return An modifiable version of this map.
      */
-    @NonNull ModifiableMapPhase<K, V> toModifiableMap();
+    @Nonnull ModifiableMapPhase<K, V> toModifiableMap();
 }

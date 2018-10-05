@@ -5,6 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -25,8 +26,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
-import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,7 +80,7 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
          * @param listener the listener to invoke
          * @param notifications notifications to send
          */
-        void invokeListener(@NonNull L listener, @NonNull Collection<? extends N> notifications);
+        void invokeListener(@Nonnull L listener, @Nonnull Collection<? extends N> notifications);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(QueuedNotificationManager.class);

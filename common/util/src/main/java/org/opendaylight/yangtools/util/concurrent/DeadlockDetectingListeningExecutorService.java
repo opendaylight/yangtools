@@ -5,6 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
+
 package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkState;
@@ -19,8 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 /**
  * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that
@@ -65,8 +66,8 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * @param deadlockExceptionSupplier Supplier that returns an Exception instance to set as the
      *             cause of the ExecutionException when a deadlock is detected.
      */
-    public DeadlockDetectingListeningExecutorService(final @NonNull ExecutorService delegate,
-            final @NonNull Supplier<Exception> deadlockExceptionSupplier) {
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            @Nonnull final Supplier<Exception> deadlockExceptionSupplier) {
         this(delegate, deadlockExceptionSupplier, null);
     }
 
@@ -79,28 +80,31 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
      *             If null, no executor is used.
      */
-    public DeadlockDetectingListeningExecutorService(final @NonNull ExecutorService delegate,
-            @NonNull final Supplier<Exception> deadlockExceptionSupplier,
+    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
+            @Nonnull final Supplier<Exception> deadlockExceptionSupplier,
             @Nullable final Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
         this.deadlockExceptionFunction = requireNonNull(deadlockExceptionSupplier);
     }
 
     @Override
-    public void execute(final Runnable command) {
+    public void execute(@Nonnull final Runnable command) {
         getDelegate().execute(wrapRunnable(command));
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Callable<T> task) {
         return wrapListenableFuture(super.submit(wrapCallable(task)));
     }
 
+    @Nonnull
     @Override
     public ListenableFuture<?> submit(final Runnable task) {
         return wrapListenableFuture(super.submit(wrapRunnable(task)));
     }
 
+    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Runnable task, final T result) {
         return wrapListenableFuture(super.submit(wrapRunnable(task), result));
@@ -160,7 +164,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
             }
 
             @Override
-            public T get(final long timeout, final TimeUnit unit)
+            public T get(final long timeout, @Nonnull final TimeUnit unit)
                     throws InterruptedException, ExecutionException, TimeoutException {
                 checkDeadLockDetectorTL();
                 return super.get(timeout, unit);
