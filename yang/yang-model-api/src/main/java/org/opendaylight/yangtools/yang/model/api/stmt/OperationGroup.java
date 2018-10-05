@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -23,11 +23,11 @@ import org.opendaylight.yangtools.yang.common.QName;
 @Beta
 public interface OperationGroup extends DocumentationGroup.WithStatus, ConditionalFeature {
 
-    @Nonnull QName getName();
+    @NonNull QName getName();
 
-    @Nonnull Collection<? extends TypedefStatement> getTypedefs();
+    @NonNull Collection<? extends TypedefStatement> getTypedefs();
 
-    @Nonnull Collection<? extends GroupingStatement> getGroupings();
+    @NonNull Collection<? extends GroupingStatement> getGroupings();
 
     @Nullable InputStatement getInput();
 

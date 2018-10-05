@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -42,6 +42,5 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
      *
      * @return Collection of unique constraints of this list schema node
      */
-    @Nonnull
-    Collection<UniqueConstraint> getUniqueConstraints();
+    @NonNull Collection<UniqueConstraint> getUniqueConstraints();
 }
