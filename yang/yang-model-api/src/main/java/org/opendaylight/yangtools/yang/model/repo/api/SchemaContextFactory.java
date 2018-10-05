@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -32,7 +32,7 @@ public interface SchemaContextFactory {
      *         with an explanation why the creation of the schema context
      *         failed.
      */
-    ListenableFuture<SchemaContext> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources);
+    ListenableFuture<SchemaContext> createSchemaContext(@NonNull Collection<SourceIdentifier> requiredSources);
 
     /**
      * Create a new schema context containing specified sources, pulling in any
@@ -69,7 +69,7 @@ public interface SchemaContextFactory {
      */
     @Deprecated
     default ListenableFuture<SchemaContext> createSchemaContext(
-            @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
+            @NonNull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 

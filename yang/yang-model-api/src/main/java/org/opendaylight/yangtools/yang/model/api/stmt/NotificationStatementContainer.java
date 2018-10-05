@@ -5,11 +5,10 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Marker interface for statements which may contain a 'notification' statement, as defined in RFC7950. There is
@@ -25,5 +24,5 @@ public interface NotificationStatementContainer {
      *
      * @return collection of notification statements
      */
-    @Nonnull Collection<? extends NotificationStatement> getNotifications();
+    @NonNull Collection<? extends NotificationStatement> getNotifications();
 }
