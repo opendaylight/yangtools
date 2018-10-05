@@ -20,8 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -47,7 +47,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return Interned reference, or this object if it was interned.
      */
-    public QNameModule intern() {
+    public @NonNull QNameModule intern() {
         return INTERNER.intern(this);
     }
 
@@ -58,7 +58,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace, final Optional<Revision> revision) {
+    public static @NonNull QNameModule create(final URI namespace, final Optional<Revision> revision) {
         return new QNameModule(namespace, revision.orElse(null));
     }
 
@@ -68,7 +68,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param namespace Module namespace
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace) {
+    public static @NonNull QNameModule create(final URI namespace) {
         return new QNameModule(namespace, null);
     }
 
@@ -79,7 +79,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
      */
-    public static QNameModule create(final URI namespace, @Nullable final Revision revision) {
+    public static @NonNull QNameModule create(final URI namespace, @Nullable final Revision revision) {
         return new QNameModule(namespace, revision);
     }
 
@@ -91,7 +91,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A QNameModule instance
      * @throws IOException if I/O error occurs
      */
-    public static QNameModule readFrom(final DataInput in) throws IOException {
+    public static @NonNull QNameModule readFrom(final DataInput in) throws IOException {
         final String namespace = in.readUTF();
         final String revision = in.readUTF();
         return new QNameModule(URI.create(namespace), revision.isEmpty() ? null : Revision.of(revision));
