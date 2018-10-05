@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * Class representing a registration of an object. Such a registration is a proper resource and should be cleaned up
@@ -22,5 +22,5 @@ public interface ObjectRegistration<T> extends Registration {
      *
      * @return Registered object.
      */
-    @NonNull T getInstance();
+    @Nonnull T getInstance();
 }

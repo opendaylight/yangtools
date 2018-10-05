@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.concepts;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * Utility registration handle. It is a convenience for register-style method which can return an AutoCloseable realized
@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.NonNull;
 public abstract class AbstractObjectRegistration<T> extends AbstractRegistration implements ObjectRegistration<T> {
     private final T instance;
 
-    protected AbstractObjectRegistration(final @NonNull T instance) {
+    protected AbstractObjectRegistration(final @Nonnull T instance) {
         this.instance = requireNonNull(instance);
     }
 

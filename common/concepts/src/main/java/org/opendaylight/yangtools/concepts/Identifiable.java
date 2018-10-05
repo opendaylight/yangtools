@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 
 public interface Identifiable<T> {
     /**
@@ -15,5 +15,5 @@ public interface Identifiable<T> {
      *
      * @return Object's identifier, must not be null.
      */
-    @NonNull T getIdentifier();
+    @Nonnull T getIdentifier();
 }

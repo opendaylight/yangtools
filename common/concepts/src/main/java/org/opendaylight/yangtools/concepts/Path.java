@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-import org.eclipse.jdt.annotation.NonNull;
+import javax.annotation.Nonnull;
 
 /**
  * Conceptual representation of a logical path in a tree-like structure, similar to a
@@ -25,5 +25,5 @@ public interface Path<P extends Path<P>> {
      * @param other Other path, may not be null.
      * @return True if this path contains the other.
      */
-    boolean contains(@NonNull P other);
+    boolean contains(@Nonnull P other);
 }

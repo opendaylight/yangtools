@@ -13,7 +13,7 @@ import com.google.common.annotations.Beta;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNullByDefault;
+import javax.annotation.Nonnull;
 
 /**
  * Utility methods for working with {@link WritableObject}s.
@@ -21,7 +21,6 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
  * @author Robert Varga
  */
 @Beta
-@NonNullByDefault
 public final class WritableObjects {
     private WritableObjects() {
         throw new UnsupportedOperationException();
@@ -72,7 +71,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
-    public static long readLong(final DataInput in) throws IOException {
+    public static long readLong(final @Nonnull DataInput in) throws IOException {
         return readLongBody(in, readLongHeader(in));
     }
 
@@ -85,7 +84,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
-    public static byte readLongHeader(final DataInput in) throws IOException {
+    public static byte readLongHeader(final @Nonnull DataInput in) throws IOException {
         return in.readByte();
     }
 
@@ -109,7 +108,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
-    public static long readLongBody(final DataInput in, final byte header) throws IOException {
+    public static long readLongBody(final @Nonnull DataInput in, final byte header) throws IOException {
         int bytes = header & 0xF;
         if (bytes >= 8) {
             return in.readLong();
@@ -147,7 +146,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if output is null
      */
-    public static void writeLongs(final DataOutput out, final long value0, final long value1)
+    public static void writeLongs(final @Nonnull DataOutput out, final long value0, final long value1)
             throws IOException {
         final int clen = WritableObjects.valueBytes(value1);
         writeLong(out, value0, clen << 4);
@@ -163,7 +162,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
-    public static long readFirstLong(final DataInput in, final byte header) throws IOException {
+    public static long readFirstLong(final @Nonnull DataInput in, final byte header) throws IOException {
         return WritableObjects.readLongBody(in, header);
     }
 
@@ -176,7 +175,7 @@ public final class WritableObjects {
      * @throws IOException if an I/O error occurs
      * @throws NullPointerException if input is null
      */
-    public static long readSecondLong(final DataInput in, final byte header) throws IOException {
+    public static long readSecondLong(final @Nonnull DataInput in, final byte header) throws IOException {
         return WritableObjects.readLongBody(in, (byte)(header >> 4));
     }
 
