@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
@@ -21,23 +20,24 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.eclipse.jdt.annotation.Nullable;
+import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
-@NonNullByDefault
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
-    private final URI namespace;
-    private final @Nullable Revision revision;
+    private final @NonNull URI namespace;
+
+    //Nullable
+    private final Revision revision;
 
     private transient int hash = 0;
 
-    private QNameModule(final URI namespace, final @Nullable Revision revision) {
+    private QNameModule(final @NonNull URI namespace, final Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -59,7 +59,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A new, potentially shared, QNameModule instance
      */
     public static QNameModule create(final URI namespace, final Optional<Revision> revision) {
-        return new QNameModule(namespace, revision.isPresent() ? revision.get() : null);
+        return new QNameModule(namespace, revision.orElse(null));
     }
 
     /**
@@ -68,7 +68,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param namespace Module namespace
      * @return A new, potentially shared, QNameModule instance
      */
-    @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public static QNameModule create(final URI namespace) {
         return new QNameModule(namespace, null);
     }
@@ -115,8 +114,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
     public Optional<Revision> getRevision() {
-        final Revision rev = revision;
-        return rev == null ? Optional.empty() : Optional.of(rev);
+        return Optional.ofNullable(revision);
     }
 
     @Override
@@ -135,7 +133,6 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return a QNameModule with the same namespace, but with no revision.
      */
-    @SuppressFBWarnings("NP_NULL_PARAM_DEREF_NONVIRTUAL")
     public QNameModule withoutRevision() {
         return revision == null ? this : new QNameModule(namespace, null);
     }
@@ -155,7 +152,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     @Override
-    public boolean equals(final @Nullable Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }
