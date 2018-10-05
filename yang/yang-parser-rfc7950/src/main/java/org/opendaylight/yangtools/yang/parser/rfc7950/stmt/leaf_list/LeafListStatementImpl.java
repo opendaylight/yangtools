@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.leaf_list;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.LeafListStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class LeafListStatementImpl extends AbstractDeclaredStatement<QName> implements LeafListStatement {
+final class LeafListStatementImpl extends WithArgument<QName> implements LeafListStatement {
     LeafListStatementImpl(final StmtContext<QName, LeafListStatement, ?> context) {
         super(context);
     }

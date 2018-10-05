@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.pattern;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternStatement;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class PatternStatementImpl extends AbstractDeclaredStatement<PatternConstraint> implements PatternStatement {
+public class PatternStatementImpl extends WithArgument<PatternConstraint> implements PatternStatement {
     protected PatternStatementImpl(final StmtContext<PatternConstraint, PatternStatement, ?> context) {
         super(context);
     }

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MandatoryStatementImpl extends AbstractDeclaredStatement<Boolean> implements MandatoryStatement {
+final class MandatoryStatementImpl extends WithArgument<Boolean> implements MandatoryStatement {
     MandatoryStatementImpl(final StmtContext<Boolean, MandatoryStatement, ?> context) {
         super(context);
     }
