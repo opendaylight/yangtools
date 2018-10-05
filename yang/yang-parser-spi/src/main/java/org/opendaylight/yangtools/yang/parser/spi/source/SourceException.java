@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Thrown to indicate error in YANG model source.
@@ -21,7 +21,7 @@ public class SourceException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     @SuppressFBWarnings(value = "SE_BAD_FIELD", justification = "Interface-specified member")
-    private final StatementSourceReference sourceRef;
+    private final @NonNull StatementSourceReference sourceRef;
 
     /**
      * Create a new instance with the specified message and source. The message will be appended with
@@ -30,7 +30,7 @@ public class SourceException extends RuntimeException {
      * @param message Context message
      * @param source Statement source
      */
-    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
+    public SourceException(@NonNull final String message, @NonNull final StatementSourceReference source) {
         super(createMessage(message, source));
         sourceRef = source;
     }
@@ -43,7 +43,7 @@ public class SourceException extends RuntimeException {
      * @param source Statement source
      * @param cause Underlying cause of this exception
      */
-    public SourceException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+    public SourceException(@NonNull final String message, @NonNull final StatementSourceReference source,
             final Throwable cause) {
         super(createMessage(message, source), cause);
         sourceRef = source;
@@ -57,7 +57,7 @@ public class SourceException extends RuntimeException {
      * @param format Format string, according to {@link String#format(String, Object...)}.
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      */
-    public SourceException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
+    public SourceException(@NonNull final StatementSourceReference source, @NonNull final String format,
             final Object... args) {
         this(String.format(format, args), source);
     }
@@ -71,8 +71,8 @@ public class SourceException extends RuntimeException {
      * @param format Format string, according to {@link String#format(String, Object...)}.
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      */
-    public SourceException(@Nonnull final StatementSourceReference source, final Throwable cause,
-            @Nonnull final String format, final Object... args) {
+    public SourceException(@NonNull final StatementSourceReference source, final Throwable cause,
+            @NonNull final String format, final Object... args) {
         this(String.format(format, args), source, cause);
     }
 
@@ -81,7 +81,7 @@ public class SourceException extends RuntimeException {
      *
      * @return Source reference
      */
-    public @Nonnull StatementSourceReference getSourceReference() {
+    public @NonNull StatementSourceReference getSourceReference() {
         return sourceRef;
     }
 
@@ -95,8 +95,8 @@ public class SourceException extends RuntimeException {
      * @param args Format string arguments, according to {@link String#format(String, Object...)}
      * @throws SourceException if the expression evaluates to true.
      */
-    public static void throwIf(final boolean expression, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
+    public static void throwIf(final boolean expression, @NonNull final StatementSourceReference source,
+            @NonNull final String format, final Object... args) {
         if (expression) {
             throw new SourceException(source, format, args);
         }
@@ -113,10 +113,11 @@ public class SourceException extends RuntimeException {
      * @return Object if it is not null
      * @throws SourceException if object is null
      */
-    @Nonnull public static <T> T throwIfNull(@Nullable final T obj, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
-        throwIf(obj == null, source, format, args);
-        return obj;
+    public static <T> @NonNull T throwIfNull(@Nullable final T obj, @NonNull final StatementSourceReference source,
+            @NonNull final String format, final Object... args) {
+        final T tmp = obj;
+        throwIf(tmp == null, source, format, args);
+        return tmp;
     }
 
     /**
@@ -130,13 +131,13 @@ public class SourceException extends RuntimeException {
      * @return Object unwrapped from the opt optional
      * @throws SourceException if the optional is not present
      */
-    @Nonnull public static <T> T unwrap(final Optional<T> opt, @Nonnull final StatementSourceReference source,
-            @Nonnull final String format, final Object... args) {
+    public static <T> @NonNull T unwrap(final Optional<T> opt, @NonNull final StatementSourceReference source,
+            @NonNull final String format, final Object... args) {
         throwIf(!opt.isPresent(), source, format, args);
         return opt.get();
     }
 
-    private static String createMessage(@Nonnull final String message, @Nonnull final StatementSourceReference source) {
+    private static String createMessage(@NonNull final String message, @NonNull final StatementSourceReference source) {
         requireNonNull(message);
         requireNonNull(source);
 

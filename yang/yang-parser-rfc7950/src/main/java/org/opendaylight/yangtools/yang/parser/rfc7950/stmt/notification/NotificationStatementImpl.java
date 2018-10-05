@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.NotificationStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class NotificationStatementImpl extends AbstractDeclaredStatement<QName> implements NotificationStatement {
+final class NotificationStatementImpl extends WithArgument<QName> implements NotificationStatement {
     NotificationStatementImpl(final StmtContext<QName, NotificationStatement, ?> context) {
         super(context);
     }

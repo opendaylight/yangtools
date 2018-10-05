@@ -10,11 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.key;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.KeyStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class KeyStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier>>
-        implements KeyStatement {
+final class KeyStatementImpl extends WithArgument<Collection<SchemaNodeIdentifier>> implements KeyStatement {
     KeyStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier>, KeyStatement, ?> context) {
         super(context);
     }

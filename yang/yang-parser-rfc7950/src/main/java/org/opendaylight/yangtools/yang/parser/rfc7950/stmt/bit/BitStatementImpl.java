@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.bit;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.BitStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class BitStatementImpl extends AbstractDeclaredStatement<QName> implements BitStatement {
+final class BitStatementImpl extends WithArgument<QName> implements BitStatement {
     BitStatementImpl(final StmtContext<QName, BitStatement, ?> context) {
         super(context);
     }
