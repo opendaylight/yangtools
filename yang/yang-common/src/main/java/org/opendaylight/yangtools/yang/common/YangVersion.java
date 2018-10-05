@@ -14,7 +14,7 @@ import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
  * Enumeration of supported YANG versions.
@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
  * @author Robert Varga
  */
 @Beta
+@NonNullByDefault
 public enum YangVersion {
     /**
      * Version 1, as defined in RFC6020.
@@ -50,7 +51,7 @@ public enum YangVersion {
      * @return YANG version
      * @throws NullPointerException if the string is null
      */
-    public static Optional<YangVersion> parse(@Nonnull final String str) {
+    public static Optional<YangVersion> parse(final String str) {
         return Optional.ofNullable(YANG_VERSION_MAP.get(requireNonNull(str)));
     }
 
@@ -59,12 +60,12 @@ public enum YangVersion {
      *
      * @return Normative reference.
      */
-    @Nonnull public String getReference() {
+    public String getReference() {
         return reference;
     }
 
     @Override
-    @Nonnull public String toString() {
+    public String toString() {
         return str;
     }
 }
