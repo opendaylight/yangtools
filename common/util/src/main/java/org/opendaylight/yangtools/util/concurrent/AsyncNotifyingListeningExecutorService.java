@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static java.util.Objects.requireNonNull;
@@ -19,8 +18,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * An {@link com.google.common.util.concurrent.ListeningExecutorService}
@@ -55,7 +54,7 @@ import javax.annotation.Nullable;
 public class AsyncNotifyingListeningExecutorService extends AbstractListeningExecutorService {
 
     private final ExecutorService delegate;
-    private final Executor listenableFutureExecutor;
+    private final @Nullable Executor listenableFutureExecutor;
 
     /**
      * Constructor.
@@ -64,19 +63,10 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
      * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
      *     If null, no executor is used.
      */
-    public AsyncNotifyingListeningExecutorService(final ExecutorService delegate,
+    public AsyncNotifyingListeningExecutorService(final @NonNull ExecutorService delegate,
             @Nullable final Executor listenableFutureExecutor) {
         this.delegate = requireNonNull(delegate);
         this.listenableFutureExecutor = listenableFutureExecutor;
-    }
-
-    /**
-     * Creates an {@link AsyncNotifyingListenableFutureTask} instance with the listener Executor.
-     *
-     * @param task the Callable to execute
-     */
-    private <T> AsyncNotifyingListenableFutureTask<T> newFutureTask(final Callable<T> task) {
-        return AsyncNotifyingListenableFutureTask.create(task, listenableFutureExecutor);
     }
 
     /**
@@ -96,7 +86,7 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
     }
 
     @Override
-    public boolean awaitTermination(final long timeout, @Nonnull final TimeUnit unit) throws InterruptedException {
+    public boolean awaitTermination(final long timeout, final TimeUnit unit) throws InterruptedException {
         return delegate.awaitTermination(timeout, unit);
     }
 
@@ -115,37 +105,34 @@ public class AsyncNotifyingListeningExecutorService extends AbstractListeningExe
         delegate.shutdown();
     }
 
-    @Nonnull
     @Override
     public List<Runnable> shutdownNow() {
         return delegate.shutdownNow();
     }
 
     @Override
-    public void execute(@Nonnull final Runnable command) {
+    public void execute(final Runnable command) {
         delegate.execute(command);
     }
 
-    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Callable<T> task) {
-        AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask(task);
+        final AsyncNotifyingListenableFutureTask<T> futureTask = AsyncNotifyingListenableFutureTask.create(
+            task, listenableFutureExecutor);
         delegate.execute(futureTask);
         return futureTask;
     }
 
-    @Nonnull
     @Override
     public ListenableFuture<?> submit(final Runnable task) {
-        AsyncNotifyingListenableFutureTask<Void> futureTask = newFutureTask(task, null);
+        final AsyncNotifyingListenableFutureTask<Void> futureTask = newFutureTask(task, null);
         delegate.execute(futureTask);
         return futureTask;
     }
 
-    @Nonnull
     @Override
     public <T> ListenableFuture<T> submit(final Runnable task, final T result) {
-        AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask(task, result);
+        final AsyncNotifyingListenableFutureTask<T> futureTask = newFutureTask(task, result);
         delegate.execute(futureTask);
         return futureTask;
     }
