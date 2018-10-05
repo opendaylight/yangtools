@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * An unmodifiable view over a {@link Collection}. Unlike the view returned via
@@ -33,8 +33,8 @@ import javax.annotation.Nonnull;
  */
 public final class UnmodifiableCollection<E> implements Collection<E>, Serializable {
     private static final long serialVersionUID = 1L;
-    private static final Class<?> UNMODIFIABLE_COLLECTION_CLASS;
-    private static final Collection<Class<?>> SINGLETON_CLASSES;
+    private static final @NonNull Class<?> UNMODIFIABLE_COLLECTION_CLASS;
+    private static final @NonNull Collection<Class<?>> SINGLETON_CLASSES;
 
     static {
         UNMODIFIABLE_COLLECTION_CLASS = Collections.unmodifiableCollection(new ArrayList<>()).getClass();
@@ -45,9 +45,9 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
         SINGLETON_CLASSES = b.build();
     }
 
-    private final Collection<E> delegate;
+    private final @NonNull Collection<E> delegate;
 
-    private UnmodifiableCollection(final Collection<E> delegate) {
+    private UnmodifiableCollection(final @NonNull Collection<E> delegate) {
         this.delegate = requireNonNull(delegate);
     }
 
@@ -57,8 +57,9 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
      *
      * @param collection Target collection
      * @return An unmodifiable view of the collection
+     * @throws NullPointerException if {@code collection} is null
      */
-    public static <T> Collection<T> create(@Nonnull final Collection<T> collection) {
+    public static <T> @NonNull Collection<T> create(final @NonNull Collection<T> collection) {
         if (collection instanceof UnmodifiableCollection || collection instanceof ImmutableCollection
                 || Collections.EMPTY_LIST == collection || Collections.EMPTY_SET == collection
                 || UNMODIFIABLE_COLLECTION_CLASS.isInstance(collection)
@@ -69,9 +70,8 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
         return new UnmodifiableCollection<>(collection);
     }
 
-    @Nonnull
     @Override
-    public Iterator<E> iterator() {
+    public @NonNull Iterator<E> iterator() {
         return Iterators.unmodifiableIterator(delegate.iterator());
     }
 
@@ -98,13 +98,13 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public <T> T[] toArray(@Nonnull final T[] a) {
+    public <T> T[] toArray(final T[] a) {
         return delegate.toArray(a);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean containsAll(@Nonnull final Collection<?> c) {
+    public boolean containsAll(final Collection<?> c) {
         return delegate.containsAll(c);
     }
 
@@ -116,7 +116,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean addAll(@Nonnull final Collection<? extends E> c) {
+    public boolean addAll(final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -128,13 +128,13 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean removeAll(@Nonnull final Collection<?> c) {
+    public boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public boolean retainAll(@Nonnull final Collection<?> c) {
+    public boolean retainAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -144,7 +144,7 @@ public final class UnmodifiableCollection<E> implements Collection<E>, Serializa
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return "UnmodifiableCollection{" + delegate + "}";
     }
 }

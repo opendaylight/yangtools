@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
 import java.util.UUID;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
@@ -22,13 +22,13 @@ public abstract class AbstractStringIdentifier<T extends AbstractStringIdentifie
         extends AbstractIdentifier<String> implements Comparable<T> {
     private static final long serialVersionUID = 1L;
 
-    protected AbstractStringIdentifier(final String string) {
+    protected AbstractStringIdentifier(final @NonNull String string) {
         super(string);
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final int compareTo(@Nonnull final T o) {
+    public final int compareTo(final T o) {
         return getValue().compareTo(o.getValue());
     }
 }

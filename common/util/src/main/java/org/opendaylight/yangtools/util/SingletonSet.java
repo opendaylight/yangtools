@@ -16,7 +16,9 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.Spliterator;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -43,17 +45,17 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
 
         @Override
-        public Object getElement() {
+        public @Nullable Object getElement() {
             return null;
         }
 
         @Override
-        public Spliterator<Object> spliterator() {
+        public @NonNull Spliterator<Object> spliterator() {
             return SingletonSpliterators.immutableOfNull();
         }
 
         @Override
-        public String toString() {
+        public @NonNull String toString() {
             return "[null]";
         }
 
@@ -63,14 +65,11 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     };
 
     @SuppressWarnings("unchecked")
-    public static <E> SingletonSet<E> of(@Nonnull final E element) {
-        if (element == null) {
-            return (SingletonSet<E>) NULL_SINGLETON;
-        }
-        return new RegularSingletonSet<>(element);
+    public static <E> @NonNull SingletonSet<E> of(final @Nullable E element) {
+        return element == null ? (SingletonSet<E>) NULL_SINGLETON : new RegularSingletonSet<>(element);
     }
 
-    public abstract E getElement();
+    public abstract @Nullable E getElement();
 
     @Override
     public final int size() {
@@ -83,23 +82,21 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     }
 
     @Override
-    public final Iterator<E> iterator() {
+    public final @NonNull Iterator<E> iterator() {
         return Iterators.singletonIterator(getElement());
     }
 
     @Override
-    public abstract Spliterator<E> spliterator();
+    public abstract @NonNull Spliterator<E> spliterator();
 
-    @Nonnull
     @Override
-    public final Object[] toArray() {
+    public final @NonNull Object[] toArray() {
         return new Object[] { getElement() };
     }
 
-    @Nonnull
     @SuppressWarnings({ "unchecked", "checkstyle:parameterName" })
     @Override
-    public final <T> T[] toArray(@Nonnull final T[] a) {
+    public final <T> @NonNull T[] toArray(final T[] a) {
         if (a.length > 0) {
             a[0] = (T)getElement();
             return a;
@@ -122,7 +119,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean containsAll(@Nonnull final Collection<?> c) {
+    public final boolean containsAll(final Collection<?> c) {
         if (c.isEmpty()) {
             return true;
         }
@@ -135,19 +132,19 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean addAll(@Nonnull final Collection<? extends E> c) {
+    public final boolean addAll(final Collection<? extends E> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean retainAll(@Nonnull final Collection<?> c) {
+    public final boolean retainAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean removeAll(@Nonnull final Collection<?> c) {
+    public final boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -173,7 +170,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         return s.size() == 1 && otherContains(s);
     }
 
-    private boolean otherContains(final Collection<?> other) {
+    private boolean otherContains(final @NonNull Collection<?> other) {
         try {
             return other.contains(getElement());
         } catch (ClassCastException | NullPointerException e) {
@@ -181,8 +178,10 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
         }
     }
 
+    @NonNullByDefault
     private static final class RegularSingletonSet<E> extends SingletonSet<E> {
         private static final long serialVersionUID = 1L;
+
         private final E element;
 
         RegularSingletonSet(final E element) {
@@ -191,7 +190,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
 
         @Override
         @SuppressWarnings("checkstyle:parameterName")
-        public boolean contains(final Object o) {
+        public boolean contains(final @Nullable Object o) {
             return element.equals(o);
         }
 

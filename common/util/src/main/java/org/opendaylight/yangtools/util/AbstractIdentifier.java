@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.util;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifier;
 
 /**
@@ -23,13 +24,13 @@ import org.opendaylight.yangtools.concepts.Identifier;
 public abstract class AbstractIdentifier<T> implements Identifier {
     private static final long serialVersionUID = 1L;
 
-    private final T value;
+    private final @NonNull T value;
 
-    public AbstractIdentifier(final T value) {
+    public AbstractIdentifier(final @NonNull T value) {
         this.value = requireNonNull(value);
     }
 
-    public final T getValue() {
+    public final @NonNull T getValue() {
         return value;
     }
 
@@ -51,7 +52,7 @@ public abstract class AbstractIdentifier<T> implements Identifier {
     }
 
     @Override
-    public final String toString() {
+    public final @NonNull String toString() {
         return MoreObjects.toStringHelper(this).add("value", value).toString();
     }
 }
