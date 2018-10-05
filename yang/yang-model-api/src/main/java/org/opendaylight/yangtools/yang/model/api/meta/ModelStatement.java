@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Model statement. There are two base types of model statements:
@@ -34,7 +34,7 @@ public interface ModelStatement<A> {
      *
      * @return definition of this statement.
      */
-    @Nonnull StatementDefinition statementDefinition();
+    @NonNull StatementDefinition statementDefinition();
 
     /**
      * Returns statement argument.
@@ -50,5 +50,5 @@ public interface ModelStatement<A> {
      *
      * @return statement source.
      */
-    @Nonnull StatementSource getStatementSource();
+    @NonNull StatementSource getStatementSource();
 }

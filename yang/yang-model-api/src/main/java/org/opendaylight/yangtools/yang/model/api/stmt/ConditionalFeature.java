@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Rfc6020AbnfRule("*(if-feature-stmt)")
 @Deprecated
@@ -20,5 +20,5 @@ public interface ConditionalFeature {
      *
      * @return collection of if-feature statements
      */
-    @Nonnull Collection<? extends IfFeatureStatement> getIfFeatures();
+    @NonNull Collection<? extends IfFeatureStatement> getIfFeatures();
 }

@@ -10,8 +10,9 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -158,6 +159,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.YinElementStatement;
  * Mapping for both RFC6020 and RFC7950 statements.
  */
 @Beta
+@NonNullByDefault
 public enum YangStmtMapping implements StatementDefinition {
     ACTION(ActionStatement.class, ActionEffectiveStatement.class, "action", "name"),
     ANYDATA(AnydataStatement.class, AnydataEffectiveStatement.class, "anydata", "name"),
@@ -233,9 +235,10 @@ public enum YangStmtMapping implements StatementDefinition {
     private final Class<? extends DeclaredStatement<?>> declaredType;
     private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
     private final QName name;
-    private final QName argument;
+    private final @Nullable QName argument;
     private final boolean yinElement;
 
+    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
         declaredType = requireNonNull(declared);
@@ -260,11 +263,10 @@ public enum YangStmtMapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    @Nonnull private static QName yinQName(final String nameStr) {
+    private static QName yinQName(final String nameStr) {
         return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
     }
 
-    @Nonnull
     @Override
     public QName getStatementName() {
         return name;
@@ -276,11 +278,10 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    @Nonnull public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredType;
     }
 
-    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
@@ -291,4 +292,3 @@ public enum YangStmtMapping implements StatementDefinition {
         return yinElement;
     }
 }
-
