@@ -20,8 +20,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
@@ -31,13 +31,11 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     private static final long serialVersionUID = 3L;
 
     private final @NonNull URI namespace;
-
-    //Nullable
-    private final Revision revision;
+    private final @Nullable Revision revision;
 
     private transient int hash = 0;
 
-    private QNameModule(final @NonNull URI namespace, final Revision revision) {
+    private QNameModule(final @NonNull URI namespace, final @Nullable Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -47,7 +45,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return Interned reference, or this object if it was interned.
      */
-    public QNameModule intern() {
+    public @NonNull QNameModule intern() {
         return INTERNER.intern(this);
     }
 
@@ -57,8 +55,10 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param namespace Module namespace
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
+     * @throws NullPointerException if any argument is null
      */
-    public static QNameModule create(final URI namespace, final Optional<Revision> revision) {
+    public static @NonNull QNameModule create(final @NonNull URI namespace,
+            final @NonNull Optional<Revision> revision) {
         return new QNameModule(namespace, revision.orElse(null));
     }
 
@@ -67,8 +67,9 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @param namespace Module namespace
      * @return A new, potentially shared, QNameModule instance
+     * @throws NullPointerException if {@code namespace} is null
      */
-    public static QNameModule create(final URI namespace) {
+    public static @NonNull QNameModule create(final @NonNull URI namespace) {
         return new QNameModule(namespace, null);
     }
 
@@ -78,8 +79,9 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @param namespace Module namespace
      * @param revision Module revision
      * @return A new, potentially shared, QNameModule instance
+     * @throws NullPointerException if any argument is null
      */
-    public static QNameModule create(final URI namespace, @Nullable final Revision revision) {
+    public static @NonNull QNameModule create(final @NonNull URI namespace, @Nullable final Revision revision) {
         return new QNameModule(namespace, revision);
     }
 
@@ -91,19 +93,18 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A QNameModule instance
      * @throws IOException if I/O error occurs
      */
-    public static QNameModule readFrom(final DataInput in) throws IOException {
+    public static @NonNull QNameModule readFrom(final @NonNull DataInput in) throws IOException {
         final String namespace = in.readUTF();
         final String revision = in.readUTF();
         return new QNameModule(URI.create(namespace), revision.isEmpty() ? null : Revision.of(revision));
     }
 
     /**
-     * Returns the namespace of the module which is specified as argument of
-     * YANG Module <b><font color="#00FF00">namespace</font></b> keyword.
+     * Returns the namespace of the module which is specified as argument of YANG Module {@code namespace} keyword.
      *
      * @return URI format of the namespace of the module
      */
-    public URI getNamespace() {
+    public @NonNull URI getNamespace() {
         return namespace;
     }
 
@@ -113,7 +114,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return date of the module revision which is specified as argument of
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
-    public Optional<Revision> getRevision() {
+    public @NonNull Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
     }
 
@@ -133,7 +134,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *
      * @return a QNameModule with the same namespace, but with no revision.
      */
-    public QNameModule withoutRevision() {
+    public @NonNull QNameModule withoutRevision() {
         return revision == null ? this : new QNameModule(namespace, null);
     }
 
@@ -172,14 +173,14 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @throws URISyntaxException on incorrect namespace definition
      *
      */
-    URI getRevisionNamespace() throws URISyntaxException {
+    @NonNull URI getRevisionNamespace() throws URISyntaxException {
         final String query = revision == null ? "" : "revision=" + revision.toString();
         return new URI(namespace.getScheme(), namespace.getUserInfo(), namespace.getHost(), namespace.getPort(),
             namespace.getPath(), query, namespace.getFragment());
     }
 
     @Override
-    public String toString() {
+    public @NonNull String toString() {
         return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", namespace)
             .add("rev", revision).toString();
     }
