@@ -14,7 +14,6 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +58,7 @@ public final class ExecutorServiceUtil {
         return new ForwardingBlockingQueue<E>() {
             @Override
             @SuppressWarnings("checkstyle:parameterName")
-            public boolean offer(@Nonnull final E o) {
+            public boolean offer(final E o) {
                 return false;
             }
 
