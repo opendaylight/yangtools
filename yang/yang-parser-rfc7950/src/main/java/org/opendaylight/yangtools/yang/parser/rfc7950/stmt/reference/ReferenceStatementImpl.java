@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ReferenceStatementImpl extends AbstractDeclaredStatement<String> implements ReferenceStatement {
+final class ReferenceStatementImpl extends WithArgument<String> implements ReferenceStatement {
     ReferenceStatementImpl(final StmtContext<String, ReferenceStatement, ?> context) {
         super(context);
     }

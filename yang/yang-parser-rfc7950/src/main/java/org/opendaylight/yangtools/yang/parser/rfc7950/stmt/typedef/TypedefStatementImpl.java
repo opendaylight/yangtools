@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypedefStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class TypedefStatementImpl extends AbstractDeclaredStatement<QName> implements TypedefStatement {
+final class TypedefStatementImpl extends WithArgument<QName> implements TypedefStatement {
     TypedefStatementImpl(final StmtContext<QName, TypedefStatement, ?> context) {
         super(context);
     }

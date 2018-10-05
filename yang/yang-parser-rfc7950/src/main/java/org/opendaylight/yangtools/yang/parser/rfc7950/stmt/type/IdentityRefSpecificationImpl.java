@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.IdentityRefSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IdentityRefSpecificationImpl extends AbstractDeclaredStatement<String> implements IdentityRefSpecification {
+final class IdentityRefSpecificationImpl extends WithArgument<String> implements IdentityRefSpecification {
     IdentityRefSpecificationImpl(final StmtContext<String, IdentityRefSpecification, ?> context) {
         super(context);
     }
