@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -15,9 +16,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Effective model statement which should be used to derive application behaviour.
@@ -27,14 +27,12 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends ModelStatement<A> {
     /**
-     * Returns statement, which was explicit declaration of this effective
-     * statement.
+     * Returns statement, which was explicit declaration of this effective statement.
      *
-     * @return statement, which was explicit declaration of this effective
-     *         statement or null if statement was inferred from context.
+     * @return statement, which was explicit declaration of this effective statement or null if statement was inferred
+     *         from context.
      */
-    @Nullable
-    D getDeclared();
+    @Nullable D getDeclared();
 
     /**
      * Returns value associated with supplied identifier.
@@ -48,8 +46,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
     // FIXME: 3.0.0: make this return an Optional, not a nullable
-    @Nullable
-    <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull Class<N> namespace, @Nonnull K identifier);
+    <K, V, N extends IdentifierNamespace<K, V>> @Nullable V get(@NonNull Class<N> namespace, @NonNull K identifier);
 
     /**
      * Returns all local values from supplied namespace.
@@ -61,8 +58,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return Value if present, null otherwise.
      */
     // FIXME: 3.0.0: make this contract return empty maps on non-presence
-    @Nullable
-    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull Class<N> namespace);
+    <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> getAll(@NonNull Class<N> namespace);
 
     /**
      * Returns all local values from supplied namespace.
@@ -74,7 +70,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return Key-value mappings, empty if the namespace does not exist.
      */
     // FIXME: 3.0.0: remove this in favor of fixed getAll()
-    default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(@NonNull final Class<N> namespace) {
+    default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(final @NonNull Class<N> namespace) {
         final Map<K, V> map = getAll(requireNonNull(namespace));
         return map == null ? ImmutableMap.of() : map;
     }
@@ -84,7 +80,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      *
      * @return collection of all effective substatements.
      */
-    @Nonnull Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
+    @NonNull Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements();
 
     /**
      * Find the first effective substatement of specified type.
@@ -93,7 +89,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      */
     @Beta
     default <T extends EffectiveStatement<?, ?>> Optional<T> findFirstEffectiveSubstatement(
-            @Nonnull final Class<T> type) {
+            final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).findFirst().map(type::cast);
     }
 
@@ -104,8 +100,8 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      */
     @Beta
     default <V, T extends EffectiveStatement<V, ?>> Optional<V> findFirstEffectiveSubstatementArgument(
-            @Nonnull final Class<T> type) {
-        return findFirstEffectiveSubstatement(type).map(EffectiveStatement::argument);
+            final @NonNull Class<T> type) {
+        return findFirstEffectiveSubstatement(type).map(stmt -> verifyNotNull(stmt.argument()));
     }
 
     /**
@@ -114,7 +110,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return A stream of all effective substatements of specified type.
      */
     @Beta
-    default <T extends EffectiveStatement<?, ?>> Stream<T> streamEffectiveSubstatements(@Nonnull final Class<T> type) {
+    default <T extends EffectiveStatement<?, ?>> Stream<T> streamEffectiveSubstatements(final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).map(type::cast);
     }
 }

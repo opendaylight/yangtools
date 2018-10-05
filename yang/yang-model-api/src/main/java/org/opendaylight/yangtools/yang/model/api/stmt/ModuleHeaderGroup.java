@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 @Rfc6020AbnfRule("module-header-stmts")
 public interface ModuleHeaderGroup {
 
     @Nullable YangVersionStatement getYangVersion();
 
-    @Nonnull NamespaceStatement getNamespace();
+    @NonNull NamespaceStatement getNamespace();
 
-    @Nonnull PrefixStatement getPrefix();
+    @NonNull PrefixStatement getPrefix();
 }

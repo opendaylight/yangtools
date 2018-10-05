@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -32,7 +32,7 @@ public interface SchemaRepository {
      *             instead.
      */
     @Deprecated
-    SchemaContextFactory createSchemaContextFactory(@Nonnull SchemaSourceFilter filter);
+    SchemaContextFactory createSchemaContextFactory(@NonNull SchemaSourceFilter filter);
 
     /**
      * Returns {@link SchemaContextFactory} with supplied configuration.
@@ -41,8 +41,8 @@ public interface SchemaRepository {
      *            configuration of schema context factory.
      * @return schema context factory.
      */
-    SchemaContextFactory createSchemaContextFactory(@Nonnull SchemaContextFactoryConfiguration config);
+    SchemaContextFactory createSchemaContextFactory(@NonNull SchemaContextFactoryConfiguration config);
 
-    <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(@Nonnull SourceIdentifier id,
-            @Nonnull Class<T> represetation);
+    <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(@NonNull SourceIdentifier id,
+            @NonNull Class<T> represetation);
 }
