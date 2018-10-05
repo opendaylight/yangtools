@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.util;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Utility class for storing an optional boolean in a single byte value. This cuts down the memory requirement quite
@@ -94,9 +96,10 @@ public final class OptionalBoolean {
     /**
      * Convert a field value to a nullable {@link Boolean}. Similar to {@code Optional.orElse(null)}.
      *
-     * @param value Fied value.
+     * @param value Field value.
      * @return Nullable Boolean.
      */
+    @SuppressFBWarnings("NP_BOOLEAN_RETURN_NULL")
     public static @Nullable Boolean toNullable(final byte value) {
         switch (value) {
             case ABSENT:
@@ -117,7 +120,7 @@ public final class OptionalBoolean {
      * @return Optional {@link Boolean}.
      * @throws IllegalArgumentException if value is invalid.
      */
-    public static Optional<Boolean> toOptional(final byte value) {
+    public static @NonNull Optional<Boolean> toOptional(final byte value) {
         switch (value) {
             case ABSENT:
                 return Optional.empty();
@@ -137,7 +140,7 @@ public final class OptionalBoolean {
      * @return Boolean-compatible string, or "absent".
      * @throws IllegalArgumentException if value is invalid.
      */
-    public static String toString(final byte value) {
+    public static @NonNull String toString(final byte value) {
         switch (value) {
             case ABSENT:
                 return "absent";

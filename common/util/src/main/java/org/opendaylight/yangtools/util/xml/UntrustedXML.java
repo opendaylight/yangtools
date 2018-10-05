@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
-import javax.annotation.Nonnull;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -21,6 +20,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.eclipse.jdt.annotation.NonNull;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -32,7 +32,7 @@ import org.xml.sax.SAXNotSupportedException;
  */
 @Beta
 public final class UntrustedXML {
-    private static final DocumentBuilderFactory DBF;
+    private static final @NonNull DocumentBuilderFactory DBF;
 
     static {
         final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
@@ -97,7 +97,7 @@ public final class UntrustedXML {
      * @return A new DocumentBuilder
      * @throws UnsupportedOperationException if the runtime fails to instantiate a good enough builder
      */
-    public static @Nonnull DocumentBuilder newDocumentBuilder() {
+    public static @NonNull DocumentBuilder newDocumentBuilder() {
         try {
             return DBF.newDocumentBuilder();
         } catch (ParserConfigurationException e) {
@@ -112,7 +112,7 @@ public final class UntrustedXML {
      * @return A new SAXParser
      * @throws UnsupportedOperationException if the runtime fails to instantiate a good enough builder
      */
-    public static @Nonnull SAXParser newSAXParser() {
+    public static @NonNull SAXParser newSAXParser() {
         try {
             return SPF.newSAXParser();
         } catch (ParserConfigurationException | SAXException e) {
@@ -127,7 +127,7 @@ public final class UntrustedXML {
      * @return A new XMLStreamReader
      * @throws XMLStreamException when the underlying factory throws it
      */
-    public static @Nonnull XMLStreamReader createXMLStreamReader(final InputStream stream) throws XMLStreamException {
+    public static @NonNull XMLStreamReader createXMLStreamReader(final InputStream stream) throws XMLStreamException {
         return XIF.createXMLStreamReader(stream);
     }
 
@@ -138,7 +138,7 @@ public final class UntrustedXML {
      * @return A new XMLStreamReader
      * @throws XMLStreamException when the underlying factory throws it
      */
-    public static @Nonnull XMLStreamReader createXMLStreamReader(final InputStream stream, final Charset charset)
+    public static @NonNull XMLStreamReader createXMLStreamReader(final InputStream stream, final Charset charset)
             throws XMLStreamException {
         return XIF.createXMLStreamReader(stream, charset.name());
     }
@@ -150,7 +150,7 @@ public final class UntrustedXML {
      * @return A new XMLStreamReader
      * @throws XMLStreamException when the underlying factory throws it
      */
-    public static @Nonnull XMLStreamReader createXMLStreamReader(final Reader reader) throws XMLStreamException {
+    public static @NonNull XMLStreamReader createXMLStreamReader(final Reader reader) throws XMLStreamException {
         return XIF.createXMLStreamReader(reader);
     }
 }

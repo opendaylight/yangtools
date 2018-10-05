@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.util.concurrent;
 
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.util.concurrent.ForwardingListenableFuture;
+import com.google.common.util.concurrent.ForwardingListenableFuture.SimpleForwardingListenableFuture;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
@@ -20,32 +19,30 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that
- * could occur if clients invoke the returned Future's <code>get</code> methods synchronously.
+ * An implementation of ListeningExecutorService that attempts to detect deadlock scenarios that could occur if clients
+ * invoke the returned Future's <code>get</code> methods synchronously.
  *
- * <p>Deadlock scenarios are most apt to occur with a backing single-threaded executor where setting of
- * the Future's result is executed on the single thread. Here's a scenario:
+ * <p>Deadlock scenarios are most apt to occur with a backing single-threaded executor where setting of the Future's
+ * result is executed on the single thread. Here's a scenario:
  * <ul>
  * <li>Client code is currently executing in an executor's single thread.</li>
  * <li>The client submits another task to the same executor.</li>
  * <li>The client calls <code>get()</code> synchronously on the returned Future</li>
  * </ul>
- * The second submitted task will never execute since the single thread is currently executing
- * the client code which is blocked waiting for the submitted task to complete. Thus, deadlock has
- * occurred.
+ * The second submitted task will never execute since the single thread is currently executing the client code which
+ * is blocked waiting for the submitted task to complete. Thus, deadlock has occurred.
  *
- * <p>This class prevents this scenario via the use of a ThreadLocal variable. When a task is invoked,
- * the ThreadLocal is set and, when a task completes, the ThreadLocal is cleared. Futures returned
- * from this class override the <code>get</code> methods to check if the ThreadLocal is set. If it is,
- * an ExecutionException is thrown with a custom cause.
+ * <p>This class prevents this scenario via the use of a ThreadLocal variable. When a task is invoked, the ThreadLocal
+ * is set and, when a task completes, the ThreadLocal is cleared. Futures returned from this class override
+ * the {@code get} methods to check if the ThreadLocal is set. If it is, an ExecutionException is thrown with a custom
+ * cause.
  *
- * <p>Note that the ThreadLocal is not removed automatically, so some state may be left hanging off of
- * threads which have encountered this class. If you need to clean that state up, use
- * {@link #cleanStateForCurrentThread()}.
+ * <p>Note that the ThreadLocal is not removed automatically, so some state may be left hanging off of threads which
+ * have encountered this class. If you need to clean that state up, use {@link #cleanStateForCurrentThread()}.
  *
  * @author Thomas Pantelis
  * @author Robert Varga
@@ -56,8 +53,8 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * tasks may be submitted to underlay and some to overlay service -- and the two cases need to
      * be discerned reliably.
      */
-    private final SettableBooleanThreadLocal deadlockDetector = new SettableBooleanThreadLocal();
-    private final Supplier<Exception> deadlockExceptionFunction;
+    private final @NonNull SettableBooleanThreadLocal deadlockDetector = new SettableBooleanThreadLocal();
+    private final @NonNull Supplier<Exception> deadlockExceptionFunction;
 
     /**
      * Constructor.
@@ -66,8 +63,8 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * @param deadlockExceptionSupplier Supplier that returns an Exception instance to set as the
      *             cause of the ExecutionException when a deadlock is detected.
      */
-    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
-            @Nonnull final Supplier<Exception> deadlockExceptionSupplier) {
+    public DeadlockDetectingListeningExecutorService(final @NonNull ExecutorService delegate,
+            final @NonNull Supplier<Exception> deadlockExceptionSupplier) {
         this(delegate, deadlockExceptionSupplier, null);
     }
 
@@ -80,33 +77,30 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
      * @param listenableFutureExecutor the executor used to run listener callbacks asynchronously.
      *             If null, no executor is used.
      */
-    public DeadlockDetectingListeningExecutorService(final ExecutorService delegate,
-            @Nonnull final Supplier<Exception> deadlockExceptionSupplier,
+    public DeadlockDetectingListeningExecutorService(final @NonNull ExecutorService delegate,
+            @NonNull final Supplier<Exception> deadlockExceptionSupplier,
             @Nullable final Executor listenableFutureExecutor) {
         super(delegate, listenableFutureExecutor);
         this.deadlockExceptionFunction = requireNonNull(deadlockExceptionSupplier);
     }
 
     @Override
-    public void execute(@Nonnull final Runnable command) {
+    public void execute(final Runnable command) {
         getDelegate().execute(wrapRunnable(command));
     }
 
-    @Nonnull
     @Override
-    public <T> ListenableFuture<T> submit(final Callable<T> task) {
+    public <T> @NonNull ListenableFuture<T> submit(final Callable<T> task) {
         return wrapListenableFuture(super.submit(wrapCallable(task)));
     }
 
-    @Nonnull
     @Override
-    public ListenableFuture<?> submit(final Runnable task) {
+    public @NonNull ListenableFuture<?> submit(final Runnable task) {
         return wrapListenableFuture(super.submit(wrapRunnable(task)));
     }
 
-    @Nonnull
     @Override
-    public <T> ListenableFuture<T> submit(final Runnable task, final T result) {
+    public <T> @NonNull ListenableFuture<T> submit(final Runnable task, final T result) {
         return wrapListenableFuture(super.submit(wrapRunnable(task), result));
     }
 
@@ -118,14 +112,15 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
         deadlockDetector.remove();
     }
 
-    private SettableBoolean primeDetector() {
+    private @NonNull SettableBoolean primeDetector() {
         final SettableBoolean b = deadlockDetector.get();
         checkState(!b.isSet(), "Detector for {} has already been primed", this);
         b.set();
         return b;
     }
 
-    private Runnable wrapRunnable(final Runnable task) {
+    private @NonNull Runnable wrapRunnable(final @Nullable Runnable task) {
+        requireNonNull(task);
         return () -> {
             final SettableBoolean b = primeDetector();
             try {
@@ -136,18 +131,19 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
         };
     }
 
-    private <T> Callable<T> wrapCallable(final Callable<T> delagate) {
+    private <T> @NonNull Callable<T> wrapCallable(final @NonNull Callable<T> task) {
+        requireNonNull(task);
         return () -> {
             final SettableBoolean b = primeDetector();
             try {
-                return delagate.call();
+                return task.call();
             } finally {
                 b.reset();
             }
         };
     }
 
-    private <T> ListenableFuture<T> wrapListenableFuture(final ListenableFuture<T> delegate) {
+    private <T> @NonNull ListenableFuture<T> wrapListenableFuture(final @NonNull ListenableFuture<T> delegate) {
         /*
          * This creates a forwarding Future that overrides calls to get(...) to check, via the
          * ThreadLocal, if the caller is doing a blocking call on a thread from this executor. If
@@ -156,7 +152,7 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
          * practice somewhere, either on the client side for doing a blocking call or in the
          * framework's threading model.
          */
-        return new ForwardingListenableFuture.SimpleForwardingListenableFuture<T>(delegate) {
+        return new SimpleForwardingListenableFuture<T>(delegate) {
             @Override
             public T get() throws InterruptedException, ExecutionException {
                 checkDeadLockDetectorTL();
@@ -164,8 +160,8 @@ public class DeadlockDetectingListeningExecutorService extends AsyncNotifyingLis
             }
 
             @Override
-            public T get(final long timeout, @Nonnull final TimeUnit unit)
-                    throws InterruptedException, ExecutionException, TimeoutException {
+            public T get(final long timeout, final TimeUnit unit) throws InterruptedException, ExecutionException,
+                    TimeoutException {
                 checkDeadLockDetectorTL();
                 return super.get(timeout, unit);
             }

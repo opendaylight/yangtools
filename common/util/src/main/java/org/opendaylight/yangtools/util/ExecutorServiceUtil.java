@@ -14,7 +14,7 @@ import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +40,7 @@ public final class ExecutorServiceUtil {
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(ExecutorServiceUtil.class);
-    private static final RejectedExecutionHandler WAIT_IN_QUEUE_HANDLER = new WaitInQueueExecutionHandler();
+    private static final @NonNull RejectedExecutionHandler WAIT_IN_QUEUE_HANDLER = new WaitInQueueExecutionHandler();
 
     private ExecutorServiceUtil() {
         throw new UnsupportedOperationException("Utility class");
@@ -55,11 +55,11 @@ public final class ExecutorServiceUtil {
      * @param delegate Backing blocking queue.
      * @return A new blocking queue backed by the delegate
      */
-    public static <E> BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
+    public static <E> @NonNull BlockingQueue<E> offerFailingBlockingQueue(final BlockingQueue<E> delegate) {
         return new ForwardingBlockingQueue<E>() {
             @Override
             @SuppressWarnings("checkstyle:parameterName")
-            public boolean offer(@Nonnull final E o) {
+            public boolean offer(final E o) {
                 return false;
             }
 
@@ -76,7 +76,7 @@ public final class ExecutorServiceUtil {
      *
      * @return A shared RejectedExecutionHandler instance.
      */
-    public static RejectedExecutionHandler waitInQueueExecutionHandler() {
+    public static @NonNull RejectedExecutionHandler waitInQueueExecutionHandler() {
         return WAIT_IN_QUEUE_HANDLER;
     }
 
@@ -85,8 +85,8 @@ public final class ExecutorServiceUtil {
      * timeout period. If the timeout elapses before termination, the executor is forcefully
      * shutdown.
      */
-    public static void tryGracefulShutdown(final ExecutorService executor, final long timeout, final TimeUnit unit) {
-
+    public static void tryGracefulShutdown(final @NonNull ExecutorService executor, final long timeout,
+            final @NonNull TimeUnit unit) {
         executor.shutdown();
 
         try {
