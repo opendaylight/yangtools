@@ -10,14 +10,14 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata;
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.AnydataStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * YANG 1.1 AnyData declared statement implementation.
  */
 @Beta
-final class AnydataStatementImpl extends AbstractDeclaredStatement<QName> implements AnydataStatement {
+final class AnydataStatementImpl extends WithArgument<QName> implements AnydataStatement {
     AnydataStatementImpl(final StmtContext<QName, AnydataStatement, ?> context) {
         super(context);
     }

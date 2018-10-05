@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.BitsSpecification;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-public class BitsSpecificationImpl extends AbstractDeclaredStatement<String> implements BitsSpecification {
+public class BitsSpecificationImpl extends WithArgument<String> implements BitsSpecification {
     protected BitsSpecificationImpl(final StmtContext<String, BitsSpecification, ?> context) {
         super(context);
     }
