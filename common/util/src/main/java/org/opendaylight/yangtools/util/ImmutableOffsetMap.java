@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -47,9 +47,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             super(offsets, objects);
         }
 
-        @Nonnull
         @Override
-        public MutableOffsetMap<K, V> toModifiableMap() {
+        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
         }
 
@@ -67,9 +66,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             super(offsets, objects);
         }
 
-        @Nonnull
         @Override
-        public MutableOffsetMap<K, V> toModifiableMap() {
+        public @NonNull MutableOffsetMap<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
         }
 
@@ -95,15 +93,14 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(@Nonnull final Map<K, Integer> offsets, @Nonnull final V[] objects) {
+    ImmutableOffsetMap(final @NonNull Map<K, Integer> offsets, final @NonNull V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);
     }
 
-    @Nonnull
     @Override
-    public abstract MutableOffsetMap<K, V> toModifiableMap();
+    public abstract @NonNull MutableOffsetMap<K, V> toModifiableMap();
 
     abstract void setFields(List<K> keys, V[] values) throws IOException;
 
@@ -122,7 +119,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
-    @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> map) {
+    public static <K, V> @NonNull Map<K, V> orderedCopyOf(final @NonNull Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
         if (common != null) {
             return common;
@@ -160,7 +157,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      *            Input map, may not be null.
      * @return An isolated, immutable copy of the input map
      */
-    @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> map) {
+    public static <K, V> @NonNull Map<K, V> unorderedCopyOf(final @NonNull Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
         if (common != null) {
             return common;
@@ -183,7 +180,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return new Unordered<>(offsets, array);
     }
 
-    private static <K, V> @Nullable Map<K, V> commonCopy(@Nonnull final Map<K, V> map) {
+    private static <K, V> @Nullable Map<K, V> commonCopy(final @NonNull Map<K, V> map) {
         // Prevent a copy. Note that ImmutableMap is not listed here because of its potentially larger keySet overhead.
         if (map instanceof ImmutableOffsetMap || map instanceof SharedSingletonMap) {
             return map;
@@ -303,7 +300,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
+    public final void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -317,15 +314,13 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return offsets.keySet();
     }
 
-    @Nonnull
     @Override
-    public final Collection<V> values() {
+    public final @NonNull Collection<V> values() {
         return new ConstantArrayCollection<>(objects);
     }
 
-    @Nonnull
     @Override
-    public final Set<Entry<K, V>> entrySet() {
+    public final @NonNull Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
@@ -356,11 +351,9 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
-        @Nonnull
         @Override
-        public Iterator<Entry<K, V>> iterator() {
+        public @NonNull Iterator<Entry<K, V>> iterator() {
             final Iterator<Entry<K, Integer>> it = offsets.entrySet().iterator();
-
             return new UnmodifiableIterator<Entry<K, V>>() {
                 @Override
                 public boolean hasNext() {
