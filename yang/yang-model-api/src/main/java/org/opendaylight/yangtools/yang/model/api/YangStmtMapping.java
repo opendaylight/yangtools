@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -237,6 +238,7 @@ public enum YangStmtMapping implements StatementDefinition {
     private final @Nullable QName argument;
     private final boolean yinElement;
 
+    @SuppressFBWarnings("NP_STORE_INTO_NONNULL_FIELD")
     YangStmtMapping(final Class<? extends DeclaredStatement<?>> declared,
             final Class<? extends EffectiveStatement<?, ?>> effective, final String nameStr) {
         declaredType = requireNonNull(declared);

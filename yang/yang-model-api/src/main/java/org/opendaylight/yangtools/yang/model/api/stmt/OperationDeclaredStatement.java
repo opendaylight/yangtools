@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -18,6 +19,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 @Beta
 public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>, OperationGroup,
         IfFeatureAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
     @Override
     default QName getName() {
         return argument();

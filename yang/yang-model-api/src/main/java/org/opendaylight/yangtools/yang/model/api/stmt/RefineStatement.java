@@ -16,6 +16,10 @@ public interface RefineStatement extends ConfigStatementAwareDeclaredStatement<S
         DocumentedDeclaredStatement<SchemaNodeIdentifier>, IfFeatureAwareDeclaredStatement<SchemaNodeIdentifier>,
         MandatoryStatementAwareDeclaredStatement<SchemaNodeIdentifier>,
         MustStatementAwareDeclaredStatement<SchemaNodeIdentifier> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull SchemaNodeIdentifier argument();
+
     @Override
     @NonNull String rawArgument();
 

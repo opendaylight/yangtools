@@ -13,6 +13,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
     /**
      * Returns the base identities of this identity.
      *

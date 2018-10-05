@@ -13,6 +13,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 public interface NotificationStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<QName>, IfFeatureAwareDeclaredStatement<QName>,
         MustStatementAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
     default @NonNull QName getName() {
         return argument();
     }

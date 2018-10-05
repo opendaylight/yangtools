@@ -13,6 +13,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
     default @NonNull String getName() {
         return argument().getLocalName();
     }

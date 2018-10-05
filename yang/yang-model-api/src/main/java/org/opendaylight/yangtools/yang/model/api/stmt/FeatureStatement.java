@@ -12,6 +12,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 
 public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull QName argument();
+
     default @NonNull QName getName() {
         return argument();
     }

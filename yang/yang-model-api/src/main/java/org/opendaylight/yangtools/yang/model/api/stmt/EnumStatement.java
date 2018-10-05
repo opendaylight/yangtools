@@ -13,6 +13,10 @@ import org.eclipse.jdt.annotation.Nullable;
 
 public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>,
         IfFeatureAwareDeclaredStatement<String> {
+    // FIXME: YANGTOOLS-908: this should not be needed here
+    @Override
+    @NonNull String argument();
+
     default @NonNull String getName() {
         return argument();
     }

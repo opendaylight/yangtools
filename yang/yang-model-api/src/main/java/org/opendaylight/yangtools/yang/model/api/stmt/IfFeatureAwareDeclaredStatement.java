@@ -9,15 +9,10 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface IfFeatureAwareDeclaredStatement<A> extends DeclaredStatement<A>, ConditionalFeature {
-    // FIXME: YANGTOOLS-908: this should not be needed here
-    @Override
-    @NonNull A argument();
-
     @Override
     default Collection<? extends IfFeatureStatement> getIfFeatures() {
         return declaredSubstatements(IfFeatureStatement.class);
