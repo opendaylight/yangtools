@@ -20,24 +20,23 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
+@NonNullByDefault
 public final class QNameModule implements Comparable<QNameModule>, Immutable, Serializable, Identifier, WritableObject {
     private static final Interner<QNameModule> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 3L;
 
-    private final @NonNull URI namespace;
-
-    //Nullable
-    private final Revision revision;
+    private final URI namespace;
+    private final @Nullable Revision revision;
 
     private transient int hash = 0;
 
-    private QNameModule(final @NonNull URI namespace, final Revision revision) {
+    private QNameModule(final URI namespace, final @Nullable Revision revision) {
         this.namespace = requireNonNull(namespace);
         this.revision = revision;
     }
@@ -59,7 +58,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      * @return A new, potentially shared, QNameModule instance
      */
     public static QNameModule create(final URI namespace, final Optional<Revision> revision) {
-        return new QNameModule(namespace, revision.orElse(null));
+        return new QNameModule(namespace, revision.isPresent() ? revision.get() : null);
     }
 
     /**
@@ -114,7 +113,8 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
      *         YANG Module <b><font color="#339900">revison</font></b> keyword
      */
     public Optional<Revision> getRevision() {
-        return Optional.ofNullable(revision);
+        final Revision rev = revision;
+        return rev == null ? Optional.empty() : Optional.of(rev);
     }
 
     @Override
@@ -152,7 +152,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }
