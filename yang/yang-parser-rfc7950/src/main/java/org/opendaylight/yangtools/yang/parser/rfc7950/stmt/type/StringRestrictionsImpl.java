@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement.StringRestrictions;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 // FIXME: this class is not used anywhere, decide its future
-final class StringRestrictionsImpl extends AbstractDeclaredStatement<String> implements
-        TypeStatement.StringRestrictions {
+final class StringRestrictionsImpl extends WithArgument<String> implements StringRestrictions {
     StringRestrictionsImpl(final StmtContext<String, StringRestrictions, ?> context) {
         super(context);
     }

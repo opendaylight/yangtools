@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.must;
 
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MustStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements MustStatement {
+final class MustStatementImpl extends WithArgument<RevisionAwareXPath> implements MustStatement {
     MustStatementImpl(final StmtContext<RevisionAwareXPath, MustStatement, ?> context) {
         super(context);
     }
