@@ -13,7 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.model.api.stmt.AnyxmlStatement;
 final class YangModeledAnyxmlEffectiveStatementImpl
         extends ForwardingEffectiveStatement<QName, AnyxmlStatement, AnyxmlEffectiveStatement>
         implements YangModeledAnyXmlSchemaNode, AnyxmlEffectiveStatement {
-    private final AnyxmlEffectiveStatement delegate;
-    private final ContainerSchemaNode contentSchema;
+    private final @NonNull AnyxmlEffectiveStatement delegate;
+    private final @NonNull ContainerSchemaNode contentSchema;
 
     YangModeledAnyxmlEffectiveStatementImpl(final AnyxmlEffectiveStatement delegate,
         final ContainerSchemaNode contentSchema) {
@@ -44,7 +44,6 @@ final class YangModeledAnyxmlEffectiveStatementImpl
         return delegate;
     }
 
-    @Nonnull
     @Override
     public ContainerSchemaNode getSchemaOfAnyXmlData() {
         return contentSchema;
