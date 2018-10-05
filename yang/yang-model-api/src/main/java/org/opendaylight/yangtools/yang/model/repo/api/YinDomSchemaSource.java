@@ -16,12 +16,13 @@ import static org.opendaylight.yangtools.yang.model.api.YangStmtMapping.SUBMODUL
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
@@ -51,8 +52,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param source W3C DOM source
      * @return A new {@link YinDomSchemaSource} instance.
      */
-    public static @Nonnull YinDomSchemaSource create(@Nonnull final SourceIdentifier identifier,
-            final @Nonnull DOMSource source) {
+    public static @NonNull YinDomSchemaSource create(final @NonNull SourceIdentifier identifier,
+            final @NonNull DOMSource source) {
 
         final Node root = source.getNode().getFirstChild();
         final String rootNs = root.getNamespaceURI();
@@ -105,7 +106,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param xmlSchemaSource Backing schema source
      * @return A {@link YinDomSchemaSource} instance
      */
-    @Nonnull public static YinDomSchemaSource lazyTransform(final YinXmlSchemaSource xmlSchemaSource) {
+    public static @NonNull YinDomSchemaSource lazyTransform(final YinXmlSchemaSource xmlSchemaSource) {
         final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast : new Transforming(xmlSchemaSource);
     }
@@ -118,7 +119,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @return A {@link YinDomSchemaSource} instance
      * @throws TransformerException when the provided source fails to transform
      */
-    @Nonnull public static YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource)
+    public static @NonNull YinDomSchemaSource transform(final YinXmlSchemaSource xmlSchemaSource)
             throws TransformerException {
         final YinDomSchemaSource cast = castSchemaSource(xmlSchemaSource);
         return cast != null ? cast :
@@ -126,7 +127,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     }
 
     @Override
-    @Nonnull public abstract DOMSource getSource();
+    public abstract DOMSource getSource();
 
     @Override
     public final Class<? extends YinXmlSchemaSource> getType() {
@@ -147,7 +148,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
+    protected abstract ToStringHelper addToStringAttributes(@NonNull ToStringHelper toStringHelper);
 
     static DOMSource transformSource(final Source source) throws TransformerException {
         final DOMResult result = new DOMResult();
@@ -169,16 +170,16 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         return null;
     }
 
+    @NonNullByDefault
     private static final class Simple extends YinDomSchemaSource {
         private final SourceIdentifier identifier;
         private final DOMSource source;
 
-        Simple(@Nonnull final SourceIdentifier identifier, @Nonnull final DOMSource source) {
+        Simple(final SourceIdentifier identifier, final DOMSource source) {
             this.identifier = requireNonNull(identifier);
             this.source = requireNonNull(source);
         }
 
-        @Nonnull
         @Override
         public DOMSource getSource() {
             return source;
@@ -203,7 +204,6 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
             this.xmlSchemaSource = requireNonNull(xmlSchemaSource);
         }
 
-        @Nonnull
         @Override
         public DOMSource getSource() {
             DOMSource ret = source;
