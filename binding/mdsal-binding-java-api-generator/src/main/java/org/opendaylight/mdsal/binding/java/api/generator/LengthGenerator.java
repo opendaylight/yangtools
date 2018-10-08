@@ -11,8 +11,8 @@ import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
@@ -122,7 +122,7 @@ final class LengthGenerator {
                         : generateStringLengthChecker(member, constraint, template);
     }
 
-    static String generateLengthCheckerCall(@Nullable final String member, @Nonnull final String valueReference) {
+    static String generateLengthCheckerCall(final @Nullable String member, final @NonNull String valueReference) {
         return lengthCheckerName(member) + '(' + valueReference + ");\n";
     }
 }

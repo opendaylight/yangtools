@@ -7,8 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import com.google.common.base.Preconditions;
-import javax.annotation.Nonnull;
+import static com.google.common.base.Preconditions.checkArgument;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
@@ -31,13 +32,13 @@ final class TypeUtils {
      * @param type Input Type object
      * @return Resolved {@link ConcreteType} instance.
      */
-    static ConcreteType getBaseYangType(@Nonnull final Type type) {
+    static ConcreteType getBaseYangType(final @NonNull Type type) {
         // Already the correct type
         if (type instanceof ConcreteType) {
             return (ConcreteType) type;
         }
 
-        Preconditions.checkArgument(type instanceof GeneratedTransferObject, "Unsupported type %s", type);
+        checkArgument(type instanceof GeneratedTransferObject, "Unsupported type %s", type);
 
         // Need to walk up the GTO chain to the root
         GeneratedTransferObject rootGto = (GeneratedTransferObject) type;

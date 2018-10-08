@@ -7,12 +7,13 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
@@ -23,7 +24,8 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
     private static final Map<String, AbstractRangeGenerator<?>> GENERATORS;
 
-    private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> b, final AbstractRangeGenerator<?> generator) {
+    private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> b,
+            final AbstractRangeGenerator<?> generator) {
         b.put(generator.getTypeClass().getCanonicalName(), generator);
     }
 
@@ -41,10 +43,10 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private final Class<T> type;
 
     protected AbstractRangeGenerator(final Class<T> typeClass) {
-        this.type = Preconditions.checkNotNull(typeClass);
+        this.type = requireNonNull(typeClass);
     }
 
-    static AbstractRangeGenerator<?> forType(@Nonnull final Type type) {
+    static AbstractRangeGenerator<?> forType(final @NonNull Type type) {
         final ConcreteType javaType = TypeUtils.getBaseYangType(type);
         return GENERATORS.get(javaType.getFullyQualifiedName());
     }
@@ -54,7 +56,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      *
      * @return A class object
      */
-    @Nonnull protected final Class<T> getTypeClass() {
+    protected final @NonNull Class<T> getTypeClass() {
         return type;
     }
 
@@ -63,7 +65,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      *
      * @return Fully-qualified name
      */
-    @Nonnull protected final String getTypeName() {
+    protected final @NonNull String getTypeName() {
         return type.getName();
     }
 
@@ -73,7 +75,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param value Value as a Number
      * @return Value in native format.
      */
-    @Nonnull protected final T getValue(final Number value) {
+    protected final @NonNull T getValue(final Number value) {
         if (type.isInstance(value)) {
             return type.cast(value);
         }
@@ -103,7 +105,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param value Number value
      * @return Java language string representation
      */
-    @Nonnull protected abstract String format(T value);
+    protected abstract @NonNull String format(T value);
 
     /**
      * Generate the checker method source code.
@@ -111,19 +113,19 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
      * @param constraints Restrictions which need to be applied.
      * @return Method source code.
      */
-    @Nonnull protected abstract String generateRangeCheckerImplementation(@Nonnull String checkerName,
-            @Nonnull RangeConstraint<?> constraints, Function<Class<?>, String> classImporter);
+    protected abstract @NonNull String generateRangeCheckerImplementation(@NonNull String checkerName,
+            @NonNull RangeConstraint<?> constraints, Function<Class<?>, String> classImporter);
 
     private static String rangeCheckerName(final String member) {
         return "check" + member + "Range";
     }
 
-    String generateRangeChecker(@Nonnull final String member, @Nonnull final RangeConstraint<?> constraints,
+    String generateRangeChecker(final @NonNull String member, final @NonNull RangeConstraint<?> constraints,
             final JavaFileTemplate template) {
         return generateRangeCheckerImplementation(rangeCheckerName(member), constraints, template::importedName);
     }
 
-    String generateRangeCheckerCall(@Nonnull final String member, @Nonnull final String valueReference) {
+    String generateRangeCheckerCall(final @NonNull String member, final @NonNull String valueReference) {
         return rangeCheckerName(member) + '(' + valueReference + ");\n";
     }
 }

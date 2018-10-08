@@ -7,14 +7,15 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Range;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 import org.slf4j.Logger;
@@ -26,11 +27,12 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
     private final T minValue;
     private final T maxValue;
 
-    protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue, final T maxValue) {
+    protected AbstractPrimitiveRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
+            final T maxValue) {
         super(typeClass);
-        this.primitiveName = Preconditions.checkNotNull(primitiveName);
-        this.minValue = Preconditions.checkNotNull(minValue);
-        this.maxValue = Preconditions.checkNotNull(maxValue);
+        this.primitiveName = requireNonNull(primitiveName);
+        this.minValue = requireNonNull(minValue);
+        this.maxValue = requireNonNull(maxValue);
     }
 
     /**
@@ -38,7 +40,7 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
      *
      * @return Primitive type name
      */
-    @Nonnull protected final String getPrimitiveName() {
+    protected final @NonNull String getPrimitiveName() {
         return primitiveName;
     }
 

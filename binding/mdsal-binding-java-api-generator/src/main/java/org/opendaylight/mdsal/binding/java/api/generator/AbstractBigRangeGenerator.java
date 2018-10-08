@@ -11,7 +11,6 @@ import com.google.common.collect.Range;
 import java.lang.reflect.Array;
 import java.util.Set;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.binding.CodeHelpers;
 import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
@@ -42,7 +41,7 @@ abstract class AbstractBigRangeGenerator<T extends Number & Comparable<T>> exten
 
     @Override
     protected final String generateRangeCheckerImplementation(final String checkerName,
-            @Nonnull final RangeConstraint<?> constraint, final Function<Class<?>, String> classImporter) {
+            final RangeConstraint<?> constraint, final Function<Class<?>, String> classImporter) {
         final Set<? extends Range<? extends Number>> constraints = constraint.getAllowedRanges().asRanges();
         final String fieldName = checkerName.toUpperCase() + "_RANGES";
         final StringBuilder sb = new StringBuilder();
