@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -21,13 +21,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 // TODO: Add more detailed documentation
 public interface BindingCodecTree {
 
-    @Nullable
-    <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
+    @Nullable <T extends DataObject> BindingCodecTreeNode<T> getSubtreeCodec(InstanceIdentifier<T> path);
 
-    @Nullable
-    BindingCodecTreeNode<?> getSubtreeCodec(YangInstanceIdentifier path);
+    @Nullable BindingCodecTreeNode<?> getSubtreeCodec(YangInstanceIdentifier path);
 
-    @Nullable
-    BindingCodecTreeNode<?> getSubtreeCodec(SchemaPath path);
-
+    @Nullable BindingCodecTreeNode<?> getSubtreeCodec(SchemaPath path);
 }

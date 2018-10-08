@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableCollection;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -15,7 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -49,9 +51,9 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
                 final SchemaContext schemaContext) {
         this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
-        this.valueCodec = Preconditions.checkNotNull(codec);
+        this.valueCodec = requireNonNull(codec);
         this.getter = getter;
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
 
         this.defaultObject = createDefaultObject(schema, valueCodec, schemaContext);
     }
@@ -209,7 +211,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        checkArgument(getDomPathArgument().equals(arg));
         return null;
     }
 

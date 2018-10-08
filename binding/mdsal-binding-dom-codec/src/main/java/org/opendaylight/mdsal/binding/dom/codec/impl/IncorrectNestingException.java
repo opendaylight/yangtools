@@ -7,8 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Thrown where incorrect nesting of data structures was detected and was caused by user.
@@ -31,8 +31,7 @@ public class IncorrectNestingException extends IllegalArgumentException {
         }
     }
 
-    @Nonnull
-    public static <V> V checkNonNull(@Nullable final V nullable, final String message, final Object... args) {
+    public static <V> @NonNull V checkNonNull(final @Nullable V nullable, final String message, final Object... args) {
         if (nullable != null) {
             return nullable;
         }

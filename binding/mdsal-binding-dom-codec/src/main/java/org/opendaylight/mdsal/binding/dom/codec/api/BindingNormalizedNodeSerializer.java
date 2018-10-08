@@ -9,9 +9,8 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -39,7 +38,7 @@ public interface BindingNormalizedNodeSerializer {
      * @return DOM Instance Identifier
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    YangInstanceIdentifier toYangInstanceIdentifier(@Nonnull InstanceIdentifier<?> binding);
+    YangInstanceIdentifier toYangInstanceIdentifier(@NonNull InstanceIdentifier<?> binding);
 
     /**
      * Translates supplied YANG Instance Identifier into Binding instance identifier.
@@ -47,8 +46,8 @@ public interface BindingNormalizedNodeSerializer {
      * @param dom YANG Instance Identifier
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
      */
-    @Nullable
-    <T extends DataObject> InstanceIdentifier<T> fromYangInstanceIdentifier(@Nonnull YangInstanceIdentifier dom);
+    <T extends DataObject> @Nullable InstanceIdentifier<T> fromYangInstanceIdentifier(
+            @NonNull YangInstanceIdentifier dom);
 
     /**
      * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
@@ -68,8 +67,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return DOM Instance Identifier
      */
-    @Nullable
-    Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@Nonnull YangInstanceIdentifier path,
+    @Nullable Entry<InstanceIdentifier<?>, DataObject> fromNormalizedNode(@NonNull YangInstanceIdentifier path,
             NormalizedNode<?, ?> data);
 
     /**
@@ -79,7 +77,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return Binding representation of Notification
      */
-    @Nullable Notification fromNormalizedNodeNotification(@Nonnull SchemaPath path,@Nonnull ContainerNode data);
+    @Nullable Notification fromNormalizedNodeNotification(@NonNull SchemaPath path, @NonNull ContainerNode data);
 
     /**
      * Translates supplied NormalizedNode RPC input or output into Binding data.
@@ -88,7 +86,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing data
      * @return Binding representation of RPC data
      */
-    @Nullable DataObject fromNormalizedNodeRpcData(@Nonnull SchemaPath path,@Nonnull ContainerNode data);
+    @Nullable DataObject fromNormalizedNodeRpcData(@NonNull SchemaPath path, @NonNull ContainerNode data);
 
     /**
      * Translates supplied ContainerNode action input.
@@ -120,7 +118,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing notification data
      * @return NormalizedNode representation of notification
      */
-    @Nonnull ContainerNode toNormalizedNodeNotification(@Nonnull Notification data);
+    @NonNull ContainerNode toNormalizedNodeNotification(@NonNull Notification data);
 
     /**
      * Translates supplied Binding RPC input or output into NormalizedNode data.
@@ -128,7 +126,7 @@ public interface BindingNormalizedNodeSerializer {
      * @param data NormalizedNode representing rpc data
      * @return NormalizedNode representation of rpc data
      */
-    @Nonnull ContainerNode toNormalizedNodeRpcData(@Nonnull DataContainer data);
+    @NonNull ContainerNode toNormalizedNodeRpcData(@NonNull DataContainer data);
 
     /**
      * Lazily translates supplied Binding action input into NormalizedNode data.

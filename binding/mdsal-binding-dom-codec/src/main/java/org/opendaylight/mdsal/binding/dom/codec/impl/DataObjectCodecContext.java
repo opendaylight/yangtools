@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
@@ -28,8 +29,8 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -279,8 +280,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return null;
     }
 
-    @Nullable
-    private DataContainerCodecPrototype<?> augmentationByClass(@Nonnull final Class<?> childClass) {
+    private @Nullable DataContainerCodecPrototype<?> augmentationByClass(final @NonNull Class<?> childClass) {
         final DataContainerCodecPrototype<?> firstTry = augmentationByClassOrEquivalentClass(childClass);
         if (firstTry != null) {
             return firstTry;
@@ -289,8 +289,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return augmentationByClassOrEquivalentClass(childClass);
     }
 
-    @Nullable
-    private DataContainerCodecPrototype<?> augmentationByClassOrEquivalentClass(@Nonnull final Class<?> childClass) {
+    private @Nullable DataContainerCodecPrototype<?> augmentationByClassOrEquivalentClass(
+            final @NonNull Class<?> childClass) {
         final DataContainerCodecPrototype<?> childProto = byStreamAugmented.get(childClass);
         if (childProto != null) {
             return childProto;
@@ -389,13 +389,13 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
     @Override
     public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        checkArgument(getDomPathArgument().equals(arg));
         return bindingArg();
     }
 
     @Override
     public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(bindingArg().equals(arg));
+        checkArgument(bindingArg().equals(arg));
         return getDomPathArgument();
     }
 }

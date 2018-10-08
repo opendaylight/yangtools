@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
@@ -145,7 +145,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
      *         binding representation (choice, case, leaf).
      *
      */
-    @Nullable NodeCodecContext<?> getCodecContextNode(final @Nonnull YangInstanceIdentifier dom,
+    @Nullable NodeCodecContext<?> getCodecContextNode(final @NonNull YangInstanceIdentifier dom,
             final @Nullable Collection<InstanceIdentifier.PathArgument> bindingArguments) {
         NodeCodecContext<?> currentNode = root;
         ListNodeCodecContext<?> currentList = null;

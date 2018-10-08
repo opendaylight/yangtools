@@ -314,12 +314,13 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
     @Override
     public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final InstanceIdentifier.PathArgument arg,
             final List<PathArgument> builder) {
-        final java.util.Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
+        final Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
         if (caseType.isPresent()) {
-            final Class<? extends DataObject> type = caseType.get();
-            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(type);
+            // XXX: we use two caseType.get()s because of https://bugs.openjdk.java.net/browse/JDK-8144185,
+            //      which makes JaCoCo blow up if we try using @NonNull on the local variable.
+            final ChoiceNodeCodecContext<?> choice = choicesByClass.getUnchecked(caseType.get());
             choice.addYangPathArgument(arg, builder);
-            final DataContainerCodecContext<?, ?> caze = choice.streamChild(type);
+            final DataContainerCodecContext<?, ?> caze = choice.streamChild(caseType.get());
             caze.addYangPathArgument(arg, builder);
             return caze.bindingPathArgumentChild(arg, builder);
         }

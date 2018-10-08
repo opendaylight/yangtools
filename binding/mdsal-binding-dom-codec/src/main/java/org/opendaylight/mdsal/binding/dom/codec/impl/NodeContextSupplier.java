@@ -8,12 +8,12 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import java.util.function.Supplier;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Type capture of an entity producing NodeCodecContexts.
  */
 interface NodeContextSupplier extends Supplier<NodeCodecContext<?>> {
     @Override
-    @Nonnull NodeCodecContext<?> get();
+    @NonNull NodeCodecContext<?> get();
 }

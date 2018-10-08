@@ -27,8 +27,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -235,7 +234,6 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     @SuppressWarnings("unchecked")
     @Override
-    @Nullable
     public D deserialize(final NormalizedNode<?, ?> data) {
         Preconditions.checkArgument(data instanceof ChoiceNode);
         final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> casted =
@@ -243,6 +241,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         final NormalizedNode<?, ?> first = Iterables.getFirst(casted.getValue(), null);
 
         if (first == null) {
+            // FIXME: this needs to be sorted out
             return null;
         }
         final DataContainerCodecPrototype<?> caze = byYangCaseChild.get(first.getIdentifier());
@@ -266,7 +265,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
         return getDomPathArgument();
     }
 
-    DataContainerCodecContext<?, ?> getCaseByChildClass(final @Nonnull Class<? extends DataObject> type) {
+    DataContainerCodecContext<?, ?> getCaseByChildClass(final @NonNull Class<? extends DataObject> type) {
         DataContainerCodecPrototype<?> result = byCaseChildClass.get(type);
         if (result == null) {
             // We have not found an unambiguous result, try ambiguous ones

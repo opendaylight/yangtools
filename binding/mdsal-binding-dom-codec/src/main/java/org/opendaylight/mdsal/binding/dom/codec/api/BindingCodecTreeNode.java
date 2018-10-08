@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableCollection;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -32,8 +32,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *
      * @return interface which defines API of binding representation of data.
      */
-    @Nonnull
-    Class<T> getBindingClass();
+    @NonNull Class<T> getBindingClass();
 
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case,
@@ -44,8 +43,8 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied child class is not valid in specified context.
      */
-    @Nonnull
-    <E extends DataObject> BindingCodecTreeNode<E> streamChild(@Nonnull Class<E> childClass);
+    // FIXME: this may return null in some implementations...
+    <E extends DataObject> @NonNull BindingCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case,
@@ -61,7 +60,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *         applicable in context.
      */
     <E extends DataObject> Optional<? extends BindingCodecTreeNode<E>> possibleStreamChild(
-            @Nonnull Class<E> childClass);
+            @NonNull Class<E> childClass);
 
     /**
      * Returns nested node context using supplied YANG Instance Identifier.
@@ -72,8 +71,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied argument does not represent valid child.
      */
-    @Nonnull
-    BindingCodecTreeNode<?> yangPathArgumentChild(@Nonnull YangInstanceIdentifier.PathArgument child);
+    @NonNull BindingCodecTreeNode<?> yangPathArgumentChild(YangInstanceIdentifier.@NonNull PathArgument child);
 
     /**
      * Returns nested node context using supplied Binding Instance Identifier and adds YANG instance identifiers to
@@ -88,8 +86,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied argument does not represent valid child.
      */
-    @Nonnull
-    BindingCodecTreeNode<?> bindingPathArgumentChild(@Nonnull InstanceIdentifier.PathArgument arg,
+    @NonNull BindingCodecTreeNode<?> bindingPathArgumentChild(InstanceIdentifier.@NonNull PathArgument arg,
             @Nullable List<YangInstanceIdentifier.PathArgument> builder);
 
     /**
@@ -102,9 +99,8 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @param cacheSpecifier Set of objects, for which cache may be in place
      * @return Codec whihc uses cache for serialization / deserialization.
      */
-    @Nonnull
-    BindingNormalizedNodeCachingCodec<T> createCachingCodec(@Nonnull
-            ImmutableCollection<Class<? extends DataObject>> cacheSpecifier);
+    @NonNull BindingNormalizedNodeCachingCodec<T> createCachingCodec(
+            @NonNull ImmutableCollection<Class<? extends DataObject>> cacheSpecifier);
 
     @Beta
     void writeAsNormalizedNode(T data, NormalizedNodeStreamWriter writer);
@@ -119,7 +115,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
     @Beta
-    @Nullable YangInstanceIdentifier.PathArgument serializePathArgument(@Nullable InstanceIdentifier.PathArgument arg);
+    YangInstanceIdentifier.@Nullable PathArgument serializePathArgument(InstanceIdentifier.@Nullable PathArgument arg);
 
     /**
      * Deserializes path argument for current node.
@@ -131,15 +127,15 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException If supplied {@code arg} is not valid.
      */
     @Beta
-    @Nullable InstanceIdentifier.PathArgument deserializePathArgument(
-            @Nullable YangInstanceIdentifier.PathArgument arg);
+    InstanceIdentifier.@Nullable PathArgument deserializePathArgument(
+            YangInstanceIdentifier.@Nullable PathArgument arg);
 
     /**
      * Return the schema node associated with this node.
      *
      * @return A schema node.
      */
-    @Nonnull WithStatus getSchema();
+    @NonNull WithStatus getSchema();
 
     /**
      * Return a summary of addressability of potential children. Binding specification does not allow all DOM tree
@@ -150,7 +146,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      *
      * @return Summary children addressability.
      */
-    @Nonnull ChildAddressabilitySummary getChildAddressabilitySummary();
+    @NonNull ChildAddressabilitySummary getChildAddressabilitySummary();
 
     /**
      * Enumeration of possible addressability attribute of all children.

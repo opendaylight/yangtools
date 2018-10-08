@@ -12,8 +12,8 @@ import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -79,7 +79,6 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    @Nullable
     public DataContainerCodecContext<?,?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         final DataContainerCodecContext<?,?> child = streamChild(arg.getType());
@@ -118,7 +117,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
      * @throws IllegalArgumentException If supplied child class is not valid in specified context.
      */
     @Override
-    public abstract @Nullable <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
+    public abstract <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
 
     /**
      * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
@@ -149,29 +148,26 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         return BindingToNormalizedStreamWriter.create(this, domWriter);
     }
 
-    @Nonnull
-    protected final <V> V childNonNull(@Nullable final V nullable, final YangInstanceIdentifier.PathArgument child,
+    protected final <V> @NonNull V childNonNull(final @Nullable V nullable,
+            final YangInstanceIdentifier.PathArgument child, final String message, final Object... args) {
+        if (nullable != null) {
+            return nullable;
+        }
+        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
+        throw IncorrectNestingException.create(message, args);
+    }
+
+    protected final <V> @NonNull V childNonNull(final @Nullable V nullable, final QName child, final String message,
+            final Object... args) {
+        if (nullable != null) {
+            return nullable;
+        }
+        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
+        throw IncorrectNestingException.create(message, args);
+    }
+
+    protected final <V> @NonNull V childNonNull(final @Nullable V nullable, final Class<?> childClass,
             final String message, final Object... args) {
-        if (nullable != null) {
-            return nullable;
-        }
-        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
-        throw IncorrectNestingException.create(message, args);
-    }
-
-    @Nonnull
-    protected final <V> V childNonNull(@Nullable final V nullable, final QName child, final String message,
-            final Object... args) {
-        if (nullable != null) {
-            return nullable;
-        }
-        MissingSchemaException.checkModulePresent(factory().getRuntimeContext().getSchemaContext(), child);
-        throw IncorrectNestingException.create(message, args);
-    }
-
-    @Nonnull
-    protected final <V> V childNonNull(@Nullable final V nullable, final Class<?> childClass, final String message,
-            final Object... args) {
         if (nullable != null) {
             return nullable;
         }

@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -43,8 +43,8 @@ public interface BindingNormalizedNodeWriterFactory {
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    @Nonnull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
-            @Nonnull InstanceIdentifier<?> path, @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriterAndIdentifier(
+            @NonNull InstanceIdentifier<?> path, @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for data tree path which will translate to NormalizedNode model
@@ -62,9 +62,8 @@ public interface BindingNormalizedNodeWriterFactory {
      *         which will write to supplied {@link NormalizedNodeStreamWriter}.
      * @throws IllegalArgumentException If supplied Instance Identifier is not valid.
      */
-    @Nonnull
-    BindingStreamEventWriter newWriter(@Nonnull InstanceIdentifier<?> path,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull BindingStreamEventWriter newWriter(@NonNull InstanceIdentifier<?> path,
+            @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for RPC data which will translate to NormalizedNode model and invoke
@@ -77,9 +76,8 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
-    @Nonnull
-    BindingStreamEventWriter newRpcWriter(@Nonnull Class<? extends DataContainer> rpcInputOrOutput,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull BindingStreamEventWriter newRpcWriter(@NonNull Class<? extends DataContainer> rpcInputOrOutput,
+            @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for notification which will translate to NormalizedNode model
@@ -92,9 +90,8 @@ public interface BindingNormalizedNodeWriterFactory {
      * @return {@link BindingStreamEventWriter} which will write to supplied
      *         {@link NormalizedNodeStreamWriter}.
      */
-    @Nonnull
-    BindingStreamEventWriter newNotificationWriter(@Nonnull Class<? extends Notification> notification,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull BindingStreamEventWriter newNotificationWriter(@NonNull Class<? extends Notification> notification,
+            @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for action input which will translate to NormalizedNode model
@@ -104,9 +101,8 @@ public interface BindingNormalizedNodeWriterFactory {
      * @param domWriter Stream writer on which events will be invoked.
      * @return {@link BindingStreamEventWriter} which will write to supplied {@link NormalizedNodeStreamWriter}.
      */
-    @Nonnull
-    BindingStreamEventWriter newActionInputWriter(@Nonnull Class<? extends Action<?, ?, ?>> action,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull BindingStreamEventWriter newActionInputWriter(@NonNull Class<? extends Action<?, ?, ?>> action,
+            @NonNull NormalizedNodeStreamWriter domWriter);
 
     /**
      * Creates a {@link BindingStreamEventWriter} for action output which will translate to NormalizedNode model
@@ -116,7 +112,6 @@ public interface BindingNormalizedNodeWriterFactory {
      * @param domWriter Stream writer on which events will be invoked.
      * @return {@link BindingStreamEventWriter} which will write to supplied {@link NormalizedNodeStreamWriter}.
      */
-    @Nonnull
-    BindingStreamEventWriter newActionOutputWriter(@Nonnull Class<? extends Action<?, ?, ?>> action,
-            @Nonnull NormalizedNodeStreamWriter domWriter);
+    @NonNull BindingStreamEventWriter newActionOutputWriter(@NonNull Class<? extends Action<?, ?, ?>> action,
+            @NonNull NormalizedNodeStreamWriter domWriter);
 }
