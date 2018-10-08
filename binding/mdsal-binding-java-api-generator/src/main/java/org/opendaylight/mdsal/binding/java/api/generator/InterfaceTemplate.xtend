@@ -12,13 +12,16 @@ import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
+import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 
 /**
  * Template for generating JAVA interfaces.
  */
 class InterfaceTemplate extends BaseTemplate {
+    static val JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable")
 
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
@@ -163,17 +166,29 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «IF !m.isAccessor»
-                    «m.comment.asJavadoc»
-                «ELSE»
-                    «formatDataForJavaDoc(m, "@return " + asCode(m.returnType.fullyQualifiedName) + " "
+                «val accessor = m.isAccessor»
+                «val ret = m.returnType»
+                «IF accessor»
+                    «formatDataForJavaDoc(m, "@return " + asCode(ret.fullyQualifiedName) + " "
                     + asCode(propertyNameFromGetter(m)) + ", or " + asCode("null") + " if not present")»
+                «ELSE»
+                    «m.comment.asJavadoc»
                 «ENDIF»
                 «m.annotations.generateAnnotations»
-                «m.returnType.importedName» «m.name»(«m.parameters.generateParameters»);
+                «nullableType(ret, accessor)» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»
         «ENDIF»
     '''
 
-}
+    def private String nullableType(Type type, boolean accessor) {
+        if (accessor && type.isObject) {
+            return importedName(type, NULLABLE.importedName)
+        }
+        return type.importedName
+    }
 
+    def private static boolean isObject(Type type) {
+        // The return type has a package, so it's not a primitive type
+        return !type.getPackageName().isEmpty()
+    }
+}

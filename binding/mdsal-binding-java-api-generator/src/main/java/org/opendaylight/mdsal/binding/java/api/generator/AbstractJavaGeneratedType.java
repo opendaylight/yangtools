@@ -61,7 +61,7 @@ abstract class AbstractJavaGeneratedType {
         conflictingNames = ImmutableSet.copyOf(cb);
     }
 
-    private void collectAccessibleTypes(Set<String> set, GeneratedType type) {
+    private void collectAccessibleTypes(final Set<String> set, final GeneratedType type) {
         for (Type impl : type.getImplements()) {
             if (impl instanceof GeneratedType) {
                 final GeneratedType genType = (GeneratedType) impl;
@@ -81,13 +81,13 @@ abstract class AbstractJavaGeneratedType {
         return name.simpleName();
     }
 
-    final String getReferenceString(final Type type) {
+    final String getReferenceString(final Type type, final String... annotations) {
+        final String ref = getReferenceString(type.getIdentifier());
         if (!(type instanceof ParameterizedType)) {
-            return getReferenceString(type.getIdentifier());
+            return annotations.length == 0 ? ref : annotate(ref, annotations).toString();
         }
 
-        final StringBuilder sb = new StringBuilder();
-        sb.append(getReferenceString(type.getIdentifier())).append('<');
+        final StringBuilder sb = annotate(ref, annotations).append('<');
         final Type[] types = ((ParameterizedType) type).getActualTypeArguments();
         if (types.length == 0) {
             return sb.append("?>").toString();
@@ -160,5 +160,22 @@ abstract class AbstractJavaGeneratedType {
     private String packageTypeName(final JavaTypeName type) {
         // Try to anchor the top-level type and use a local reference
         return checkAndImportType(type.topLevelClass()) ? type.localName() : type.toString();
+    }
+
+    private static StringBuilder annotate(final String ref, final String... annotations) {
+        final StringBuilder sb = new StringBuilder();
+        if (annotations.length == 0) {
+            return sb.append(ref);
+        }
+
+        final int dot = ref.lastIndexOf('.');
+        if (dot != -1) {
+            sb.append(ref, 0, dot + 1);
+        }
+        for (String annotation : annotations) {
+            sb.append('@').append(annotation).append(' ');
+        }
+
+        return sb.append(ref, dot + 1, ref.length());
     }
 }

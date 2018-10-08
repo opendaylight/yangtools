@@ -33,7 +33,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.annotations.RoutingContext;
@@ -470,7 +469,7 @@ public class CompilationTest extends BaseCompilationTest {
             throw new AssertionError("Method getId() not found", e);
         }
 
-        assertEquals(ImmutableSet.of(RoutingContext.class, Nullable.class), Arrays.stream(getId.getAnnotations())
+        assertEquals(ImmutableSet.of(RoutingContext.class), Arrays.stream(getId.getAnnotations())
             .map(Annotation::annotationType).collect(Collectors.toSet()));
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
