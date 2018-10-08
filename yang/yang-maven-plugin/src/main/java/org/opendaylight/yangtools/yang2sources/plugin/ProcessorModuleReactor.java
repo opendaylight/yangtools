@@ -13,6 +13,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
 import com.google.common.io.CharStreams;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
@@ -85,6 +86,8 @@ final class ProcessorModuleReactor {
         return modelsInProject.values();
     }
 
+    @SuppressFBWarnings(value = "RCN_REDUNDANT_NULLCHECK_WOULD_HAVE_BEEN_A_NPE",
+        justification = "https://github.com/spotbugs/spotbugs/issues/600")
     private static Collection<YangTextSchemaSource> toUniqueSources(final Collection<ScannedDependency> dependencies)
             throws IOException {
         final Map<String, YangTextSchemaSource> byContent = new HashMap<>();
