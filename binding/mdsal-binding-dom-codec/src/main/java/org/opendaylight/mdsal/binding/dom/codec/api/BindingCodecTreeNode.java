@@ -43,7 +43,6 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
      * @throws IllegalArgumentException
      *             If supplied child class is not valid in specified context.
      */
-    // FIXME: this may return null in some implementations...
     <E extends DataObject> @NonNull BindingCodecTreeNode<E> streamChild(@NonNull Class<E> childClass);
 
     /**

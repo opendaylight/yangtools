@@ -79,16 +79,13 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public DataContainerCodecContext<?,?> bindingPathArgumentChild(final PathArgument arg,
+    public DataContainerCodecContext<?, ?> bindingPathArgumentChild(final PathArgument arg,
             final List<YangInstanceIdentifier.PathArgument> builder) {
         final DataContainerCodecContext<?,?> child = streamChild(arg.getType());
-        if (child != null) {
-            if (builder != null) {
-                child.addYangPathArgument(arg,builder);
-            }
-            return child;
+        if (builder != null) {
+            child.addYangPathArgument(arg,builder);
         }
-        throw new IllegalArgumentException("Supplied argument is not valid child");
+        return child;
     }
 
     /**
@@ -108,14 +105,6 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         return Class.class.cast(prototype.getBindingClass());
     }
 
-    /**
-     * Returns child context as if it was walked by {@link BindingStreamEventWriter}. This means that to enter case, one
-     * must issue getChild(ChoiceClass).getChild(CaseClass).
-     *
-     * @param childClass child class
-     * @return Context of child node or null, if supplied class is not subtree child
-     * @throws IllegalArgumentException If supplied child class is not valid in specified context.
-     */
     @Override
     public abstract <C extends DataObject> DataContainerCodecContext<C, ?> streamChild(Class<C> childClass);
 
@@ -200,5 +189,4 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
             throw new IllegalStateException("Failed to serialize Binding DTO",e);
         }
     }
-
 }
