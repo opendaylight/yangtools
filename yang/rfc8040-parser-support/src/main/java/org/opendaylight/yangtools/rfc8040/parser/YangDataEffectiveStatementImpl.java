@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataEffectiveStatement;
 import org.opendaylight.yangtools.rfc8040.model.api.YangDataStatement;
@@ -27,8 +26,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, YangDataStatement>
         implements YangDataEffectiveStatement {
 
-    private final SchemaPath path;
-    private final QName maybeQNameArgument;
+    private final @NonNull SchemaPath path;
+    private final @NonNull QName maybeQNameArgument;
     private final @NonNull ContainerEffectiveStatement container;
 
     YangDataEffectiveStatementImpl(final StmtContext<String, YangDataStatement, ?> ctx) {
@@ -50,15 +49,13 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         Verify.verify(container instanceof ContainerSchemaNode);
     }
 
-    @Nonnull
     @Override
-    public QName getQName() {
+    public @NonNull QName getQName() {
         return maybeQNameArgument;
     }
 
-    @Nonnull
     @Override
-    public SchemaPath getPath() {
+    public @NonNull SchemaPath getPath() {
         return path;
     }
 
@@ -67,9 +64,8 @@ final class YangDataEffectiveStatementImpl extends UnknownEffectiveStatementBase
         return container;
     }
 
-    @Nonnull
     @Override
-    public ContainerSchemaNode getContainerSchemaNode() {
+    public @NonNull ContainerSchemaNode getContainerSchemaNode() {
         // Verified in the constructor
         return (ContainerSchemaNode) container;
     }

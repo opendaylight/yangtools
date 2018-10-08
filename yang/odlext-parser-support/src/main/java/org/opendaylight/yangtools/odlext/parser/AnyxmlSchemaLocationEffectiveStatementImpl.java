@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.odlext.parser;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationEffectiveStatement;
 import org.opendaylight.yangtools.odlext.model.api.AnyxmlSchemaLocationStatement;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -23,7 +23,7 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
         extends UnknownEffectiveStatementBase<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>
         implements AnyxmlSchemaLocationEffectiveStatement {
 
-    private final SchemaPath path;
+    private final @NonNull SchemaPath path;
 
     AnyxmlSchemaLocationEffectiveStatementImpl(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
@@ -31,15 +31,13 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
-    @Nonnull
     @Override
-    public QName getQName() {
+    public @NonNull QName getQName() {
         return getNodeType();
     }
 
-    @Nonnull
     @Override
-    public SchemaPath getPath() {
+    public @NonNull SchemaPath getPath() {
         return path;
     }
 
