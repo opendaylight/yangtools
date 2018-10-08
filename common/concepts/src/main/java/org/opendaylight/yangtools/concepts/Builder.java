@@ -14,13 +14,6 @@ package org.opendaylight.yangtools.concepts;
  *
  * @author Tony Tkacik &lt;ttkacik@cisco.com&gt;
  */
-public interface Builder<P> extends Mutable {
-    /**
-     * Returns instance of the product. Multiple calls to this method are not required to return same instance if
-     * the state of the builder has changed.
-     *
-     * @return A newly-built instance
-     * @throws IllegalStateException if the builder's state is not sufficiently initialized
-     */
-    P build();
+public interface Builder<P> extends CheckedBuilder<P, IllegalArgumentException> {
+
 }
