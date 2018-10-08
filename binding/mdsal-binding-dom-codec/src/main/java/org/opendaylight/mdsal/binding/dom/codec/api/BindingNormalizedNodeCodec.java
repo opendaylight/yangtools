@@ -35,5 +35,5 @@ public interface BindingNormalizedNodeCodec<T extends DataObject> {
      * @param data Binding representation of data
      * @return Normalized Node representation of data
      */
-    @NonNull NormalizedNode<?,?> serialize(@NonNull T data);
+    @NonNull NormalizedNode<?, ?> serialize(@NonNull T data);
 }
