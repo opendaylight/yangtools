@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>4.0.2</version>
+        <version>4.0.3-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -154,7 +154,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>!javax.annotation,*</Import-Package>
                         <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
                         <Bundle-Activator>org.opendaylight.yangtools.yang.parser.impl.osgi.Activator</Bundle-Activator>
                     </instructions>

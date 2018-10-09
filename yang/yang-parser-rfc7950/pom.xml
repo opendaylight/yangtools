@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>4.0.2</version>
+        <version>4.0.3-SNAPSHOT</version>
         <relativePath/>
     </parent>
 
@@ -103,15 +103,6 @@
                     <outputDirectory>${project.build.directory}/generated-sources/parser/org/opendaylight/yangtools/antlrv4/code/gen</outputDirectory>
                     <visitor>true</visitor>
                     <listener>true</listener>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <configuration>
-                    <instructions>
-                        <Import-Package>!javax.annotation,*</Import-Package>
-                    </instructions>
                 </configuration>
             </plugin>
             <plugin>
