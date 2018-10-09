@@ -408,7 +408,7 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.assertContainsMethod(nodesClass, BigInteger.class, "getIdU64");
         CompilationTestUtils.assertContainsMethod(nodesClass, pkg + ".Nodes$IdUnion", "getIdUnion", loader);
 
-        final Object builderObj = builderClass.newInstance();
+        final Object builderObj = builderClass.getDeclaredConstructor().newInstance();
 
         Method m = CompilationTestUtils.assertContainsMethod(builderClass, builderClass, "setIdBinary", b.getClass());
         final List<Range<Integer>> lengthConstraints = new ArrayList<>();

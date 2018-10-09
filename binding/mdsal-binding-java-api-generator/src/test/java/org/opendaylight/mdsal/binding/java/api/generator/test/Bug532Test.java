@@ -60,7 +60,7 @@ public class Bug532Test extends BaseCompilationTest {
         Object expectedKey = keyConstructor.newInstance(expectedId, expectedName, expectedSize);
 
         // create Links object
-        Object linksBuilder = linksBuilderClass.newInstance();
+        Object linksBuilder = linksBuilderClass.getDeclaredConstructor().newInstance();
         linksBuilderClass.getDeclaredMethod("withKey", linksKeyClass).invoke(linksBuilder, expectedKey);
         linksBuilderClass.getDeclaredMethod("setLevel", levelClass).invoke(linksBuilder, expectedLevel);
         linksBuilderClass.getDeclaredMethod("setLinksId", Integer.class).invoke(linksBuilder, expectedLinksId);
