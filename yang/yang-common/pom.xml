@@ -44,7 +44,6 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Import-Package>!javax.annotation,*</Import-Package>
                         <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
                     </instructions>
                 </configuration>
