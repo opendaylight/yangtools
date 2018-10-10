@@ -33,19 +33,19 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-util</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-util</artifactId>
         </dependency>
 
@@ -59,12 +59,12 @@
         </dependency>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-test-util</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-impl</artifactId>
             <scope>test</scope>
         </dependency>

@@ -22,12 +22,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-data-impl</artifactId>
             <version>2.1.2-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-test-util</artifactId>
             <version>2.1.2-SNAPSHOT</version>
             <scope>compile</scope>
