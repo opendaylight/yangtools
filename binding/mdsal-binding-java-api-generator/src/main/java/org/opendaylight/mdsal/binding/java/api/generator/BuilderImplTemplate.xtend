@@ -10,11 +10,15 @@ package org.opendaylight.mdsal.binding.java.api.generator
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 
+import com.google.common.collect.ImmutableMap
 import java.util.Arrays
-import java.util.Objects
+import java.util.List
 import java.util.Map
+import java.util.Objects
+import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.yang.binding.DataObject
 
 class BuilderImplTemplate extends AbstractBuilderTemplate {
@@ -33,7 +37,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             «generateAugmentField(true)»
 
-            «generateCopyConstructor(true, builderType, type)»
+            «generateCopyConstructor(builderType, type)»
 
             @«Override.importedName»
             public «Class.importedName»<«targetType.importedName»> getImplementedInterface() {
@@ -138,5 +142,20 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                 return true;
             }
         «ENDIF»
+    '''
+
+    override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
+        if (base.«BindingMapping.IDENTIFIABLE_KEY_NAME»() != null) {
+            this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
+        } else {
+            this.key = new «keyType.importedName»(«FOR keyProp : keyProps SEPARATOR ", "»base.«keyProp.getterMethodName»()«ENDFOR»);
+        }
+        «FOR field : keyProps»
+            this.«field.fieldName» = key.«field.getterMethodName»();
+        «ENDFOR»
+    '''
+
+    override protected generateCopyAugmentation(Type implType) '''
+        this.«AUGMENTATION_FIELD» = «ImmutableMap.importedName».copyOf(base.«AUGMENTATION_FIELD»);
     '''
 }

@@ -27,7 +27,9 @@ import org.opendaylight.mdsal.binding.model.api.ParameterizedType
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
 import org.opendaylight.mdsal.binding.model.util.Types
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
 import org.opendaylight.yangtools.concepts.Builder
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder
 import org.opendaylight.yangtools.yang.binding.CodeHelpers
 import org.opendaylight.yangtools.yang.binding.DataObject
 
@@ -71,7 +73,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
             «generateConstructorsFromIfcs()»
 
-            «generateCopyConstructor(false, targetType, type.enclosedTypes.get(0))»
+            public «generateCopyConstructor(targetType, type.enclosedTypes.get(0))»
 
             «generateMethodFieldsFrom()»
 
@@ -345,6 +347,34 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «typeDescription»
             «ENDIF»
         '''.toString
+    }
+
+    override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
+        this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
+        «FOR field : keyProps»
+            this.«field.fieldName» = base.«field.getterMethodName»();
+        «ENDFOR»
+    '''
+
+    override protected generateCopyAugmentation(Type implType) {
+        val implTypeRef = implType.importedName
+        val augmentationHolderRef = AugmentationHolder.importedName
+        val typeRef = targetType.importedName
+        val hashMapRef = HashMap.importedName
+        return '''
+            if (base instanceof «implTypeRef») {
+                «implTypeRef» impl = («implTypeRef») base;
+                if (!impl.«AUGMENTATION_FIELD».isEmpty()) {
+                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(impl.«AUGMENTATION_FIELD»);
+                }
+            } else if (base instanceof «augmentationHolderRef») {
+                @SuppressWarnings("unchecked")
+                «augmentationHolderRef»<«typeRef»> casted =(«augmentationHolderRef»<«typeRef»>) base;
+                if (!casted.augmentations().isEmpty()) {
+                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(casted.augmentations());
+                }
+            }
+        '''
     }
 }
 

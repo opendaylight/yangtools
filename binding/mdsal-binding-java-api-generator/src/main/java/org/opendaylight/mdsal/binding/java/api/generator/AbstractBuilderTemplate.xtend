@@ -11,22 +11,20 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.base.MoreObjects
+import java.util.ArrayList
 import java.util.Collection
 import java.util.Collections
+import java.util.List
 import java.util.Map
 import java.util.Set
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty
+import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.yangtools.yang.binding.CodeHelpers
-import java.util.ArrayList
 import org.opendaylight.mdsal.binding.model.util.Types
-import org.opendaylight.yangtools.yang.binding.Identifiable
-import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping
-import com.google.common.collect.ImmutableMap
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder
-import java.util.HashMap
+import org.opendaylight.yangtools.yang.binding.CodeHelpers
+import org.opendaylight.yangtools.yang.binding.Identifiable
 
 abstract class AbstractBuilderTemplate extends BaseTemplate {
     /**
@@ -70,7 +68,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      * @param makeFinal value which specify whether field is|isn't final
      * @return string with class attributes and their types
      */
-    def generateFields(boolean makeFinal) '''
+    def protected final generateFields(boolean makeFinal) '''
         «IF properties !== null»
             «FOR f : properties»
                 private«IF makeFinal» final«ENDIF» «f.returnType.importedName» «f.fieldName»;
@@ -81,7 +79,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def generateAugmentField(boolean isPrivate) '''
+    def protected final generateAugmentField(boolean isPrivate) '''
         «IF augmentType !== null»
             «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
         «ENDIF»
@@ -108,7 +106,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
      *
      * @return string with getter methods
      */
-    def generateGetters(boolean addOverride) '''
+    def final generateGetters(boolean addOverride) '''
         «IF keyType !== null»
             «IF addOverride»@«Override.importedName»«ENDIF»
             public «keyType.importedName» «BindingMapping.IDENTIFIABLE_KEY_NAME»() {
@@ -132,8 +130,8 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def CharSequence generateCopyConstructor(boolean impl, Type fromType, Type implType) '''
-        «IF impl»private«ELSE»public«ENDIF» «type.name»(«fromType.importedName» base) {
+    def protected final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
+        «type.name»(«fromType.importedName» base) {
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(targetType, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), targetType))»
             «IF isList && keyType !== null»
@@ -142,45 +140,20 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 «FOR field : keyProps»
                     «removeProperty(allProps, field.name)»
                 «ENDFOR»
-                if (base.«BindingMapping.IDENTIFIABLE_KEY_NAME»() == null) {
-                    this.key = new «keyType.importedName»(
-                        «FOR keyProp : keyProps SEPARATOR ", "»
-                            base.«keyProp.getterMethodName»()
-                        «ENDFOR»
-                    );
-                    «FOR field : keyProps»
-                        this.«field.fieldName» = base.«field.getterMethodName»();
-                    «ENDFOR»
-                } else {
-                    this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
-                    «FOR field : keyProps»
-                           this.«field.fieldName» = key.«field.getterMethodName»();
-                    «ENDFOR»
-                }
+                «generateCopyKeys(keyProps)»
             «ENDIF»
             «FOR field : allProps»
                 this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
             «IF augmentType !== null»
-                «IF impl»
-                    this.«AUGMENTATION_FIELD» = «ImmutableMap.importedName».copyOf(base.«AUGMENTATION_FIELD»);
-                «ELSE»
-                    if (base instanceof «implType.importedName») {
-                        «implType.importedName» impl = («implType.importedName») base;
-                        if (!impl.«AUGMENTATION_FIELD».isEmpty()) {
-                            this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>(impl.«AUGMENTATION_FIELD»);
-                        }
-                    } else if (base instanceof «AugmentationHolder.importedName») {
-                        @SuppressWarnings("unchecked")
-                        «AugmentationHolder.importedName»<«fromType.importedName»> casted =(«AugmentationHolder.importedName»<«fromType.importedName»>) base;
-                        if (!casted.augmentations().isEmpty()) {
-                            this.«AUGMENTATION_FIELD» = new «HashMap.importedName»<>(casted.augmentations());
-                        }
-                    }
-                «ENDIF»
+                «generateCopyAugmentation(implType)»
             «ENDIF»
         }
     '''
+
+    def protected abstract CharSequence generateCopyKeys(List<GeneratedProperty> keyProps)
+
+    def protected abstract CharSequence generateCopyAugmentation(Type implType);
 
     private def boolean implementsIfc(GeneratedType type, Type impl) {
         for (Type ifc : type.implements) {
