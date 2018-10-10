@@ -8,37 +8,18 @@
  and is available at http://www.eclipse.org/legal/epl-v10.html
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-    <parent>
-        <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>bundle-parent</artifactId>
-        <version>4.0.2</version>
-        <relativePath/>
-    </parent>
-    <packaging>bundle</packaging>
     <modelVersion>4.0.0</modelVersion>
-    <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>util</artifactId>
-    <version>2.1.2-SNAPSHOT</version>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>bundle-parent</artifactId>
+        <version>2.1.2-SNAPSHOT</version>
+        <relativePath>../../bundle-parent</relativePath>
+    </parent>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>tech.pantheon.triemap</groupId>
-                <artifactId>bom</artifactId>
-                <version>1.0.1</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yangtools-artifacts</artifactId>
-                <version>${project.version}</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+    <artifactId>util</artifactId>
+    <packaging>bundle</packaging>
+    <name>${project.artifactId}</name>
+    <description>Common utilities</description>
 
     <dependencies>
         <dependency>

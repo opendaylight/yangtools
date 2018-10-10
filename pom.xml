@@ -33,6 +33,7 @@
     <modules>
         <module>artifacts</module>
         <module>benchmarks</module>
+        <module>bundle-parent</module>
         <module>common</module>
         <module>features</module>
         <module>yang</module>

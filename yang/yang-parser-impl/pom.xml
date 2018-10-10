@@ -8,109 +8,94 @@
  and is available at http://www.eclipse.org/legal/epl-v10.html
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
+    <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>org.opendaylight.odlparent</groupId>
+        <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>bundle-parent</artifactId>
-        <version>4.0.2</version>
-        <relativePath/>
+        <version>2.1.2-SNAPSHOT</version>
+        <relativePath>../../bundle-parent</relativePath>
     </parent>
 
-    <modelVersion>4.0.0</modelVersion>
-    <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-parser-impl</artifactId>
-    <version>2.1.2-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>YANG parser</description>
 
-    <dependencyManagement>
-        <dependencies>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yangtools-artifacts</artifactId>
-                <version>2.1.2-SNAPSHOT</version>
-                <scope>import</scope>
-                <type>pom</type>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
-
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>concepts</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-reactor</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-spi</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-model-util</artifactId>
         </dependency>
 
         <!-- Base RFC6020/RFC7950 reactor support -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-parser-rfc7950</artifactId>
         </dependency>
 
         <!-- Various extension reactor supports -->
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odlext-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odlext-parser-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>openconfig-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>openconfig-parser-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc6536-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc6536-parser-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc7952-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc7952-parser-support</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8040-model-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8040-parser-support</artifactId>
         </dependency>
 
