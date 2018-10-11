@@ -29,7 +29,7 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     }
 
     static {
-        final Builder<String, AbstractRangeGenerator<?>> b = ImmutableMap.<String, AbstractRangeGenerator<?>>builder();
+        final Builder<String, AbstractRangeGenerator<?>> b = ImmutableMap.builder();
         addGenerator(b, new ByteRangeGenerator());
         addGenerator(b, new ShortRangeGenerator());
         addGenerator(b, new IntegerRangeGenerator());

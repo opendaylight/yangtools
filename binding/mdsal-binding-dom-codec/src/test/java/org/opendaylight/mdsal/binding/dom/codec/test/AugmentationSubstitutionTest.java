@@ -18,7 +18,6 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugmentBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ContainerWithUsesBuilder;
-import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.complex.from.grouping.ListViaUses;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.Top;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
@@ -75,7 +74,7 @@ public class AugmentationSubstitutionTest extends AbstractBindingCodecTest {
                 .setContainerWithUses(new ContainerWithUsesBuilder()
                     .setLeafFromGrouping("foo")
                     .build())
-                .setListViaUses(Collections.<ListViaUses>emptyList())
+                .setListViaUses(Collections.emptyList())
                 .build();
     }
 }

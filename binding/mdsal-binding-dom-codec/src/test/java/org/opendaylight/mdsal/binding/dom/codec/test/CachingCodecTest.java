@@ -111,7 +111,7 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
     @SafeVarargs
     private final BindingNormalizedNodeCachingCodec<Top> createCachingCodec(
             final Class<? extends DataObject>... classes) {
-        return topNode.createCachingCodec(ImmutableSet.<Class<? extends DataObject>>copyOf(classes));
+        return topNode.createCachingCodec(ImmutableSet.copyOf(classes));
     }
 
     private static void verifyListItemSame(final NormalizedNode<?, ?> firstTop, final NormalizedNode<?, ?> secondTop) {

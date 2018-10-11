@@ -106,10 +106,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
             pathArguments = Iterables.concat(basePath, pathBuilder.build());
         }
 
-        @SuppressWarnings("unchecked")
-        final InstanceIdentifier<T> ret = (InstanceIdentifier<T>) InstanceIdentifier.trustedCreate(arg, pathArguments,
-            hashBuilder.build(), wildcard);
-        return ret;
+        return InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
     }
 
     <N extends DataObject> InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
