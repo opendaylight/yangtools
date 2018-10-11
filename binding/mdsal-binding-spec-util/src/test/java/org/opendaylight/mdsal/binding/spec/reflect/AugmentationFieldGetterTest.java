@@ -42,7 +42,7 @@ public class AugmentationFieldGetterTest {
     @Test(expected = IllegalStateException.class)
     public void getWrongGetterTest() throws Exception {
         final AugmentationFieldGetter augmentationFieldGetter = getGetter(TestAugmentationClass.class);
-        augmentationFieldGetter.getAugmentations(new String());
+        augmentationFieldGetter.getAugmentations("");
         fail("Expected IllegalStateException");
     }
 

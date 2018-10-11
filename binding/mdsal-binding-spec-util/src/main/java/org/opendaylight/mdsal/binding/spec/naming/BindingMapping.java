@@ -131,8 +131,7 @@ public final class BindingMapping {
             // right characters.
             final String rev = optRev.get().toString();
             checkArgument(rev.length() == 10, "Unsupported revision %s", rev);
-            packageNameBuilder.append("rev");
-            packageNameBuilder.append(rev.substring(2, 4)).append(rev.substring(5, 7)).append(rev.substring(8));
+            packageNameBuilder.append("rev").append(rev, 2, 4).append(rev, 5, 7).append(rev.substring(8));
         } else {
             // No-revision packages are special
             packageNameBuilder.append("norev");
