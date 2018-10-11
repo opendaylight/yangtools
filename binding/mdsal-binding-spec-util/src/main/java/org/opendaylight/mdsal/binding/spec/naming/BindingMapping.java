@@ -148,7 +148,7 @@ public final class BindingMapping {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
 
-        for (String p : DOT_SPLITTER.split(packageName.toLowerCase())) {
+        for (String p : DOT_SPLITTER.split(packageName.toLowerCase(Locale.ENGLISH))) {
             if (first) {
                 first = false;
             } else {
@@ -237,9 +237,9 @@ public final class BindingMapping {
             return str;
         }
         if (str.length() == 1) {
-            return str.toUpperCase();
+            return str.toUpperCase(Locale.ENGLISH);
         }
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
+        return str.substring(0, 1).toUpperCase(Locale.ENGLISH) + str.substring(1);
     }
 
     /**
@@ -258,9 +258,9 @@ public final class BindingMapping {
             return str;
         }
         if (str.length() == 1) {
-            return str.toLowerCase();
+            return str.toLowerCase(Locale.ENGLISH);
         }
-        return str.substring(0, 1).toLowerCase() + str.substring(1);
+        return str.substring(0, 1).toLowerCase(Locale.ENGLISH) + str.substring(1);
     }
 
     /**

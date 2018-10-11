@@ -17,6 +17,9 @@ import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodHandles.Lookup;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedActionException;
+import java.security.PrivilegedExceptionAction;
 import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
@@ -70,9 +73,12 @@ abstract class AugmentationFieldGetter {
         public AugmentationFieldGetter load(final Class<?> key) throws IllegalAccessException {
             final Field field;
             try {
-                field = key.getDeclaredField(BindingMapping.AUGMENTATION_FIELD);
-                field.setAccessible(true);
-            } catch (NoSuchFieldException | SecurityException e) {
+                field = AccessController.doPrivileged((PrivilegedExceptionAction<Field>) () -> {
+                    final Field f = key.getDeclaredField(BindingMapping.AUGMENTATION_FIELD);
+                    f.setAccessible(true);
+                    return f;
+                });
+            } catch (PrivilegedActionException e) {
                 LOG.warn("Failed to acquire augmentation field {}, ignoring augmentations in class {}",
                     BindingMapping.AUGMENTATION_FIELD, key, e);
                 return DUMMY;

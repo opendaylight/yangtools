@@ -17,6 +17,8 @@ import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,8 +77,6 @@ public final class StringValueObjectFactory<T> {
         }
 
         final Field f = findValueField(clazz);
-        f.setAccessible(true);
-
         final StringValueObjectFactory<T> ret;
         try {
             ret = new StringValueObjectFactory<>(template,
@@ -113,17 +113,24 @@ public final class StringValueObjectFactory<T> {
     private static Field findValueField(final Class<?> orig) {
         NoSuchFieldException cause = null;
         Class<?> clazz = orig;
-        do {
+        while (clazz != null) {
+            final Field f;
             try {
-                return clazz.getDeclaredField("_value");
+                f = clazz.getDeclaredField("_value");
             } catch (NoSuchFieldException e) {
                 if (cause != null) {
                     e.addSuppressed(cause);
                 }
                 cause = e;
+                clazz = clazz.getSuperclass();
+                continue;
             }
-            clazz = clazz.getSuperclass();
-        } while (clazz != null);
+
+            return AccessController.doPrivileged((PrivilegedAction<Field>) () -> {
+                f.setAccessible(true);
+                return f;
+            });
+        }
 
         throw new IllegalArgumentException(orig + " nor its superclasses define required internal field _value", cause);
     }
