@@ -12,24 +12,19 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 /**
- *
- * Transformator of the data from the virtual form to JAVA source code. The
- * result source code represents JAVA class. For generating of the source code
- * is used the template written in XTEND language.
- *
+ * Transformator of the data from the virtual form to JAVA source code. The result source code represents JAVA class.
+ * For generating of the source code is used the template written in XTEND language.
  */
 public final class TOGenerator implements CodeGenerator {
-
     /**
-     * Generates JAVA source code for generated type <code>Type</code>. The code
-     * is generated according to the template source code template which is
-     * written in XTEND language.
+     * Generates JAVA source code for generated type <code>Type</code>. The code is generated according to the template
+     * source code template which is written in XTEND language.
      */
     @Override
-    public String generate(Type type) {
+    public String generate(final Type type) {
         if (type instanceof GeneratedTransferObject) {
             final GeneratedTransferObject genTO = (GeneratedTransferObject) type;
-            if(genTO.isUnionType()) {
+            if (genTO.isUnionType()) {
                 final UnionTemplate template = new UnionTemplate(genTO);
                 return template.generate();
             } else if (genTO.isUnionTypeBuilder()) {
@@ -44,13 +39,12 @@ public final class TOGenerator implements CodeGenerator {
     }
 
     @Override
-    public boolean isAcceptable(Type type) {
+    public boolean isAcceptable(final Type type) {
         return type instanceof GeneratedTransferObject;
     }
 
     @Override
-    public String getUnitName(Type type) {
+    public String getUnitName(final Type type) {
         return type.getName();
     }
-
 }

@@ -85,13 +85,13 @@ public class ClassCodeGeneratorTest {
     }
 
     /**
-     * Test for testing of false scenario.
-     *
-     * Test tests value types. Value types are not allowed to have default constructor.
+     * Test for testing of false scenario. Test tests value types. Value types are not allowed to have default
+     * constructor.
      */
     @Test
     public void defaultConstructorNotPresentInValueTypeTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack",
+            "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));
@@ -112,7 +112,8 @@ public class ClassCodeGeneratorTest {
 
     @Test
     public void toStringTest() {
-        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack", "DefCtor"));
+        final GeneratedTOBuilder toBuilder = new CodegenGeneratedTOBuilder(JavaTypeName.create("simple.pack",
+            "DefCtor"));
 
         GeneratedPropertyBuilder propBuilder = toBuilder.addProperty("foo");
         propBuilder.setReturnType(Types.typeForClass(String.class));

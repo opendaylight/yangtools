@@ -102,7 +102,8 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
         final StringBuilder sb = new StringBuilder();
         final Collection<String> expressions = createExpressions(constraints);
 
-        sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName).append(" value) {\n");
+        sb.append("private static void ").append(checkerName).append("(final ").append(primitiveName)
+            .append(" value) {\n");
 
         if (!expressions.isEmpty()) {
             for (String exp : expressions) {
@@ -115,8 +116,6 @@ abstract class AbstractPrimitiveRangeGenerator<T extends Number & Comparable<T>>
             .append(createRangeString(constraints)).append("\", value);\n");
         }
 
-        sb.append("}\n");
-
-        return sb.toString();
+        return sb.append("}\n").toString();
     }
 }

@@ -28,25 +28,18 @@ import org.opendaylight.mdsal.binding.model.util.TypeConstants;
 import org.opendaylight.mdsal.binding.model.util.Types;
 
 public final class GeneratorUtil {
-
-    /**
-     * It doesn't have the sense to create the instances of this class.
-     */
     private GeneratorUtil() {
         throw new UnsupportedOperationException();
     }
 
     /**
-     * Returns the map of imports. The map maps the type name to the package
-     * name. To the map are added packages for <code>genType</code> and for all
-     * enclosed types, constants, methods (parameter types, return values),
+     * Returns the map of imports. The map maps the type name to the package name. To the map are added packages
+     * for <code>genType</code> and for all enclosed types, constants, methods (parameter types, return values),
      * implemented types.
      *
-     * @param genType
-     *            generated type for which the map of the imports is created
+     * @param genType generated type for which the map of the imports is created
      * @return map of the necessary imports
-     * @throws IllegalArgumentException
-     *             if <code>genType</code> equals <code>null</code>
+     * @throws IllegalArgumentException if <code>genType</code> equals <code>null</code>
      */
     static Map<String, JavaTypeName> createImports(final GeneratedType genType) {
         if (genType == null) {
@@ -97,18 +90,12 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Evaluates if it is necessary to add the package name for
-     * <code>type</code> to the map of imports for <code>parentGenType</code>.
-     * If it is so the package name is saved to the map <code>imports</code>.
+     * Evaluates if it is necessary to add the package name for <code>type</code> to the map of imports for
+     * <code>parentGenType</code>. If it is so the package name is saved to the map <code>imports</code>.
      *
-     * @param parentGenType
-     *            generated type for which is the map of the necessary imports
-     *            built
-     * @param type
-     *            JAVA <code>Type</code> for which is the necessary of the
-     *            package import evaluated
-     * @param imports
-     *            map of the imports for <code>parentGenType</code>
+     * @param parentGenType generated type for which is the map of the necessary imports built
+     * @param type JAVA <code>Type</code> for which is the necessary of the package import evaluated
+     * @param imports map of the imports for <code>parentGenType</code>
      * @throws IllegalArgumentException
      *             <ul>
      *             <li>if the <code>parentGenType</code> equals
@@ -157,14 +144,11 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Checks if the constant with the name <code>constName</code> is in the
-     * list of the constant definition for <code>genTO</code>.
+     * Checks if the constant with the name <code>constName</code> is in the list of the constant definition for
+     * <code>genTO</code>.
      *
-     * @param constName
-     *            string with the name of constant which is sought
-     * @param genTO
-     *            generated transfer object in which is <code>constName</code>
-     *            sought
+     * @param constName string with the name of constant which is sought
+     * @param genTO generated transfer object in which is <code>constName</code> sought
      * @return boolean value
      *         <ul>
      *         <li>true - if <code>constName</code> is in the list of the
@@ -191,14 +175,11 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Creates the map which maps the type name to package name and contains
-     * only package names for enclosed types of <code>genType</code> and
-     * recursively their enclosed types.
+     * Creates the map which maps the type name to package name and contains only package names for enclosed types
+     * of <code>genType</code> and recursively their enclosed types.
      *
-     * @param genType
-     *            JAVA <code>Type</code> for which is the map created
-     * @return map of the package names for all the enclosed types and
-     *         recursively their enclosed types
+     * @param genType JAVA <code>Type</code> for which is the map created
+     * @return map of the package names for all the enclosed types and recursively their enclosed types
      */
     static Map<String, String> createChildImports(final GeneratedType genType) {
         Map<String, String> childImports = new LinkedHashMap<>();
@@ -210,19 +191,13 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Builds the string which contains either the full path to the type
-     * (package name with type) or only type name if the package is among
-     * <code>imports</code>.
+     * Builds the string which contains either the full path to the type (package name with type) or only type name
+     * if the package is among <code>imports</code>.
      *
-     * @param parentGenType
-     *            generated type which contains <code>type</code>
-     * @param type
-     *            JAVA <code>Type</code> for which is the string with type info
-     *            generated
-     * @param imports
-     *            map of necessary imports for <code>parentGenType</code>
-     * @return string with type name for <code>type</code> in the full format or
-     *         in the short format
+     * @param parentGenType generated type which contains <code>type</code>
+     * @param type JAVA <code>Type</code> for which is the string with type info generated
+     * @param imports map of necessary imports for <code>parentGenType</code>
+     * @return string with type name for <code>type</code> in the full format or in the short format
      * @throws IllegalArgumentException
      *             <ul>
      *             <li>if the <code>type</code> equals <code>null</code></li>
@@ -257,19 +232,13 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Adds actual type parameters from <code>type</code> to
-     * <code>builder</code> if <code>type</code> is
+     * Adds actual type parameters from <code>type</code> to <code>builder</code> if <code>type</code> is
      * <code>ParametrizedType</code>.
      *
-     * @param builder
-     *            string builder which contains type name
-     * @param type
-     *            JAVA <code>Type</code> for which is the string with type info
-     *            generated
-     * @param parentGenType
-     *            generated type which contains <code>type</code>
-     * @param imports
-     *            map of necessary imports for <code>parentGenType</code>
+     * @param builder string builder which contains type name
+     * @param type JAVA <code>Type</code> for which is the string with type info generated
+     * @param parentGenType generated type which contains <code>type</code>
+     * @param imports map of necessary imports for <code>parentGenType</code>
      * @return if <code>type</code> is of the type <code>ParametrizedType</code> <br />
      *         <li>then <code>builder</code> + actual <code>type</code>
      *         parameters</li> <li>else only <code>builder</code></li>
@@ -279,37 +248,31 @@ public final class GeneratorUtil {
         if (type instanceof ParameterizedType) {
             final ParameterizedType pType = (ParameterizedType) type;
             final Type[] pTypes = pType.getActualTypeArguments();
-            builder.append("<");
-            builder.append(getParameters(parentGenType, pTypes, imports));
-            builder.append(">");
+            builder.append('<').append(getParameters(parentGenType, pTypes, imports)).append('>');
         }
         return builder;
     }
 
     /**
-     * Generates the string with all actual type parameters from
-     * <code>pTypes</code>
+     * Generates the string with all actual type parameters from <code>pTypes</code>.
      *
-     * @param parentGenType
-     *            generated type for which is the JAVA code generated
-     * @param pTypes
-     *            array of <code>Type</code> instances = actual type parameters
-     * @param availableImports
-     *            map of imports for <code>parentGenType</code>
+     * @param parentGenType generated type for which is the JAVA code generated
+     * @param paramTypes array of <code>Type</code> instances = actual type parameters
+     * @param availableImports map of imports for <code>parentGenType</code>
      * @return string with all actual type parameters from <code>pTypes</code>
      */
-    private static String getParameters(final GeneratedType parentGenType, final Type[] pTypes,
+    private static String getParameters(final GeneratedType parentGenType, final Type[] paramTypes,
                                         final Map<String, JavaTypeName> availableImports) {
 
-        if (pTypes == null || pTypes.length == 0) {
+        if (paramTypes == null || paramTypes.length == 0) {
             return "?";
         }
         final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < pTypes.length; i++) {
-            final Type t = pTypes[i];
+        for (int i = 0; i < paramTypes.length; i++) {
+            final Type t = paramTypes[i];
 
             String separator = COMMA;
-            if (i == pTypes.length - 1) {
+            if (i == paramTypes.length - 1) {
                 separator = "";
             }
 
@@ -328,14 +291,11 @@ public final class GeneratorUtil {
     /**
      * Returns the reference to highest (top parent) Generated Transfer Object.
      *
-     * @param childTransportObject
-     *            is generated transfer object which can be extended by other
-     *            generated transfer object
-     * @return in first case that <code>childTransportObject</code> isn't
-     *         extended then <code>childTransportObject</code> is returned. In
-     *         second case the method is recursive called until first case.
-     * @throws IllegalArgumentException
-     *             if <code>childTransportObject</code> equals <code>null</code>
+     * @param childTransportObject is generated transfer object which can be extended by other generated transfer object
+     * @return in first case that <code>childTransportObject</code> is not extended then
+     *         <code>childTransportObject</code> is returned. In second case the method is recursive called until first
+     *         case.
+     * @throws IllegalArgumentException if <code>childTransportObject</code> equals <code>null</code>
      */
     static GeneratedTransferObject getTopParentTransportObject(final GeneratedTransferObject childTransportObject) {
         if (childTransportObject == null) {
@@ -343,19 +303,16 @@ public final class GeneratorUtil {
         }
         if (childTransportObject.getSuperType() == null) {
             return childTransportObject;
-        } else {
-            return getTopParentTransportObject(childTransportObject.getSuperType());
         }
+
+        return getTopParentTransportObject(childTransportObject.getSuperType());
     }
 
     /**
-     * Selects from input list of properties only those which have read only
-     * attribute set to true.
+     * Selects from input list of properties only those which have read only attribute set to true.
      *
-     * @param properties
-     *            list of properties of generated transfer object
-     * @return subset of <code>properties</code> which have read only attribute
-     *         set to true
+     * @param properties list of properties of generated transfer object
+     * @return subset of <code>properties</code> which have read only attribute set to true
      */
     static List<GeneratedProperty> resolveReadOnlyPropertiesFromTO(final List<GeneratedProperty> properties) {
         List<GeneratedProperty> readOnlyProperties = new ArrayList<>();
@@ -370,16 +327,12 @@ public final class GeneratorUtil {
     }
 
     /**
-     * Returns the list of the read only properties of all extending generated
-     * transfer object from <code>genTO</code> to highest parent generated
-     * transfer object
+     * Returns the list of the read only properties of all extending generated transfer object from <code>genTO</code>
+     * to highest parent generated transfer object.
      *
-     * @param genTO
-     *            generated transfer object for which is the list of read only
-     *            properties generated
-     * @return list of all read only properties from actual to highest parent
-     *         generated transfer object. In case when extension exists the
-     *         method is recursive called.
+     * @param genTO generated transfer object for which is the list of read only properties generated
+     * @return list of all read only properties from actual to highest parent generated transfer object. In case when
+     *         extension exists the method is recursive called.
      */
     static List<GeneratedProperty> getPropertiesOfAllParents(final GeneratedTransferObject genTO) {
         List<GeneratedProperty> propertiesOfAllParents = new ArrayList<>();

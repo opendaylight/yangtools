@@ -38,12 +38,12 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
         // Test if all sources are generated from module foo
         File parent = new File(sourcesOutputDir, NS_FOO);
         assertFilesCount(parent, 6);
-        File fooData = new File(parent, "FooData.java");
-        File foo_gr1 = new File(parent, "FooGr1.java");
-        File nodes = new File(parent, "Nodes.java");
-        File nodesBuilder = new File(parent, "NodesBuilder.java");
+        final File fooData = new File(parent, "FooData.java");
+        final File fooGr1 = new File(parent, "FooGr1.java");
+        final File nodes = new File(parent, "Nodes.java");
+        final File nodesBuilder = new File(parent, "NodesBuilder.java");
         assertTrue(fooData.exists());
-        assertTrue(foo_gr1.exists());
+        assertTrue(fooGr1.exists());
         assertTrue(nodes.exists());
         assertTrue(nodesBuilder.exists());
 

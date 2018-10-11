@@ -8,35 +8,28 @@
 package org.opendaylight.mdsal.binding.java.api.generator;
 
 /**
- *
  * Various constants when generating JAVA source code.
- *
  */
 final class Constants {
-
     public static final String COMMA = ",";
     public static final String DOT = ".";
 
     /**
-     * Name or prefix (multiple patterns in builder class as composed with '_'
-     * and upper case of the field name) of the class constant which contains list
-     * of <code>Pattern</code> instances. The type of this constant is Pattern[]
-     * for more than one pattern, or Pattern if there is only a single one.
+     * Name or prefix (multiple patterns in builder class as composed with '_' and upper case of the field name)
+     * of the class constant which contains list of <code>Pattern</code> instances. The type of this constant is
+     * Pattern[] for more than one pattern, or Pattern if there is only a single one.
      */
     public static final String MEMBER_PATTERN_LIST = "patterns";
 
     /**
-     * Name or prefix (multiple patterns in builder class as composed with '_'
-     * and upper case of the field name) of the class constant which contains a list
-     * of XSD regular expression strings. The type of this constant is String[]
-     * (or String for single strings) and it corresponds to {@link #MEMBER_PATTERN_LIST}
-     * in both size and ordering.
+     * Name or prefix (multiple patterns in builder class as composed with '_' and upper case of the field name)
+     * of the class constant which contains a list of XSD regular expression strings. The type of this constant is
+     * String[] (or String for single strings) and it corresponds to {@link #MEMBER_PATTERN_LIST} in both size
+     * and ordering.
      */
     public static final String MEMBER_REGEX_LIST = "regexes";
 
-    /**
-     * It doesn't have the sense to create the instances of this class.
-     */
     private Constants() {
+
     }
 }

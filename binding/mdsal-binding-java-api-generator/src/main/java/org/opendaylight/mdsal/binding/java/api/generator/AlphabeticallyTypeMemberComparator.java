@@ -11,15 +11,15 @@ import java.util.Comparator;
 import org.opendaylight.mdsal.binding.model.api.TypeMember;
 
 /**
- * Alphabetically type member {@link Comparator} which provides sorting by name for type members
- * (variables and methods) in generated class.
+ * Alphabetically type member {@link Comparator} which provides sorting by name for type members (variables and methods)
+ * in a generated class.
  *
- * @param <T>
+ * @param <T> TypeMember type
  */
-public class AlphabeticallyTypeMemberComparator<T extends TypeMember> implements Comparator<T>{
+public class AlphabeticallyTypeMemberComparator<T extends TypeMember> implements Comparator<T> {
 
     @Override
-    public int compare(T member1, T member2) {
+    public int compare(final T member1, final T member2) {
         return member1.getName().compareTo(member2.getName());
     }
 }

@@ -26,7 +26,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Generates files with JAVA source codes for every specified type.
- *
  */
 public final class GeneratorJavaFile {
     public enum FileKind {
@@ -73,14 +72,11 @@ public final class GeneratorJavaFile {
     private final Collection<? extends Type> types;
 
     /**
-     * Creates instance of this class with the set of <code>types</code> for
-     * which the JAVA code is generated. Generator instantiated this way uses
-     * the default build context, e.g. it will re-generate any and all files.
+     * Creates instance of this class with the set of <code>types</code> for which the JAVA code is generated. Generator
+     * instantiated this way uses the default build context, e.g. it will re-generate any and all files. The instances
+     * of concrete JAVA code generator are created.
      *
-     * The instances of concrete JAVA code generator are created.
-     *
-     * @param types
-     *            set of types for which JAVA code should be generated
+     * @param types set of types for which JAVA code should be generated
      */
     public GeneratorJavaFile(final Collection<? extends Type> types) {
         this.types = Preconditions.checkNotNull(types);
@@ -122,17 +118,13 @@ public final class GeneratorJavaFile {
     }
 
     /**
-     * Creates the package directory path as concatenation of
-     * <code>parentDirectory</code> and parsed <code>packageName</code>. The
-     * parsing of <code>packageName</code> is realized as replacement of the
-     * package name dots with the file system separator.
+     * Creates the package directory path as concatenation of <code>parentDirectory</code> and parsed
+     * <code>packageName</code>. The parsing of <code>packageName</code> is realized as replacement of the package name
+     * dots with the file system separator.
      *
-     * @param parentDirectory
-     *            <code>File</code> object with reference to parent directory
-     * @param packageName
-     *            string with the name of the package
-     * @return <code>File</code> object which refers to the new directory for
-     *         package <code>packageName</code>
+     * @param parentDirectory <code>File</code> object with reference to parent directory
+     * @param packageName string with the name of the package
+     * @return <code>File</code> object which refers to the new directory for package <code>packageName</code>
      */
     public static File packageToDirectory(final File parentDirectory, final String packageName) {
         if (packageName == null) {

@@ -24,13 +24,13 @@ abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
     private static final Map<String, AbstractRangeGenerator<?>> GENERATORS;
 
-    private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> b,
+    private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> builder,
             final AbstractRangeGenerator<?> generator) {
-        b.put(generator.getTypeClass().getCanonicalName(), generator);
+        builder.put(generator.getTypeClass().getCanonicalName(), generator);
     }
 
     static {
-        final Builder<String, AbstractRangeGenerator<?>> b = ImmutableMap.<String, AbstractRangeGenerator<?>> builder();
+        final Builder<String, AbstractRangeGenerator<?>> b = ImmutableMap.<String, AbstractRangeGenerator<?>>builder();
         addGenerator(b, new ByteRangeGenerator());
         addGenerator(b, new ShortRangeGenerator());
         addGenerator(b, new IntegerRangeGenerator());

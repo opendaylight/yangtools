@@ -7,8 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-abstract class AbstractSubIntegerRangeGenerator<T extends Number & Comparable<T>> extends AbstractPrimitiveRangeGenerator<T> {
-    protected AbstractSubIntegerRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue, final T maxValue) {
+abstract class AbstractSubIntegerRangeGenerator<T extends Number & Comparable<T>>
+        extends AbstractPrimitiveRangeGenerator<T> {
+    AbstractSubIntegerRangeGenerator(final Class<T> typeClass, final String primitiveName, final T minValue,
+            final T maxValue) {
         super(typeClass, primitiveName, minValue, maxValue);
     }
 

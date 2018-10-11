@@ -31,7 +31,8 @@ public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("union-typedef");
         final List<Type> types = generateTestSources("/compilation/union-typedef", sourcesOutputDir);
 
-        final boolean isUsedImport = containsImport("org.opendaylight.yang.gen.v1.org.opendaylight.yangtools.union.typedef.rev130208.TypedefUnion");
+        final boolean isUsedImport = containsImport(
+            "org.opendaylight.yang.gen.v1.org.opendaylight.yangtools.union.typedef.rev130208.TypedefUnion");
         assertFalse(String.format("Class shouldn't contain import for this type '%s'", types.get(1).getName()),
                 isUsedImport);
 
@@ -46,7 +47,9 @@ public class UnionTypedefUnusedImportTest extends BaseCompilationTest {
     }
 
     private static boolean containsImport(final String fullImport) throws URISyntaxException, IOException {
-        final String filePath = GENERATOR_OUTPUT_PATH + FS + "union-typedef" + FS + "org" + FS + "opendaylight" + FS + "yang" + FS + "gen" + FS + "v1" + FS + "org" + FS + "opendaylight" + FS + "yangtools" + FS + "union" + FS + "typedef" + FS + "rev141124" + FS + "TypedefUnionBuilder.java";
+        final String filePath = GENERATOR_OUTPUT_PATH + FS + "union-typedef" + FS + "org" + FS + "opendaylight" + FS
+                + "yang" + FS + "gen" + FS + "v1" + FS + "org" + FS + "opendaylight" + FS + "yangtools" + FS + "union"
+                + FS + "typedef" + FS + "rev141124" + FS + "TypedefUnionBuilder.java";
         final String fileContent = readFile(filePath, StandardCharsets.UTF_8);
 
         if (fileContent.contains(fullImport)) {

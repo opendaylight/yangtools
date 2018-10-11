@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -17,7 +16,7 @@ import org.junit.Test;
 public class ConstantsTest {
 
     @Test
-    public void constructTest() throws Throwable {
+    public void constructTest() throws ReflectiveOperationException {
         final Constructor<?> constructor = Constants.class.getDeclaredConstructor();
         assertFalse(constructor.isAccessible());
         constructor.setAccessible(true);

@@ -11,11 +11,9 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.EnumGenerator;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
 public class EnumGeneratorTest {
-
     @Test
     public void basicTest() throws Exception {
         assertEquals("", new EnumGenerator().generate(mock(Type.class)));

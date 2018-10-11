@@ -35,65 +35,65 @@ public class BuilderGeneratorTest {
     public void builderTemplateGenerateToStringWithPropertyTest() {
         final GeneratedType genType = mockGenType("get" + TEST);
 
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(genType).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    CodeHelpers.appendValue(helper, \"_test\", _test);\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(genType).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutAnyPropertyTest() throws Exception {
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(mockGenType(TEST)).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(mockGenType(TEST)).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesTest() throws Exception {
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
-                "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(mockGenTypeMoreMeth("get" + TEST)).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n"
+                + "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(mockGenTypeMoreMeth("get" + TEST)).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithoutPropertyWithAugmentTest() throws Exception {
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(mockAugment(mockGenType(TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithPropertyWithAugmentTest() throws Exception {
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"_test\", _test);\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    CodeHelpers.appendValue(helper, \"_test\", _test);\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(mockAugment(mockGenType("get" + TEST))).toString());
     }
 
     @Test
     public void builderTemplateGenerateToStringWithMorePropertiesWithAugmentTest() throws Exception {
-        assertEquals("@Override\n" +
-                "public String toString() {\n" +
-                "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n" +
-                "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n" +
-                "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n" +
-                "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n" +
-                "    return helper.toString();\n" +
-                "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
+        assertEquals("@Override\n"
+                + "public String toString() {\n"
+                + "    final MoreObjects.ToStringHelper helper = MoreObjects.toStringHelper(\"test\");\n"
+                + "    CodeHelpers.appendValue(helper, \"_test1\", _test1);\n"
+                + "    CodeHelpers.appendValue(helper, \"_test2\", _test2);\n"
+                + "    CodeHelpers.appendValue(helper, \"augmentation\", augmentation.values());\n"
+                + "    return helper.toString();\n"
+                + "}\n", genToString(mockAugment(mockGenTypeMoreMeth("get" + TEST))).toString());
     }
 
     private static GeneratedType mockAugment(final GeneratedType genType) {

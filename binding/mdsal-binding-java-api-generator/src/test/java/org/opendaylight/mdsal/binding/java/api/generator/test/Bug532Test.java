@@ -78,11 +78,11 @@ public class Bug532Test extends BaseCompilationTest {
         Object actualKey = linksBuilderClass.getDeclaredMethod("key").invoke(linksBuilderTested);
         Object actualId = linksBuilderClass.getDeclaredMethod("getId").invoke(linksBuilderTested);
         Object actualName = linksBuilderClass.getDeclaredMethod("getName").invoke(linksBuilderTested);
-        Object actualSize = linksBuilderClass.getDeclaredMethod("getSize").invoke(linksBuilderTested);
-        Object actualLevel = linksBuilderClass.getDeclaredMethod("getLevel").invoke(linksBuilderTested);
-        Object actualLinksId = linksBuilderClass.getDeclaredMethod("getLinksId").invoke(linksBuilderTested);
-        Object actualNode = linksBuilderClass.getDeclaredMethod("getNode").invoke(linksBuilderTested);
-        Object actualNodeList = linksBuilderClass.getDeclaredMethod("getNodeList").invoke(linksBuilderTested);
+        final Object actualSize = linksBuilderClass.getDeclaredMethod("getSize").invoke(linksBuilderTested);
+        final Object actualLevel = linksBuilderClass.getDeclaredMethod("getLevel").invoke(linksBuilderTested);
+        final Object actualLinksId = linksBuilderClass.getDeclaredMethod("getLinksId").invoke(linksBuilderTested);
+        final Object actualNode = linksBuilderClass.getDeclaredMethod("getNode").invoke(linksBuilderTested);
+        final Object actualNodeList = linksBuilderClass.getDeclaredMethod("getNodeList").invoke(linksBuilderTested);
 
         // test
         assertEquals(expectedKey, actualKey);

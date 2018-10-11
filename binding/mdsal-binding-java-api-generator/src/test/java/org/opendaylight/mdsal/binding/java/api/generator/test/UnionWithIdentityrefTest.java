@@ -18,10 +18,8 @@ import java.net.URLClassLoader;
 import org.junit.Test;
 
 /**
- * union constructor with indentityref
- * previously identityref was ignored so that there is no constructor
- * for indentityref
- *
+ * Union constructor with indentityref. Previously identityref was ignored so that there is no constructor for
+ * identityref.
  */
 public class UnionWithIdentityrefTest extends BaseCompilationTest {
 
@@ -35,12 +33,16 @@ public class UnionWithIdentityrefTest extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> identBaseClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.yang.union.test.rev160509.IdentBase", true, loader);
-        Class<?> identOneClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.yang.union.test.rev160509.IdentOne", true, loader);
-        Class<?> unionTypeClass = Class.forName(CompilationTestUtils.BASE_PKG + ".urn.opendaylight.yang.union.test.rev160509.UnionType", true, loader);
+        Class<?> identBaseClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.yang.union.test.rev160509.IdentBase", true, loader);
+        Class<?> identOneClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.yang.union.test.rev160509.IdentOne", true, loader);
+        Class<?> unionTypeClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".urn.opendaylight.yang.union.test.rev160509.UnionType", true, loader);
 
         // test UnionType with IdentOne argument
-        Constructor<?> unionTypeIdentBaseConstructor = CompilationTestUtils.assertContainsConstructor(unionTypeClass, Class.class);
+        Constructor<?> unionTypeIdentBaseConstructor = CompilationTestUtils.assertContainsConstructor(unionTypeClass,
+            Class.class);
         Object unionType = unionTypeIdentBaseConstructor.newInstance(identOneClass);
 
         Method getUint8 = unionTypeClass.getDeclaredMethod("getUint8");

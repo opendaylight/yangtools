@@ -7,19 +7,23 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import org.junit.Test;
 
 public class LengthGeneratorTest {
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void constructTest() throws Throwable {
+    @Test
+    public void constructTest() throws ReflectiveOperationException {
         final Constructor<LengthGenerator> constructor = LengthGenerator.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();
-        } catch (Exception e) {
-            throw e.getCause();
+            fail();
+        } catch (InvocationTargetException e) {
+            assertTrue(e.getCause() instanceof UnsupportedOperationException);
         }
     }
 }

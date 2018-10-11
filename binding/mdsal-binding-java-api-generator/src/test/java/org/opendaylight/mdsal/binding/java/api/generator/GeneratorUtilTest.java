@@ -11,6 +11,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
@@ -19,6 +20,7 @@ import static org.opendaylight.mdsal.binding.model.util.TypeConstants.PATTERN_CO
 
 import com.google.common.collect.ImmutableList;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -94,14 +96,14 @@ public class GeneratorUtilTest {
         assertTrue(generated.get("tstName").equals("tst.package"));
     }
 
-    @Test(expected = UnsupportedOperationException.class)
-    public void constructTest() throws Throwable {
+    public void constructTest() throws ReflectiveOperationException {
         final Constructor<GeneratorUtil> constructor = GeneratorUtil.class.getDeclaredConstructor();
         constructor.setAccessible(true);
         try {
             constructor.newInstance();
-        } catch (Exception e) {
-            throw e.getCause();
+            fail();
+        } catch (InvocationTargetException e) {
+            assertTrue(e.getCause() instanceof UnsupportedOperationException);
         }
     }
 

@@ -12,10 +12,8 @@ import static org.junit.Assert.assertNotNull;
 
 import java.math.BigInteger;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.java.api.generator.BigIntegerRangeGenerator;
 
 public class BigIntegerRangeGeneratorTest {
-
     @Test
     public void basicTest() throws Exception {
         BigIntegerRangeGenerator generator = new BigIntegerRangeGenerator();

@@ -46,7 +46,8 @@ public class Bug5151Test extends BaseCompilationTest {
 
         final File fooDataFile = generatedFiles.get("FooData.java");
         assertNotNull(fooDataFile);
-        assertTrue(findInFile(fooDataFile, "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present"));
+        assertTrue(findInFile(fooDataFile,
+            "FooContainer</code> <code>fooContainer</code>, or <code>null</code> if not present"));
 
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }

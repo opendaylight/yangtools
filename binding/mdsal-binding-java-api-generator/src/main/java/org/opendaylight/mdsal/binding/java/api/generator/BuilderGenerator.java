@@ -39,11 +39,8 @@ import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 
 /**
- *
- * Transformator of the data from the virtual form to JAVA programming language.
- * The result source code represent java class. For generation of the source
- * code is used the template written in XTEND language.
- *
+ * Transformator of the data from the virtual form to JAVA programming language. The result source code represent java
+ * class. For generation of the source code is used the template written in XTEND language.
  */
 public final class BuilderGenerator implements CodeGenerator {
     private static final Comparator<MethodSignature> METHOD_COMPARATOR = new AlphabeticallyTypeMemberComparator<>();
@@ -63,13 +60,11 @@ public final class BuilderGenerator implements CodeGenerator {
     /**
      * Passes via list of implemented types in <code>type</code>.
      *
-     * @param type
-     *            JAVA <code>Type</code>
-     * @return boolean value which is true if any of implemented types is of the
-     *         type <code>Augmentable</code>.
+     * @param type JAVA <code>Type</code>
+     * @return boolean value which is true if any of implemented types is of the type <code>Augmentable</code>.
      */
     @Override
-    public boolean isAcceptable(Type type) {
+    public boolean isAcceptable(final Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             for (Type t : ((GeneratedType) type).getImplements()) {
                 // "rpc" and "grouping" elements do not implement Augmentable
@@ -85,12 +80,11 @@ public final class BuilderGenerator implements CodeGenerator {
     }
 
     /**
-     * Generates JAVA source code for generated type <code>Type</code>. The code
-     * is generated according to the template source code template which is
-     * written in XTEND language.
+     * Generates JAVA source code for generated type <code>Type</code>. The code is generated according to the template
+     * source code template which is written in XTEND language.
      */
     @Override
-    public String generate(Type type) {
+    public String generate(final Type type) {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             return templateForType((GeneratedType) type).generate();
         }
@@ -98,12 +92,12 @@ public final class BuilderGenerator implements CodeGenerator {
     }
 
     @Override
-    public String getUnitName(Type type) {
+    public String getUnitName(final Type type) {
         return type.getName() + BuilderTemplate.BUILDER;
     }
 
     @VisibleForTesting
-    static BuilderTemplate templateForType(GeneratedType type) {
+    static BuilderTemplate templateForType(final GeneratedType type) {
         final GeneratedType genType = type;
         final JavaTypeName origName = genType.getIdentifier();
 
@@ -123,7 +117,7 @@ public final class BuilderGenerator implements CodeGenerator {
             augmentType, getKey(genType));
     }
 
-    private static Type getKey(GeneratedType type) {
+    private static Type getKey(final GeneratedType type) {
         for (MethodSignature m : type.getMethodDefinitions()) {
             if (BindingMapping.IDENTIFIABLE_KEY_NAME.equals(m.getName())) {
                 return m.getReturnType();
@@ -138,7 +132,7 @@ public final class BuilderGenerator implements CodeGenerator {
      *
      * @returns set of method signature instances
      */
-    private static ParameterizedType createMethods(GeneratedType type, Set<MethodSignature> methods) {
+    private static ParameterizedType createMethods(final GeneratedType type, final Set<MethodSignature> methods) {
         methods.addAll(type.getMethodDefinitions());
         return collectImplementedMethods(type, methods, type.getImplements());
     }
@@ -150,8 +144,8 @@ public final class BuilderGenerator implements CodeGenerator {
      * @param methods set of method signatures
      * @param implementedIfcs list of implemented interfaces
      */
-    private static ParameterizedType collectImplementedMethods(GeneratedType type, Set<MethodSignature> methods,
-            List<Type> implementedIfcs) {
+    private static ParameterizedType collectImplementedMethods(final GeneratedType type,
+            final Set<MethodSignature> methods, final List<Type> implementedIfcs) {
         if (implementedIfcs == null || implementedIfcs.isEmpty()) {
             return null;
         }
@@ -181,7 +175,7 @@ public final class BuilderGenerator implements CodeGenerator {
      * @param set of method signature instances which should be transformed to list of properties
      * @return set of generated property instances which represents the getter <code>methods</code>
      */
-    private static Set<GeneratedProperty> propertiesFromMethods(Collection<MethodSignature> methods) {
+    private static Set<GeneratedProperty> propertiesFromMethods(final Collection<MethodSignature> methods) {
         if (methods == null || methods.isEmpty()) {
             return Collections.emptySet();
         }
@@ -200,14 +194,14 @@ public final class BuilderGenerator implements CodeGenerator {
      *
      * @param method method signature from which is the method name and return type obtained
      * @return generated property instance for the getter <code>method</code>
-     * @throws IllegalArgumentException<ul>
+     * @throws IllegalArgumentException <ul>
      *  <li>if the <code>method</code> equals <code>null</code></li>
      *  <li>if the name of the <code>method</code> equals <code>null</code></li>
      *  <li>if the name of the <code>method</code> is empty</li>
      *  <li>if the return type of the <code>method</code> equals <code>null</code></li>
      * </ul>
      */
-    private static GeneratedProperty propertyFromGetter(MethodSignature method) {
+    private static GeneratedProperty propertyFromGetter(final MethodSignature method) {
         checkArgument(method != null);
         checkArgument(method.getReturnType() != null);
         checkArgument(method.getName() != null);

@@ -14,8 +14,9 @@ import java.net.URLClassLoader;
 import org.junit.Test;
 
 /**
- * Previous construction of union constructor
+ * Test for BG-1276. Previous construction of union constructor
  *
+ * <p>
  * <code>
  * public IpAddress(Arg1 _arg1) {
  *     super();
@@ -25,15 +26,18 @@ import org.junit.Test;
  * }
  * </code>
  *
+ * <p>
  * was incorrect and setting
  *
+ * <p>
  * <code>this._value == null</code>
  *
+ * <p>
  * was replaced with setting _value to correct value, for example:
  *
+ * <p>
  * <code>this._value = arg1.getValue()</code> or
  * <code>this._value = _arg1.getValue().toString().toCharArray()</code>
- *
  */
 public class Bug1276Test extends BaseCompilationTest {
 
@@ -47,12 +51,17 @@ public class Bug1276Test extends BaseCompilationTest {
         CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
 
         ClassLoader loader = new URLClassLoader(new URL[] { compiledOutputDir.toURI().toURL() });
-        Class<?> ipAddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.IpAddress", true, loader);
-        Class<?> ipv4AddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.Ipv4Address", true, loader);
-        Class<?> hostClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.Host", true, loader);
+        Class<?> ipAddressClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.IpAddress",
+            true, loader);
+        Class<?> ipv4AddressClass = Class.forName(CompilationTestUtils.BASE_PKG
+            + ".test.yang.union.rev140715.Ipv4Address", true, loader);
+        Class<?> hostClass = Class.forName(CompilationTestUtils.BASE_PKG + ".test.yang.union.rev140715.Host", true,
+            loader);
 
-        Constructor<?> ipAddressConstructor = CompilationTestUtils.assertContainsConstructor(ipAddressClass, ipv4AddressClass);
-        Constructor<?> ipv4addressConstructor = CompilationTestUtils.assertContainsConstructor(ipv4AddressClass, String.class);
+        Constructor<?> ipAddressConstructor = CompilationTestUtils.assertContainsConstructor(ipAddressClass,
+            ipv4AddressClass);
+        Constructor<?> ipv4addressConstructor = CompilationTestUtils.assertContainsConstructor(ipv4AddressClass,
+            String.class);
         Constructor<?> hostConstructor = CompilationTestUtils.assertContainsConstructor(hostClass, ipAddressClass);
 
         // test IpAddress with Ipv4Address argument

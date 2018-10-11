@@ -34,10 +34,10 @@ public class NestedGroupingCompilationTest extends BaseCompilationTest {
 
         // Test if all sources are generated
         File parent = new File(sourcesOutputDir, NS_TEST);
-        File foo = new File(parent, "Foo.java");
-        File fooBuilder = new File(parent, "FooBuilder.java");
-        File testData = new File(parent, "TestData.java");
-        File fooDir = new File(parent, "foo");
+        final File foo = new File(parent, "Foo.java");
+        final File fooBuilder = new File(parent, "FooBuilder.java");
+        final File testData = new File(parent, "TestData.java");
+        final File fooDir = new File(parent, "foo");
         assertTrue(foo.exists());
         assertTrue(fooBuilder.exists());
         assertTrue(testData.exists());
