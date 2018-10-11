@@ -11,6 +11,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
@@ -65,6 +66,8 @@ final class NestedJavaGeneratedType extends AbstractJavaGeneratedType {
         return sb.toString();
     }
 
+    @SuppressFBWarnings(value = "NP_NONNULL_RETURN_VIOLATION",
+            justification = "SpotBugs confusion @Nullable vs @NonNullByDefault")
     private @Nullable List<String> findDescandantPath(final JavaTypeName type) {
         Optional<JavaTypeName> optEnclosing = type.immediatelyEnclosingClass();
         verify(optEnclosing.isPresent());

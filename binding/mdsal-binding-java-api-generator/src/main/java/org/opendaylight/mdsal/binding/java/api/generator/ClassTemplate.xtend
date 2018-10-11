@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.yang.common.Uint32
 import org.opendaylight.yangtools.yang.common.Uint64
 import org.opendaylight.yangtools.yang.common.Uint8
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings
 
 /**
  * Template for generating JAVA class.
@@ -387,6 +388,7 @@ class ClassTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
+    @SuppressFBWarnings(value = "DLS_DEAD_LOCAL_STORE", justification = "FOR with SEPARATOR, not needing for value")
     def protected bitsArgs() '''
         «JU_LIST.importedName»<«STRING.importedName»> properties = «Lists.importedName».newArrayList(«allProperties.propsAsArgs»);
         if (!properties.contains(defaultValue)) {
