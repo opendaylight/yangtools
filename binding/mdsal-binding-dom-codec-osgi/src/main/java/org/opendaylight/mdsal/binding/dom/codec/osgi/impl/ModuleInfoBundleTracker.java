@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -94,7 +95,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
             moduleInfoRegistry.updateService();
         }
 
-        LOG.trace("Bundle {} resultend in registrations {}", registrations);
+        LOG.trace("Bundle {} resultend in registrations {}", bundle, registrations);
         return registrations;
     }
 
@@ -160,6 +161,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
         }
     }
 
+    @SuppressFBWarnings("SLF4J_UNKNOWN_ARRAY")
     private static String logMessage(final String slfMessage, final Object... params) {
         LOG.info(slfMessage, params);
         return String.format(BRACE_PATTERN.matcher(slfMessage).replaceAll("%s"), params);

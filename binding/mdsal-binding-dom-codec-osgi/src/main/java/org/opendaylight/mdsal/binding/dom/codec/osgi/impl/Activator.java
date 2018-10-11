@@ -24,8 +24,8 @@ import org.osgi.util.tracker.BundleTracker;
 public final class Activator implements BundleActivator {
     private final List<ServiceRegistration<?>> registrations = new ArrayList<>(2);
 
-    private BundleTracker<Collection<ObjectRegistration<YangModuleInfo>>> moduleInfoResolvedBundleTracker;
-    private SimpleBindingRuntimeContextService service;
+    private BundleTracker<Collection<ObjectRegistration<YangModuleInfo>>> moduleInfoResolvedBundleTracker = null;
+    private SimpleBindingRuntimeContextService service = null;
 
     @Override
     public void start(final BundleContext context) {
