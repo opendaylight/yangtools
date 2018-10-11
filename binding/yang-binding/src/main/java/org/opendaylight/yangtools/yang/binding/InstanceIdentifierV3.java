@@ -80,7 +80,7 @@ class InstanceIdentifierV3<T extends DataObject> implements Externalizable {
         pathArguments = ImmutableList.copyOf(args);
     }
 
-    private Object readResolve() throws ObjectStreamException {
+    Object readResolve() throws ObjectStreamException {
         return new InstanceIdentifier<>(targetType, pathArguments, wildcarded, hash);
     }
 }

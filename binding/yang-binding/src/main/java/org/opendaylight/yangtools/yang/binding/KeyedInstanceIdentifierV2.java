@@ -41,7 +41,8 @@ final class KeyedInstanceIdentifierV2<T extends Identifiable<K> & DataObject, K 
         key = (K) in.readObject();
     }
 
-    private Object readResolve() throws ObjectStreamException {
+    @Override
+    Object readResolve() throws ObjectStreamException {
         return new KeyedInstanceIdentifier<>(getTargetType(), getPathArguments(), isWildcarded(), getHash(), key);
     }
 }

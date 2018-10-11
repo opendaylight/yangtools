@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.binding;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+
 /**
  * Object is unique identifier for another object.
  *
- * @param <T>
- *            Class of object for which this object is identifier
+ * @param <T> Class of object for which this object is identifier
  * @author ttkacik
  */
+@SuppressFBWarnings(value = "NM_SAME_SIMPLE_NAME_AS_INTERFACE", justification = "This is binding specialization")
 public interface Identifier<T extends Identifiable<?>> extends org.opendaylight.yangtools.concepts.Identifier {
 
 }
