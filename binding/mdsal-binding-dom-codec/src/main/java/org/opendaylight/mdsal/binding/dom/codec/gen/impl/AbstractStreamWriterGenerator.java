@@ -15,6 +15,8 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
 import java.util.Map.Entry;
 import javassist.CannotCompileException;
 import javassist.CtClass;
@@ -49,28 +51,38 @@ abstract class AbstractStreamWriterGenerator extends AbstractGenerator implement
 
     protected static final String SERIALIZE_METHOD_NAME = "serialize";
     protected static final AugmentableDispatchSerializer AUGMENTABLE = new AugmentableDispatchSerializer();
-    private static final Field FIELD_MODIFIERS;
+    private static final Field FIELD_MODIFIERS = getModifiersField();
 
     private final LoadingCache<Class<?>, DataObjectSerializerImplementation> implementations;
     private final CtClass[] serializeArguments;
     private final JavassistUtils javassist;
     private BindingRuntimeContext context;
 
-    static {
+    private static Field getModifiersField() {
         /*
          * Cache reflection access to field modifiers field. We need this to set
          * fix the static declared fields to final once we initialize them. If we
          * cannot get access, that's fine, too.
          */
-        Field field = null;
+        final Field field;
         try {
             field = Field.class.getDeclaredField("modifiers");
-            field.setAccessible(true);
         } catch (NoSuchFieldException | SecurityException e) {
-            LOG.warn("Could not get Field modifiers field, serializers run at decreased efficiency", e);
+            LOG.warn("Could not get modifiers field, serializers run at decreased efficiency", e);
+            return null;
         }
 
-        FIELD_MODIFIERS = field;
+        try {
+            AccessController.doPrivileged((PrivilegedAction<Void>) () -> {
+                field.setAccessible(true);
+                return null;
+            });
+        } catch (SecurityException e) {
+            LOG.warn("Could not get access to modifiers field, serializers run at decreased efficiency", e);
+            return null;
+        }
+
+        return field;
     }
 
     protected AbstractStreamWriterGenerator(final JavassistUtils utils) {

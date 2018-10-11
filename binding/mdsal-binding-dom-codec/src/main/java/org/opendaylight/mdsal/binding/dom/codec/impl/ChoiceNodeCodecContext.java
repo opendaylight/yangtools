@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableListMultimap;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -35,7 +36,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -215,7 +215,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             return DataContainerCodecPrototype.from(childClass, childSchema.get(), factory());
         }
 
-        LOG.debug("Supplied class %s is not valid case in schema %s", childClass, getSchema());
+        LOG.debug("Supplied class {} is not valid case in schema {}", childClass, getSchema());
         return null;
     }
 
@@ -228,16 +228,15 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
             cazeProto = byYangCaseChild.get(arg);
         }
 
-        return childNonNull(cazeProto, arg,"Argument %s is not valid child of %s", arg, getSchema()).get()
+        return childNonNull(cazeProto, arg, "Argument %s is not valid child of %s", arg, getSchema()).get()
                 .yangPathArgumentChild(arg);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public D deserialize(final NormalizedNode<?, ?> data) {
-        Preconditions.checkArgument(data instanceof ChoiceNode);
-        final NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>> casted =
-                (NormalizedNodeContainer<?, ?, NormalizedNode<?, ?>>) data;
+        checkArgument(data instanceof ChoiceNode);
+        final ChoiceNode casted = (ChoiceNode) data;
         final NormalizedNode<?, ?> first = Iterables.getFirst(casted.getValue(), null);
 
         if (first == null) {
@@ -255,7 +254,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
 
     @Override
     public PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        Preconditions.checkArgument(getDomPathArgument().equals(arg));
+        checkArgument(getDomPathArgument().equals(arg));
         return null;
     }
 

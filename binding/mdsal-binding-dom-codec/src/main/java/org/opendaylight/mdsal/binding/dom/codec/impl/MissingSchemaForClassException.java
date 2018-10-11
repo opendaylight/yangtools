@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.base.Preconditions;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 
@@ -21,6 +22,7 @@ public final class MissingSchemaForClassException extends MissingSchemaException
 
     private static final long serialVersionUID = 1L;
 
+    @SuppressFBWarnings("SE_TRANSIENT_FIELD_NOT_RESTORED")
     private final transient Class<?> bindingClass;
 
     private MissingSchemaForClassException(final Class<?> clz) {

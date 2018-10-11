@@ -9,10 +9,10 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
@@ -73,7 +73,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     private volatile BindingCodecContext codecContext;
 
     public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
-        this.generator = Preconditions.checkNotNull(generator);
+        this.generator = requireNonNull(generator);
         this.serializers = CacheBuilder.newBuilder().weakKeys().build(new GeneratorLoader());
     }
 
@@ -123,6 +123,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     @Override
+    @SuppressFBWarnings("BC_UNCONFIRMED_CAST")
     public ContainerNode toNormalizedNodeNotification(final Notification data) {
         // FIXME: Should the cast to DataObject be necessary?
         return serializeDataObject((DataObject) data,

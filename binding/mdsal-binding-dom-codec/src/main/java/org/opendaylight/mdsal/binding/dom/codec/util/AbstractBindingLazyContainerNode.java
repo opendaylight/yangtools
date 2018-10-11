@@ -104,7 +104,7 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
             return false;
         }
         final ContainerNode other = (ContainerNode) obj;
-        return delegate().equals(obj);
+        return delegate().equals(other);
     }
 
     @Override

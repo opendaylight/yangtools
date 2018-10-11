@@ -7,12 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkState;
+
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 
 final class NotificationCodecContext<D extends DataObject & Notification>
@@ -25,8 +25,8 @@ final class NotificationCodecContext<D extends DataObject & Notification>
 
     @Override
     public D deserialize(final NormalizedNode<?, ?> data) {
-        Preconditions.checkState(data instanceof ContainerNode);
-        return createBindingProxy((NormalizedNodeContainer<?, ?, ?>) data);
+        checkState(data instanceof ContainerNode);
+        return createBindingProxy((ContainerNode) data);
     }
 
     @Override

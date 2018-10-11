@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSortedMap;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -130,6 +131,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         }
     }
 
+    @SuppressFBWarnings("RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED")
     private void reloadAllAugmentations() {
         for (final Entry<AugmentationIdentifier, Type> augment : possibleAugmentations.entrySet()) {
             final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment.getValue());

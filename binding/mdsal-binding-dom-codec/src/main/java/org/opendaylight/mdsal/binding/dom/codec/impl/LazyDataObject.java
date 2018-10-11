@@ -7,9 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -51,8 +53,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     LazyDataObject(final DataObjectCodecContext<D,?> ctx, final NormalizedNodeContainer data) {
-        this.context = Preconditions.checkNotNull(ctx, "Context must not be null");
-        this.data = Preconditions.checkNotNull(data, "Data must not be null");
+        this.context = requireNonNull(ctx, "Context must not be null");
+        this.data = requireNonNull(data, "Data must not be null");
     }
 
     @Override
@@ -146,12 +148,13 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         Object cached = cachedData.get(method);
         if (cached == null) {
             final Object readedValue = context.getBindingChildValue(method, data);
-            if (readedValue == null) {
-                cached = NULL_VALUE;
-            } else {
-                cached = readedValue;
+            cached = readedValue == null ? NULL_VALUE : readedValue;
+
+            final Object raced = cachedData.putIfAbsent(method, cached);
+            if (raced != null) {
+                // Load/store raced, we should return the stored value
+                cached = raced;
             }
-            cachedData.putIfAbsent(method, cached);
         }
 
         return cached == NULL_VALUE ? null : cached;
@@ -174,14 +177,14 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
 
     @Override
     public Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object obj) {
-        Preconditions.checkArgument(this == Proxy.getInvocationHandler(obj),
+        checkArgument(this == Proxy.getInvocationHandler(obj),
                 "Supplied object is not associated with this proxy handler");
 
         return getAugmentationsImpl();
     }
 
     private Object getAugmentationImpl(final Class<?> cls) {
-        Preconditions.checkNotNull(cls, "Supplied augmentation must not be null.");
+        requireNonNull(cls, "Supplied augmentation must not be null.");
 
         final ImmutableMap<Class<? extends Augmentation<?>>, Augmentation<?>> aug = cachedAugmentations;
         if (aug != null) {

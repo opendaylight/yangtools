@@ -7,7 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -75,11 +78,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     private final SchemaRootCodecContext<?> root;
 
     BindingCodecContext(final BindingRuntimeContext context, final BindingNormalizedNodeCodecRegistry registry) {
-        this.context = Preconditions.checkNotNull(context, "Binding Runtime Context is required.");
+        this.context = requireNonNull(context, "Binding Runtime Context is required.");
         this.root = SchemaRootCodecContext.create(this);
         this.identityCodec = new IdentityCodec(context);
         this.instanceIdentifierCodec = new InstanceIdentifierCodec(this);
-        this.registry = Preconditions.checkNotNull(registry);
+        this.registry = requireNonNull(registry);
     }
 
     @Override
@@ -128,7 +131,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         DataContainerCodecContext<?,?> currentNode = root;
         for (final InstanceIdentifier.PathArgument bindingArg : binding.getPathArguments()) {
             currentNode = currentNode.bindingPathArgumentChild(bindingArg, builder);
-            Preconditions.checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.", binding);
+            checkArgument(currentNode != null, "Supplied Instance Identifier %s is not valid.", binding);
         }
         return currentNode;
     }
@@ -151,9 +154,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         ListNodeCodecContext<?> currentList = null;
 
         for (final YangInstanceIdentifier.PathArgument domArg : dom.getPathArguments()) {
-            Preconditions.checkArgument(currentNode instanceof DataContainerCodecContext<?,?>,
+            checkArgument(currentNode instanceof DataContainerCodecContext,
                 "Unexpected child of non-container node %s", currentNode);
-            final DataContainerCodecContext<?,?> previous = (DataContainerCodecContext<?,?>) currentNode;
+            final DataContainerCodecContext<?,?> previous = (DataContainerCodecContext<?, ?>) currentNode;
             final NodeCodecContext<?> nextNode = previous.yangPathArgumentChild(domArg);
 
             /*
@@ -165,7 +168,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
              * Identifier as Item or IdentifiableItem
              */
             if (currentList != null) {
-                Preconditions.checkArgument(currentList == nextNode,
+                checkArgument(currentList == nextNode,
                         "List should be referenced two times in YANG Instance Identifier %s", dom);
 
                 // We entered list, so now we have all information to emit
@@ -183,13 +186,13 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 // We do not add path argument for choice, since
                 // it is not supported by binding instance identifier.
                 currentNode = nextNode;
-            } else if (nextNode instanceof DataContainerCodecContext<?,?>) {
+            } else if (nextNode instanceof DataContainerCodecContext) {
                 if (bindingArguments != null) {
-                    bindingArguments.add(((DataContainerCodecContext<?,?>) nextNode).getBindingPathArgument(domArg));
+                    bindingArguments.add(((DataContainerCodecContext<?, ?>) nextNode).getBindingPathArgument(domArg));
                 }
                 currentNode = nextNode;
             } else if (nextNode instanceof LeafNodeCodecContext) {
-                LOG.debug("Instance identifier referencing a leaf is not representable (%s)", dom);
+                LOG.debug("Instance identifier referencing a leaf is not representable ({})", dom);
                 return null;
             }
         }
@@ -197,11 +200,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         // Algorithm ended in list as whole representation
         // we sill need to emit identifier for list
         if (currentNode instanceof ChoiceNodeCodecContext) {
-            LOG.debug("Instance identifier targeting a choice is not representable (%s)", dom);
+            LOG.debug("Instance identifier targeting a choice is not representable ({})", dom);
             return null;
         }
         if (currentNode instanceof CaseNodeCodecContext) {
-            LOG.debug("Instance identifier targeting a case is not representable (%s)", dom);
+            LOG.debug("Instance identifier targeting a case is not representable ({})", dom);
             return null;
         }
 
@@ -282,8 +285,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     private Codec<Object, Object> getCodec(final Class<?> valueType, final DataSchemaNode schema) {
-        Preconditions.checkArgument(schema instanceof TypedDataSchemaNode, "Unsupported leaf node type %s", schema);
-
+        checkArgument(schema instanceof TypedDataSchemaNode, "Unsupported leaf node type %s", schema);
         return getCodec(valueType, ((TypedDataSchemaNode)schema).getType());
     }
 
@@ -323,7 +325,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         } else if (typeDef instanceof LeafrefTypeDefinition) {
             final Entry<GeneratedType, WithStatus> typeWithSchema = context.getTypeWithSchema(valueType);
             final WithStatus schema = typeWithSchema.getValue();
-            Preconditions.checkState(schema instanceof TypeDefinition<?>);
+            checkState(schema instanceof TypeDefinition);
             return getCodec(valueType, (TypeDefinition<?>) schema);
         }
         return ValueTypeCodec.getCodecFor(valueType, typeDef);
