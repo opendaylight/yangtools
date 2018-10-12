@@ -25,6 +25,20 @@ module yt776 {
                 }
             }
         }
+
+        choice any-of {
+            leaf some-leaf {
+                type string;
+            }
+            list some-list {
+                key some-leaf;
+                min-elements 1;
+
+                leaf some-leaf {
+                    type string;
+                }
+            }
+        }
     }
 }
 
