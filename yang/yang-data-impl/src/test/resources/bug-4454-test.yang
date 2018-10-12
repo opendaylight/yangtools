@@ -36,4 +36,19 @@ module Bug4454Test {
             type string;
         }
     }
+
+    container presence {
+        presence "anchor point";
+
+        list min-max-list {
+            min-elements 2;
+            max-elements 3;
+
+            key "min-max-key-leaf";
+
+            leaf min-max-key-leaf {
+                type string;
+            }
+        }
+    }
 }

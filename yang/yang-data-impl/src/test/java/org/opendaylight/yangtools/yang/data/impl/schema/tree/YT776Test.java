@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.choiceBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.containerBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.Builders.leafSetBuilder;
@@ -50,6 +51,13 @@ public class YT776Test {
     private static final NodeIdentifierWithPredicates NESTED_ITEM = new NodeIdentifierWithPredicates(NESTED,
         ImmutableMap.of(NESTED_ATTRIBUTE, "foo"));
 
+    private static final NodeIdentifier ANY_OF = new NodeIdentifier(QName.create(MODULE, "any-of"));
+    private static final QName SOME_LEAF = QName.create(MODULE, "some-leaf");
+    private static final NodeIdentifier SOME_LEAF_ID = new NodeIdentifier(SOME_LEAF);
+    private static final QName SOME_LIST = QName.create(MODULE, "some-list");
+    private static final NodeIdentifier SOME_LIST_ID = new NodeIdentifier(SOME_LIST);
+    private static final NodeIdentifierWithPredicates SOME_LIST_ITEM = new NodeIdentifierWithPredicates(SOME_LIST,
+                ImmutableMap.of(SOME_LEAF, "foo"));
     private static SchemaContext SCHEMA_CONTEXT;
 
     private DataTree dataTree;
@@ -208,6 +216,31 @@ public class YT776Test {
             .build());
 
         mod.delete(YangInstanceIdentifier.create(BOX, OBJECT_LIST, OBJECT_ITEM, NESTED_LIST, NESTED_ITEM));
+
+        commit(mod);
+    }
+
+    @Test
+    public void testDisappearInChoice() throws DataValidationFailedException {
+        DataTreeModification mod = dataTree.takeSnapshot().newModification();
+        // Initialize choice with list
+        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+            .withChild(choiceBuilder().withNodeIdentifier(ANY_OF)
+                .withChild(mapBuilder().withNodeIdentifier(SOME_LIST_ID)
+                    .withChild(mapEntryBuilder()
+                        .withNodeIdentifier(SOME_LIST_ITEM)
+                        .withChild(leafBuilder().withNodeIdentifier(SOME_LEAF_ID).withValue("foo").build())
+                        .build())
+                    .build())
+                .build())
+            .build());
+        commit(mod);
+
+        // Now delete the single item, causing the list to fizzle, while creating the alterinative case
+        mod = dataTree.takeSnapshot().newModification();
+        mod.delete(YangInstanceIdentifier.create(BOX, ANY_OF, SOME_LIST_ID, SOME_LIST_ITEM));
+        mod.write(YangInstanceIdentifier.create(BOX, ANY_OF, SOME_LEAF_ID),
+            leafBuilder().withNodeIdentifier(SOME_LEAF_ID).withValue("foo").build());
 
         commit(mod);
     }

@@ -60,8 +60,11 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
         if (ret == null) {
             // Deal with the result moving on us
             ret = delegate.apply(modification, storeMeta, version);
-            checkChildren(modification.getIdentifier(), numOfChildrenFromTreeNode(ret));
+            if (ret.isPresent()) {
+                checkChildren(ret.get().getData());
+            }
         }
+
         return ret;
     }
 
@@ -77,9 +80,12 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
         final ModifiedNode modified = (ModifiedNode) modification;
 
         // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
-        // is immutable, so the result of validation will probably not change.
+        // is immutable, so the result of validation will probably not change. Note we should not be checking number
         final Optional<TreeNode> maybeApplied = delegate.apply(modified, current, version);
-        validateMinMaxElements(path, modified.getIdentifier(), numOfChildrenFromTreeNode(maybeApplied));
+        if (maybeApplied.isPresent()) {
+            // We only enforce min/max on present data and rely on MandatoryLeafEnforcer to take care of the empty case
+            validateMinMaxElements(path, maybeApplied.get().getData());
+        }
 
         // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
         // We know what the result of an apply operation is going to be *if* the following are kept unchanged:
@@ -94,7 +100,7 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
     void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
         delegate.verifyStructure(modification, verifyChildren);
         if (verifyChildren) {
-            checkChildren(modification.getIdentifier(), numOfChildrenFromValue(modification));
+            checkChildren(modification);
         }
     }
 
@@ -118,27 +124,27 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
         delegate.recursivelyVerifyStructure(value);
     }
 
-    private void validateMinMaxElements(final ModificationPath path, final PathArgument id, final int children)
+    private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
             throws DataValidationFailedException {
+        final PathArgument id = value.getIdentifier();
+        final int children = numOfChildrenFromValue(value);
         if (minElements > children) {
-            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements,
-                children, "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
+            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements, children,
+                "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
         }
         if (maxElements < children) {
-            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements,
-                children, "%s has too many elements (%s), can have at most %s", id, children, maxElements);
+            throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements, children,
+                "%s has too many elements (%s), can have at most %s", id, children, maxElements);
         }
     }
 
-    private void checkChildren(final PathArgument id, final int children) {
+    private void checkChildren(final NormalizedNode<?, ?> value) {
+        final PathArgument id = value.getIdentifier();
+        final int children = numOfChildrenFromValue(value);
         checkArgument(minElements <= children, "Node %s does not have enough elements (%s), needs at least %s", id,
                 children, minElements);
         checkArgument(maxElements >= children, "Node %s has too many elements (%s), can have at most %s", id, children,
                 maxElements);
-    }
-
-    private static int numOfChildrenFromTreeNode(final Optional<TreeNode> node) {
-        return node.isPresent() ? numOfChildrenFromValue(node.get().getData()) : 0;
     }
 
     private static int numOfChildrenFromValue(final NormalizedNode<?, ?> value) {
