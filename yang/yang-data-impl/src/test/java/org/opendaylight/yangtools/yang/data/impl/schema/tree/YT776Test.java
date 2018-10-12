@@ -37,12 +37,18 @@ public class YT776Test {
     private static final NodeIdentifier BOX = new NodeIdentifier(QName.create(MODULE, "box"));
     private static final QName OBJECT = QName.create(MODULE, "object");
     private static final QName OBJECT_ID = QName.create(MODULE, "object-id");
-    private static final NodeIdentifier OBJECT_LIST = new NodeIdentifier(QName.create(MODULE, "object"));
+    private static final NodeIdentifier OBJECT_LIST = new NodeIdentifier(OBJECT);
     private static final NodeIdentifierWithPredicates OBJECT_ITEM = new NodeIdentifierWithPredicates(OBJECT,
         ImmutableMap.of(OBJECT_ID, "1"));
     private static final LeafNode<?> OBJECT_ID_LEAF = leafBuilder().withNodeIdentifier(new NodeIdentifier(OBJECT_ID))
             .withValue("1").build();
     private static final NodeIdentifier ATTRIBUTES = new NodeIdentifier(QName.create(MODULE, "attributes"));
+
+    private static final QName NESTED = QName.create(MODULE, "nested");
+    private static final QName NESTED_ATTRIBUTE = QName.create(MODULE, "nested-attribute");
+    private static final NodeIdentifier NESTED_LIST = new NodeIdentifier(NESTED);
+    private static final NodeIdentifierWithPredicates NESTED_ITEM = new NodeIdentifierWithPredicates(NESTED,
+        ImmutableMap.of(NESTED_ATTRIBUTE, "foo"));
 
     private static SchemaContext SCHEMA_CONTEXT;
 
@@ -176,6 +182,32 @@ public class YT776Test {
                     .build())
                 .build())
             .build());
+
+        commit(mod);
+    }
+
+    @Test
+    public void testEmptyAndMergeOneWithListTouched() throws DataValidationFailedException {
+        final DataTreeModification mod = dataTree.takeSnapshot().newModification();
+        mod.write(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+            .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
+                .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
+                    .withChild(OBJECT_ID_LEAF)
+                    .build())
+                .build())
+            .build());
+        mod.merge(YangInstanceIdentifier.create(BOX), containerBuilder().withNodeIdentifier(BOX)
+            .withChild(mapBuilder().withNodeIdentifier(OBJECT_LIST)
+                .addChild(mapEntryBuilder().withNodeIdentifier(OBJECT_ITEM)
+                    .withChild(OBJECT_ID_LEAF)
+                    .withChild(leafSetBuilder().withNodeIdentifier(ATTRIBUTES)
+                        .withChildValue("object1")
+                        .build())
+                    .build())
+                .build())
+            .build());
+
+        mod.delete(YangInstanceIdentifier.create(BOX, OBJECT_LIST, OBJECT_ITEM, NESTED_LIST, NESTED_ITEM));
 
         commit(mod);
     }

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -38,8 +39,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         if (treeConfig.getTreeType() == TreeType.CONFIGURATION) {
-            Preconditions.checkArgument(schemaNode.isConfiguration(),
-                "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
+            checkArgument(schemaNode.isConfiguration(), "Supplied %s does not belongs to configuration tree.",
+                schemaNode.getPath());
         }
         if (schemaNode instanceof ContainerSchemaNode) {
             final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
@@ -94,7 +95,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
@@ -115,7 +116,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     protected final ModificationApplyOperation resolveChildOperation(final PathArgument child) {
         final Optional<ModificationApplyOperation> potential = getChild(child);
-        Preconditions.checkArgument(potential.isPresent(), "Operation for child %s is not defined.", child);
+        checkArgument(potential.isPresent(), "Operation for child %s is not defined.", child);
         return potential.get();
     }
 
@@ -204,8 +205,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                         : ModificationType.UNMODIFIED);
                 return modification.setSnapshot(Optional.empty());
             case TOUCH:
-                Preconditions.checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s",
-                    modification);
+                checkArgument(currentMeta.isPresent(), "Metadata not available for modification %s", modification);
                 return modification.setSnapshot(Optional.of(applyTouch(modification, currentMeta.get(),
                     version)));
             case MERGE:

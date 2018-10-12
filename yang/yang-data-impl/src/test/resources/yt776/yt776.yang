@@ -15,6 +15,15 @@ module yt776 {
                 min-elements 1;
                 max-elements 2;
             }
+
+            list nested {
+                key nested-attribute;
+                max-elements 1;
+
+                leaf nested-attribute {
+                    type string;
+                }
+            }
         }
     }
 }
