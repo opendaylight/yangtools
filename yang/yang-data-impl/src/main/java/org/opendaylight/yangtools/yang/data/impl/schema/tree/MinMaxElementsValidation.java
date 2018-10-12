@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -52,9 +51,8 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
         return new MinMaxElementsValidation(delegate, constraint.getMinElements(), constraint.getMaxElements());
     }
 
-    private void validateMinMaxElements(final ModificationPath path, final PathArgument id,
-            final NormalizedNode<?, ?> data) throws DataValidationFailedException {
-        final int children = numOfChildrenFromValue(data);
+    private void validateMinMaxElements(final ModificationPath path, final PathArgument id, final int children)
+            throws DataValidationFailedException {
         if (minElements > children) {
             throw new RequiredElementCountException(path.toInstanceIdentifier(), minElements, maxElements,
                 children, "%s does not have enough elements (%s), needs at least %s", id, children, minElements);
@@ -71,16 +69,19 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
             LOG.debug("Could not validate {}, does not implement expected class {}", nodeMod, ModifiedNode.class);
             return;
         }
-
         final ModifiedNode modification = (ModifiedNode) nodeMod;
 
-        // We need to actually perform the operation to get deal with merge in a sane manner. We know the modification
+        // We need to actually perform the operation to deal with merge in a sane manner. We know the modification
         // is immutable, so the result of validation will probably not change.
         final Optional<TreeNode> maybeApplied = delegate.apply(modification, current, version);
-        Verify.verify(maybeApplied.isPresent());
+        if (!maybeApplied.isPresent()) {
+            // The list may have disappeared on us, hence it counts as zero elements
+            validateMinMaxElements(path, modification.getIdentifier(), 0);
+            return;
+        }
 
         final TreeNode applied = maybeApplied.get();
-        validateMinMaxElements(path, modification.getIdentifier(), applied.getData());
+        validateMinMaxElements(path, modification.getIdentifier(), numOfChildrenFromValue(applied.getData()));
 
         // Everything passed. We now have a snapshot of the result node, it would be too bad if we just threw it out.
         // We know what the result of an apply operation is going to be *if* the following are kept unchanged:
