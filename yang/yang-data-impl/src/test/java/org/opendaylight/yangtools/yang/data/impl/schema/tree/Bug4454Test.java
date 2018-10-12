@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
+import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -57,12 +58,15 @@ public class Bug4454Test {
             .create(MASTER_CONTAINER_QNAME, "min-max-list-no-minmax");
     private static final QName MIN_MAX_KEY_LEAF_QNAME = QName.create(MASTER_CONTAINER_QNAME, "min-max-key-leaf");
     private static final QName MIN_MAX_VALUE_LEAF_QNAME = QName.create(MASTER_CONTAINER_QNAME, "min-max-value-leaf");
+    private static final QName PRESENCE_QNAME = QName.create(MASTER_CONTAINER_QNAME, "presence");
 
     private static final YangInstanceIdentifier MASTER_CONTAINER_PATH = YangInstanceIdentifier
             .of(MASTER_CONTAINER_QNAME);
     private static final YangInstanceIdentifier MIN_MAX_LIST_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH)
             .node(MIN_MAX_LIST_QNAME).build();
+    private static final YangInstanceIdentifier PRESENCE_PATH = YangInstanceIdentifier.of(PRESENCE_QNAME);
+    private static final YangInstanceIdentifier PRESENCE_MIN_MAX_LIST_PATH = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME);
     private static final YangInstanceIdentifier MIN_MAX_LIST_NO_MINMAX_PATH = YangInstanceIdentifier
             .builder(MASTER_CONTAINER_PATH)
             .node(MIN_MAX_LIST_QNAME_NO_MINMAX).build();
@@ -303,29 +307,24 @@ public class Bug4454Test {
     }
 
     @Test
-    public void minMaxListDeleteExceptionTest() {
+    public void minMaxListDeleteTest() throws DataValidationFailedException {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
-        Map<QName, Object> key = new HashMap<>();
-        key.put(MIN_MAX_KEY_LEAF_QNAME, "foo");
 
-        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "foo"));
 
         final YangInstanceIdentifier minMaxLeafFoo = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
-        key.clear();
-        key.put(MIN_MAX_KEY_LEAF_QNAME, "bar");
-
-        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "bar"));
 
         final YangInstanceIdentifier minMaxLeafBar = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
 
-        key.clear();
-        key.put(MIN_MAX_KEY_LEAF_QNAME, "baz");
-
-        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME, key);
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "baz"));
 
         final YangInstanceIdentifier minMaxLeafBaz = MASTER_CONTAINER_PATH
                 .node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
@@ -337,13 +336,54 @@ public class Bug4454Test {
         modificationTree.delete(minMaxLeafBar);
         modificationTree.delete(minMaxLeafBaz);
 
+        modificationTree.ready();
+
+        inMemoryDataTree.validate(modificationTree);
+        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare);
+
+        // Empty list should have disappeared, along with the container, as we are not enforcing root
+        final NormalizedNode<?, ?> data = inMemoryDataTree.takeSnapshot().readNode(YangInstanceIdentifier.EMPTY).get();
+        assertTrue(data instanceof ContainerNode);
+        assertEquals(0, ((ContainerNode) data).getValue().size());
+    }
+
+    @Test
+    public void minMaxListDeleteExceptionTest() throws DataValidationFailedException {
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+
+        NodeIdentifierWithPredicates mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "foo"));
+
+        final YangInstanceIdentifier minMaxLeafFoo = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "bar"));
+
+        final YangInstanceIdentifier minMaxLeafBar = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+
+        mapEntryPath2 = new NodeIdentifierWithPredicates(MIN_MAX_LIST_QNAME,
+            ImmutableMap.of(MIN_MAX_KEY_LEAF_QNAME, "baz"));
+
+        final YangInstanceIdentifier minMaxLeafBaz = PRESENCE_PATH.node(MIN_MAX_LIST_QNAME).node(mapEntryPath2);
+
+        modificationTree.write(PRESENCE_PATH, ImmutableNodes.containerNode(PRESENCE_QNAME));
+        modificationTree.write(PRESENCE_MIN_MAX_LIST_PATH, mapNodeFooWithNodes);
+        modificationTree.merge(PRESENCE_MIN_MAX_LIST_PATH, mapNodeBar);
+        modificationTree.merge(PRESENCE_MIN_MAX_LIST_PATH, mapNodeBaz);
+        modificationTree.delete(minMaxLeafFoo);
+        modificationTree.delete(minMaxLeafBar);
+        modificationTree.delete(minMaxLeafBaz);
+
         try {
+            // Unlike minMaxListDeleteTest(), presence container enforces the list to be present
             modificationTree.ready();
             fail("Should have failed with IAE");
         } catch (IllegalArgumentException e) {
             assertEquals("Node (urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
-                    + "revision=2015-02-02)min-max-list does not have enough elements (0), needs at least 1",
-                    e.getMessage());
+                    + "revision=2015-02-02)presence is missing mandatory descendant "
+                    + "/(urn:opendaylight:params:xml:ns:yang:list-constraints-validation-test-model?"
+                    + "revision=2015-02-02)min-max-list", e.getMessage());
         }
     }
 
