@@ -94,7 +94,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
