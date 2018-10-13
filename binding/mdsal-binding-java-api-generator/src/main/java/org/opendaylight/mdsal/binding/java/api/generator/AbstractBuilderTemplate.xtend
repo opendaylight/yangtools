@@ -79,11 +79,12 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
     '''
 
-    def protected final generateAugmentField(boolean isPrivate) '''
-        «IF augmentType !== null»
-            «IF isPrivate»private «ENDIF»«Map.importedName»<«Class.importedName»<? extends «augmentType.importedName»>, «augmentType.importedName»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
-        «ENDIF»
-    '''
+    def protected final generateAugmentField() {
+        val augmentTypeRef = augmentType.importedName
+        return '''
+           «Map.importedName»<«Class.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> «AUGMENTATION_FIELD» = «Collections.importedName».emptyMap();
+        '''
+    }
 
     override generateToString(Collection<GeneratedProperty> properties) '''
         «IF properties !== null»

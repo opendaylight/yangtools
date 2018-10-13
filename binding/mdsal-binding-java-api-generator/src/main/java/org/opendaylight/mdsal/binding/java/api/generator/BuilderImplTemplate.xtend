@@ -35,7 +35,9 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             «generateFields(true)»
 
-            «generateAugmentField(true)»
+            «IF augmentType !== null»
+                private «generateAugmentField()»
+            «ENDIF»
 
             «generateCopyConstructor(builderType, type)»
 

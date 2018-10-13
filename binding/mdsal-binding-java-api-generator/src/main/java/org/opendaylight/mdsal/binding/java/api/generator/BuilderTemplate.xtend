@@ -69,7 +69,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
 
             «constantsDeclarations()»
 
-            «generateAugmentField(false)»
+            «IF augmentType !== null»
+                «generateAugmentField()»
+            «ENDIF»
 
             «generateConstructorsFromIfcs()»
 
