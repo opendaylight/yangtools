@@ -361,6 +361,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         val augmentationHolderRef = AugmentationHolder.importedName
         val typeRef = targetType.importedName
         val hashMapRef = HashMap.importedName
+        val augmentTypeRef = augmentType.importedName
         return '''
             if (base instanceof «implTypeRef») {
                 «implTypeRef» impl = («implTypeRef») base;
@@ -369,9 +370,9 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 }
             } else if (base instanceof «augmentationHolderRef») {
                 @SuppressWarnings("unchecked")
-                «augmentationHolderRef»<«typeRef»> casted =(«augmentationHolderRef»<«typeRef»>) base;
-                if (!casted.augmentations().isEmpty()) {
-                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(casted.augmentations());
+                «Map.importedName»<«Class.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug =((«augmentationHolderRef»<«typeRef»>) base).augmentations();
+                if (!aug.isEmpty()) {
+                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(aug);
                 }
             }
         '''
