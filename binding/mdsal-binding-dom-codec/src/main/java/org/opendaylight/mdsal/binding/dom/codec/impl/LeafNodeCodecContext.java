@@ -61,7 +61,7 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     private static Object createDefaultObject(final DataSchemaNode schema, final Codec<Object, Object> codec,
                                               final SchemaContext schemaContext) {
         if (schema instanceof LeafSchemaNode) {
-            java.util.Optional<? extends Object> defaultValue = ((LeafSchemaNode) schema).getType().getDefaultValue();
+            Optional<? extends Object> defaultValue = ((LeafSchemaNode) schema).getType().getDefaultValue();
             TypeDefinition<?> type = ((LeafSchemaNode) schema).getType();
             if (defaultValue.isPresent()) {
                 if (type instanceof IdentityrefTypeDefinition) {

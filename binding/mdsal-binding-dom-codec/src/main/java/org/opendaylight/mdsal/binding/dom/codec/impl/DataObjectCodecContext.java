@@ -187,7 +187,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
             choice.addYangPathArgument(arg, builder);
 
-            final java.util.Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
+            final Optional<? extends Class<? extends DataObject>> caseType = arg.getCaseType();
             final Class<? extends DataObject> type = arg.getType();
             final DataContainerCodecContext<?, ?> caze;
             if (caseType.isPresent()) {
@@ -339,7 +339,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     Object getBindingChildValue(final Method method, final NormalizedNodeContainer domData) {
         final NodeCodecContext<?> childContext = byMethod.get(method).get();
         @SuppressWarnings("unchecked")
-        final java.util.Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
+        final Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
         if (domChild.isPresent()) {
             return childContext.deserializeObject(domChild.get());
         } else if (childContext instanceof LeafNodeCodecContext) {
@@ -377,7 +377,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             }
         }
         for (final DataContainerCodecPrototype<?> value : byStreamAugmented.values()) {
-            final java.util.Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
+            final Optional<NormalizedNode<?, ?>> augData = data.getChild(value.getYangArg());
             if (augData.isPresent()) {
                 map.put(value.getBindingClass(), value.get().deserializeObject(augData.get()));
             }

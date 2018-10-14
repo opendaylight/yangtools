@@ -201,7 +201,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
             // the augmentation the user is requesting -- otherwise a strict receiver would end up with a cryptic
             // ClassCastException.
             if (cls.isAssignableFrom(augCtx.getBindingClass())) {
-                final java.util.Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.getDomPathArgument());
+                final Optional<NormalizedNode<?, ?>> augData = data.getChild(augCtx.getDomPathArgument());
                 if (augData.isPresent()) {
                     return augCtx.deserialize(augData.get());
                 }
