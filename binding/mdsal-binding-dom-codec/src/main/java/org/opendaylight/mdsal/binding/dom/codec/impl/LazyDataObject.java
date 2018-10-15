@@ -83,7 +83,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         if (other == null) {
             return false;
         }
-        if (!context.getBindingClass().isAssignableFrom(other.getClass())) {
+        final Class<D> bindingClass = context.getBindingClass();
+        if (!bindingClass.isAssignableFrom(other.getClass())) {
             return false;
         }
         try {
@@ -103,7 +104,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                 }
             }
 
-            if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
+            if (Augmentable.class.isAssignableFrom(bindingClass)) {
                 if (!getAugmentationsImpl().equals(getAllAugmentations(other))) {
                     return false;
                 }
@@ -211,12 +212,13 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     }
 
     public String bindingToString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(context.getBindingClass()).omitNullValues();
+        final Class<D> bindingClass = context.getBindingClass();
+        final ToStringHelper helper = MoreObjects.toStringHelper(bindingClass).omitNullValues();
 
         for (final Method m : context.getHashCodeAndEqualsMethods()) {
             helper.add(m.getName(), getBindingData(m));
         }
-        if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
+        if (Augmentable.class.isAssignableFrom(bindingClass)) {
             helper.add("augmentations", getAugmentationsImpl());
         }
         return helper.toString();

@@ -29,9 +29,10 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
         super(prototype);
 
-        this.codec = factory().getPathArgumentCodec(getBindingClass(), getSchema());
+        final Class<D> bindingClass = getBindingClass();
+        this.codec = factory().getPathArgumentCodec(bindingClass, getSchema());
         try {
-            this.keyGetter = getBindingClass().getMethod(BindingMapping.IDENTIFIABLE_KEY_NAME);
+            this.keyGetter = bindingClass.getMethod(BindingMapping.IDENTIFIABLE_KEY_NAME);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }

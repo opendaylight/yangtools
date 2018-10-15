@@ -80,9 +80,10 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
 
-        this.leafChild = factory().getLeafNodes(getBindingClass(), getSchema());
+        final Class<D> bindingClass = getBindingClass();
+        this.leafChild = factory().getLeafNodes(bindingClass, getSchema());
 
-        final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(getBindingClass());
+        final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
         final SortedMap<Method, NodeContextSupplier> byMethodBuilder = new TreeMap<>(METHOD_BY_ALPHABET);
@@ -113,15 +114,14 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-
-        if (Augmentable.class.isAssignableFrom(getBindingClass())) {
+        if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
         } else {
             this.possibleAugmentations = ImmutableMap.of();
         }
         reloadAllAugmentations();
 
-        final Class<?> proxyClass = Proxy.getProxyClass(getBindingClass().getClassLoader(), getBindingClass(),
+        final Class<?> proxyClass = Proxy.getProxyClass(bindingClass.getClassLoader(), bindingClass,
             AugmentationHolder.class);
         try {
             proxyConstructor = MethodHandles.publicLookup().findConstructor(proxyClass, CONSTRUCTOR_TYPE)
