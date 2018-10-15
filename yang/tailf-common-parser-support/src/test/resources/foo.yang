@@ -1,0 +1,19 @@
+module foo {
+    namespace urn:foo;
+    prefix foo;
+
+    import "tailf-common" { prefix tailf; }
+
+    container foo {
+        tailf:action bar {
+
+        }
+    }
+
+    deviation /foo:foo/foo:bar/foo:input {
+        deviate add {
+            container baz;
+        }
+    }
+}
+
