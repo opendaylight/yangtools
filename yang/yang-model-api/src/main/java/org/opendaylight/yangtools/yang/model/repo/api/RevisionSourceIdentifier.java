@@ -12,7 +12,8 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
@@ -40,6 +41,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * and http://tools.ietf.org/html/rfc6022#section-3.1 ).
  */
 @Beta
+@NonNullByDefault
 public final class RevisionSourceIdentifier extends SourceIdentifier {
     private static final long serialVersionUID = 1L;
 
@@ -62,7 +64,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      * @param revision
      *            Revision of source, may be null
      */
-    RevisionSourceIdentifier(final String name, @Nullable final Revision revision) {
+    RevisionSourceIdentifier(final String name, final @Nullable Revision revision) {
         super(requireNonNull(name), revision);
     }
 
@@ -124,7 +126,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }

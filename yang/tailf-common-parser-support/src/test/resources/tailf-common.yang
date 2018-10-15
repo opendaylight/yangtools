@@ -1,0 +1,6 @@
+module tailf-common {
+    revision 2018-10-16;
+
+    extension action;
+}
+

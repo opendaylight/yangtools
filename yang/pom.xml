@@ -81,6 +81,10 @@
         <!-- RFC8040 (yang-data) metamodel support -->
         <module>rfc8040-model-api</module>
         <module>rfc8040-parser-support</module>
+
+        <!-- Tail-F tailf-common support (so far minimal) -->
+        <module>tailf-common-model-api</module>
+        <module>tailf-common-parser-support</module>
     </modules>
 
 </project>
