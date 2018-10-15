@@ -33,8 +33,10 @@ import java.util.concurrent.ConcurrentMap;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
+import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
@@ -283,12 +285,38 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     }
 
     private @Nullable DataContainerCodecPrototype<?> augmentationByClass(final @NonNull Class<?> childClass) {
-        final DataContainerCodecPrototype<?> firstTry = augmentationByClassOrEquivalentClass(childClass);
-        if (firstTry != null) {
-            return firstTry;
+        DataContainerCodecPrototype<?> lookup = augmentationByClassOrEquivalentClass(childClass);
+        if (lookup != null || !isPotentialAugmentation(childClass)) {
+            return lookup;
         }
+
+        // Attempt to reload all augmentations using TCCL and lookup again
         reloadAllAugmentations();
+        lookup = augmentationByClassOrEquivalentClass(childClass);
+        if (lookup != null) {
+            return lookup;
+        }
+
+        // Still no result, this can be caused by TCCL not being set up properly -- try the class's ClassLoader
+        // if it is present;
+        final ClassLoader loader = childClass.getClassLoader();
+        if (loader == null) {
+            return null;
+        }
+
+        LOG.debug("Class {} not loaded via TCCL, attempting to recover", childClass);
+        ClassLoaderUtils.runWithClassLoader(loader, this::reloadAllAugmentations);
         return augmentationByClassOrEquivalentClass(childClass);
+    }
+
+    private boolean isPotentialAugmentation(final Class<?> childClass) {
+        final JavaTypeName name = JavaTypeName.create(childClass);
+        for (Type type : possibleAugmentations.values()) {
+            if (name.equals(type.getIdentifier())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private @Nullable DataContainerCodecPrototype<?> augmentationByClassOrEquivalentClass(
