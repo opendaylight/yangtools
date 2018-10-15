@@ -133,8 +133,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
     @SuppressFBWarnings("RV_RETURN_VALUE_OF_PUTIFABSENT_IGNORED")
     private void reloadAllAugmentations() {
-        for (final Entry<AugmentationIdentifier, Type> augment : possibleAugmentations.entrySet()) {
-            final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment.getValue());
+        for (final Type augment : possibleAugmentations.values()) {
+            final DataContainerCodecPrototype<?> augProto = getAugmentationPrototype(augment);
             if (augProto != null) {
                 byYangAugmented.putIfAbsent(augProto.getYangArg(), augProto);
                 byStreamAugmented.putIfAbsent(augProto.getBindingClass(), augProto);
