@@ -1,0 +1,19 @@
+module foo {
+    namespace foo;
+    module foo;
+
+    import "tailf-action.yang" { prefix tailf; }
+
+    container foo {
+        tailf:action bar {
+
+        }
+    }
+
+    deviation /foo:foo/foo:bar/foo:input {
+        deviate add {
+            container baz;
+        }
+    }
+}
+
