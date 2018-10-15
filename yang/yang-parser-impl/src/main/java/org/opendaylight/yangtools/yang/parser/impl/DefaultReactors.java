@@ -18,6 +18,9 @@ import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
+import org.opendaylight.yangtools.tailf.parser.TailFActionRFC6020StatementSupport;
+import org.opendaylight.yangtools.tailf.parser.TailFActionRFC7950StatementSupport;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -85,6 +88,12 @@ public final class DefaultReactors {
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     EncryptedValueStatementSupport.getInstance())
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
-                    HashedValueStatementSupport.getInstance());
+                    HashedValueStatementSupport.getInstance())
+
+                // Tail-F action support
+                .addStatementSupport(ModelProcessingPhase.STATEMENT_DEFINITION, YangVersion.VERSION_1,
+                    TailFActionRFC6020StatementSupport.getInstance())
+                .addStatementSupport(ModelProcessingPhase.STATEMENT_DEFINITION, YangVersion.VERSION_1_1,
+                    TailFActionRFC7950StatementSupport.getInstance());
     }
 }
