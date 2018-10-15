@@ -130,11 +130,11 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     @Override
     public YangXPathExpression parseExpression(final String xpath) throws XPathExpressionException {
         // Create a parser and disconnect it from console error output
-        final xpathParser parser = new xpathParser(new CommonTokenStream(new xpathLexer(
-            CharStreams.fromString(xpath))));
-        parser.removeErrorListeners();
+        final xpathLexer lexer = new xpathLexer(CharStreams.fromString(xpath));
+        final xpathParser parser = new xpathParser(new CommonTokenStream(lexer));
+
         final List<XPathExpressionException> errors = new ArrayList<>();
-        parser.addErrorListener(new BaseErrorListener() {
+        final BaseErrorListener listener = new BaseErrorListener() {
             @Override
             public void syntaxError(final @Nullable Recognizer<?, ?> recognizer, final @Nullable Object offendingSymbol,
                     final int line, final int charPositionInLine, final @Nullable String msg,
@@ -147,7 +147,12 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
                     errors.get(0).addSuppressed(ex);
                 }
             }
-        });
+        };
+
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(listener);
+        parser.removeErrorListeners();
+        parser.addErrorListener(listener);
 
         final YangExpr expr = parseExpr(parser.main().expr());
         if (!errors.isEmpty()) {
@@ -399,9 +404,12 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     }
 
     private YangLiteralExpr parseLocationLiteral(final String text) {
-        final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(new xpathLexer(
-            CharStreams.fromString(text))));
+        final xpathLexer lexer = new xpathLexer(CharStreams.fromString(text));
+        final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
+        lexer.removeErrorListeners();
         parser.removeErrorListeners();
+
+        // FIXME: add listeners
 
         final InstanceIdentifierContext id = parser.instanceIdentifier();
         final int length = id.getChildCount();

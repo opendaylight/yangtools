@@ -39,11 +39,12 @@ final class LeafRefPathParserImpl {
 
     private Path_argContext parseLeafRefPathSource(final String path) throws LeafRefYangSyntaxErrorException {
         final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(path));
-        final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        final LeafRefPathParser parser = new LeafRefPathParser(tokens);
-        parser.removeErrorListeners();
+        final LeafRefPathParser parser = new LeafRefPathParser(new CommonTokenStream(lexer));
 
         final LeafRefPathErrorListener errorListener = new LeafRefPathErrorListener(module);
+        lexer.removeErrorListeners();
+        lexer.addErrorListener(errorListener);
+        parser.removeErrorListeners();
         parser.addErrorListener(errorListener);
 
         final Path_argContext result = parser.path_arg();

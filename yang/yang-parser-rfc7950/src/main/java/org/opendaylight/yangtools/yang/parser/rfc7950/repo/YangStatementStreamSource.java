@@ -180,12 +180,13 @@ public final class YangStatementStreamSource implements StatementStreamSource {
     private static StatementContext parseYangSource(final SourceIdentifier source, final InputStream stream)
             throws IOException, YangSyntaxErrorException {
         final YangStatementLexer lexer = new YangStatementLexer(CharStreams.fromStream(stream));
-        final CommonTokenStream tokens = new CommonTokenStream(lexer);
-        final YangStatementParser parser = new YangStatementParser(tokens);
-        //disconnect from console error output
+        final YangStatementParser parser = new YangStatementParser(new CommonTokenStream(lexer));
+        // disconnect from console error output
+        lexer.removeErrorListeners();
         parser.removeErrorListeners();
 
         final YangErrorListener errorListener = new YangErrorListener(source);
+        lexer.addErrorListener(errorListener);
         parser.addErrorListener(errorListener);
 
         final StatementContext result = parser.statement();
