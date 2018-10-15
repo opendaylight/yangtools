@@ -37,10 +37,10 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
     }
 
     static Predicate<Set<QName>> parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
-        final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(new CommonTokenStream(
-            new IfFeatureExpressionLexer(CharStreams.fromString(value))));
-        return new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(parser, parser::if_feature_expr,
-            ctx.getStatementSourceReference()));
+        final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
+        final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
+        return new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(lexer, parser,
+            parser::if_feature_expr, ctx.getStatementSourceReference()));
     }
 
     @Override
