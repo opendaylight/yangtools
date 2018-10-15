@@ -1,0 +1,17 @@
+module foo {
+    namespace urn:foo;
+    prefix foo;
+
+    import "tailf-common" { prefix tailf; }
+
+    container foo {
+        tailf:action bar {
+            input {
+                leaf bar {
+                    type string;
+                }
+            }
+        }
+    }
+}
+

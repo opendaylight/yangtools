@@ -1,0 +1,10 @@
+module tailf-common {
+    namespace "http://tail-f.com/yang/common";
+    prefix tailf;
+    revision 2017-09-28;
+
+    extension action {
+        argument name;
+    }
+}
+

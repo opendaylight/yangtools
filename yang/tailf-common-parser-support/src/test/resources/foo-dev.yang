@@ -1,0 +1,13 @@
+module foo-dev {
+    namespace urn:foo:dev;
+    prefix foo-dev;
+
+    import "foo" { prefix foo; }
+
+    deviation /foo:foo/foo:bar/foo:input/foo:bar {
+        deviate add {
+            default "";
+        }
+    }
+}
+
