@@ -50,6 +50,11 @@ public final class Revision implements Comparable<Revision>, Serializable {
      */
     public static final Pattern STRING_FORMAT_PATTERN = Pattern.compile(STRING_FORMAT_PATTERN_STR);
 
+    /**
+     * Revision which compares as greater than any other valid revision.
+     */
+    public static final Revision MAX_VALUE = Revision.of("9999-12-31");
+
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     private final @NonNull String str;
@@ -88,7 +93,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @return An optional Revision instance.
      * @throws DateTimeParseException if the string format does not conform specification.
      */
-    public static Optional<Revision> ofNullable(final @Nullable String str) {
+    public static @NonNull Optional<Revision> ofNullable(final @Nullable String str) {
         return str == null ? Optional.empty() : Optional.of(new Revision(str));
     }
 
