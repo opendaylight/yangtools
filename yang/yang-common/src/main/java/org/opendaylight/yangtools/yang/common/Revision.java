@@ -41,6 +41,8 @@ public final class Revision implements Comparable<Revision>, Serializable {
     // Note: since we are using writeReplace() this version is not significant.
     private static final long serialVersionUID = 1L;
 
+    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     @RegEx
     // FIXME: we should improve this to filter incorrect dates -- see constructor.
     private static final String STRING_FORMAT_PATTERN_STR = "\\d\\d\\d\\d\\-\\d\\d-\\d\\d";
@@ -50,7 +52,10 @@ public final class Revision implements Comparable<Revision>, Serializable {
      */
     public static final Pattern STRING_FORMAT_PATTERN = Pattern.compile(STRING_FORMAT_PATTERN_STR);
 
-    private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    /**
+     * Revision which compares as greater than any other valid revision.
+     */
+    public static final Revision MAX_VALUE = Revision.of("9999-12-31");
 
     private final @NonNull String str;
 
@@ -88,7 +93,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
      * @return An optional Revision instance.
      * @throws DateTimeParseException if the string format does not conform specification.
      */
-    public static Optional<Revision> ofNullable(final @Nullable String str) {
+    public static @NonNull Optional<Revision> ofNullable(final @Nullable String str) {
         return str == null ? Optional.empty() : Optional.of(new Revision(str));
     }
 
