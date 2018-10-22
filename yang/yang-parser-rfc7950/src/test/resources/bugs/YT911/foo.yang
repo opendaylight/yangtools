@@ -1,0 +1,14 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision "2018-10-22";
+
+    container foo {
+        config false;
+    }
+
+    augment /foo {
+        container bar;
+    }
+}
