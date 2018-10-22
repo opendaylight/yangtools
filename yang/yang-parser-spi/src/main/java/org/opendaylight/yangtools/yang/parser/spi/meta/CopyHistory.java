@@ -9,7 +9,10 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 @Beta
@@ -113,5 +116,13 @@ public final class CopyHistory implements Immutable {
         }
         final CopyHistory other = (CopyHistory) obj;
         return operations == other.operations && lastOperation == other.lastOperation;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).add("lastOperation", getLastOperation())
+                .add("operations", Arrays.stream(VALUES).filter(value -> (value.bit() & operations) != 0)
+                    .collect(Collectors.toList()))
+                .toString();
     }
 }
