@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -44,22 +45,17 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      * Public statement definition may be used to provide different implementation of statement definition,
      * which will not retain any build specific data or context.
      *
-     * @return public statement definition, which will be present in built
-     *         statements.
+     * @return public statement definition, which will be present in built statements.
      */
-    StatementDefinition getPublicView();
+    @NonNull StatementDefinition getPublicView();
 
     /**
      * Parses textual representation of argument in object representation.
      *
-     * @param ctx
-     *            Context, which may be used to access source-specific
-     *            namespaces required for parsing.
-     * @param value
-     *            String representation of value, as was present in text source.
+     * @param ctx Context, which may be used to access source-specific namespaces required for parsing.
+     * @param value String representation of value, as was present in text source.
      * @return Parsed value
-     * @throws SourceException
-     *             when an inconsistency is detected.
+     * @throws SourceException when an inconsistency is detected.
      */
     A parseArgumentValue(StmtContext<?, ?, ?> ctx, String value);
 
@@ -167,8 +163,7 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            argument of statement
      * @return statement support specific for supplied argument or null
      */
-    @Nullable
-    StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
+    @Nullable StatementSupport<?, ?, ?> getSupportSpecificForArgument(String argument);
 
     /**
      * Given a raw string representation of an argument, try to use a shared representation.

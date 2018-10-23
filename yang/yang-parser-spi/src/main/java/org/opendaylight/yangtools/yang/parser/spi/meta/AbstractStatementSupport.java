@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -19,17 +20,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * Class providing necessary support for processing a YANG statement. This class is intended to be subclassed
  * by developers who want to add semantic support for a statement to a parser reactor.
  *
- * @param <A>
- *            Argument type
- * @param <D>
- *            Declared Statement representation
- * @param <E>
- *            Effective Statement representation
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
  */
 public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
         implements StatementDefinition, StatementFactory<A, D, E>, StatementSupport<A, D, E> {
 
-    private final StatementDefinition type;
+    private final @NonNull StatementDefinition type;
 
     protected AbstractStatementSupport(final StatementDefinition publicDefinition) {
         this.type = requireNonNull(publicDefinition);
@@ -114,9 +112,7 @@ public abstract class AbstractStatementSupport<A, D extends DeclaredStatement<A>
     /**
      * Returns corresponding substatement validator of a statement support.
      *
-     * @return substatement validator or null, if substatement validator is not
-     *         defined
+     * @return substatement validator or null, if substatement validator is not defined
      */
-    @Nullable
-    protected abstract SubstatementValidator getSubstatementValidator();
+    protected abstract @Nullable SubstatementValidator getSubstatementValidator();
 }
