@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.namespace;
 import com.google.common.annotations.Beta;
 import java.util.Iterator;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
@@ -54,7 +53,7 @@ public final class SchemaNodeIdentifierBuildNamespace
     }
 
     @Override
-    public Mutable<?, ?, EffectiveStatement<?, ?>> get(@Nonnull final SchemaNodeIdentifier key) {
+    public Mutable<?, ?, EffectiveStatement<?, ?>> get(final SchemaNodeIdentifier key) {
         throw new UnsupportedOperationException("Direct access to namespace is not supported");
     }
 

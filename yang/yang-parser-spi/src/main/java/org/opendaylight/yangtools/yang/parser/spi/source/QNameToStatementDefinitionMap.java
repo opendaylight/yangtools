@@ -12,8 +12,6 @@ import static java.util.Objects.requireNonNull;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -66,17 +64,13 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
         noRevQNameToSupport.put(norev, support);
     }
 
-    @Nullable
     @Override
-    public StatementSupport<?, ?, ?> get(@Nonnull final QName identifier) {
+    public StatementSupport<?, ?, ?> get(final QName identifier) {
         return qnameToSupport.get(identifier);
     }
 
-    @Nullable
     @Override
-    public StatementDefinition getByNamespaceAndLocalName(@Nonnull final URI namespace,
-            @Nonnull final String localName) {
+    public StatementDefinition getByNamespaceAndLocalName(final URI namespace, final String localName) {
         return noRevQNameToSupport.get(QName.create(namespace, localName));
     }
-
 }
