@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -22,7 +22,7 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
 
     private final String description;
     private final String reference;
-    private final Status status;
+    private final @NonNull Status status;
 
     /**
      * Constructor.
@@ -47,7 +47,6 @@ public abstract class AbstractEffectiveDocumentedNode<A, D extends DeclaredState
         return Optional.ofNullable(reference);
     }
 
-    @Nonnull
     @Override
     public final Status getStatus() {
         return status;

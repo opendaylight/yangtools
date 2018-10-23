@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -20,23 +23,23 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 final class BitImpl implements Bit, Immutable {
-    private final List<UnknownSchemaNode> unknownNodes;
-    private final SchemaPath schemaPath;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull SchemaPath schemaPath;
     private final String description;
     private final String reference;
-    private final Status status;
+    private final @NonNull Status status;
     private final long position;
 
     BitImpl(final SchemaPath schemaPath, final long position, final String description,
             final String reference, final Status status, final List<UnknownSchemaNode> unknownNodes) {
-        this.schemaPath = Preconditions.checkNotNull(schemaPath, "Schema Path should not be null");
+        this.schemaPath = requireNonNull(schemaPath, "Schema Path should not be null");
 
-        Preconditions.checkArgument(position >= 0L && position <= 4294967295L, "Invalid position %s", position);
+        checkArgument(position >= 0L && position <= 4294967295L, "Invalid position %s", position);
         this.position = position;
         this.description = description;
         this.reference = reference;
-        this.status = Preconditions.checkNotNull(status);
-        this.unknownNodes = Preconditions.checkNotNull(unknownNodes);
+        this.status = requireNonNull(status);
+        this.unknownNodes = requireNonNull(unknownNodes);
     }
 
     @Nonnull
@@ -61,13 +64,11 @@ final class BitImpl implements Bit, Immutable {
         return Optional.ofNullable(reference);
     }
 
-    @Nonnull
     @Override
     public Status getStatus() {
         return status;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
@@ -114,5 +115,4 @@ final class BitImpl implements Bit, Immutable {
     public String toString() {
         return Bit.class.getSimpleName() + "[name=" + getQName().getLocalName() + ", position=" + position + "]";
     }
-
 }

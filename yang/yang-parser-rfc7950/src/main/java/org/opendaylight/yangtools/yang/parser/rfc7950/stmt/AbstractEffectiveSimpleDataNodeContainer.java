@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -33,7 +34,7 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements AugmentationTarget, DataSchemaNode {
 
     private final Set<AugmentationSchemaNode> augmentations;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final SchemaPath path;
     private final boolean configuration;
@@ -110,7 +111,6 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         return augmentations;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

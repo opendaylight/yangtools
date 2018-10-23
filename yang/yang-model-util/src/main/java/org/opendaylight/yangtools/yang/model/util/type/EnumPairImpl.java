@@ -7,36 +7,36 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 final class EnumPairImpl implements EnumPair, Immutable {
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
     private final String description;
     private final String reference;
-    private final Status status;
-    private final String name;
+    private final @NonNull Status status;
+    private final @NonNull String name;
     private final int value;
 
     EnumPairImpl(final String name, final int value, final String description, final String reference,
             final Status status, final List<UnknownSchemaNode> unknownSchemaNodes) {
-        this.name = Preconditions.checkNotNull(name);
+        this.name = requireNonNull(name);
         this.value = value;
         this.description = description;
         this.reference = reference;
-        this.status = Preconditions.checkNotNull(status);
-        this.unknownSchemaNodes = Preconditions.checkNotNull(unknownSchemaNodes);
+        this.status = requireNonNull(status);
+        this.unknownSchemaNodes = requireNonNull(unknownSchemaNodes);
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;
@@ -52,7 +52,6 @@ final class EnumPairImpl implements EnumPair, Immutable {
         return Optional.ofNullable(reference);
     }
 
-    @Nonnull
     @Override
     public Status getStatus() {
         return status;

@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.MustDefinition;
@@ -36,7 +37,7 @@ final class NotificationEffectiveStatementImpl
     private final QName qname;
     private final SchemaPath path;
     private final Set<AugmentationSchemaNode> augmentations;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
     private final Collection<MustDefinition> mustConstraints;
@@ -97,7 +98,6 @@ final class NotificationEffectiveStatementImpl
         return augmentations;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
@@ -51,7 +50,6 @@ abstract class AbstractBaseType<T extends TypeDefinition<T>> extends AbstractTyp
         return Optional.empty();
     }
 
-    @Nonnull
     @Override
     public final Status getStatus() {
         return Status.CURRENT;

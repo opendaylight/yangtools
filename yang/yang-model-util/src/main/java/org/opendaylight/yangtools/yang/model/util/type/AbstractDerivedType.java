@@ -7,30 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
-    private final T baseType;
+    private final @NonNull T baseType;
     private final Object defaultValue;
     private final String description;
     private final String reference;
-    private final Status status;
+    private final @NonNull Status status;
     private final String units;
 
     AbstractDerivedType(final T baseType, final SchemaPath path, final Object defaultValue, final String description,
             final String reference, final Status status, final String units,
             final Collection<UnknownSchemaNode> unknownSchemNodes) {
         super(path, unknownSchemNodes);
-        this.baseType = Preconditions.checkNotNull(baseType);
-        this.status = Preconditions.checkNotNull(status);
+        this.baseType = requireNonNull(baseType);
+        this.status = requireNonNull(status);
         this.defaultValue = defaultValue;
         this.description = description;
         this.reference = reference;
@@ -64,7 +65,6 @@ abstract class AbstractDerivedType<T extends TypeDefinition<T>> extends Abstract
         return Optional.ofNullable(reference);
     }
 
-    @Nonnull
     @Override
     public final Status getStatus() {
         return status;

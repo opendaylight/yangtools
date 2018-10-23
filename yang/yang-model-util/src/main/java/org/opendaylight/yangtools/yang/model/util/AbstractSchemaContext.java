@@ -181,13 +181,11 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return SchemaPath.ROOT;
     }
 
-    @Nonnull
     @Override
     public Status getStatus() {
         return Status.CURRENT;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         final List<UnknownSchemaNode> result = new ArrayList<>();

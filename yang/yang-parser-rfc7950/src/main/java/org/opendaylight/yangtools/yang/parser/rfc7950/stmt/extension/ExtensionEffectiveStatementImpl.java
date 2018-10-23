@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -67,9 +68,9 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
     private final QName qname;
     private final String argument;
-    private final SchemaPath schemaPath;
+    private final @NonNull SchemaPath schemaPath;
 
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
     private ExtensionEffectiveStatementImpl(
@@ -140,13 +141,11 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
         return qname;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return schemaPath;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -30,7 +30,7 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
     private final QName qname;
     private final SchemaPath schemaPath;
     private final Long declaredPosition;
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
 
     BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);
@@ -69,7 +69,6 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
         return schemaPath;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;

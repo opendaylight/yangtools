@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -35,7 +36,7 @@ final class GroupingEffectiveStatementImpl
     private final boolean addedByUses;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
 
     GroupingEffectiveStatementImpl(
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {

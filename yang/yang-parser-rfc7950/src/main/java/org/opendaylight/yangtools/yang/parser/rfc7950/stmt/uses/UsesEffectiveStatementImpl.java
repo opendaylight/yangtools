@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -44,7 +45,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
     private final boolean addedByUses;
     private final Map<SchemaPath, SchemaNode> refines;
     private final Set<AugmentationSchemaNode> augmentations;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
 
     UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {

@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -41,7 +41,7 @@ final class AugmentEffectiveStatementImpl
     private final Revision revision;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchemaNode copyOf;
 
@@ -92,7 +92,6 @@ final class AugmentEffectiveStatementImpl
         return Optional.ofNullable(whenCondition);
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

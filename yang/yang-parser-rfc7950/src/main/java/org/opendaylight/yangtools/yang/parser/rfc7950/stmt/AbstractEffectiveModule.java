@@ -27,7 +27,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
@@ -83,7 +82,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final Set<Deviation> deviations;
     private final List<ExtensionDefinition> extensionNodes;
     private final Set<IdentitySchemaNode> identities;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final Map<QName, DataSchemaNode> childNodes;
     private final Set<GroupingDefinition> groupings;
     private final Set<UsesNode> uses;
@@ -365,7 +364,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         return identities;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.enum_;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.EnumEffectiveStatement;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: hide this class
 public final class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
         implements EnumEffectiveStatement {
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
     private final Integer declaredValue;
 
@@ -54,7 +54,6 @@ public final class EnumEffectiveStatementImpl extends AbstractEffectiveDocumente
         return declaredValue;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes;

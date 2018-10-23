@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.DeviateDefinition;
 import org.opendaylight.yangtools.yang.model.api.Deviation;
@@ -32,7 +33,7 @@ final class DeviationEffectiveStatementImpl
     private final SchemaPath targetPath;
     private final String description;
     private final String reference;
-    private final List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
     private final List<DeviateDefinition> deviateDefinitions;
 
     DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {

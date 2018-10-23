@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Node which can have documentation assigned.
@@ -35,7 +35,7 @@ public interface DocumentedNode {
      *
      * @return list of unknown schema nodes defined under this node.
      */
-    @Nonnull default List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    default @NonNull List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return ImmutableList.of();
     }
 
@@ -46,6 +46,6 @@ public interface DocumentedNode {
          * @return status of this node which represents the argument of the YANG
          *         <code>status</code> substatement
          */
-        @Nonnull Status getStatus();
+        @NonNull Status getStatus();
     }
 }

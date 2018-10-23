@@ -11,6 +11,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -27,8 +28,8 @@ public final class RefineEffectiveStatementImpl
         implements RefineEffectiveStatement, SchemaNode {
 
     private final QName qname;
-    private final SchemaPath path;
-    private final List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull SchemaPath path;
+    private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final SchemaNode refineTargetNode;
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
@@ -60,7 +61,6 @@ public final class RefineEffectiveStatementImpl
         return path;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;

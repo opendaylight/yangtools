@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 // FIXME: hide this somewhere
@@ -77,12 +75,6 @@ public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSc
         return path;
     }
 
-    @Nonnull
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return ImmutableList.of();
-    }
-
     @Override
     public Optional<String> getDescription() {
         return caseShorthandNode.getDescription();
@@ -93,7 +85,6 @@ public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSc
         return caseShorthandNode.getReference();
     }
 
-    @Nonnull
     @Override
     public Status getStatus() {
         return caseShorthandNode.getStatus();

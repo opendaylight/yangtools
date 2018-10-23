@@ -7,22 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends AbstractTypeDefinition<T> {
-    private final T baseType;
+    private final @NonNull T baseType;
 
     AbstractRestrictedType(final T baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
-        this.baseType = Preconditions.checkNotNull(baseType);
+        this.baseType = requireNonNull(baseType);
     }
 
     @Override
@@ -50,7 +51,6 @@ abstract class AbstractRestrictedType<T extends TypeDefinition<T>> extends Abstr
         return baseType.getReference();
     }
 
-    @Nonnull
     @Override
     public final Status getStatus() {
         return baseType.getStatus();
