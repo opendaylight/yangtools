@@ -7,13 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -27,16 +28,16 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 
 public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
-    private final StatementSupport<A, D, E> support;
+    private final @NonNull StatementSupport<A, D, E> support;
     private final Map<String, StatementDefinitionContext<?, ?, ?>> argumentSpecificSubDefinitions;
     private Map<StatementDefinitionContext<?,?,?>, StatementDefinitionContext<?,?,?>> unknownStmtDefsOfYangStmts;
 
     public StatementDefinitionContext(final StatementSupport<A, D, E> support) {
-        this.support = Preconditions.checkNotNull(support);
+        this.support = requireNonNull(support);
         this.argumentSpecificSubDefinitions = support.hasArgumentSpecificSupports() ? new HashMap<>() : null;
     }
 
-    public StatementFactory<A,D,E> getFactory() {
+    public @NonNull StatementFactory<A,D,E> getFactory() {
         return support;
     }
 
@@ -52,7 +53,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         // Noop
     }
 
-    public StatementDefinition getPublicView() {
+    public @NonNull StatementDefinition getPublicView() {
         return support.getPublicView();
     }
 
@@ -84,7 +85,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         }
     }
 
-    public Class<?> getRepresentingClass() {
+    public @NonNull Class<?> getRepresentingClass() {
         return support.getDeclaredRepresentationClass();
     }
 
@@ -96,7 +97,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return support.isArgumentYinElement();
     }
 
-    public QName getStatementName() {
+    public @NonNull QName getStatementName() {
         return support.getStatementName();
     }
 
@@ -113,8 +114,7 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
         return toStringHelper.add("statement", getStatementName());
     }
 
-    @Nonnull
-    StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
+    @NonNull StatementDefinitionContext<?, ?, ?> getSubDefinitionSpecificForArgument(final String argument) {
         if (!hasArgumentSpecificSubDefinitions()) {
             return this;
         }

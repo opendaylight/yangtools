@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Multimap;
@@ -22,6 +25,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -86,8 +90,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     private RootStatementContext<?, ?, ?> root;
 
     SourceSpecificContext(final BuildGlobalContext currentContext, final StatementStreamSource source) {
-        this.currentContext = Preconditions.checkNotNull(currentContext);
-        this.source = Preconditions.checkNotNull(source);
+        this.currentContext = requireNonNull(currentContext);
+        this.source = requireNonNull(source);
     }
 
     boolean isEnabledSemanticVersioning() {
@@ -130,7 +134,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
              * This code wraps statements encountered inside an extension so
              * they do not get confused with regular statements.
              */
-            def = Preconditions.checkNotNull(current.definition().getAsUnknownStatementDefinition(def),
+            def = checkNotNull(current.definition().getAsUnknownStatementDefinition(def),
                     "Unable to create unknown statement definition of yang statement %s in unknown statement %s", def,
                     current);
         }
@@ -170,9 +174,8 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
             final QName rootStatement = root.definition().getStatementName();
             final String rootArgument = root.rawStatementArgument();
 
-            Preconditions.checkState(Objects.equals(def.getStatementName(), rootStatement)
-                && Objects.equals(argument, rootArgument), "Root statement was already defined as '%s %s'.",
-                rootStatement, rootArgument);
+            checkState(Objects.equals(def.getStatementName(), rootStatement) && Objects.equals(argument, rootArgument),
+                "Root statement was already defined as '%s %s'.", rootStatement, rootArgument);
         }
         return root;
     }
@@ -200,13 +203,13 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
     void startPhase(final ModelProcessingPhase phase) {
         @Nullable final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
-        Verify.verify(Objects.equals(previousPhase, finishedPhase),
+        verify(Objects.equals(previousPhase, finishedPhase),
             "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, source,
             finishedPhase);
 
         final Collection<ModifierImpl> previousModifiers = modifiers.get(previousPhase);
-        Preconditions.checkState(previousModifiers.isEmpty(),
-            "Previous phase %s has unresolved modifiers %s in source %s", previousPhase, previousModifiers, source);
+        checkState(previousModifiers.isEmpty(), "Previous phase %s has unresolved modifiers %s in source %s",
+            previousPhase, previousModifiers, source);
 
         inProgressPhase = phase;
         LOG.debug("Source {} started phase {}", source, phase);
@@ -218,7 +221,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
                 importedNamespaces = new ArrayList<>(1);
             }
 
-            Verify.verify(value instanceof RootStatementContext);
+            verify(value instanceof RootStatementContext);
             importedNamespaces.add((RootStatementContext<?, ?, ?>) value);
         }
     }
@@ -299,7 +302,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
 
         boolean hasProgressed = tryToProgress(currentPhaseModifiers);
 
-        Preconditions.checkNotNull(this.root, "Malformed source. Valid root element is missing.");
+        checkNotNull(this.root, "Malformed source. Valid root element is missing.");
         final boolean phaseCompleted = root.tryToCompletePhase(phase);
 
         hasProgressed |= tryToProgress(currentPhaseModifiers);
@@ -329,7 +332,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return hasProgressed;
     }
 
-    ModelActionBuilder newInferenceAction(final ModelProcessingPhase phase) {
+    @NonNull ModelActionBuilder newInferenceAction(final @NonNull ModelProcessingPhase phase) {
         final ModifierImpl action = new ModifierImpl();
         modifiers.put(phase, action);
         return action;

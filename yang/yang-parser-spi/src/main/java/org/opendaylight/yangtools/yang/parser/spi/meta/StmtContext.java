@@ -13,8 +13,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -28,14 +28,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 
 public interface StmtContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> {
 
-    @Nonnull
-    StatementSource getStatementSource();
+    @NonNull StatementSource getStatementSource();
 
-    @Nonnull
-    StatementSourceReference getStatementSourceReference();
+    @NonNull StatementSourceReference getStatementSourceReference();
 
-    @Nonnull
-    StatementDefinition getPublicDefinition();
+    @NonNull StatementDefinition getPublicDefinition();
 
     /**
      * Return the parent statement context, or null if this is the root statement.
@@ -62,7 +59,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Optional SchemaPath
      */
-    @Nonnull Optional<SchemaPath> getSchemaPath();
+    @NonNull Optional<SchemaPath> getSchemaPath();
 
     boolean isConfiguration();
 
@@ -80,24 +77,21 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    @Nonnull
-    <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key) ;
+    @NonNull <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key) ;
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
             Class<N> type);
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
-    @Nonnull
-    StmtContext<?, ?, ?> getRoot();
+    @NonNull StmtContext<?, ?, ?> getRoot();
 
     /**
      * Return declared substatements. These are the statements which are explicitly written in the source model.
      *
      * @return Collection of declared substatements
      */
-    @Nonnull
-    Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements();
+    @NonNull Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements();
 
     /**
      * Return effective substatements. These are the statements which are added as this statement's substatements
@@ -105,8 +99,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return Collection of declared substatements
      */
-    @Nonnull
-    Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
+    @NonNull Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements();
 
     default Iterable<? extends StmtContext<?, ?, ?>> allSubstatements() {
         return Iterables.concat(declaredSubstatements(), effectiveSubstatements());
@@ -143,7 +136,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return version of root statement context
      */
-    @Nonnull YangVersion getRootVersion();
+    @NonNull YangVersion getRootVersion();
 
     interface Mutable<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
             extends StmtContext<A, D, E> {
@@ -167,7 +160,6 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
         <K, V, T extends K, U extends V, N extends IdentifierNamespace<K, V>> void addToNs(Class<N> type, T key,
                 U value);
 
-        @Nonnull
         @Override
         Mutable<?, ?, ?> getRoot();
 
@@ -204,11 +196,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
             return childCopyOf(stmt, type, null);
         }
 
-        @Nonnull
-        Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
+        @NonNull Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements();
 
-        @Nonnull
-        Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements();
+        @NonNull Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements();
 
         /**
          * Create a new inference action to be executed during specified phase. The action cannot be cancelled
@@ -219,7 +209,7 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
          * @return A new action builder.
          * @throws NullPointerException if the specified phase is null
          */
-        @Nonnull ModelActionBuilder newInferenceAction(@Nonnull ModelProcessingPhase phase);
+        @NonNull ModelActionBuilder newInferenceAction(@NonNull ModelProcessingPhase phase);
 
         /**
          * Adds s statement to namespace map with a key.
