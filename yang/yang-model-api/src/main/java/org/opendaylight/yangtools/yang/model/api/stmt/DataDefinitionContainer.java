@@ -8,17 +8,17 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Deprecated
 public interface DataDefinitionContainer {
 
-    @Nonnull Collection<? extends DataDefinitionStatement> getDataDefinitions();
+    @NonNull Collection<? extends DataDefinitionStatement> getDataDefinitions();
 
     interface WithReusableDefinitions extends DataDefinitionContainer {
 
-        @Nonnull Collection<? extends TypedefStatement> getTypedefs();
+        @NonNull Collection<? extends TypedefStatement> getTypedefs();
 
-        @Nonnull Collection<? extends GroupingStatement> getGroupings();
+        @NonNull Collection<? extends GroupingStatement> getGroupings();
     }
 }

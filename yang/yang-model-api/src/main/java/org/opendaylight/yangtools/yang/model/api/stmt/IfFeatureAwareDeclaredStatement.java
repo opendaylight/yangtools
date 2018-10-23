@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface IfFeatureAwareDeclaredStatement<A> extends DeclaredStatement<A>, ConditionalFeature {
     @Override
-    default @Nonnull Collection<? extends IfFeatureStatement> getIfFeatures() {
+    default Collection<? extends IfFeatureStatement> getIfFeatures() {
         return declaredSubstatements(IfFeatureStatement.class);
     }
 }

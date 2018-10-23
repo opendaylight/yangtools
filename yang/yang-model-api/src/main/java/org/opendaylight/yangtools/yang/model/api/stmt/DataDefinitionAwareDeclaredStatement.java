@@ -9,25 +9,24 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface DataDefinitionAwareDeclaredStatement<A> extends DeclaredStatement<A>, DataDefinitionContainer {
     @Override
-    default @Nonnull Collection<? extends DataDefinitionStatement> getDataDefinitions() {
+    default Collection<? extends DataDefinitionStatement> getDataDefinitions() {
         return declaredSubstatements(DataDefinitionStatement.class);
     }
 
     interface WithReusableDefinitions<A> extends DataDefinitionAwareDeclaredStatement<A>,
             DataDefinitionContainer.WithReusableDefinitions {
         @Override
-        default @Nonnull Collection<? extends TypedefStatement> getTypedefs() {
+        default Collection<? extends TypedefStatement> getTypedefs() {
             return declaredSubstatements(TypedefStatement.class);
         }
 
         @Override
-        default @Nonnull Collection<? extends GroupingStatement> getGroupings() {
+        default Collection<? extends GroupingStatement> getGroupings() {
             return declaredSubstatements(GroupingStatement.class);
         }
     }
