@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.meta;
 
 import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Model statement. There are two base types of model statements:
@@ -52,4 +53,16 @@ public interface ModelStatement<A> {
      * @return statement source.
      */
     @NonNull StatementSource getStatementSource();
+
+    /**
+     * Returns statement name as referenced in the model. The default implementation relies on
+     * {@link #statementDefinition()} to provide this name. In case this statement is define across multiple revisions,
+     * such as an {@code extension}, implementations need to override this method to provide the name as bound during
+     * model processing.
+     *
+     * @return Name of the statement
+     */
+    default @NonNull QName statementName() {
+        return statementDefinition().getStatementName();
+    }
 }
