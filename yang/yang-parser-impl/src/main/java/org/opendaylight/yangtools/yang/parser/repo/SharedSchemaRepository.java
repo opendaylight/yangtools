@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.repo;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -31,12 +32,13 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
  */
 @Beta
 @MetaInfServices(value = SchemaRepository.class)
+@NonNullByDefault
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
     @Deprecated
     private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cacheByFilter = CacheBuilder.newBuilder()
             .softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
                 @Override
-                public SchemaContextFactory load(@Nonnull final SchemaSourceFilter key) {
+                public SchemaContextFactory load(final SchemaSourceFilter key) {
                     return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
                 }
             });
@@ -45,7 +47,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
             .newBuilder().softValues()
             .build(new CacheLoader<SchemaContextFactoryConfiguration, SchemaContextFactory>() {
                 @Override
-                public SchemaContextFactory load(@Nonnull final SchemaContextFactoryConfiguration key) {
+                public SchemaContextFactory load(final SchemaContextFactoryConfiguration key) {
                     return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
                 }
             });
@@ -53,7 +55,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     private final String id;
 
     public SharedSchemaRepository(final String id) {
-        this.id = Preconditions.checkNotNull(id);
+        this.id = requireNonNull(id);
     }
 
     @Override
@@ -63,12 +65,12 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
 
     @Override
     @Deprecated
-    public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
+    public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
         return cacheByFilter.getUnchecked(filter);
     }
 
     @Override
-    public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaContextFactoryConfiguration config) {
+    public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
         return cacheByConfig.getUnchecked(config);
     }
 
