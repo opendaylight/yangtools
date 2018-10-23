@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.concurrent.FluentFutures;
 
 /**
@@ -23,7 +24,7 @@ public interface SchemaSourceFilter {
     /**
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
-    SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
+    @NonNull SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
         private final Iterable<Class<? extends SchemaSourceRepresentation>> representations =
                 ImmutableList.of(SchemaSourceRepresentation.class);
 

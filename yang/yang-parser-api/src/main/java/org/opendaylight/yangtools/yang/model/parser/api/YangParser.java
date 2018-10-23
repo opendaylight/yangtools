@@ -14,8 +14,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -51,8 +51,7 @@ public interface YangParser {
     /**
      * Add main source. All main sources are present in resulting SchemaContext.
      *
-     * @param source
-     *            which should be added into main sources
+     * @param source which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
@@ -62,8 +61,7 @@ public interface YangParser {
     /**
      * Add main sources. All main sources are present in resulting SchemaContext.
      *
-     * @param sources
-     *            which should be added into main sources
+     * @param sources which should be added into main sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
@@ -93,8 +91,7 @@ public interface YangParser {
      * <p>
      * Note: Library sources are not supported in semantic version mode currently.
      *
-     * @param sources
-     *            YANG sources which should be added into library sources
+     * @param sources YANG sources which should be added into library sources
      * @throws YangSyntaxErrorException when one of the sources fails syntactic analysis
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
@@ -116,25 +113,24 @@ public interface YangParser {
     }
 
     /**
-     * Set supported features based on which all if-feature statements in the
-     * parsed YANG modules will be resolved. If this method is not invoked, all features will be supported.
+     * Set supported features based on which all if-feature statements in the parsed YANG modules will be resolved. If
+     * this method is not invoked, all features will be supported.
      *
-     * @param supportedFeatures
-     *            Set of supported features in the final SchemaContext.
-     *            If the set is empty, no features encountered will be supported.
+     * @param supportedFeatures Set of supported features in the final SchemaContext. If the set is empty, no features
+     *                          encountered will be supported.
      */
-    YangParser setSupportedFeatures(@Nonnull Set<QName> supportedFeatures);
+    YangParser setSupportedFeatures(@NonNull Set<QName> supportedFeatures);
 
     /**
-     * Set YANG modules which can be deviated by specified modules during the parsing process.
-     * Map key (QNameModule) denotes a module which can be deviated by the modules in the Map value.
+     * Set YANG modules which can be deviated by specified modules during the parsing process. Map key (QNameModule)
+     * denotes a module which can be deviated by the modules in the Map value.
      *
-     * @param modulesDeviatedByModules
-     *            Map of YANG modules (Map key) which can be deviated by specified modules (Map value) in the final
-     *            SchemaContext. If the map is empty, no deviations encountered will be supported.
+     * @param modulesDeviatedByModules Map of YANG modules (Map key) which can be deviated by specified modules (Map
+     *                                 value) in the final SchemaContext. If the map is empty, no deviations encountered
+     *                                 will be supported.
      */
     YangParser setModulesWithSupportedDeviations(
-            @Nonnull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
+            @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
 
     /**
      * Build the declared view of a combined view of declared statements.

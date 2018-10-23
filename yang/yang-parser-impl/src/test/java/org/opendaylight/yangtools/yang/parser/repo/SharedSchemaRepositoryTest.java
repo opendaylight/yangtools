@@ -40,7 +40,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -301,7 +300,7 @@ public class SharedSchemaRepositoryTest {
             }
 
             @Override
-            public void onFailure(@Nonnull final Throwable cause) {
+            public void onFailure(final Throwable cause) {
                 // Creation of schema context fails, since we do not provide regular sources, but we just want
                 // to check cache
                 final List<File> cachedSchemas = Arrays.asList(storageDir.listFiles());
