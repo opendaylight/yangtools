@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -119,7 +119,7 @@ public final class CompatUtils {
      * @param leaf Leaf for which we are acquiring the type
      * @return Potentially base type of the leaf type.
      */
-    @Nonnull public static TypeDefinition<?> compatType(@Nonnull final TypedDataSchemaNode leaf) {
+    public static @NonNull TypeDefinition<?> compatType(final @NonNull TypedDataSchemaNode leaf) {
         final TypeDefinition<?> leafType = leaf.getType();
         Preconditions.checkNotNull(leafType);
 
@@ -170,7 +170,7 @@ public final class CompatUtils {
     }
 
     // FIXME: 3.0.0: remove this method
-    @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
+    public static @NonNull TypeDefinition<?> compatLeafType(final @NonNull LeafSchemaNode leaf) {
         return compatType(leaf);
     }
 

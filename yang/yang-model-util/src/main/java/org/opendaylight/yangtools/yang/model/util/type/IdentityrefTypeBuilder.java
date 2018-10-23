@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
@@ -20,11 +20,11 @@ import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 public final class IdentityrefTypeBuilder extends TypeBuilder<IdentityrefTypeDefinition> {
     private final Builder<IdentitySchemaNode> builder = ImmutableSet.builder();
 
-    IdentityrefTypeBuilder(final SchemaPath path) {
+    IdentityrefTypeBuilder(final @NonNull SchemaPath path) {
         super(null, path);
     }
 
-    public IdentityrefTypeBuilder addIdentity(@Nonnull final IdentitySchemaNode identity) {
+    public IdentityrefTypeBuilder addIdentity(final @NonNull IdentitySchemaNode identity) {
         builder.add(identity);
         return this;
     }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -28,7 +27,6 @@ abstract class AbstractRangeRestrictedType<T extends RangeRestrictedTypeDefiniti
     }
 
     @Override
-    @Nonnull
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return Optional.ofNullable(rangeConstraint);
     }
