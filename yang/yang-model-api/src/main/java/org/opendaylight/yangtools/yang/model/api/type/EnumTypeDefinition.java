@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -46,7 +47,7 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
      */
     @NonNull List<EnumPair> getValues();
 
-    static boolean equals(final EnumTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull EnumTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -55,13 +56,13 @@ public interface EnumTypeDefinition extends TypeDefinition<EnumTypeDefinition> {
         return other != null && type.getValues().equals(other.getValues());
     }
 
-    static int hashCode(final EnumTypeDefinition type) {
+    static int hashCode(final @NonNull EnumTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null),
             type.getDefaultValue(), type.getValues());
     }
 
-    static String toString(final EnumTypeDefinition type) {
+    static String toString(final @NonNull EnumTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("values", type.getValues()).toString();
     }
 }

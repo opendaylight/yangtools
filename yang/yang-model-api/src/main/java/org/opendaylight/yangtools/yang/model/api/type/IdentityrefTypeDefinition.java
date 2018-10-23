@@ -9,7 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -23,14 +24,14 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
      * @return set of identities to which the instance of this type refers (in YANG 1.1 models) or a set containing
      *         just one identity (in YANG 1.0 models)
      */
-    @Nonnull Set<IdentitySchemaNode> getIdentities();
+    @NonNull Set<IdentitySchemaNode> getIdentities();
 
-    static int hashCode(final IdentityrefTypeDefinition type) {
+    static int hashCode(final @NonNull IdentityrefTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getIdentities());
     }
 
-    static boolean equals(final IdentityrefTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull IdentityrefTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -40,7 +41,7 @@ public interface IdentityrefTypeDefinition extends TypeDefinition<IdentityrefTyp
         return other != null && type.getIdentities().equals(other.getIdentities());
     }
 
-    static String toString(final IdentityrefTypeDefinition type) {
+    static String toString(final @NonNull IdentityrefTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("identities", type.getIdentities()).toString();
     }
 }

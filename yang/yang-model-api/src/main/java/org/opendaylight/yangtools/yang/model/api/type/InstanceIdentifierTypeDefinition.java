@@ -8,18 +8,20 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Contains methods for getting data from the <code>instance-identifier</code> YANG built-in type.
  */
 public interface InstanceIdentifierTypeDefinition
         extends RequireInstanceRestrictedTypeDefinition<InstanceIdentifierTypeDefinition> {
-    static int hashCode(final InstanceIdentifierTypeDefinition type) {
+    static int hashCode(final @NonNull InstanceIdentifierTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.requireInstance());
     }
 
-    static boolean equals(final InstanceIdentifierTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull InstanceIdentifierTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -29,7 +31,7 @@ public interface InstanceIdentifierTypeDefinition
         return other != null && type.requireInstance() == other.requireInstance();
     }
 
-    static String toString(final InstanceIdentifierTypeDefinition type) {
+    static String toString(final @NonNull InstanceIdentifierTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("requireInstance", type.requireInstance()).toString();
     }
 }

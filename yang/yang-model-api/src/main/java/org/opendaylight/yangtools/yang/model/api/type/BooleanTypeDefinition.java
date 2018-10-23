@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -15,11 +17,11 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public interface BooleanTypeDefinition extends TypeDefinition<BooleanTypeDefinition> {
 
-    static int hashCode(final BooleanTypeDefinition type) {
+    static int hashCode(final @NonNull BooleanTypeDefinition type) {
         return TypeDefinitions.basicHashCode(type);
     }
 
-    static boolean equals(final BooleanTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull BooleanTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -27,7 +29,7 @@ public interface BooleanTypeDefinition extends TypeDefinition<BooleanTypeDefinit
         return TypeDefinitions.castIfEquals(BooleanTypeDefinition.class, type, obj) != null;
     }
 
-    static String toString(final BooleanTypeDefinition type) {
+    static String toString(final @NonNull BooleanTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).toString();
     }
 }

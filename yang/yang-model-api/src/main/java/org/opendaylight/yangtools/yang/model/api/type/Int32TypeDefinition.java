@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Type definition derived from int32 type.
  *
@@ -14,15 +17,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface Int32TypeDefinition extends RangeRestrictedTypeDefinition<Int32TypeDefinition, Integer> {
 
-    static int hashCode(final Int32TypeDefinition type) {
+    static int hashCode(final @NonNull Int32TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
     }
 
-    static boolean equals(final Int32TypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull Int32TypeDefinition type, final @Nullable Object obj) {
         return TypeDefinitions.equals(Int32TypeDefinition.class, type, obj);
     }
 
-    static String toString(final Int32TypeDefinition type) {
+    static String toString(final @NonNull Int32TypeDefinition type) {
         return TypeDefinitions.toString(type);
     }
 }

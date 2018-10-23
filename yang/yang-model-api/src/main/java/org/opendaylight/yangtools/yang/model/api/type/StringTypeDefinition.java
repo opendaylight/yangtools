@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.List;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Contains method for getting data from the <code>string</code> YANG built-in type.
@@ -17,19 +19,18 @@ public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<Str
     /**
      * Returns patterns specified in the string.
      *
-     * @return list of pattern constraints which are specified in the
-     *         <code>pattern</code> substatement of the <code>type</code>
+     * @return list of pattern constraints which are specified in the {@code pattern} substatement of the {@code type}
      *         statement
      */
-    List<PatternConstraint> getPatternConstraints();
+    @NonNull List<PatternConstraint> getPatternConstraints();
 
-    static int hashCode(final StringTypeDefinition type) {
+    static int hashCode(final @NonNull StringTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null),
             type.getPatternConstraints());
     }
 
-    static boolean equals(final StringTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull StringTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -39,7 +40,7 @@ public interface StringTypeDefinition extends LengthRestrictedTypeDefinition<Str
                 && type.getPatternConstraints().equals(other.getPatternConstraints());
     }
 
-    static String toString(final StringTypeDefinition type) {
+    static String toString(final @NonNull StringTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null))
                 .add("patterns", type.getPatternConstraints()).toString();
     }

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -19,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 final class RestrictedStringType extends AbstractLengthRestrictedType<StringTypeDefinition>
         implements StringTypeDefinition {
-    private final List<PatternConstraint> patternConstraints;
+    private final @NonNull List<PatternConstraint> patternConstraints;
 
     RestrictedStringType(final StringTypeDefinition baseType, final SchemaPath path,
         final Collection<UnknownSchemaNode> unknownSchemaNodes,

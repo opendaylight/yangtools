@@ -7,15 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition> {
 
-    static int hashCode(final EmptyTypeDefinition type) {
+    static int hashCode(final @NonNull EmptyTypeDefinition type) {
         return TypeDefinitions.basicHashCode(type);
     }
 
-    static boolean equals(final EmptyTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull EmptyTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -23,7 +25,7 @@ public interface EmptyTypeDefinition extends TypeDefinition<EmptyTypeDefinition>
         return TypeDefinitions.castIfEquals(EmptyTypeDefinition.class, type, obj) != null;
     }
 
-    static String toString(final EmptyTypeDefinition type) {
+    static String toString(final @NonNull EmptyTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).toString();
     }
 }

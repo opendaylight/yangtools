@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
@@ -24,12 +26,12 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
     @Override
     boolean requireInstance();
 
-    static int hashCode(final LeafrefTypeDefinition type) {
+    static int hashCode(final @NonNull LeafrefTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getPathStatement());
     }
 
-    static boolean equals(final LeafrefTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull LeafrefTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
@@ -38,7 +40,7 @@ public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefi
         return other != null && type.getPathStatement().equals(other.getPathStatement());
     }
 
-    static String toString(final LeafrefTypeDefinition type) {
+    static String toString(final @NonNull LeafrefTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("pathStatement", type.getPathStatement()).toString();
     }
 }

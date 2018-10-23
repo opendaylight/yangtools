@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.type;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 /**
  * Type definition derived from int8 type.
  *
@@ -14,15 +17,15 @@ package org.opendaylight.yangtools.yang.model.api.type;
  */
 public interface Int8TypeDefinition extends RangeRestrictedTypeDefinition<Int8TypeDefinition, Byte> {
 
-    static int hashCode(final Int8TypeDefinition type) {
+    static int hashCode(final @NonNull Int8TypeDefinition type) {
         return TypeDefinitions.hashCode(type);
     }
 
-    static boolean equals(final Int8TypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull Int8TypeDefinition type, final @Nullable Object obj) {
         return TypeDefinitions.equals(Int8TypeDefinition.class, type, obj);
     }
 
-    static String toString(final Int8TypeDefinition type) {
+    static String toString(final @NonNull Int8TypeDefinition type) {
         return TypeDefinitions.toString(type);
     }
 }

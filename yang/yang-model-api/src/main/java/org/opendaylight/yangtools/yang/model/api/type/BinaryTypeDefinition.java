@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * The binary built-in type represents any binary data, i.e., a sequence of
@@ -26,16 +28,16 @@ import java.util.Objects;
  */
 public interface BinaryTypeDefinition extends LengthRestrictedTypeDefinition<BinaryTypeDefinition> {
 
-    static String toString(final BinaryTypeDefinition type) {
+    static String toString(final @NonNull BinaryTypeDefinition type) {
         return TypeDefinitions.toStringHelper(type).add("length", type.getLengthConstraint().orElse(null)).toString();
     }
 
-    static int hashCode(final BinaryTypeDefinition type) {
+    static int hashCode(final @NonNull BinaryTypeDefinition type) {
         return Objects.hash(type.getPath(), type.getUnknownSchemaNodes(), type.getBaseType(),
             type.getUnits().orElse(null), type.getDefaultValue().orElse(null), type.getLengthConstraint().orElse(null));
     }
 
-    static boolean equals(final BinaryTypeDefinition type, final Object obj) {
+    static boolean equals(final @NonNull BinaryTypeDefinition type, final @Nullable Object obj) {
         if (type == obj) {
             return true;
         }
