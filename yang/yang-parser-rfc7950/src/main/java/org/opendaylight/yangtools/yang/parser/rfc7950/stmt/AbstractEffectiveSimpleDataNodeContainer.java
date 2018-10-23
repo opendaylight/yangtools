@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -36,7 +35,7 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
     private final Set<AugmentationSchemaNode> augmentations;
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
-    private final SchemaPath path;
+    private final @NonNull SchemaPath path;
     private final boolean configuration;
     private final boolean addedByUses;
 
@@ -77,13 +76,11 @@ public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends Declare
         }
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return path.getLastComponent();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

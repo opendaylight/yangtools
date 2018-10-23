@@ -8,12 +8,13 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
@@ -31,8 +32,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class GroupingEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<QName, GroupingStatement>
         implements GroupingDefinition, GroupingEffectiveStatement {
-    private final QName qname;
-    private final SchemaPath path;
+    private final @NonNull QName qname;
+    private final @NonNull SchemaPath path;
     private final boolean addedByUses;
     private final @NonNull Set<ActionDefinition> actions;
     private final @NonNull Set<NotificationDefinition> notifications;
@@ -42,7 +43,7 @@ final class GroupingEffectiveStatementImpl
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
         super(ctx);
 
-        qname = ctx.getStatementArgument();
+        qname = verifyNotNull(ctx.getStatementArgument());
         path = ctx.getSchemaPath().get();
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 
@@ -68,13 +69,11 @@ final class GroupingEffectiveStatementImpl
         unknownNodes = b.build();
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return qname;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

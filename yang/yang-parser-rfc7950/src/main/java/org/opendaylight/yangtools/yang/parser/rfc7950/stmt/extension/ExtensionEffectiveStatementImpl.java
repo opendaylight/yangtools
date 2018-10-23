@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -15,8 +17,8 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
@@ -66,8 +68,8 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
 
     private static final RecursionDetector TOSTRING_DETECTOR = new RecursionDetector();
 
-    private final QName qname;
-    private final String argument;
+    private final @NonNull QName qname;
+    private final @Nullable String argument;
     private final @NonNull SchemaPath schemaPath;
 
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
@@ -76,7 +78,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
-        this.qname = ctx.getStatementArgument();
+        this.qname = verifyNotNull(ctx.getStatementArgument());
         this.schemaPath = ctx.getSchemaPath().get();
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
@@ -135,7 +137,6 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
         return super.initSubstatements(substatementsInit);
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return qname;

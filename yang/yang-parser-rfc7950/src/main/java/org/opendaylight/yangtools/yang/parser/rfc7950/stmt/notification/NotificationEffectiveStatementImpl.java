@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -15,7 +17,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -34,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class NotificationEffectiveStatementImpl
         extends AbstractEffectiveDocumentedDataNodeContainer<QName, NotificationStatement>
         implements NotificationDefinition, NotificationEffectiveStatement {
-    private final QName qname;
-    private final SchemaPath path;
+    private final @NonNull QName qname;
+    private final @NonNull SchemaPath path;
     private final Set<AugmentationSchemaNode> augmentations;
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
@@ -45,7 +46,7 @@ final class NotificationEffectiveStatementImpl
     NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
         super(ctx);
-        this.qname = ctx.getStatementArgument();
+        this.qname = verifyNotNull(ctx.getStatementArgument());
         this.path = ctx.getSchemaPath().get();
 
         // initSubstatementCollections
@@ -76,13 +77,11 @@ final class NotificationEffectiveStatementImpl
         }
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return qname;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

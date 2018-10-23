@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -75,12 +76,12 @@ public abstract class SchemaPath implements Immutable {
     /**
      * Shared instance of the conceptual root schema node.
      */
-    public static final SchemaPath ROOT = new AbsoluteSchemaPath(null, null);
+    public static final @NonNull SchemaPath ROOT = new AbsoluteSchemaPath(null, null);
 
     /**
      * Shared instance of the "same" relative schema node.
      */
-    public static final SchemaPath SAME = new RelativeSchemaPath(null, null);
+    public static final @NonNull SchemaPath SAME = new RelativeSchemaPath(null, null);
 
     /**
      * Parent path.
@@ -181,7 +182,7 @@ public abstract class SchemaPath implements Immutable {
      * @param relative Relative path
      * @return A new child path
      */
-    public SchemaPath createChild(final Iterable<QName> relative) {
+    public @NonNull SchemaPath createChild(final Iterable<QName> relative) {
         if (Iterables.isEmpty(relative)) {
             return this;
         }
@@ -200,7 +201,7 @@ public abstract class SchemaPath implements Immutable {
      * @param relative Relative SchemaPath
      * @return A new child path
      */
-    public SchemaPath createChild(final SchemaPath relative) {
+    public @NonNull SchemaPath createChild(final SchemaPath relative) {
         checkArgument(!relative.isAbsolute(), "Child creation requires relative path");
         return createChild(relative.getPathFromRoot());
     }
@@ -211,7 +212,7 @@ public abstract class SchemaPath implements Immutable {
      * @param element Relative SchemaPath elements
      * @return A new child path
      */
-    public abstract SchemaPath createChild(QName element);
+    public abstract @NonNull SchemaPath createChild(QName element);
 
     /**
      * Create a child path based on concatenation of this path and additional
@@ -220,7 +221,7 @@ public abstract class SchemaPath implements Immutable {
      * @param elements Relative SchemaPath elements
      * @return A new child path
      */
-    public SchemaPath createChild(final QName... elements) {
+    public @NonNull SchemaPath createChild(final QName... elements) {
         return createChild(Arrays.asList(elements));
     }
 

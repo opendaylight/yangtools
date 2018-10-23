@@ -9,7 +9,7 @@
 package org.opendaylight.yangtools.yang.thirdparty.plugin;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
@@ -19,7 +19,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
         extends UnknownEffectiveStatementBase<String, ThirdPartyExtensionStatement>
         implements ThirdPartyExtensionEffectiveStatement {
 
-    private final SchemaPath path;
+    private final @NonNull SchemaPath path;
     private final String valueFromNamespace;
 
     ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
@@ -33,13 +33,11 @@ final class ThirdPartyExtensionEffectiveStatementImpl
         return valueFromNamespace;
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return getNodeType();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

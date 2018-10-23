@@ -15,7 +15,8 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -32,9 +33,9 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
 // FIXME: hide this somewhere
 public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSchemaNode {
 
-    private final DataSchemaNode caseShorthandNode;
-    private final CaseSchemaNode original;
-    private final SchemaPath path;
+    private final @NonNull DataSchemaNode caseShorthandNode;
+    private final @Nullable CaseSchemaNode original;
+    private final @NonNull SchemaPath path;
     private final boolean augmenting;
 
     public ImplicitCaseSchemaNode(final DataSchemaNode caseShorthandNode) {
@@ -63,13 +64,11 @@ public final class ImplicitCaseSchemaNode implements CaseSchemaNode, DerivableSc
         return caseShorthandNode.isConfiguration();
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return caseShorthandNode.getQName();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

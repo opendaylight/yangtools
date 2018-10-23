@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.refine;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,14 +29,14 @@ public final class RefineEffectiveStatementImpl
         extends AbstractEffectiveDocumentedNode<SchemaNodeIdentifier, RefineStatement>
         implements RefineEffectiveStatement, SchemaNode {
 
-    private final QName qname;
+    private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
     private final SchemaNode refineTargetNode;
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
         super(ctx);
-        qname = ctx.getStatementArgument().getLastComponent();
+        qname = verifyNotNull(ctx.getStatementArgument().getLastComponent());
         path = ctx.getSchemaPath().get();
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
 

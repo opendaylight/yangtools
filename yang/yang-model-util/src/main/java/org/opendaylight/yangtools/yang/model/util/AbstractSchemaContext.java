@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -169,13 +168,11 @@ public abstract class AbstractSchemaContext implements SchemaContext {
         return false;
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return SchemaContext.NAME;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return SchemaPath.ROOT;

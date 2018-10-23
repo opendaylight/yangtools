@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.openconfig.stmt;
 
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
@@ -21,20 +21,18 @@ final class OpenConfigVersionEffectiveStatementImpl extends
         UnknownEffectiveStatementBase<SemVer, OpenConfigVersionStatement>
         implements OpenConfigVersionEffectiveStatement {
 
-    private final SchemaPath path;
+    private final @NonNull SchemaPath path;
 
     OpenConfigVersionEffectiveStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
         super(ctx);
         path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return getNodeType();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return path;

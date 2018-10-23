@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,13 +41,11 @@ final class BitImpl implements Bit, Immutable {
         this.unknownNodes = requireNonNull(unknownNodes);
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return schemaPath.getLastComponent();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return schemaPath;
