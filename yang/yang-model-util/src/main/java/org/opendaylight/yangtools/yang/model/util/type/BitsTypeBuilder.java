@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
@@ -19,15 +19,15 @@ import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTypeDefinition> {
     private final Builder<String, Bit> builder = ImmutableMap.builder();
 
-    BitsTypeBuilder(final SchemaPath path) {
+    BitsTypeBuilder(final @NonNull SchemaPath path) {
         super(null, path);
     }
 
-    BitsTypeBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+    BitsTypeBuilder(final BitsTypeDefinition baseType, final @NonNull SchemaPath path) {
         super(baseType, path);
     }
 
-    public BitsTypeBuilder addBit(@Nonnull final Bit item) {
+    public BitsTypeBuilder addBit(final @NonNull Bit item) {
         // in case we are dealing with a restricted bits type, validate if the bit is a subset of its base type
         if (getBaseType() != null) {
             validateRestrictedBit(item);
@@ -38,7 +38,7 @@ public final class BitsTypeBuilder extends AbstractRestrictedTypeBuilder<BitsTyp
         return this;
     }
 
-    private void validateRestrictedBit(@Nonnull final Bit item) {
+    private void validateRestrictedBit(final @NonNull Bit item) {
         boolean isASubsetOfBaseBits = false;
         for (Bit baseTypeBit : getBaseType().getBits()) {
             if (item.getName().equals(baseTypeBit.getName())) {
