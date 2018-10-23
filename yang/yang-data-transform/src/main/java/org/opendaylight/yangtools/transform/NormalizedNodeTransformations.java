@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -47,8 +47,8 @@ public final class NormalizedNodeTransformations {
      * @param mapping Map of QNames to transform. Not listed QNames are preserved.
      * @return Normalized Node with replaced QNames.
      */
-    public static NormalizedNode<?, ?> replaceQNames(@Nonnull final NormalizedNode<?, ?> original,
-            @Nonnull final Map<QName, QName> mapping) {
+    public static NormalizedNode<?, ?> replaceQNames(final @NonNull NormalizedNode<?, ?> original,
+            final @NonNull Map<QName, QName> mapping) {
         return transformQNames(original, new QNameReplacementFunction(mapping));
     }
 
@@ -59,8 +59,8 @@ public final class NormalizedNodeTransformations {
      * @param mapping Map of QNameModules to transform. Not listed QNameModules are preserved.
      * @return Normalized Node with replaced QNameModules.
      */
-    public static NormalizedNode<?, ?> replaceQNameModules(@Nonnull final NormalizedNode<?, ?> original,
-            @Nonnull final Map<QNameModule, QNameModule> mapping) {
+    public static NormalizedNode<?, ?> replaceQNameModules(final @NonNull NormalizedNode<?, ?> original,
+            final @NonNull Map<QNameModule, QNameModule> mapping) {
         return transformQNames(original, new QNameModuleReplacementFunction(mapping));
     }
 }

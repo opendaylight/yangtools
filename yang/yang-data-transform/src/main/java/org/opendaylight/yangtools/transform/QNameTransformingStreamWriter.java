@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -51,9 +51,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
                 return delegate;
             }
 
-            @Nonnull
             @Override
-            protected QName transform(@Nonnull final QName key) {
+            protected QName transform(final QName key) {
                 return transformation.apply(key);
             }
 
@@ -180,7 +179,7 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
      * @param key QName to transform.
      * @return Returns new value of QName.
      */
-    protected abstract @Nonnull QName transform(@Nonnull QName key);
+    protected abstract @NonNull QName transform(@NonNull QName key);
 
     private NodeIdentifier transform(final NodeIdentifier name) {
         return new NodeIdentifier(transform(name.getNodeType()));
