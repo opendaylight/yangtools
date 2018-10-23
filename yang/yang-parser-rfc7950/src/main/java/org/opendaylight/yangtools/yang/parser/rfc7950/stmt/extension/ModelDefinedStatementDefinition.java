@@ -11,6 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
  * to be declared in a model.
  */
 final class ModelDefinedStatementDefinition implements StatementDefinition {
-    private final QName statementName;
+    private final @NonNull QName statementName;
     private final QName argumentName;
     private final boolean yinElement;
 

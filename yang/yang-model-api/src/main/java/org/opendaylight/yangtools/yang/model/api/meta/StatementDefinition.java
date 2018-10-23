@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -29,8 +29,7 @@ public interface StatementDefinition extends Immutable {
      *
      * @return Name of the statement
      */
-    @Nonnull
-    QName getStatementName();
+    @NonNull QName getStatementName();
 
     /**
      * Returns name of statement argument or null, if statement does not have
@@ -38,6 +37,8 @@ public interface StatementDefinition extends Immutable {
      *
      * @return argument name or null, if statement does not take argument.
      */
+    // FIXME: 3.0.0: make this return an Optional<StatementArgumentDefinition>, which will include the boolean value
+    //               of isArgumentYinElement()
     @Nullable
     QName getArgumentName();
 
@@ -52,8 +53,7 @@ public interface StatementDefinition extends Immutable {
      * @return class which represents declared version of statement associated
      *         with this definition.
      */
-    @Nonnull
-    Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
+    @NonNull Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass();
 
     /**
      * Returns class which represents derived behaviour from supplied statement.
@@ -65,8 +65,7 @@ public interface StatementDefinition extends Immutable {
      * @return class which represents effective version of statement associated
      *         with this definition
      */
-    @Nonnull
-    Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
+    @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
 
     /**
      * Returns true, if argument of statement is represented as value of yin
@@ -76,5 +75,6 @@ public interface StatementDefinition extends Immutable {
      * @return returns true, if statement argument is represented as value of
      *         yin element, otherwise returns false.
      */
+    // FIXME: 3.0.0: integrate this with getArgumentName()
     boolean isArgumentYinElement();
 }
