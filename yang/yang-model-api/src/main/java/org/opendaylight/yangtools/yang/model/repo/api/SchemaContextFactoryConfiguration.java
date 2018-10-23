@@ -17,7 +17,8 @@ import com.google.common.collect.SetMultimap;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -26,8 +27,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  * SchemaContextFactory configuration class.
  *
  * <p>
- * SchemaContextFactoryConfiguration supports currently the following options to
- * be set:
+ * SchemaContextFactoryConfiguration supports currently the following options to be set:
  * <ul>
  * <li>schema source filter</li>
  * <li>statement parser mode</li>
@@ -37,27 +37,27 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
  */
 @Beta
 public final class SchemaContextFactoryConfiguration implements Immutable {
-    private static final SchemaContextFactoryConfiguration DEFAULT_CONFIGURATION = new Builder().build();
+    private static final @NonNull SchemaContextFactoryConfiguration DEFAULT_CONFIGURATION = new Builder().build();
 
-    private final SchemaSourceFilter filter;
-    private final StatementParserMode statementParserMode;
-    private final Set<QName> supportedFeatures;
-    private final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
+    private final @NonNull SchemaSourceFilter filter;
+    private final @NonNull StatementParserMode statementParserMode;
+    private final @Nullable Set<QName> supportedFeatures;
+    private final @Nullable SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
-    private SchemaContextFactoryConfiguration(final SchemaSourceFilter filter,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures,
-            final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
+    private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
+            final @NonNull StatementParserMode statementParserMode, final @Nullable Set<QName> supportedFeatures,
+            final @Nullable SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
         this.supportedFeatures = supportedFeatures;
         this.modulesDeviatedByModules = modulesDeviatedByModules;
     }
 
-    public SchemaSourceFilter getSchemaSourceFilter() {
+    public @NonNull SchemaSourceFilter getSchemaSourceFilter() {
         return filter;
     }
 
-    public StatementParserMode getStatementParserMode() {
+    public @NonNull StatementParserMode getStatementParserMode() {
         return statementParserMode;
     }
 
@@ -69,11 +69,11 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         return Optional.ofNullable(modulesDeviatedByModules);
     }
 
-    public static SchemaContextFactoryConfiguration getDefault() {
+    public static @NonNull SchemaContextFactoryConfiguration getDefault() {
         return DEFAULT_CONFIGURATION;
     }
 
-    public static Builder builder() {
+    public static @NonNull Builder builder() {
         return new Builder();
     }
 
@@ -111,68 +111,59 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
         private Set<QName> supportedFeatures;
 
         /**
-         * Set schema source filter which will filter available schema sources
-         * using the provided filter.
+         * Set schema source filter which will filter available schema sources using the provided filter.
          *
-         * @param filter
-         *            schema source filter which acts as the gating function
-         *            before a schema source is considered by the factory for
-         *            inclusion in the SchemaContext it produces.
+         * @param filter schema source filter which acts as the gating function before a schema source is considered
+         *               by the factory for inclusion in the SchemaContext it produces.
          * @return this builder
          */
-        public Builder setFilter(@Nonnull final SchemaSourceFilter filter) {
+        public @NonNull Builder setFilter(final @NonNull SchemaSourceFilter filter) {
             this.filter = requireNonNull(filter);
             return this;
         }
 
         /**
-         * Set yang statement parser mode.
+         * Set YANG statement parser mode.
          *
-         * @param statementParserMode
-         *            mode of yang statement parser
+         * @param statementParserMode mode of yang statement parser
          * @return this builder
          */
-        public Builder setStatementParserMode(@Nonnull final StatementParserMode statementParserMode) {
+        public @NonNull Builder setStatementParserMode(final @NonNull StatementParserMode statementParserMode) {
             this.statementParserMode = requireNonNull(statementParserMode);
             return this;
         }
 
         /**
-         * Set supported features based on which all if-feature statements in
-         * the parsed YANG modules will be resolved.
+         * Set supported features based on which all if-feature statements in the parsed YANG modules will be resolved.
          *
-         * @param supportedFeatures
-         *            Set of supported features in the final SchemaContext. If
-         *            the set is empty, no features encountered will be
-         *            supported.
+         * @param supportedFeatures Set of supported features in the final SchemaContext. If the set is empty, no
+         *                          features encountered will be supported.
          * @return this builder
          */
-        public Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
+        public @NonNull Builder setSupportedFeatures(final Set<QName> supportedFeatures) {
             this.supportedFeatures = supportedFeatures != null ? ImmutableSet.copyOf(supportedFeatures) : null;
             return this;
         }
 
         /**
-         * Set YANG modules which can be deviated by specified modules during
-         * the parsing process. Map key (QNameModule) denotes a module which can
-         * be deviated by the modules in the Map value.
+         * Set YANG modules which can be deviated by specified modules during the parsing process. Map key (QNameModule)
+         * denotes a module which can be deviated by the modules in the Map value.
          *
-         * @param modulesDeviatedByModules
-         *            Map of YANG modules (Map key) which can be deviated by
-         *            specified modules (Map values) in the final SchemaContext.
-         *            If the map is empty, no deviations encountered will be
-         *            supported. If the map is null, all deviations will be applied.
+         * @param modulesDeviatedByModules Map of YANG modules (Map key) which can be deviated by specified modules
+         *                                 (Map values) in the final SchemaContext. If the map is empty, no deviations
+         *                                 encountered will be supported. If the map is null, all deviations will be
+         *                                 applied.
          * @return this builder
          */
-        public Builder setModulesDeviatedByModules(
-                final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
+        public @NonNull Builder setModulesDeviatedByModules(
+                final @Nullable SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
             this.modulesDeviatedByModules = modulesDeviatedByModules != null
                     ? ImmutableSetMultimap.copyOf(modulesDeviatedByModules) : null;
             return this;
         }
 
         @Override
-        public SchemaContextFactoryConfiguration build() {
+        public @NonNull SchemaContextFactoryConfiguration build() {
             return new SchemaContextFactoryConfiguration(filter, statementParserMode, supportedFeatures,
                     modulesDeviatedByModules);
         }
