@@ -79,7 +79,6 @@ final class BitImpl implements Bit, Immutable {
         return position;
     }
 
-    @Nonnull
     @Override
     public String getName() {
         return getQName().getLocalName();
