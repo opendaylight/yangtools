@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Range;
 import com.google.common.collect.RangeSet;
 import com.google.common.primitives.UnsignedInteger;
@@ -23,9 +24,9 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -183,10 +184,10 @@ abstract class SchemaContextEmitter {
 
     SchemaContextEmitter(final YangModuleWriter writer, final Map<QName, StatementDefinition> extensions,
             final YangVersion yangVersion, final boolean emitInstantiated, final boolean emitUses) {
-        this.writer = Preconditions.checkNotNull(writer);
+        this.writer = requireNonNull(writer);
         this.emitInstantiated = emitInstantiated;
         this.emitUses = emitUses;
-        this.extensions = Preconditions.checkNotNull(extensions);
+        this.extensions = requireNonNull(extensions);
         this.yangVersion = yangVersion;
     }
 
@@ -374,7 +375,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitYangVersionNode(@Nullable final YangVersionStatement yangVersionStatement) {
+        private void emitYangVersionNode(final @Nullable YangVersionStatement yangVersionStatement) {
             if (yangVersionStatement != null) {
                 super.writer.startYangVersionNode(yangVersionStatement.rawArgument());
                 super.writer.endNode();
@@ -397,46 +398,44 @@ abstract class SchemaContextEmitter {
         }
 
         private void emitNamespace(final NamespaceStatement namespaceStatement) {
-            Preconditions.checkNotNull(namespaceStatement, "Namespace must not be null");
-            super.writer.startNamespaceNode(namespaceStatement.getUri());
+            super.writer.startNamespaceNode(requireNonNull(namespaceStatement, "Namespace must not be null").getUri());
             super.writer.endNode();
         }
 
         private void emitPrefixNode(final PrefixStatement prefixStatement) {
-            Preconditions.checkNotNull(prefixStatement, "Prefix must not be null");
-            super.writer.startPrefixNode(prefixStatement.rawArgument());
+            super.writer.startPrefixNode(requireNonNull(prefixStatement, "Prefix must not be null").rawArgument());
             super.writer.endNode();
         }
 
-        private void emitOrganizationNode(@Nullable final OrganizationStatement organizationStatement) {
+        private void emitOrganizationNode(final @Nullable OrganizationStatement organizationStatement) {
             if (organizationStatement != null) {
                 super.writer.startOrganizationNode(organizationStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitContact(@Nullable final ContactStatement contactStatement) {
+        private void emitContact(final @Nullable ContactStatement contactStatement) {
             if (contactStatement != null) {
                 super.writer.startContactNode(contactStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitDescriptionNode(@Nullable final DescriptionStatement descriptionStatement) {
+        private void emitDescriptionNode(final @Nullable DescriptionStatement descriptionStatement) {
             if (descriptionStatement != null) {
                 super.writer.startDescriptionNode(descriptionStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitReferenceNode(@Nullable final ReferenceStatement referenceStatement) {
+        private void emitReferenceNode(final @Nullable ReferenceStatement referenceStatement) {
             if (referenceStatement != null) {
                 super.writer.startReferenceNode(referenceStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitUnitsNode(@Nullable final UnitsStatement unitsStatement) {
+        private void emitUnitsNode(final @Nullable UnitsStatement unitsStatement) {
             if (unitsStatement != null) {
                 super.writer.startUnitsNode(unitsStatement.rawArgument());
                 super.writer.endNode();
@@ -455,7 +454,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitRevisionDateNode(@Nullable final RevisionDateStatement revisionDateStatement) {
+        private void emitRevisionDateNode(final @Nullable RevisionDateStatement revisionDateStatement) {
             if (revisionDateStatement != null) {
                 super.writer.startRevisionDateNode(revisionDateStatement.rawArgument());
                 super.writer.endNode();
@@ -470,7 +469,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitArgument(@Nullable final ArgumentStatement input) {
+        private void emitArgument(final @Nullable ArgumentStatement input) {
             if (input != null) {
                 super.writer.startArgumentNode(input.rawArgument());
                 emitYinElement(input.getYinElement());
@@ -478,7 +477,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitYinElement(@Nullable final YinElementStatement yinElementStatement) {
+        private void emitYinElement(final @Nullable YinElementStatement yinElementStatement) {
             if (yinElementStatement != null) {
                 super.writer.startYinElementNode(yinElementStatement.rawArgument());
                 super.writer.endNode();
@@ -600,7 +599,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitDefaultNode(@Nullable final DefaultStatement defaultStmt) {
+        private void emitDefaultNode(final @Nullable DefaultStatement defaultStmt) {
             if (defaultStmt != null) {
                 super.writer.startDefaultNode(defaultStmt.rawArgument());
                 super.writer.endNode();
@@ -631,49 +630,49 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitPositionNode(@Nullable final PositionStatement positionStatement) {
+        private void emitPositionNode(final @Nullable PositionStatement positionStatement) {
             if (positionStatement != null) {
                 super.writer.startPositionNode(positionStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitStatusNode(@Nullable final StatusStatement statusStatement) {
+        private void emitStatusNode(final @Nullable StatusStatement statusStatement) {
             if (statusStatement != null) {
                 super.writer.startStatusNode(statusStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitConfigNode(@Nullable final ConfigStatement configStatement) {
+        private void emitConfigNode(final @Nullable ConfigStatement configStatement) {
             if (configStatement != null) {
                 super.writer.startConfigNode(configStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitMandatoryNode(@Nullable final MandatoryStatement mandatoryStatement) {
+        private void emitMandatoryNode(final @Nullable MandatoryStatement mandatoryStatement) {
             if (mandatoryStatement != null) {
                 super.writer.startMandatoryNode(mandatoryStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitPresenceNode(@Nullable final PresenceStatement presenceStatement) {
+        private void emitPresenceNode(final @Nullable PresenceStatement presenceStatement) {
             if (presenceStatement != null) {
                 super.writer.startPresenceNode(presenceStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitOrderedBy(@Nullable final OrderedByStatement orderedByStatement) {
+        private void emitOrderedBy(final @Nullable OrderedByStatement orderedByStatement) {
             if (orderedByStatement != null) {
                 super.writer.startOrderedByNode(orderedByStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitMust(@Nullable final MustStatement must) {
+        private void emitMust(final @Nullable MustStatement must) {
             if (must != null) {
                 super.writer.startMustNode(must.rawArgument());
                 emitErrorMessageNode(must.getErrorMessageStatement());
@@ -684,35 +683,35 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitErrorMessageNode(@Nullable final ErrorMessageStatement errorMessageStatement) {
+        private void emitErrorMessageNode(final @Nullable ErrorMessageStatement errorMessageStatement) {
             if (errorMessageStatement != null) {
                 super.writer.startErrorMessageNode(errorMessageStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitErrorAppTagNode(@Nullable final ErrorAppTagStatement errorAppTagStatement) {
+        private void emitErrorAppTagNode(final @Nullable ErrorAppTagStatement errorAppTagStatement) {
             if (errorAppTagStatement != null) {
                 super.writer.startErrorAppTagNode(errorAppTagStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitMinElementsNode(@Nullable final MinElementsStatement minElementsStatement) {
+        private void emitMinElementsNode(final @Nullable MinElementsStatement minElementsStatement) {
             if (minElementsStatement != null) {
                 super.writer.startMinElementsNode(minElementsStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitMaxElementsNode(@Nullable final MaxElementsStatement maxElementsStatement) {
+        private void emitMaxElementsNode(final @Nullable MaxElementsStatement maxElementsStatement) {
             if (maxElementsStatement != null) {
                 super.writer.startMaxElementsNode(maxElementsStatement.rawArgument());
                 super.writer.endNode();
             }
         }
 
-        private void emitValueNode(@Nullable final ValueStatement valueStatement) {
+        private void emitValueNode(final @Nullable ValueStatement valueStatement) {
             if (valueStatement != null) {
                 super.writer.startValueNode(valueStatement.rawArgument());
                 super.writer.endNode();
@@ -879,8 +878,7 @@ abstract class SchemaContextEmitter {
                     emitCaseNode(caze);
                 } else {
                     final Collection<? extends DeclaredStatement<?>> shortCaseChilds = caze.declaredSubstatements();
-                    Preconditions.checkState(shortCaseChilds.size() == 1,
-                            "Only one child is allowed for each short case node");
+                    checkState(shortCaseChilds.size() == 1, "Only one child is allowed for each short case node");
                     emitShortCases(shortCaseChilds);
                 }
             }
@@ -970,15 +968,11 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitUnknownStatementNodes(final DeclaredStatement<?> decaredStmt) {
-            final Collection<? extends DeclaredStatement<?>> unknownStmts = Collections2
-                    .filter(decaredStmt.declaredSubstatements(), Predicates.instanceOf(UnknownStatement.class));
-            for (final DeclaredStatement<?> unknonwnStmt : unknownStmts) {
-                emitUnknownStatementNode(unknonwnStmt);
-            }
+        private void emitUnknownStatementNodes(final DeclaredStatement<?> declaredStmt) {
+            declaredStmt.streamDeclaredSubstatements(UnknownStatement.class).forEach(this::emitUnknownStatementNode);
         }
 
-        private void emitUnknownStatementNode(final DeclaredStatement<?> unknonwnStmt) {
+        private void emitUnknownStatementNode(final UnknownStatement<?> unknonwnStmt) {
             final StatementDefinition def = unknonwnStmt.statementDefinition();
             if (def.getArgumentName() == null) {
                 super.writer.startUnknownNode(def);
@@ -1117,7 +1111,7 @@ abstract class SchemaContextEmitter {
                 } else if (child instanceof ConfigStatement) {
                     emitConfigNode((ConfigStatement) child);
                 } else if (child instanceof UnknownStatement) {
-                    emitUnknownStatementNode(child);
+                    emitUnknownStatementNode((UnknownStatement<?>) child);
                 }
             }
             super.writer.endNode();
@@ -1331,7 +1325,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitUnitsNode(@Nullable final String input) {
+        private void emitUnitsNode(final @Nullable String input) {
             super.writer.startUnitsNode(input);
             super.writer.endNode();
         }
@@ -1581,7 +1575,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitDefaultNode(@Nullable final Object object) {
+        private void emitDefaultNode(final @Nullable Object object) {
             super.writer.startDefaultNode(object.toString());
             super.writer.endNode();
         }
@@ -1645,14 +1639,14 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitPositionNode(@Nullable final Long position) {
+        private void emitPositionNode(final @Nullable Long position) {
             if (position != null) {
                 super.writer.startPositionNode(UnsignedInteger.valueOf(position));
                 super.writer.endNode();
             }
         }
 
-        private void emitStatusNode(@Nullable final Status status) {
+        private void emitStatusNode(final @Nullable Status status) {
             if (status != null) {
                 super.writer.startStatusNode(status);
                 super.writer.endNode();
@@ -1683,7 +1677,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitMust(@Nullable final MustDefinition mustCondition) {
+        private void emitMust(final @Nullable MustDefinition mustCondition) {
             if (mustCondition != null && mustCondition.getXpath() != null) {
                 super.writer.startMustNode(mustCondition.getXpath());
                 mustCondition.getErrorMessage().ifPresent(this::emitErrorMessageNode);
@@ -1693,7 +1687,7 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitErrorMessageNode(@Nullable final String input) {
+        private void emitErrorMessageNode(final @Nullable String input) {
             super.writer.startErrorMessageNode(input);
             super.writer.endNode();
         }
@@ -1710,14 +1704,14 @@ abstract class SchemaContextEmitter {
             }
         }
 
-        private void emitMaxElementsNode(final Integer max) {
+        private void emitMaxElementsNode(final @Nullable Integer max) {
             if (max != null) {
                 super.writer.startMaxElementsNode(max);
                 super.writer.endNode();
             }
         }
 
-        private void emitValueNode(@Nullable final Integer value) {
+        private void emitValueNode(final @Nullable Integer value) {
             if (value != null) {
                 super.writer.startValueNode(value);
                 super.writer.endNode();
@@ -1936,7 +1930,7 @@ abstract class SchemaContextEmitter {
 
         private static <T extends SchemaNode> T getOriginalChecked(final T value) {
             final Optional<SchemaNode> original = SchemaNodeUtils.getOriginalIfPossible(value);
-            Preconditions.checkArgument(original.isPresent(), "Original unmodified version of node is not present.");
+            checkArgument(original.isPresent(), "Original unmodified version of node is not present.");
             @SuppressWarnings("unchecked")
             final T ret = (T) original.get();
             return ret;
@@ -2108,7 +2102,7 @@ abstract class SchemaContextEmitter {
 
         private StatementDefinition getStatementChecked(final QName nodeType) {
             final StatementDefinition ret = super.extensions.get(nodeType);
-            Preconditions.checkArgument(ret != null, "Unknown extension %s used during export.", nodeType);
+            checkArgument(ret != null, "Unknown extension %s used during export.", nodeType);
             return ret;
         }
 
@@ -2160,7 +2154,7 @@ abstract class SchemaContextEmitter {
             super.writer.endNode();
         }
 
-        private void emitInput(@Nonnull final ContainerSchemaNode input) {
+        private void emitInput(final @NonNull ContainerSchemaNode input) {
             if (isExplicitStatement(input)) {
                 super.writer.startInputNode();
                 input.getMustConstraints().forEach(this::emitMust);
@@ -2171,7 +2165,7 @@ abstract class SchemaContextEmitter {
 
         }
 
-        private void emitOutput(@Nonnull final ContainerSchemaNode output) {
+        private void emitOutput(final @NonNull ContainerSchemaNode output) {
             if (isExplicitStatement(output)) {
                 super.writer.startOutputNode();
                 output.getMustConstraints().forEach(this::emitMust);

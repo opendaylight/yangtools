@@ -7,19 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import java.net.URI;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -67,7 +69,7 @@ final class SingleModuleYinStatementWriter implements StatementTextWriter {
 
     @Override
     public void startStatement(final StatementDefinition statement) {
-        currentStatement = Preconditions.checkNotNull(statement);
+        currentStatement = requireNonNull(statement);
         try {
             writeStartXmlElement(statement.getStatementName());
             if (YangStmtMapping.MODULE.equals(statement) || YangStmtMapping.SUBMODULE.equals(statement)) {
@@ -151,12 +153,12 @@ final class SingleModuleYinStatementWriter implements StatementTextWriter {
     }
 
     private void checkArgumentApplicable() {
-        Preconditions.checkState(currentStatement != null, "No statement is opened.");
-        Preconditions.checkState(currentStatement.getArgumentName() != null, "Statement %s does not take argument.",
+        checkState(currentStatement != null, "No statement is opened.");
+        checkState(currentStatement.getArgumentName() != null, "Statement %s does not take argument.",
                 currentStatement.getArgumentName());
     }
 
-    private static String toPrefixedString(@Nullable final String prefix, final String localName) {
+    private static String toPrefixedString(final @Nullable String prefix, final String localName) {
         if (prefix == null || prefix.isEmpty()) {
             return localName;
         }
