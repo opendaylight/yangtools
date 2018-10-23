@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Contains method which returns various data constraints for a list-like YANG element
@@ -86,20 +87,20 @@ public abstract class ElementCountConstraint {
         // Hidden on purpose
     }
 
-    public static ElementCountConstraint atLeast(final int minElements) {
+    public static @NonNull ElementCountConstraint atLeast(final int minElements) {
         return new Min(minElements);
     }
 
-    public static ElementCountConstraint atMost(final int maxElements) {
+    public static @NonNull ElementCountConstraint atMost(final int maxElements) {
         return new Max(maxElements);
     }
 
-    public static ElementCountConstraint inRange(final int minElements, final int maxElements) {
+    public static @NonNull ElementCountConstraint inRange(final int minElements, final int maxElements) {
         return new MinMax(minElements, maxElements);
     }
 
-    public static Optional<ElementCountConstraint> forNullable(@Nullable final Integer minElements,
-            @Nullable final Integer maxElements) {
+    public static @NonNull Optional<ElementCountConstraint> forNullable(final @Nullable Integer minElements,
+            final @Nullable Integer maxElements) {
         if (minElements == null) {
             return maxElements != null ? Optional.of(new Max(maxElements)) : Optional.empty();
         }
@@ -118,7 +119,7 @@ public abstract class ElementCountConstraint {
      *
      * @return integer with minimal number of elements, or null if no minimum is defined
      */
-    @Nullable public abstract Integer getMinElements();
+    public abstract @Nullable Integer getMinElements();
 
     /**
      * Returns the maximum admissible number of data elements for node where
@@ -131,7 +132,7 @@ public abstract class ElementCountConstraint {
      *
      * @return integer with maximum number of elements, or null if no maximum is defined
      */
-    @Nullable public abstract Integer getMaxElements();
+    public abstract @Nullable Integer getMaxElements();
 
     @Override
     public final int hashCode() {
