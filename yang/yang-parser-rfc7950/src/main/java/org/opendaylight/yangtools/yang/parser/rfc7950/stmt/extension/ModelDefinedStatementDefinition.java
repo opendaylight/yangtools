@@ -9,9 +9,8 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import static java.util.Objects.requireNonNull;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,36 +22,34 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
  * Public definition for statements declared by extensions. This class is instantiated for every extension that is seen
  * to be declared in a model.
  */
+@NonNullByDefault
 final class ModelDefinedStatementDefinition implements StatementDefinition {
-    private final @NonNull QName statementName;
-    private final QName argumentName;
+    private final QName statementName;
+    private final @Nullable QName argumentName;
     private final boolean yinElement;
 
-    ModelDefinedStatementDefinition(final QName statementName, final QName argumentName, final boolean yinElement) {
+    ModelDefinedStatementDefinition(final QName statementName, final @Nullable QName argumentName,
+            final boolean yinElement) {
         this.statementName = requireNonNull(statementName);
         this.argumentName = argumentName;
         this.yinElement = yinElement;
     }
 
-    @Nonnull
     @Override
     public QName getStatementName() {
         return statementName;
     }
 
-    @Nullable
     @Override
-    public QName getArgumentName() {
+    public @Nullable QName getArgumentName() {
         return argumentName;
     }
 
-    @Nonnull
     @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return UnrecognizedStatement.class;
     }
 
-    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return UnrecognizedEffectiveStatement.class;

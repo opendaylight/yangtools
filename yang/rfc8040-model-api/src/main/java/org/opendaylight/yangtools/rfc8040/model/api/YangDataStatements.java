@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.rfc8040.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *
  * @author Robert Varga
  */
+@NonNullByDefault
 public enum YangDataStatements implements StatementDefinition {
     YANG_DATA(QName.create(YangDataConstants.RFC8040_MODULE, "yang-data"), "name", YangDataStatement.class,
         YangDataEffectiveStatement.class);
@@ -38,7 +41,7 @@ public enum YangDataStatements implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
+    public @NonNull QName getArgumentName() {
         return argumentName;
     }
 

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.rfc7952.model.api;
 import com.google.common.collect.ImmutableList;
 import java.net.URI;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
@@ -20,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
  *
  * @author Robert Varga
  */
+@NonNullByDefault
 public final class MetadataConstants {
     private static final String MODULE_NAME = "ietf-yang-metadata";
     private static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-yang-metadata");
