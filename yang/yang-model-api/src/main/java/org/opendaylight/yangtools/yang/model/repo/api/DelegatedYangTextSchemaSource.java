@@ -14,10 +14,11 @@ import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
-    private final ByteSource delegate;
+    private final @NonNull ByteSource delegate;
 
     DelegatedYangTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
         super(identifier);
