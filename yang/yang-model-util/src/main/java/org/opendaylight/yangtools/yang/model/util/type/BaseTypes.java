@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -59,39 +59,39 @@ public final class BaseTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static BinaryTypeDefinition binaryType() {
+    public static @NonNull BinaryTypeDefinition binaryType() {
         return BaseBinaryType.INSTANCE;
     }
 
-    public static BitsTypeBuilder bitsTypeBuilder(final SchemaPath path) {
+    public static @NonNull BitsTypeBuilder bitsTypeBuilder(final SchemaPath path) {
         return new BitsTypeBuilder(path);
     }
 
-    public static BooleanTypeDefinition booleanType() {
+    public static @NonNull BooleanTypeDefinition booleanType() {
         return BaseBooleanType.INSTANCE;
     }
 
-    public static DecimalTypeBuilder decimalTypeBuilder(final SchemaPath path) {
+    public static @NonNull DecimalTypeBuilder decimalTypeBuilder(final SchemaPath path) {
         return new DecimalTypeBuilder(path);
     }
 
-    public static EmptyTypeDefinition emptyType() {
+    public static @NonNull EmptyTypeDefinition emptyType() {
         return BaseEmptyType.INSTANCE;
     }
 
-    public static EnumerationTypeBuilder enumerationTypeBuilder(final SchemaPath path) {
+    public static @NonNull EnumerationTypeBuilder enumerationTypeBuilder(final SchemaPath path) {
         return new EnumerationTypeBuilder(path);
     }
 
-    public static IdentityrefTypeBuilder identityrefTypeBuilder(final SchemaPath path) {
+    public static @NonNull IdentityrefTypeBuilder identityrefTypeBuilder(final SchemaPath path) {
         return new IdentityrefTypeBuilder(path);
     }
 
-    public static InstanceIdentifierTypeDefinition instanceIdentifierType() {
+    public static @NonNull InstanceIdentifierTypeDefinition instanceIdentifierType() {
         return BaseInstanceIdentifierType.INSTANCE;
     }
 
-    public static Int8TypeDefinition int8Type() {
+    public static @NonNull Int8TypeDefinition int8Type() {
         return BaseInt8Type.INSTANCE;
     }
 
@@ -105,7 +105,7 @@ public final class BaseTypes {
         return BaseInt8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Int16TypeDefinition int16Type() {
+    public static @NonNull Int16TypeDefinition int16Type() {
         return BaseInt16Type.INSTANCE;
     }
 
@@ -119,7 +119,7 @@ public final class BaseTypes {
         return BaseInt16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Int32TypeDefinition int32Type() {
+    public static @NonNull Int32TypeDefinition int32Type() {
         return BaseInt32Type.INSTANCE;
     }
 
@@ -134,7 +134,7 @@ public final class BaseTypes {
         return BaseInt32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Int64TypeDefinition int64Type() {
+    public static @NonNull Int64TypeDefinition int64Type() {
         return BaseInt64Type.INSTANCE;
     }
 
@@ -148,11 +148,11 @@ public final class BaseTypes {
         return BaseInt64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
+    public static @NonNull LeafrefTypeBuilder leafrefTypeBuilder(final SchemaPath path) {
         return new LeafrefTypeBuilder(path);
     }
 
-    public static StringTypeDefinition stringType() {
+    public static @NonNull StringTypeDefinition stringType() {
         return BaseStringType.INSTANCE;
     }
 
@@ -160,7 +160,7 @@ public final class BaseTypes {
         return new UnionTypeBuilder(path);
     }
 
-    public static Uint8TypeDefinition uint8Type() {
+    public static @NonNull Uint8TypeDefinition uint8Type() {
         return BaseUint8Type.INSTANCE;
     }
 
@@ -171,11 +171,11 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint8 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint8(final @NonNull TypeDefinition<?> type) {
         return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Uint16TypeDefinition uint16Type() {
+    public static @NonNull Uint16TypeDefinition uint16Type() {
         return BaseUint16Type.INSTANCE;
     }
 
@@ -186,11 +186,11 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint16 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint16(final @NonNull TypeDefinition<?> type) {
         return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Uint32TypeDefinition uint32Type() {
+    public static @NonNull Uint32TypeDefinition uint32Type() {
         return BaseUint32Type.INSTANCE;
     }
 
@@ -201,11 +201,11 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint32 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint32(final @NonNull TypeDefinition<?> type) {
         return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
-    public static Uint64TypeDefinition uint64Type() {
+    public static @NonNull Uint64TypeDefinition uint64Type() {
         return BaseUint64Type.INSTANCE;
     }
 
@@ -216,7 +216,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint64 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint64(final @NonNull TypeDefinition<?> type) {
         return BaseUint64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -228,7 +228,7 @@ public final class BaseTypes {
      * @return Base type of specified type
      * @throws NullPointerException if type is null
      */
-    public static TypeDefinition<?> baseTypeOf(@Nonnull final TypeDefinition<?> type) {
+    public static @NonNull TypeDefinition<?> baseTypeOf(final @NonNull TypeDefinition<?> type) {
         TypeDefinition<?> ret = type;
         while (ret.getBaseType() != null) {
             ret = ret.getBaseType();

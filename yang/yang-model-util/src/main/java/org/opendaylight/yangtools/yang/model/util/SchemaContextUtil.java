@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
 import java.util.HashSet;
@@ -19,8 +22,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
@@ -51,11 +54,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The Schema Context Util contains support methods for searching through Schema
- * Context modules for specified schema nodes via Schema Path or Revision Aware
- * XPath. The Schema Context Util is designed as mixin, so it is not
+ * The Schema Context Util contains support methods for searching through Schema Context modules for specified schema
+ * nodes via Schema Path or Revision Aware XPath. The Schema Context Util is designed as mixin, so it is not
  * instantiable.
- *
  */
 public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
@@ -83,8 +84,8 @@ public final class SchemaContextUtil {
      * @throws IllegalArgumentException if context or schemaPath is not correct.
      */
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final SchemaPath schemaPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(schemaPath != null, "Schema Path reference cannot be NULL");
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(schemaPath != null, "Schema Path reference cannot be NULL");
 
         final Iterable<QName> prefixedPath = schemaPath.getPathFromRoot();
         if (prefixedPath == null) {
@@ -138,14 +139,13 @@ public final class SchemaContextUtil {
     //        that feels like an overkill.
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
             final RevisionAwareXPath nonCondXPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
-        Preconditions.checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(module != null, "Module reference cannot be NULL");
+        checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
         final String strXPath = nonCondXPath.toString();
         if (strXPath != null) {
-            Preconditions.checkArgument(strXPath.indexOf('[') == -1,
-                    "Revision Aware XPath may not contain a condition");
+            checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
                 final List<QName> path = xpathToQNamePath(context, module, strXPath);
 
@@ -209,13 +209,12 @@ public final class SchemaContextUtil {
     //        that feels like an overkill.
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
             final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
-        Preconditions.checkArgument(actualSchemaNode != null, "Actual Schema Node reference cannot be NULL");
-        Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
-        Preconditions.checkState(!relativeXPath.isAbsolute(),
-                "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
-                        + "for non relative Revision Aware XPath use findDataSchemaNode method");
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(module != null, "Module reference cannot be NULL");
+        checkArgument(actualSchemaNode != null, "Actual Schema Node reference cannot be NULL");
+        checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
+        checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
+                + "for non relative Revision Aware XPath use findDataSchemaNode method");
 
         final SchemaPath actualNodePath = actualSchemaNode.getPath();
         if (actualNodePath != null) {
@@ -244,13 +243,13 @@ public final class SchemaContextUtil {
      *         return <code>null</code>
      */
     public static Module findParentModule(final SchemaContext context, final SchemaNode schemaNode) {
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL!");
-        Preconditions.checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
-        Preconditions.checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not "
-                + "set properly (Schema Path is NULL)");
+        checkArgument(context != null, "Schema Context reference cannot be NULL!");
+        checkArgument(schemaNode != null, "Schema Node cannot be NULL!");
+        checkState(schemaNode.getPath() != null, "Schema Path for Schema Node is not set properly (Schema Path is "
+                + "NULL)");
 
         final QName qname = schemaNode.getPath().getLastComponent();
-        Preconditions.checkState(qname != null, "Schema Path contains invalid state of path parts. "
+        checkState(qname != null, "Schema Path contains invalid state of path parts. "
                 + "The Schema Path MUST contain at least ONE QName  which defines namespace and Local name of path.");
         return context.findModule(qname.getModule()).orElse(null);
     }
@@ -276,11 +275,10 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable
-    public static NotificationDefinition getNotificationSchema(@Nonnull final SchemaContext schema,
-            @Nonnull final SchemaPath path) {
-        Preconditions.checkNotNull(schema, "Schema context must not be null.");
-        Preconditions.checkNotNull(path, "Schema path must not be null.");
+    public static @Nullable NotificationDefinition getNotificationSchema(final @NonNull SchemaContext schema,
+            final @NonNull SchemaPath path) {
+        requireNonNull(schema, "Schema context must not be null.");
+        requireNonNull(path, "Schema path must not be null.");
         for (final NotificationDefinition potential : schema.getNotifications()) {
             if (path.equals(potential.getPath())) {
                 return potential;
@@ -297,15 +295,14 @@ public final class SchemaContextUtil {
      * @return Notification schema or null, if notification is not present in schema context.
      */
     @Beta
-    @Nullable
-    public static ContainerSchemaNode getRpcDataSchema(@Nonnull final SchemaContext schema,
-            @Nonnull final SchemaPath path) {
-        Preconditions.checkNotNull(schema, "Schema context must not be null.");
-        Preconditions.checkNotNull(path, "Schema path must not be null.");
+    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @NonNull SchemaContext schema,
+            final @NonNull SchemaPath path) {
+        requireNonNull(schema, "Schema context must not be null.");
+        requireNonNull(path, "Schema path must not be null.");
         final Iterator<QName> it = path.getPathFromRoot().iterator();
-        Preconditions.checkArgument(it.hasNext(), "Rpc must have QName.");
+        checkArgument(it.hasNext(), "Rpc must have QName.");
         final QName rpcName = it.next();
-        Preconditions.checkArgument(it.hasNext(), "input or output must be part of path.");
+        checkArgument(it.hasNext(), "input or output must be part of path.");
         final QName inOrOut = it.next();
         for (final RpcDefinition potential : schema.getOperations()) {
             if (rpcName.equals(potential.getQName())) {
@@ -340,9 +337,8 @@ public final class SchemaContextUtil {
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
-
-        Preconditions.checkArgument(module != null, "Parent reference cannot be NULL");
-        Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
+        checkArgument(module != null, "Parent reference cannot be NULL");
+        checkArgument(path != null, "Path reference cannot be NULL");
 
         if (!path.iterator().hasNext()) {
             LOG.debug("No node matching {} found in node {}", path, module);
@@ -390,9 +386,8 @@ public final class SchemaContextUtil {
     }
 
     private static SchemaNode findNodeIn(final SchemaNode parent, final Iterable<QName> path) {
-
-        Preconditions.checkArgument(parent != null, "Parent reference cannot be NULL");
-        Preconditions.checkArgument(path != null, "Path reference cannot be NULL");
+        checkArgument(parent != null, "Parent reference cannot be NULL");
+        checkArgument(path != null, "Path reference cannot be NULL");
 
         if (!path.iterator().hasNext()) {
             LOG.debug("No node matching {} found in node {}", path, parent);
@@ -549,10 +544,10 @@ public final class SchemaContextUtil {
      */
     private static List<QName> xpathToQNamePath(final SchemaContext context, final Module parentModule,
             final String xpath) {
-        // FIXME: 2.0.0: this should throw NPE, not IAE
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
-        Preconditions.checkArgument(xpath != null, "XPath string reference cannot be NULL");
+        // FIXME: 3.0.0: this should throw NPE, not IAE
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
+        checkArgument(xpath != null, "XPath string reference cannot be NULL");
 
         final List<QName> path = new LinkedList<>();
         for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
@@ -574,30 +569,26 @@ public final class SchemaContextUtil {
      * If Schema Context, Parent Module or Prefixed Path Part refers to
      * <code>null</code> the method will throw IllegalArgumentException
      *
-     * @param context
-     *            Schema Context
-     * @param parentModule
-     *            Parent Module
-     * @param prefixedPathPart
-     *            Prefixed Path Part string
+     * @param context Schema Context
+     * @param parentModule Parent Module
+     * @param prefixedPathPart Prefixed Path Part string
      * @return QName from prefixed Path Part String.
      * @throws IllegalArgumentException if any arguments are null
      */
     private static QName stringPathPartToQName(final SchemaContext context, final Module parentModule,
             final String prefixedPathPart) {
-        // FIXME: 2.0.0: this should throw NPE, not IAE
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
-        Preconditions.checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
+        // FIXME: 3.0.0: this should throw NPE, not IAE
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(parentModule != null, "Parent Module reference cannot be NULL");
+        checkArgument(prefixedPathPart != null, "Prefixed Path Part cannot be NULL!");
 
         if (prefixedPathPart.indexOf(':') != -1) {
             final Iterator<String> prefixedName = COLON_SPLITTER.split(prefixedPathPart).iterator();
             final String modulePrefix = prefixedName.next();
 
             final Module module = resolveModuleForPrefix(context, parentModule, modulePrefix);
-            Preconditions.checkArgument(module != null,
-                    "Failed to resolve xpath: no module found for prefix %s in module %s", modulePrefix,
-                    parentModule.getName());
+            checkArgument(module != null, "Failed to resolve xpath: no module found for prefix %s in module %s",
+                    modulePrefix, parentModule.getName());
 
             return QName.create(module.getQNameModule(), prefixedName.next());
         }
@@ -606,34 +597,26 @@ public final class SchemaContextUtil {
     }
 
     /**
-     * Method will attempt to resolve and provide Module reference for specified
-     * module prefix. Each Yang module could contains multiple imports which
-     * MUST be associated with corresponding module prefix. The method simply
-     * looks into module imports and returns the module that is bounded with
-     * specified prefix. If the prefix is not present in module or the prefixed
-     * module is not present in specified Schema Context, the method will return
-     * <code>null</code>. <br>
-     * If String prefix is the same as prefix of the specified Module the
-     * reference to this module is returned. <br>
-     * If Schema Context, Module or Prefix are referring to <code>null</code>
-     * the method will return IllegalArgumentException
+     * Method will attempt to resolve and provide Module reference for specified module prefix. Each Yang module could
+     * contains multiple imports which MUST be associated with corresponding module prefix. The method simply looks into
+     * module imports and returns the module that is bounded with specified prefix. If the prefix is not present
+     * in module or the prefixed module is not present in specified Schema Context, the method will return {@code null}.
+     * <br>
+     * If String prefix is the same as prefix of the specified Module the reference to this module is returned.<br>
+     * If Schema Context, Module or Prefix are referring to {@code null} the method will throw IllegalArgumentException.
      *
-     * @param context
-     *            Schema Context
-     * @param module
-     *            Yang Module
-     * @param prefix
-     *            Module Prefix
-     * @return Module for given prefix in specified Schema Context if is
-     *         present, otherwise returns <code>null</code>
+     * @param context Schema Context
+     * @param module Yang Module
+     * @param prefix Module Prefix
+     * @return Module for given prefix in specified Schema Context if is present, otherwise returns <code>null</code>
      * @throws IllegalArgumentException if any arguments are null
      */
     private static Module resolveModuleForPrefix(final SchemaContext context, final Module module,
             final String prefix) {
-        // FIXME: 2.0.0: this should throw NPE, not IAE
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
-        Preconditions.checkArgument(prefix != null, "Prefix string cannot be NULL");
+        // FIXME: 3.0.0: this should throw NPE, not IAE
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(module != null, "Module reference cannot be NULL");
+        checkArgument(prefix != null, "Prefix string cannot be NULL");
 
         if (prefix.equals(module.getPrefix())) {
             return module;
@@ -664,14 +647,13 @@ public final class SchemaContextUtil {
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
             final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
-        // FIXME: 2.0.0: this should throw NPE, not IAE
-        Preconditions.checkArgument(context != null, "Schema Context reference cannot be NULL");
-        Preconditions.checkArgument(module != null, "Module reference cannot be NULL");
-        Preconditions.checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
-        Preconditions.checkState(!relativeXPath.isAbsolute(),
-                "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
-                        + "for non relative Revision Aware XPath use findDataSchemaNode method");
-        Preconditions.checkState(actualSchemaNode.getPath() != null,
+        // FIXME: 3.0.0: this should throw NPE, not IAE
+        checkArgument(context != null, "Schema Context reference cannot be NULL");
+        checkArgument(module != null, "Module reference cannot be NULL");
+        checkArgument(relativeXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
+        checkState(!relativeXPath.isAbsolute(), "Revision Aware XPath MUST be relative i.e. MUST contains ../, "
+                + "for non relative Revision Aware XPath use findDataSchemaNode method");
+        checkState(actualSchemaNode.getPath() != null,
                 "Schema Path reference for Leafref cannot be NULL");
 
         final Iterable<String> xpaths = SLASH_SPLITTER.split(relativeXPath.toString());
@@ -770,7 +752,7 @@ public final class SchemaContextUtil {
         }
 
         final Optional<Module> parentModule = schemaContext.findModule(qname.getModule());
-        Preconditions.checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
+        checkArgument(parentModule.isPresent(), "Failed to find parent module for %s", qname);
 
         final DataSchemaNode dataSchemaNode = (DataSchemaNode) SchemaContextUtil.findDataSchemaNode(schemaContext,
             parentModule.get(), strippedPathStatement);
@@ -784,8 +766,8 @@ public final class SchemaContextUtil {
 
     private static Module findParentModuleOfReferencingType(final SchemaContext schemaContext,
             final SchemaNode schemaNode) {
-        Preconditions.checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
-        Preconditions.checkArgument(schemaNode instanceof TypedDataSchemaNode, "Unsupported node %s", schemaNode);
+        checkArgument(schemaContext != null, "Schema Context reference cannot be NULL!");
+        checkArgument(schemaNode instanceof TypedDataSchemaNode, "Unsupported node %s", schemaNode);
 
         TypeDefinition<?> nodeType = ((TypedDataSchemaNode) schemaNode).getType();
         if (nodeType.getBaseType() != null) {
