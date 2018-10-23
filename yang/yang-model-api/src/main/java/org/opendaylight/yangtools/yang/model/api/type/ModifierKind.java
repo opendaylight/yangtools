@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api.type;
 
 import static java.util.Objects.requireNonNull;
@@ -14,15 +13,14 @@ import com.google.common.collect.Maps;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Enum describing the effect of a YANG modifier statement.
  *
  * <p>
- * As of YANG 1.1 (RFC7950) there is only one modifier value available and that
- * is "invert-match". If there are more possible values added in the future,
- * this enum can be extended with more enum constants.
+ * As of YANG 1.1 (RFC7950) there is only one modifier value available and that is "invert-match". If there are more
+ * possible values added in the future, this enum can be extended with more enum constants.
  */
 public enum ModifierKind {
     INVERT_MATCH("invert-match");
@@ -30,9 +28,9 @@ public enum ModifierKind {
     private static final Map<String, ModifierKind> MODIFIER_KIND_MAP = Maps.uniqueIndex(
         Arrays.asList(ModifierKind.values()), ModifierKind::getKeyword);
 
-    private final String keyword;
+    private final @NonNull String keyword;
 
-    ModifierKind(final String keyword) {
+    ModifierKind(final @NonNull String keyword) {
         this.keyword = requireNonNull(keyword);
     }
 
@@ -41,19 +39,18 @@ public enum ModifierKind {
      *
      * @return String that corresponds to the YANG keyword.
      */
-    public @Nonnull String getKeyword() {
+    public @NonNull String getKeyword() {
         return keyword;
     }
 
     /**
-     * Returns ModifierKind based on supplied Yang keyword.
+     * Returns ModifierKind based on supplied YANG keyword.
      *
-     * @param keyword
-     *            Yang keyword in string form
+     * @param keyword YANG keyword in string form
      * @return ModifierKind based on supplied YANG keyword
      * @throws NullPointerException if keyword is null
      */
-    public static Optional<ModifierKind> parse(final String keyword) {
+    public static Optional<ModifierKind> parse(final @NonNull String keyword) {
         return Optional.ofNullable(MODIFIER_KIND_MAP.get(requireNonNull(keyword)));
     }
 }
