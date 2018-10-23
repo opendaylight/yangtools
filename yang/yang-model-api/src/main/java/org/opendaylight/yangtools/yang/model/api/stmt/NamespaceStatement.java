@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.net.URI;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface NamespaceStatement extends DeclaredStatement<URI> {
-    default @Nonnull URI getUri() {
-        return argument();
+    default @NonNull URI getUri() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 }
-

@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface IncludeStatement extends DocumentedDeclaredStatement<String> {
-    default @Nonnull String getModule() {
-        return argument();
+    default @NonNull String getModule() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
     default @Nullable RevisionDateStatement getRevisionDate() {
@@ -21,4 +24,3 @@ public interface IncludeStatement extends DocumentedDeclaredStatement<String> {
         return opt.isPresent() ? opt.get() : null;
     }
 }
-

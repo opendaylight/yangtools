@@ -7,16 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Verify.verifyNotNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface BelongsToStatement extends DeclaredStatement<String> {
-    default @Nonnull String getModule() {
-        return argument();
+    default @NonNull String getModule() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
-    default @Nonnull PrefixStatement getPrefix() {
+    default @NonNull PrefixStatement getPrefix() {
         return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 }
-

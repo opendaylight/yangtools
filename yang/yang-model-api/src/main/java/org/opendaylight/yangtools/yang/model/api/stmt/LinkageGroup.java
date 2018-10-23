@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Rfc6020AbnfRule("linkage-stms")
 @Deprecated
 public interface LinkageGroup {
 
-    @Nonnull Collection<? extends ImportStatement> getImports();
+    @NonNull Collection<? extends ImportStatement> getImports();
 
-    @Nonnull Collection<? extends IncludeStatement> getIncludes();
+    @NonNull Collection<? extends IncludeStatement> getIncludes();
 }

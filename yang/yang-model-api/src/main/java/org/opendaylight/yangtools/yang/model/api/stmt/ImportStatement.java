@@ -7,16 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface ImportStatement extends DocumentedDeclaredStatement<String> {
-    default @Nonnull String getModule() {
-        return rawArgument();
+    default @NonNull String getModule() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(rawArgument());
     }
 
-    default @Nonnull PrefixStatement getPrefix() {
+    default @NonNull PrefixStatement getPrefix() {
         return findFirstDeclaredSubstatement(PrefixStatement.class).get();
     }
 

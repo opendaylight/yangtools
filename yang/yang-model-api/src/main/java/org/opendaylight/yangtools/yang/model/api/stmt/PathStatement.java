@@ -7,14 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Verify.verifyNotNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 public interface PathStatement extends DeclaredStatement<RevisionAwareXPath> {
     // FIXME: Introduce proper type representing parsed leafref
-    default @Nonnull String getValue() {
-        return rawArgument();
+    default @NonNull String getValue() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(rawArgument());
     }
 }
-
