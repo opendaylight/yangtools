@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Collection;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
@@ -23,73 +23,57 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @Beta
 public interface SchemaContextFactory {
     /**
-     * Create a new schema context containing specified sources, pulling in any
-     * dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any dependencies they may have.
      *
-     * @param requiredSources
-     *            a collection of sources which are required to be present
-     * @return A checked future, which will produce a schema context, or fail
-     *         with an explanation why the creation of the schema context
-     *         failed.
+     * @param requiredSources a collection of sources which are required to be present
+     * @return A checked future, which will produce a schema context, or fail with an explanation why the creation
+     *         of the schema context failed.
      */
-    ListenableFuture<SchemaContext> createSchemaContext(@Nonnull Collection<SourceIdentifier> requiredSources);
+    @NonNull ListenableFuture<SchemaContext> createSchemaContext(@NonNull Collection<SourceIdentifier> requiredSources);
 
     /**
-     * Create a new schema context containing specified sources, pulling in any
-     * dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any dependencies they may have.
      *
-     * @param requiredSources
-     *            a collection of sources which are required to be present
-     * @param statementParserMode
-     *            mode of statement parser
-     * @return A checked future, which will produce a schema context, or fail
-     *         with an explanation why the creation of the schema context
-     *         failed.
+     * @param requiredSources a collection of sources which are required to be present
+     * @param statementParserMode mode of statement parser
+     * @return A future which will produce a schema context, or fail with an explanation why the creation
+     *         of the schema context failed.
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    default ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
-            final StatementParserMode statementParserMode) {
+    default @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources, final StatementParserMode statementParserMode) {
         return createSchemaContext(requiredSources, statementParserMode, null);
     }
 
     /**
-     * Create a new schema context containing specified sources, pulling in any
-     * dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any dependencies they may have.
      *
-     * @param requiredSources
-     *            a collection of sources which are required to be present
-     * @param supportedFeatures
-     *            set of supported features based on which all if-feature
-     *            statements in the parsed yang models are resolved
-     * @return A checked future, which will produce a schema context, or fail
-     *         with an explanation why the creation of the schema context
-     *         failed.
+     * @param requiredSources a collection of sources which are required to be present
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
+     * @return A future which will produce a schema context, or fail with an explanation why the creation of the schema
+     *         context failed.
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    default ListenableFuture<SchemaContext> createSchemaContext(
-            @Nonnull final Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
+    default @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+            final @NonNull Collection<SourceIdentifier> requiredSources, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources, StatementParserMode.DEFAULT_MODE, supportedFeatures);
     }
 
     /**
-     * Create a new schema context containing specified sources, pulling in any
-     * dependencies they may have.
+     * Create a new schema context containing specified sources, pulling in any dependencies they may have.
      *
-     * @param requiredSources
-     *            a collection of sources which are required to be present
-     * @param statementParserMode
-     *            mode of statement parser
-     * @param supportedFeatures
-     *            set of supported features based on which all if-feature
-     *            statements in the parsed yang models are resolved
-     * @return A checked future, which will produce a schema context, or fail
-     *         with an explanation why the creation of the schema context
-     *         failed.
+     * @param requiredSources a collection of sources which are required to be present
+     * @param statementParserMode mode of statement parser
+     * @param supportedFeatures set of supported features based on which all if-feature statements in the parsed YANG
+     *                          models are resolved
+     * @return A future which will produce a schema context, or fail with an explanation why the creation of the schema
+     *         context failed.
      * @deprecated Use SchemaContextFactoryConfiguration instead.
      */
     @Deprecated
-    ListenableFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
+    @NonNull ListenableFuture<SchemaContext> createSchemaContext(Collection<SourceIdentifier> requiredSources,
             StatementParserMode statementParserMode, Set<QName> supportedFeatures);
 }
