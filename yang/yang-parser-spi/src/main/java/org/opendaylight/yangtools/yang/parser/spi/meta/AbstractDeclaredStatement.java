@@ -5,13 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -22,13 +21,14 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
  * @param <A> Argument type.
  */
 public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<A> {
+    private final @NonNull ImmutableList<? extends DeclaredStatement<?>> substatements;
+    private final @NonNull StatementDefinition definition;
+    private final @NonNull StatementSource source;
+
     private final A argument;
     private final String rawArgument;
-    private final ImmutableList<? extends DeclaredStatement<?>> substatements;
-    private final StatementDefinition definition;
-    private final StatementSource source;
 
-    protected AbstractDeclaredStatement(final StmtContext<A,?,?> context) {
+    protected AbstractDeclaredStatement(final StmtContext<A, ?, ?> context) {
         rawArgument = context.rawStatementArgument();
         argument = context.getStatementArgument();
         source = context.getStatementSource();
@@ -63,19 +63,16 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
         return argument;
     }
 
-    @Nonnull
     @Override
     public StatementDefinition statementDefinition() {
         return definition;
     }
 
-    @Nonnull
     @Override
     public Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return substatements;
     }
 
-    @Nonnull
     @Override
     public StatementSource getStatementSource() {
         return source;

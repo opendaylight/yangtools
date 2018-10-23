@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -45,13 +44,11 @@ abstract class EmptyConfigStatement implements ConfigStatement {
 
     abstract EffectiveStatement<Boolean, ConfigStatement> toEffective();
 
-    @Nonnull
     @Override
     public final Collection<? extends DeclaredStatement<?>> declaredSubstatements() {
         return ImmutableList.of();
     }
 
-    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return YangStmtMapping.CONFIG;
@@ -62,7 +59,6 @@ abstract class EmptyConfigStatement implements ConfigStatement {
         return Boolean.toString(getValue());
     }
 
-    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.DECLARATION;
