@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
@@ -83,8 +82,8 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
     }
 
     @Override
-    public <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(
-            @Nonnull final SourceIdentifier id, @Nonnull final Class<T> representation) {
+    public <T extends SchemaSourceRepresentation> ListenableFuture<T> getSchemaSource(final SourceIdentifier id,
+            final Class<T> representation) {
         final ArrayList<AbstractSchemaSourceRegistration<?>> sortedSchemaSourceRegistrations;
 
         synchronized (this) {
@@ -119,7 +118,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
 
             @Override
             @SuppressWarnings("checkstyle:parameterName")
-            public void onFailure(@Nonnull final Throwable t) {
+            public void onFailure(final Throwable t) {
                 LOG.trace("Skipping notification for encountered source {}, fetching source failed", id, t);
             }
         }, MoreExecutors.directExecutor());

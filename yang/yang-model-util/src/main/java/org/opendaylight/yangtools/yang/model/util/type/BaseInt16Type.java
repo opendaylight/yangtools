@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.Int16TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 final class BaseInt16Type extends AbstractRangeRestrictedBaseType<Int16TypeDefinition, Short>
         implements Int16TypeDefinition {
-    static final BaseInt16Type INSTANCE = new BaseInt16Type();
+    static final @NonNull BaseInt16Type INSTANCE = new BaseInt16Type();
 
     private BaseInt16Type() {
         super(BaseTypes.INT16_QNAME, Short.MIN_VALUE, Short.MAX_VALUE);

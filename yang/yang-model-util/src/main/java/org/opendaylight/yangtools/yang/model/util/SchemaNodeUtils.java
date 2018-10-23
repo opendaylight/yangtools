@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.util;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 
 public final class SchemaNodeUtils {
-
     private SchemaNodeUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -50,11 +49,10 @@ public final class SchemaNodeUtils {
      * @param qname input or output QName with namespace same as RPC
      * @return input or output schema. Returns null if RPC does not have input/output specified.
      */
-    @Nullable public static ContainerSchemaNode getRpcDataSchema(@Nonnull final RpcDefinition rpc,
-            @Nonnull final QName qname) {
+    public static @Nullable ContainerSchemaNode getRpcDataSchema(final @NonNull RpcDefinition rpc,
+            final @NonNull QName qname) {
         requireNonNull(rpc, "Rpc Schema must not be null");
-        requireNonNull(qname, "QName must not be null");
-        switch (qname.getLocalName()) {
+        switch (requireNonNull(qname, "QName must not be null").getLocalName()) {
             case "input":
                 return rpc.getInput();
             case "output":

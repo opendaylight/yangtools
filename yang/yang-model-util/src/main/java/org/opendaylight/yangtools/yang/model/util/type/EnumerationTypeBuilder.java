@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
@@ -27,7 +27,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
         super(baseType, path);
     }
 
-    public EnumerationTypeBuilder addEnum(@Nonnull final EnumPair item) {
+    public EnumerationTypeBuilder addEnum(final @NonNull EnumPair item) {
         // in case we are dealing with a restricted enumeration type, validate if the enum is a subset of its base type
         if (getBaseType() != null) {
             validateRestrictedEnum(item);
@@ -38,7 +38,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
         return this;
     }
 
-    private void validateRestrictedEnum(@Nonnull final EnumPair item) {
+    private void validateRestrictedEnum(final @NonNull EnumPair item) {
         boolean isASubsetOfBaseEnums = false;
         for (EnumPair baseTypeEnumPair : getBaseType().getValues()) {
             if (item.getName().equals(baseTypeEnumPair.getName())) {
@@ -70,10 +70,7 @@ public final class EnumerationTypeBuilder extends AbstractRestrictedTypeBuilder<
             }
         }
 
-        if (getBaseType() == null) {
-            return new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values());
-        } else {
-            return new RestrictedEnumerationType(getBaseType(), getPath(), getUnknownSchemaNodes(), map.values());
-        }
+        return getBaseType() == null ? new BaseEnumerationType(getPath(), getUnknownSchemaNodes(), map.values())
+                : new RestrictedEnumerationType(getBaseType(), getPath(), getUnknownSchemaNodes(), map.values());
     }
 }
