@@ -10,8 +10,7 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -23,9 +22,9 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
             ThirdPartyExtensionStatementImpl.class, ThirdPartyExtensionEffectiveStatementImpl.class,
             "third-party-extension", "argument-name", false);
 
-    private final Class<? extends DeclaredStatement<?>> type;
-    private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
-    private final QName name;
+    private final @NonNull Class<? extends DeclaredStatement<?>> type;
+    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
+    private final @NonNull QName name;
     private final QName argument;
     private final boolean yinElement;
 
@@ -50,35 +49,29 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    @Nonnull
-    private static QName createQName(final String namespace, final String localName) {
+    private static @NonNull QName createQName(final String namespace, final String localName) {
         return QName.create(namespace, localName).intern();
     }
 
-    @Nonnull
-    private static QName createQName(final String namespace, final String revision, final String localName) {
+    private static @NonNull QName createQName(final String namespace, final String revision, final String localName) {
         return QName.create(namespace, revision, localName).intern();
     }
 
-    @Nonnull
     @Override
     public QName getStatementName() {
         return name;
     }
 
     @Override
-    @Nullable
     public QName getArgumentName() {
         return argument;
     }
 
     @Override
-    @Nonnull
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return type;
     }
 
-    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;

@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -230,9 +230,9 @@ public enum YangStmtMapping implements StatementDefinition {
     YANG_VERSION(YangVersionStatement.class, YangVersionEffectiveStatement.class, "yang-version", "value"),
     YIN_ELEMENT(YinElementStatement.class, YinElementEffectiveStatement.class, "yin-element", "value");
 
-    private final Class<? extends DeclaredStatement<?>> declaredType;
-    private final Class<? extends EffectiveStatement<?, ?>> effectiveType;
-    private final QName name;
+    private final @NonNull Class<? extends DeclaredStatement<?>> declaredType;
+    private final @NonNull Class<? extends EffectiveStatement<?, ?>> effectiveType;
+    private final @NonNull QName name;
     private final QName argument;
     private final boolean yinElement;
 
@@ -260,27 +260,26 @@ public enum YangStmtMapping implements StatementDefinition {
         this.yinElement = yinElement;
     }
 
-    @Nonnull private static QName yinQName(final String nameStr) {
+    private static @NonNull QName yinQName(final String nameStr) {
         return QName.create(YangConstants.RFC6020_YIN_MODULE, nameStr).intern();
     }
 
-    @Nonnull
     @Override
     public QName getStatementName() {
         return name;
     }
 
     @Override
-    @Nullable public QName getArgumentName() {
+    @Nullable
+    public QName getArgumentName() {
         return argument;
     }
 
     @Override
-    @Nonnull public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
+    public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredType;
     }
 
-    @Nonnull
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
