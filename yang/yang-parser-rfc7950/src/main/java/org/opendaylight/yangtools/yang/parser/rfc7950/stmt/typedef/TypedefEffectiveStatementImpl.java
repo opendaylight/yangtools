@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -40,7 +41,7 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         TypedefEffectiveStatement {
     private static final Logger LOG = LoggerFactory.getLogger(TypedefEffectiveStatementImpl.class);
 
-    private final TypeDefinition<?> typeDefinition;
+    private final @NonNull TypeDefinition<?> typeDefinition;
 
     private volatile TypeEffectiveStatement<TypeStatement> typeStatement;
 
@@ -82,7 +83,6 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public TypeDefinition<?> getTypeDefinition() {
         return typeDefinition;
@@ -126,7 +126,6 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
             return TypedefEffectiveStatementImpl.this.effectiveSubstatements();
         }
 
-        @Nonnull
         @Override
         public StatementDefinition statementDefinition() {
             return YangStmtMapping.TYPE;
@@ -137,13 +136,11 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
             return getQName().getLocalName();
         }
 
-        @Nonnull
         @Override
         public StatementSource getStatementSource() {
             return StatementSource.CONTEXT;
         }
 
-        @Nonnull
         @Override
         public TypeDefinition<?> getTypeDefinition() {
             return TypedefEffectiveStatementImpl.this.getTypeDefinition();

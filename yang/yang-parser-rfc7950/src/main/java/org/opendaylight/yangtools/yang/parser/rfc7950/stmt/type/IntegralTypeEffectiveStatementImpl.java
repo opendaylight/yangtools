@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -24,7 +24,7 @@ final class IntegralTypeEffectiveStatementImpl<T extends RangeRestrictedTypeDefi
         N extends Number & Comparable<N>> extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
 
-    private final T typeDefinition;
+    private final @NonNull T typeDefinition;
 
     IntegralTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -49,7 +49,6 @@ final class IntegralTypeEffectiveStatementImpl<T extends RangeRestrictedTypeDefi
         }
     }
 
-    @Nonnull
     @Override
     public T getTypeDefinition() {
         return typeDefinition;

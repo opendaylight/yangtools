@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
-    private final BinaryTypeDefinition typeDefinition;
+    private final @NonNull BinaryTypeDefinition typeDefinition;
 
     BinaryTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -56,7 +56,6 @@ final class BinaryTypeEffectiveStatementImpl extends DeclaredEffectiveStatementB
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public BinaryTypeDefinition getTypeDefinition() {
         return typeDefinition;
