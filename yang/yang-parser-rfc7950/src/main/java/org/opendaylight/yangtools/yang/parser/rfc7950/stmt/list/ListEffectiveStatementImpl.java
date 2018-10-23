@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -48,7 +48,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final ListSchemaNode original;
     private final Set<ActionDefinition> actions;
     private final Set<NotificationDefinition> notifications;
-    private final Collection<UniqueConstraint> uniqueConstraints;
+    private final @NonNull Collection<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
     private final Collection<MustDefinition> mustConstraints;
 
@@ -128,7 +128,6 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     }
 
     @Override
-    @Nonnull
     public Collection<UniqueConstraint> getUniqueConstraints() {
         return uniqueConstraints;
     }
