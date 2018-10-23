@@ -8,15 +8,14 @@
 package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
 import javax.xml.transform.Source;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * YIN text schema source representation. Exposes an RFC6020 or RFC7950 XML representation as an XML {@link Source}.
  */
 @Beta
 public interface YinXmlSchemaSource extends YinSchemaSourceRepresentation {
-    @Nonnull
     @Override
     Class<? extends YinXmlSchemaSource> getType();
 
@@ -25,5 +24,5 @@ public interface YinXmlSchemaSource extends YinSchemaSourceRepresentation {
      *
      * @return An XML {@link Source} instance.
      */
-    @Nonnull Source getSource();
+    @NonNull Source getSource();
 }
