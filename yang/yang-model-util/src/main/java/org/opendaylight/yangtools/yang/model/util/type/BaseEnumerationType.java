@@ -10,13 +10,13 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> implements EnumTypeDefinition {
-    private final List<EnumPair> values;
+    private final @NonNull List<EnumPair> values;
 
     BaseEnumerationType(final SchemaPath path, final List<UnknownSchemaNode> unknownSchemaNodes,
             final Collection<EnumPair> values) {
@@ -24,7 +24,6 @@ final class BaseEnumerationType extends AbstractBaseType<EnumTypeDefinition> imp
         this.values = ImmutableList.copyOf(values);
     }
 
-    @Nonnull
     @Override
     public List<EnumPair> getValues() {
         return values;
