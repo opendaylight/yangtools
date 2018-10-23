@@ -9,20 +9,19 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 
 /**
  * Interface describing YANG 'unique' constraint.
  *
  * <p>
- * The 'unique' constraint specifies that the combined values of all the leaf
- * instances specified in the argument string, including leafs with default
- * values, MUST be unique within all list entry instances in which all
- * referenced leafs exist (for more information see RFC-6020 section 7.8.3.).
+ * The 'unique' constraint specifies that the combined values of all the leaf instances specified in the argument
+ * string, including leafs with default values, MUST be unique within all list entry instances in which all referenced
+ * leafs exist (for more information see RFC-6020 section 7.8.3.).
  */
 @Beta
 public interface UniqueConstraint {
     // FIXME: 3.0.0: return Set<Relative>
-    @Nonnull Collection<Relative> getTag();
+    @NonNull Collection<Relative> getTag();
 }
