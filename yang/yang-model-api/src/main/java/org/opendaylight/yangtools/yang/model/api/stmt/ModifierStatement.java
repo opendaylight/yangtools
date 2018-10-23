@@ -8,8 +8,10 @@
 
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 
@@ -17,14 +19,14 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
  * Represents YANG modifier statement.
  *
  * <p>
- * The "modifier" statement, which is an optional substatement
- * to the "pattern" statement, takes as an argument the string "invert-match".
- * If a pattern has the "invert-match" modifier present, the type is
- * restricted to values that do not match the pattern.
+ * The "modifier" statement, which is an optional substatement to the "pattern" statement, takes as an argument
+ * the string "invert-match". If a pattern has the "invert-match" modifier present, the type is restricted to values
+ * that do not match the pattern.
  */
 @Beta
 public interface ModifierStatement extends DeclaredStatement<ModifierKind> {
-    default @Nonnull ModifierKind getValue() {
-        return argument();
+    default @NonNull ModifierKind getValue() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 }

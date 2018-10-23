@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Verify.verifyNotNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface FeatureStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull QName getName() {
-        return argument();
+    default @NonNull QName getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 }

@@ -8,13 +8,13 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface ChoiceStatement extends DataDefinitionStatement, ConfigStatementAwareDeclaredStatement<QName>,
         DefaultStatementAwareDeclaredStatement, MandatoryStatementAwareDeclaredStatement<QName> {
 
-    default @Nonnull Collection<? extends CaseStatement> getCases() {
+    default @NonNull Collection<? extends CaseStatement> getCases() {
         return declaredSubstatements(CaseStatement.class);
     }
 }

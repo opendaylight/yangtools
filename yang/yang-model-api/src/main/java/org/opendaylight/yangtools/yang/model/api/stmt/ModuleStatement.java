@@ -7,13 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface ModuleStatement extends MetaDeclaredStatement<String>, ModuleHeaderGroup, LinkageDeclaredStatement,
         RevisionAwareDeclaredStatement, BodyDeclaredStatement {
-    default @Nonnull String getName() {
-        return rawArgument();
+    default @NonNull String getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(rawArgument());
     }
 
     @Override

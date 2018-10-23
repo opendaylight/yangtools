@@ -7,15 +7,18 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 public interface DeviationStatement extends DocumentedDeclaredStatement<SchemaNodeIdentifier> {
-    default @Nonnull SchemaNodeIdentifier getTargetNode() {
-        return argument();
+    default @NonNull SchemaNodeIdentifier getTargetNode() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
-    default @Nonnull Collection<? extends DeviateStatement> getDeviateStatements() {
+    default @NonNull Collection<? extends DeviateStatement> getDeviateStatements() {
         return declaredSubstatements(DeviateStatement.class);
     }
 }

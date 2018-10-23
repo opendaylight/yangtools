@@ -9,14 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface NotificationStatementAwareDeclaredStatement<A> extends DeclaredStatement<A>,
         NotificationStatementContainer {
     @Override
-    default @Nonnull Collection<? extends NotificationStatement> getNotifications() {
+    default Collection<? extends NotificationStatement> getNotifications() {
         return declaredSubstatements(NotificationStatement.class);
     }
 }

@@ -7,14 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 public interface EnumStatement extends DocumentedDeclaredStatement.WithStatus<String>,
         IfFeatureAwareDeclaredStatement<String> {
-    default @Nonnull String getName() {
-        return argument();
+    default @NonNull String getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
     default @Nullable ValueStatement getValue() {
