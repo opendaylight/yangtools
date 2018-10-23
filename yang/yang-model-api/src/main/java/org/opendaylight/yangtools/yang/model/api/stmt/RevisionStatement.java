@@ -7,11 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import javax.annotation.Nonnull;
+import static com.google.common.base.Verify.verifyNotNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 public interface RevisionStatement extends DocumentedDeclaredStatement<Revision> {
-    default @Nonnull Revision getDate() {
-        return argument();
+    default @NonNull Revision getDate() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 }

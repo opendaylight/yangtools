@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.revision;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
@@ -16,11 +15,5 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class RevisionStatementImpl extends AbstractDeclaredStatement<Revision> implements RevisionStatement {
     RevisionStatementImpl(final StmtContext<Revision, RevisionStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public Revision getDate() {
-        return argument();
     }
 }
