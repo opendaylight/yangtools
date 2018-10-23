@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
 /**
@@ -21,5 +21,5 @@ public interface TypeDefinitionAware {
      *
      * @return Effective {@link TypeDefinition} as defined by this statement.
      */
-    @Nonnull TypeDefinition<?> getTypeDefinition();
+    @NonNull TypeDefinition<?> getTypeDefinition();
 }

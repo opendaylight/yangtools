@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
 
-    private final BitsTypeDefinition typeDefinition;
+    private final @NonNull BitsTypeDefinition typeDefinition;
 
     BitsTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -70,7 +70,6 @@ final class BitsTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
                 "Bit '%s' is not a subset of its base bits type %s.", bitName, baseType.getQName());
     }
 
-    @Nonnull
     @Override
     public BitsTypeDefinition getTypeDefinition() {
         return typeDefinition;

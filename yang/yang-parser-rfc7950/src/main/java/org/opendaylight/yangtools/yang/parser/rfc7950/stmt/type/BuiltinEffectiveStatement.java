@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Map;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -41,14 +42,14 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
     UINT32(BaseTypes.uint32Type()),
     UINT64(BaseTypes.uint64Type());
 
-    private final TypeDefinition<?> typedef;
+    private final @NonNull TypeDefinition<?> typedef;
 
     BuiltinEffectiveStatement(final TypeDefinition<?> typedef) {
         this.typedef = requireNonNull(typedef);
     }
 
     @Override
-    public @Nonnull TypeDefinition<?> getTypeDefinition() {
+    public TypeDefinition<?> getTypeDefinition() {
         return typedef;
     }
 
@@ -76,7 +77,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
         return ImmutableList.of();
     }
 
-    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return YangStmtMapping.TYPE;
@@ -87,7 +87,6 @@ enum BuiltinEffectiveStatement implements TypeEffectiveStatement<TypeStatement> 
         return getTypeDefinition().getQName().getLocalName();
     }
 
-    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return StatementSource.CONTEXT;

@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 public final class BitsSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, BitsSpecification> implements TypeEffectiveStatement<BitsSpecification> {
 
-    private final BitsTypeDefinition typeDefinition;
+    private final @NonNull BitsTypeDefinition typeDefinition;
 
     BitsSpecificationEffectiveStatement(
             final StmtContext<String, BitsSpecification, EffectiveStatement<String, BitsSpecification>> ctx) {
@@ -70,7 +70,6 @@ public final class BitsSpecificationEffectiveStatement extends
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public BitsTypeDefinition getTypeDefinition() {
         return typeDefinition;
