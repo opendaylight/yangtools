@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -59,25 +59,27 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             .weakValues().build();
     private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
-    private final SchemaRepository repository;
-    private final SchemaContextFactoryConfiguration config;
+    private final @NonNull SchemaRepository repository;
+    private final @NonNull SchemaContextFactoryConfiguration config;
 
     // FIXME SchemaRepository should be the type for repository parameter instead of SharedSchemaRepository
     //       (final implementation)
     @Deprecated
-    SharedSchemaContextFactory(final SharedSchemaRepository repository, final SchemaSourceFilter filter) {
-        this.repository = requireNonNull(repository);
-        this.config = SchemaContextFactoryConfiguration.builder().setFilter(filter).build();
+    SharedSchemaContextFactory(final @NonNull SharedSchemaRepository repository,
+            final @NonNull SchemaSourceFilter filter) {
+        this(repository, SchemaContextFactoryConfiguration.builder().setFilter(filter).build());
     }
 
-    SharedSchemaContextFactory(final SchemaRepository repository, final SchemaContextFactoryConfiguration config) {
+    SharedSchemaContextFactory(final @NonNull SchemaRepository repository,
+        final @NonNull SchemaContextFactoryConfiguration config) {
         this.repository = requireNonNull(repository);
         this.config = requireNonNull(config);
     }
 
     @Override
     @Deprecated
-    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+    public @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources,
             final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
         return createSchemaContext(requiredSources,
                 statementParserMode == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
@@ -87,13 +89,15 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     @Override
-    public ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources) {
+    public @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+            final @NonNull Collection<SourceIdentifier> requiredSources) {
         return createSchemaContext(requiredSources,
                 config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
                 new AssembleSources(config));
     }
 
-    private ListenableFuture<SchemaContext> createSchemaContext(final Collection<SourceIdentifier> requiredSources,
+    private @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+            final Collection<SourceIdentifier> requiredSources,
             final Cache<Collection<SourceIdentifier>, SchemaContext> cache,
             final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
         // Make sources unique
@@ -127,7 +131,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             }
 
             @Override
-            public void onFailure(@Nonnull final Throwable cause) {
+            public void onFailure(final Throwable cause) {
                 LOG.debug("Failed to assemble sources", cause);
             }
         }, MoreExecutors.directExecutor());
@@ -135,7 +139,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         return cf;
     }
 
-    private ListenableFuture<ASTSchemaSource> requestSource(final SourceIdentifier identifier) {
+    private ListenableFuture<ASTSchemaSource> requestSource(final @NonNull SourceIdentifier identifier) {
         return repository.getSchemaSource(identifier, ASTSchemaSource.class);
     }
 
@@ -191,11 +195,10 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
+        private final @NonNull SchemaContextFactoryConfiguration config;
+        private final @NonNull Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
-        private final SchemaContextFactoryConfiguration config;
-        private final Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
-
-        private AssembleSources(@Nonnull final SchemaContextFactoryConfiguration config) {
+        private AssembleSources(final @NonNull SchemaContextFactoryConfiguration config) {
             this.config = config;
             switch (config.getStatementParserMode()) {
                 case SEMVER_MODE:
@@ -207,7 +210,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         @Override
-        public FluentFuture<SchemaContext> apply(@Nonnull final List<ASTSchemaSource> sources)
+        public FluentFuture<SchemaContext> apply(final List<ASTSchemaSource> sources)
                 throws SchemaResolutionException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
