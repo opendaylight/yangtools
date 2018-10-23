@@ -20,8 +20,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.ArgumentContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
 import org.opendaylight.yangtools.concepts.SemVer;
@@ -170,7 +171,7 @@ public abstract class YangModelDependencyInfo {
      * @return {@link YangModelDependencyInfo}
      * @throws YangSyntaxErrorException If the AST is not a valid YANG module/submodule
      */
-    static YangModelDependencyInfo fromAST(final SourceIdentifier source, final ParserRuleContext tree)
+    static @NonNull YangModelDependencyInfo fromAST(final SourceIdentifier source, final ParserRuleContext tree)
             throws YangSyntaxErrorException {
 
         if (tree instanceof StatementContext) {
@@ -181,7 +182,7 @@ public abstract class YangModelDependencyInfo {
         throw new YangSyntaxErrorException(source, 0, 0, "Unknown YANG text type");
     }
 
-    private static YangModelDependencyInfo parseAST(final StatementContext rootStatement,
+    private static @NonNull YangModelDependencyInfo parseAST(final StatementContext rootStatement,
             final SourceIdentifier source) {
         final String keyWordText = rootStatement.keyword().getText();
         if (MODULE.equals(keyWordText)) {
@@ -215,7 +216,7 @@ public abstract class YangModelDependencyInfo {
         return parseAST((StatementContext) ast, source.getIdentifier());
     }
 
-    private static YangModelDependencyInfo parseModuleContext(final StatementContext module,
+    private static @NonNull YangModelDependencyInfo parseModuleContext(final StatementContext module,
             final SourceIdentifier source) {
         final String name = safeStringArgument(source, module, "module name");
         final String latestRevision = getLatestRevision(module, source);
@@ -303,7 +304,7 @@ public abstract class YangModelDependencyInfo {
         return latestRevision;
     }
 
-    private static YangModelDependencyInfo parseSubmoduleContext(final StatementContext submodule,
+    private static @NonNull YangModelDependencyInfo parseSubmoduleContext(final StatementContext submodule,
             final SourceIdentifier source) {
         final String name = safeStringArgument(source, submodule, "submodule name");
         final String belongsTo = parseBelongsTo(submodule, source);
@@ -392,11 +393,12 @@ public abstract class YangModelDependencyInfo {
         private final SemVer semVer;
         private final String name;
 
-        ModuleImportImpl(final String moduleName, final Revision revision) {
+        ModuleImportImpl(final @NonNull String moduleName, final @Nullable Revision revision) {
             this(moduleName, revision, null);
         }
 
-        ModuleImportImpl(final String moduleName, @Nullable final Revision revision, @Nullable final SemVer semVer) {
+        ModuleImportImpl(final @NonNull String moduleName, final @Nullable Revision revision,
+                final @Nullable SemVer semVer) {
             this.name = requireNonNull(moduleName, "Module name must not be null.");
             this.revision = revision;
             this.semVer = semVer;

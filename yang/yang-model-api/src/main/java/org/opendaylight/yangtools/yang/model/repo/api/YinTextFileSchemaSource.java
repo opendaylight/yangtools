@@ -7,13 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
@@ -24,9 +26,9 @@ import org.opendaylight.yangtools.concepts.Delegator;
 final class YinTextFileSchemaSource extends YinTextSchemaSource implements Delegator<File> {
     private final File file;
 
-    YinTextFileSchemaSource(final SourceIdentifier identifier, final File file) {
+    YinTextFileSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull File file) {
         super(identifier);
-        this.file = Preconditions.checkNotNull(file);
+        this.file = requireNonNull(file);
     }
 
     @Override
