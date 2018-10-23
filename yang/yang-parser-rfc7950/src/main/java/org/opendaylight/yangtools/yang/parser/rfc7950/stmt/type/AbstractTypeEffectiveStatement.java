@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> extends
         DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
-    private final T typeDefinition;
+    private final @NonNull T typeDefinition;
 
     AbstractTypeEffectiveStatement(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -35,7 +35,6 @@ abstract class AbstractTypeEffectiveStatement<T extends TypeDefinition<T>> exten
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public final T getTypeDefinition() {
         return typeDefinition;

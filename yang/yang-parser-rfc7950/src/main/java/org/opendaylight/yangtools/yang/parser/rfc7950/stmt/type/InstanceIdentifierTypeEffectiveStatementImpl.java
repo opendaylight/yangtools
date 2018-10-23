@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
@@ -21,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class InstanceIdentifierTypeEffectiveStatementImpl
         extends DeclaredEffectiveStatementBase<String, TypeStatement> implements TypeEffectiveStatement<TypeStatement> {
-    private final InstanceIdentifierTypeDefinition typeDefinition;
+    private final @NonNull InstanceIdentifierTypeDefinition typeDefinition;
 
     InstanceIdentifierTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -44,7 +44,6 @@ final class InstanceIdentifierTypeEffectiveStatementImpl
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public InstanceIdentifierTypeDefinition getTypeDefinition() {
         return typeDefinition;

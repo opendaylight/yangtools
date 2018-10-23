@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -25,7 +25,7 @@ public final class UnionSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, UnionSpecification> implements
         TypeEffectiveStatement<UnionSpecification> {
 
-    private final UnionTypeDefinition typeDefinition;
+    private final @NonNull UnionTypeDefinition typeDefinition;
 
     UnionSpecificationEffectiveStatement(
             final StmtContext<String, UnionSpecification, EffectiveStatement<String, UnionSpecification>> ctx) {
@@ -45,7 +45,6 @@ public final class UnionSpecificationEffectiveStatement extends
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public UnionTypeDefinition getTypeDefinition() {
         return typeDefinition;
