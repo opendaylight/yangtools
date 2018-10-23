@@ -7,33 +7,31 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.api;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
  * YANG Schema revision source identifier.
  *
  * <p>
- * Simple transfer object represents revision identifier of source for YANG
- * schema (module or submodule), which consists of
+ * Simple transfer object represents revision identifier of source for YANG schema (module or submodule), which consists
+ * of
  * <ul>
  * <li>YANG schema name ({@link #getName()}
  * <li>Module revision (optional) ({link {@link #getRevision()})
  * </ul>
  *
  * <p>
- * Revision source identifier is designated to be carry only necessary
- * information to look-up YANG model source and to be used by various
- * SchemaSourceProviders.
+ * Revision source identifier is designated to be carry only necessary information to look-up YANG model source
+ * and to be used by various SchemaSourceProviders.
  *
  * <p>
- * <b>Note:</b>On source retrieval layer it is impossible to distinguish between
- * YANG module and/or submodule unless source is present.
+ * <b>Note:</b>On source retrieval layer it is impossible to distinguish between YANG module and/or submodule unless
+ * source is present.
  *
  * <p>
  * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2
@@ -44,11 +42,9 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     private static final long serialVersionUID = 1L;
 
     /**
-     * Creates new YANG Schema revision source identifier for sources without
-     * a revision.
+     * Creates new YANG Schema revision source identifier for sources without a revision.
      *
-     * @param name
-     *            Name of schema
+     * @param name Name of schema
      */
     RevisionSourceIdentifier(final String name) {
         super(name);
@@ -57,22 +53,18 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema revision source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param revision
-     *            Revision of source, may be null
+     * @param name Name of schema
+     * @param revision Revision of source, may be null
      */
-    RevisionSourceIdentifier(final String name, @Nullable final Revision revision) {
-        super(requireNonNull(name), revision);
+    RevisionSourceIdentifier(final String name, final @Nullable Revision revision) {
+        super(name, revision);
     }
 
     /**
      * Creates new YANG Schema revision source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param formattedRevision
-     *            Revision of source, potentially not present
+     * @param name Name of schema
+     * @param formattedRevision Revision of source, potentially not present
      */
     private RevisionSourceIdentifier(final String name, final Optional<Revision> revision) {
         super(name, revision);
@@ -81,25 +73,20 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema revision source identifier.
      *
-     * @param moduleName
-     *            Name of schema
-     * @param revision
-     *            Revision of source in format YYYY-mm-dd. If not present,
-     *            default value will be used.
+     * @param moduleName Name of schema
+     * @param revision Revision of source in format YYYY-mm-dd. If not present, default value will be used.
      */
-    public static RevisionSourceIdentifier create(final String moduleName, final Optional<Revision> revision) {
+    public static @NonNull RevisionSourceIdentifier create(final String moduleName, final Optional<Revision> revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
     }
 
     /**
      * Creates new YANG Schema revision source identifier.
      *
-     * @param moduleName
-     *            Name of schema
-     * @param revision
-     *            Revision of source, may be null
+     * @param moduleName Name of schema
+     * @param revision Revision of source, may be null
      */
-    public static RevisionSourceIdentifier create(final String moduleName, @Nullable final Revision revision) {
+    public static @NonNull RevisionSourceIdentifier create(final String moduleName, final @Nullable Revision revision) {
         return new RevisionSourceIdentifier(moduleName, revision);
     }
 
@@ -110,7 +97,7 @@ public final class RevisionSourceIdentifier extends SourceIdentifier {
      * @param moduleName
      *            Name of schema
      */
-    public static RevisionSourceIdentifier create(final String moduleName) {
+    public static @NonNull RevisionSourceIdentifier create(final String moduleName) {
         return new RevisionSourceIdentifier(moduleName);
     }
 

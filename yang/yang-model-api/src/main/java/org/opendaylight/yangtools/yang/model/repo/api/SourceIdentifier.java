@@ -13,7 +13,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -35,14 +36,13 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     private static final Interner<SourceIdentifier> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 2L;
 
-    private final Revision revision;
-    private final String name;
+    private final @Nullable Revision revision;
+    private final @NonNull String name;
 
     /**
      * Creates new YANG Schema source identifier for sources without revision.
      *
-     * @param name
-     *            Name of schema
+     * @param name Name of schema
      */
     SourceIdentifier(final String name) {
         this(name, (Revision) null);
@@ -51,12 +51,10 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      * Creates new YANG Schema source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param revision
-     *            Revision of source, may be null
+     * @param name Name of schema
+     * @param revision Revision of source, may be null
      */
-    SourceIdentifier(final String name, @Nullable final Revision revision) {
+    SourceIdentifier(final String name, final @Nullable Revision revision) {
         this.name = requireNonNull(name);
         this.revision = revision;
     }
@@ -64,10 +62,8 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
     /**
      * Creates new YANG Schema source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param revision
-     *            Revision of source, possibly not present
+     * @param name Name of schema
+     * @param revision Revision of source, possibly not present
      */
     SourceIdentifier(final String name, final Optional<Revision> revision) {
         this(name, revision.orElse(null));
@@ -78,7 +74,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return Interned reference, or this object if it was interned.
      */
-    public SourceIdentifier intern() {
+    public @NonNull SourceIdentifier intern() {
         return INTERNER.intern(this);
     }
 
@@ -87,7 +83,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return model name
      */
-    public String getName() {
+    public @NonNull String getName() {
         return name;
     }
 
@@ -104,15 +100,14 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      * Returns filename for this YANG module as specified in RFC 6020.
      *
      * <p>
-     * Returns filename in format <code>name ['@' revision] '.yang'</code>,
-     * where revision is date in format YYYY-mm-dd.
+     * Returns filename in format <code>name ['@' revision] '.yang'</code>, where revision is date in format YYYY-mm-dd.
      *
      * <p>
      * @see <a href="http://tools.ietf.org/html/rfc6020#section-5.2">RFC6020</a>
      *
      * @return Filename for this source identifier.
      */
-    public String toYangFilename() {
+    public @NonNull String toYangFilename() {
         return toYangFileName(name, Optional.ofNullable(revision));
     }
 
@@ -128,7 +123,7 @@ public abstract class SourceIdentifier implements Identifier, Immutable {
      *
      * @return Filename for this source identifier.
      */
-    public static String toYangFileName(final String moduleName, final Optional<Revision> revision) {
+    public static @NonNull String toYangFileName(final String moduleName, final Optional<Revision> revision) {
         StringBuilder filename = new StringBuilder(moduleName);
         if (revision.isPresent()) {
             filename.append('@');
