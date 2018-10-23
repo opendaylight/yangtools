@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 
@@ -16,16 +17,16 @@ public final class InstanceIdentifierTypeBuilder
 
     InstanceIdentifierTypeBuilder(final InstanceIdentifierTypeDefinition baseType,
             final SchemaPath path) {
-        super(Preconditions.checkNotNull(baseType), path);
+        super(requireNonNull(baseType), path);
     }
 
     @Override
     InstanceIdentifierTypeDefinition buildType() {
-        if (getRequireInstance() == getBaseType().requireInstance()) {
-            return getBaseType();
+        final InstanceIdentifierTypeDefinition base = getBaseType();
+        if (getRequireInstance() == base.requireInstance()) {
+            return base;
         }
 
-        return new RestrictedInstanceIdentifierType(getBaseType(), getPath(), getUnknownSchemaNodes(),
-                getRequireInstance());
+        return new RestrictedInstanceIdentifierType(base, getPath(), getUnknownSchemaNodes(), getRequireInstance());
     }
 }

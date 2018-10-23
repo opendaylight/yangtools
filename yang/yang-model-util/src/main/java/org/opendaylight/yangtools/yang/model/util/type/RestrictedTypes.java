@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import com.google.common.annotations.Beta;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -74,8 +74,8 @@ public final class RestrictedTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(
-            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    public static @NonNull LengthRestrictedTypeBuilder<BinaryTypeDefinition> newBinaryBuilder(
+            final @NonNull BinaryTypeDefinition baseType, final @NonNull SchemaPath path) {
         return new LengthRestrictedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             BinaryTypeDefinition buildType(final @Nullable LengthConstraint constraint) {
@@ -93,12 +93,13 @@ public final class RestrictedTypes {
         };
     }
 
-    public static BitsTypeBuilder newBitsBuilder(final BitsTypeDefinition baseType, final SchemaPath path) {
+    public static @NonNull BitsTypeBuilder newBitsBuilder(final BitsTypeDefinition baseType,
+            final SchemaPath path) {
         return new BitsTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(@Nonnull final BooleanTypeDefinition baseType,
-            @Nonnull final SchemaPath path) {
+    public static @NonNull TypeBuilder<BooleanTypeDefinition> newBooleanBuilder(
+            final @NonNull BooleanTypeDefinition baseType, final @NonNull SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             BooleanTypeDefinition buildType() {
@@ -107,7 +108,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> newDecima64Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<DecimalTypeDefinition, BigDecimal> newDecima64Builder(
             final DecimalTypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<DecimalTypeDefinition, BigDecimal>(baseType, path) {
             @Override
@@ -117,7 +118,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static TypeBuilder<EmptyTypeDefinition> newEmptyBuilder(final EmptyTypeDefinition baseType,
+    public static @NonNull TypeBuilder<EmptyTypeDefinition> newEmptyBuilder(final EmptyTypeDefinition baseType,
             final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
@@ -127,13 +128,13 @@ public final class RestrictedTypes {
         };
     }
 
-    public static EnumerationTypeBuilder newEnumerationBuilder(final EnumTypeDefinition baseType,
+    public static @NonNull EnumerationTypeBuilder newEnumerationBuilder(final EnumTypeDefinition baseType,
             final SchemaPath path) {
         return new EnumerationTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(final IdentityrefTypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull TypeBuilder<IdentityrefTypeDefinition> newIdentityrefBuilder(
+            final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
             IdentityrefTypeDefinition buildType() {
@@ -142,18 +143,19 @@ public final class RestrictedTypes {
         };
     }
 
-    public static InstanceIdentifierTypeBuilder newInstanceIdentifierBuilder(
+    public static @NonNull InstanceIdentifierTypeBuilder newInstanceIdentifierBuilder(
             final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new InstanceIdentifierTypeBuilder(baseType, path);
     }
 
-    public static RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> newLeafrefBuilder(
+    public static @NonNull RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> newLeafrefBuilder(
             final LeafrefTypeDefinition baseType, final SchemaPath path) {
         return new RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             LeafrefTypeDefinition buildType() {
-                if (getRequireInstance() == getBaseType().requireInstance()) {
-                    return getBaseType();
+                final LeafrefTypeDefinition base = getBaseType();
+                if (getRequireInstance() == base.requireInstance()) {
+                    return base;
                 }
                 return new RestrictedLeafrefType(getBaseType(), getPath(), getUnknownSchemaNodes(),
                         getRequireInstance());
@@ -161,7 +163,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Int8TypeDefinition, Byte> newInt8Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Int8TypeDefinition, Byte> newInt8Builder(
             final Int8TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Int8TypeDefinition, Byte>(baseType, path) {
             @Override
@@ -171,7 +173,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Int16TypeDefinition, Short> newInt16Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Int16TypeDefinition, Short> newInt16Builder(
             final Int16TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Int16TypeDefinition, Short>(baseType, path) {
             @Override
@@ -181,7 +183,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Int32TypeDefinition, Integer> newInt32Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Int32TypeDefinition, Integer> newInt32Builder(
             final Int32TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Int32TypeDefinition, Integer>(baseType, path) {
             @Override
@@ -191,7 +193,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Int64TypeDefinition, Long> newInt64Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Int64TypeDefinition, Long> newInt64Builder(
             final Int64TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Int64TypeDefinition, Long>(baseType, path) {
             @Override
@@ -201,11 +203,12 @@ public final class RestrictedTypes {
         };
     }
 
-    public static StringTypeBuilder newStringBuilder(final StringTypeDefinition baseType, final SchemaPath path) {
+    public static @NonNull StringTypeBuilder newStringBuilder(final StringTypeDefinition baseType,
+            final SchemaPath path) {
         return new StringTypeBuilder(baseType, path);
     }
 
-    public static TypeBuilder<UnionTypeDefinition> newUnionBuilder(final UnionTypeDefinition baseType,
+    public static @NonNull TypeBuilder<UnionTypeDefinition> newUnionBuilder(final UnionTypeDefinition baseType,
             final SchemaPath path) {
         return new AbstractRestrictedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
@@ -215,7 +218,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Uint8TypeDefinition, Short> newUint8Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Uint8TypeDefinition, Short> newUint8Builder(
             final Uint8TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Uint8TypeDefinition, Short>(baseType, path) {
             @Override
@@ -225,7 +228,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Uint16TypeDefinition, Integer> newUint16Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Uint16TypeDefinition, Integer> newUint16Builder(
             final Uint16TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Uint16TypeDefinition, Integer>(baseType, path) {
             @Override
@@ -235,7 +238,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Uint32TypeDefinition, Long> newUint32Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Uint32TypeDefinition, Long> newUint32Builder(
             final Uint32TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Uint32TypeDefinition, Long>(baseType, path) {
             @Override
@@ -245,7 +248,7 @@ public final class RestrictedTypes {
         };
     }
 
-    public static RangeRestrictedTypeBuilder<Uint64TypeDefinition, BigInteger> newUint64Builder(
+    public static @NonNull RangeRestrictedTypeBuilder<Uint64TypeDefinition, BigInteger> newUint64Builder(
             final Uint64TypeDefinition baseType, final SchemaPath path) {
         return new RangeRestrictedTypeBuilderWithBase<Uint64TypeDefinition, BigInteger>(baseType, path) {
             @Override

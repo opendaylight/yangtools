@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -119,9 +121,8 @@ public final class CompatUtils {
      * @param leaf Leaf for which we are acquiring the type
      * @return Potentially base type of the leaf type.
      */
-    @Nonnull public static TypeDefinition<?> compatType(@Nonnull final TypedDataSchemaNode leaf) {
-        final TypeDefinition<?> leafType = leaf.getType();
-        Preconditions.checkNotNull(leafType);
+    public static @NonNull TypeDefinition<?> compatType(final @NonNull TypedDataSchemaNode leaf) {
+        final TypeDefinition<?> leafType = requireNonNull(leaf.getType());
 
         if (!leaf.getPath().equals(leafType.getPath())) {
             // Old parser semantics, or no new default/units defined for this leaf
@@ -130,7 +131,7 @@ public final class CompatUtils {
 
         // We are dealing with a type generated for the leaf itself
         final TypeDefinition<?> baseType = leafType.getBaseType();
-        Preconditions.checkArgument(baseType != null, "Leaf %s has type for leaf, but no base type", leaf);
+        checkArgument(baseType != null, "Leaf %s has type for leaf, but no base type", leaf);
 
         if (leaf.getPath().equals(baseType.getPath().getParent())) {
             // Internal instantiation of a base YANG type (decimal64 and similar)
@@ -170,24 +171,24 @@ public final class CompatUtils {
     }
 
     // FIXME: 3.0.0: remove this method
-    @Nonnull public static TypeDefinition<?> compatLeafType(@Nonnull final LeafSchemaNode leaf) {
+    public static @NonNull TypeDefinition<?> compatLeafType(final @NonNull LeafSchemaNode leaf) {
         return compatType(leaf);
     }
 
-    private static BinaryTypeDefinition baseTypeIfNotConstrained(final BinaryTypeDefinition type) {
+    private static BinaryTypeDefinition baseTypeIfNotConstrained(final @NonNull BinaryTypeDefinition type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final DecimalTypeDefinition type) {
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final @NonNull DecimalTypeDefinition type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final InstanceIdentifierTypeDefinition type) {
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final @NonNull InstanceIdentifierTypeDefinition type) {
         final InstanceIdentifierTypeDefinition base = type.getBaseType();
         return type.requireInstance() == base.requireInstance() ? base : type;
     }
 
-    private static TypeDefinition<?> baseTypeIfNotConstrained(final StringTypeDefinition type) {
+    private static TypeDefinition<?> baseTypeIfNotConstrained(final @NonNull StringTypeDefinition type) {
         final StringTypeDefinition base = type.getBaseType();
         final List<PatternConstraint> patterns = type.getPatternConstraints();
         final Optional<LengthConstraint> optLengths = type.getLengthConstraint();
@@ -200,11 +201,11 @@ public final class CompatUtils {
         return type;
     }
 
-    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final T type) {
+    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final @NonNull T type) {
         return baseTypeIfNotConstrained(type, type.getBaseType());
     }
 
-    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final T type,
+    private static <T extends RangeRestrictedTypeDefinition<T, ?>> T baseTypeIfNotConstrained(final @NonNull T type,
             final T base) {
         final Optional<?> optConstraint = type.getRangeConstraint();
         if (!optConstraint.isPresent()) {
@@ -213,7 +214,7 @@ public final class CompatUtils {
         return optConstraint.equals(base.getRangeConstraint()) ? base : type;
     }
 
-    private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final T type,
+    private static <T extends LengthRestrictedTypeDefinition<T>> T baseTypeIfNotConstrained(final @NonNull T type,
             final T base) {
         final Optional<LengthConstraint> optConstraint = type.getLengthConstraint();
         if (!optConstraint.isPresent()) {

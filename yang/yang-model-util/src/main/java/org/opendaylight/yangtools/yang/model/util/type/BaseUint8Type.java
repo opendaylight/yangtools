@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 final class BaseUint8Type extends AbstractRangeRestrictedBaseType<Uint8TypeDefinition, Short>
         implements Uint8TypeDefinition {
-    static final BaseUint8Type INSTANCE = new BaseUint8Type();
+    static final @NonNull BaseUint8Type INSTANCE = new BaseUint8Type();
 
     private BaseUint8Type() {
         super(BaseTypes.UINT8_QNAME, (short)0, (short)255);

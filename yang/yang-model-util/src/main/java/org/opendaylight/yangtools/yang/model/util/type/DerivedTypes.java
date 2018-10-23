@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -47,8 +47,8 @@ public final class DerivedTypes {
         throw new UnsupportedOperationException();
     }
 
-    public static DerivedTypeBuilder<?> derivedTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
-            @Nonnull final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<?> derivedTypeBuilder(final @NonNull TypeDefinition<?> baseType,
+            final @NonNull SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
             return derivedBinaryBuilder((BinaryTypeDefinition) baseType, path);
         } else if (baseType instanceof BitsTypeDefinition) {
@@ -92,8 +92,8 @@ public final class DerivedTypes {
         }
     }
 
-    public static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
-            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
+            final @NonNull BinaryTypeDefinition baseType, final @NonNull SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition build() {
@@ -103,7 +103,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType,
+    public static @NonNull DerivedTypeBuilder<BitsTypeDefinition> derivedBitsBuilder(final BitsTypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<BitsTypeDefinition>(baseType, path) {
             @Override
@@ -114,8 +114,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
-            @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
+            final @NonNull BooleanTypeDefinition baseType, final @NonNull SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition build() {
@@ -125,8 +125,8 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(final DecimalTypeDefinition baseType,
-            final SchemaPath path) {
+    private static @NonNull DerivedTypeBuilder<DecimalTypeDefinition> derivedDecimalBuilder(
+            final DecimalTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<DecimalTypeDefinition>(baseType, path) {
             @Override
             public DecimalTypeDefinition build() {
@@ -136,8 +136,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(final EmptyTypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<EmptyTypeDefinition> derivedEmptyBuilder(
+            final EmptyTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<EmptyTypeDefinition>(baseType, path) {
             @Override
             public EmptyTypeDefinition build() {
@@ -147,8 +147,8 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(final EnumTypeDefinition baseType,
-            final SchemaPath path) {
+    private static @NonNull DerivedTypeBuilder<EnumTypeDefinition> derivedEnumerationBuilder(
+            final EnumTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<EnumTypeDefinition>(baseType, path) {
             @Override
             public EnumTypeDefinition build() {
@@ -158,7 +158,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(
+    public static @NonNull DerivedTypeBuilder<IdentityrefTypeDefinition> derivedIdentityrefBuilder(
             final IdentityrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<IdentityrefTypeDefinition>(baseType, path) {
             @Override
@@ -169,7 +169,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(
+    public static @NonNull DerivedTypeBuilder<InstanceIdentifierTypeDefinition> derivedInstanceIdentifierBuilder(
             final InstanceIdentifierTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<InstanceIdentifierTypeDefinition>(baseType, path) {
             @Override
@@ -180,7 +180,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Int8TypeDefinition> derivedInt8Builder(final Int8TypeDefinition baseType,
+    private static @NonNull DerivedTypeBuilder<Int8TypeDefinition> derivedInt8Builder(final Int8TypeDefinition baseType,
             final SchemaPath path) {
         return new DerivedTypeBuilder<Int8TypeDefinition>(baseType, path) {
             @Override
@@ -191,8 +191,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(final Int16TypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<Int16TypeDefinition> derivedInt16Builder(
+            final Int16TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Int16TypeDefinition>(baseType, path) {
             @Override
             public Int16TypeDefinition build() {
@@ -202,8 +202,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(final Int32TypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<Int32TypeDefinition> derivedInt32Builder(
+            final Int32TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Int32TypeDefinition>(baseType, path) {
             @Override
             public Int32TypeDefinition build() {
@@ -213,8 +213,8 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Int64TypeDefinition> derivedInt64Builder(final Int64TypeDefinition baseType,
-            final SchemaPath path) {
+    private static @NonNull DerivedTypeBuilder<Int64TypeDefinition> derivedInt64Builder(
+            final Int64TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Int64TypeDefinition>(baseType, path) {
             @Override
             public Int64TypeDefinition build() {
@@ -224,8 +224,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(final LeafrefTypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<LeafrefTypeDefinition> derivedLeafrefBuilder(
+            final LeafrefTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<LeafrefTypeDefinition>(baseType, path) {
             @Override
             public LeafrefTypeDefinition build() {
@@ -235,8 +235,8 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(final StringTypeDefinition baseType,
-            final SchemaPath path) {
+    private static @NonNull DerivedTypeBuilder<StringTypeDefinition> derivedStringBuilder(
+            final StringTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<StringTypeDefinition>(baseType, path) {
             @Override
             public StringTypeDefinition build() {
@@ -246,8 +246,8 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(final UnionTypeDefinition baseType,
-            final SchemaPath path) {
+    public static @NonNull DerivedTypeBuilder<UnionTypeDefinition> derivedUnionBuilder(
+            final UnionTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<UnionTypeDefinition>(baseType, path) {
             @Override
             public DerivedUnionType build() {
@@ -257,7 +257,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Uint8TypeDefinition> derivedUint8Builder(
+    private static @NonNull DerivedTypeBuilder<Uint8TypeDefinition> derivedUint8Builder(
             final Uint8TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint8TypeDefinition>(baseType, path) {
             @Override
@@ -268,7 +268,7 @@ public final class DerivedTypes {
         };
     }
 
-    private static DerivedTypeBuilder<Uint16TypeDefinition> derivedUint16Builder(
+    private static @NonNull DerivedTypeBuilder<Uint16TypeDefinition> derivedUint16Builder(
             final Uint16TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint16TypeDefinition>(baseType, path) {
             @Override
@@ -279,7 +279,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
+    public static @NonNull DerivedTypeBuilder<Uint32TypeDefinition> derivedUint32Builder(
             final Uint32TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint32TypeDefinition>(baseType, path) {
             @Override
@@ -290,7 +290,7 @@ public final class DerivedTypes {
         };
     }
 
-    public static DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
+    public static @NonNull DerivedTypeBuilder<Uint64TypeDefinition> derivedUint64Builder(
             final Uint64TypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<Uint64TypeDefinition>(baseType, path) {
             @Override
