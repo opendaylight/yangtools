@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableRangeSet;
 import com.google.common.collect.Range;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -61,7 +60,6 @@ abstract class AbstractRangeRestrictedBaseType<T extends RangeRestrictedTypeDefi
     }
 
     @Override
-    @Nonnull
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return Optional.of(rangeConstraint);
     }
