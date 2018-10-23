@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeEffectiveStatement;
@@ -28,7 +28,7 @@ public final class EnumSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, EnumSpecification> implements
         TypeEffectiveStatement<EnumSpecification> {
 
-    private final EnumTypeDefinition typeDefinition;
+    private final @NonNull EnumTypeDefinition typeDefinition;
 
     EnumSpecificationEffectiveStatement(
             final StmtContext<String, EnumSpecification, EffectiveStatement<String, EnumSpecification>> ctx) {
@@ -68,7 +68,6 @@ public final class EnumSpecificationEffectiveStatement extends
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public EnumTypeDefinition getTypeDefinition() {
         return typeDefinition;

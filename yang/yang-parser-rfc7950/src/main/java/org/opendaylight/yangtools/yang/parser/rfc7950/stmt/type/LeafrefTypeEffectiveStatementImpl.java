@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RequireInstanceEffectiveStatement;
@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class LeafrefTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
 
-    private final LeafrefTypeDefinition typeDefinition;
+    private final @NonNull LeafrefTypeDefinition typeDefinition;
 
     LeafrefTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -43,7 +43,6 @@ final class LeafrefTypeEffectiveStatementImpl extends DeclaredEffectiveStatement
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public LeafrefTypeDefinition getTypeDefinition() {
         return typeDefinition;
