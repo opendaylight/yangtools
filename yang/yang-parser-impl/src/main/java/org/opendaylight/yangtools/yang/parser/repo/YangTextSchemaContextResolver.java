@@ -30,7 +30,7 @@ import java.util.concurrent.ConcurrentLinkedDeque;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -96,7 +96,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
      */
-    public YangTextSchemaSourceRegistration registerSource(@Nonnull final YangTextSchemaSource source)
+    public @NonNull YangTextSchemaSourceRegistration registerSource(final @NonNull YangTextSchemaSource source)
             throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(source != null);
 
@@ -165,8 +165,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      * @throws IOException when the URL is not readable
      * @throws SchemaSourceException When parsing encounters general error
      */
-    public YangTextSchemaSourceRegistration registerSource(@Nonnull final URL url) throws SchemaSourceException,
-            IOException, YangSyntaxErrorException {
+    public @NonNull YangTextSchemaSourceRegistration registerSource(final @NonNull URL url)
+            throws SchemaSourceException, IOException, YangSyntaxErrorException {
         checkArgument(url != null, "Supplied URL must not be null");
 
         final String path = url.getPath();
@@ -185,7 +185,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
         });
     }
 
-    private static SourceIdentifier guessSourceIdentifier(final String fileName) {
+    private static SourceIdentifier guessSourceIdentifier(final @NonNull String fileName) {
         try {
             return YangTextSchemaSource.identifierFromFilename(fileName);
         } catch (final IllegalArgumentException e) {
