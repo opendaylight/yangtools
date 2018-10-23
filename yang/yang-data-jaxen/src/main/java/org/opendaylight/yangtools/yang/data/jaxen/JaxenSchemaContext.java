@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.jaxen;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Converter;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.jaxen.JaxenException;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -22,6 +22,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
+@NonNullByDefault
 final class JaxenSchemaContext implements XPathSchemaContext {
     private final DataSchemaContextTree tree;
     private final SchemaContext context;
@@ -31,11 +32,9 @@ final class JaxenSchemaContext implements XPathSchemaContext {
         this.tree = DataSchemaContextTree.from(context);
     }
 
-    @Nonnull
     @Override
-    public XPathExpression compileExpression(@Nonnull final SchemaPath schemaPath,
-            final Converter<String, QNameModule> prefixes, @Nonnull final String xpath)
-            throws XPathExpressionException {
+    public XPathExpression compileExpression(final SchemaPath schemaPath,
+            final Converter<String, QNameModule> prefixes, final String xpath) throws XPathExpressionException {
         try {
             return JaxenXPath.create(prefixes, schemaPath, xpath);
         } catch (JaxenException e) {
@@ -43,9 +42,8 @@ final class JaxenSchemaContext implements XPathSchemaContext {
         }
     }
 
-    @Nonnull
     @Override
-    public XPathDocument createDocument(@Nonnull final NormalizedNode<?, ?> documentRoot) {
+    public XPathDocument createDocument(final NormalizedNode<?, ?> documentRoot) {
         return new JaxenDocument(context, tree, documentRoot);
     }
 }
