@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.concepts.Delegator;
  * @author Robert Varga
  */
 final class YinTextFileSchemaSource extends YinTextSchemaSource implements Delegator<File> {
-    private final File file;
+    private final @NonNull File file;
 
     YinTextFileSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull File file) {
         super(identifier);

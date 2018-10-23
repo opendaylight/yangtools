@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Delegator;
 public final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
     private final @NonNull URL url;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
+    ResourceYangTextSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull URL url) {
         super(identifier);
         this.url = requireNonNull(url);
     }
