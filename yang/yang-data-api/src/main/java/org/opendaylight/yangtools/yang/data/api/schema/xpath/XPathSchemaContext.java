@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Converter;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -35,8 +35,8 @@ public interface XPathSchemaContext {
      * @throws XPathExpressionException if the provided expression is invalid, either syntactically or by referencing
      *         namespaces unknown to this schema context.
      */
-    @Nonnull XPathExpression compileExpression(@Nonnull SchemaPath schemaPath,
-            Converter<String, QNameModule> prefixes, @Nonnull String xpath) throws XPathExpressionException;
+    @NonNull XPathExpression compileExpression(@NonNull SchemaPath schemaPath,
+            @NonNull Converter<String, QNameModule> prefixes, @NonNull String xpath) throws XPathExpressionException;
 
     /**
      * Create a new document context.
@@ -45,5 +45,5 @@ public interface XPathSchemaContext {
      * @return A new {@link XPathDocument} on which queries may be executed.
      * @throws IllegalArgumentException if the document root is not known to this schema context.
      */
-    @Nonnull XPathDocument createDocument(@Nonnull NormalizedNode<?, ?> documentRoot);
+    @NonNull XPathDocument createDocument(@NonNull NormalizedNode<?, ?> documentRoot);
 }

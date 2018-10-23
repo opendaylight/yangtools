@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.jaxen;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContext;
 import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 @MetaInfServices
+@NonNullByDefault
 public final class JaxenSchemaContextFactory implements XPathSchemaContextFactory {
-    @Nonnull
     @Override
-    public XPathSchemaContext createContext(@Nonnull final SchemaContext context) {
+    public XPathSchemaContext createContext(final SchemaContext context) {
         return new JaxenSchemaContext(context);
     }
 }
