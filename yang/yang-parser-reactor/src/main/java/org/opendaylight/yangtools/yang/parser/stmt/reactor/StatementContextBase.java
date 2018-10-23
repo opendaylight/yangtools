@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
@@ -23,9 +27,9 @@ import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.util.OptionalBoolean;
@@ -91,8 +95,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private static final Logger LOG = LoggerFactory.getLogger(StatementContextBase.class);
 
-    private final StatementDefinitionContext<A, D, E> definition;
-    private final StatementSourceReference statementDeclSource;
+    private final @NonNull StatementDefinitionContext<A, D, E> definition;
+    private final @NonNull StatementSourceReference statementDeclSource;
     private final StmtContext<?, ?, ?> originalCtx;
     private final CopyHistory copyHistory;
     private final String rawArgument;
@@ -115,19 +119,16 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     StatementContextBase(final StatementDefinitionContext<A, D, E> def, final StatementSourceReference ref,
             final String rawArgument) {
-        this.definition = Preconditions.checkNotNull(def);
-        this.statementDeclSource = Preconditions.checkNotNull(ref);
+        this.definition = requireNonNull(def);
+        this.statementDeclSource = requireNonNull(ref);
         this.rawArgument = def.internArgument(rawArgument);
         this.copyHistory = CopyHistory.original();
         this.originalCtx = null;
     }
 
     StatementContextBase(final StatementContextBase<A, D, E> original, final CopyType copyType) {
-        this.definition = Preconditions.checkNotNull(original.definition,
-                "Statement context definition cannot be null copying from: %s", original.getStatementSourceReference());
-        this.statementDeclSource = Preconditions.checkNotNull(original.statementDeclSource,
-                "Statement context statementDeclSource cannot be null copying from: %s",
-                original.getStatementSourceReference());
+        this.definition = original.definition;
+        this.statementDeclSource = original.statementDeclSource;
         this.rawArgument = original.rawArgument;
         this.copyHistory = CopyHistory.of(copyType, original.getCopyHistory());
         this.originalCtx = original.getOriginalCtx().orElse(original);
@@ -238,7 +239,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return root context of statement
      */
-    @Nonnull
     @Override
     public abstract RootStatementContext<?, ?, ?> getRoot();
 
@@ -247,7 +247,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return origin of statement
      */
-    @Nonnull
     @Override
     public StatementSource getStatementSource() {
         return statementDeclSource.getStatementSource();
@@ -258,7 +257,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return reference of statement source
      */
-    @Nonnull
     @Override
     public StatementSourceReference getStatementSourceReference() {
         return statementDeclSource;
@@ -269,13 +267,11 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return rawArgument;
     }
 
-    @Nonnull
     @Override
     public Collection<? extends StmtContext<?, ?, ?>> declaredSubstatements() {
         return substatements.values();
     }
 
-    @Nonnull
     @Override
     public Collection<? extends Mutable<?, ?, ?>> mutableDeclaredSubstatements() {
         return substatements.values();
@@ -286,7 +282,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
         return mutableEffectiveSubstatements();
     }
 
-    @Nonnull
     @Override
     public Collection<? extends Mutable<?, ?, ?>> mutableEffectiveSubstatements() {
         if (effective instanceof ImmutableCollection) {
@@ -387,14 +382,14 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return;
         }
 
-        statements.forEach(Preconditions::checkNotNull);
+        statements.forEach(Objects::requireNonNull);
         beforeAddEffectiveStatement(statements.size());
         effective.addAll(statements);
     }
 
     private void beforeAddEffectiveStatement(final int toAdd) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        Preconditions.checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
+        checkState(inProgressPhase == ModelProcessingPhase.FULL_DECLARATION
                 || inProgressPhase == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Effective statement cannot be added in declared phase at: %s", getStatementSourceReference());
 
@@ -421,7 +416,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
                     final StatementDefinitionContext<X, Y, Z> def, final StatementSourceReference ref,
                     final String argument) {
         final ModelProcessingPhase inProgressPhase = getRoot().getSourceContext().getInProgressPhase();
-        Preconditions.checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
+        checkState(inProgressPhase != ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Declared statement cannot be added in effective phase at: %s", getStatementSourceReference());
 
         final Optional<StatementSupport<?, ?, ?>> implicitParent = definition.getImplicitParentFor(def.getPublicView());
@@ -466,7 +461,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     }
 
     final void walkChildren(final ModelProcessingPhase phase) {
-        Preconditions.checkState(fullyDefined);
+        checkState(fullyDefined);
         substatements.values().forEach(stmt -> {
             stmt.walkChildren(phase);
             stmt.endDeclared(phase);
@@ -475,7 +470,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     @Override
     public D buildDeclared() {
-        Preconditions.checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
+        checkArgument(completedPhase == ModelProcessingPhase.FULL_DECLARATION
                 || completedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         if (declaredInstance == null) {
             declaredInstance = definition().getFactory().createDeclared(this);
@@ -583,7 +578,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      *
      * @return statement definition
      */
-    protected final StatementDefinitionContext<A, D, E> definition() {
+    protected final @NonNull StatementDefinitionContext<A, D, E> definition() {
         return definition;
     }
 
@@ -644,8 +639,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     final <K, V, N extends IdentifierNamespace<K, V>> void selectMatch(final Class<N> type,
             final NamespaceKeyCriterion<K> criterion, final OnNamespaceItemAdded listener) {
         final Optional<Entry<K, V>> optMatch = getFromNamespace(type, criterion);
-        Preconditions.checkState(optMatch.isPresent(),
-            "Failed to find a match for criterion %s in namespace %s node %s", criterion, type, this);
+        checkState(optMatch.isPresent(), "Failed to find a match for criterion %s in namespace %s node %s", criterion,
+            type, this);
         final Entry<K, V> match = optMatch.get();
         listener.namespaceItemAdded(StatementContextBase.this, type, match.getKey(), match.getValue());
     }
@@ -663,8 +658,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     private <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviourWithListeners<K, V, N> getBehaviour(
             final Class<N> type) {
         final NamespaceBehaviour<K, V, N> behaviour = getBehaviourRegistry().getNamespaceBehaviour(type);
-        Preconditions.checkArgument(behaviour instanceof NamespaceBehaviourWithListeners,
-            "Namespace %s does not support listeners", type);
+        checkArgument(behaviour instanceof NamespaceBehaviourWithListeners, "Namespace %s does not support listeners",
+            type);
 
         return (NamespaceBehaviourWithListeners<K, V, N>) behaviour;
     }
@@ -672,7 +667,6 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     /**
      * See {@link StatementSupport#getPublicView()}.
      */
-    @Nonnull
     @Override
     public StatementDefinition getPublicDefinition() {
         return definition().getPublicView();
@@ -696,10 +690,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
      * @throws NullPointerException if any of the arguments is null
      */
     void addPhaseCompletedListener(final ModelProcessingPhase phase, final OnPhaseFinished listener) {
-        Preconditions.checkNotNull(phase, "Statement context processing phase cannot be null at: %s",
-                getStatementSourceReference());
-        Preconditions.checkNotNull(listener, "Statement context phase listener cannot be null at: %s",
-                getStatementSourceReference());
+        checkNotNull(phase, "Statement context processing phase cannot be null at: %s", getStatementSourceReference());
+        checkNotNull(listener, "Statement context phase listener cannot be null at: %s", getStatementSourceReference());
 
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
@@ -725,8 +717,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     void addMutation(final ModelProcessingPhase phase, final ContextMutation mutation) {
         ModelProcessingPhase finishedPhase = completedPhase;
         while (finishedPhase != null) {
-            Preconditions.checkState(!phase.equals(finishedPhase),
-                "Mutation registered after phase was completed at: %s", getStatementSourceReference());
+            checkState(!phase.equals(finishedPhase), "Mutation registered after phase was completed at: %s",
+                getStatementSourceReference());
             finishedPhase = finishedPhase.getPreviousPhase();
         }
 
@@ -745,10 +737,10 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
     @Override
     public <X, Y extends DeclaredStatement<X>, Z extends EffectiveStatement<X, Y>> Mutable<X, Y, Z> childCopyOf(
             final StmtContext<X, Y, Z> stmt, final CopyType type, final QNameModule targetModule) {
-        Preconditions.checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
+        checkState(stmt.getCompletedPhase() == ModelProcessingPhase.EFFECTIVE_MODEL,
                 "Attempted to copy statement %s which has completed phase %s", stmt, stmt.getCompletedPhase());
 
-        Preconditions.checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
+        checkArgument(stmt instanceof SubstatementContext, "Unsupported statement %s", stmt);
 
         final SubstatementContext<X, Y, Z> original = (SubstatementContext<X, Y, Z>)stmt;
         final SubstatementContext<X, Y, Z> copy = new SubstatementContext<>(original, this, type, targetModule);
