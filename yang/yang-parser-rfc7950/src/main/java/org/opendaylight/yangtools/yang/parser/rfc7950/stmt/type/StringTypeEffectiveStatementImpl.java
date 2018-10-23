@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PatternEffectiveStatement;
@@ -28,7 +28,8 @@ import org.slf4j.LoggerFactory;
 final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
     private static final Logger LOG = LoggerFactory.getLogger(StringTypeEffectiveStatementImpl.class);
-    private final StringTypeDefinition typeDefinition;
+
+    private final @NonNull StringTypeDefinition typeDefinition;
 
     StringTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -68,7 +69,6 @@ final class StringTypeEffectiveStatementImpl extends DeclaredEffectiveStatementB
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public StringTypeDefinition getTypeDefinition() {
         return typeDefinition;

@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -28,7 +28,7 @@ public final class IdentityRefSpecificationEffectiveStatement extends
         DeclaredEffectiveStatementBase<String, IdentityRefSpecification> implements
         TypeEffectiveStatement<IdentityRefSpecification> {
 
-    private final IdentityrefTypeDefinition typeDefinition;
+    private final @NonNull IdentityrefTypeDefinition typeDefinition;
 
     IdentityRefSpecificationEffectiveStatement(final StmtContext<String, IdentityRefSpecification,
             EffectiveStatement<String, IdentityRefSpecification>> ctx) {
@@ -50,7 +50,6 @@ public final class IdentityRefSpecificationEffectiveStatement extends
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public IdentityrefTypeDefinition getTypeDefinition() {
         return typeDefinition;

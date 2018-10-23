@@ -8,7 +8,7 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class EnumTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, TypeStatement>
         implements TypeEffectiveStatement<TypeStatement> {
 
-    private final EnumTypeDefinition typeDefinition;
+    private final @NonNull EnumTypeDefinition typeDefinition;
 
     EnumTypeEffectiveStatementImpl(
             final StmtContext<String, TypeStatement, EffectiveStatement<String, TypeStatement>> ctx,
@@ -72,7 +72,6 @@ final class EnumTypeEffectiveStatementImpl extends DeclaredEffectiveStatementBas
                 "Enum '%s' is not a subset of its base enumeration type %s.", enumName, baseType.getQName());
     }
 
-    @Nonnull
     @Override
     public EnumTypeDefinition getTypeDefinition() {
         return typeDefinition;

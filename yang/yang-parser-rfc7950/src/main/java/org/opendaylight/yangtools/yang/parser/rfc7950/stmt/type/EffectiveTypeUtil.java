@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 import org.opendaylight.yangtools.yang.model.util.type.BitBuilder;
@@ -21,7 +22,7 @@ final class EffectiveTypeUtil {
         throw new UnsupportedOperationException();
     }
 
-    static Bit buildBit(final BitEffectiveStatementImpl stmt, final long effectivePos) {
+    static @NonNull Bit buildBit(final @NonNull BitEffectiveStatementImpl stmt, final long effectivePos) {
         // TODO: code duplication with EnumPairBuilder is indicating we could use a common Builder<?> interface
         final BitBuilder builder = BitBuilder.create(stmt.getPath(), effectivePos).setStatus(stmt.getStatus());
         stmt.getDescription().ifPresent(builder::setDescription);
@@ -30,7 +31,7 @@ final class EffectiveTypeUtil {
         return builder.build();
     }
 
-    static EnumPair buildEnumPair(final EnumEffectiveStatementImpl stmt, final int effectiveValue) {
+    static @NonNull EnumPair buildEnumPair(final @NonNull EnumEffectiveStatementImpl stmt, final int effectiveValue) {
         final EnumPairBuilder builder = EnumPairBuilder.create(stmt.getName(), effectiveValue)
                 .setStatus(stmt.getStatus()).setUnknownSchemaNodes(stmt.getUnknownSchemaNodes());
         stmt.getDescription().ifPresent(builder::setDescription);
