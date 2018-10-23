@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
 
 abstract class EmptyMandatoryStatement implements MandatoryStatement {
-    static final MandatoryStatement FALSE = new EmptyMandatoryStatement() {
+    static final @NonNull MandatoryStatement FALSE = new EmptyMandatoryStatement() {
         @Override
         public Boolean argument() {
             return Boolean.FALSE;
@@ -30,7 +31,7 @@ abstract class EmptyMandatoryStatement implements MandatoryStatement {
         }
     };
 
-    static final MandatoryStatement TRUE = new EmptyMandatoryStatement() {
+    static final @NonNull MandatoryStatement TRUE = new EmptyMandatoryStatement() {
         @Override
         public Boolean argument() {
             return Boolean.TRUE;
