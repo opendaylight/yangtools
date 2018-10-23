@@ -29,7 +29,7 @@ public abstract class LengthRestrictedTypeBuilder<T extends LengthRestrictedType
         extends AbstractRestrictedTypeBuilder<T> {
     private LengthConstraint lengthConstraint;
 
-    LengthRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
+    LengthRestrictedTypeBuilder(final @NonNull T baseType, final @NonNull SchemaPath path) {
         super(requireNonNull(baseType), path);
     }
 

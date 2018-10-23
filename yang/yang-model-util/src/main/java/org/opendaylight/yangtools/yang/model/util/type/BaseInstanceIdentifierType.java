@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 final class BaseInstanceIdentifierType extends AbstractBaseType<InstanceIdentifierTypeDefinition>
         implements InstanceIdentifierTypeDefinition {
-    static final BaseInstanceIdentifierType INSTANCE = new BaseInstanceIdentifierType();
+    static final @NonNull BaseInstanceIdentifierType INSTANCE = new BaseInstanceIdentifierType();
 
     private BaseInstanceIdentifierType() {
         super(BaseTypes.INSTANCE_IDENTIFIER_QNAME);
