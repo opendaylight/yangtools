@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.Revision;
 
@@ -17,8 +19,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * YANG Schema source identifier with specified semantic version.
  *
  * <p>
- * Simple transfer object represents identifier of source for YANG schema
- * (module or submodule), which consists of
+ * Simple transfer object represents identifier of source for YANG schema (module or submodule), which consists of
  * <ul>
  * <li>YANG schema name {@link #getName()}
  * <li>Semantic version of yang schema {@link #getSemanticVersion()}
@@ -26,12 +27,12 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * </ul>
  *
  * <p>
- * Source identifier is designated to be carry only necessary information to
- * look-up YANG model source and to be used by various SchemaSourceProviders.
+ * Source identifier is designated to be carry only necessary information to look-up YANG model source and to be used
+ * by various SchemaSourceProviders.
  *
  * <p>
- * <b>Note:</b>On source retrieval layer it is impossible to distinguish between
- * YANG module and/or submodule unless source is present.
+ * <b>Note:</b>On source retrieval layer it is impossible to distinguish between YANG module and/or submodule unless
+ * source is present.
  *
  * <p>
  * (For further reference see: http://tools.ietf.org/html/rfc6020#section-5.2
@@ -45,14 +46,11 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema semVer source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param revision
-     *            Revision of source, possibly not present
-     * @param semVer
-     *            semantic version of source
+     * @param name Name of schema
+     * @param revision Revision of source, possibly not present
+     * @param semVer semantic version of source
      */
-    SemVerSourceIdentifier(final String name, final Optional<Revision> revision, final SemVer semVer) {
+    SemVerSourceIdentifier(final String name, final Optional<Revision> revision, final @Nullable SemVer semVer) {
         super(name, revision);
         this.semVer = semVer;
     }
@@ -60,12 +58,10 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema semVer source identifier.
      *
-     * @param name
-     *            Name of schema
-     * @param semVer
-     *            semantic version of source
+     * @param name Name of schema
+     * @param semVer semantic version of source
      */
-    SemVerSourceIdentifier(final String name, final SemVer semVer) {
+    SemVerSourceIdentifier(final String name, final @Nullable SemVer semVer) {
         this(name, Optional.empty(), semVer);
     }
 
@@ -81,26 +77,21 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema semVer source identifier.
      *
-     * @param moduleName
-     *            Name of schema
-     * @param semVer
-     *            semantic version of source
+     * @param moduleName Name of schema
+     * @param semVer semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName, final SemVer semVer) {
+    public static @NonNull SemVerSourceIdentifier create(final String moduleName, final SemVer semVer) {
         return new SemVerSourceIdentifier(moduleName, semVer);
     }
 
     /**
      * Creates new YANG Schema semVer source identifier.
      *
-     * @param moduleName
-     *            Name of schema
-     * @param revision
-     *            Revision of source in format YYYY-mm-dd
-     * @param semVer
-     *            semantic version of source
+     * @param moduleName Name of schema
+     * @param revision Revision of source in format YYYY-mm-dd
+     * @param semVer semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName, final Revision revision,
+    public static @NonNull SemVerSourceIdentifier create(final String moduleName, final Revision revision,
             final SemVer semVer) {
         return new SemVerSourceIdentifier(moduleName, Optional.ofNullable(revision), semVer);
     }
@@ -108,15 +99,11 @@ public final class SemVerSourceIdentifier extends SourceIdentifier {
     /**
      * Creates new YANG Schema semVer source identifier.
      *
-     * @param moduleName
-     *            Name of schema
-     * @param revision
-     *            Optional of source revision in format YYYY-mm-dd. If not
-     *            present, default value will be used.
-     * @param semVer
-     *            semantic version of source
+     * @param moduleName Name of schema
+     * @param revision Optional of source revision in format YYYY-mm-dd. If not present, default value will be used.
+     * @param semVer semantic version of source
      */
-    public static SemVerSourceIdentifier create(final String moduleName, final Optional<Revision> revision,
+    public static @NonNull SemVerSourceIdentifier create(final String moduleName, final Optional<Revision> revision,
             final SemVer semVer) {
         return new SemVerSourceIdentifier(moduleName, revision, semVer);
     }
