@@ -18,7 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -30,13 +29,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
-    private final List<? extends EffectiveStatement<?, ?>> substatements;
+    private final @NonNull List<? extends EffectiveStatement<?, ?>> substatements;
 
     /**
      * Constructor.
      *
-     * @param ctx
-     *            context of statement.
+     * @param ctx context of statement.
      */
     protected EffectiveStatementBase(final StmtContext<A, D, ?> ctx) {
         final Collection<? extends StmtContext<?, ?, ?>> effectiveSubstatements = ctx.effectiveSubstatements();
@@ -73,13 +71,12 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
-            @Nonnull final K identifier) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
         return findAll(namespace).get(requireNonNull(identifier));
     }
 
     @Override
-    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
+    public final <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
         return getNamespaceContents(requireNonNull(namespace)).orElse(null);
     }
 
@@ -95,7 +92,6 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         return Optional.empty();
     }
 
-    @Nonnull
     @Override
     public final Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
         return substatements;
