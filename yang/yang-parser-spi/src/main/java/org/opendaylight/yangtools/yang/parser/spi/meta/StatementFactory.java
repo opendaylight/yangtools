@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
@@ -18,7 +18,7 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * @param ctx Statement context
      * @return A declared statement instance.
      */
-    @Nonnull D createDeclared(@Nonnull StmtContext<A, D, ?> ctx);
+    @NonNull D createDeclared(@NonNull StmtContext<A, D, ?> ctx);
 
     /**
      * Create a {@link EffectiveStatement} for specified context.
@@ -26,5 +26,5 @@ public interface StatementFactory<A, D extends DeclaredStatement<A>, E extends E
      * @param ctx Statement context
      * @return An effective statement instance.
      */
-    @Nonnull E createEffective(@Nonnull StmtContext<A, D, E> ctx);
+    @NonNull E createEffective(@NonNull StmtContext<A, D, E> ctx);
 }
