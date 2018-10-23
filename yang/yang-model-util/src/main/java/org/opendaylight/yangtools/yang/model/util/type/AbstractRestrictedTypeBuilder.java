@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.base.Preconditions;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -28,7 +29,7 @@ abstract class AbstractRestrictedTypeBuilder<T extends TypeDefinition<T>> extend
         touched = true;
     }
 
-    abstract T buildType();
+    abstract @NonNull T buildType();
 
     @Override
     public final T build() {

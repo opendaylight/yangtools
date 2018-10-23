@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.type;
 
 import com.google.common.annotations.VisibleForTesting;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FractionDigitsEffectiveStatement;
@@ -27,7 +27,7 @@ public final class Decimal64SpecificationEffectiveStatement
         extends DeclaredEffectiveStatementBase<String, Decimal64Specification>
         implements TypeEffectiveStatement<Decimal64Specification> {
 
-    private final DecimalTypeDefinition typeDefinition;
+    private final @NonNull DecimalTypeDefinition typeDefinition;
 
     Decimal64SpecificationEffectiveStatement(
             final StmtContext<String, Decimal64Specification, EffectiveStatement<String, Decimal64Specification>> ctx) {
@@ -50,7 +50,6 @@ public final class Decimal64SpecificationEffectiveStatement
         typeDefinition = builder.build();
     }
 
-    @Nonnull
     @Override
     public DecimalTypeDefinition getTypeDefinition() {
         return typeDefinition;
