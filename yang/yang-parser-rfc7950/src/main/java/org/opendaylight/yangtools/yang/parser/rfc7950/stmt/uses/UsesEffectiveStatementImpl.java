@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -41,12 +41,12 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<QName, UsesStatement>
         implements UsesEffectiveStatement, UsesNode {
-    private final SchemaPath groupingPath;
+    private final @NonNull SchemaPath groupingPath;
     private final boolean addedByUses;
-    private final Map<SchemaPath, SchemaNode> refines;
-    private final Set<AugmentationSchemaNode> augmentations;
+    private final @NonNull Map<SchemaPath, SchemaNode> refines;
+    private final @NonNull Set<AugmentationSchemaNode> augmentations;
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
-    private final RevisionAwareXPath whenCondition;
+    private final @Nullable RevisionAwareXPath whenCondition;
 
     UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {
         super(ctx);
@@ -85,13 +85,11 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         whenCondition = findFirstEffectiveSubstatementArgument(WhenEffectiveStatement.class).orElse(null);
     }
 
-    @Nonnull
     @Override
     public SchemaPath getGroupingPath() {
         return groupingPath;
     }
 
-    @Nonnull
     @Override
     public Set<AugmentationSchemaNode> getAugmentations() {
         return augmentations;
@@ -109,19 +107,16 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         return addedByUses;
     }
 
-    @Nonnull
     @Override
     public Map<SchemaPath, SchemaNode> getRefines() {
         return refines;
     }
 
-    @Nonnull
     @Override
     public List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownNodes;
     }
 
-    @Nonnull
     @Override
     public Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.ofNullable(whenCondition);
