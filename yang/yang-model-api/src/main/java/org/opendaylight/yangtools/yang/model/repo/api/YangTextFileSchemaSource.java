@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
@@ -23,9 +24,9 @@ import org.opendaylight.yangtools.concepts.Delegator;
  * @author Robert Varga
  */
 final class YangTextFileSchemaSource extends YangTextSchemaSource implements Delegator<File> {
-    private final File file;
+    private final @NonNull File file;
 
-    YangTextFileSchemaSource(final SourceIdentifier identifier, final File file) {
+    YangTextFileSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull File file) {
         super(identifier);
         this.file = requireNonNull(file);
     }
