@@ -14,8 +14,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.Immutable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -80,45 +81,40 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return Module, if present.
      * @throws NullPointerException if qnameModule is null
      */
-    Optional<Module> findModule(QNameModule qnameModule);
+    Optional<Module> findModule(@NonNull QNameModule qnameModule);
 
     /**
      * Returns module instance (from the context) with specified namespace and no revision.
      *
-     * @param namespace
-     *            module namespace
+     * @param namespace module namespace
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and no revision.
      */
-    default Optional<Module> findModule(final URI namespace) {
+    default Optional<Module> findModule(final @NonNull URI namespace) {
         return findModule(QNameModule.create(namespace));
     }
 
     /**
      * Returns module instance (from the context) with specified namespace and revision.
      *
-     * @param namespace
-     *            module namespace
-     * @param revision
-     *            module revision, may be null
+     * @param namespace module namespace
+     * @param revision module revision, may be null
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final URI namespace, @Nullable final Revision revision) {
+    default Optional<Module> findModule(final @NonNull URI namespace, final @Nullable Revision revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 
     /**
      * Returns module instance (from the context) with specified namespace and revision.
      *
-     * @param namespace
-     *            module namespace
-     * @param revision
-     *            module revision, may be null
+     * @param namespace module namespace
+     * @param revision module revision, may be null
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>namespace</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final URI namespace, final Optional<Revision> revision) {
+    default Optional<Module> findModule(final @NonNull URI namespace, final @NonNull Optional<Revision> revision) {
         return findModule(QNameModule.create(namespace, revision));
     }
 
@@ -146,7 +142,7 @@ public interface SchemaContext extends ContainerSchemaNode {
      * @return module instance which has name and revision the same as are the values specified in parameters
      *         <code>name</code> and <code>revision</code>.
      */
-    default Optional<Module> findModule(final String name, @Nullable final Revision revision) {
+    default Optional<Module> findModule(final String name, final @Nullable Revision revision) {
         return findModule(name, Optional.ofNullable(revision));
     }
 
