@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
- * Implementation of this interface delegates all it's calls to the delegate if not specified otherwise.
+ * Implementation of this interface delegates all its calls to the delegate if not specified otherwise.
  *
  * @param <T> Type of delegate
  */
@@ -18,5 +20,5 @@ public interface Delegator<T> {
      *
      * @return underlying delegate.
      */
-    T getDelegate();
+    @NonNull T getDelegate();
 }
