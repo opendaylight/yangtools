@@ -33,7 +33,7 @@ public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDe
     private ConstraintMetaDefinition constraint;
     private List<ValueRange> ranges;
 
-    RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
+    RangeRestrictedTypeBuilder(final T baseType, final @NonNull SchemaPath path) {
         super(baseType, path);
     }
 

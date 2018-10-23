@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -42,13 +42,13 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
  * explicitly set. Status defaults to current.
  */
 @Beta
+@NonNullByDefault
 public final class DerivedTypes {
     private DerivedTypes() {
         throw new UnsupportedOperationException();
     }
 
-    public static DerivedTypeBuilder<?> derivedTypeBuilder(@Nonnull final TypeDefinition<?> baseType,
-            @Nonnull final SchemaPath path) {
+    public static DerivedTypeBuilder<?> derivedTypeBuilder(final TypeDefinition<?> baseType, final SchemaPath path) {
         if (baseType instanceof BinaryTypeDefinition) {
             return derivedBinaryBuilder((BinaryTypeDefinition) baseType, path);
         } else if (baseType instanceof BitsTypeDefinition) {
@@ -93,7 +93,7 @@ public final class DerivedTypes {
     }
 
     public static DerivedTypeBuilder<BinaryTypeDefinition> derivedBinaryBuilder(
-            @Nonnull final BinaryTypeDefinition baseType, @Nonnull final SchemaPath path) {
+            final BinaryTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<BinaryTypeDefinition>(baseType, path) {
             @Override
             public BinaryTypeDefinition build() {
@@ -115,7 +115,7 @@ public final class DerivedTypes {
     }
 
     public static DerivedTypeBuilder<BooleanTypeDefinition> derivedBooleanBuilder(
-            @Nonnull final BooleanTypeDefinition baseType, @Nonnull final SchemaPath path) {
+            final BooleanTypeDefinition baseType, final SchemaPath path) {
         return new DerivedTypeBuilder<BooleanTypeDefinition>(baseType, path) {
             @Override
             public BooleanTypeDefinition build() {

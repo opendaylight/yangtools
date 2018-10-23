@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -26,7 +25,6 @@ abstract class AbstractRangeRestrictedDerivedType<T extends RangeRestrictedTypeD
         super(baseType, path, defaultValue, description, reference, status, units, unknownSchemaNodes);
     }
 
-    @Nonnull
     @Override
     public final Optional<RangeConstraint<N>> getRangeConstraint() {
         return baseType().getRangeConstraint();
