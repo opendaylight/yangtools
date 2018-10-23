@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
@@ -23,7 +24,7 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 @Beta
 @NonNullByDefault
 public abstract class AbstractDelegator<T> implements Delegator<T> {
-    private final T delegate;
+    private final @NonNull T delegate;
 
     protected AbstractDelegator(final T delegate) {
         this.delegate = requireNonNull(delegate);
