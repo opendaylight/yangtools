@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface describing YANG 'leaf-list' statement.
@@ -30,5 +30,5 @@ public interface LeafListSchemaNode extends TypedDataSchemaNode, MustConstraintA
      *
      * @return Ordered list of Strings which specify the default values of this leaf-list
      */
-    @Nonnull Collection<? extends Object> getDefaults();
+    @NonNull Collection<? extends Object> getDefaults();
 }
