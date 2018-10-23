@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
@@ -23,16 +22,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * Support for processing concrete YANG statement.
  *
  * <p>
- * This interface is intended to be implemented by developers, which want to
- * introduce support of statement to parser. Consider subclassing
- * {@link AbstractStatementSupport} for easier implementation of this interface.
+ * This interface is intended to be implemented by developers, which want to introduce support of statement to parser.
+ * Consider subclassing {@link AbstractStatementSupport} for easier implementation of this interface.
  *
- * @param <A>
- *            Argument type
- * @param <D>
- *            Declared Statement representation
- * @param <E>
- *            Effective Statement representation
+ * @param <A> Argument type
+ * @param <D> Declared Statement representation
+ * @param <E> Effective Statement representation
  */
 // FIXME: 3.0.0: do not extends ImplicitParentAwareStatementSupport
 public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
