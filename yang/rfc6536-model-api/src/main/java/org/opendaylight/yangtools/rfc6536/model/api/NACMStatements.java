@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.rfc6536.model.api;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -19,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  *
  * @author Robert Varga
  */
+@NonNullByDefault
 public enum NACMStatements implements StatementDefinition {
     DEFAULT_DENY_ALL(QName.create(NACMConstants.RFC6536_MODULE, "default-deny-all"), DefaultDenyAllStatement.class,
         DefaultDenyAllEffectiveStatement.class),
@@ -37,7 +40,7 @@ public enum NACMStatements implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
+    public @Nullable QName getArgumentName() {
         return null;
     }
 

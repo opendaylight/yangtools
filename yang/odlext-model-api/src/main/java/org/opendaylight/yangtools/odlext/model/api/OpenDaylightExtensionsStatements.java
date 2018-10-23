@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.odlext.model.api;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -48,7 +49,7 @@ public enum OpenDaylightExtensionsStatements implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
+    public @NonNull QName getArgumentName() {
         return argumentName;
     }
 
