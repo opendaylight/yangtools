@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 /**
@@ -23,9 +24,9 @@ import org.opendaylight.yangtools.concepts.Delegator;
 @Beta
 // FIXME: YANGTOOLS-849: 3.0.0: hide this class
 public final class ResourceYangTextSchemaSource extends YangTextSchemaSource implements Delegator<URL> {
-    private final URL url;
+    private final @NonNull URL url;
 
-    ResourceYangTextSchemaSource(final SourceIdentifier identifier, final URL url) {
+    ResourceYangTextSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull URL url) {
         super(identifier);
         this.url = requireNonNull(url);
     }

@@ -18,7 +18,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 final class DelegatedYangTextSchemaSource extends YangTextSchemaSource implements Delegator<ByteSource> {
-    private final ByteSource delegate;
+    private final @NonNull ByteSource delegate;
 
     DelegatedYangTextSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull ByteSource delegate) {
         super(identifier);
