@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 
 /**
@@ -21,19 +22,17 @@ public interface StatementSourceReference {
     /**
      * Returns source type.
      *
-     * @return {@link StatementSource#DECLARATION} if statement was explicitly
-     *         declared in YANG model source, {@link StatementSource#CONTEXT} if statement
-     *         was inferred.
+     * @return {@link StatementSource#DECLARATION} if statement was explicitly declared in YANG model source,
+     *         {@link StatementSource#CONTEXT} if statement was inferred.
      */
-    StatementSource getStatementSource();
+    @NonNull StatementSource getStatementSource();
 
     /**
      * Returns human readable representation of statement source.
      *
      * <p>
-     * Implementations of this interface should override {@link #toString()},
-     * since it may be used in error reporting to provide context
-     * information for model designer to debug errors in its mode.
+     * Implementations of this interface should override {@link #toString()}, since it may be used in error reporting
+     * to provide context information for model designer to debug errors in its mode.
      *
      * @return human readable representation of statement source.
      */
