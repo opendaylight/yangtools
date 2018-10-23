@@ -9,25 +9,19 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
- * Common interface for schema source representations.
+ * Common interface for schema source representations. A schema source is an atomic piece of the overall schema context.
+ * In YANG terms, a schema source is semantically equivalent to a single YANG text file, be it a module or a submodule.
  *
  * <p>
- * A schema source is an atomic piece of the overall schema context. In YANG terms,
- * a schema source is semantically equivalent to a single YANG text file, be it a
- * module or a submodule.
- *
- * <p>
- * A schema source can exist in various forms, which we call representations. Again,
- * in YANG terms, each representation is semantically equivalent, but from
- * implementation perspective certain operations on a schema source may require it
- * to be first transformed into a particular representation before they can be
- * applied. Such transformations are affected via instances of
- * SchemaSourceTransformation.
+ * A schema source can exist in various forms, which we call representations. Again, in YANG terms, each representation
+ * is semantically equivalent, but from implementation perspective certain operations on a schema source may require it
+ * to be first transformed into a particular representation before they can be applied. Such transformations are
+ * affected via instances of SchemaSourceTransformation.
  *
  * <p>
  * Typical examples of a schema source representation include:
@@ -52,7 +46,7 @@ public interface SchemaSourceRepresentation extends Identifiable<SourceIdentifie
      *
      * @return The type of representation.
      */
-    @Nonnull Class<? extends SchemaSourceRepresentation> getType();
+    @NonNull Class<? extends SchemaSourceRepresentation> getType();
 
     /**
      * Return the symbolic name, if available. This name has no semantic meaning beyond being useful for debugging

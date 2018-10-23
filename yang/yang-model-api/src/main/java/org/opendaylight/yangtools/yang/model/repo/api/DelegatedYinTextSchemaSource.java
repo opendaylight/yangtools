@@ -14,12 +14,13 @@ import com.google.common.io.ByteSource;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Delegator;
 
 final class DelegatedYinTextSchemaSource extends YinTextSchemaSource implements Delegator<ByteSource> {
-    private final ByteSource delegate;
+    private final @NonNull ByteSource delegate;
 
-    DelegatedYinTextSchemaSource(final SourceIdentifier identifier, final ByteSource delegate) {
+    DelegatedYinTextSchemaSource(final @NonNull SourceIdentifier identifier, final @NonNull ByteSource delegate) {
         super(identifier);
         this.delegate = requireNonNull(delegate);
     }
