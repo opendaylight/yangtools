@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface RevisionAwareDeclaredStatement extends DeclaredStatement<String>, RevisionGroup {
     @Override
-    default @Nonnull Collection<? extends RevisionStatement> getRevisions() {
+    default Collection<? extends RevisionStatement> getRevisions() {
         return declaredSubstatements(RevisionStatement.class);
     }
 }

@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
@@ -31,7 +30,7 @@ public interface DocumentedDeclaredStatement<T> extends DeclaredStatement<T>, Do
 
     interface WithStatus<T> extends DocumentedDeclaredStatement<T>, DocumentationGroup.WithStatus {
         @Override
-        default @Nullable StatusStatement getStatus() {
+        default StatusStatement getStatus() {
             final Optional<StatusStatement> opt = findFirstDeclaredSubstatement(StatusStatement.class);
             return opt.isPresent() ? opt.get() : null;
         }

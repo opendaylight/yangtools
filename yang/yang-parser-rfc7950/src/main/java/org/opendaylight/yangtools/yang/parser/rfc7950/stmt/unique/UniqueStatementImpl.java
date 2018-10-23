@@ -8,22 +8,13 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<SchemaNodeIdentifier.Relative>>
-        implements UniqueStatement {
-    UniqueStatementImpl(final StmtContext<Collection<SchemaNodeIdentifier.Relative>, UniqueStatement, ?> context) {
+final class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Relative>> implements UniqueStatement {
+    UniqueStatementImpl(final StmtContext<Collection<Relative>, UniqueStatement, ?> context) {
         super(context);
-    }
-
-    @Nonnull
-    @Override
-    public Collection<Relative> getTag() {
-        return argument();
     }
 }

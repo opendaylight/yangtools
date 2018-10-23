@@ -7,17 +7,21 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface BitStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull String getName() {
-        return argument().getLocalName();
+    default @NonNull String getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument()).getLocalName();
     }
 
-    default PositionStatement getPosition() {
+    default @Nullable PositionStatement getPosition() {
         final Optional<PositionStatement> opt = findFirstDeclaredSubstatement(PositionStatement.class);
         return opt.isPresent() ? opt.get() : null;
     }
