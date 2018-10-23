@@ -8,9 +8,8 @@
 package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import java.net.URI;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -31,8 +30,7 @@ public interface QNameToStatementDefinition extends IdentifierNamespace<QName, S
      * @return StatementDefinition
      */
     @Override
-    @Nullable
-    StatementDefinition get(@Nonnull QName identifier);
+    StatementDefinition get(QName identifier);
 
     /**
      * Returns StatementDefinition with specified namespace and localName.
@@ -43,6 +41,5 @@ public interface QNameToStatementDefinition extends IdentifierNamespace<QName, S
      *            localName of requested statement
      * @return StatementDefinition
      */
-    @Nullable
-    StatementDefinition getByNamespaceAndLocalName(@Nonnull URI namespace, @Nonnull String localName);
+    @Nullable StatementDefinition getByNamespaceAndLocalName(@NonNull URI namespace, @NonNull String localName);
 }

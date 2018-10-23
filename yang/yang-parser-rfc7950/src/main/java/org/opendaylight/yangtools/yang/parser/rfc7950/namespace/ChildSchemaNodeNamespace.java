@@ -12,7 +12,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -38,7 +37,7 @@ public final class ChildSchemaNodeNamespace<D extends DeclaredStatement<QName>, 
     }
 
     @Override
-    public StmtContext<?, D, E> get(@Nonnull final QName key) {
+    public StmtContext<?, D, E> get(final QName key) {
         // TODO Auto-generated method stub
         return null;
     }
