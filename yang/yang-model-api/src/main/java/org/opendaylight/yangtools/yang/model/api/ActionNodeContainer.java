@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Node which can contain action nodes.
@@ -21,5 +22,5 @@ public interface ActionNodeContainer {
      *
      * @return set of action nodes
      */
-    Set<ActionDefinition> getActions();
+    @NonNull Set<ActionDefinition> getActions();
 }

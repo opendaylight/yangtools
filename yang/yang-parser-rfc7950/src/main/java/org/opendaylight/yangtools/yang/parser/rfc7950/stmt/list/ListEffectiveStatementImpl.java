@@ -46,8 +46,8 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private final boolean userOrdered;
     private final List<QName> keyDefinition;
     private final ListSchemaNode original;
-    private final Set<ActionDefinition> actions;
-    private final Set<NotificationDefinition> notifications;
+    private final @NonNull Set<ActionDefinition> actions;
+    private final @NonNull Set<NotificationDefinition> notifications;
     private final @NonNull Collection<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
     private final Collection<MustDefinition> mustConstraints;

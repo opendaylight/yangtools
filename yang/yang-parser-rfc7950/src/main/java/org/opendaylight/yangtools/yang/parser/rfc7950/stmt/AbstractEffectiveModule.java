@@ -76,7 +76,7 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final String contact;
     private final Set<ModuleImport> imports;
     private final Set<FeatureDefinition> features;
-    private final Set<NotificationDefinition> notifications;
+    private final @NonNull Set<NotificationDefinition> notifications;
     private final Set<AugmentationSchemaNode> augmentations;
     private final Set<RpcDefinition> rpcs;
     private final Set<Deviation> deviations;

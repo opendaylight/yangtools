@@ -12,6 +12,8 @@ import com.google.common.collect.ImmutableSet.Builder;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -27,9 +29,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: hide this class
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements ContainerEffectiveStatement, DerivableSchemaNode {
-    private final Set<ActionDefinition> actions;
-    private final Set<NotificationDefinition> notifications;
-    private final ContainerSchemaNode original;
+    private final @NonNull Set<ActionDefinition> actions;
+    private final @NonNull Set<NotificationDefinition> notifications;
+    private final @Nullable ContainerSchemaNode original;
     private final boolean presence;
 
     ContainerEffectiveStatementImpl(

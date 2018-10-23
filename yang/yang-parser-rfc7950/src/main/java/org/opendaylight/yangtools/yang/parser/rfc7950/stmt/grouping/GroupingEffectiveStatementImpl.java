@@ -34,8 +34,8 @@ final class GroupingEffectiveStatementImpl
     private final QName qname;
     private final SchemaPath path;
     private final boolean addedByUses;
-    private final Set<ActionDefinition> actions;
-    private final Set<NotificationDefinition> notifications;
+    private final @NonNull Set<ActionDefinition> actions;
+    private final @NonNull Set<NotificationDefinition> notifications;
     private final @NonNull List<UnknownSchemaNode> unknownNodes;
 
     GroupingEffectiveStatementImpl(
@@ -90,7 +90,6 @@ final class GroupingEffectiveStatementImpl
         return actions;
     }
 
-    @Nonnull
     @Override
     public Set<NotificationDefinition> getNotifications() {
         return notifications;
