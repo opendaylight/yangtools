@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Verify;
 import java.util.Objects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 
@@ -36,7 +37,7 @@ public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends D
      *
      * @return A new type instance
      */
-    @Nonnull abstract T buildType();
+    abstract @NonNull T buildType();
 
     @Override
     public final T build() {
@@ -46,6 +47,6 @@ public abstract class ConcreteTypeBuilder<T extends TypeDefinition<T>> extends D
             return base;
         }
 
-        return Verify.verifyNotNull(buildType());
+        return verifyNotNull(buildType());
     }
 }
