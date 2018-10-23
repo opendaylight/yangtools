@@ -17,6 +17,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -114,7 +115,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorageIfAbsent(Class<N> type, K key, V value);
     }
 
-    private final Class<N> identifier;
+    private final @NonNull Class<N> identifier;
 
     protected NamespaceBehaviour(final Class<N> identifier) {
         this.identifier = requireNonNull(identifier);

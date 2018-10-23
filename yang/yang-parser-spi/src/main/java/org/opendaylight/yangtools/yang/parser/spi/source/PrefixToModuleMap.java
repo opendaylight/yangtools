@@ -11,8 +11,6 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
@@ -36,13 +34,11 @@ public class PrefixToModuleMap implements PrefixToModule {
         namespaceToModuleMap.put(module.getNamespace(), module);
     }
 
-    @Nullable
     @Override
-    public QNameModule get(@Nonnull final String prefix) {
+    public QNameModule get(final String prefix) {
         return prefixToModuleMap.get(prefix);
     }
 
-    @Nullable
     @Override
     public QNameModule getByNamespace(final String namespace) throws URISyntaxException {
         return namespaceToModuleMap.get(new URI(namespace));
