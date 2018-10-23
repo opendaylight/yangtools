@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseTypes;
 
 final class BaseInt8Type extends AbstractRangeRestrictedBaseType<Int8TypeDefinition, Byte>
         implements Int8TypeDefinition {
-    static final BaseInt8Type INSTANCE = new BaseInt8Type();
+    static final @NonNull BaseInt8Type INSTANCE = new BaseInt8Type();
 
     private BaseInt8Type() {
         super(BaseTypes.INT8_QNAME, Byte.MIN_VALUE, Byte.MAX_VALUE);

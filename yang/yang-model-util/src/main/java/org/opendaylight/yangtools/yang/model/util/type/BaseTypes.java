@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -54,6 +54,7 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
  * </ul>
  */
 @Beta
+@NonNullByDefault
 public final class BaseTypes {
     private BaseTypes() {
         throw new UnsupportedOperationException();
@@ -171,7 +172,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint8 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint8(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint8(final TypeDefinition<?> type) {
         return BaseUint8Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -186,7 +187,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint16 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint16(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint16(final TypeDefinition<?> type) {
         return BaseUint16Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -201,7 +202,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint32 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint32(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint32(final TypeDefinition<?> type) {
         return BaseUint32Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -216,7 +217,7 @@ public final class BaseTypes {
      * @return If the type corresponds to the base uint64 type.
      * @throws NullPointerException if type is null
      */
-    public static boolean isUint64(@Nonnull final TypeDefinition<?> type) {
+    public static boolean isUint64(final TypeDefinition<?> type) {
         return BaseUint64Type.INSTANCE.getPath().equals(type.getPath());
     }
 
@@ -228,7 +229,7 @@ public final class BaseTypes {
      * @return Base type of specified type
      * @throws NullPointerException if type is null
      */
-    public static TypeDefinition<?> baseTypeOf(@Nonnull final TypeDefinition<?> type) {
+    public static TypeDefinition<?> baseTypeOf(final TypeDefinition<?> type) {
         TypeDefinition<?> ret = type;
         while (ret.getBaseType() != null) {
             ret = ret.getBaseType();

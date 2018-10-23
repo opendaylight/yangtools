@@ -7,9 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -17,27 +20,27 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 
 public abstract class TypeBuilder<T extends TypeDefinition<T>> implements Builder<T> {
     private final ImmutableList.Builder<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.builder();
-    private final SchemaPath path;
-    private final T baseType;
+    private final @NonNull SchemaPath path;
+    private final @Nullable T baseType;
 
-    TypeBuilder(final T baseType, final SchemaPath path) {
-        this.path = Preconditions.checkNotNull(path);
+    TypeBuilder(final @Nullable T baseType, final @NonNull SchemaPath path) {
+        this.path = requireNonNull(path);
         this.baseType = baseType;
     }
 
-    final T getBaseType() {
+    final @Nullable T getBaseType() {
         return baseType;
     }
 
-    final SchemaPath getPath() {
+    final @NonNull SchemaPath getPath() {
         return path;
     }
 
-    final List<UnknownSchemaNode> getUnknownSchemaNodes() {
+    final @NonNull List<UnknownSchemaNode> getUnknownSchemaNodes() {
         return unknownSchemaNodes.build();
     }
 
-    public final void addUnknownSchemaNode(final UnknownSchemaNode node) {
+    public final void addUnknownSchemaNode(final @NonNull UnknownSchemaNode node) {
         unknownSchemaNodes.add(node);
     }
 }
