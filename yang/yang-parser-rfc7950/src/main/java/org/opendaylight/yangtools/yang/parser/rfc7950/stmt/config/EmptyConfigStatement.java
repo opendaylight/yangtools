@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -18,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
 
 abstract class EmptyConfigStatement implements ConfigStatement {
-    static final ConfigStatement FALSE = new EmptyConfigStatement() {
+    static final @NonNull ConfigStatement FALSE = new EmptyConfigStatement() {
         @Override
         public Boolean argument() {
             return Boolean.FALSE;
@@ -30,7 +31,7 @@ abstract class EmptyConfigStatement implements ConfigStatement {
         }
     };
 
-    static final ConfigStatement TRUE = new EmptyConfigStatement() {
+    static final @NonNull ConfigStatement TRUE = new EmptyConfigStatement() {
         @Override
         public Boolean argument() {
             return Boolean.TRUE;

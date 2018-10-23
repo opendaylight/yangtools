@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.typedef;
 
 import java.util.Collection;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -110,17 +109,15 @@ final class TypedefEffectiveStatementImpl extends AbstractEffectiveSchemaNode<Ty
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> V get(@Nonnull final Class<N> namespace,
-                @Nonnull final K identifier) {
+        public <K, V, N extends IdentifierNamespace<K, V>> V get(final Class<N> namespace, final K identifier) {
             return TypedefEffectiveStatementImpl.this.get(namespace, identifier);
         }
 
         @Override
-        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(@Nonnull final Class<N> namespace) {
+        public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAll(final Class<N> namespace) {
             return TypedefEffectiveStatementImpl.this.getAll(namespace);
         }
 
-        @Nonnull
         @Override
         public Collection<? extends EffectiveStatement<?, ?>> effectiveSubstatements() {
             return TypedefEffectiveStatementImpl.this.effectiveSubstatements();
