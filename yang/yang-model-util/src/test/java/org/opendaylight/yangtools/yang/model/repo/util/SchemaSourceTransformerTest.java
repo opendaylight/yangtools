@@ -12,7 +12,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
-import javax.annotation.Nonnull;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -142,13 +141,12 @@ public class SchemaSourceTransformerTest {
     private class Provider extends AbstractSchemaRepository {
         @Deprecated
         @Override
-        public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
+        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
             return null;
         }
 
         @Override
-        public SchemaContextFactory createSchemaContextFactory(
-                @Nonnull final SchemaContextFactoryConfiguration config) {
+        public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
             return null;
         }
 
@@ -157,13 +155,12 @@ public class SchemaSourceTransformerTest {
     private class Consumer extends AbstractSchemaRepository {
         @Deprecated
         @Override
-        public SchemaContextFactory createSchemaContextFactory(@Nonnull final SchemaSourceFilter filter) {
+        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
             return null;
         }
 
         @Override
-        public SchemaContextFactory createSchemaContextFactory(
-                @Nonnull final SchemaContextFactoryConfiguration config) {
+        public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
             return null;
         }
     }

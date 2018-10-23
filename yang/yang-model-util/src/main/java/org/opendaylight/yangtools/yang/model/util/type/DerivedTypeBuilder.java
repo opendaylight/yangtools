@@ -11,7 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -45,19 +45,19 @@ public abstract class DerivedTypeBuilder<T extends TypeDefinition<T>> extends Ty
         units = baseType.getUnits().orElse(null);
     }
 
-    public void setDefaultValue(@Nonnull final Object defaultValue) {
+    public void setDefaultValue(final @NonNull Object defaultValue) {
         this.defaultValue = requireNonNull(defaultValue);
     }
 
-    public final void setDescription(@Nonnull final String description) {
+    public final void setDescription(final @NonNull String description) {
         this.description = requireNonNull(description);
     }
 
-    public final void setReference(@Nonnull final String reference) {
+    public final void setReference(final @NonNull String reference) {
         this.reference = requireNonNull(reference);
     }
 
-    public final void setStatus(@Nonnull final Status status) {
+    public final void setStatus(final @NonNull Status status) {
         this.status = requireNonNull(status);
     }
 

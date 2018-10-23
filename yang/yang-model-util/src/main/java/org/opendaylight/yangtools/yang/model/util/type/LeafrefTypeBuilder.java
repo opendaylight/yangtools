@@ -7,8 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
-import javax.annotation.Nonnull;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -20,9 +22,9 @@ public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuild
         super(null, path);
     }
 
-    public LeafrefTypeBuilder setPathStatement(@Nonnull final RevisionAwareXPath pathStatement) {
-        Preconditions.checkState(this.pathStatement == null, "Path statement already set to %s", this.pathStatement);
-        this.pathStatement = Preconditions.checkNotNull(pathStatement);
+    public LeafrefTypeBuilder setPathStatement(final @NonNull RevisionAwareXPath pathStatement) {
+        checkState(this.pathStatement == null, "Path statement already set to %s", this.pathStatement);
+        this.pathStatement = requireNonNull(pathStatement);
         return this;
     }
 
