@@ -17,9 +17,8 @@ import com.google.common.io.ByteSource;
 import com.google.common.io.Resources;
 import java.io.File;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNames;
@@ -34,13 +33,13 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
     private static final Logger LOG = LoggerFactory.getLogger(YinTextSchemaSource.class);
     private static final String XML_EXTENSION = ".xml";
 
-    private final SourceIdentifier identifier;
+    private final @NonNull SourceIdentifier identifier;
 
     protected YinTextSchemaSource(final SourceIdentifier identifier) {
         this.identifier = requireNonNull(identifier);
     }
 
-    public static SourceIdentifier identifierFromFilename(final String name) {
+    public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
         final String baseName;
         if (name.endsWith(YangConstants.RFC6020_YIN_FILE_EXTENSION)) {
             baseName = name.substring(0, name.length() - YangConstants.RFC6020_YIN_FILE_EXTENSION.length());
@@ -61,7 +60,6 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
         return identifier;
     }
 
-    @Nonnull
     @Override
     public Class<? extends YinTextSchemaSource> getType() {
         return YinTextSchemaSource.class;
@@ -81,7 +79,7 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @param toStringHelper ToStringHelper onto the attributes can be added
      * @return ToStringHelper supplied as input argument.
      */
-    protected abstract ToStringHelper addToStringAttributes(ToStringHelper toStringHelper);
+    protected abstract ToStringHelper addToStringAttributes(@NonNull ToStringHelper toStringHelper);
 
     /**
      * Create a new YinTextSchemaSource with a specific source identifier and backed
@@ -91,20 +89,19 @@ public abstract class YinTextSchemaSource extends ByteSource implements YinSchem
      * @param delegate Backing ByteSource instance
      * @return A new YinTextSchemaSource
      */
-    public static YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+    public static @NonNull YinTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
             final ByteSource delegate) {
         return new DelegatedYinTextSchemaSource(identifier, delegate);
     }
 
-    public static YinTextSchemaSource forFile(final File file) {
+    public static @NonNull YinTextSchemaSource forFile(final File file) {
         checkArgument(file.isFile(), "Supplied file %s is not a file", file);
         return new YinTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
 
-    public static YinTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+    public static @NonNull YinTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
-        final SourceIdentifier identifier = identifierFromFilename(fileName);
-        final URL url = Resources.getResource(clazz, resourceName);
-        return new ResourceYinTextSchemaSource(identifier, url);
+        return new ResourceYinTextSchemaSource(identifierFromFilename(fileName),
+            Resources.getResource(clazz, resourceName));
     }
 }

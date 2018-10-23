@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
@@ -30,13 +30,13 @@ import org.opendaylight.yangtools.yang.common.Revision;
  */
 @Beta
 public abstract class YangTextSchemaSource extends ByteSource implements YangSchemaSourceRepresentation {
-    private final SourceIdentifier identifier;
+    private final @NonNull SourceIdentifier identifier;
 
     protected YangTextSchemaSource(final SourceIdentifier identifier) {
         this.identifier = requireNonNull(identifier);
     }
 
-    public static SourceIdentifier identifierFromFilename(final String name) {
+    public static @NonNull SourceIdentifier identifierFromFilename(final String name) {
         checkArgument(name.endsWith(RFC6020_YANG_FILE_EXTENSION), "Filename %s does not end with '%s'",
             RFC6020_YANG_FILE_EXTENSION, name);
 
@@ -53,7 +53,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @param delegate Backing ByteSource instance
      * @return A new YangTextSchemaSource
      */
-    public static YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
+    public static @NonNull YangTextSchemaSource delegateForByteSource(final SourceIdentifier identifier,
             final ByteSource delegate) {
         return new DelegatedYangTextSchemaSource(identifier, delegate);
     }
@@ -67,7 +67,8 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new YangTextSchemaSource
      * @throws IllegalArgumentException if the file name has invalid format
      */
-    public static YangTextSchemaSource delegateForByteSource(final String fileName, final ByteSource delegate) {
+    public static @NonNull YangTextSchemaSource delegateForByteSource(final String fileName,
+            final ByteSource delegate) {
         return new DelegatedYangTextSchemaSource(identifierFromFilename(fileName), delegate);
     }
 
@@ -80,7 +81,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the file name has invalid format or if the supplied File is not a file
      * @throws NullPointerException if file is null
      */
-    public static YangTextSchemaSource forFile(final File file) {
+    public static @NonNull YangTextSchemaSource forFile(final File file) {
         checkArgument(file.isFile(), "Supplied file %s is not a file", file);
         return new YangTextFileSchemaSource(identifierFromFilename(file.getName()), file);
     }
@@ -94,7 +95,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
     // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
-    public static ResourceYangTextSchemaSource forResource(final String resourceName) {
+    public static @NonNull ResourceYangTextSchemaSource forResource(final String resourceName) {
         return forResource(YangTextSchemaSource.class, resourceName);
     }
 
@@ -108,7 +109,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
     // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
-    public static ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+    public static @NonNull ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
         final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
@@ -120,7 +121,6 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
         return identifier;
     }
 
-    @Nonnull
     @Override
     public Class<? extends YangTextSchemaSource> getType() {
         return YangTextSchemaSource.class;
