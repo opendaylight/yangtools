@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.identity;
 
+import static com.google.common.base.Preconditions.checkState;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -29,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
         implements IdentityEffectiveStatement, IdentitySchemaNode, MutableStatement {
     private final Set<IdentitySchemaNode> derivedIdentities;
-    private Set<IdentitySchemaNode> baseIdentities;
+    private @NonNull Set<IdentitySchemaNode> baseIdentities;
     private boolean sealed;
 
     IdentityEffectiveStatementImpl(
@@ -57,15 +58,13 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
     }
 
     private void addBaseIdentity(final IdentityEffectiveStatementImpl baseIdentity) {
-        Preconditions.checkState(!sealed, "Attempt to modify sealed identity effective statement %s", getQName());
+        checkState(!sealed, "Attempt to modify sealed identity effective statement %s", getQName());
         this.baseIdentities.add(baseIdentity);
     }
 
-    @Nonnull
     @Override
     public Set<IdentitySchemaNode> getBaseIdentities() {
-        Preconditions.checkState(sealed,
-                "Attempt to get base identities from unsealed identity effective statement %s", getQName());
+        checkState(sealed, "Attempt to get base identities from unsealed identity effective statement %s", getQName());
         return baseIdentities;
     }
 
