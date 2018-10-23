@@ -8,7 +8,8 @@
 package org.opendaylight.yangtools.yang.model.parser.api;
 
 import java.util.Optional;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
 public class YangSyntaxErrorException extends YangParserException {
@@ -18,13 +19,13 @@ public class YangSyntaxErrorException extends YangParserException {
     private final int line;
     private final int charPositionInLine;
 
-    public YangSyntaxErrorException(@Nullable final SourceIdentifier source, final int line,
+    public YangSyntaxErrorException(final @Nullable SourceIdentifier source, final int line,
             final int charPositionInLine, final String message) {
         this(source, line, charPositionInLine, message, null);
     }
 
-    public YangSyntaxErrorException(@Nullable final SourceIdentifier source, final int line,
-            final int charPositionInLine, final String message, @Nullable final Throwable cause) {
+    public YangSyntaxErrorException(final @Nullable SourceIdentifier source, final int line,
+            final int charPositionInLine, final String message, final @Nullable Throwable cause) {
         super(message, cause);
         this.source = source;
         this.line = line;
@@ -43,7 +44,7 @@ public class YangSyntaxErrorException extends YangParserException {
         return charPositionInLine;
     }
 
-    public String getFormattedMessage() {
+    public @NonNull String getFormattedMessage() {
         final StringBuilder sb = new StringBuilder(getMessage());
         if (source != null) {
             sb.append(" in source ");
