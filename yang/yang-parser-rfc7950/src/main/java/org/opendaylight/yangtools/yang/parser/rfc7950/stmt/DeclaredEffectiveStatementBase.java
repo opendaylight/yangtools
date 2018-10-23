@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.base.Verify;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
@@ -17,9 +17,9 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatement<A>> extends
         EffectiveStatementBase<A, D> {
 
-    private final StatementSource statementSource;
+    private final @NonNull StatementSource statementSource;
     private final A argument;
-    private final D declaredInstance;
+    private final @NonNull D declaredInstance;
 
     /**
      * Constructor.
@@ -44,7 +44,6 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
             "Statement %s failed to build declared statement", lookupCtx);
     }
 
-    @Nonnull
     @Override
     public final StatementDefinition statementDefinition() {
         return declaredInstance.statementDefinition();
@@ -55,7 +54,6 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
         return argument;
     }
 
-    @Nonnull
     @Override
     public final StatementSource getStatementSource() {
         return statementSource;
