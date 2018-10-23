@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
@@ -33,7 +33,7 @@ public interface XPathExpression {
      * @throws XPathExpressionException if the expression cannot be evaluated
      * @throws IllegalArgumentException if the path does not match the path at which this expression was compiled
      */
-    Optional<? extends XPathResult<?>> evaluate(@Nonnull XPathDocument document, @Nonnull YangInstanceIdentifier path)
+    Optional<? extends XPathResult<?>> evaluate(@NonNull XPathDocument document, @NonNull YangInstanceIdentifier path)
             throws XPathExpressionException;
 
     /**
@@ -42,7 +42,7 @@ public interface XPathExpression {
      *
      * @return The evaluation {@link SchemaPath}
      */
-    @Nonnull SchemaPath getEvaluationPath();
+    @NonNull SchemaPath getEvaluationPath();
 
     /**
      * Return the SchemaPath of the topmost node which affects the result of evaluation of this expression. This
@@ -54,5 +54,5 @@ public interface XPathExpression {
      * @return The apex node evaluation of this expression can reference, or {@link SchemaPath#ROOT} if it cannot
      *         cannot be conclusively determined.
      */
-    @Nonnull SchemaPath getApexPath();
+    @NonNull SchemaPath getApexPath();
 }

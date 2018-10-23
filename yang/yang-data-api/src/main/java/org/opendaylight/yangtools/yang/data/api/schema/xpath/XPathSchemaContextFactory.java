@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * <p>
  * Implementations are required to support {@link java.util.ServiceLoader}.
  */
+@NonNullByDefault
 public interface XPathSchemaContextFactory {
     /**
      * Create an {@link XPathSchemaContext} based on a {@link SchemaContext}. This effectively binds the namespaces
@@ -27,5 +28,5 @@ public interface XPathSchemaContextFactory {
      * @param context SchemaContext associated with the resulting {@link XPathSchemaContext}
      * @return An {@link XPathSchemaContext} instance
      */
-    @Nonnull XPathSchemaContext createContext(@Nonnull SchemaContext context);
+    XPathSchemaContext createContext(SchemaContext context);
 }

@@ -16,8 +16,8 @@ import com.google.common.collect.Lists;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.jaxen.JaxenException;
 import org.jaxen.JaxenHandler;
 import org.jaxen.XPathSyntaxException;
@@ -40,21 +40,21 @@ import org.slf4j.LoggerFactory;
 final class JaxenXPath implements XPathExpression {
     private static final Logger LOG = LoggerFactory.getLogger(JaxenXPath.class);
 
-    private final Converter<String, QNameModule> converter;
-    private final SchemaPath schemaPath;
-    private final Expr expr;
+    private final @NonNull Converter<String, QNameModule> converter;
+    private final @NonNull SchemaPath schemaPath;
+    private final @NonNull Expr expr;
 
-    private JaxenXPath(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
-            final Expr expr) {
+    private JaxenXPath(final @NonNull Converter<String, QNameModule> converter, final @NonNull SchemaPath schemaPath,
+            final @NonNull Expr expr) {
         this.converter = requireNonNull(converter);
         this.schemaPath = requireNonNull(schemaPath);
         this.expr = requireNonNull(expr);
     }
 
-    static JaxenXPath create(final Converter<String, QNameModule> converter, final SchemaPath schemaPath,
-            final String xpath) throws JaxenException {
+    static @NonNull JaxenXPath create(final @NonNull Converter<String, QNameModule> converter,
+            final @NonNull SchemaPath schemaPath, final @NonNull String xpath) throws JaxenException {
 
-        final Expr parsed;
+        final @NonNull Expr parsed;
         try {
             final XPathReader reader = new org.jaxen.saxpath.base.XPathReader();
             final JaxenHandler handler = new JaxenHandler();
@@ -77,8 +77,8 @@ final class JaxenXPath implements XPathExpression {
     }
 
     @Override
-    public Optional<? extends XPathResult<?>> evaluate(@Nonnull final XPathDocument document,
-            @Nonnull final YangInstanceIdentifier path) throws XPathExpressionException {
+    public Optional<? extends XPathResult<?>> evaluate(final XPathDocument document,
+            final YangInstanceIdentifier path) throws XPathExpressionException {
         checkArgument(document instanceof JaxenDocument);
 
         final NormalizedNodeContextSupport contextSupport = NormalizedNodeContextSupport.create(
@@ -126,13 +126,11 @@ final class JaxenXPath implements XPathExpression {
         return result;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getEvaluationPath() {
         return schemaPath;
     }
 
-    @Nonnull
     @Override
     public SchemaPath getApexPath() {
         // TODO: improve this
