@@ -7,14 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    default @Nonnull QName getName() {
-        return argument();
+    default @NonNull QName getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
     /**
@@ -22,7 +25,7 @@ public interface IdentityStatement extends DocumentedDeclaredStatement.WithStatu
      *
      * @return base identities, empty if there are none.
      */
-    default @Nonnull Collection<? extends BaseStatement> getBases() {
+    default @NonNull Collection<? extends BaseStatement> getBases() {
         return declaredSubstatements(BaseStatement.class);
     }
 }
