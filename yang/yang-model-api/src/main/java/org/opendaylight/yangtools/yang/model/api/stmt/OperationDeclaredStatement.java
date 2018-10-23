@@ -7,10 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -20,8 +21,9 @@ import org.opendaylight.yangtools.yang.common.QName;
 public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>, OperationGroup,
         IfFeatureAwareDeclaredStatement<QName> {
     @Override
-    default @Nonnull QName getName() {
-        return argument();
+    default QName getName() {
+        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
+        return verifyNotNull(argument());
     }
 
     @Override
@@ -37,12 +39,12 @@ public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.
     }
 
     @Override
-    default @Nonnull Collection<? extends TypedefStatement> getTypedefs() {
+    default Collection<? extends TypedefStatement> getTypedefs() {
         return declaredSubstatements(TypedefStatement.class);
     }
 
     @Override
-    default @Nonnull Collection<? extends GroupingStatement> getGroupings() {
+    default Collection<? extends GroupingStatement> getGroupings() {
         return declaredSubstatements(GroupingStatement.class);
     }
 }

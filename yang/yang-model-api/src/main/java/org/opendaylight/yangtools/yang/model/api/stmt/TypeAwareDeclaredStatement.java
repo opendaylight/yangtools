@@ -9,20 +9,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
 public interface TypeAwareDeclaredStatement extends DeclaredStatement<QName>, TypeGroup {
     @Override
-    default @Nonnull TypeStatement getType() {
+    default TypeStatement getType() {
         return findFirstDeclaredSubstatement(TypeStatement.class).get();
     }
 
     @Override
-    default @Nullable UnitsStatement getUnits() {
+    default UnitsStatement getUnits() {
         final Optional<UnitsStatement> opt = findFirstDeclaredSubstatement(UnitsStatement.class);
         return opt.isPresent() ? opt.get() : null;
     }

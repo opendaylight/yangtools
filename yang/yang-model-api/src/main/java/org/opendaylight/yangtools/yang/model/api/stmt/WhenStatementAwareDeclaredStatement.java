@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nullable;
 
 @Beta
 public interface WhenStatementAwareDeclaredStatement<A> extends IfFeatureAwareDeclaredStatement<A>,
         ConditionalDataDefinition {
     @Override
-    default @Nullable WhenStatement getWhenStatement() {
+    default WhenStatement getWhenStatement() {
         final Optional<WhenStatement> opt = findFirstDeclaredSubstatement(WhenStatement.class);
         return opt.isPresent() ? opt.get() : null;
     }
