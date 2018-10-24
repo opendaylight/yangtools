@@ -7,10 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Verify;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -24,8 +26,8 @@ final class StatementContextWriter implements StatementWriter {
     private StatementContextBase<?, ?, ?> current;
 
     StatementContextWriter(final SourceSpecificContext ctx, final ModelProcessingPhase phase) {
-        this.ctx = Preconditions.checkNotNull(ctx);
-        this.phase = Preconditions.checkNotNull(phase);
+        this.ctx = requireNonNull(ctx);
+        this.phase = requireNonNull(phase);
     }
 
     @Override
@@ -46,8 +48,8 @@ final class StatementContextWriter implements StatementWriter {
 
     @Override
     public void storeStatement(final int expectedChildren, final boolean fullyDefined) {
-        Preconditions.checkState(current != null);
-        Preconditions.checkArgument(expectedChildren >= 0);
+        checkState(current != null);
+        checkArgument(expectedChildren >= 0);
         current.resizeSubstatements(expectedChildren);
 
         if (fullyDefined) {
@@ -56,21 +58,20 @@ final class StatementContextWriter implements StatementWriter {
     }
 
     @Override
-    public void startStatement(final int childId, @Nonnull final QName name, final String argument,
-            @Nonnull final StatementSourceReference ref) {
+    public void startStatement(final int childId, final QName name, final String argument,
+            final StatementSourceReference ref) {
         final Optional<StatementContextBase<?, ?, ?>> existing = ctx.lookupDeclaredChild(current, childId);
         current = existing.isPresent() ? existing.get()
-                :  Verify.verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
+                :  verifyNotNull(ctx.createDeclaredChild(current, childId, name, argument, ref));
     }
 
     @Override
-    public void endStatement(@Nonnull final StatementSourceReference ref) {
-        Preconditions.checkState(current != null);
+    public void endStatement(final StatementSourceReference ref) {
+        checkState(current != null);
         current.endDeclared(phase);
         exitStatement();
     }
 
-    @Nonnull
     @Override
     public ModelProcessingPhase getPhase() {
         return phase;
