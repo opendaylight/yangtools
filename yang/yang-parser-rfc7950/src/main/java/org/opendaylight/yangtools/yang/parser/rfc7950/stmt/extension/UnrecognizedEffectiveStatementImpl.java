@@ -41,7 +41,7 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
             }
             this.maybeQNameArgument = maybeQNameArgumentInit;
         }
-        path = ctx.getParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
     }
 
     @Override

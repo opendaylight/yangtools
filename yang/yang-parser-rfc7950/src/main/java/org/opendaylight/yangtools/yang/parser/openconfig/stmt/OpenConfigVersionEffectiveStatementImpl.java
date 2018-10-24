@@ -25,7 +25,7 @@ final class OpenConfigVersionEffectiveStatementImpl extends
 
     OpenConfigVersionEffectiveStatementImpl(final StmtContext<SemVer, OpenConfigVersionStatement, ?> ctx) {
         super(ctx);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

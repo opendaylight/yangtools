@@ -32,7 +32,7 @@ abstract class AbstractOutputStatementSupport extends
     @Override
     public final void onStatementAdded(final Mutable<QName, OutputStatement,
             EffectiveStatement<QName, OutputStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override

@@ -7,14 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.base.VerifyException;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Streams;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -39,19 +42,51 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      *
      * @return context of parent of statement, or null if this is the root statement.
      */
-    @Nullable
-    StmtContext<?, ?, ?> getParentContext();
+    @Nullable StmtContext<?, ?, ?> getParentContext();
+
+    /**
+     * Return the parent statement context, forcing a VerifyException if this is the root statement.
+     *
+     * @return context of parent of statement
+     * @throws VerifyException if this statement is the root statement
+     */
+    default @NonNull StmtContext<?, ?, ?> coerceParentContext() {
+        return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
+    }
+
+    /**
+     * Return the statement argument in literal format.
+     *
+     * @return raw statement argument string, or null if this statement does not have an argument.
+     */
+    @Nullable String rawStatementArgument();
 
     /**
      * Return the statement argument in literal format.
      *
      * @return raw statement argument string
+     * @throws VerifyException if this statement does not have an argument
      */
-    @Nullable
-    String rawStatementArgument();
+    default @NonNull String coerceRawStatementArgument() {
+        return verifyNotNull(rawStatementArgument(), "Statement context %s does not have an argument", this);
+    }
 
-    @Nullable
-    A getStatementArgument();
+    /**
+     * Return the statement argument.
+     *
+     * @return statement argument, or null if this statement does not have an argument
+     */
+    @Nullable A getStatementArgument();
+
+    /**
+     * Return the statement argument in literal format.
+     *
+     * @return raw statement argument string
+     * @throws VerifyException if this statement does not have an argument
+     */
+    default @NonNull A coerceStatementArgument() {
+        return verifyNotNull(getStatementArgument(), "Statement context %s does not have an argument", this);
+    }
 
     /**
      * Return the {@link SchemaPath} of this statement. Not all statements have a SchemaPath, in which case
@@ -77,10 +112,9 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    @NonNull <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key) ;
+    @NonNull <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(Class<N> type, T key);
 
-    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(
-            Class<N> type);
+    <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromNamespace(Class<N> type);
 
     <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromCurrentStmtCtxNamespace(Class<N> type);
 
@@ -143,6 +177,11 @@ public interface StmtContext<A, D extends DeclaredStatement<A>, E extends Effect
 
         @Override
         Mutable<?, ?, ?> getParentContext();
+
+        @Override
+        default Mutable<?, ?, ?> coerceParentContext() {
+            return verifyNotNull(getParentContext(), "Root context %s does not have a parent", this);
+        }
 
         /**
          * Associate a value with a key within a namespace.

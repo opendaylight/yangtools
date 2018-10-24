@@ -114,7 +114,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+            return !YangStmtMapping.GROUPING.equals(stmtContext.coerceParentContext().getPublicDefinition());
         }
 
         LOG.trace("Will copy {} statement {}", def, stmtContext);
@@ -154,7 +154,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         if (StmtContextUtils.isUnknownStatement(refineTargetNodeCtx)) {
             LOG.trace("Refine node '{}' in uses '{}' has target node unknown statement '{}'. "
                 + "Refine has been skipped. At line: {}", subStmtCtx.getStatementArgument(),
-                subStmtCtx.getParentContext().getStatementArgument(),
+                subStmtCtx.coerceParentContext().getStatementArgument(),
                 refineTargetNodeCtx.getStatementArgument(), subStmtCtx.getStatementSourceReference());
             subStmtCtx.addAsEffectOfStatement(refineTargetNodeCtx);
             return;
@@ -182,9 +182,9 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         SourceException.throwIf(!isSupportedRefineTarget(refineSubstatementCtx, refineTargetNodeCtx),
                 refineSubstatementCtx.getStatementSourceReference(),
                 "Error in module '%s' in the refine of uses '%s': can not perform refine of '%s' for the target '%s'.",
-                refineSubstatementCtx.getRoot().getStatementArgument(), refineSubstatementCtx.getParentContext()
-                        .getStatementArgument(), refineSubstatementCtx.getPublicDefinition(), refineTargetNodeCtx
-                        .getPublicDefinition());
+                refineSubstatementCtx.getRoot().getStatementArgument(),
+                refineSubstatementCtx.coerceParentContext().getStatementArgument(),
+                refineSubstatementCtx.getPublicDefinition(), refineTargetNodeCtx.getPublicDefinition());
 
         if (isAllowedToAddByRefine(refineSubstatementDef)) {
             refineTargetNodeCtx.addEffectiveSubstatement(refineSubstatementCtx);
