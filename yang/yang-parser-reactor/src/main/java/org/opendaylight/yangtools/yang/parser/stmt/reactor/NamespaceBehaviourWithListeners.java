@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 
@@ -58,7 +58,7 @@ abstract class NamespaceBehaviourWithListeners<K, V, N extends IdentifierNamespa
             super(contextNode);
         }
 
-        abstract boolean onValueAdded(@Nonnull K key, @Nonnull V value);
+        abstract boolean onValueAdded(@NonNull K key, @NonNull V value);
     }
 
     protected final NamespaceBehaviour<K, V, N> delegate;
