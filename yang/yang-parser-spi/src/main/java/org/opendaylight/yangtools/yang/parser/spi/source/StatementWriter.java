@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.parser.spi.source;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -102,8 +102,8 @@ public interface StatementWriter {
      *            error.
      * @throws SourceException if statement is not valid according to current context.
      */
-    void startStatement(int childId, @Nonnull QName name, @Nullable String argument,
-            @Nonnull StatementSourceReference ref);
+    void startStatement(int childId, @NonNull QName name, @Nullable String argument,
+            @NonNull StatementSourceReference ref);
 
     /**
      * Ends current opened statement.
@@ -112,12 +112,12 @@ public interface StatementWriter {
      *            error.
      * @throws SourceException if closed statement is not valid in current context, or there is no such statement
      */
-    void endStatement(@Nonnull StatementSourceReference ref);
+    void endStatement(@NonNull StatementSourceReference ref);
 
     /**
      * Return current model processing phase.
      *
      * @return current processing phase
      */
-    @Nonnull ModelProcessingPhase getPhase();
+    @NonNull ModelProcessingPhase getPhase();
 }
