@@ -21,6 +21,7 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -35,7 +36,8 @@ public final class UntrustedXML {
     private static final DocumentBuilderFactory DBF;
 
     static {
-        final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory f = ClassLoaderUtils.getWithClassLoader(UntrustedXML.class.getClassLoader(),
+            DocumentBuilderFactory::newInstance);
         f.setCoalescing(true);
         f.setExpandEntityReferences(false);
         f.setIgnoringElementContentWhitespace(true);
@@ -57,7 +59,8 @@ public final class UntrustedXML {
     private static final SAXParserFactory SPF;
 
     static {
-        final SAXParserFactory f = SAXParserFactory.newInstance();
+        final SAXParserFactory f = ClassLoaderUtils.getWithClassLoader(UntrustedXML.class.getClassLoader(),
+            SAXParserFactory::newInstance);
         f.setNamespaceAware(true);
         f.setXIncludeAware(false);
         try {
@@ -76,7 +79,8 @@ public final class UntrustedXML {
     private static final XMLInputFactory XIF;
 
     static {
-        final XMLInputFactory f = XMLInputFactory.newInstance();
+        final XMLInputFactory f = ClassLoaderUtils.getWithClassLoader(UntrustedXML.class.getClassLoader(),
+            XMLInputFactory::newInstance);
 
         f.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
         f.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
