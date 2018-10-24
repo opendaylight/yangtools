@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -42,7 +42,7 @@ public final class CrossSourceStatementReactor {
      *
      * @return A new builder.
      */
-    public static Builder builder() {
+    public static @NonNull Builder builder() {
         return new Builder();
     }
 
@@ -51,7 +51,7 @@ public final class CrossSourceStatementReactor {
      *
      * @return A new {@link BuildAction}.
      */
-    public BuildAction newBuild() {
+    public @NonNull BuildAction newBuild() {
         return newBuild(StatementParserMode.DEFAULT_MODE);
     }
 
@@ -62,7 +62,7 @@ public final class CrossSourceStatementReactor {
      * @return A new {@link BuildAction}.
      * @throws NullPointerException if statementParserMode is null
      */
-    public BuildAction newBuild(final StatementParserMode statementParserMode) {
+    public @NonNull BuildAction newBuild(final StatementParserMode statementParserMode) {
         return new BuildAction(statementParserMode);
     }
 
@@ -72,12 +72,13 @@ public final class CrossSourceStatementReactor {
         private final Map<ModelProcessingPhase, StatementSupportBundle> bundles =
                 new EnumMap<>(ModelProcessingPhase.class);
 
-        public Builder setBundle(final ModelProcessingPhase phase, final StatementSupportBundle bundle) {
+        public @NonNull Builder setBundle(final ModelProcessingPhase phase, final StatementSupportBundle bundle) {
             bundles.put(phase, bundle);
             return this;
         }
 
-        public Builder setValidationBundle(final ValidationBundleType type, final Collection<?> validationBundle) {
+        public @NonNull Builder setValidationBundle(final ValidationBundleType type,
+                final Collection<?> validationBundle) {
             validationBundles.put(type, validationBundle);
             return this;
         }
@@ -93,7 +94,7 @@ public final class CrossSourceStatementReactor {
         private boolean supportedFeaturesSet = false;
         private boolean modulesDeviatedByModulesSet = false;
 
-        BuildAction(@Nonnull final StatementParserMode statementParserMode) {
+        BuildAction(final @NonNull StatementParserMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation,
                 requireNonNull(statementParserMode));
         }
@@ -105,7 +106,7 @@ public final class CrossSourceStatementReactor {
          *            which should be added into main sources
          * @return This build action, for fluent use.
          */
-        public BuildAction addSource(final StatementStreamSource source) {
+        public @NonNull BuildAction addSource(final StatementStreamSource source) {
             context.addSource(source);
             return this;
         }
@@ -117,14 +118,14 @@ public final class CrossSourceStatementReactor {
          *            which should be added into main sources
          * @return This build action, for fluent use.
          */
-        public BuildAction addSources(final StatementStreamSource... sources) {
+        public @NonNull BuildAction addSources(final StatementStreamSource... sources) {
             addSources(Arrays.asList(sources));
             return this;
         }
 
-        public BuildAction addSources(final Collection<? extends StatementStreamSource> sources) {
+        public @NonNull BuildAction addSources(final @NonNull Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
-                context.addSource(source);
+                context.addSource(requireNonNull(source));
             }
             return this;
         }
@@ -136,16 +137,15 @@ public final class CrossSourceStatementReactor {
          * <p>
          * Library sources are not supported in semantic version mode currently.
          *
-         * @param libSources
-         *            yang sources which should be added into library sources
+         * @param libSources yang sources which should be added into library sources
          * @return This build action, for fluent use.
          */
-        public BuildAction addLibSources(final StatementStreamSource... libSources) {
+        public @NonNull BuildAction addLibSources(final StatementStreamSource... libSources) {
             addLibSources(Arrays.asList(libSources));
             return this;
         }
 
-        public BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
+        public @NonNull BuildAction addLibSources(final Collection<StatementStreamSource> libSources) {
             for (final StatementStreamSource libSource : libSources) {
                 context.addLibSource(libSource);
             }
@@ -161,7 +161,7 @@ public final class CrossSourceStatementReactor {
          *            If the set is empty, no features encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public BuildAction setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
+        public @NonNull BuildAction setSupportedFeatures(final @NonNull Set<QName> supportedFeatures) {
             checkState(!supportedFeaturesSet, "Supported features should be set only once.");
             context.setSupportedFeatures(requireNonNull(supportedFeatures));
             supportedFeaturesSet = true;
@@ -177,8 +177,8 @@ public final class CrossSourceStatementReactor {
          *            SchemaContext. If the map is empty, no deviations encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public BuildAction setModulesWithSupportedDeviations(
-                @Nonnull final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
+        public @NonNull BuildAction setModulesWithSupportedDeviations(
+                final @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
             checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
             context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
             modulesDeviatedByModulesSet = true;
