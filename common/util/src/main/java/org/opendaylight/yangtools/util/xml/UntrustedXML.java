@@ -11,6 +11,7 @@ import com.google.common.annotations.Beta;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.charset.Charset;
+import java.util.function.Supplier;
 import javax.annotation.Nonnull;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -21,6 +22,8 @@ import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
@@ -35,7 +38,7 @@ public final class UntrustedXML {
     private static final DocumentBuilderFactory DBF;
 
     static {
-        final DocumentBuilderFactory f = DocumentBuilderFactory.newInstance();
+        final DocumentBuilderFactory f = getLimited(DocumentBuilderFactory::newInstance);
         f.setCoalescing(true);
         f.setExpandEntityReferences(false);
         f.setIgnoringElementContentWhitespace(true);
@@ -57,7 +60,7 @@ public final class UntrustedXML {
     private static final SAXParserFactory SPF;
 
     static {
-        final SAXParserFactory f = SAXParserFactory.newInstance();
+        final SAXParserFactory f = getLimited(SAXParserFactory::newInstance);
         f.setNamespaceAware(true);
         f.setXIncludeAware(false);
         try {
@@ -76,8 +79,7 @@ public final class UntrustedXML {
     private static final XMLInputFactory XIF;
 
     static {
-        final XMLInputFactory f = XMLInputFactory.newInstance();
-
+        final XMLInputFactory f = getLimited(XMLInputFactory::newInstance);
         f.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
         f.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.TRUE);
         f.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, Boolean.FALSE);
@@ -152,5 +154,10 @@ public final class UntrustedXML {
      */
     public static @Nonnull XMLStreamReader createXMLStreamReader(final Reader reader) throws XMLStreamException {
         return XIF.createXMLStreamReader(reader);
+    }
+
+    private static <T> T getLimited(final @NonNull Supplier<T> supplier) {
+        final ClassLoader loader = UntrustedXML.class.getClassLoader();
+        return loader == null ? supplier.get() : ClassLoaderUtils.getWithClassLoader(loader, supplier);
     }
 }
