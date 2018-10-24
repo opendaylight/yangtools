@@ -42,7 +42,7 @@ abstract class AbstractHashedValueStatementSupport
 
         Effective(final StmtContext<Void, OpenConfigHashedValueStatement, ?> ctx) {
             super(ctx);
-            path = ctx.getParentContext().getSchemaPath().get().createChild(
+            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
 

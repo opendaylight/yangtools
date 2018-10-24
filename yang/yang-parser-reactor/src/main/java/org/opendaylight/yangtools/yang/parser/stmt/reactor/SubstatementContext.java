@@ -140,7 +140,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             }
 
             final SchemaPath path;
-            if ((StmtContextUtils.producesDeclared(getParentContext(), ChoiceStatement.class)
+            if ((StmtContextUtils.producesDeclared(parent, ChoiceStatement.class)
                     || Boolean.TRUE.equals(parent.getFromNamespace(AugmentToChoiceNamespace.class, parent)))
                     && isSupportedAsShorthandCase()) {
                 path = parentPath.createChild(qname);
@@ -200,7 +200,7 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
 
         final boolean isConfig;
         if (configStatement != null) {
-            isConfig = configStatement.getStatementArgument();
+            isConfig = configStatement.coerceStatementArgument();
 
             // Validity check: if parent is config=false this cannot be a config=true
             InferenceException.throwIf(isConfig && !parentIsConfig, getStatementSourceReference(),

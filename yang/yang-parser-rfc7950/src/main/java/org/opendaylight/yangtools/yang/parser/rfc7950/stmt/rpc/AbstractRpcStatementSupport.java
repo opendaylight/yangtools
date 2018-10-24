@@ -48,7 +48,7 @@ abstract class AbstractRpcStatementSupport
     @Override
     public final void onStatementAdded(
             final Mutable<QName, RpcStatement, EffectiveStatement<QName, RpcStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override

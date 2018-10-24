@@ -41,7 +41,7 @@ final class ImportEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
     ImportEffectiveStatementImpl(final StmtContext<String, ImportStatement, ?> ctx) {
         super(ctx);
 
-        moduleName = ctx.getStatementArgument();
+        moduleName = ctx.coerceStatementArgument();
         final Optional<String> prefixStmt = findFirstEffectiveSubstatementArgument(PrefixEffectiveStatement.class);
         MissingSubstatementException.throwIf(!prefixStmt.isPresent(), ctx.getStatementSourceReference(),
             "Prefix is mandatory substatement of import statement");

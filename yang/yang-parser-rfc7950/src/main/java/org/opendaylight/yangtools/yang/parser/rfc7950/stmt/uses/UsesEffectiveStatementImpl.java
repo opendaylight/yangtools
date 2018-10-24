@@ -53,7 +53,7 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
 
         // initGroupingPath
         final StmtContext<?, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> grpCtx =
-                ctx.getFromNamespace(GroupingNamespace.class, ctx.getStatementArgument());
+                ctx.getFromNamespace(GroupingNamespace.class, ctx.coerceStatementArgument());
         this.groupingPath = grpCtx.getSchemaPath().get();
 
         // initCopyType

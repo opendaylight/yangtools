@@ -132,7 +132,7 @@ abstract class AbstractModuleStatementSupport extends
     private static void addToSemVerModuleNamespace(
             final Mutable<String, ModuleStatement, EffectiveStatement<String, ModuleStatement>> stmt,
             final SourceIdentifier moduleIdentifier) {
-        final String moduleName = stmt.getStatementArgument();
+        final String moduleName = stmt.coerceStatementArgument();
         final SemVer moduleSemVer = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         final SemVerSourceIdentifier id = SemVerSourceIdentifier.create(moduleName, moduleSemVer);
         stmt.addToNs(SemanticVersionModuleNamespace.class, id, stmt);

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -78,7 +76,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private ExtensionEffectiveStatementImpl(
             final StmtContext<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> ctx) {
         super(ctx);
-        this.qname = verifyNotNull(ctx.getStatementArgument());
+        this.qname = ctx.coerceStatementArgument();
         this.schemaPath = ctx.getSchemaPath().get();
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();

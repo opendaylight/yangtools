@@ -24,7 +24,7 @@ final class ThirdPartyExtensionEffectiveStatementImpl
 
     ThirdPartyExtensionEffectiveStatementImpl(final StmtContext<String, ThirdPartyExtensionStatement, ?> ctx) {
         super(ctx);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
         valueFromNamespace = ctx.getFromNamespace(ThirdPartyNamespace.class, ctx);
     }
 

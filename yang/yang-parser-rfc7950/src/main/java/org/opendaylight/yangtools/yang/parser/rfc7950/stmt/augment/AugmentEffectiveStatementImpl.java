@@ -49,7 +49,7 @@ final class AugmentEffectiveStatementImpl
             EffectiveStatement<SchemaNodeIdentifier, AugmentStatement>> ctx) {
         super(ctx);
 
-        this.targetPath = ctx.getStatementArgument().asSchemaPath();
+        this.targetPath = ctx.coerceStatementArgument().asSchemaPath();
 
         final QNameModule rootModuleQName = StmtContextUtils.getRootModuleQName(ctx);
         this.namespace = rootModuleQName.getNamespace();

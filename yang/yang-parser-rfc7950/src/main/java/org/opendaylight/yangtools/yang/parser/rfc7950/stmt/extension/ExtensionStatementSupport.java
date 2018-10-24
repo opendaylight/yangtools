@@ -62,7 +62,7 @@ public final class ExtensionStatementSupport
             final Mutable<QName, ExtensionStatement, EffectiveStatement<QName, ExtensionStatement>> stmt) {
         super.onStatementDefinitionDeclared(stmt);
 
-        QName stmtName = stmt.getStatementArgument();
+        QName stmtName = stmt.coerceStatementArgument();
         if (OpenConfigStatements.OPENCONFIG_VERSION.getStatementName().isEqualWithoutRevision(stmtName)) {
             stmtName = stmtName.withoutRevision();
         }

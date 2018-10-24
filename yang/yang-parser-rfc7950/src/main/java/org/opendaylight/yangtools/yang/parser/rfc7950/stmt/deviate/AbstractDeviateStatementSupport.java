@@ -129,7 +129,7 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
         getSubstatementValidatorForDeviate(deviateKind).validate(deviateStmtCtx);
 
         final SchemaNodeIdentifier deviationTarget =
-                (SchemaNodeIdentifier) deviateStmtCtx.getParentContext().getStatementArgument();
+                (SchemaNodeIdentifier) deviateStmtCtx.coerceParentContext().getStatementArgument();
 
         if (!isDeviationSupported(deviateStmtCtx, deviationTarget)) {
             return;
@@ -175,7 +175,7 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
 
             @Override
             public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
-                throw new InferenceException(deviateStmtCtx.getParentContext().getStatementSourceReference(),
+                throw new InferenceException(deviateStmtCtx.coerceParentContext().getStatementSourceReference(),
                     "Deviation target '%s' not found.", deviationTarget);
             }
         });

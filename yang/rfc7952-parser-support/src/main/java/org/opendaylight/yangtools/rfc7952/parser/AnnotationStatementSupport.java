@@ -50,7 +50,7 @@ public final class AnnotationStatementSupport
 
         Effective(final StmtContext<String, AnnotationStatement, ?> ctx) {
             super(ctx);
-            path = ctx.getParentContext().getSchemaPath().get().createChild(
+            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 StmtContextUtils.parseIdentifier(ctx, argument()));
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
@@ -123,7 +123,7 @@ public final class AnnotationStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<String, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
-        final StatementDefinition parentDef = stmt.getParentContext().getPublicDefinition();
+        final StatementDefinition parentDef = stmt.coerceParentContext().getPublicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
                 stmt.getStatementSourceReference(),
                 "Annotations may only be defined at root of either a module or a submodule");

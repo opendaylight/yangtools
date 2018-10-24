@@ -43,7 +43,7 @@ final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<I
         // initDerivedIdentities
         final Set<IdentitySchemaNode> derivedIdentitiesInit = new HashSet<>();
         final List<StmtContext<?, ?, ?>> derivedIdentitiesCtxList = ctx.getFromNamespace(
-                DerivedIdentitiesNamespace.class, ctx.getStatementArgument());
+                DerivedIdentitiesNamespace.class, ctx.coerceStatementArgument());
         if (derivedIdentitiesCtxList == null) {
             this.derivedIdentities = ImmutableSet.of();
             return;

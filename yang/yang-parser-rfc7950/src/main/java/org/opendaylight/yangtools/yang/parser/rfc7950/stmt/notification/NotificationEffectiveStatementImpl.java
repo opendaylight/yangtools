@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.notification;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
@@ -46,7 +44,7 @@ final class NotificationEffectiveStatementImpl
     NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
         super(ctx);
-        this.qname = verifyNotNull(ctx.getStatementArgument());
+        this.qname = ctx.coerceStatementArgument();
         this.path = ctx.getSchemaPath().get();
 
         // initSubstatementCollections

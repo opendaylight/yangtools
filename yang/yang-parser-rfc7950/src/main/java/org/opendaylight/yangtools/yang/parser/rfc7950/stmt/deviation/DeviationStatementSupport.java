@@ -59,7 +59,7 @@ public final class DeviationStatementSupport extends AbstractStatementSupport<Sc
             EffectiveStatement<SchemaNodeIdentifier, DeviationStatement>> ctx) {
         final QNameModule currentModule = ctx.getFromNamespace(ModuleCtxToModuleQName.class,
                 ctx.getRoot());
-        final QNameModule targetModule = ctx.getStatementArgument().getLastComponent().getModule();
+        final QNameModule targetModule = ctx.coerceStatementArgument().getLastComponent().getModule();
 
         if (currentModule.equals(targetModule)) {
             throw new InferenceException(ctx.getStatementSourceReference(),

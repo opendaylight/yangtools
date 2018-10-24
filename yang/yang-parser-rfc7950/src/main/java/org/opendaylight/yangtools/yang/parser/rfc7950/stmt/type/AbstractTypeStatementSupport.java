@@ -145,7 +145,7 @@ abstract class AbstractTypeStatementSupport
 
         // First look up the proper base type
         final TypeEffectiveStatement<TypeStatement> typeStmt;
-        switch (ctx.getStatementArgument()) {
+        switch (ctx.coerceStatementArgument()) {
             case BINARY:
                 typeStmt = BuiltinEffectiveStatement.BINARY;
                 break;

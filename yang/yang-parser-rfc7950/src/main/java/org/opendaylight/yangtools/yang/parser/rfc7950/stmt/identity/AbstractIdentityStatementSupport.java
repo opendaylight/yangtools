@@ -42,6 +42,6 @@ abstract class AbstractIdentityStatementSupport
     @Override
     public final void onStatementDefinitionDeclared(final StmtContext.Mutable<QName, IdentityStatement,
             EffectiveStatement<QName, IdentityStatement>> stmt) {
-        stmt.addToNs(IdentityNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.addToNs(IdentityNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 }

@@ -62,13 +62,13 @@ abstract class AbstractGroupingStatementSupport
                 // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
                 // declarations and parent declarations which have already been declared.
                 checkConflict(parent, stmt);
-                parent.addContext(GroupingNamespace.class, stmt.getStatementArgument(), stmt);
+                parent.addContext(GroupingNamespace.class, stmt.coerceStatementArgument(), stmt);
             }
         }
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final QName arg = stmt.getStatementArgument();
+        final QName arg = stmt.coerceStatementArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(GroupingNamespace.class, arg);
         SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), "Duplicate name for grouping %s",
                 arg);

@@ -27,7 +27,7 @@ abstract class AbstractLeafListStatementSupport
     @Override
     public final void onStatementAdded(
             final Mutable<QName, LeafListStatement, EffectiveStatement<QName, LeafListStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override

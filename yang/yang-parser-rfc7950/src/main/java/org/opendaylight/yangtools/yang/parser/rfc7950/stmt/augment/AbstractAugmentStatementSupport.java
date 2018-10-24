@@ -96,7 +96,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                 augmentAction.requiresCtx(augmentNode, ModelProcessingPhase.EFFECTIVE_MODEL);
         final Prerequisite<Mutable<?, ?, EffectiveStatement<?, ?>>> target =
                 augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
-                    ChildSchemaNodeNamespace.class, augmentNode.getStatementArgument().getPathFromRoot());
+                    ChildSchemaNodeNamespace.class, augmentNode.coerceStatementArgument().getPathFromRoot());
 
         augmentAction.apply(new ModelActionBuilder.InferenceAction() {
             @Override
@@ -146,14 +146,14 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                 /*
                  * Do not fail, if it is an uses-augment to an unknown node.
                  */
-                if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
+                if (YangStmtMapping.USES == augmentNode.coerceParentContext().getPublicDefinition()) {
+                    final SchemaNodeIdentifier augmentArg = augmentNode.coerceStatementArgument();
                     final Optional<StmtContext<?, ?, ?>> targetNode = ChildSchemaNodeNamespace.findNode(
-                        getSearchRoot(augmentNode), augmentNode.getStatementArgument());
+                        getSearchRoot(augmentNode), augmentArg);
                     if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
                         augmentNode.setIsSupportedToBuildEffective(false);
-                        LOG.warn(
-                                "Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
-                                augmentNode.getStatementArgument(), augmentNode.getStatementSourceReference());
+                        LOG.warn("Uses-augment to unknown node {}. Augmentation has not been performed. At line: {}",
+                            augmentArg, augmentNode.getStatementSourceReference());
                         return;
                     }
                 }
@@ -165,8 +165,8 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
     }
 
     private static StmtContext<?, ?, ?> getSearchRoot(final StmtContext<?, ?, ?> augmentContext) {
-        final StmtContext<?, ?, ?> parent = augmentContext.getParentContext();
         // Augment is in uses - we need to augment instantiated nodes in parent.
+        final StmtContext<?, ?, ?> parent = augmentContext.coerceParentContext();
         if (YangStmtMapping.USES == parent.getPublicDefinition()) {
             return parent.getParentContext();
         }
@@ -175,7 +175,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
 
     static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.getParentContext().getPublicDefinition()
+        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.coerceParentContext().getPublicDefinition()
                 .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
                 : CopyType.ADDED_BY_AUGMENTATION;
         /*

@@ -77,7 +77,7 @@ public final class TypedefStatementSupport extends
                 // Shadowing check: make sure we do not trample on pre-existing definitions. This catches sibling
                 // declarations and parent declarations which have already been declared.
                 checkConflict(parent, stmt);
-                parent.addContext(TypeNamespace.class, stmt.getStatementArgument(), stmt);
+                parent.addContext(TypeNamespace.class, stmt.coerceStatementArgument(), stmt);
             }
         }
     }
@@ -88,7 +88,7 @@ public final class TypedefStatementSupport extends
     }
 
     private static void checkConflict(final StmtContext<?, ?, ?> parent, final StmtContext<QName, ?, ?> stmt) {
-        final QName arg = stmt.getStatementArgument();
+        final QName arg = stmt.coerceStatementArgument();
         final StmtContext<?, ?, ?> existing = parent.getFromNamespace(TypeNamespace.class, arg);
         // RFC7950 sections 5.5 and 6.2.1: identifiers must not be shadowed
         SourceException.throwIf(existing != null, stmt.getStatementSourceReference(), "Duplicate name for typedef %s",

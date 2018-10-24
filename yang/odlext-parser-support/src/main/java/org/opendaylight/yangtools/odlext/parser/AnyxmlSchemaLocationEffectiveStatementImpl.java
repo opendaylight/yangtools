@@ -28,7 +28,7 @@ public final class AnyxmlSchemaLocationEffectiveStatementImpl
     AnyxmlSchemaLocationEffectiveStatementImpl(
             final StmtContext<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement, ?> ctx) {
         super(ctx);
-        path = ctx.getParentContext().getSchemaPath().get().createChild(getNodeType());
+        path = ctx.coerceParentContext().getSchemaPath().get().createChild(getNodeType());
     }
 
     @Override

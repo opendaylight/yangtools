@@ -815,7 +815,7 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
             return false;
         }
         if (NOCOPY_FROM_GROUPING_SET.contains(def)) {
-            return !YangStmtMapping.GROUPING.equals(stmtContext.getParentContext().getPublicDefinition());
+            return !YangStmtMapping.GROUPING.equals(stmtContext.coerceParentContext().getPublicDefinition());
         }
 
         LOG.debug("Will copy {} statement {}", def, stmtContext);

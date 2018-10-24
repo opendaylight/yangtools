@@ -64,7 +64,7 @@ public final class KeyStatementSupport
             final QNameModule targetModule) {
         final Builder<SchemaNodeIdentifier> builder = ImmutableSet.builder();
         boolean replaced = false;
-        for (final SchemaNodeIdentifier arg : ctx.getStatementArgument()) {
+        for (final SchemaNodeIdentifier arg : ctx.coerceStatementArgument()) {
             final QName qname = arg.getLastComponent();
             if (!targetModule.equals(qname.getModule())) {
                 final QName newQname = ctx.getFromNamespace(QNameCacheNamespace.class, qname.withModule(targetModule));

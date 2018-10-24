@@ -66,7 +66,7 @@ abstract class AbstractIncludeStatementSupport extends
     @Override
     public final void onLinkageDeclared(
             final Mutable<String, IncludeStatement, EffectiveStatement<String, IncludeStatement>> stmt) {
-        final String submoduleName = stmt.getStatementArgument();
+        final String submoduleName = stmt.coerceStatementArgument();
         final StmtContext<Revision, ?, ?> revision = findFirstDeclaredSubstatement(stmt,
             RevisionDateStatement.class);
 

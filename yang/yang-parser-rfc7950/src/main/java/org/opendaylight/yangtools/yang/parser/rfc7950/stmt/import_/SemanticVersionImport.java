@@ -120,7 +120,7 @@ final class SemanticVersionImport {
     static void onLinkageDeclared(
             final Mutable<String, ImportStatement, EffectiveStatement<String, ImportStatement>> stmt) {
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_LINKAGE);
-        final String moduleName = stmt.getStatementArgument();
+        final String moduleName = stmt.coerceStatementArgument();
         final SemVer semanticVersion = stmt.getFromNamespace(SemanticVersionNamespace.class, stmt);
         final SemanticVersionImport.CompatibleCriterion criterion = semanticVersion == null
                 ? new NoVerCompatibleCriterion(moduleName)

@@ -48,7 +48,7 @@ public final class AnyxmlStatementSupport
 
     @Override
     public void onStatementAdded(final Mutable<QName, AnyxmlStatement, AnyxmlEffectiveStatement> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.coerceStatementArgument(), stmt);
     }
 
     @Override

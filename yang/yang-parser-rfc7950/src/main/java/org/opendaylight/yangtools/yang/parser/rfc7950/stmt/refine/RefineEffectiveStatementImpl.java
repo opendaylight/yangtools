@@ -36,7 +36,7 @@ public final class RefineEffectiveStatementImpl
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {
         super(ctx);
-        qname = verifyNotNull(ctx.getStatementArgument().getLastComponent());
+        qname = verifyNotNull(ctx.coerceStatementArgument().getLastComponent());
         path = ctx.getSchemaPath().get();
         refineTargetNode = (SchemaNode) ctx.getEffectOfStatement().iterator().next().buildEffective();
 

@@ -62,7 +62,7 @@ abstract class AbstractImportStatementSupport extends
          */
         stmt.addRequiredSource(RevisionImport.getImportedSourceIdentifier(stmt));
 
-        final String moduleName = stmt.getStatementArgument();
+        final String moduleName = stmt.coerceStatementArgument();
         final ModelActionBuilder importAction = stmt.newInferenceAction(SOURCE_PRE_LINKAGE);
         final Prerequisite<StmtContext<?, ?, ?>> imported = importAction.requiresCtx(stmt,
                 PreLinkageModuleNamespace.class, moduleName, SOURCE_PRE_LINKAGE);

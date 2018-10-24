@@ -40,7 +40,7 @@ public final class DefaultDenyWriteStatementSupport
 
         Effective(final StmtContext<Void, DefaultDenyWriteStatement, ?> ctx) {
             super(ctx);
-            path = ctx.getParentContext().getSchemaPath().get().createChild(
+            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
                 ctx.getPublicDefinition().getStatementName());
         }
 

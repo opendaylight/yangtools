@@ -206,7 +206,7 @@ public final class StmtContextUtils {
 
     public static boolean isInExtensionBody(final StmtContext<?, ?, ?> stmtCtx) {
         StmtContext<?, ?, ?> current = stmtCtx;
-        while (current.getParentContext().getParentContext() != null) {
+        while (current.coerceParentContext().getParentContext() != null) {
             current = current.getParentContext();
             if (isUnknownStatement(current)) {
                 return true;
@@ -256,7 +256,7 @@ public final class StmtContextUtils {
             if (YangStmtMapping.IF_FEATURE.equals(stmt.getPublicDefinition())) {
                 containsIfFeature = true;
                 @SuppressWarnings("unchecked")
-                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.getStatementArgument();
+                final Predicate<Set<QName>> argument = (Predicate<Set<QName>>) stmt.coerceStatementArgument();
                 if (argument.test(supportedFeatures)) {
                     isSupported = true;
                 } else {
@@ -379,7 +379,7 @@ public final class StmtContextUtils {
         requireNonNull(ancestorType);
         requireNonNull(ancestorChildType);
 
-        StmtContext<?, ?, ?> current = ctx.getParentContext();
+        StmtContext<?, ?, ?> current = ctx.coerceParentContext();
         StmtContext<?, ?, ?> parent = current.getParentContext();
         while (parent != null) {
             if (ancestorType.equals(current.getPublicDefinition())) {
@@ -447,12 +447,13 @@ public final class StmtContextUtils {
     private static boolean isRelevantForIfFeatureAndWhenOnListKeysCheck(final StmtContext<?, ?, ?> ctx) {
         return YangVersion.VERSION_1_1.equals(ctx.getRootVersion())
                 && StmtContextUtils.hasParentOfType(ctx, YangStmtMapping.LIST)
-                && StmtContextUtils.findFirstDeclaredSubstatement(ctx.getParentContext(), KeyStatement.class) != null;
+                && StmtContextUtils.findFirstDeclaredSubstatement(ctx.coerceParentContext(),
+                    KeyStatement.class) != null;
     }
 
     private static boolean isListKey(final StmtContext<?, ?, ?> leafStmtCtx,
             final StmtContext<Collection<SchemaNodeIdentifier>, ?, ?> keyStmtCtx) {
-        for (final SchemaNodeIdentifier keyIdentifier : keyStmtCtx.getStatementArgument()) {
+        for (final SchemaNodeIdentifier keyIdentifier : keyStmtCtx.coerceStatementArgument()) {
             if (leafStmtCtx.getStatementArgument().equals(keyIdentifier.getLastComponent())) {
                 return true;
             }
@@ -639,9 +640,11 @@ public final class StmtContextUtils {
                     RevisionStatement.class)) {
                 if (revision == null && subStmt.getStatementArgument() != null) {
                     revision = (Revision) subStmt.getStatementArgument();
-                } else if (subStmt.getStatementArgument() != null
-                        && ((Revision) subStmt.getStatementArgument()).compareTo(revision) > 0) {
-                    revision = (Revision) subStmt.getStatementArgument();
+                } else {
+                    final Revision subArg = (Revision) subStmt.getStatementArgument();
+                    if (subArg != null && subArg.compareTo(revision) > 0) {
+                        revision = subArg;
+                    }
                 }
             }
         }

@@ -8,8 +8,6 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.List;
@@ -43,7 +41,7 @@ final class GroupingEffectiveStatementImpl
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {
         super(ctx);
 
-        qname = verifyNotNull(ctx.getStatementArgument());
+        qname = ctx.coerceStatementArgument();
         path = ctx.getSchemaPath().get();
         addedByUses = ctx.getCopyHistory().contains(CopyType.ADDED_BY_USES);
 

@@ -65,7 +65,7 @@ public final class BaseStatementSupport
         final Mutable<?, ?, ?> baseParentCtx = baseStmtCtx.getParentContext();
         if (StmtContextUtils.producesDeclared(baseParentCtx, IdentityStatement.class)) {
 
-            final QName baseIdentityQName = baseStmtCtx.getStatementArgument();
+            final QName baseIdentityQName = baseStmtCtx.coerceStatementArgument();
             final ModelActionBuilder baseIdentityAction = baseStmtCtx.newInferenceAction(
                 ModelProcessingPhase.STATEMENT_DEFINITION);
             final Prerequisite<StmtContext<?, ?, ?>> requiresPrereq = baseIdentityAction.requiresCtx(baseStmtCtx,
@@ -77,7 +77,7 @@ public final class BaseStatementSupport
                 @Override
                 public void apply(final InferenceContext ctx) {
                     List<StmtContext<?, ?, ?>> derivedIdentities = baseStmtCtx.getFromNamespace(
-                        DerivedIdentitiesNamespace.class, baseStmtCtx.getStatementArgument());
+                        DerivedIdentitiesNamespace.class, baseIdentityQName);
                     if (derivedIdentities == null) {
                         derivedIdentities = new ArrayList<>(1);
                         baseStmtCtx.addToNs(DerivedIdentitiesNamespace.class, baseIdentityQName, derivedIdentities);
