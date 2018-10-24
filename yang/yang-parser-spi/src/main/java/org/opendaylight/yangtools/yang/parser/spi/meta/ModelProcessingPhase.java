@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.eclipse.jdt.annotation.Nullable;
 
+@NonNullByDefault
 public enum ModelProcessingPhase {
     INIT(null),
 
     /**
-     * Preliminary cross-source relationship resolution phase which collects
-     * available module names and module namespaces. It is necessary in order to
-     * correct resolution of unknown statements used in linkage phase (e.g.
+     * Preliminary cross-source relationship resolution phase which collects available module names and module
+     * namespaces. It is necessary in order to correct resolution of unknown statements used in linkage phase (e.g.
      * semantic version of yang modules).
      */
     SOURCE_PRE_LINKAGE(INIT),
@@ -36,13 +37,13 @@ public enum ModelProcessingPhase {
     FULL_DECLARATION(STATEMENT_DEFINITION),
     EFFECTIVE_MODEL(FULL_DECLARATION);
 
-    private final ModelProcessingPhase previousPhase;
+    private final @Nullable ModelProcessingPhase previousPhase;
 
-    ModelProcessingPhase(@Nullable ModelProcessingPhase previous) {
+    ModelProcessingPhase(@Nullable final ModelProcessingPhase previous) {
         this.previousPhase = previous;
     }
 
-    public ModelProcessingPhase getPreviousPhase() {
+    public @Nullable ModelProcessingPhase getPreviousPhase() {
         return previousPhase;
     }
 }

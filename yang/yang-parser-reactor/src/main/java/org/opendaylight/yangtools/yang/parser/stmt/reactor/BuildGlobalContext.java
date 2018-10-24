@@ -30,7 +30,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedMap;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.RecursiveObjectLeaker;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -118,11 +118,11 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         return supports.get(phase);
     }
 
-    void addSource(@Nonnull final StatementStreamSource source) {
+    void addSource(final @NonNull StatementStreamSource source) {
         sources.add(new SourceSpecificContext(this, source));
     }
 
-    void addLibSource(@Nonnull final StatementStreamSource libSource) {
+    void addLibSource(final @NonNull StatementStreamSource libSource) {
         checkState(!isEnabledSemanticVersioning(),
             "Library sources are not supported in semantic version mode currently.");
         checkState(currentPhase == ModelProcessingPhase.INIT,
