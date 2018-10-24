@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 
@@ -64,7 +64,7 @@ public abstract class NamespaceKeyCriterion<K> {
      * @param key Key to be matched
      * @return True if the key matches this criterion, false otherwise.
      */
-    public abstract boolean match(@Nonnull K key);
+    public abstract boolean match(@NonNull K key);
 
     /**
      * Select the better match from two candidate keys.
@@ -73,7 +73,7 @@ public abstract class NamespaceKeyCriterion<K> {
      * @param second Second key
      * @return Selected key, must be either first or second key, by identity.
      */
-    public abstract K select(@Nonnull K first, @Nonnull K second);
+    public abstract K select(@NonNull K first, @NonNull K second);
 
     @Override
     public final String toString() {
