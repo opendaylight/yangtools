@@ -45,7 +45,7 @@ public final class AnyxmlSchemaLocationStatementSupport
     public void onFullDefinitionDeclared(final Mutable<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement,
             EffectiveStatement<SchemaNodeIdentifier, AnyxmlSchemaLocationStatement>> stmt) {
         super.onFullDefinitionDeclared(stmt);
-        stmt.getParentContext().addToNs(AnyxmlSchemaLocationNamespace.class, ANYXML_SCHEMA_LOCATION, stmt);
+        stmt.coerceParentContext().addToNs(AnyxmlSchemaLocationNamespace.class, ANYXML_SCHEMA_LOCATION, stmt);
     }
 
     @Override

@@ -146,7 +146,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                 /*
                  * Do not fail, if it is an uses-augment to an unknown node.
                  */
-                if (YangStmtMapping.USES == augmentNode.getParentContext().getPublicDefinition()) {
+                if (YangStmtMapping.USES == augmentNode.coerceParentContext().getPublicDefinition()) {
                     final Optional<StmtContext<?, ?, ?>> targetNode = ChildSchemaNodeNamespace.findNode(
                         getSearchRoot(augmentNode), augmentNode.getStatementArgument());
                     if (targetNode.isPresent() && StmtContextUtils.isUnknownStatement(targetNode.get())) {
@@ -175,7 +175,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
 
     static void copyFromSourceToTarget(final StatementContextBase<?, ?, ?> sourceCtx,
             final StatementContextBase<?, ?, ?> targetCtx) {
-        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.getParentContext().getPublicDefinition()
+        final CopyType typeOfCopy = UsesStatement.class.equals(sourceCtx.coerceParentContext().getPublicDefinition()
                 .getDeclaredRepresentationClass()) ? CopyType.ADDED_BY_USES_AUGMENTATION
                 : CopyType.ADDED_BY_AUGMENTATION;
         /*

@@ -31,7 +31,7 @@ abstract class AbstractNotificationStatementSupport
     @Override
     public final void onStatementAdded(
             final Mutable<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override

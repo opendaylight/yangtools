@@ -32,7 +32,7 @@ abstract class AbstractInputStatementSupport
     @Override
     public final void onStatementAdded(final Mutable<QName, InputStatement,
             EffectiveStatement<QName, InputStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override

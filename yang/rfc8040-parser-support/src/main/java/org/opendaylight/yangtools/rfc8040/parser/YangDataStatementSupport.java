@@ -83,7 +83,7 @@ public final class YangDataStatementSupport extends AbstractStatementSupport<Str
             EffectiveStatement<String, YangDataStatement>> ctx) {
         // as per https://tools.ietf.org/html/rfc8040#section-8,
         // yang-data is ignored unless it appears as a top-level statement
-        if (ctx.getParentContext().getParentContext() != null) {
+        if (ctx.coerceParentContext().getParentContext() != null) {
             ctx.setIsSupportedToBuildEffective(false);
         }
     }

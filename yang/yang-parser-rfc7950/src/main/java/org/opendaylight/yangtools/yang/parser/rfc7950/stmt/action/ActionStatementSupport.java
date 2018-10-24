@@ -60,7 +60,7 @@ public final class ActionStatementSupport
     @Override
     public void onStatementAdded(
             final StmtContext.Mutable<QName, ActionStatement, EffectiveStatement<QName, ActionStatement>> stmt) {
-        stmt.getParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
+        stmt.coerceParentContext().addToNs(ChildSchemaNodeNamespace.class, stmt.getStatementArgument(), stmt);
     }
 
     @Override
