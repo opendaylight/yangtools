@@ -12,6 +12,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
@@ -19,9 +21,9 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Optional;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -45,6 +47,7 @@ import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
 
+@RunWith(MockitoJUnitRunner.class)
 public class SchemaContextUtilTest {
     @Mock
     private SchemaContext mockSchemaContext;
@@ -53,7 +56,6 @@ public class SchemaContextUtilTest {
 
     @Test
     public void testFindDummyData() {
-        MockitoAnnotations.initMocks(this);
         doReturn(Optional.empty()).when(mockSchemaContext).findModule(any(QNameModule.class));
         doReturn(Optional.empty()).when(mockSchemaContext).findDataTreeChild(any(Iterable.class));
         doReturn(URI.create("dummy")).when(mockModule).getNamespace();
@@ -383,7 +385,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParentModuleIllegalArgumentTest() {
 
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
         SchemaContextUtil.findParentModule(mockContext, null);
 
     }
@@ -391,35 +393,29 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findParentModuleIllegalArgumentTest2() {
 
-        final SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
+        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
         SchemaContextUtil.findParentModule(null, mockSchemaNode);
 
     }
 
     @Test(expected = IllegalStateException.class)
     public void findParentModuleIllegalStateTest() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        final SchemaNode mockSchemaNode = Mockito.mock(SchemaNode.class);
-        Mockito.when(mockSchemaNode.getPath()).thenReturn(null);
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
+        when(mockSchemaNode.getPath()).thenReturn(null);
         SchemaContextUtil.findParentModule(mockContext, mockSchemaNode);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeIllegalArgumentTest() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
         SchemaContextUtil.findDataSchemaNode(mockContext, null);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeIllegalArgumentTest2() {
-
-        final SchemaPath mockSchemaPath = Mockito.mock(SchemaPath.class);
+        final SchemaPath mockSchemaPath = mock(SchemaPath.class);
         SchemaContextUtil.findDataSchemaNode(null, mockSchemaPath);
-
     }
 
     @Test
@@ -469,73 +465,60 @@ public class SchemaContextUtilTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        final Module module = Mockito.mock(Module.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, module, null);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
         final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
-
-        final Module module = Mockito.mock(Module.class);
+        final Module module = mock(Module.class);
         final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(null, module, xpath);
-
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        final Module module = Mockito.mock(Module.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
         final RevisionAwareXPath xpath = new RevisionAwareXPathImpl(
                 "my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath);
-
     }
 
     @Test
     public void findDataSchemaNodeFromXPathNullTest() {
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
+        final RevisionAwareXPath xpath = mock(RevisionAwareXPath.class);
 
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        final Module module = Mockito.mock(Module.class);
-        final RevisionAwareXPath xpath = Mockito.mock(RevisionAwareXPath.class);
-
-        Mockito.when(xpath.toString()).thenReturn(null);
+        when(xpath.toString()).thenReturn(null);
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
-
     }
 
     @Test
     public void findDataSchemaNodeFromXPathNullTest2() {
-
-        final SchemaContext mockContext = Mockito.mock(SchemaContext.class);
-        final Module module = Mockito.mock(Module.class);
+        final SchemaContext mockContext = mock(SchemaContext.class);
+        final Module module = mock(Module.class);
         final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
 
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
-
     }
 
     @Test
     public void findNodeInSchemaContextGroupingsTest() throws URISyntaxException, IOException,
             YangSyntaxErrorException, ReactorException {
-
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
         final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
@@ -729,7 +712,6 @@ public class SchemaContextUtilTest {
         assertNotNull(testNode);
         assertNotNull(foundNode);
         assertEquals(testNode, foundNode);
-
     }
 
     @Test
@@ -737,7 +719,6 @@ public class SchemaContextUtilTest {
             YangSyntaxErrorException, ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-
         final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
 
         // find grouping in container
@@ -842,7 +823,6 @@ public class SchemaContextUtilTest {
 
         assertNull(testNode);
         assertNull(foundNode);
-
     }
 
     private static GroupingDefinition getGroupingByName(final DataNodeContainer dataNodeContainer, final String name) {

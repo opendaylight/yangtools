@@ -7,12 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.model.repo.util;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+
 import com.google.common.util.concurrent.AsyncFunction;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 import java.util.Arrays;
 import java.util.concurrent.Future;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -53,7 +56,7 @@ public class SchemaSourceTransformerTest {
         this.schema = new SchemaSourceTransformer<>(
                 this.provider, SchemaSourceTransformerTest.SRC_CLASS, this.consumer,
                 SchemaSourceTransformerTest.DST_CLASS, this.function);
-        Assert.assertNotNull(this.schema);
+        assertNotNull(this.schema);
     }
 
     @Test
@@ -68,9 +71,9 @@ public class SchemaSourceTransformerTest {
                 this.function);
         final SchemaSourceProvider<YinXmlSchemaSource> prov = this.schema;
         final Future<? extends YinXmlSchemaSource> source = prov.getSource(sourceIdentifier);
-        Assert.assertNotNull(source);
+        assertNotNull(source);
         source.cancel(true);
-        Assert.assertTrue(source.isDone());
+        assertTrue(source.isDone());
     }
 
     @Test
@@ -96,11 +99,11 @@ public class SchemaSourceTransformerTest {
         final Iterable<PotentialSchemaSource<?>> sources = Arrays.asList(potList);
         listener.schemaSourceRegistered(sources);
         final ListenableFuture<YinXmlSchemaSource> source = this.schema.getSource(sourceIdentifier);
-        Assert.assertNotNull(source);
+        assertNotNull(source);
 
         listener.schemaSourceUnregistered(foo.getPotentialSchemSource());
         final ListenableFuture<YinXmlSchemaSource> source2 = this.schema.getSource(sourceIdentifier);
-        Assert.assertNotNull(source2);
+        assertNotNull(source2);
     }
 
     private class Foo<T extends SchemaSourceRepresentation> {
@@ -142,26 +145,25 @@ public class SchemaSourceTransformerTest {
         @Deprecated
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
-            return null;
+            return mock(SchemaContextFactory.class);
         }
 
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
-            return null;
+            return mock(SchemaContextFactory.class);
         }
-
     }
 
     private class Consumer extends AbstractSchemaRepository {
         @Deprecated
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
-            return null;
+            return mock(SchemaContextFactory.class);
         }
 
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
-            return null;
+            return mock(SchemaContextFactory.class);
         }
     }
 }

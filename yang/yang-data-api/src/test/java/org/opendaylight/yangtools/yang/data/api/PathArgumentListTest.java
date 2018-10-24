@@ -14,8 +14,10 @@ import static org.junit.Assert.fail;
 
 import com.google.common.collect.UnmodifiableIterator;
 import java.net.URI;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -26,7 +28,17 @@ public class PathArgumentListTest {
     private static final class TestClass extends PathArgumentList {
         @Override
         public UnmodifiableIterator<PathArgument> iterator() {
-            return null;
+            return new UnmodifiableIterator<PathArgument>() {
+                @Override
+                public boolean hasNext() {
+                    return false;
+                }
+
+                @Override
+                public PathArgument next() {
+                    throw new NoSuchElementException();
+                }
+            };
         }
 
         @Override
@@ -57,21 +69,21 @@ public class PathArgumentListTest {
         }
 
         try {
-            l.addAll(null);
+            l.addAll(Collections.emptyList());
             fail();
         } catch (UnsupportedOperationException e) {
             // Expected
         }
 
         try {
-            l.removeAll(null);
+            l.removeAll(Collections.emptyList());
             fail();
         } catch (UnsupportedOperationException e) {
             // Expected
         }
 
         try {
-            l.retainAll(null);
+            l.retainAll(Collections.emptyList());
             fail();
         } catch (UnsupportedOperationException e) {
             // Expected

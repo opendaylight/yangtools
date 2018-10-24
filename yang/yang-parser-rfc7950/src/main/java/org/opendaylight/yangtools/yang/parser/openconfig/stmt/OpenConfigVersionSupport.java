@@ -33,7 +33,7 @@ public final class OpenConfigVersionSupport extends AbstractStatementSupport<Sem
 
     @Override
     public SemVer parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return SemVer.valueOf(value) ;
+        return SemVer.valueOf(value);
     }
 
     @Override
