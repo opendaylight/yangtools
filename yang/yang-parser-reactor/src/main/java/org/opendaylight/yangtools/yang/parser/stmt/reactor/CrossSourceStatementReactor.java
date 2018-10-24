@@ -17,7 +17,7 @@ import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
@@ -93,7 +93,7 @@ public final class CrossSourceStatementReactor {
         private boolean supportedFeaturesSet = false;
         private boolean modulesDeviatedByModulesSet = false;
 
-        BuildAction(@Nonnull final StatementParserMode statementParserMode) {
+        BuildAction(final @NonNull StatementParserMode statementParserMode) {
             this.context = new BuildGlobalContext(supportedTerminology, supportedValidation,
                 requireNonNull(statementParserMode));
         }
@@ -122,9 +122,9 @@ public final class CrossSourceStatementReactor {
             return this;
         }
 
-        public BuildAction addSources(final Collection<? extends StatementStreamSource> sources) {
+        public BuildAction addSources(final @NonNull Collection<? extends StatementStreamSource> sources) {
             for (final StatementStreamSource source : sources) {
-                context.addSource(source);
+                context.addSource(requireNonNull(source));
             }
             return this;
         }
@@ -161,7 +161,7 @@ public final class CrossSourceStatementReactor {
          *            If the set is empty, no features encountered will be supported.
          * @return This build action, for fluent use.
          */
-        public BuildAction setSupportedFeatures(@Nonnull final Set<QName> supportedFeatures) {
+        public BuildAction setSupportedFeatures(final @NonNull Set<QName> supportedFeatures) {
             checkState(!supportedFeaturesSet, "Supported features should be set only once.");
             context.setSupportedFeatures(requireNonNull(supportedFeatures));
             supportedFeaturesSet = true;
@@ -178,7 +178,7 @@ public final class CrossSourceStatementReactor {
          * @return This build action, for fluent use.
          */
         public BuildAction setModulesWithSupportedDeviations(
-                @Nonnull final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
+                final @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
             checkState(!modulesDeviatedByModulesSet, "Modules with supported deviations should be set only once.");
             context.setModulesDeviatedByModules(requireNonNull(modulesDeviatedByModules));
             modulesDeviatedByModulesSet = true;
