@@ -15,9 +15,8 @@ import com.google.common.base.Verify;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 
@@ -81,14 +80,11 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          */
         StorageNodeType getStorageNodeType();
 
-        @Nullable
-        NamespaceStorageNode getParentNamespaceStorage();
+        @Nullable NamespaceStorageNode getParentNamespaceStorage();
 
-        @Nullable
-        <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key);
+        @Nullable <K, V, N extends IdentifierNamespace<K, V>> V getFromLocalStorage(Class<N> type, K key);
 
-        @Nullable
-        <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
+        @Nullable <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(Class<N> type);
 
         /**
          * Populate specified namespace with a key/value pair, overwriting previous contents. Similar to
@@ -99,8 +95,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
          * @param value Value
          * @return Previously-stored value, or null if the key was not present
          */
-        @Nullable
-        <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(Class<N> type, K key, V value);
+        @Nullable <K, V, N extends IdentifierNamespace<K, V>> V putToLocalStorage(Class<N> type, K key, V value);
 
         /**
          * Populate specified namespace with a key/value pair unless the key is already associated with a value. Similar
@@ -132,7 +127,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @param <N> type parameter
      * @return global namespace behaviour for supplied namespace type.
      */
-    public static @Nonnull <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> global(
+    public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> global(
             final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.GLOBAL);
     }
@@ -142,19 +137,18 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * and loads all values from closest {@link NamespaceStorageNode} ancestor with type
      * of {@link StorageNodeType#SOURCE_LOCAL_SPECIAL}.
      *
-     * @param identifier
-     *            Namespace identifier.
+     * @param identifier Namespace identifier.
      * @param <K> type parameter
      * @param <V> type parameter
      * @param <N> type parameter
      * @return source-local namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> sourceLocal(
+    public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> sourceLocal(
             final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.SOURCE_LOCAL_SPECIAL);
     }
 
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> statementLocal(
+    public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> statementLocal(
            final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.STATEMENT_LOCAL);
     }
@@ -171,7 +165,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @param <N> type parameter
      * @return root-statement-local namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> rootStatementLocal(
+    public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> rootStatementLocal(
             final Class<N> identifier) {
         return new StorageSpecific<>(identifier, StorageNodeType.ROOT_STATEMENT_LOCAL);
     }
@@ -187,7 +181,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
      * @param <N> type parameter
      * @return tree-scoped namespace behaviour for supplied namespace type.
      */
-    public static <K, V, N extends IdentifierNamespace<K, V>> NamespaceBehaviour<K, V, N> treeScoped(
+    public static <K, V, N extends IdentifierNamespace<K, V>> @NonNull NamespaceBehaviour<K, V, N> treeScoped(
             final Class<N> identifier) {
         return new TreeScoped<>(identifier);
     }
