@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
-public interface ConfigStatement extends DeclaredStatement<Boolean> {
+public interface ConfigStatement extends WithArgument<Boolean> {
     default boolean getValue() {
         return argument().booleanValue();
     }

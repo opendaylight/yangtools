@@ -14,10 +14,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatem
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.RevisionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class RevisionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Revision, RevisionStatement>
+final class RevisionEffectiveStatementImpl extends WithArgument<Revision, RevisionStatement>
         implements DocumentedNode, RevisionEffectiveStatement {
 
     private final String reference;

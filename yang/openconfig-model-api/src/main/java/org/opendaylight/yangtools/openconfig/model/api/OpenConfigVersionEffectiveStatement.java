@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
 @Beta
-public interface OpenConfigVersionEffectiveStatement extends EffectiveStatement<SemVer, OpenConfigVersionStatement> {
+public interface OpenConfigVersionEffectiveStatement extends WithArgument<SemVer, OpenConfigVersionStatement> {
 
 }

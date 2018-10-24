@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
-public interface MaxElementsStatement extends DeclaredStatement<String> {
+public interface MaxElementsStatement extends WithArgument<String> {
     default @NonNull String getValue() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 }

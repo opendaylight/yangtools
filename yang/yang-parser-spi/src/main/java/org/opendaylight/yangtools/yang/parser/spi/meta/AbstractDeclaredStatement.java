@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -90,5 +93,26 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     @Deprecated
     protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(final Class<S> type) {
         return declaredSubstatements(type);
+    }
+
+    @Beta
+    public abstract static class WithArgument<A> extends AbstractDeclaredStatement<A>
+            implements DeclaredStatement.WithArgument<A> {
+        protected WithArgument(final StmtContext<A, ?, ?> context) {
+            super(context);
+            // Sanity check
+            argument();
+            rawArgument();
+        }
+
+        @Override
+        public final @NonNull String rawArgument() {
+            return verifyNotNull(super.rawArgument());
+        }
+
+        @Override
+        public final @NonNull A argument() {
+            return verifyNotNull(super.argument());
+        }
     }
 }

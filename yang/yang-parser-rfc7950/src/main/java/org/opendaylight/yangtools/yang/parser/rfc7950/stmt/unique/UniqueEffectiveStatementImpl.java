@@ -7,17 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.UniqueConstraint;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UniqueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Collection<Relative>, UniqueStatement>
+final class UniqueEffectiveStatementImpl extends WithArgument<Collection<Relative>, UniqueStatement>
         implements UniqueConstraint, UniqueEffectiveStatement {
     UniqueEffectiveStatementImpl(final StmtContext<Collection<Relative>, UniqueStatement, ?> ctx) {
         super(ctx);
@@ -25,7 +23,6 @@ final class UniqueEffectiveStatementImpl extends DeclaredEffectiveStatementBase<
 
     @Override
     public Collection<Relative> getTag() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 }

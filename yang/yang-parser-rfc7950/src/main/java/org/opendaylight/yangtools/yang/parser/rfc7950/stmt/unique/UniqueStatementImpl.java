@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 import org.opendaylight.yangtools.yang.model.api.stmt.UniqueStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UniqueStatementImpl extends AbstractDeclaredStatement<Collection<Relative>> implements UniqueStatement {
+final class UniqueStatementImpl extends WithArgument<Collection<Relative>> implements UniqueStatement {
     UniqueStatementImpl(final StmtContext<Collection<Relative>, UniqueStatement, ?> context) {
         super(context);
     }

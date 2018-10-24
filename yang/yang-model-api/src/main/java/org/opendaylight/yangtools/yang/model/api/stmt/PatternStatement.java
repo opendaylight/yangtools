@@ -7,17 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.model.api.type.PatternConstraint;
 
-public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint> {
+public interface PatternStatement extends ConstrainedDocumentedDeclaredStatement<PatternConstraint>,
+        WithArgument<PatternConstraint> {
     default @NonNull PatternConstraint getValue() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 
     /**

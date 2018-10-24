@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.status;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.StatusStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class StatusEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Status, StatusStatement>
+final class StatusEffectiveStatementImpl extends WithArgument<Status, StatusStatement>
         implements StatusEffectiveStatement {
     StatusEffectiveStatementImpl(final StmtContext<Status, StatusStatement, ?> ctx) {
         super(ctx);

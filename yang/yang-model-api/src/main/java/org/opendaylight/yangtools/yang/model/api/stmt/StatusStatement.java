@@ -7,15 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
-public interface StatusStatement extends DeclaredStatement<Status> {
+public interface StatusStatement extends WithArgument<Status> {
     default @NonNull Status getValue() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 }

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.error_message;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ErrorMessageEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ErrorMessageStatement>
+final class ErrorMessageEffectiveStatementImpl extends WithArgument<String, ErrorMessageStatement>
         implements ErrorMessageEffectiveStatement {
     ErrorMessageEffectiveStatementImpl(final StmtContext<String, ErrorMessageStatement, ?> ctx) {
         super(ctx);

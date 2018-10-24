@@ -14,8 +14,8 @@ import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Represents declared statement.
@@ -73,9 +73,9 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
      * @throws NullPointerException if {@code type} is null
      */
     @Beta
-    default <V, T extends DeclaredStatement<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
+    default <V, T extends WithArgument<V>> @NonNull Optional<V> findFirstDeclaredSubstatementArgument(
             @NonNull final Class<T> type) {
-        return findFirstDeclaredSubstatement(type).map(DeclaredStatement::argument);
+        return findFirstDeclaredSubstatement(type).map(WithArgument::argument);
     }
 
     /**
@@ -89,5 +89,15 @@ public interface DeclaredStatement<A> extends ModelStatement<A> {
             @NonNull final Class<T> type) {
         requireNonNull(type);
         return declaredSubstatements().stream().filter(type::isInstance).map(type::cast);
+    }
+
+    interface WithArgument<A> extends DeclaredStatement<A>, ModelStatement.WithArgument<A> {
+        /**
+         * Returns statement argument as was present in original source.
+         *
+         * @return statement argument as was present in original source.
+         */
+        @Override
+        @NonNull String rawArgument();
     }
 }

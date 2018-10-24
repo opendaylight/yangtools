@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.mandatory;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MandatoryStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MandatoryEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Boolean, MandatoryStatement>
-    implements MandatoryEffectiveStatement {
+final class MandatoryEffectiveStatementImpl extends WithArgument<Boolean, MandatoryStatement>
+        implements MandatoryEffectiveStatement {
     MandatoryEffectiveStatementImpl(final StmtContext<Boolean, MandatoryStatement, ?> ctx) {
         super(ctx);
     }

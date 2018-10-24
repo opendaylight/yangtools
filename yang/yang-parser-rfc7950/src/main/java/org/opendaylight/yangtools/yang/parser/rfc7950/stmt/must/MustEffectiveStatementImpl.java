@@ -17,10 +17,10 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ErrorMessageEffectiveState
 import org.opendaylight.yangtools.yang.model.api.stmt.MustEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.MustStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, MustStatement>
+final class MustEffectiveStatementImpl extends WithArgument<RevisionAwareXPath, MustStatement>
         implements MustDefinition, MustEffectiveStatement {
 
     private final RevisionAwareXPath xpath;

@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
 @Beta
-public interface WhenEffectiveStatement extends EffectiveStatement<RevisionAwareXPath, WhenStatement> {
+public interface WhenEffectiveStatement extends WithArgument<RevisionAwareXPath, WhenStatement> {
 
 }

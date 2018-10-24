@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -42,7 +42,6 @@ public interface ModelStatement<A> {
      *
      * @return statement argument or null if statement does not have argument.
      */
-    // FIXME: figure out @NonNull argument override in subclasses and switch to JDT @Nullable
     @Nullable A argument();
 
     /**
@@ -64,5 +63,10 @@ public interface ModelStatement<A> {
      */
     default @NonNull QName statementName() {
         return statementDefinition().getStatementName();
+    }
+
+    interface WithArgument<A> extends ModelStatement<A> {
+        @Override
+        @NonNull A argument();
     }
 }

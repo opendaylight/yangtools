@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
-public interface ConfigEffectiveStatement extends EffectiveStatement<Boolean, ConfigStatement> {
+public interface ConfigEffectiveStatement extends WithArgument<Boolean, ConfigStatement> {
 
 }

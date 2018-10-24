@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -21,14 +22,14 @@ import org.opendaylight.yangtools.yang.model.api.type.ModifierKind;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement<A>> extends
-        DeclaredEffectiveStatementBase<A, D> implements ConstraintMetaDefinition {
+public abstract class AbstractConstraintEffectiveStatement<A, D extends DeclaredStatement.WithArgument<A>> extends
+        DeclaredEffectiveStatementBase.WithArgument<A, D> implements ConstraintMetaDefinition {
     private final String description;
     private final String reference;
     private final String errorAppTag;
     private final String errorMessage;
     private final ModifierKind modifier;
-    private final A constraints;
+    private final @NonNull A constraints;
 
     protected AbstractConstraintEffectiveStatement(final StmtContext<A, D, ?> ctx) {
         super(ctx);

@@ -10,10 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.YangVersionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementWithArgumentBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class YangVersionEffectiveStatementImpl extends DeclaredEffectiveStatementBase<YangVersion, YangVersionStatement>
+final class YangVersionEffectiveStatementImpl
+        extends DeclaredEffectiveStatementWithArgumentBase<YangVersion, YangVersionStatement>
         implements YangVersionEffectiveStatement {
     YangVersionEffectiveStatementImpl(final StmtContext<YangVersion, YangVersionStatement, ?> ctx) {
         super(ctx);

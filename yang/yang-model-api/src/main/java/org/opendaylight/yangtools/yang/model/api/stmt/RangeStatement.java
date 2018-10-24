@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import java.util.List;
-import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
-public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>> {
-    @Override
-    @NonNull List<ValueRange> argument();
+public interface RangeStatement extends ConstrainedDocumentedDeclaredStatement<List<ValueRange>>,
+        WithArgument<List<ValueRange>> {
+
 }

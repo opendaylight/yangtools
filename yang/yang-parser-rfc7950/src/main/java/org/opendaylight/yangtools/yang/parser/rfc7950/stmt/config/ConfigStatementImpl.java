@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.config;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ConfigStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ConfigStatementImpl extends AbstractDeclaredStatement<Boolean> implements ConfigStatement {
+final class ConfigStatementImpl extends WithArgument<Boolean> implements ConfigStatement {
     ConfigStatementImpl(final StmtContext<Boolean, ConfigStatement, ?> context) {
         super(context);
     }

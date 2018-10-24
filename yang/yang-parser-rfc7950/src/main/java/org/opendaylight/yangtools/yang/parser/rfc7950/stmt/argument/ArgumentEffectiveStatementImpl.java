@@ -10,10 +10,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.argument;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ArgumentStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementWithArgumentBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ArgumentEffectiveStatementImpl extends DeclaredEffectiveStatementBase<QName, ArgumentStatement>
+final class ArgumentEffectiveStatementImpl extends DeclaredEffectiveStatementWithArgumentBase<QName, ArgumentStatement>
         implements ArgumentEffectiveStatement {
     ArgumentEffectiveStatementImpl(final StmtContext<QName, ArgumentStatement, ?> ctx) {
         super(ctx);

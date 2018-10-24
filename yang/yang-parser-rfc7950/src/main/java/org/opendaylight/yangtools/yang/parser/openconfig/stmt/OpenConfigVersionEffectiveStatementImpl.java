@@ -14,11 +14,10 @@ import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiv
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionStatement;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OpenConfigVersionEffectiveStatementImpl extends
-        UnknownEffectiveStatementBase<SemVer, OpenConfigVersionStatement>
+final class OpenConfigVersionEffectiveStatementImpl extends WithArgument<SemVer, OpenConfigVersionStatement>
         implements OpenConfigVersionEffectiveStatement {
 
     private final @NonNull SchemaPath path;

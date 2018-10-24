@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.openconfig.model.api;
 
 import com.google.common.annotations.Beta;
 import org.opendaylight.yangtools.concepts.SemVer;
-import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.UnknownStatement.WithArgument;
 
 @Beta
-public interface OpenConfigVersionStatement extends UnknownStatement<SemVer> {
+public interface OpenConfigVersionStatement extends WithArgument<SemVer> {
 
 }

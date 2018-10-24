@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.prefix;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PrefixStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class PrefixEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, PrefixStatement>
+final class PrefixEffectiveStatementImpl extends WithArgument<String, PrefixStatement>
         implements PrefixEffectiveStatement {
     PrefixEffectiveStatementImpl(final StmtContext<String, PrefixStatement, ?> ctx) {
         super(ctx);

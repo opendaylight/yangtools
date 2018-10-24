@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.reference;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ReferenceStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ReferenceEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, ReferenceStatement>
+final class ReferenceEffectiveStatementImpl extends WithArgument<String, ReferenceStatement>
         implements ReferenceEffectiveStatement {
     ReferenceEffectiveStatementImpl(final StmtContext<String, ReferenceStatement, ?> ctx) {
         super(ctx);

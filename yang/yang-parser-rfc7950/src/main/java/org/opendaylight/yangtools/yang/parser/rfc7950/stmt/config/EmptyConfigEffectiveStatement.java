@@ -43,7 +43,7 @@ abstract class EmptyConfigEffectiveStatement implements ConfigEffectiveStatement
     }
 
     @Override
-    public final Boolean argument() {
+    public final @NonNull Boolean argument() {
         return getDeclared().argument();
     }
 

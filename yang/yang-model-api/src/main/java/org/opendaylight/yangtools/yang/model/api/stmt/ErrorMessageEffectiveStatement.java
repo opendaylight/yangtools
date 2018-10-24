@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
 @Beta
-public interface ErrorMessageEffectiveStatement extends EffectiveStatement<String, ErrorMessageStatement> {
+public interface ErrorMessageEffectiveStatement extends WithArgument<String, ErrorMessageStatement> {
 
 }

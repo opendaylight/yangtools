@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -20,5 +21,17 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 public interface UnknownStatement<A> extends DeclaredStatement<A> {
     default @Nullable A getArgument() {
         return argument();
+    }
+
+    interface WithArgument<A> extends UnknownStatement<A>, DeclaredStatement.WithArgument<A> {
+        /**
+         * Returns statement argument as was present in original source.
+         *
+         * @return statement argument as was present in original source.
+         */
+        @Override
+        default @NonNull A getArgument() {
+            return argument();
+        }
     }
 }

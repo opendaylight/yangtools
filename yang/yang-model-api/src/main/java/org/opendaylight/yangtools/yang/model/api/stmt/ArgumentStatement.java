@@ -7,19 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
 @Rfc6020AbnfRule("argument-stmt")
-public interface ArgumentStatement extends DeclaredStatement<QName> {
+public interface ArgumentStatement extends WithArgument<QName> {
     default @NonNull QName getName() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 
     default @Nullable YinElementStatement getYinElement() {

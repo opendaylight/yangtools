@@ -99,9 +99,9 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return First effective substatement's argument, or empty if no match is found.
      */
     @Beta
-    default <V, T extends EffectiveStatement<V, ?>> Optional<V> findFirstEffectiveSubstatementArgument(
+    default <V, T extends WithArgument<V, ?>> Optional<V> findFirstEffectiveSubstatementArgument(
             final @NonNull Class<T> type) {
-        return findFirstEffectiveSubstatement(type).map(EffectiveStatement::argument);
+        return findFirstEffectiveSubstatement(type).map(WithArgument::argument);
     }
 
     /**
@@ -112,5 +112,10 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
     @Beta
     default <T extends EffectiveStatement<?, ?>> Stream<T> streamEffectiveSubstatements(final @NonNull Class<T> type) {
         return effectiveSubstatements().stream().filter(type::isInstance).map(type::cast);
+    }
+
+    interface WithArgument<A, D extends DeclaredStatement.WithArgument<A>> extends EffectiveStatement<A, D>,
+            ModelStatement.WithArgument<A> {
+
     }
 }

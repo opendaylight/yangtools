@@ -7,9 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Verify;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -62,5 +66,20 @@ public abstract class DeclaredEffectiveStatementBase<A, D extends DeclaredStatem
     @Override
     public final D getDeclared() {
         return declaredInstance;
+    }
+
+    @Beta
+    public static class WithArgument<A, D extends DeclaredStatement.WithArgument<A>>
+            extends DeclaredEffectiveStatementBase<A, D> implements EffectiveStatement.WithArgument<A, D> {
+        protected WithArgument(final StmtContext<A, D, ?> ctx) {
+            super(ctx);
+            // Sanity check
+            argument();
+        }
+
+        @Override
+        public @NonNull A argument() {
+            return verifyNotNull(super.argument());
+        }
     }
 }

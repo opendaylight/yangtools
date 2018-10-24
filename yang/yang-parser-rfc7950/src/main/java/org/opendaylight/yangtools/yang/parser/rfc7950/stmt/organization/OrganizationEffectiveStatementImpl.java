@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.organization;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrganizationStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OrganizationEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, OrganizationStatement>
+final class OrganizationEffectiveStatementImpl extends WithArgument<String, OrganizationStatement>
         implements OrganizationEffectiveStatement {
     OrganizationEffectiveStatementImpl(final StmtContext<String, OrganizationStatement, ?> ctx) {
         super(ctx);

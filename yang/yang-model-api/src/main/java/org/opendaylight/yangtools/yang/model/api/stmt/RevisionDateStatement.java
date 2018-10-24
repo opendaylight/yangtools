@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 
-public interface RevisionDateStatement extends DeclaredStatement<Revision> {
-    default Revision getDate() {
+public interface RevisionDateStatement extends WithArgument<Revision> {
+    default @NonNull Revision getDate() {
         return argument();
     }
 }

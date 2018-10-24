@@ -9,9 +9,9 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
 @Beta
-public interface LengthEffectiveStatement extends EffectiveStatement<List<ValueRange>, LengthStatement> {
+public interface LengthEffectiveStatement extends WithArgument<List<ValueRange>, LengthStatement> {
 
 }

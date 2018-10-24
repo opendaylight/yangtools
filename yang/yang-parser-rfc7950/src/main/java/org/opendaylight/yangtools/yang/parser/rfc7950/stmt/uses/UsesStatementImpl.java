@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UsesStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implements UsesStatement {
+final class UsesStatementImpl extends WithArgument<QName> implements UsesStatement {
     private static final Logger LOG = LoggerFactory.getLogger(UsesStatementImpl.class);
 
     UsesStatementImpl(final StmtContext<QName, UsesStatement, ?> context) {

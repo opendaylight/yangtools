@@ -10,11 +10,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 @Beta
-public abstract class AbstractListConstraintEffectiveStatement<T, D extends DeclaredStatement<List<T>>>
+public abstract class AbstractListConstraintEffectiveStatement<T, D extends WithArgument<List<T>>>
         extends AbstractConstraintEffectiveStatement<List<T>, D> {
 
     protected AbstractListConstraintEffectiveStatement(final StmtContext<List<T>, D, ?> ctx) {

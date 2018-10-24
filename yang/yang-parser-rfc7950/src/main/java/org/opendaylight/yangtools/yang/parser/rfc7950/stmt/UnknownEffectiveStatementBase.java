@@ -8,6 +8,9 @@
 
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt;
 
+import static com.google.common.base.Verify.verifyNotNull;
+
+import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableList.Builder;
@@ -112,5 +115,20 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     public String toString() {
         final QName type = getNodeType();
         return String.valueOf(type.getNamespace()) + ":" + type.getLocalName() + " " + nodeParameter;
+    }
+
+    @Beta
+    public abstract static class WithArgument<A, D extends UnknownStatement.WithArgument<A>>
+            extends UnknownEffectiveStatementBase<A, D> implements EffectiveStatement.WithArgument<A, D> {
+        protected WithArgument(final StmtContext<A, D, ?> ctx) {
+            super(ctx);
+            // Sanity check
+            argument();
+        }
+
+        @Override
+        public final @NonNull A argument() {
+            return verifyNotNull(super.argument());
+        }
     }
 }

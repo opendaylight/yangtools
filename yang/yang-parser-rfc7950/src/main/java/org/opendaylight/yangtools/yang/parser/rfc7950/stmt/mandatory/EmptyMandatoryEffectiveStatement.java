@@ -39,7 +39,7 @@ abstract class EmptyMandatoryEffectiveStatement implements MandatoryEffectiveSta
     }
 
     @Override
-    public final Boolean argument() {
+    public final @NonNull Boolean argument() {
         return getDeclared().argument();
     }
 

@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.list;
 
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.stmt.ListStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class ListStatementImpl extends AbstractDeclaredStatement<QName> implements ListStatement {
+final class ListStatementImpl extends WithArgument<QName> implements ListStatement {
     ListStatementImpl(final StmtContext<QName, ListStatement, ?> context) {
         super(context);
     }

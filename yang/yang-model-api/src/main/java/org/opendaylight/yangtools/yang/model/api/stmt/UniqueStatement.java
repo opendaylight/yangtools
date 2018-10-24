@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement.WithArgument;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 
-public interface UniqueStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> {
-
+public interface UniqueStatement extends WithArgument<Collection<Relative>> {
     default Collection<Relative> getTag() {
-        // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
-        return verifyNotNull(argument());
+        return argument();
     }
 }
 

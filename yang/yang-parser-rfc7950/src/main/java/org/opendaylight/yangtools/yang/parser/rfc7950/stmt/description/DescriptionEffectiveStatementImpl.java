@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.description;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.DescriptionStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class DescriptionEffectiveStatementImpl
-        extends DeclaredEffectiveStatementBase<String, DescriptionStatement> implements DescriptionEffectiveStatement {
+final class DescriptionEffectiveStatementImpl extends WithArgument<String, DescriptionStatement>
+        implements DescriptionEffectiveStatement {
     DescriptionEffectiveStatementImpl(final StmtContext<String, DescriptionStatement, ?> ctx) {
         super(ctx);
     }

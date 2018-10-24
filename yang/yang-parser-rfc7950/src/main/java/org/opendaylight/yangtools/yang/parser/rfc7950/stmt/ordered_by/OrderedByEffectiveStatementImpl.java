@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ordered_by;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.OrderedByStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class OrderedByEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, OrderedByStatement>
+final class OrderedByEffectiveStatementImpl extends WithArgument<String, OrderedByStatement>
         implements OrderedByEffectiveStatement {
     OrderedByEffectiveStatementImpl(final StmtContext<String, OrderedByStatement, ?> ctx) {
         super(ctx);

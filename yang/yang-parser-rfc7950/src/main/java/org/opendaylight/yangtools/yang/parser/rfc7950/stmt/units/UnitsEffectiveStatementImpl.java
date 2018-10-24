@@ -9,10 +9,10 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.units;
 
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnitsStatement;
-import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
+import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase.WithArgument;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class UnitsEffectiveStatementImpl extends DeclaredEffectiveStatementBase<String, UnitsStatement>
+final class UnitsEffectiveStatementImpl extends WithArgument<String, UnitsStatement>
         implements UnitsEffectiveStatement {
     UnitsEffectiveStatementImpl(final StmtContext<String, UnitsStatement, ?> ctx) {
         super(ctx);

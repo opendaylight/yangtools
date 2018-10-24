@@ -8,9 +8,9 @@
 package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement.WithArgument;
 
 @Beta
-public interface PrefixEffectiveStatement extends EffectiveStatement<String, PrefixStatement> {
+public interface PrefixEffectiveStatement extends WithArgument<String, PrefixStatement> {
 
 }
