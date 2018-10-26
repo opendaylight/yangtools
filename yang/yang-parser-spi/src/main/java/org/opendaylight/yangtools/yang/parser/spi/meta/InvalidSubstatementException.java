@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -17,17 +17,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public class InvalidSubstatementException extends SourceException {
     private static final long serialVersionUID = 1L;
 
-    public InvalidSubstatementException(@Nonnull final String message,
-            @Nonnull final StatementSourceReference source) {
+    public InvalidSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source) {
         super(message, source);
     }
 
-    public InvalidSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+    public InvalidSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source,
             final Throwable cause) {
         super(message, source, cause);
     }
 
-    public InvalidSubstatementException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
+    public InvalidSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
         this(String.format(format, args), source);
     }

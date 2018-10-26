@@ -27,12 +27,7 @@ public class SourceExceptionTest {
 
     @Test
     public void testThrowIfFalse() {
-        SourceException.throwIf(false, null, null);
-    }
-
-    @Test(expected = NullPointerException.class)
-    public void testThrowIfTrueNullNull() {
-        SourceException.throwIf(true, null, null);
+        SourceException.throwIf(false, mock, "");
     }
 
     @Test(expected = NullPointerException.class)
@@ -57,12 +52,12 @@ public class SourceExceptionTest {
 
     @Test
     public void testThrowIfNullMock() {
-        assertSame(mock, SourceException.throwIfNull(mock, null, null));
+        assertSame(mock, SourceException.throwIfNull(mock, mock, ""));
     }
 
     @Test
     public void testUnwrapPresent() {
-        assertEquals("test", SourceException.unwrap(Optional.of("test"), null, null));
+        assertEquals("test", SourceException.unwrap(Optional.of("test"), mock, ""));
     }
 
     @Test(expected = SourceException.class)

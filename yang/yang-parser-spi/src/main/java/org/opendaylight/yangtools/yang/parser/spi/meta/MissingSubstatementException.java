@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi.meta;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
@@ -17,17 +17,16 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 public class MissingSubstatementException extends SourceException {
     private static final long serialVersionUID = 1L;
 
-    public MissingSubstatementException(@Nonnull final String message,
-            @Nonnull final StatementSourceReference source) {
+    public MissingSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source) {
         super(message, source);
     }
 
-    public MissingSubstatementException(@Nonnull final String message, @Nonnull final StatementSourceReference source,
+    public MissingSubstatementException(final @NonNull String message, final @NonNull StatementSourceReference source,
             final Throwable cause) {
         super(message, source, cause);
     }
 
-    public MissingSubstatementException(@Nonnull final StatementSourceReference source, @Nonnull final String format,
+    public MissingSubstatementException(final @NonNull StatementSourceReference source, final @NonNull String format,
             final Object... args) {
         this(String.format(format, args), source);
     }
