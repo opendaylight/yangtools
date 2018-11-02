@@ -30,6 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.CopyType;
 import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -98,9 +100,9 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                 augmentAction.mutatesEffectiveCtxPath(getSearchRoot(augmentNode),
                     ChildSchemaNodeNamespace.class, augmentNode.coerceStatementArgument().getPathFromRoot());
 
-        augmentAction.apply(new ModelActionBuilder.InferenceAction() {
+        augmentAction.apply(new InferenceAction() {
             @Override
-            public void apply(final ModelActionBuilder.InferenceContext ctx) {
+            public void apply(final InferenceContext ctx) {
                 final StatementContextBase<?, ?, ?> augmentTargetCtx =
                         (StatementContextBase<?, ?, ?>) target.resolve(ctx);
                 if (!isSupportedAugmentTarget(augmentTargetCtx)
@@ -142,7 +144,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
             }
 
             @Override
-            public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 /*
                  * Do not fail, if it is an uses-augment to an unknown node.
                  */

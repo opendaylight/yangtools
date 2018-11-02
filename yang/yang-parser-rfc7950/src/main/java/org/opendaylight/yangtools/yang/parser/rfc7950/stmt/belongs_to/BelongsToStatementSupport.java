@@ -89,7 +89,7 @@ public final class BelongsToStatementSupport extends
             }
 
             @Override
-            public void prerequisiteFailed(final Collection<? extends ModelActionBuilder.Prerequisite<?>> failed) {
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
                 if (failed.contains(belongsToPrereq)) {
                     throw new InferenceException(belongsToCtx.getStatementSourceReference(),
                         "Module '%s' from belongs-to was not found", belongsToCtx.getStatementArgument());
