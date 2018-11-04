@@ -200,4 +200,10 @@ public class InstanceIdToNodesTest {
                 YangInstanceIdentifier.create(rootContainer, leafList, leafListWithValue));
         assertEquals(expectedFilter, filter);
     }
+
+    @Test
+    public void testEmptyInstanceIdentifier() {
+        assertEquals(ImmutableNodes.containerNode(SchemaContext.NAME),
+            ImmutableNodes.fromInstanceId(ctx, YangInstanceIdentifier.EMPTY));
+    }
 }

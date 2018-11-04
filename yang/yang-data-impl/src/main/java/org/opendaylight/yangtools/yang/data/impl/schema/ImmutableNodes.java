@@ -39,6 +39,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public final class ImmutableNodes {
+    private static final NodeIdentifier SCHEMACONTEXT_NAME = NodeIdentifier.create(SchemaContext.NAME);
 
     private ImmutableNodes() {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
@@ -195,13 +196,20 @@ public final class ImmutableNodes {
      */
     public static NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
             final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Entry<QName, ModifyAction>> operation) {
+        final PathArgument topLevelElement;
+        final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();
-        final PathArgument topLevelElement = it.next();
-        final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
-        checkNotNull(dataChildByName,
-            "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
-        final InstanceIdToNodes<?> instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx,
-            topLevelElement.getNodeType());
+        if (it.hasNext()) {
+            topLevelElement = it.next();
+            final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());
+            checkNotNull(dataChildByName,
+                "Cannot find %s node in schema context. Instance identifier has to start from root", topLevelElement);
+            instanceIdToNodes = InstanceIdToNodes.fromSchemaAndQNameChecked(ctx, topLevelElement.getNodeType());
+        } else {
+            topLevelElement = SCHEMACONTEXT_NAME;
+            instanceIdToNodes = InstanceIdToNodes.fromDataSchemaNode(ctx);
+        }
+
         return instanceIdToNodes.create(topLevelElement, it, deepestElement, operation);
     }
 }
