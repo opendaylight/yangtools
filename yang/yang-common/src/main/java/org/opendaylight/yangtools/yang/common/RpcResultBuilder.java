@@ -5,15 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.util.concurrent.FluentFuture;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.ListenableFuture;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.Collections;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorSeverity;
 import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
@@ -25,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  *
  * @param <T> the result value type
  */
-public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
+public final class RpcResultBuilder<T> extends RpcResultBuilderCompat<T> implements Builder<RpcResult<T>> {
 
     private static class RpcResultImpl<T> implements RpcResult<T>, Serializable {
         private static final long serialVersionUID = 1L;
@@ -409,26 +407,21 @@ public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
 
     @Override
     public RpcResult<T> build() {
-
-        return new RpcResultImpl<>(successful, result,
-                errors != null ? errors.build() : Collections.emptyList());
+        return new RpcResultImpl<>(successful, result, errors != null ? errors.build() : ImmutableList.of());
     }
 
     /**
-     * Builds RpcResult and wraps it in a Future
+     * Builds RpcResult and wraps it in a Future.
      *
      * <p>
-     * This is a convenience method to assist those writing rpcs
-     * that produce immediate results.  It allows you to replace
-     *
-     * {@code Futures.immediateFuture(rpcResult.build())}
-     * with
-     * {@code rpcResult.buildFuture();}
+     * This is a convenience method to assist those writing RPCs that produce immediate results. It allows you to
+     * replace {@code FluentFuture.from(Futures.immediateFuture(rpcResult.build()))} with
+     * {@code rpcResult.buildFuture()}
      *
      * @return Future for RpcResult built by RpcResultBuilder
-     *
      */
-    public ListenableFuture<RpcResult<T>> buildFuture() {
-        return Futures.immediateFuture(build());
+    @Override
+    public FluentFuture<RpcResult<T>> buildFuture() {
+        return FluentFuture.from(Futures.immediateFuture(build()));
     }
 }
