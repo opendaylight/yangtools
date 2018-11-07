@@ -244,27 +244,22 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
                 .orElseThrow(() -> new IllegalArgumentException("Failed to find module for " + qnameModule));
         final String className = BindingMapping.getClassName(qname);
 
-        RpcDefinition rpc = null;
         for (final RpcDefinition potential : module.getRpcs()) {
             final QName potentialQName = potential.getQName();
             /*
-             * Check if rpc and class represents data from same module and then
-             * checks if rpc local name produces same class name as class name
-             * appended with Input/Output based on QName associated with bidning
-             * class.
+             * Check if rpc and class represents data from same module and then checks if rpc local name produces same
+             * class name as class name appended with Input/Output based on QName associated with binding class.
              *
-             * FIXME: Rework this to have more precise logic regarding Binding
-             * Specification.
+             * FIXME: Rework this to have more precise logic regarding Binding Specification.
              */
             if (key.getSimpleName().equals(BindingMapping.getClassName(potentialQName) + className)) {
-                rpc = potential;
-                break;
+                final ContainerSchemaNode schema = SchemaNodeUtils.getRpcDataSchema(potential, qname);
+                checkArgument(schema != null, "Schema for %s does not define input / output.", potential.getQName());
+                return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
             }
         }
-        checkArgument(rpc != null, "Supplied class %s is not valid RPC class.", key);
-        final ContainerSchemaNode schema = SchemaNodeUtils.getRpcDataSchema(rpc, qname);
-        checkArgument(schema != null, "Schema for %s does not define input / output.", rpc.getQName());
-        return (ContainerNodeCodecContext<?>) DataContainerCodecPrototype.from(key, schema, factory()).get();
+
+        throw new IllegalArgumentException("Supplied class " + key + " is not valid RPC class.");
     }
 
     NotificationCodecContext<?> createNotificationDataContext(final Class<?> notificationType) {
