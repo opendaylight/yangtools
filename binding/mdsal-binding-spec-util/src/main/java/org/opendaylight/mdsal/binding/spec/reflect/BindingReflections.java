@@ -409,7 +409,7 @@ public final class BindingReflections {
 
     @SuppressWarnings({ "unchecked", "rawtypes", "checkstyle:illegalCatch" })
     private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
-        if ("getClass".equals(method.getName()) || !method.getName().startsWith("get")
+        if ("getClass".equals(method.getName()) || !method.getName().startsWith(BindingMapping.GETTER_PREFIX)
                 || method.getParameterTypes().length > 0) {
             return Optional.empty();
         }

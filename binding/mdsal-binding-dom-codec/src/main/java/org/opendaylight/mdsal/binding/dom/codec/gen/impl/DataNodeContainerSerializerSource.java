@@ -11,12 +11,12 @@ package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 import com.google.common.base.Preconditions;
 import java.util.HashMap;
 import java.util.Map;
+import org.opendaylight.mdsal.binding.dom.codec.util.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.dom.codec.util.ChoiceDispatchSerializer;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.model.api.MethodSignature;
 import org.opendaylight.mdsal.binding.model.api.ParameterizedType;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.BindingSerializer;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -30,10 +30,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -108,31 +104,11 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
         return hashMap;
     }
 
-    private static String getGetterName(final DataSchemaNode node) {
-        final TypeDefinition<?> type;
-        if (node instanceof TypedDataSchemaNode) {
-            type = ((TypedDataSchemaNode) node).getType();
-        } else {
-            type = null;
-        }
-
-        final String prefix;
-        // Bug 8903: If it is a derived type of boolean or empty, not an inner type, then the return type
-        // of method would be the generated type of typedef not build-in types, so here it should be 'get'.
-        if ((type instanceof BooleanTypeDefinition || type instanceof EmptyTypeDefinition)
-                && (type.getPath().equals(node.getPath()) || type.getBaseType() == null)) {
-            prefix = "is";
-        } else {
-            prefix = "get";
-        }
-        return prefix + BindingMapping.getGetterSuffix(node.getQName());
-    }
-
     private void emitBody(final StringBuilder sb) {
         final Map<String, Type> getterToType = collectAllProperties(dtoType, new HashMap<String, Type>());
         for (final DataSchemaNode schemaChild : schemaNode.getChildNodes()) {
             if (!schemaChild.isAugmenting()) {
-                final String getter = getGetterName(schemaChild);
+                final String getter = BindingSchemaMapping.getGetterMethodName(schemaChild);
                 final Type childType = getterToType.get(getter);
                 if (childType == null) {
                     // FIXME AnyXml nodes are ignored, since their type cannot be found in generated bindnig

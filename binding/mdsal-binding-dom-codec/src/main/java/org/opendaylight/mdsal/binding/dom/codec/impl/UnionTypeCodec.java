@@ -41,8 +41,8 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
                 if (subtype instanceof LeafrefTypeDefinition) {
                     addLeafrefValueCodec(unionCls, unionType, bindingCodecContext, values, subtype);
                 } else {
-                    final Method valueGetter =
-                            unionCls.getMethod("get" + BindingMapping.getClassName(subtype.getQName()));
+                    final Method valueGetter = unionCls.getMethod(BindingMapping.GETTER_PREFIX
+                        + BindingMapping.getClassName(subtype.getQName()));
                     final Class<?> valueType = valueGetter.getReturnType();
                     final Codec<Object, Object> valueCodec = bindingCodecContext.getCodec(valueType, subtype);
 
@@ -91,8 +91,8 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
 
         // get method via reflection from generated code according to
         // get_TypeName_Value method
-        final Method valueGetterParent = unionCls
-                .getMethod(new StringBuilder("get").append(typeName).append(className).append("Value").toString());
+        final Method valueGetterParent = unionCls.getMethod(new StringBuilder().append(BindingMapping.GETTER_PREFIX)
+            .append(typeName).append(className).append("Value").toString());
         final Class<?> returnType = valueGetterParent.getReturnType();
 
         // prepare codec of union subtype according to return type of referenced

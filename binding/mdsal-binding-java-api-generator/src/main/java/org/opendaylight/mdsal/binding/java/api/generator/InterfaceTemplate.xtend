@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
+
 import java.util.List
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
@@ -166,7 +168,7 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «val accessor = m.isAccessor»
+                «val accessor = m.name.isGetterMethodName»
                 «val ret = m.returnType»
                 «IF accessor»
                     «formatDataForJavaDoc(m, "@return " + asCode(ret.fullyQualifiedName) + " "

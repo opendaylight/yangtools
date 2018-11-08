@@ -28,9 +28,9 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
+import org.opendaylight.mdsal.binding.dom.codec.util.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -55,11 +55,9 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
@@ -235,21 +233,10 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
             if (leaf instanceof TypedDataSchemaNode) {
-                getterToLeafSchema.put(getGetterName(leaf, ((TypedDataSchemaNode) leaf).getType()), leaf);
+                getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName((TypedDataSchemaNode) leaf), leaf);
             }
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
-    }
-
-    private static String getGetterName(final SchemaNode node, final TypeDefinition<?> typeDef) {
-        final String suffix = BindingMapping.getGetterSuffix(node.getQName());
-        // Bug 8903: If it is a derived type of boolean or empty, not an inner type, then the return type
-        // of method would be the generated type of typedef not build-in types, so here it should be 'get'.
-        if ((typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition)
-                && (typeDef.getPath().equals(node.getPath()) || typeDef.getBaseType() == null)) {
-            return "is" + suffix;
-        }
-        return "get" + suffix;
     }
 
     private ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodesUsingReflection(final Class<?> parentClass,

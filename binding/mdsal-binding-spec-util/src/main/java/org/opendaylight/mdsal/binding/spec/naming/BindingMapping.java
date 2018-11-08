@@ -73,6 +73,16 @@ public final class BindingMapping {
      */
     public static final String IDENTIFIABLE_KEY_NAME = "key";
 
+    /**
+     * Prefix for getter methods working on top of boolean.
+     */
+    public static final String BOOLEAN_GETTER_PREFIX = "is";
+
+    /**
+     * Prefix for normal getter methods.
+     */
+    public static final String GETTER_PREFIX = "get";
+
     public static final String RPC_INPUT_SUFFIX = "Input";
     public static final String RPC_OUTPUT_SUFFIX = "Output";
 
@@ -185,6 +195,22 @@ public final class BindingMapping {
         return getMethodName(name.getLocalName());
     }
 
+    public static String getGetterPrefix(final boolean isBoolean) {
+        return isBoolean ? BOOLEAN_GETTER_PREFIX : GETTER_PREFIX;
+    }
+
+    public static String getGetterMethodName(final String localName, final boolean isBoolean) {
+        return getGetterPrefix(isBoolean) + toFirstUpper(getPropertyName(localName));
+    }
+
+    public static String getGetterMethodName(final QName name, final boolean isBoolean) {
+        return getGetterPrefix(isBoolean) + getGetterSuffix(name);
+    }
+
+    public static boolean isGetterMethodName(final String methodName) {
+        return methodName.startsWith(GETTER_PREFIX) || methodName.startsWith(BOOLEAN_GETTER_PREFIX);
+    }
+
     public static String getGetterSuffix(final QName name) {
         checkArgument(name != null, "Name should not be null.");
         final String candidate = toFirstUpper(toCamelCase(name.getLocalName()));
@@ -213,12 +239,8 @@ public final class BindingMapping {
         if (rawString == null || rawString.isEmpty()) {
             return rawString;
         }
-        char firstChar = rawString.charAt(0);
-        if (firstChar >= '0' && firstChar <= '9') {
-            return "_" + rawString;
-        } else {
-            return rawString;
-        }
+        final char firstChar = rawString.charAt(0);
+        return firstChar >= '0' && firstChar <= '9' ? "_" + rawString : rawString;
     }
 
     /**

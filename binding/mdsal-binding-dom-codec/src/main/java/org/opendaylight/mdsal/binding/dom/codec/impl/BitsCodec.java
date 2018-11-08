@@ -52,7 +52,8 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
             final Set<String> ctorArgs = new TreeSet<>();
 
             for (Bit bit : rootType.getBits()) {
-                final Method valueGetter = returnType.getMethod("is" + BindingMapping.getClassName(bit.getName()));
+                final Method valueGetter = returnType.getMethod(BindingMapping.BOOLEAN_GETTER_PREFIX
+                    + BindingMapping.getClassName(bit.getName()));
                 ctorArgs.add(bit.getName());
                 getters.put(bit.getName(), valueGetter);
             }

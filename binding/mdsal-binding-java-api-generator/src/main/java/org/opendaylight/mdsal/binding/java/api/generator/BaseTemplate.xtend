@@ -84,19 +84,15 @@ abstract class BaseTemplate extends JavaFileTemplate {
     final protected def fieldName(GeneratedProperty property) '''_«property.name»'''
 
     final protected def propertyNameFromGetter(MethodSignature getter) {
-        var int prefix;
-        if (getter.name.startsWith("is")) {
-            prefix = 2
-        } else if (getter.name.startsWith("get")) {
-            prefix = 3
+        var String prefix;
+        if (getter.name.startsWith(BindingMapping.BOOLEAN_GETTER_PREFIX)) {
+            prefix = BindingMapping.BOOLEAN_GETTER_PREFIX
+        } else if (getter.name.startsWith(BindingMapping.GETTER_PREFIX)) {
+            prefix = BindingMapping.GETTER_PREFIX
         } else {
             throw new IllegalArgumentException("Not a getter")
         }
-        return getter.name.substring(prefix).toFirstLower;
-    }
-
-    final protected def isAccessor(MethodSignature maybeGetter) {
-        return maybeGetter.name.startsWith("is") || maybeGetter.name.startsWith("get");
+        return getter.name.substring(prefix.length).toFirstLower;
     }
 
     /**

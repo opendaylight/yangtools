@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -174,7 +175,7 @@ public final class DataObjectReadingUtil {
         public abstract DataContainer read(DataContainer parent, Class<?> child);
 
         private static Method resolveGetterMethod(final Class<? extends DataContainer> parent, final Class<?> child) {
-            String methodName = "get" + child.getSimpleName();
+            String methodName = BindingMapping.GETTER_PREFIX + child.getSimpleName();
             try {
                 return parent.getMethod(methodName);
             } catch (NoSuchMethodException e) {
