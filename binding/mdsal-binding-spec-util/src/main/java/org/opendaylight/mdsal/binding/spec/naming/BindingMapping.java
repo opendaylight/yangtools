@@ -83,6 +83,11 @@ public final class BindingMapping {
      */
     public static final String GETTER_PREFIX = "get";
 
+    /**
+     * Prefix for non-null default wrapper methods. These methods always wrap a corresponding normal getter.
+     */
+    public static final String NONNULL_PREFIX = "nonnull";
+
     public static final String RPC_INPUT_SUFFIX = "Input";
     public static final String RPC_OUTPUT_SUFFIX = "Output";
 
@@ -209,6 +214,19 @@ public final class BindingMapping {
 
     public static boolean isGetterMethodName(final String methodName) {
         return methodName.startsWith(GETTER_PREFIX) || methodName.startsWith(BOOLEAN_GETTER_PREFIX);
+    }
+
+    public static String getGetterMethodForNonnull(final String methodName) {
+        checkArgument(isNonnullMethodName(methodName));
+        return GETTER_PREFIX + methodName.substring(NONNULL_PREFIX.length());
+    }
+
+    public static String getNonnullMethodName(final String localName) {
+        return NONNULL_PREFIX + toFirstUpper(getPropertyName(localName));
+    }
+
+    public static boolean isNonnullMethodName(final String methodName) {
+        return methodName.startsWith(NONNULL_PREFIX);
     }
 
     public static String getGetterSuffix(final QName name) {

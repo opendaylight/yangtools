@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.spec.reflect;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
+import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -378,7 +379,8 @@ public final class BindingReflections {
         checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type must be derived from DataContainer");
         List<Class<? extends DataObject>> ret = new LinkedList<>();
         for (Method method : type.getMethods()) {
-            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method,
+                BindingMapping.GETTER_PREFIX);
             if (entity.isPresent()) {
                 ret.add((Class<? extends DataObject>) entity.get());
             }
@@ -394,12 +396,16 @@ public final class BindingReflections {
      * @return Iterable of all data children, which have YANG modeled entity
      */
     public static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type) {
+        return getChildrenClassToMethod(type, BindingMapping.GETTER_PREFIX);
+    }
+
+    private static Map<Class<?>, Method> getChildrenClassToMethod(final Class<?> type, final String prefix) {
         checkArgument(type != null, "Target type must not be null");
         checkArgument(DataContainer.class.isAssignableFrom(type), "Supplied type %s must be derived from DataContainer",
             type);
         Map<Class<?>, Method> ret = new HashMap<>();
         for (Method method : type.getMethods()) {
-            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method);
+            Optional<Class<? extends DataContainer>> entity = getYangModeledReturnType(method, prefix);
             if (entity.isPresent()) {
                 ret.put(entity.get(), method);
             }
@@ -407,22 +413,28 @@ public final class BindingReflections {
         return ret;
     }
 
+    @Beta
+    public static Map<Class<?>, Method> getChildrenClassToNonnullMethod(final Class<?> type) {
+        return getChildrenClassToMethod(type, BindingMapping.NONNULL_PREFIX);
+    }
+
     @SuppressWarnings({ "unchecked", "rawtypes", "checkstyle:illegalCatch" })
-    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method) {
-        if ("getClass".equals(method.getName()) || !method.getName().startsWith(BindingMapping.GETTER_PREFIX)
-                || method.getParameterTypes().length > 0) {
+    private static Optional<Class<? extends DataContainer>> getYangModeledReturnType(final Method method,
+            final String prefix) {
+        final String methodName = method.getName();
+        if ("getClass".equals(methodName) || !methodName.startsWith(prefix) || method.getParameterTypes().length > 0) {
             return Optional.empty();
         }
 
         Class returnType = method.getReturnType();
         if (DataContainer.class.isAssignableFrom(returnType)) {
             return Optional.of(returnType);
-        } else if (List.class.isAssignableFrom(returnType)) {
+        }
+        if (List.class.isAssignableFrom(returnType)) {
             try {
                 return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
                     Type listResult = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
-                    if (listResult instanceof Class
-                            && DataContainer.class.isAssignableFrom((Class) listResult)) {
+                    if (listResult instanceof Class && DataContainer.class.isAssignableFrom((Class) listResult)) {
                         return Optional.of((Class) listResult);
                     }
                     return Optional.empty();

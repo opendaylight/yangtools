@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForNonnull
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
+import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
 
 import java.util.List
 import org.opendaylight.mdsal.binding.model.api.AnnotationType
@@ -18,11 +20,13 @@ import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
+import org.opendaylight.yangtools.yang.binding.CodeHelpers
 
 /**
  * Template for generating JAVA interfaces.
  */
 class InterfaceTemplate extends BaseTemplate {
+    static val JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull")
     static val JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable")
 
     /**
@@ -168,23 +172,43 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «val accessor = m.name.isGetterMethodName»
-                «val ret = m.returnType»
-                «IF accessor»
-                    «formatDataForJavaDoc(m, "@return " + asCode(ret.fullyQualifiedName) + " "
-                    + asCode(propertyNameFromGetter(m)) + ", or " + asCode("null") + " if not present")»
+                «IF m.name.isGetterMethodName»
+                    «generateAccessorMethod(m)»
+                «ELSEIF m.name.isNonnullMethodName»
+                    «generateNonnullMethod(m)»
                 «ELSE»
-                    «m.comment.asJavadoc»
+                    «generateMethod(m)»
                 «ENDIF»
-                «m.annotations.generateAnnotations»
-                «nullableType(ret, accessor)» «m.name»(«m.parameters.generateParameters»);
             «ENDFOR»
         «ENDIF»
     '''
 
-    def private String nullableType(Type type, boolean accessor) {
-        if (accessor && type.isObject) {
-            return importedName(type, NULLABLE.importedName)
+    def private generateMethod(MethodSignature method) '''
+        «method.comment.asJavadoc»
+        «method.annotations.generateAnnotations»
+        «method.returnType.importedName» «method.name»(«method.parameters.generateParameters»);
+    '''
+
+    def private generateAccessorMethod(MethodSignature method) '''
+        «val ret = method.returnType»
+        «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or " + asCode("null") + " if not present")»
+        «method.annotations.generateAnnotations»
+        «nullableType(ret)» «method.name»();
+    '''
+
+    def private generateNonnullMethod(MethodSignature method) '''
+        «val ret = method.returnType»
+        «val name = method.name»
+        «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or an empty list if it is not present")»
+        «method.annotations.generateAnnotations»
+        default «ret.importedName(NONNULL.importedName)» «name»() {
+            return «CodeHelpers.importedName».nonnull(«getGetterMethodForNonnull(name)»());
+        }
+    '''
+
+    def private String nullableType(Type type) {
+        if (type.isObject) {
+            return type.importedName(NULLABLE.importedName)
         }
         return type.importedName
     }

@@ -9,7 +9,9 @@ package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -87,6 +89,23 @@ public class CachingCodecTest extends AbstractBindingCodecTest {
 
         final NormalizedNode<?, ?> third = cachingCodec.serialize(TOP_THREE_LIST_DATA);
         verifyListItemSame(first, third);
+    }
+
+    @Test
+    public void testDefaultInvocation() {
+        final BindingNormalizedNodeCachingCodec<Top> cachingCodec = createCachingCodec(Top.class, TopLevelList.class);
+
+        final Top input = new TopBuilder().build();
+        assertNull(input.getTopLevelList());
+        assertEquals(ImmutableList.of(), input.nonnullTopLevelList());
+
+        final NormalizedNode<?, ?> dom = cachingCodec.serialize(input);
+        final Top output = cachingCodec.deserialize(dom);
+        assertTrue(input.equals(output));
+        assertTrue(output.equals(input));
+
+        assertNull(output.getTopLevelList());
+        assertEquals(ImmutableList.of(), output.nonnullTopLevelList());
     }
 
     @SafeVarargs

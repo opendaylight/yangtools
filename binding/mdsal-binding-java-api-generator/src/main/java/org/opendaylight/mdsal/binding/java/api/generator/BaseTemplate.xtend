@@ -89,8 +89,10 @@ abstract class BaseTemplate extends JavaFileTemplate {
             prefix = BindingMapping.BOOLEAN_GETTER_PREFIX
         } else if (getter.name.startsWith(BindingMapping.GETTER_PREFIX)) {
             prefix = BindingMapping.GETTER_PREFIX
+        } else if (getter.name.startsWith(BindingMapping.NONNULL_PREFIX)) {
+            prefix = BindingMapping.NONNULL_PREFIX
         } else {
-            throw new IllegalArgumentException("Not a getter")
+            throw new IllegalArgumentException(getter + " is not a getter")
         }
         return getter.name.substring(prefix.length).toFirstLower;
     }
