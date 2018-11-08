@@ -21,6 +21,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.List;
 import org.junit.Test;
+import org.opendaylight.mdsal.binding.spec.util.FooChild;
+import org.opendaylight.mdsal.binding.spec.util.GroupingFoo;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
