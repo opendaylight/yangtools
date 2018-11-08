@@ -23,6 +23,9 @@ import javax.annotation.Nullable;
  */
 @Beta
 public final class OptionalBoolean {
+    private static final @NonNull Optional<Boolean> FALSE_OPTIONAL = Optional.of(Boolean.FALSE);
+    private static final @NonNull Optional<Boolean> TRUE_OPTIONAL = Optional.of(Boolean.TRUE);
+
     private static final byte ABSENT = 0;
     private static final byte FALSE = 1;
     private static final byte TRUE = 2;
@@ -111,6 +114,17 @@ public final class OptionalBoolean {
     }
 
     /**
+     * Convert an {@link Optional} {@link Boolean} into a field value.
+     *
+     * @param value Optional {@link Boolean}.
+     * @return Field value.
+     * @throws NullPointerException if value is null.
+     */
+    public static byte ofOptional(final Optional<Boolean> value) {
+        return ofNullable(value.orElse(null));
+    }
+
+    /**
      * Convert a field value into an {@link Optional} {@link Boolean}.
      *
      * @param value Field value.
@@ -122,9 +136,9 @@ public final class OptionalBoolean {
             case ABSENT:
                 return Optional.empty();
             case FALSE:
-                return Optional.of(Boolean.FALSE);
+                return FALSE_OPTIONAL;
             case TRUE:
-                return Optional.of(Boolean.TRUE);
+                return TRUE_OPTIONAL;
             default:
                 throw invalidValue(value);
         }
