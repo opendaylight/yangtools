@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.concepts.Codec;
@@ -92,6 +93,16 @@ abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTre
         if (builder != null) {
             builder.add(getDomPathArgument());
         }
+    }
+
+    /**
+     * Return the default value object. Implementations of this method are explicitly allowed to throw unchecked
+     * exceptions, which are propagated as-is upwards the stack.
+     *
+     * @return The default value object, or null if the default value is not defined.
+     */
+    @Nullable Object defaultObject() {
+        return null;
     }
 
     protected abstract Object deserializeObject(NormalizedNode<?, ?> normalizedNode);
