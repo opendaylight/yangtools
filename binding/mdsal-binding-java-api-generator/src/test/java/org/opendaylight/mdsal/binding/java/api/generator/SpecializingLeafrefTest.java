@@ -5,20 +5,20 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.java.api.generator.test;
+package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.DOUBLE_TAB;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.TAB;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.TRIPLE_TAB;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.doubleTab;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.getFiles;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.tab;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.FileSearchUtil.tripleTab;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.DOUBLE_TAB;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.TAB;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.TRIPLE_TAB;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.doubleTab;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.getFiles;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.tab;
+import static org.opendaylight.mdsal.binding.java.api.generator.FileSearchUtil.tripleTab;
 
 import java.io.File;
 import java.io.IOException;

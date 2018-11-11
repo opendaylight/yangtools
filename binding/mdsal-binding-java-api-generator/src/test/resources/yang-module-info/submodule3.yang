@@ -1,0 +1,13 @@
+submodule submodule3 {
+
+    belongs-to main-module {
+        prefix m;
+    }
+
+    revision 2014-06-30 {
+    }
+
+
+    container sub3-cont {}
+
+}

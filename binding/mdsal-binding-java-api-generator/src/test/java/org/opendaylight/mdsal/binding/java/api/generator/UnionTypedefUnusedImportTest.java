@@ -5,13 +5,13 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.java.api.generator.test;
+package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.junit.Assert.assertFalse;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.FS;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.cleanUp;
-import static org.opendaylight.mdsal.binding.java.api.generator.test.CompilationTestUtils.testCompilation;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.FS;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.GENERATOR_OUTPUT_PATH;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.cleanUp;
+import static org.opendaylight.mdsal.binding.java.api.generator.CompilationTestUtils.testCompilation;
 
 import java.io.File;
 import java.io.IOException;

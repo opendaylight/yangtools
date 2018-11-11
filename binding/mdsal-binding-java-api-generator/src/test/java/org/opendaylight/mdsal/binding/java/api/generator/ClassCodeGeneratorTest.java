@@ -5,7 +5,7 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.mdsal.binding.java.api.generator.test;
+package org.opendaylight.mdsal.binding.java.api.generator;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -16,7 +16,6 @@ import static org.junit.Assert.assertNotNull;
 import java.util.List;
 import org.junit.Test;
 import org.opendaylight.mdsal.binding.generator.impl.DefaultBindingGenerator;
-import org.opendaylight.mdsal.binding.java.api.generator.TOGenerator;
 import org.opendaylight.mdsal.binding.model.api.GeneratedProperty;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
