@@ -7,28 +7,25 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.Set;
@@ -36,6 +33,7 @@ import java.util.stream.Collectors;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
@@ -46,11 +44,9 @@ import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
+import org.opendaylight.yangtools.yang.plugin.generator.api.FileGeneratorFactory;
+import org.opendaylight.yangtools.yang.plugin.generator.api.ImportResolutionMode;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
-import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
-import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator.ImportResolutionMode;
-import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
-import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -134,7 +130,7 @@ class YangToSourcesProcessor {
         }
 
         // We need to instantiate all code generators to determine required import resolution mode
-        final List<Entry<CodeGeneratorArg, BasicCodeGenerator>> codeGenerators = instantiateGenerators();
+        final List<AbstractGeneratorTask> codeGenerators = instantiateGenerators();
         final StatementParserMode importMode = determineRequiredImportMode(codeGenerators);
         final Optional<ProcessorModuleReactor> optReactor = createReactor(importMode, yangFilesInProject);
         if (!optReactor.isPresent()) {
@@ -142,6 +138,7 @@ class YangToSourcesProcessor {
         }
 
         final ProcessorModuleReactor reactor = optReactor.get();
+        final Builder<File> files = ImmutableSet.builder();
         if (!skip) {
             final Stopwatch watch = Stopwatch.createStarted();
             final ContextHolder holder;
@@ -155,7 +152,7 @@ class YangToSourcesProcessor {
             }
 
             LOG.info("{} {} YANG models processed in {}", LOG_PREFIX, holder.getContext().getModules().size(), watch);
-            generateSources(holder, codeGenerators);
+            files.addAll(generateSources(holder, codeGenerators));
         } else {
             LOG.info("{} Skipping YANG code generation because property yang.skip is true", LOG_PREFIX);
         }
@@ -175,61 +172,52 @@ class YangToSourcesProcessor {
             META_INF_YANG_SERVICES_STRING_JAR);
     }
 
-    private static StatementParserMode determineRequiredImportMode(
-            final Collection<Entry<CodeGeneratorArg, BasicCodeGenerator>> codeGenerators) throws MojoFailureException {
-        ImportResolutionMode requestedMode = null;
-        BasicCodeGenerator requestingGenerator = null;
-
-        for (Entry<CodeGeneratorArg, BasicCodeGenerator> entry : codeGenerators) {
-            final BasicCodeGenerator generator = entry.getValue();
-            final ImportResolutionMode mode = generator.getImportResolutionMode();
-            if (mode == null) {
-                // the generator does not care about the mode
-                continue;
-            }
-
-            if (requestedMode == null) {
+    private static StatementParserMode determineRequiredImportMode(final Collection<AbstractGeneratorTask> tasks)
+            throws MojoFailureException {
+        ImportResolutionMode proposedMode = null;
+        for (AbstractGeneratorTask task : tasks) {
+            final Optional<ImportResolutionMode> mode = task.suggestedImportResolutionMode();
+            if (mode.isPresent()) {
                 // No mode yet, we have just determined it
-                requestedMode = mode;
-                requestingGenerator = generator;
-                continue;
-            }
-
-            if (mode != requestedMode) {
-                throw new MojoFailureException(String.format(
-                    "Import resolution mode conflict between %s (%s) and %s (%s)", requestingGenerator, requestedMode,
-                    generator, mode));
+                proposedMode = mode.get();
+                // Requesting generator has to accept the mode
+                verify(task.isAcceptableImportResolutionMode(proposedMode));
+                break;
             }
         }
 
-        if (requestedMode == null) {
-            return StatementParserMode.DEFAULT_MODE;
+        if (proposedMode == null) {
+            // Try the default
+            proposedMode = ImportResolutionMode.REVISION_EXACT_OR_LATEST;
         }
-        switch (requestedMode) {
+
+        for (AbstractGeneratorTask task : tasks) {
+            checkState(task.isAcceptableImportResolutionMode(proposedMode),
+                "Task %s rejects proposed import resolution mode %s", task, proposedMode);
+        }
+
+        switch (proposedMode) {
             case REVISION_EXACT_OR_LATEST:
                 return StatementParserMode.DEFAULT_MODE;
             case SEMVER_LATEST:
                 return StatementParserMode.SEMVER_MODE;
             default:
-                throw new IllegalStateException("Unhandled import resolution mode " + requestedMode);
+                throw new IllegalStateException("Unhandled import resolution mode " + proposedMode);
         }
     }
 
-    private List<Entry<CodeGeneratorArg, BasicCodeGenerator>> instantiateGenerators() throws MojoExecutionException {
-        final List<Entry<CodeGeneratorArg, BasicCodeGenerator>> generators = new ArrayList<>(codeGeneratorArgs.size());
+    private List<AbstractGeneratorTask> instantiateGenerators() throws MojoExecutionException, MojoFailureException {
+        final List<AbstractGeneratorTask> generators = new ArrayList<>(codeGeneratorArgs.size());
         for (CodeGeneratorArg arg : codeGeneratorArgs) {
-            arg.check();
-
-            final BasicCodeGenerator generator;
-            try {
-                generator = getInstance(arg.getCodeGeneratorClass(), BasicCodeGenerator.class);
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-                throw new MojoExecutionException("Failed to instantiate code generator "
-                        + arg.getCodeGeneratorClass(), e);
-            }
-
+            generators.add(CodeGeneratorTask.create(arg));
             LOG.info("{} Code generator instantiated from {}", LOG_PREFIX, arg.getCodeGeneratorClass());
-            generators.add(new SimpleImmutableEntry<>(arg, generator));
+        }
+
+        for (FileGeneratorFactory factory : ServiceLoader.load(FileGeneratorFactory.class)) {
+            // FIXME: additional config?!
+            final AbstractGeneratorTask task = new FileGeneratorTask(factory.newFileGenerator(ImmutableMap.of()));
+            generators.add(task);
+            LOG.info("{} Code generator {} instantiated", LOG_PREFIX, task);
         }
 
         return generators;
@@ -240,30 +228,42 @@ class YangToSourcesProcessor {
             final List<File> yangFilesInProject) throws MojoExecutionException {
         LOG.info("{} Inspecting {}", LOG_PREFIX, yangFilesRootDir);
 
-        try {
-            final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
-            final Collection<ScannedDependency> dependencies;
-            if (inspectDependencies) {
-                dependencies = new ArrayList<>();
-                final Stopwatch watch = Stopwatch.createStarted();
+        final Collection<File> allFiles = new ArrayList<>(yangFilesInProject);
+        final Collection<ScannedDependency> dependencies;
+        if (inspectDependencies) {
+            dependencies = new ArrayList<>();
+            final Stopwatch watch = Stopwatch.createStarted();
+
+            try {
                 ScannedDependency.scanDependencies(project).forEach(dep -> {
                     allFiles.add(dep.file());
                     dependencies.add(dep);
                 });
-                LOG.info("{} Found {} dependencies in {}", LOG_PREFIX, dependencies.size(), watch);
-            } else {
-                dependencies = ImmutableList.of();
+            } catch (IOException e) {
+                LOG.error("{} Failed to scan dependencies", LOG_PREFIX, e);
+                throw new MojoExecutionException(LOG_PREFIX + " Failed to scan dependencies ", e);
             }
+            LOG.info("{} Found {} dependencies in {}", LOG_PREFIX, dependencies.size(), watch);
+        } else {
+            dependencies = ImmutableList.of();
+        }
 
-            /*
-             * Check if any of the listed files changed. If no changes occurred,
-             * simply return null, which indicates and of execution.
-             */
-            if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
-                LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
-                return Optional.empty();
-            }
+        /*
+         * Check if any of the listed files changed. If no changes occurred, simply return empty, which indicates
+         * end of execution.
+         */
+        if (!allFiles.stream().anyMatch(buildContext::hasDelta)) {
+            LOG.info("{} None of {} input files changed", LOG_PREFIX, allFiles.size());
+            return Optional.empty();
+        }
 
+        final BuildInfo buildInfo = getBuildInfo();
+        if (buildInfo != null) {
+
+
+        }
+
+        try {
             final YangParser parser = parserFactory.createParser(parserMode);
             final List<YangTextSchemaSource> sourcesInProject = new ArrayList<>(yangFilesInProject.size());
             for (final File f : yangFilesInProject) {
@@ -296,6 +296,16 @@ class YangToSourcesProcessor {
         }
     }
 
+    private @Nullable BuildInfo getBuildInfo() {
+        final Object stored = buildContext.getValue(BuildInfo.class.getName());
+        if (stored == null) {
+            return null;
+        }
+
+        verify(stored instanceof BuildInfo, "Unexpected build info structure %s", stored);
+        return (BuildInfo) stored;
+    }
+
     private static List<File> listFiles(final File root, final Collection<File> excludedFiles)
             throws IOException {
         if (!root.isDirectory()) {
@@ -315,85 +325,27 @@ class YangToSourcesProcessor {
     /**
      * Call generate on every generator from plugin configuration.
      */
-    @SuppressWarnings("checkstyle:illegalCatch")
-    private void generateSources(final ContextHolder context,
-            final Collection<Entry<CodeGeneratorArg, BasicCodeGenerator>> generators) throws MojoFailureException {
+    private Set<File> generateSources(final ContextHolder context, final Collection<AbstractGeneratorTask> generators)
+            throws MojoFailureException {
         if (generators.isEmpty()) {
             LOG.warn("{} No code generators provided", LOG_PREFIX);
-            return;
+            return ImmutableSet.of();
         }
 
-        final Map<String, String> thrown = new HashMap<>();
-        for (Entry<CodeGeneratorArg, BasicCodeGenerator> entry : generators) {
-            final String codeGeneratorClass = entry.getKey().getCodeGeneratorClass();
-
+        Builder<File> allFiles = ImmutableSet.builder();
+        for (AbstractGeneratorTask task : generators) {
+            final Stopwatch watch = Stopwatch.createStarted();
+            final Collection<File> files;
             try {
-                generateSourcesWithOneGenerator(context, entry.getKey(), entry.getValue());
-            } catch (Exception e) {
-                // try other generators, exception will be thrown after
-                LOG.error("{} Unable to generate sources with {} generator", LOG_PREFIX, codeGeneratorClass, e);
-                thrown.put(codeGeneratorClass, e.getClass().getCanonicalName());
+                files = task.execute(buildContext);
+            } catch (IOException e) {
+                throw new MojoFailureException(LOG_PREFIX + " Generator " + task + " failed", e);
             }
+
+            LOG.debug("{} Sources generated by {}: {}", LOG_PREFIX, task, files);
+            LOG.info("{} Sources generated by {}: {} in {}", LOG_PREFIX, task, files == null ? 0 : files.size(), watch);
+            allFiles.addAll(files);
         }
-
-        if (!thrown.isEmpty()) {
-            LOG.error("{} One or more code generators failed, including failed list(generatorClass=exception) {}",
-                LOG_PREFIX, thrown);
-            throw new MojoFailureException(LOG_PREFIX
-                + " One or more code generators failed, including failed list(generatorClass=exception) " + thrown);
-        }
-    }
-
-    /**
-     * Complete initialization of a code generator and invoke it.
-     */
-    private void generateSourcesWithOneGenerator(final ContextHolder context, final CodeGeneratorArg codeGeneratorCfg,
-            final BasicCodeGenerator codeGenerator) throws IOException {
-
-        final File outputDir = requireNonNull(codeGeneratorCfg.getOutputBaseDir(project),
-            "outputBaseDir is null. Please provide a valid outputBaseDir value in pom.xml");
-
-        project.addCompileSourceRoot(outputDir.getAbsolutePath());
-
-        LOG.info("{} Sources will be generated to {}", LOG_PREFIX, outputDir);
-        LOG.debug("{} Project root dir is {}", LOG_PREFIX, project.getBasedir());
-        LOG.debug("{} Additional configuration picked up for : {}: {}", LOG_PREFIX, codeGeneratorCfg
-                        .getCodeGeneratorClass(), codeGeneratorCfg.getAdditionalConfiguration());
-
-        if (codeGenerator instanceof BuildContextAware) {
-            ((BuildContextAware)codeGenerator).setBuildContext(buildContext);
-        }
-        if (codeGenerator instanceof MavenProjectAware) {
-            ((MavenProjectAware)codeGenerator).setMavenProject(project);
-        }
-        codeGenerator.setAdditionalConfig(codeGeneratorCfg.getAdditionalConfiguration());
-
-        File resourceBaseDir = codeGeneratorCfg.getResourceBaseDir(project);
-        YangProvider.setResource(resourceBaseDir, project);
-        codeGenerator.setResourceBaseDir(resourceBaseDir);
-        LOG.debug("{} Folder: {} marked as resources for generator: {}", LOG_PREFIX, resourceBaseDir,
-                codeGeneratorCfg.getCodeGeneratorClass());
-
-        if (outputDir.exists()) {
-            Files.walk(outputDir.toPath()).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            LOG.info("{} Succesfully deleted output directory {}", LOG_PREFIX, outputDir);
-        }
-        final Stopwatch watch = Stopwatch.createStarted();
-        Collection<File> generated = codeGenerator.generateSources(context.getContext(), outputDir,
-            context.getYangModules(), context::moduleToResourcePath);
-
-        LOG.debug("{} Sources generated by {}: {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(), generated);
-        LOG.info("{} Sources generated by {}: {} in {}", LOG_PREFIX, codeGeneratorCfg.getCodeGeneratorClass(),
-                generated == null ? 0 : generated.size(), watch);
-    }
-
-    /**
-     * Instantiate object from fully qualified class name.
-     */
-    private static <T> T getInstance(final String codeGeneratorClass, final Class<T> baseType) throws
-            ClassNotFoundException, InstantiationException, IllegalAccessException {
-        final Class<?> clazz = Class.forName(codeGeneratorClass);
-        checkArgument(baseType.isAssignableFrom(clazz), "Code generator %s has to implement %s", clazz, baseType);
-        return baseType.cast(clazz.newInstance());
+        return allFiles.build();
     }
 }
