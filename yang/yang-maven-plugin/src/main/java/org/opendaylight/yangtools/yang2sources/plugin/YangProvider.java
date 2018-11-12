@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// FIXME: should be a FileGenerator
 abstract class YangProvider {
     private static final class Default extends YangProvider {
         private static final Logger LOG = LoggerFactory.getLogger(Default.class);
