@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -59,6 +60,13 @@ public final class YangToSourcesMojo extends AbstractMojo {
      */
     @Parameter(required = false)
     private CodeGeneratorArg[] codeGenerators;
+
+    /**
+     * {@link FileGenerator} instances resolved via ServiceLoader can hold additional configuration, which details
+     * how they are executed.
+     */
+    @Parameter(required = false)
+    private FileGeneratorArg[] fileGenerators;
 
     /**
      * Source directory that will be recursively searched for yang files (ending
