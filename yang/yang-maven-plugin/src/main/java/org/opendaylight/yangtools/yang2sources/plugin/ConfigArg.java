@@ -25,13 +25,13 @@ public abstract class ConfigArg {
     }
 
     public File getOutputBaseDir(final MavenProject project) {
-        if (outputBaseDir == null) {
-            return null;
-        }
         return outputBaseDir.isAbsolute() ? outputBaseDir : new File(project.getBasedir(), outputBaseDir.getPath());
     }
 
-    public abstract void check();
+    public void check() {
+        requireNonNull(outputBaseDir,
+            "outputBaseDir is null. Please provide a valid outputBaseDir value in the pom.xml");
+    }
 
     /**
      * Configuration argument for code generator class and output directory.
@@ -65,6 +65,7 @@ public abstract class ConfigArg {
 
         @Override
         public void check() {
+            super.check();
             requireNonNull(codeGeneratorClass, "codeGeneratorClass for CodeGenerator cannot be null");
         }
 
