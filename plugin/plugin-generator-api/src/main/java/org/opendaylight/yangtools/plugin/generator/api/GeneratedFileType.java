@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
- * Type of generated file. Four most common kinds are captured in {@link #RESOURCE}, {@link #SOURCE},
- * {@link #TEST_RESOURCE} and {@link #TEST_SOURCE}, but others may be externally defined.
+ * Type of generated file. Two most common kinds are captured in {@link #RESOURCE}, {@link #SOURCE}, but others may be
+ * externally defined.
  *
  * <p>
  * Users of {@link FileGenerator} are expected to provide sensible mapping of {@link GeneratedFileType} to their
@@ -41,19 +41,8 @@ public final class GeneratedFileType {
      */
     public static final GeneratedFileType SOURCE = new GeneratedFileType("source");
 
-    /**
-     * A generated test resource file. This file should be part of test resources.
-     */
-    public static final GeneratedFileType TEST_RESOURCE = new GeneratedFileType("test-resource");
-
-    /**
-     * A generated test source file. This file should be part of test sources.
-     */
-    public static final GeneratedFileType TEST_SOURCE = new GeneratedFileType("test-source");
-
     private static final ImmutableMap<String, GeneratedFileType> WELL_KNOWN = ImmutableMap.of(
-        RESOURCE.name(), RESOURCE, TEST_RESOURCE.name(), TEST_RESOURCE,
-        SOURCE.name(), SOURCE, TEST_SOURCE.name(), TEST_SOURCE);
+        RESOURCE.name(), RESOURCE, SOURCE.name(), SOURCE);
 
     private final String name;
 
