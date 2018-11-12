@@ -14,7 +14,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
@@ -30,6 +29,8 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.repository.RepositorySystem;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
+import org.opendaylight.yangtools.yang.plugin.generator.api.FileGenerator;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
 import org.sonatype.plexus.build.incremental.BuildContext;
@@ -59,6 +60,13 @@ public final class YangToSourcesMojo extends AbstractMojo {
      */
     @Parameter(required = false)
     private CodeGeneratorArg[] codeGenerators;
+
+    /**
+     * {@link FileGenerator} instances resolved via ServiceLoader can hold additional configuration, which details
+     * how they are executed.
+     */
+    @Parameter(required = false)
+    private FileGeneratorArg[] fileGenerators;
 
     /**
      * Source directory that will be recursively searched for yang files (ending
@@ -96,6 +104,9 @@ public final class YangToSourcesMojo extends AbstractMojo {
     @Parameter(property = "yang.skip")
     private String yangSkip;
 
+    @Parameter(defaultValue = "DEFAULT_MODE")
+    private StatementParserMode parserMode;
+
     public YangToSourcesMojo() {
 
     }
@@ -115,26 +126,19 @@ public final class YangToSourcesMojo extends AbstractMojo {
         Util.checkClasspath(project, repoSystem, localRepository, remoteRepos);
 
         if (yangToSourcesProcessor == null) {
-            List<CodeGeneratorArg> codeGeneratorArgs = processCodeGenerators(codeGenerators);
-
             // defaults to ${basedir}/src/main/yang
             File yangFilesRootFile = processYangFilesRootDir(yangFilesRootDir, project.getBasedir());
             Collection<File> excludedFiles = processExcludeFiles(excludeFiles, yangFilesRootFile);
 
             yangToSourcesProcessor = new YangToSourcesProcessor(buildContext, yangFilesRootFile,
-                    excludedFiles, codeGeneratorArgs, project, inspectDependencies);
+                    excludedFiles, arrayToList(codeGenerators), arrayToList(fileGenerators), parserMode, project,
+                    inspectDependencies);
         }
         yangToSourcesProcessor.conditionalExecute("true".equals(yangSkip));
     }
 
-    private static List<CodeGeneratorArg> processCodeGenerators(final CodeGeneratorArg[] codeGenerators) {
-        List<CodeGeneratorArg> codeGeneratorArgs;
-        if (codeGenerators == null) {
-            codeGeneratorArgs = Collections.emptyList();
-        } else {
-            codeGeneratorArgs = Arrays.asList(codeGenerators);
-        }
-        return codeGeneratorArgs;
+    private static <T> List<T> arrayToList(final T[] array) {
+        return array == null ? ImmutableList.of() : Arrays.asList(array);
     }
 
     private static File processYangFilesRootDir(final String yangFilesRootDir, final File baseDir) {
