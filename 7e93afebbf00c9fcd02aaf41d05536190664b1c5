@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "7c8c657d_c64f274c",
+        "filename": "yang/yang-maven-plugin-spi/src/main/java/org/opendaylight/yangtools/yang/plugin/generator/api/FileGenerator.java",
+        "patchSetId": 23
+      },
+      "lineNbr": 34,
+      "author": {
+        "id": 2046
+      },
+      "writtenOn": "2018-11-12T17:29:29Z",
+      "side": 1,
+      "message": "One \"directly\" too many.",
+      "range": {
+        "startLine": 34,
+        "startChar": 59,
+        "endLine": 34,
+        "endChar": 99
+      },
+      "revId": "7e93afebbf00c9fcd02aaf41d05536190664b1c5",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
