@@ -15,6 +15,7 @@
     <modules>
         <module>additional-config</module>
         <module>correct</module>
+        <module>file-generator</module>
         <module>generate-test1</module>
         <module>generate-test2</module>
         <module>generator</module>
