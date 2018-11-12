@@ -94,7 +94,8 @@ public class YangToSourcesPluginTestIT {
         Verifier vrf = setUp("test-parent/UnknownGenerator/", true);
         vrf.verifyTextInLog("[INFO] yang-to-sources: Code generator instantiated from "
                 + "org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
-        vrf.verifyTextInLog("Failed to instantiate code generator unknown");
+        vrf.verifyTextInLog("on project unknown-generator: Failed to find code generator class unknown");
+        vrf.verifyTextInLog("MojoFailureException: Failed to find code generator class unknown");
         vrf.verifyTextInLog("java.lang.ClassNotFoundException: unknown");
     }
 
