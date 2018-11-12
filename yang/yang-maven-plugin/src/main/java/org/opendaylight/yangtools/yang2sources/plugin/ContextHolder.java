@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableSet;
 import java.util.Optional;
 import java.util.Set;
@@ -22,7 +23,7 @@ final class ContextHolder implements Immutable {
     private final Set<SourceIdentifier> sources;
 
     ContextHolder(final SchemaContext context, final Set<Module> modules, final Set<SourceIdentifier> sources) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = requireNonNull(context);
         this.modules = ImmutableSet.copyOf(modules);
         this.sources = ImmutableSet.copyOf(sources);
     }
