@@ -1,0 +1,153 @@
+/*
+ * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang2sources.plugin;
+
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.base.Stopwatch;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Optional;
+import org.apache.maven.model.Resource;
+import org.apache.maven.plugin.MojoFailureException;
+import org.apache.maven.project.MavenProject;
+import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
+import org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator;
+import org.opendaylight.yangtools.yang2sources.spi.BuildContextAware;
+import org.opendaylight.yangtools.yang2sources.spi.MavenProjectAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.sonatype.plexus.build.incremental.BuildContext;
+
+/**
+ * Bridge to legacy {@link BasicCodeGenerator} generation.
+ *
+ * @author Robert Varga
+ *
+ * @deprecated Scheduled for removal with {@link BasicCodeGenerator}.
+ */
+@Deprecated
+final class CodeGeneratorTask extends AbstractGeneratorTask {
+    private static final Logger LOG = LoggerFactory.getLogger(CodeGeneratorTask.class);
+
+    private final BasicCodeGenerator gen;
+    private final CodeGeneratorArg cfg;
+
+    private ContextHolder context;
+    private File outputDir;
+
+    private CodeGeneratorTask(final BasicCodeGenerator gen, final CodeGeneratorArg cfg) {
+        this.gen = requireNonNull(gen);
+        this.cfg = requireNonNull(cfg);
+    }
+
+    static AbstractGeneratorTask create(final CodeGeneratorArg cfg) throws MojoFailureException {
+        cfg.check();
+
+        final String codegenClass = cfg.getCodeGeneratorClass();
+        final Class<?> clazz;
+        try {
+            clazz = Class.forName(codegenClass);
+        } catch (ClassNotFoundException e) {
+            throw new MojoFailureException("Failed to find code generator class " + codegenClass, e);
+        }
+
+        if (!BasicCodeGenerator.class.isAssignableFrom(clazz)) {
+            throw new MojoFailureException("Code generator " + clazz + " does not implement "
+                    + BasicCodeGenerator.class);
+        }
+
+        final BasicCodeGenerator gen;
+        try {
+            gen = (BasicCodeGenerator)clazz.newInstance();
+        } catch (Exception e) {
+            throw new MojoFailureException("Failed to instantiate code generator " + clazz, e);
+        }
+
+        LOG.debug("{} Code generator instantiated from {}", codegenClass);
+        return new CodeGeneratorTask(gen, cfg);
+    }
+
+    @Override
+    void initialize(final MavenProject project, final ContextHolder context) {
+        this.context = requireNonNull(context);
+
+        if (gen instanceof MavenProjectAware) {
+            ((MavenProjectAware)gen).setMavenProject(project);
+        }
+
+        LOG.debug("Project root dir is {}", project.getBasedir());
+        LOG.debug("Additional configuration picked up for : {}: {}", gen.getClass(), cfg.getAdditionalConfiguration());
+
+        outputDir = cfg.getOutputBaseDir(project);
+        project.addCompileSourceRoot(outputDir.getAbsolutePath());
+
+        gen.setAdditionalConfig(cfg.getAdditionalConfiguration());
+        File resourceBaseDir = cfg.getResourceBaseDir(project);
+
+        Resource res = new Resource();
+        res.setDirectory(resourceBaseDir.getPath());
+        project.addResource(res);
+
+        gen.setResourceBaseDir(resourceBaseDir);
+        LOG.debug("Folder: {} marked as resources for generator: {}", resourceBaseDir, gen.getClass());
+    }
+
+    @Override
+    Optional<ImportResolutionMode> suggestedImportResolutionMode() {
+        final org.opendaylight.yangtools.yang2sources.spi.BasicCodeGenerator.ImportResolutionMode mode =
+                gen.getImportResolutionMode();
+        if (mode == null) {
+            return Optional.empty();
+        }
+        switch (mode) {
+            case REVISION_EXACT_OR_LATEST:
+                return Optional.of(ImportResolutionMode.REVISION_EXACT_OR_LATEST);
+            case SEMVER_LATEST:
+                return Optional.of(ImportResolutionMode.SEMVER_LATEST);
+            default:
+                throw new IllegalStateException("Unhandled mode " + mode);
+        }
+    }
+
+    @Override
+    boolean isAcceptableImportResolutionMode(final ImportResolutionMode mode) {
+        final Optional<ImportResolutionMode> genMode = suggestedImportResolutionMode();
+        return genMode.isPresent() ? mode == genMode.get() : true;
+    }
+
+    @Override
+    Collection<File> execute(final BuildContext buildContext) throws IOException {
+        final Stopwatch watch = Stopwatch.createStarted();
+        final boolean mark;
+        if (gen instanceof BuildContextAware) {
+            ((BuildContextAware)gen).setBuildContext(buildContext);
+            mark = false;
+        } else {
+            mark = true;
+        }
+        Collection<File> generated = gen.generateSources(context.getContext(), outputDir, context.getYangModules(),
+            context::moduleToResourcePath);
+
+        LOG.debug("Sources generated by {}: {}", cfg.getCodeGeneratorClass(), generated);
+        LOG.info("Sources generated by {}: {} in {}", cfg.getCodeGeneratorClass(),
+            generated == null ? 0 : generated.size(), watch);
+
+        LOG.debug("Sources will be generated to {}", outputDir);
+        Collection<File> sources = gen.generateSources(context.getContext(), outputDir, context.getYangModules(),
+            context::moduleToResourcePath);
+        LOG.info("{} Sources generated by {}: {}", gen.getClass(), generated);
+
+        if (mark) {
+            sources.forEach(buildContext::refresh);
+        }
+
+        return sources;
+    }
+}
