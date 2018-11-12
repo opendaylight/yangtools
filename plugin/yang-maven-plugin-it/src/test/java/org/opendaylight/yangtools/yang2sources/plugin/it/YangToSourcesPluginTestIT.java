@@ -94,7 +94,8 @@ public class YangToSourcesPluginTestIT {
         Verifier vrf = setUp("test-parent/UnknownGenerator/", true);
         vrf.verifyTextInLog("[INFO] yang-to-sources: Code generator instantiated from "
                 + "org.opendaylight.yangtools.yang2sources.spi.CodeGeneratorTestImpl");
-        vrf.verifyTextInLog("Failed to instantiate code generator unknown");
+        vrf.verifyTextInLog("on project unknown-generator: Failed to find code generator class unknown");
+        vrf.verifyTextInLog("MojoFailureException: Failed to find code generator class unknown");
         vrf.verifyTextInLog("java.lang.ClassNotFoundException: unknown");
     }
 
@@ -150,6 +151,23 @@ public class YangToSourcesPluginTestIT {
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types1@2013-02-27.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types2@2013-02-27.yang");
         v2.assertFileNotPresent(buildDir + "/classes/META-INF/yang/types3@2013-02-27.yang");
+    }
+
+    @Test
+    public void testFileGenerator() throws Exception {
+        Verifier v1 = setUp("test-parent/FileGenerator/", false);
+
+        String buildDir = getMavenBuildDirectory(v1);
+
+        // Test builder
+        v1.assertFilePresent(buildDir + "/generated-sources/"
+            + "org.opendaylight.yangtools.yang2sources.spi.TestFileGenerator/fooSource.java");
+        v1.assertFilePresent(buildDir + "/generated-sources/"
+            + "org.opendaylight.yangtools.yang2sources.spi.TestFileGenerator/fooresource");
+        v1.assertFilePresent(buildDir + "/generated-sources/"
+            + "org.opendaylight.yangtools.yang2sources.spi.TestFileGenerator/footestSource.java");
+        v1.assertFilePresent(buildDir + "/generated-sources/"
+            + "org.opendaylight.yangtools.yang2sources.spi.TestFileGenerator/footestResource");
     }
 
     private static String getMavenBuildDirectory(final Verifier verifier) throws IOException {

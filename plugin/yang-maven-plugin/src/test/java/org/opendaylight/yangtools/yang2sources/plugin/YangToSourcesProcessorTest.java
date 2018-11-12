@@ -7,56 +7,64 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
+
 import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.List;
 import org.apache.maven.model.Build;
 import org.apache.maven.project.MavenProject;
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.GenerateSourcesTest.GeneratorMock;
 
-@RunWith(MockitoJUnitRunner.Silent.class)
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class YangToSourcesProcessorTest {
+    @Mock
+    public File buildContext;
+    @Mock
+    public MavenProject project;
+    @Mock
+    public YangProvider inspectDependencies;
 
-    private final File buildContext = Mockito.mock(File.class);
-    private final List<File> yangFilesRootDir = ImmutableList.of(buildContext);
-    private final MavenProject project = Mockito.mock(MavenProject.class);
     private final boolean dep = false;
-    private final YangProvider inspectDependencies = Mockito.mock(YangProvider.class);
+    private List<File> yangFilesRootDir;
+
+    @Before
+    public void before() {
+        yangFilesRootDir = ImmutableList.of(buildContext);
+    }
 
     @Test
     public void yangToSourcesProcessotTest() {
-        Mockito.when(this.buildContext.getPath()).thenReturn("path");
         YangToSourcesProcessor processor = new YangToSourcesProcessor(buildContext, yangFilesRootDir,
             ImmutableList.of(), project, dep, inspectDependencies);
-        Assert.assertNotNull(processor);
+        assertNotNull(processor);
 
         processor = new YangToSourcesProcessor(buildContext, yangFilesRootDir, ImmutableList.of(), project, dep,
             inspectDependencies);
-        Assert.assertNotNull(processor);
+        assertNotNull(processor);
     }
 
     @Test
     public void test() throws Exception {
         final File file = new File(getClass().getResource("/yang").getFile());
         final File excludedYang = new File(getClass().getResource("/yang/excluded-file.yang").getFile());
-        final String path = file.getPath();
         final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
                 "target/YangToSourcesProcessorTest-outputBaseDir");
         final List<CodeGeneratorArg> codeGenerators = ImmutableList.of(codeGeneratorArg);
-        final MavenProject mvnProject = Mockito.mock(MavenProject.class);
         final Build build = new Build();
-        Mockito.when(mvnProject.getBuild()).thenReturn(build);
+        build.setDirectory("foo");
+        doReturn(build).when(project).getBuild();
         final boolean dependencies = true;
         final YangToSourcesProcessor proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang),
-            codeGenerators, mvnProject, dependencies, YangProvider.getInstance());
-        Assert.assertNotNull(proc);
+            codeGenerators, project, dependencies, YangProvider.getInstance());
+        assertNotNull(proc);
         proc.execute();
     }
-
 }
