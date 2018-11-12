@@ -7,6 +7,10 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.verify;
+
 import com.google.common.collect.ImmutableList;
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +18,6 @@ import java.util.List;
 import org.apache.maven.model.Build;
 import org.apache.maven.model.Plugin;
 import org.apache.maven.project.MavenProject;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,29 +42,29 @@ public class YangToSourcesMojoTest {
 
     @Test
     public void yangToSourceMojoTest() throws Exception {
-        Mockito.when(this.project.getPlugin(YangToSourcesMojo.PLUGIN_NAME)).thenReturn(this.plugin);
+        doReturn(plugin).when(project).getPlugin(YangToSourcesMojo.PLUGIN_NAME);
 
         this.mojo = new YangToSourcesMojo();
-        this.mojo.setProject(this.project);
+        this.mojo.setProject(project);
         this.mojo.buildContext = new DefaultBuildContext();
         this.mojo.execute();
-        Assert.assertNotNull(this.mojo);
+        assertNotNull(this.mojo);
 
         final YangToSourcesProcessor processor = Mockito.mock(YangToSourcesProcessor.class);
         this.mojo = new YangToSourcesMojo(processor);
-        this.mojo.setProject(this.project);
+        this.mojo.setProject(project);
         this.mojo.execute();
-        Mockito.verify(processor).conditionalExecute(false);
+        verify(processor).conditionalExecute(false);
     }
 
     @Test
     public void test() throws Exception {
         prepareProcessor();
-        Assert.assertNotNull(this.proc);
-        this.mojo = new YangToSourcesMojo(this.proc);
-        this.mojo.setProject(this.project);
+        assertNotNull(proc);
+        this.mojo = new YangToSourcesMojo(proc);
+        this.mojo.setProject(project);
         this.mojo.execute();
-        Assert.assertNotNull(this.mojo);
+        assertNotNull(mojo);
     }
 
     private void prepareProcessor() {
@@ -72,11 +75,11 @@ public class YangToSourcesMojoTest {
         final CodeGeneratorArg codeGeneratorArg = new CodeGeneratorArg(GeneratorMock.class.getName(),
                 "target/YangToSourcesMojoTest-outputBaseDir");
         codeGenerators.add(codeGeneratorArg);
-        final MavenProject mvnProject = Mockito.mock(MavenProject.class);
         final Build build = new Build();
-        Mockito.when(mvnProject.getBuild()).thenReturn(build);
+        build.setDirectory("testDir");
+        doReturn(build).when(project).getBuild();
         final boolean dependencies = true;
         this.proc = new YangToSourcesProcessor(file, ImmutableList.of(excludedYang), codeGenerators,
-                mvnProject, dependencies, YangProvider.getInstance());
+            project, dependencies, YangProvider.getInstance());
     }
 }

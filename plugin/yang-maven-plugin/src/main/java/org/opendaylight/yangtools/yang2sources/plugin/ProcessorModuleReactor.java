@@ -48,7 +48,7 @@ final class ProcessorModuleReactor {
     private YangParser parser;
 
     ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
-        final Collection<ScannedDependency> dependencies) {
+            final Collection<ScannedDependency> dependencies) {
         this.parser = requireNonNull(parser);
         this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
         this.dependencies = ImmutableList.copyOf(dependencies);
