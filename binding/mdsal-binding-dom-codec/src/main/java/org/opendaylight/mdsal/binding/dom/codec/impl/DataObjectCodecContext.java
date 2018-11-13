@@ -14,6 +14,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSortedMap;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.lang.invoke.MethodHandle;
@@ -83,6 +84,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     private final ConcurrentMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYangAugmented =
             new ConcurrentHashMap<>();
     private final ConcurrentMap<Class<?>, DataContainerCodecPrototype<?>> byStreamAugmented = new ConcurrentHashMap<>();
+
+    private volatile ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
     DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
         super(prototype);
@@ -352,23 +355,44 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         }
 
         /*
-         * It is potentially mismatched valid augmentation - we look up equivalent augmentation
-         * using reflection and walk all stream child and compare augmenations classes if they are
-         * equivalent.
-         *
-         * FIXME: Cache mapping of mismatched augmentation to real one, to speed up lookup.
+         * It is potentially mismatched valid augmentation - we look up equivalent augmentation using reflection
+         * and walk all stream child and compare augmentations classes if they are equivalent. When we find a match
+         * we'll cache it so we do not need to perform reflection operations again.
          */
+        final DataContainerCodecPrototype<?> mismatched = mismatchedAugmented.get(childClass);
+        if (mismatched != null) {
+            return mismatched;
+        }
+
         @SuppressWarnings("rawtypes")
         final Class<?> augTarget = BindingReflections.findAugmentationTarget((Class) childClass);
         if (getBindingClass().equals(augTarget)) {
             for (final DataContainerCodecPrototype<?> realChild : byStreamAugmented.values()) {
                 if (Augmentation.class.isAssignableFrom(realChild.getBindingClass())
                         && BindingReflections.isSubstitutionFor(childClass, realChild.getBindingClass())) {
-                    return realChild;
+                    return cacheMismatched(childClass, realChild);
                 }
             }
         }
         return null;
+    }
+
+    private synchronized DataContainerCodecPrototype<?> cacheMismatched(final Class<?> childClass,
+            final DataContainerCodecPrototype<?> prototype) {
+        // Original access was unsynchronized, we need to perform additional checking
+        final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> local = mismatchedAugmented;
+        final DataContainerCodecPrototype<?> existing = local.get(childClass);
+        if (existing != null) {
+            return existing;
+        }
+
+        final Builder<Class<?>, DataContainerCodecPrototype<?>> builder = ImmutableMap.builderWithExpectedSize(
+            local.size() + 1);
+        builder.putAll(local);
+        builder.put(childClass, prototype);
+
+        mismatchedAugmented = builder.build();
+        return prototype;
     }
 
     private DataContainerCodecPrototype<?> getAugmentationPrototype(final Type value) {
