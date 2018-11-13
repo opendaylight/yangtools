@@ -105,7 +105,8 @@ class YangToSourcesProcessor {
     YangToSourcesProcessor(final BuildContext buildContext, final File yangFilesRootDir,
                 final Collection<File> excludedFiles, final List<CodeGeneratorArg> codeGenerators,
                 final MavenProject project, final boolean inspectDependencies) {
-        this(yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies, YangProvider.getInstance());
+        this(buildContext, yangFilesRootDir, excludedFiles, codeGenerators, project, inspectDependencies,
+            YangProvider.getInstance());
     }
 
     public void execute() throws MojoExecutionException, MojoFailureException {

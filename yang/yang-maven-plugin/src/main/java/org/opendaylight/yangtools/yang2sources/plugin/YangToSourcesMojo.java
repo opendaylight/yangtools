@@ -77,7 +77,8 @@ public final class YangToSourcesMojo extends AbstractMojo {
     private boolean inspectDependencies;
 
     @Component
-    private BuildContext buildContext;
+    @VisibleForTesting
+    BuildContext buildContext;
 
     private YangToSourcesProcessor yangToSourcesProcessor;
 
