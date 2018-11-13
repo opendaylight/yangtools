@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang2sources.plugin.ConfigArg.CodeGeneratorArg;
 import org.opendaylight.yangtools.yang2sources.plugin.GenerateSourcesTest.GeneratorMock;
+import org.sonatype.plexus.build.incremental.DefaultBuildContext;
 
 @RunWith(MockitoJUnitRunner.class)
 public class YangToSourcesMojoTest {
@@ -42,6 +43,7 @@ public class YangToSourcesMojoTest {
 
         this.mojo = new YangToSourcesMojo();
         this.mojo.setProject(this.project);
+        this.mojo.buildContext = new DefaultBuildContext();
         this.mojo.execute();
         Assert.assertNotNull(this.mojo);
 
