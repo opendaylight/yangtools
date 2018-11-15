@@ -12,18 +12,19 @@ import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * General identifier interface. It is primarily a marker for all things that identify concepts -- such as names,
- * addresses, classes, etc. We do not require too much, just that the identifiers are serializable (and this
+ * addresses, classes, etc. We do not require too much, just that the identifiers are serializable (and thus
  * transferable).
  *
  * <p>Implementations are expected to implement {@link #hashCode()} and {@link #equals(Object)} methods in a way,
  * which ensures that objects before and after serialization are considered equal.
  *
  * <p>Implementations are advised to use the {@link java.io.Externalizable} Proxy pattern to allow future evolution
- * of their serialization format. For further efficiency, implementation should implement {@link WritableObject},
- * so they can be efficiently embedded in other {@link Serializable} objects.
+ * of their serialization format. For further efficiency, implementations should consider implementing
+ * {@link WritableObject}, so they can be efficiently embedded in other {@link Serializable} and {@code WritableObject}s
+ * objects.
  *
  * <p>Note that this class is annotated as {@link ThreadSafe}, hence all implementations are expected to be
- * thread-safe.
+ * thread-safe. This is an implication of {@link Immutable} interface contract.
  */
 @ThreadSafe
 public interface Identifier extends Serializable, Immutable {
