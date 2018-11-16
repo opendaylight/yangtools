@@ -14,6 +14,7 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CON
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -25,6 +26,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
@@ -43,8 +45,10 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     private static final String EQUALS = "equals";
     private static final String HASHCODE = "hashCode";
     private static final String AUGMENTATIONS = "augmentations";
-    private static final Object NULL_VALUE = new Object();
+    private static final @NonNull Object NULL_VALUE = new Object();
 
+    // Method.getName() is guaranteed to be interned and all getter methods have zero arguments, name is sufficient to
+    // identify the data, skipping Method.hashCode() computation.
     private final ConcurrentHashMap<String, Object> cachedData = new ConcurrentHashMap<>();
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data;
     private final DataObjectCodecContext<D,?> context;
@@ -65,7 +69,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     public Object invoke(final Object proxy, final Method method, final Object[] args) {
         switch (method.getParameterCount()) {
             case 0:
-                switch (method.getName()) {
+                final String methodName = method.getName();
+                switch (methodName) {
                     case DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME:
                         return context.getBindingClass();
                     case TO_STRING:
@@ -75,7 +80,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                     case AUGMENTATIONS:
                         return getAugmentationsImpl();
                     default:
-                        return getBindingData(method);
+                        return method.isDefault() ? nonnullBindingData(methodName) : getBindingData(methodName);
                 }
             case 1:
                 switch (method.getName()) {
@@ -103,13 +108,13 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
             return false;
         }
         try {
-            for (final Method m : context.getHashCodeAndEqualsMethods()) {
-                final Object thisValue = getBindingData(m);
+            for (final Method m : context.propertyMethods()) {
+                final Object thisValue = getBindingData(m.getName());
                 final Object otherValue = m.invoke(other);
                 /*
-                *   added for valid byte array comparison, when list key type is binary
-                *   deepEquals is not used since it does excessive amount of instanceof calls.
-                */
+                 *   added for valid byte array comparison, when list key type is binary
+                 *   deepEquals is not used since it does excessive amount of instanceof calls.
+                 */
                 if (thisValue instanceof byte[] && otherValue instanceof byte[]) {
                     if (!Arrays.equals((byte[]) thisValue, (byte[]) otherValue)) {
                         return false;
@@ -149,8 +154,8 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
 
         final int prime = 31;
         int result = 1;
-        for (final Method m : context.getHashCodeAndEqualsMethods()) {
-            final Object value = getBindingData(m);
+        for (final Method m : context.propertyMethods()) {
+            final Object value = getBindingData(m.getName());
             result = prime * result + Objects.hashCode(value);
         }
         if (Augmentable.class.isAssignableFrom(context.getBindingClass())) {
@@ -161,23 +166,26 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         return ret;
     }
 
-    private Object getBindingData(final Method method) {
-        // Guaranteed to be interned and since method has zero arguments, name is sufficient to identify the data,
-        // skipping Method.hashCode() computation.
-        final String methodName = method.getName();
-        Object cached = cachedData.get(methodName);
-        if (cached == null) {
-            final Object readedValue = context.getBindingChildValue(method, data);
-            cached = readedValue == null ? NULL_VALUE : readedValue;
+    private Object nonnullBindingData(final String methodName) {
+        final Object value = getBindingData(context.getterNameForNonnullName(methodName));
+        return value != null ? value : ImmutableList.of();
+    }
 
-            final Object raced = cachedData.putIfAbsent(methodName, cached);
-            if (raced != null) {
-                // Load/store raced, we should return the stored value
-                cached = raced;
-            }
+    // Internal invocation, can only target getFoo() methods
+    private Object getBindingData(final String methodName) {
+        final Object cached = cachedData.get(methodName);
+        if (cached != null) {
+            return unmaskNull(cached);
         }
 
-        return cached == NULL_VALUE ? null : cached;
+        final Object value = context.getBindingChildValue(methodName, data);
+        final Object raced = cachedData.putIfAbsent(methodName, value == null ? NULL_VALUE : value);
+        // If we raced we need to return previously-stored value
+        return raced != null ? unmaskNull(raced) : value;
+    }
+
+    private static Object unmaskNull(final @NonNull Object masked) {
+        return masked == NULL_VALUE ? null : masked;
     }
 
     private Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentationsImpl() {
@@ -229,8 +237,9 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
         final Class<D> bindingClass = context.getBindingClass();
         final ToStringHelper helper = MoreObjects.toStringHelper(bindingClass).omitNullValues();
 
-        for (final Method m : context.getHashCodeAndEqualsMethods()) {
-            helper.add(m.getName(), getBindingData(m));
+        for (final Method m : context.propertyMethods()) {
+            final String methodName = m.getName();
+            helper.add(methodName, getBindingData(methodName));
         }
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             helper.add("augmentations", getAugmentationsImpl());

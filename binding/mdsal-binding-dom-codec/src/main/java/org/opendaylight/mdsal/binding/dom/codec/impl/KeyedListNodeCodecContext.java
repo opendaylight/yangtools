@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import java.lang.reflect.Method;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME;
+
 import java.util.List;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> extends ListNodeCodecContext<D> {
     private final Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> codec;
-    private final Method keyGetter;
 
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
         super(prototype);
@@ -32,7 +31,8 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
         final Class<D> bindingClass = getBindingClass();
         this.codec = factory().getPathArgumentCodec(bindingClass, getSchema());
         try {
-            this.keyGetter = bindingClass.getMethod(BindingMapping.IDENTIFIABLE_KEY_NAME);
+            // This just verifies the method is present
+            bindingClass.getMethod(IDENTIFIABLE_KEY_NAME);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }
@@ -60,12 +60,12 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     @Override
     @SuppressWarnings("rawtypes")
-    Object getBindingChildValue(final Method method, final NormalizedNodeContainer dom) {
-        if (dom instanceof MapEntryNode && keyGetter.equals(method)) {
+    Object getBindingChildValue(final String methodName, final NormalizedNodeContainer dom) {
+        if (dom instanceof MapEntryNode && IDENTIFIABLE_KEY_NAME.equals(methodName)) {
             NodeIdentifierWithPredicates identifier = ((MapEntryNode) dom).getIdentifier();
             return codec.deserialize(identifier).getKey();
         }
-        return super.getBindingChildValue(method, dom);
+        return super.getBindingChildValue(methodName, dom);
     }
 
     @Override

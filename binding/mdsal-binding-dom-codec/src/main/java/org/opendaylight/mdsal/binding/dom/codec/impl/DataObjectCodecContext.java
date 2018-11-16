@@ -13,17 +13,15 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import com.google.common.collect.ImmutableSortedMap;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -31,15 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.SortedMap;
-import java.util.TreeMap;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
@@ -84,15 +80,17 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class, InvocationHandler.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
+    private static final Method[] EMPTY_METHODS = new Method[0];
 
     private final ImmutableMap<String, LeafNodeCodecContext<?>> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
-    private final ImmutableSortedMap<Method, NodeContextSupplier> byMethod;
-    private final ImmutableMap<Method, NodeContextSupplier> nonnullMethods;
+    private final ImmutableMap<String, NodeContextSupplier> byMethod;
+    private final ImmutableMap<String, String> nonnullToGetter;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
     private final MethodHandle proxyConstructor;
+    private final Method[] propertyMethods;
 
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<DataObjectCodecContext, Augmentations>
@@ -111,13 +109,13 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
-        final SortedMap<Method, NodeContextSupplier> byMethodBuilder = new TreeMap<>(METHOD_BY_ALPHABET);
+        final Map<Method, NodeContextSupplier> tmpMethodToSupplier = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
         // Adds leaves to mapping
         for (final LeafNodeCodecContext<?> leaf : leafChild.values()) {
-            byMethodBuilder.put(leaf.getGetter(), leaf);
+            tmpMethodToSupplier.put(leaf.getGetter(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
 
@@ -125,7 +123,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             final Method method = childDataObj.getValue();
             verify(!method.isDefault(), "Unexpected default method %s in %s", method, bindingClass);
             final DataContainerCodecPrototype<?> childProto = loadChildPrototype(childDataObj.getKey());
-            byMethodBuilder.put(method, childProto);
+            tmpMethodToSupplier.put(method, childProto);
             byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
             if (childProto.isChoice()) {
@@ -135,29 +133,44 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
                 }
             }
         }
-        this.byMethod = ImmutableSortedMap.copyOfSorted(byMethodBuilder);
+
+        final int methodCount = tmpMethodToSupplier.size();
+        final Builder<String, NodeContextSupplier> byMethodBuilder = ImmutableMap.builderWithExpectedSize(methodCount);
+        this.propertyMethods = methodCount == 0 ? EMPTY_METHODS : new Method[methodCount];
+
+        int offset = 0;
+        for (Entry<Method, NodeContextSupplier> entry : tmpMethodToSupplier.entrySet()) {
+            final Method method = entry.getKey();
+            propertyMethods[offset++] = method;
+            byMethodBuilder.put(method.getName(), entry.getValue());
+        }
+
+        // Make sure properties are alpha-sorted
+        Arrays.sort(propertyMethods, METHOD_BY_ALPHABET);
+
+        this.byMethod = byMethodBuilder.build();
         this.byYang = ImmutableMap.copyOf(byYangBuilder);
         this.byStreamClass = ImmutableMap.copyOf(byStreamClassBuilder);
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
         final Map<Class<?>, Method> clsToNonnull = BindingReflections.getChildrenClassToNonnullMethod(bindingClass);
-        final Map<Method, NodeContextSupplier> nonnullMethodsBuilder = new HashMap<>();
+        final Map<String, String> nonnullToGetterBuilder = new HashMap<>();
         for (final Entry<Class<?>, Method> entry : clsToNonnull.entrySet()) {
             final Method method = entry.getValue();
             if (!method.isDefault()) {
                 LOG.warn("Ignoring non-default method {} in {}", method, bindingClass);
                 continue;
             }
-            final DataContainerCodecPrototype<?> supplier = byStreamClass.get(entry.getKey());
-            if (supplier != null) {
-                nonnullMethodsBuilder.put(method, supplier);
-            } else {
-                LOG.warn("Failed to look up data handler for method {}", method);
-            }
-        }
 
-        nonnullMethods = ImmutableMap.copyOf(nonnullMethodsBuilder);
+            // Derive getter name from the nonnull method and verify we have the corresponding getter. Note that
+            // the intern() call is important, as it makes sure we use the same instance to bridge to byMethod map.
+            final String methodName = method.getName();
+            final String getterName = BindingMapping.getGetterMethodForNonnull(methodName).intern();
+            verify(byMethod.containsKey(getterName), "Cannot find getter %s for %s", getterName, methodName);
+            nonnullToGetterBuilder.put(methodName, getterName);
+        }
+        nonnullToGetter = ImmutableMap.copyOf(nonnullToGetterBuilder);
 
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
@@ -500,15 +513,15 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
 
-    Object getBindingChildValue(final Method method, final NormalizedNodeContainer<?, ?, ?> domData) {
-        return method.isDefault() ? getBindingChildValue(nonnullMethods, method, domData, dummy -> ImmutableList.of())
-                : getBindingChildValue(byMethod, method, domData, NodeCodecContext::defaultObject);
+    // Unlike BindingMapping.getGetterMethodForNonnull() this returns an interned String
+    @NonNull String getterNameForNonnullName(final String nonnullMethod) {
+        return verifyNotNull(nonnullToGetter.get(nonnullMethod), "Failed to look up getter method for %s",
+            nonnullMethod);
     }
 
     @SuppressWarnings("rawtypes")
-    private static Object getBindingChildValue(final ImmutableMap<Method, NodeContextSupplier> map, final Method method,
-            final NormalizedNodeContainer domData, final Function<NodeCodecContext<?>, Object> getDefaultObject) {
-        final NodeCodecContext<?> childContext = verifyNotNull(map.get(method),
+    @Nullable Object getBindingChildValue(final String method, final NormalizedNodeContainer domData) {
+        final NodeCodecContext<?> childContext = verifyNotNull(byMethod.get(method),
             "Cannot find data handler for method %s", method).get();
 
         @SuppressWarnings("unchecked")
@@ -516,8 +529,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.
-        return domChild.isPresent() ? childContext.deserializeObject(domChild.get())
-                : getDefaultObject.apply(childContext);
+        return domChild.isPresent() ? childContext.deserializeObject(domChild.get()) : childContext.defaultObject();
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -556,8 +568,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return map;
     }
 
-    Collection<Method> getHashCodeAndEqualsMethods() {
-        return byMethod.keySet();
+    final Method[] propertyMethods() {
+        return propertyMethods;
     }
 
     @Override
