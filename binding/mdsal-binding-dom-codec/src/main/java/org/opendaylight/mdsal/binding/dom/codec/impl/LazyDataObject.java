@@ -63,23 +63,30 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) {
-        if (method.getParameterCount() == 0) {
-            final String name = method.getName();
-            if (DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME.equals(name)) {
-                return context.getBindingClass();
-            } else if (TO_STRING.equals(name)) {
-                return bindingToString();
-            } else if (HASHCODE.equals(name)) {
-                return bindingHashCode();
-            } else if (AUGMENTATIONS.equals(name)) {
-                return getAugmentationsImpl();
-            }
-            return getBindingData(method);
-        } else if (AUGMENTABLE_AUGMENTATION_NAME.equals(method.getName())) {
-            return getAugmentationImpl((Class<?>) args[0]);
-        } else if (EQUALS.equals(method.getName())) {
-            return bindingEquals(args[0]);
+        switch (method.getParameterCount()) {
+            case 0:
+                final String name = method.getName();
+                if (DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME.equals(name)) {
+                    return context.getBindingClass();
+                } else if (TO_STRING.equals(name)) {
+                    return bindingToString();
+                } else if (HASHCODE.equals(name)) {
+                    return bindingHashCode();
+                } else if (AUGMENTATIONS.equals(name)) {
+                    return getAugmentationsImpl();
+                }
+                return getBindingData(method);
+            case 1:
+                if (AUGMENTABLE_AUGMENTATION_NAME.equals(method.getName())) {
+                    return getAugmentationImpl((Class<?>) args[0]);
+                } else if (EQUALS.equals(method.getName())) {
+                    return bindingEquals(args[0]);
+                }
+                break;
+            default:
+                break;
         }
+
         throw new UnsupportedOperationException("Unsupported method " + method);
     }
 
