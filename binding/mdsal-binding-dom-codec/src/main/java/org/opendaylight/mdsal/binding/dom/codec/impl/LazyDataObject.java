@@ -45,7 +45,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     private static final String AUGMENTATIONS = "augmentations";
     private static final Object NULL_VALUE = new Object();
 
-    private final ConcurrentHashMap<Method, Object> cachedData = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Object> cachedData = new ConcurrentHashMap<>();
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data;
     private final DataObjectCodecContext<D,?> context;
 
@@ -161,12 +161,15 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     }
 
     private Object getBindingData(final Method method) {
-        Object cached = cachedData.get(method);
+        // Guaranteed to be interned and since method has zero arguments, name is sufficient to identify the data,
+        // skipping Method.hashCode() computation.
+        final String methodName = method.getName();
+        Object cached = cachedData.get(methodName);
         if (cached == null) {
             final Object readedValue = context.getBindingChildValue(method, data);
             cached = readedValue == null ? NULL_VALUE : readedValue;
 
-            final Object raced = cachedData.putIfAbsent(method, cached);
+            final Object raced = cachedData.putIfAbsent(methodName, cached);
             if (raced != null) {
                 // Load/store raced, we should return the stored value
                 cached = raced;
