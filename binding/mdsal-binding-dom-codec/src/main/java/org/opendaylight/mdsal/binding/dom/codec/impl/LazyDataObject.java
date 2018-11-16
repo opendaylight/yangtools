@@ -65,22 +65,26 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
     public Object invoke(final Object proxy, final Method method, final Object[] args) {
         switch (method.getParameterCount()) {
             case 0:
-                final String name = method.getName();
-                if (DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME.equals(name)) {
-                    return context.getBindingClass();
-                } else if (TO_STRING.equals(name)) {
-                    return bindingToString();
-                } else if (HASHCODE.equals(name)) {
-                    return bindingHashCode();
-                } else if (AUGMENTATIONS.equals(name)) {
-                    return getAugmentationsImpl();
+                switch (method.getName()) {
+                    case DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME:
+                        return context.getBindingClass();
+                    case TO_STRING:
+                        return bindingToString();
+                    case HASHCODE:
+                        return bindingHashCode();
+                    case AUGMENTATIONS:
+                        return getAugmentationsImpl();
+                    default:
+                        return getBindingData(method);
                 }
-                return getBindingData(method);
             case 1:
-                if (AUGMENTABLE_AUGMENTATION_NAME.equals(method.getName())) {
-                    return getAugmentationImpl((Class<?>) args[0]);
-                } else if (EQUALS.equals(method.getName())) {
-                    return bindingEquals(args[0]);
+                switch (method.getName()) {
+                    case AUGMENTABLE_AUGMENTATION_NAME:
+                        return getAugmentationImpl((Class<?>) args[0]);
+                    case EQUALS:
+                        return bindingEquals(args[0]);
+                    default:
+                        break;
                 }
                 break;
             default:
