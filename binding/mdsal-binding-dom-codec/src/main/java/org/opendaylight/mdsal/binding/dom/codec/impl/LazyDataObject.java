@@ -63,7 +63,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
 
     @Override
     public Object invoke(final Object proxy, final Method method, final Object[] args) {
-        if (method.getParameterTypes().length == 0) {
+        if (method.getParameterCount() == 0) {
             final String name = method.getName();
             if (DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME.equals(name)) {
                 return context.getBindingClass();

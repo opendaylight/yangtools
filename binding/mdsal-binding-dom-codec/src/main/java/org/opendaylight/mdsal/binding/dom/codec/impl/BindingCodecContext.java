@@ -243,7 +243,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final Map<String, DataSchemaNode> getterToLeafSchema) {
         final Map<String, LeafNodeCodecContext<?>> leaves = new HashMap<>();
         for (final Method method : parentClass.getMethods()) {
-            if (method.getParameterTypes().length == 0) {
+            if (method.getParameterCount() == 0) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
                 final Class<?> valueType;
                 if (schema instanceof LeafSchemaNode) {

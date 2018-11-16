@@ -120,7 +120,7 @@ public class CascadeUsesCompilationTest extends BaseCompilationTest {
             }
         }
         assertNotNull(fieldsFromMethod);
-        assertEquals(1, fieldsFromMethod.getParameterTypes().length);
+        assertEquals(1, fieldsFromMethod.getParameterCount());
 
         cleanUp(sourcesOutputDir, compiledOutputDir);
     }
