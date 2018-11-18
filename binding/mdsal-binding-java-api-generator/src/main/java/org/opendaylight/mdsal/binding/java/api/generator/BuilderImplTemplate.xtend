@@ -11,7 +11,6 @@ import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTA
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 
 import com.google.common.collect.ImmutableMap
-import java.util.Arrays
 import java.util.List
 import java.util.Map
 import java.util.Objects
@@ -72,15 +71,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                     return hash;
                 }
 
-                final int prime = 31;
-                int result = 1;
-                «FOR property : properties»
-                    «IF property.returnType.name.contains("[")»
-                    result = prime * result + «Arrays.importedName».hashCode(«property.fieldName»);
-                    «ELSE»
-                    result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
-                    «ENDIF»
-                «ENDFOR»
+                «hashCodeResult(properties)»
                 «IF augmentType !== null»
                     result = prime * result + «Objects.importedName».hashCode(«AUGMENTATION_FIELD»);
                 «ENDIF»
@@ -113,11 +104,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                 «targetType.importedName» other = («targetType.importedName»)obj;
                 «FOR property : properties»
                     «val fieldName = property.fieldName»
-                    «IF property.returnType.name.contains("[")»
-                    if (!«Arrays.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
-                    «ELSE»
-                    if (!«Objects.importedName».equals(«fieldName», other.«property.getterMethodName»())) {
-                    «ENDIF»
+                    if (!«property.importedUtilClass».equals(«fieldName», other.«property.getterMethodName»())) {
                         return false;
                     }
                 «ENDFOR»

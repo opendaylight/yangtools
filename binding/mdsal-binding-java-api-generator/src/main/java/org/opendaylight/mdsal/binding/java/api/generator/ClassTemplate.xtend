@@ -15,7 +15,6 @@ import com.google.common.collect.Lists
 import com.google.common.io.BaseEncoding
 import java.beans.ConstructorProperties
 import java.util.ArrayList
-import java.util.Arrays
 import java.util.Collections
 import java.util.List
 import java.util.Map
@@ -476,23 +475,23 @@ class ClassTemplate extends BaseTemplate {
      *
      * @return string with the <code>hashCode()</code> method definition in JAVA format
      */
-    def protected generateHashCode() '''
-        «IF !genTO.hashCodeIdentifiers.empty»
+    def protected generateHashCode() {
+        val size = genTO.hashCodeIdentifiers.size
+        if (size == 0) {
+            return ""
+        }
+        return '''
             @«Override.importedName»
             public int hashCode() {
-                final int prime = 31;
-                int result = 1;
-                «FOR property : genTO.hashCodeIdentifiers»
-                    «IF property.returnType.name.contains("[")»
-                    result = prime * result + «Arrays.importedName».hashCode(«property.fieldName»);
-                    «ELSE»
-                    result = prime * result + «Objects.importedName».hashCode(«property.fieldName»);
-                    «ENDIF»
-                «ENDFOR»
+            «IF size != 1»
+                «hashCodeResult(genTO.hashCodeIdentifiers)»
                 return result;
+            «ELSE»
+                return «CodeHelpers.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
+            «ENDIF»
             }
-        «ENDIF»
-    '''
+        '''
+    }
 
     /**
      * Template method which generates the method <code>equals()</code>.
@@ -515,11 +514,7 @@ class ClassTemplate extends BaseTemplate {
                 «type.name» other = («type.name») obj;
                 «FOR property : genTO.equalsIdentifiers»
                     «val fieldName = property.fieldName»
-                    «IF property.returnType.name.contains("[")»
-                    if (!«Arrays.importedName».equals(«fieldName», other.«fieldName»)) {
-                    «ELSE»
-                    if (!«Objects.importedName».equals(«fieldName», other.«fieldName»)) {
-                    «ENDIF»
+                    if (!«property.importedUtilClass».equals(«fieldName», other.«fieldName»)) {
                         return false;
                     }
                 «ENDFOR»

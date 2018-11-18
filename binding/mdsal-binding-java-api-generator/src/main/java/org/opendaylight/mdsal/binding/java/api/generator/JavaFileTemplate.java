@@ -10,6 +10,8 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
@@ -93,6 +95,17 @@ class JavaFileTemplate {
         final NestedJavaGeneratedType innerJavaType = javaType.getEnclosedType(innerClass.getIdentifier());
         return gto.isUnionType() ? new UnionTemplate(innerJavaType, gto).generateAsInnerClass()
                 : new ClassTemplate(innerJavaType, gto).generateAsInnerClass();
+    }
+
+    /**
+     * Return imported name of java.util class, whose hashCode/equals methods we want to invoke on the property. Returns
+     * {@link Arrays} if the property is an array, {@link Objects} otherwise.
+     *
+     * @param property Generated property
+     * @return Imported class name
+     */
+    final String importedUtilClass(final GeneratedProperty property) {
+        return importedName(property.getReturnType().getName().indexOf('[') != -1 ? Arrays.class : Objects.class);
     }
 
     static final Restrictions restrictionsForSetter(final Type actualType) {

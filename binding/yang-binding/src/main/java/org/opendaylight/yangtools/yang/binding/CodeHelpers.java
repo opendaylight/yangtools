@@ -16,6 +16,7 @@ import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Pattern;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -204,5 +205,46 @@ public final class CodeHelpers {
      */
     public static <T> List<T> nonnull(final @Nullable List<T> input) {
         return input != null ? input : ImmutableList.of();
+    }
+
+    /**
+     * Return hash code of a single-property wrapper class. Since the wrapper is not null, we really want to discern
+     * this object being present, hence {@link Objects#hashCode()} is not really useful we would end up with {@code 0}
+     * for both non-present and present-with-null objects.
+     *
+     * @param obj Internal object to hash
+     * @return Wrapper object hash code
+     */
+    public static int wrapperHashCode(final @Nullable Object obj) {
+        return wrapHashCode(Objects.hashCode(obj));
+    }
+
+    /**
+     * Return hash code of a single-property wrapper class. Since the wrapper is not null, we really want to discern
+     * this object being present, hence {@link Arrays#hashCode()} is not really useful we would end up with {@code 0}
+     * for both non-present and present-with-null objects.
+     *
+     * @param obj Internal object to hash
+     * @return Wrapper object hash code
+     */
+    public static int wrapperHashCode(final byte @Nullable[] obj) {
+        return wrapHashCode(Arrays.hashCode(obj));
+    }
+
+    /**
+     * The constant '31' is the result of folding this code:
+     * <pre>
+     *     final int prime = 31;
+     *     int result = 1;
+     *     result = result * prime + Objects.hashCode(obj);
+     *     return result;
+     * </pre>
+     * when hashCode is returned as 0, such as due to obj being null or its hashCode being 0.
+     *
+     * @param hash Wrapped object hash
+     * @return Wrapper object hash
+     */
+    private static int wrapHashCode(int hash) {
+        return hash == 0 ? 31 : hash;
     }
 }
