@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 /**
@@ -43,7 +44,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Ordered(final Map<K, Integer> offsets, final V[] objects) {
+        Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -63,7 +64,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Unordered(final Map<K, Integer> offsets, final V[] objects) {
+        Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -84,8 +85,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
     private static final long serialVersionUID = 1L;
 
-    private final transient Map<K, Integer> offsets;
-    private final transient V[] objects;
+    private final transient @NonNull ImmutableMap<K, Integer> offsets;
+    private final transient @NonNull V[] objects;
     private transient int hashCode;
 
     /**
@@ -95,7 +96,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(@Nonnull final Map<K, Integer> offsets, @Nonnull final V[] objects) {
+    ImmutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);
@@ -108,19 +109,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     abstract void setFields(List<K> keys, V[] values) throws IOException;
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
-     * is actually not completely true, as this method returns an
-     * {@link ImmutableMap} for empty and singleton inputs, as those are more
-     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
-     * on input, and returns it back without doing anything else. It also
-     * recognizes {@link MutableOffsetMap} (as returned by
-     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
-     * All other maps are converted to an {@link ImmutableOffsetMap} with the
-     * same iteration order as input.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true, as this
+     * method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient. This
+     * method also recognizes {@link ImmutableOffsetMap} and {@link SharedSingletonMap} on input, and returns it back
+     * without doing anything else. It also recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
+     * {@link ImmutableOffsetMap} with the same iteration order as input.
      *
-     * @param map
-     *            Input map, may not be null.
+     * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
+     * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     @Nonnull public static <K, V> Map<K, V> orderedCopyOf(@Nonnull final Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
@@ -135,7 +133,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return SharedSingletonMap.orderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
+        final ImmutableMap<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
@@ -146,19 +144,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
-     * is actually not completely true, as this method returns an
-     * {@link ImmutableMap} for empty and singleton inputs, as those are more
-     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
-     * on input, and returns it back without doing anything else. It also
-     * recognizes {@link MutableOffsetMap} (as returned by
-     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
-     * All other maps are converted to an {@link ImmutableOffsetMap}. Iterator
-     * order is not guaranteed to be retained.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true, as this
+     * method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient. This
+     * method also recognizes {@link ImmutableOffsetMap} and {@link SharedSingletonMap} on input, and returns it back
+     * without doing anything else. It also recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
+     * {@link ImmutableOffsetMap}. Iterator order is not guaranteed to be retained.
      *
-     * @param map
-     *            Input map, may not be null.
+     * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
+     * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     @Nonnull public static <K, V> Map<K, V> unorderedCopyOf(@Nonnull final Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
@@ -173,7 +168,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
+        final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
@@ -347,7 +342,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return sb.append('}').toString();
     }
 
-    final Map<K, Integer> offsets() {
+    final @NonNull ImmutableMap<K, Integer> offsets() {
         return offsets;
     }
 

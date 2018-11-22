@@ -16,8 +16,9 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.Serializable;
 import java.util.AbstractMap.SimpleImmutableEntry;
+import java.util.Iterator;
 import java.util.Map;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Implementation of the {@link Map} interface which stores a single mapping. The key set is shared among all instances
@@ -28,28 +29,34 @@ import javax.annotation.Nonnull;
  */
 @Beta
 public abstract class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
-    private static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
+    static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         Ordered(final K key, final V value) {
             super(key, value);
         }
 
-        @Nonnull
+        Ordered(final SingletonSet<K> keySet, final V value) {
+            super(keySet, value);
+        }
+
         @Override
         public ModifiableMapPhase<K, V> toModifiableMap() {
             return MutableOffsetMap.orderedCopyOf(this);
         }
     }
 
-    private static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
+    static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         Unordered(final K key, final V value) {
             super(key, value);
         }
 
-        @Nonnull
+        Unordered(final SingletonSet<K> keySet, final V value) {
+            super(keySet, value);
+        }
+
         @Override
         public ModifiableMapPhase<K, V> toModifiableMap() {
             return MutableOffsetMap.unorderedCopyOf(this);
@@ -60,55 +67,88 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     private static final LoadingCache<Object, SingletonSet<Object>> CACHE = CacheBuilder.newBuilder().weakValues()
             .build(new CacheLoader<Object, SingletonSet<Object>>() {
                 @Override
-                public SingletonSet<Object> load(@Nonnull final Object key) {
+                public SingletonSet<Object> load(final Object key) {
                     return SingletonSet.of(key);
                 }
             });
-    private final SingletonSet<K> keySet;
-    private final V value;
+
+    private final @NonNull SingletonSet<K> keySet;
+    private final @NonNull V value;
     private int hashCode;
 
-    @SuppressWarnings("unchecked")
-    SharedSingletonMap(final K key, final V value) {
-        this.keySet = (SingletonSet<K>) CACHE.getUnchecked(key);
+    SharedSingletonMap(final SingletonSet<K> keySet, final V value) {
+        this.keySet = requireNonNull(keySet);
         this.value = requireNonNull(value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
+    SharedSingletonMap(final K key, final V value) {
+        this(cachedSet(key), value);
+    }
+
+    /**
+     * Create a {@link SharedSingletonMap} of specified {@code key} and {@code value}, which retains insertion order
+     * when transformed via {@link #toModifiableMap()}.
+     *
+     * @param key key
+     * @param value value
+     * @return A SharedSingletonMap
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static <K, V> @NonNull SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
         return new Ordered<>(key, value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
+    /**
+     * Create a {@link SharedSingletonMap} of specified {@code key} and {@code value}, which does not retain insertion
+     * order when transformed via {@link #toModifiableMap()}.
+     *
+     * @param key key
+     * @param value value
+     * @return A SharedSingletonMap
+     * @throws NullPointerException if any of the arguments is null
+     */
+    public static <K, V> @NonNull SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
         return new Unordered<>(key, value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
-        checkArgument(map.size() == 1);
-
-        final Entry<K, V> e = map.entrySet().iterator().next();
+    /**
+     * Create a {@link SharedSingletonMap} of specified {@code key} and {@code value}, which retains insertion order
+     * when transformed via {@link #toModifiableMap()}.
+     *
+     * @param map input map
+     * @return A SharedSingletonMap
+     * @throws NullPointerException if {@code map} is null
+     * @throws IllegalArgumentException if {@code map} does not have exactly one entry
+     */
+    public static <K, V> @NonNull SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
+        final Entry<K, V> e = singleEntry(map);
         return new Ordered<>(e.getKey(), e.getValue());
     }
 
-    public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
-        checkArgument(map.size() == 1);
-
-        final Entry<K, V> e = map.entrySet().iterator().next();
+    /**
+     * Create a {@link SharedSingletonMap} from specified single-element map, which does not retain insertion order when
+     * transformed via {@link #toModifiableMap()}.
+     *
+     * @param map input map
+     * @return A SharedSingletonMap
+     * @throws NullPointerException if {@code map} is null
+     * @throws IllegalArgumentException if {@code map} does not have exactly one entry
+     */
+    public static <K, V> @NonNull SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+        final Entry<K, V> e = singleEntry(map);
         return new Unordered<>(e.getKey(), e.getValue());
     }
 
-    @Nonnull
     @Override
     public final SingletonSet<Entry<K, V>> entrySet() {
         return SingletonSet.of(new SimpleImmutableEntry<>(keySet.getElement(), value));
     }
 
-    @Nonnull
     @Override
     public final SingletonSet<K> keySet() {
         return keySet;
     }
 
-    @Nonnull
     @Override
     public final SingletonSet<V> values() {
         return SingletonSet.of(value);
@@ -153,7 +193,7 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final void putAll(@Nonnull final Map<? extends K, ? extends V> m) {
+    public final void putAll(final Map<? extends K, ? extends V> m) {
         throw new UnsupportedOperationException();
     }
 
@@ -186,5 +226,18 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     @Override
     public final String toString() {
         return "{" + keySet.getElement() + '=' + value + '}';
+    }
+
+    @SuppressWarnings("unchecked")
+    static <K> @NonNull SingletonSet<K> cachedSet(final K key) {
+        return (SingletonSet<K>) CACHE.getUnchecked(key);
+    }
+
+    private static <K, V> Entry<K, V> singleEntry(final Map<K, V> map) {
+        final Iterator<Entry<K, V>> it = map.entrySet().iterator();
+        checkArgument(it.hasNext(), "Input map is empty");
+        final Entry<K, V> ret = it.next();
+        checkArgument(!it.hasNext(), "Input map has more than one entry");
+        return ret;
     }
 }
