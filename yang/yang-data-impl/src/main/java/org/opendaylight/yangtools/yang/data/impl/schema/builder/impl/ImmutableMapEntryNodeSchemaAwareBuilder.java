@@ -8,16 +8,20 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException.IllegalListKeyException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapEntryNodeBuilder {
@@ -52,21 +56,35 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
      * Build map entry node identifier from schema and provided children.
      */
     private NodeIdentifierWithPredicates constructNodeIdentifier() {
-        Collection<QName> keys = schema.getKeyDefinition();
-
-        if (keys.isEmpty()) {
-            keys = childrenQNamesToPaths.keySet();
+        final Map<QName, Object> predicates;
+        final Collection<QName> keys = schema.getKeyDefinition();
+        if (!keys.isEmpty()) {
+            predicates = constructPredicates(keys);
+        } else if (!childrenQNamesToPaths.isEmpty()) {
+            predicates = constructPredicates(childrenQNamesToPaths);
+        } else {
+            predicates = ImmutableMap.of();
         }
 
-        final Map<QName, Object> keysToValues = new LinkedHashMap<>();
+        return new NodeIdentifierWithPredicates(schema.getQName(), predicates);
+    }
+
+    private Map<QName, Object> constructPredicates(final Map<QName, PathArgument> children) {
+        return Maps.transformValues(children, this::getChild);
+    }
+
+    private Map<QName, Object> constructPredicates(final Collection<QName> keys) {
+        final Map<QName, Object> predicates = new LinkedHashMap<>();
         for (QName key : keys) {
-            final DataContainerChild<?, ?> valueForKey = getChild(childrenQNamesToPaths.get(key));
-            DataValidationException.checkListKey(valueForKey, key, new NodeIdentifierWithPredicates(
-                schema.getQName(), keysToValues));
-            keysToValues.put(key, valueForKey.getValue());
+            final DataContainerChild<?, ?> child = getChild(childrenQNamesToPaths.get(key));
+            if (child == null) {
+                throw new IllegalListKeyException(key, new NodeIdentifierWithPredicates(
+                    schema.getQName(), predicates));
+            }
+            predicates.put(key, child.getValue());
         }
 
-        return new NodeIdentifierWithPredicates(schema.getQName(), keysToValues);
+        return predicates;
     }
 
     public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
