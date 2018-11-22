@@ -151,7 +151,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this.needClone = false;
     }
 
-    public static <K, V> MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
+    /**
+     * Create a {@link MutableOffsetMap} of the specified map, retaining its iteration order.
+     *
+     * @param map input map
+     * @return MutableOffsetMap with the same iteration order
+     * @throws NullPointerException if {@code map} is null
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
         if (map instanceof Ordered) {
             return ((Ordered<K, V>) map).clone();
         }
@@ -163,7 +170,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Ordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+    /**
+     * Create a {@link MutableOffsetMap} of the specified map, potentially with a different iteration order.
+     *
+     * @param map input map
+     * @return MutableOffsetMap with undefined iteration order
+     * @throws NullPointerException if {@code map} is null
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
         if (map instanceof Unordered) {
             return ((Unordered<K, V>) map).clone();
         }
@@ -175,11 +189,21 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Unordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> ordered() {
+    /**
+     * Create an empty {@link MutableOffsetMap} which has an iteration order matching the insertion order.
+     *
+     * @return MutableOffsetMap which preserves insertion order
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> ordered() {
         return new MutableOffsetMap.Ordered<>();
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unordered() {
+    /**
+     * Create an empty {@link MutableOffsetMap} which has unspecified iteration order.
+     *
+     * @return An MutableOffsetMap
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unordered() {
         return new MutableOffsetMap.Unordered<>();
     }
 
