@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
+import com.google.common.annotations.Beta;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -98,10 +99,11 @@ public class DataValidationException extends RuntimeException {
         }
     }
 
-    private static final class IllegalListKeyException extends DataValidationException {
+    @Beta
+    public static final class IllegalListKeyException extends DataValidationException {
         private static final long serialVersionUID = 1L;
 
-        IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
+        public  IllegalListKeyException(final QName keyQName, final NodeIdentifierWithPredicates id) {
             super(String.format("Key value not present for key: %s, in: %s", keyQName, id));
         }
 
