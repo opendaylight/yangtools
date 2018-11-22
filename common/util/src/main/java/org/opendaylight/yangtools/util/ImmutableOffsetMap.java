@@ -43,7 +43,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Ordered(final @NonNull Map<K, Integer> offsets, final @NonNull V[] objects) {
+        Ordered(final Map<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -93,7 +93,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(final @NonNull Map<K, Integer> offsets, final @NonNull V[] objects) {
+    ImmutableOffsetMap(final Map<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);
