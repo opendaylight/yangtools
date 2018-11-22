@@ -21,8 +21,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.CursorAwareDataTreeS
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshotCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
-final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot {
+final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot,
+        SchemaContextProvider {
     private final @NonNull RootModificationApplyOperation applyOper;
     private final @NonNull SchemaContext schemaContext;
     private final @NonNull TreeNode rootNode;
