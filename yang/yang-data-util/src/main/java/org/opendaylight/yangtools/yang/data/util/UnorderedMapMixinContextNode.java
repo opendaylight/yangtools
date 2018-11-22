@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableMap;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -19,8 +19,8 @@ class UnorderedMapMixinContextNode extends AbstractMixinContextNode<NodeIdentifi
 
     UnorderedMapMixinContextNode(final ListSchemaNode list) {
         super(NodeIdentifier.create(list.getQName()), list);
-        this.innerNode = new ListItemContextNode(new NodeIdentifierWithPredicates(list.getQName(),
-                Collections.emptyMap()), list);
+        this.innerNode = new ListItemContextNode(new NodeIdentifierWithPredicates(list.getQName(), ImmutableMap.of()),
+            list);
     }
 
     @Override
