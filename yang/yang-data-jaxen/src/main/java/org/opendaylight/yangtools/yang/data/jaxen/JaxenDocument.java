@@ -15,9 +15,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 @NonNullByDefault
-final class JaxenDocument implements XPathDocument {
+final class JaxenDocument implements XPathDocument, SchemaContextProvider {
     private final DataSchemaContextNode<?> schema;
     private final NormalizedNode<?, ?> root;
     private final SchemaContext context;
@@ -34,7 +35,8 @@ final class JaxenDocument implements XPathDocument {
         return root;
     }
 
-    SchemaContext getSchemaContext() {
+    @Override
+    public SchemaContext getSchemaContext() {
         return context;
     }
 

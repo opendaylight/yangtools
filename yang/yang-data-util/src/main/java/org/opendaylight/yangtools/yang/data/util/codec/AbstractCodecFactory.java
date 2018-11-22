@@ -13,8 +13,10 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.concurrent.ThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -50,23 +52,24 @@ import org.slf4j.LoggerFactory;
  * @param <T> Codec type
  */
 @ThreadSafe
-public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
+public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> implements SchemaContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 
-    private final CodecCache<T> cache;
+    private final @NonNull CodecCache<T> cache;
 
-    private final SchemaContext schemaContext;
+    private final @NonNull SchemaContext schemaContext;
 
     protected AbstractCodecFactory(final SchemaContext schemaContext, final CodecCache<T> cache) {
         this.schemaContext = requireNonNull(schemaContext);
         this.cache = requireNonNull(cache);
     }
 
+    @Override
     public final SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
-    public final T codecFor(final TypedDataSchemaNode schema) {
+    public final @NonNull T codecFor(final TypedDataSchemaNode schema) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -77,7 +80,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> {
          * - null codec, which does not depend on anything
          * - instance identifier codec, which is based on namespace mapping
          *
-         * We assume prevalence is in above order and that caching is effective. We therefore
+         * We assume prevalence is in above order and that caching is effective.
          */
         final TypeDefinition<?> type = schema.getType();
         T ret = cache.lookupSimple(type);
