@@ -13,8 +13,8 @@ import static com.google.common.base.Verify.verify;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
@@ -32,35 +32,46 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  */
 public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
 
-    private final Map<QName, SimpleNodeDataWithSchema> qnameToKeys = new HashMap<>();
+    // This template results in Maps in schema definition order
+    private final ImmutableMapTemplate<QName, Object> predicateTemplate;
+    private final Map<QName, SimpleNodeDataWithSchema> keyValues;
 
+    // FIXME: 3.0.0: require ListSchemaNode
+    // FIXME: 3.0.0: hide this constructor and provide specialized keyed/unkeyed classes
     public ListEntryNodeDataWithSchema(final DataSchemaNode schema) {
         super(schema);
+
+        final Collection<QName> keyDef = ((ListSchemaNode) getSchema()).getKeyDefinition();
+        if (keyDef.isEmpty()) {
+            predicateTemplate = null;
+            keyValues = null;
+        } else {
+            predicateTemplate = ImmutableMapTemplate.ordered(keyDef);
+            keyValues = new HashMap<>();
+        }
     }
 
     @Override
     public void addChild(final AbstractNodeDataWithSchema newChild) {
-        final DataSchemaNode childSchema = newChild.getSchema();
-        if (childSchema instanceof LeafSchemaNode && isPartOfKey((LeafSchemaNode) childSchema)) {
-            verify(newChild instanceof SimpleNodeDataWithSchema);
-            qnameToKeys.put(childSchema.getQName(), (SimpleNodeDataWithSchema)newChild);
+        if (predicateTemplate != null) {
+            final DataSchemaNode childSchema = newChild.getSchema();
+            if (childSchema instanceof LeafSchemaNode) {
+                populateKeyValue(childSchema.getQName(), newChild);
+            }
         }
         super.addChild(newChild);
     }
 
-    private boolean isPartOfKey(final LeafSchemaNode potentialKey) {
-        for (QName qname : ((ListSchemaNode) getSchema()).getKeyDefinition()) {
-            if (qname.equals(potentialKey.getQName())) {
-                return true;
-            }
+    private void populateKeyValue(final QName childName, final AbstractNodeDataWithSchema child) {
+        if (predicateTemplate.keySet().contains(childName)) {
+            verify(child instanceof SimpleNodeDataWithSchema);
+            keyValues.put(childName, (SimpleNodeDataWithSchema)child);
         }
-        return false;
     }
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        final Collection<QName> keyDef = ((ListSchemaNode) getSchema()).getKeyDefinition();
-        if (keyDef.isEmpty()) {
+        if (predicateTemplate == null) {
             writer.nextDataSchemaNode(getSchema());
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
             super.write(writer);
@@ -68,14 +79,14 @@ public class ListEntryNodeDataWithSchema extends CompositeNodeDataWithSchema {
             return;
         }
 
-        checkState(keyDef.size() == qnameToKeys.size(),
-                "Map entry corresponding to %s is missing some of required keys %s", getSchema().getQName(), keyDef);
+        // FIXME: 3.0.0: remove this check? predicateTemplate will throw an IllegalArgumentException if anything
+        //               goes wrong -- which is a change of behavior, as now we're throwing an ISE. Do we want that?
+        final Collection<QName> keySet = predicateTemplate.keySet();
+        checkState(keySet.size() == keyValues.size(),
+                "Map entry corresponding to %s is missing some of required keys %s", getSchema().getQName(), keySet);
 
-        // Need to restore schema order...
-        final Map<QName, Object> predicates = new LinkedHashMap<>();
-        for (QName qname : keyDef) {
-            predicates.put(qname, qnameToKeys.get(qname).getValue());
-        }
+        final Map<QName, Object> predicates = predicateTemplate.instantiateTransformed(keyValues,
+            SimpleNodeDataWithSchema::getValue);
 
         writer.nextDataSchemaNode(getSchema());
 
