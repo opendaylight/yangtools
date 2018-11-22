@@ -12,10 +12,11 @@ import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 // FIXME: 3.0.0 hide this class
-public final class LeafRefContext {
+public final class LeafRefContext implements SchemaContextProvider {
 
     private final QName currentNodeQName;
     private final SchemaPath currentNodePath;
@@ -113,7 +114,8 @@ public final class LeafRefContext {
         return currentNodeQName;
     }
 
-    SchemaContext getSchemaContext() {
+    @Override
+    public SchemaContext getSchemaContext() {
         return schemaContext;
     }
 
