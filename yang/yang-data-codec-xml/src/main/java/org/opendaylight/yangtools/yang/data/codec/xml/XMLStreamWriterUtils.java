@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -35,11 +34,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract class XMLStreamWriterUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamWriterUtils.class);
-
-    static XMLStreamWriterUtils create(final SchemaContext schemaContext) {
-        return schemaContext == null ? SchemalessXMLStreamWriterUtils.INSTANCE
-                : new SchemaAwareXMLStreamWriterUtils(schemaContext);
-    }
 
     @VisibleForTesting
     static void writeAttribute(final XMLStreamWriter writer, final Entry<QName, String> attribute,

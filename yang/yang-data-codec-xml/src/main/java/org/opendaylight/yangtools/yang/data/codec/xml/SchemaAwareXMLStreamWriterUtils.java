@@ -16,12 +16,13 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
-final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
+final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements SchemaContextProvider {
     private final SchemaContext schemaContext;
 
     SchemaAwareXMLStreamWriterUtils(final SchemaContext schemaContext) {
@@ -46,5 +47,10 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils {
         }
 
         writer.writeCharacters(serializedValue);
+    }
+
+    @Override
+    public SchemaContext getSchemaContext() {
+        return schemaContext;
     }
 }
