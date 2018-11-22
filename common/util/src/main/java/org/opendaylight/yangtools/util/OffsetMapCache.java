@@ -29,10 +29,10 @@ final class OffsetMapCache {
      * Cache for offsets where order matters. The key is a List, which defines the iteration order. Since we want
      * to retain this order, it is okay to use a simple LoadingCache.
      */
-    private static final LoadingCache<List<?>, Map<?, Integer>> ORDERED_CACHE =
-            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<List<?>, Map<?, Integer>>() {
+    private static final LoadingCache<List<?>, ImmutableMap<?, Integer>> ORDERED_CACHE =
+            CacheBuilder.newBuilder().weakValues().build(new CacheLoader<List<?>, ImmutableMap<?, Integer>>() {
                 @Override
-                public Map<?, Integer> load(final List<?> key) {
+                public ImmutableMap<?, Integer> load(final List<?> key) {
                     return createMap(key);
                 }
             });
@@ -47,7 +47,7 @@ final class OffsetMapCache {
      * we construct the map and put it conditionally with Map.keySet() as the key. This will detect concurrent loading
      * and also lead to the cache and the map sharing the same Set.
      */
-    private static final Cache<Set<?>, Map<?, Integer>> UNORDERED_CACHE =
+    private static final Cache<Set<?>, ImmutableMap<?, Integer>> UNORDERED_CACHE =
             CacheBuilder.newBuilder().weakValues().build();
 
     private OffsetMapCache() {
@@ -61,28 +61,28 @@ final class OffsetMapCache {
     }
 
     @SuppressWarnings("unchecked")
-    static <T> Map<T, Integer> orderedOffsets(final Collection<T> args) {
+    static <T> ImmutableMap<T, Integer> orderedOffsets(final Collection<T> args) {
         if (args.size() == 1) {
             return unorderedOffsets(args);
         }
 
-        return (Map<T, Integer>) ORDERED_CACHE.getUnchecked(ImmutableList.copyOf(args));
+        return (ImmutableMap<T, Integer>) ORDERED_CACHE.getUnchecked(ImmutableList.copyOf(args));
     }
 
-    static <T> Map<T, Integer> unorderedOffsets(final Collection<T> args) {
+    static <T> ImmutableMap<T, Integer> unorderedOffsets(final Collection<T> args) {
         return unorderedOffsets(args instanceof Set ? (Set<T>)args : ImmutableSet.copyOf(args));
     }
 
     @SuppressWarnings("unchecked")
-    private static <T> Map<T, Integer> unorderedOffsets(final Set<T> args) {
-        final Map<T, Integer> existing = (Map<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
+    private static <T> ImmutableMap<T, Integer> unorderedOffsets(final Set<T> args) {
+        final ImmutableMap<T, Integer> existing = (ImmutableMap<T, Integer>) UNORDERED_CACHE.getIfPresent(args);
         if (existing != null) {
             return existing;
         }
 
-        final Map<T, Integer> newMap = createMap(args);
-        final Map<?, Integer> raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
-        return raced == null ? newMap : (Map<T, Integer>)raced;
+        final ImmutableMap<T, Integer> newMap = createMap(args);
+        final ImmutableMap<?, Integer> raced = UNORDERED_CACHE.asMap().putIfAbsent(newMap.keySet(), newMap);
+        return raced == null ? newMap : (ImmutableMap<T, Integer>)raced;
     }
 
     static <K, V> V[] adjustedArray(final Map<K, Integer> offsets, final List<K> keys, final V[] array) {
@@ -103,7 +103,7 @@ final class OffsetMapCache {
         return array;
     }
 
-    private static <T> Map<T, Integer> createMap(final Collection<T> keys) {
+    private static <T> ImmutableMap<T, Integer> createMap(final Collection<T> keys) {
         final Builder<T, Integer> b = ImmutableMap.builder();
         int counter = 0;
 

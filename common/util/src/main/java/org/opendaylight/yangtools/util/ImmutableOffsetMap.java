@@ -43,7 +43,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Ordered(final Map<K, Integer> offsets, final V[] objects) {
+        Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -62,7 +62,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Unordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Unordered(final Map<K, Integer> offsets, final V[] objects) {
+        Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -82,7 +82,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
     private static final long serialVersionUID = 1L;
 
-    private final transient @NonNull Map<K, Integer> offsets;
+    private final transient @NonNull ImmutableMap<K, Integer> offsets;
     private final transient @NonNull V[] objects;
     private transient int hashCode;
 
@@ -93,7 +93,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(final Map<K, Integer> offsets, final V[] objects) {
+    ImmutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);
@@ -129,7 +129,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return SharedSingletonMap.orderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
+        final ImmutableMap<K, Integer> offsets = OffsetMapCache.orderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
@@ -164,7 +164,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
         }
 
-        final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
+        final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(map.keySet());
         @SuppressWarnings("unchecked")
         final V[] array = (V[]) new Object[offsets.size()];
         for (Entry<K, V> e : map.entrySet()) {
@@ -336,7 +336,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         return sb.append('}').toString();
     }
 
-    final @NonNull Map<K, Integer> offsets() {
+    final @NonNull ImmutableMap<K, Integer> offsets() {
         return offsets;
     }
 

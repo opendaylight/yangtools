@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableMap;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
@@ -34,9 +35,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 public abstract class ImmutableMapTemplate<K> implements Immutable {
     private abstract static class AbstractMultiple<K> extends ImmutableMapTemplate<K> {
-        private final @NonNull Map<K, Integer> offsets;
+        private final @NonNull ImmutableMap<K, Integer> offsets;
 
-        AbstractMultiple(final Map<K, Integer> offsets) {
+        AbstractMultiple(final ImmutableMap<K, Integer> offsets) {
             this.offsets = requireNonNull(offsets);
         }
 
@@ -78,7 +79,7 @@ public abstract class ImmutableMapTemplate<K> implements Immutable {
             return MoreObjects.toStringHelper(this).add("offsets", offsets).toString();
         }
 
-        abstract <V> @NonNull ImmutableOffsetMap<K, V> createMap(Map<K, Integer> offsets, V[] objects);
+        abstract <V> @NonNull ImmutableOffsetMap<K, V> createMap(ImmutableMap<K, Integer> offsets, V[] objects);
     }
 
     private static final class Ordered<K> extends AbstractMultiple<K> {
@@ -87,7 +88,7 @@ public abstract class ImmutableMapTemplate<K> implements Immutable {
         }
 
         @Override
-        <V> @NonNull ImmutableOffsetMap<K, V> createMap(final Map<K, Integer> offsets, final V[] objects) {
+        <V> @NonNull ImmutableOffsetMap<K, V> createMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             return new ImmutableOffsetMap.Ordered<>(offsets, objects);
         }
     }
@@ -98,7 +99,7 @@ public abstract class ImmutableMapTemplate<K> implements Immutable {
         }
 
         @Override
-        <V> @NonNull ImmutableOffsetMap<K, V> createMap(final Map<K, Integer> offsets, final V[] objects) {
+        <V> @NonNull ImmutableOffsetMap<K, V> createMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             return new ImmutableOffsetMap.Unordered<>(offsets, objects);
         }
     }
