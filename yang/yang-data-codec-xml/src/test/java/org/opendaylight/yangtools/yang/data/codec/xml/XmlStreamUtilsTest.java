@@ -81,8 +81,8 @@ public class XmlStreamUtilsTest {
         final Map.Entry<QName, String> attributeEntryNoPrefix = new AbstractMap.SimpleEntry<>(name, "value");
 
         final RandomPrefix randomPrefix = new RandomPrefix(null);
-        XMLStreamWriterUtils.writeAttribute(writer, attributeEntry, randomPrefix);
-        XMLStreamWriterUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
+        AbstractXMLStreamWriterUtils.writeAttribute(writer, attributeEntry, randomPrefix);
+        AbstractXMLStreamWriterUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
 
         writer.writeEndElement();
         writer.close();
@@ -113,11 +113,11 @@ public class XmlStreamUtilsTest {
 
         writer.writeStartElement("element");
         final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.of("2000-01-01"));
-        XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
+        AbstractXMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
         writer.writeEndElement();
 
         writer.writeStartElement("elementDifferent");
-        XMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
+        AbstractXMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
         writer.writeEndElement();
 
         writer.close();

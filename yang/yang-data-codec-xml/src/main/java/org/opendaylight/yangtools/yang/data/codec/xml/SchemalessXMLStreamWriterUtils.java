@@ -14,7 +14,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
-final class SchemalessXMLStreamWriterUtils extends XMLStreamWriterUtils {
+final class SchemalessXMLStreamWriterUtils extends AbstractXMLStreamWriterUtils {
     static final SchemalessXMLStreamWriterUtils INSTANCE = new SchemalessXMLStreamWriterUtils();
 
     private SchemalessXMLStreamWriterUtils() {

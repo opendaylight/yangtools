@@ -26,18 +26,20 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode> {
+final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode>
+        implements SchemaContextProvider {
     private final SchemaTracker tracker;
-    private final XMLStreamWriterUtils streamUtils;
+    private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
     private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
                                                            final SchemaPath path) {
         super(writer);
         this.tracker = SchemaTracker.create(context, path);
-        this.streamUtils = XMLStreamWriterUtils.create(context);
+        this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
     }
 
     static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer, final SchemaContext context,
@@ -139,5 +141,10 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
         final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
         anyxmlNode(schema.getQName(), value);
+    }
+
+    @Override
+    public SchemaContext getSchemaContext() {
+        return streamUtils.getSchemaContext();
     }
 }
