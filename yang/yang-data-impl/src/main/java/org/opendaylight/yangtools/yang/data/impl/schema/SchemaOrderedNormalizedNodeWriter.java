@@ -38,7 +38,6 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaOrderedNormalizedNodeWriter.class);
     private final SchemaContext schemaContext;
     private final SchemaNode root;
-    private final NormalizedNodeStreamWriter writer;
 
     private SchemaNode currentSchemaNode;
 
@@ -55,7 +54,6 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
     public SchemaOrderedNormalizedNodeWriter(final NormalizedNodeStreamWriter writer, final SchemaContext schemaContext,
             final SchemaPath path) {
         super(writer);
-        this.writer = writer;
         this.schemaContext = schemaContext;
         final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(schemaContext, path);
         Preconditions.checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s",
@@ -159,7 +157,7 @@ public class SchemaOrderedNormalizedNodeWriter extends NormalizedNodeWriter {
             }
         }
         if (endParent) {
-            writer.endNode();
+            getWriter().endNode();
         }
         return true;
     }
