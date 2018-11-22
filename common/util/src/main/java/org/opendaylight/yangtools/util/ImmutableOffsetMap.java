@@ -43,7 +43,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     static final class Ordered<K, V> extends ImmutableOffsetMap<K, V> {
         private static final long serialVersionUID = 1L;
 
-        Ordered(final @NonNull Map<K, Integer> offsets, final @NonNull V[] objects) {
+        Ordered(final Map<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
 
@@ -93,7 +93,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
      * @param objects Array of value object, may not be null. The array is stored as is, the caller
      *              is responsible for ensuring its contents remain unmodified.
      */
-    ImmutableOffsetMap(final @NonNull Map<K, Integer> offsets, final @NonNull V[] objects) {
+    ImmutableOffsetMap(final Map<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
         checkArgument(offsets.size() == objects.length);
@@ -105,19 +105,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     abstract void setFields(List<K> keys, V[] values) throws IOException;
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
-     * is actually not completely true, as this method returns an
-     * {@link ImmutableMap} for empty and singleton inputs, as those are more
-     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
-     * on input, and returns it back without doing anything else. It also
-     * recognizes {@link MutableOffsetMap} (as returned by
-     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
-     * All other maps are converted to an {@link ImmutableOffsetMap} with the
-     * same iteration order as input.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true, as this
+     * method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient. This
+     * method also recognizes {@link ImmutableOffsetMap} and {@link SharedSingletonMap} on input, and returns it back
+     * without doing anything else. It also recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
+     * {@link ImmutableOffsetMap} with the same iteration order as input.
      *
-     * @param map
-     *            Input map, may not be null.
+     * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
+     * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     public static <K, V> @NonNull Map<K, V> orderedCopyOf(final @NonNull Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
@@ -143,19 +140,16 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
     }
 
     /**
-     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This
-     * is actually not completely true, as this method returns an
-     * {@link ImmutableMap} for empty and singleton inputs, as those are more
-     * memory-efficient. This method also recognizes {@link ImmutableOffsetMap}
-     * on input, and returns it back without doing anything else. It also
-     * recognizes {@link MutableOffsetMap} (as returned by
-     * {@link #toModifiableMap()}) and makes an efficient copy of its contents.
-     * All other maps are converted to an {@link ImmutableOffsetMap}. Iterator
-     * order is not guaranteed to be retained.
+     * Create an {@link ImmutableOffsetMap} as a copy of an existing map. This is actually not completely true, as this
+     * method returns an {@link ImmutableMap} for empty and singleton inputs, as those are more memory-efficient. This
+     * method also recognizes {@link ImmutableOffsetMap} and {@link SharedSingletonMap} on input, and returns it back
+     * without doing anything else. It also recognizes {@link MutableOffsetMap} (as returned by
+     * {@link #toModifiableMap()}) and makes an efficient copy of its contents. All other maps are converted to an
+     * {@link ImmutableOffsetMap}. Iterator order is not guaranteed to be retained.
      *
-     * @param map
-     *            Input map, may not be null.
+     * @param map Input map, may not be null.
      * @return An isolated, immutable copy of the input map
+     * @throws NullPointerException if {@code map} or any of its elements is null.
      */
     public static <K, V> @NonNull Map<K, V> unorderedCopyOf(final @NonNull Map<K, V> map) {
         final Map<K, V> common = commonCopy(map);
