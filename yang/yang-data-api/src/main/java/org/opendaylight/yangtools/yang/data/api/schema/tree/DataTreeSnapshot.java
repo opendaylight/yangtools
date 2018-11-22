@@ -39,7 +39,8 @@ public interface DataTreeSnapshot {
      *
      * @return Current schema context.
      */
-    // FIXME: 3.0.0: Make this method non-default.
+    // FIXME: 3.0.0: This method provides a strong tie to yang.model.api. It either needs to be removed or inherited
+    //               by extending SchemaContextProvider. This strictly is an implementation detail.
     default @NonNull SchemaContext getSchemaContext() {
         throw new UnsupportedOperationException("Not implemented by  " + getClass());
     }
