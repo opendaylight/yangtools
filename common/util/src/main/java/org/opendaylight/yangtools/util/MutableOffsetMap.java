@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A mutable version of {@link ImmutableOffsetMap}. It inherits the set of mappings from the immutable version and
@@ -54,7 +54,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<>());
         }
 
-        Ordered(final Map<K, Integer> offsets, final V[] objects) {
+        Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects, new LinkedHashMap<>());
         }
 
@@ -69,7 +69,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsetMap, final V[] values) {
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final ImmutableMap<K, Integer> offsetMap, final V[] values) {
             return new ImmutableOffsetMap.Ordered<>(offsetMap, values);
         }
 
@@ -88,7 +88,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<>());
         }
 
-        Unordered(final Map<K, Integer> offsets, final V[] objects) {
+        Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects, new HashMap<>());
         }
 
@@ -99,12 +99,12 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         @Override
         UnmodifiableMapPhase<K, V> modifiedMap(final List<K> keys, final V[] values) {
-            final Map<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
+            final ImmutableMap<K, Integer> offsets = OffsetMapCache.unorderedOffsets(keys);
             return new ImmutableOffsetMap.Unordered<>(offsets, OffsetMapCache.adjustedArray(offsets, keys, values));
         }
 
         @Override
-        UnmodifiableMapPhase<K, V> unmodifiedMap(final Map<K, Integer> offsetMap, final V[] values) {
+        UnmodifiableMapPhase<K, V> unmodifiedMap(final ImmutableMap<K, Integer> offsetMap, final V[] values) {
             return new ImmutableOffsetMap.Unordered<>(offsetMap, values);
         }
 
@@ -116,7 +116,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
     private static final Object REMOVED = new Object();
-    private final Map<K, Integer> offsets;
+
+    private final ImmutableMap<K, Integer> offsets;
     private HashMap<K, V> newKeys;
     private Object[] objects;
     private int removed = 0;
@@ -126,7 +127,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private transient volatile int modCount;
     private boolean needClone = true;
 
-    MutableOffsetMap(final Map<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
         verify(newKeys.isEmpty());
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
@@ -139,7 +140,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     @SuppressWarnings("unchecked")
-    MutableOffsetMap(final Map<K, Integer> offsets, final Map<K, V> source, final HashMap<K, V> newKeys) {
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final Map<K, V> source, final HashMap<K, V> newKeys) {
         this(offsets, (V[]) new Object[offsets.size()], newKeys);
 
         for (Entry<K, V> e : source.entrySet()) {
@@ -149,7 +150,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this.needClone = false;
     }
 
-    public static <K, V> MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
+    /**
+     * Create a {@link MutableOffsetMap} of the specified map, retaining its iteration order.
+     *
+     * @param map input map
+     * @return MutableOffsetMap with the same iteration order
+     * @throws NullPointerException if {@code map} is null
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
         if (map instanceof Ordered) {
             return ((Ordered<K, V>) map).clone();
         }
@@ -161,7 +169,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Ordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+    /**
+     * Create a {@link MutableOffsetMap} of the specified map, potentially with a different iteration order.
+     *
+     * @param map input map
+     * @return MutableOffsetMap with undefined iteration order
+     * @throws NullPointerException if {@code map} is null
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
         if (map instanceof Unordered) {
             return ((Unordered<K, V>) map).clone();
         }
@@ -173,11 +188,21 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Unordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> ordered() {
+    /**
+     * Create an empty {@link MutableOffsetMap} which has an iteration order matching the insertion order.
+     *
+     * @return MutableOffsetMap which preserves insertion order
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> ordered() {
         return new MutableOffsetMap.Ordered<>();
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unordered() {
+    /**
+     * Create an empty {@link MutableOffsetMap} which has unspecified iteration order.
+     *
+     * @return An MutableOffsetMap
+     */
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unordered() {
         return new MutableOffsetMap.Unordered<>();
     }
 
@@ -185,7 +210,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     abstract UnmodifiableMapPhase<K, V> modifiedMap(List<K> keys, V[] values);
 
-    abstract UnmodifiableMapPhase<K, V> unmodifiedMap(Map<K, Integer> offsetMap, V[] values);
+    abstract UnmodifiableMapPhase<K, V> unmodifiedMap(ImmutableMap<K, Integer> offsetMap, V[] values);
 
     abstract SharedSingletonMap<K, V> singletonMap();
 
@@ -318,13 +343,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         }
     }
 
-    @Nonnull
     @Override
     public final Set<Entry<K, V>> entrySet() {
         return new EntrySet();
     }
 
-    @Nonnull
     @Override
     public Map<K, V> toUnmodifiableMap() {
         if (removed == 0 && newKeys.isEmpty()) {
@@ -478,7 +501,6 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return true;
     }
 
-    @Nonnull
     @Override
     public final Set<K> keySet() {
         return new KeySet();
@@ -500,7 +522,6 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
-        @Nonnull
         @Override
         public Iterator<Entry<K, V>> iterator() {
             return new AbstractSetIterator<Entry<K, V>>() {
@@ -569,7 +590,6 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private final class KeySet extends AbstractSet<K> {
-        @Nonnull
         @Override
         public Iterator<K> iterator() {
             return new AbstractSetIterator<K>() {

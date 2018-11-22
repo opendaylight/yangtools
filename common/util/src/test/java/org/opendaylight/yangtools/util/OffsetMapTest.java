@@ -53,7 +53,7 @@ public class OffsetMapTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongImmutableConstruction() {
-        new ImmutableOffsetMap.Ordered<>(Collections.<String, Integer>emptyMap(), new String[1]);
+        new ImmutableOffsetMap.Ordered<>(ImmutableMap.of(), new String[1]);
     }
 
     @Test
