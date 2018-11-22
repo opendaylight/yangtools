@@ -28,11 +28,15 @@ import org.eclipse.jdt.annotation.NonNull;
  */
 @Beta
 public abstract class SharedSingletonMap<K, V> implements Serializable, UnmodifiableMapPhase<K, V> {
-    private static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
+    static final class Ordered<K, V> extends SharedSingletonMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         Ordered(final K key, final V value) {
             super(key, value);
+        }
+
+        Ordered(final SingletonSet<K> keySet, final V value) {
+            super(keySet, value);
         }
 
         @Override
@@ -41,11 +45,15 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
         }
     }
 
-    private static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
+    static final class Unordered<K, V> extends SharedSingletonMap<K, V> {
         private static final long serialVersionUID = 1L;
 
         Unordered(final K key, final V value) {
             super(key, value);
+        }
+
+        Unordered(final SingletonSet<K> keySet, final V value) {
+            super(keySet, value);
         }
 
         @Override
@@ -62,32 +70,36 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
                     return SingletonSet.of(key);
                 }
             });
-    private final SingletonSet<K> keySet;
-    private final V value;
+
+    private final @NonNull SingletonSet<K> keySet;
+    private final @NonNull V value;
     private int hashCode;
 
-    @SuppressWarnings("unchecked")
-    SharedSingletonMap(final K key, final V value) {
-        this.keySet = (SingletonSet<K>) CACHE.getUnchecked(key);
+    SharedSingletonMap(final SingletonSet<K> keySet, final V value) {
+        this.keySet = requireNonNull(keySet);
         this.value = requireNonNull(value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
+    SharedSingletonMap(final K key, final V value) {
+        this(cachedSet(key), value);
+    }
+
+    public static <K, V> @NonNull SharedSingletonMap<K, V> orderedOf(final K key, final V value) {
         return new Ordered<>(key, value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
+    public static <K, V> @NonNull SharedSingletonMap<K, V> unorderedOf(final K key, final V value) {
         return new Unordered<>(key, value);
     }
 
-    public static <K, V> SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
+    public static <K, V> @NonNull SharedSingletonMap<K, V> orderedCopyOf(final Map<K, V> map) {
         checkArgument(map.size() == 1);
 
         final Entry<K, V> e = map.entrySet().iterator().next();
         return new Ordered<>(e.getKey(), e.getValue());
     }
 
-    public static <K, V> SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+    public static <K, V> @NonNull SharedSingletonMap<K, V> unorderedCopyOf(final Map<K, V> map) {
         checkArgument(map.size() == 1);
 
         final Entry<K, V> e = map.entrySet().iterator().next();
@@ -181,5 +193,10 @@ public abstract class SharedSingletonMap<K, V> implements Serializable, Unmodifi
     @Override
     public final String toString() {
         return "{" + keySet.getElement() + '=' + value + '}';
+    }
+
+    @SuppressWarnings("unchecked")
+    static <K> @NonNull SingletonSet<K> cachedSet(final K key) {
+        return (SingletonSet<K>) CACHE.getUnchecked(key);
     }
 }

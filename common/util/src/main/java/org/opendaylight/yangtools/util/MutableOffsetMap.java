@@ -151,7 +151,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         this.needClone = false;
     }
 
-    public static <K, V> MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
+    public static <K, V> @NonNull MutableOffsetMap<K, V> orderedCopyOf(final Map<K, V> map) {
         if (map instanceof Ordered) {
             return ((Ordered<K, V>) map).clone();
         }
@@ -163,7 +163,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Ordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unorderedCopyOf(final Map<K, V> map) {
         if (map instanceof Unordered) {
             return ((Unordered<K, V>) map).clone();
         }
@@ -175,11 +175,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         return new Unordered<>(map);
     }
 
-    public static <K, V> MutableOffsetMap<K, V> ordered() {
+    public static <K, V> @NonNull MutableOffsetMap<K, V> ordered() {
         return new MutableOffsetMap.Ordered<>();
     }
 
-    public static <K, V> MutableOffsetMap<K, V> unordered() {
+    public static <K, V> @NonNull MutableOffsetMap<K, V> unordered() {
         return new MutableOffsetMap.Unordered<>();
     }
 
