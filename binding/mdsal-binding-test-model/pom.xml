@@ -26,18 +26,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opendaylight.mdsal</groupId>
-            <artifactId>yang-binding</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.opendaylight.mdsal.model</groupId>
             <artifactId>yang-ext</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.opendaylight.mdsal</groupId>
-                    <artifactId>yang-binding</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 
@@ -48,6 +38,13 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <configuration>
                     <propertyExpansion>checkstyle.violationSeverity=error</propertyExpansion>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <failOnError>true</failOnError>
                 </configuration>
             </plugin>
         </plugins>
