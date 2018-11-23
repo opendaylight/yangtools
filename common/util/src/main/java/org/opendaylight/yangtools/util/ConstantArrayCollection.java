@@ -56,26 +56,11 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
 
     @Override
     public @NonNull Iterator<E> iterator() {
-        return new UnmodifiableIterator<E>() {
-            private int offset = 0;
-
-            @Override
-            public boolean hasNext() {
-                return offset < array.length;
-            }
-
-            @Override
-            public E next() {
-                if (offset >= array.length) {
-                    throw new NoSuchElementException();
-                }
-                return array[offset++];
-            }
-        };
+        return new Itr<>(array);
     }
 
     @Override
-    public @NonNull Object[] toArray() {
+    public Object @NonNull[] toArray() {
         return array.clone();
     }
 
@@ -173,5 +158,27 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
             sb.append(String.valueOf(array[offset++])).append(", ");
         }
         return sb.append(String.valueOf(array[offset])).append(']').toString();
+    }
+
+    private static final class Itr<E> extends UnmodifiableIterator<E> {
+        private final E @NonNull[] array;
+        private int offset = 0;
+
+        Itr(final E @NonNull[] array) {
+            this.array = array;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return offset < array.length;
+        }
+
+        @Override
+        public E next() {
+            if (offset >= array.length) {
+                throw new NoSuchElementException();
+            }
+            return array[offset++];
+        }
     }
 }
