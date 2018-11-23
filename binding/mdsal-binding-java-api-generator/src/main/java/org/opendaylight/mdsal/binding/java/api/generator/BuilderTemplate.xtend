@@ -110,7 +110,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
      */
     def private Object generateConstructorFromIfc(Type impl) '''
         «IF (impl instanceof GeneratedType)»
-            «IF !(impl.methodDefinitions.empty)»
+            «IF impl.hasNonDefaultMethods»
                 public «type.name»(«impl.fullyQualifiedName» arg) {
                     «printConstructorPropertySetter(impl)»
                 }
@@ -124,8 +124,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private Object printConstructorPropertySetter(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
             «val ifc = implementedIfc as GeneratedType»
-            «FOR getter : ifc.methodDefinitions»
-                this._«getter.propertyNameFromGetter» = arg.«getter.name»();
+            «FOR getter : ifc.nonDefaultMethods»
+                «IF BindingMapping.isGetterMethodName(getter.name)»
+                    this._«getter.propertyNameFromGetter» = arg.«getter.name»();
+                «ENDIF»
             «ENDFOR»
             «FOR impl : ifc.implements»
                 «printConstructorPropertySetter(impl)»
@@ -172,7 +174,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def boolean hasImplementsFromUses(GeneratedType type) {
         var i = 0
         for (impl : type.getAllIfcs) {
-            if ((impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)) {
+            if (impl instanceof GeneratedType && (impl as GeneratedType).hasNonDefaultMethods) {
                 i = i + 1
             }
         }
@@ -180,7 +182,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     }
 
     def private generateIfCheck(Type impl, List<Type> done) '''
-        «IF (impl instanceof GeneratedType) &&  !((impl as GeneratedType).methodDefinitions.empty)»
+        «IF (impl instanceof GeneratedType && (impl as GeneratedType).hasNonDefaultMethods)»
             «val implType = impl as GeneratedType»
             if (arg instanceof «implType.fullyQualifiedName») {
                 «printPropertySetter(implType)»
@@ -192,8 +194,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     def private printPropertySetter(Type implementedIfc) '''
         «IF (implementedIfc instanceof GeneratedType && !(implementedIfc instanceof GeneratedTransferObject))»
         «val ifc = implementedIfc as GeneratedType»
-        «FOR getter : ifc.methodDefinitions»
-            this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
+        «FOR getter : ifc.nonDefaultMethods»
+            «IF BindingMapping.isGetterMethodName(getter.name)»
+                this._«getter.propertyNameFromGetter» = ((«implementedIfc.fullyQualifiedName»)arg).«getter.name»();
+            «ENDIF»
         «ENDFOR»
         «ENDIF»
     '''
@@ -201,7 +205,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     private def List<Type> getBaseIfcs(GeneratedType type) {
         val List<Type> baseIfcs = new ArrayList();
         for (ifc : type.implements) {
-            if (ifc instanceof GeneratedType && !(ifc as GeneratedType).methodDefinitions.empty) {
+            if (ifc instanceof GeneratedType && (ifc as GeneratedType).hasNonDefaultMethods) {
                 baseIfcs.add(ifc)
             }
         }
@@ -213,7 +217,7 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         if (type instanceof GeneratedType && !(type instanceof GeneratedTransferObject)) {
             val ifc = type as GeneratedType
             for (impl : ifc.implements) {
-                if (impl instanceof GeneratedType && !(impl as GeneratedType).methodDefinitions.empty) {
+                if (impl instanceof GeneratedType && (impl as GeneratedType).hasNonDefaultMethods) {
                     baseIfcs.add(impl)
                 }
                 baseIfcs.addAll(impl.getAllIfcs)
@@ -378,6 +382,14 @@ class BuilderTemplate extends AbstractBuilderTemplate {
                 }
             }
         '''
+    }
+
+    private static def hasNonDefaultMethods(GeneratedType type) {
+        !type.methodDefinitions.isEmpty && type.methodDefinitions.exists([def | !def.isDefault])
+    }
+
+    private static def nonDefaultMethods(GeneratedType type) {
+        type.methodDefinitions.filter([def | !def.isDefault])
     }
 }
 

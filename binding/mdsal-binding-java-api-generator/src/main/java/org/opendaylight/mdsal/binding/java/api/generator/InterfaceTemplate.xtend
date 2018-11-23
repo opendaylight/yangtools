@@ -172,17 +172,22 @@ class InterfaceTemplate extends BaseTemplate {
     def private generateMethods() '''
         «IF !methods.empty»
             «FOR m : methods SEPARATOR "\n"»
-                «val noParams = m.parameters.empty»
-                «IF noParams && m.name.isGetterMethodName»
+                «IF m.isDefault»
+                    «generateDefaultMethod(m)»
+                «ELSEIF m.parameters.empty && m.name.isGetterMethodName»
                     «generateAccessorMethod(m)»
-                «ELSEIF noParams && m.name.isNonnullMethodName»
-                    «generateNonnullMethod(m)»
                 «ELSE»
                     «generateMethod(m)»
                 «ENDIF»
             «ENDFOR»
         «ENDIF»
     '''
+
+    def private generateDefaultMethod(MethodSignature method) {
+        if (method.name.isNonnullMethodName) {
+            return generateNonnullMethod(method)
+        }
+    }
 
     def private generateMethod(MethodSignature method) '''
         «method.comment.asJavadoc»

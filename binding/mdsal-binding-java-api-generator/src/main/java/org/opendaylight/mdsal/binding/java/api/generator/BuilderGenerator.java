@@ -206,6 +206,9 @@ public final class BuilderGenerator implements CodeGenerator {
         checkArgument(method.getReturnType() != null);
         checkArgument(method.getName() != null);
         checkArgument(!method.getName().isEmpty());
+        if (method.isDefault()) {
+            return null;
+        }
         final String prefix = BindingMapping.getGetterPrefix(Types.BOOLEAN.equals(method.getReturnType()));
         if (!method.getName().startsWith(prefix)) {
             return null;
