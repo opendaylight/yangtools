@@ -9,18 +9,16 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -28,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+    private final ImmutableMapTemplate<QName> predicateTemplate;
     private final Map<QName, ValueContext> keyValueContexts;
     private final List<QName> keysInBindingOrder;
     private final ListSchemaNode schema;
@@ -49,14 +48,11 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         this.ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
 
         /*
-         * We need to re-index to make sure we instantiate nodes in the order in which
-         * they are defined.
+         * We need to re-index to make sure we instantiate nodes in the order in which they are defined. We will also
+         * need to instantiate values in the same order.
          */
-        final Map<QName, ValueContext> keys = new LinkedHashMap<>();
-        for (final QName qname : schema.getKeyDefinition()) {
-            keys.put(qname, keyValueContexts.get(qname));
-        }
-        this.keyValueContexts = ImmutableMap.copyOf(keys);
+        predicateTemplate = ImmutableMapTemplate.ordered(schema.getKeyDefinition());
+        this.keyValueContexts = predicateTemplate.instantiateTransformed(keyValueContexts, (key, value) -> value);
 
         /*
          * When instantiating binding objects we need to specify constructor arguments
@@ -89,12 +85,11 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
+        final Map<QName, Object> keyValues = input.getKeyValues();
         final Object[] bindingValues = new Object[keysInBindingOrder.size()];
         int offset = 0;
-
         for (final QName key : keysInBindingOrder) {
-            final Object yangValue = input.getKeyValues().get(key);
-            bindingValues[offset++] = keyValueContexts.get(key).deserialize(yangValue);
+            bindingValues[offset++] = keyValueContexts.get(key).deserialize(keyValues.get(key));
         }
 
         final Identifier<?> identifier;
@@ -113,12 +108,13 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     @Override
     public NodeIdentifierWithPredicates serialize(final IdentifiableItem<?, ?> input) {
         final Object value = input.getKey();
-
-        final Map<QName, Object> values = new LinkedHashMap<>();
-        for (final Entry<QName, ValueContext> valueCtx : keyValueContexts.entrySet()) {
-            values.put(valueCtx.getKey(), valueCtx.getValue().getAndSerialize(value));
+        final Object[] values = new Object[keyValueContexts.size()];
+        int offset = 0;
+        for (final ValueContext valueCtx : keyValueContexts.values()) {
+            values[offset++] = valueCtx.getAndSerialize(value);
         }
-        return new NodeIdentifierWithPredicates(schema.getQName(), values);
+
+        return new NodeIdentifierWithPredicates(schema.getQName(), predicateTemplate.instantiateWithValues(values));
     }
 
     @SuppressWarnings("unchecked")
