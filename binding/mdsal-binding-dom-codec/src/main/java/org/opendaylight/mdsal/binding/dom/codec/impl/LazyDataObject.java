@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME;
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -72,6 +73,7 @@ class LazyDataObject<D extends DataObject> implements InvocationHandler, Augment
                 final String methodName = method.getName();
                 switch (methodName) {
                     case DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME:
+                    case DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME:
                         return context.getBindingClass();
                     case TO_STRING:
                         return bindingToString();

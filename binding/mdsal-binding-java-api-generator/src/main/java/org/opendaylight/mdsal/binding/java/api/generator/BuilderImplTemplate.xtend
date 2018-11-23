@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 
 import com.google.common.collect.ImmutableMap
 import java.util.List
@@ -40,6 +41,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
 
             «generateCopyConstructor(builderType, type)»
 
+            @«Deprecated.importedName»
             @«Override.importedName»
             public «Class.importedName»<«targetType.importedName»> getImplementedInterface() {
                 return «targetType.importedName».class;
@@ -98,7 +100,7 @@ class BuilderImplTemplate extends AbstractBuilderTemplate {
                 if (!(obj instanceof «DataObject.importedName»)) {
                     return false;
                 }
-                if (!«targetType.importedName».class.equals(((«DataObject.importedName»)obj).getImplementedInterface())) {
+                if (!«targetType.importedName».class.equals(((«DataObject.importedName»)obj).«DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»())) {
                     return false;
                 }
                 «targetType.importedName» other = («targetType.importedName»)obj;

@@ -166,8 +166,8 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         final NormalizedNodeResult result = new NormalizedNodeResult();
         // We create DOM stream writer which produces normalized nodes
         final NormalizedNodeStreamWriter domWriter = ImmutableNormalizedNodeStreamWriter.from(result);
+        final Class<? extends DataObject> type = data.implementedInterface();
         @SuppressWarnings("unchecked")
-        final Class<? extends DataObject> type = (Class<? extends DataObject>) data.getImplementedInterface();
         final BindingStreamEventWriter writer = newWriter.apply((Class<T>)type, domWriter);
         try {
             getSerializer(type).serialize(data, writer);

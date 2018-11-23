@@ -66,7 +66,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      */
     @Override
     public NormalizedNode<?, ?> serialize(final DataObject input) {
-        final BindingNormalizedNodeCache cachingSerializer = getCacheSerializer(input.getImplementedInterface());
+        final BindingNormalizedNodeCache cachingSerializer = getCacheSerializer(input.implementedInterface());
         if (cachingSerializer != null) {
             final NormalizedNode<?, ?> domData = cachingSerializer.get(input);
             domWriter.addChild(domData);

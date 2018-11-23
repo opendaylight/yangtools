@@ -77,7 +77,13 @@ public final class BindingMapping {
     /**
      * Name of {@link DataContainer#getImplementedInterface()}.
      */
+    // FIXME: 4.0.0: remove this constant
     public static final String DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME = "getImplementedInterface";
+
+    /**
+     * Name of {@link DataContainer#implementedInterface()}.
+     */
+    public static final String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
 
     /**
      * Prefix for getter methods working on top of boolean.

@@ -56,7 +56,7 @@ public class DataObjectReadingUtilTest {
     @Test
     public void testReadData() throws Exception {
         final Nodes nodes = mock(Nodes.class);
-        doReturn(Nodes.class).when(nodes).getImplementedInterface();
+        doReturn(Nodes.class).when(nodes).implementedInterface();
         doReturn(null).when(nodes).getNode();
         entry = ImmutableMap.<InstanceIdentifier<? extends DataObject>, DataObject>builder()
                 .put(path, nodes).build().entrySet().iterator().next();

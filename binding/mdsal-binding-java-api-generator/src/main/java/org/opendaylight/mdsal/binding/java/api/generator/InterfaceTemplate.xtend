@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
+import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.getGetterMethodForNonnull
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isGetterMethodName
 import static extension org.opendaylight.mdsal.binding.spec.naming.BindingMapping.isNonnullMethodName
@@ -185,7 +186,11 @@ class InterfaceTemplate extends BaseTemplate {
 
     def private generateDefaultMethod(MethodSignature method) {
         if (method.name.isNonnullMethodName) {
-            return generateNonnullMethod(method)
+            generateNonnullMethod(method)
+        } else {
+            switch method.name {
+                case DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME : generateDefaultImplementedInterface
+            }
         }
     }
 
@@ -200,6 +205,13 @@ class InterfaceTemplate extends BaseTemplate {
         «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or " + asCode("null") + " if not present")»
         «method.annotations.generateAnnotations»
         «nullableType(ret)» «method.name»();
+    '''
+
+    def private generateDefaultImplementedInterface() '''
+        @«Override.importedName»
+        default «Class.importedName»<«type.fullyQualifiedName»> «DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME»() {
+            return «type.fullyQualifiedName».class;
+        }
     '''
 
     def private generateNonnullMethod(MethodSignature method) '''

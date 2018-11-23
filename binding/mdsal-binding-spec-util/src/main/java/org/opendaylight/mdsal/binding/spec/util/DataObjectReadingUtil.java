@@ -90,7 +90,7 @@ public final class DataObjectReadingUtil {
     public static <T extends DataObject> Optional<T> readData(final DataObject source, final Class<T> child) {
         checkArgument(source != null, "Object should not be null.");
         checkArgument(child != null, "Child type should not be null");
-        Class<? extends DataContainer> parentClass = source.getImplementedInterface();
+        Class<? extends DataContainer> parentClass = source.implementedInterface();
 
         @SuppressWarnings("unchecked")
         T potential = (T) resolveReadStrategy(parentClass, child).read(source, child);
@@ -102,7 +102,7 @@ public final class DataObjectReadingUtil {
             final InstanceIdentifier parentPath, final PathArgument child) {
         checkArgument(parent != null, "Object should not be null.");
         checkArgument(child != null, "Child argument should not be null");
-        Class<? extends DataContainer> parentClass = parent.getImplementedInterface();
+        Class<? extends DataContainer> parentClass = parent.implementedInterface();
         return resolveReadStrategy(parentClass, child.getType()).readUsingPathArgument(parent, child, parentPath);
     }
 

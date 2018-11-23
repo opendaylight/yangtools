@@ -10,6 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.util;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -20,27 +21,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class ChoiceDispatchSerializer implements DataObjectSerializerImplementation {
-
     private static final Logger LOG = LoggerFactory.getLogger(ChoiceDispatchSerializer.class);
 
-    @SuppressWarnings("rawtypes")
-    private final Class choiceClass;
+    private final @NonNull Class<? extends DataContainer> choiceClass;
 
-    @SuppressWarnings("rawtypes")
-    private ChoiceDispatchSerializer(final Class choiceClass) {
+    private ChoiceDispatchSerializer(final Class<? extends DataContainer> choiceClass) {
         this.choiceClass = requireNonNull(choiceClass);
     }
 
-    public static ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {
+    public static @NonNull ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {
         return new ChoiceDispatchSerializer(choiceClass);
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public void serialize(final DataObjectSerializerRegistry reg, final DataObject obj,
             final BindingStreamEventWriter stream) throws IOException {
-        @SuppressWarnings("rawtypes")
-        Class cazeClass = obj.getImplementedInterface();
+        Class<? extends DataObject> cazeClass = obj.implementedInterface();
         stream.startChoiceNode(choiceClass, BindingStreamEventWriter.UNKNOWN_SIZE);
         DataObjectSerializer caseSerializer = reg.getSerializer(cazeClass);
         if (caseSerializer != null) {

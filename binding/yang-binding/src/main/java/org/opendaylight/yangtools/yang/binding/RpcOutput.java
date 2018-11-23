@@ -17,5 +17,6 @@ import com.google.common.annotations.Beta;
  */
 @Beta
 public interface RpcOutput extends DataObject {
-
+    @Override
+    Class<? extends RpcOutput> implementedInterface();
 }

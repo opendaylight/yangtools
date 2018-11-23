@@ -392,4 +392,3 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         type.methodDefinitions.filter([def | !def.isDefault])
     }
 }
-

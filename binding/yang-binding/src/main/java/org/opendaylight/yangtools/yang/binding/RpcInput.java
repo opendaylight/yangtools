@@ -12,5 +12,6 @@ package org.opendaylight.yangtools.yang.binding;
  * statement.
  */
 public interface RpcInput extends DataObject {
-
+    @Override
+    Class<? extends RpcInput> implementedInterface();
 }

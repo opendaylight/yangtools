@@ -48,7 +48,7 @@ public class BindingReflectionsTest {
         assertNull(findHierarchicalParent(mock(DataObject.class)));
         assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(FooChild.class));
         final ChildOf<?> childOf = mock(FooChild.class);
-        doReturn(FooChild.class).when(childOf).getImplementedInterface();
+        doReturn(FooChild.class).when(childOf).implementedInterface();
         assertEquals(GroupingFoo.class, BindingReflections.findHierarchicalParent(childOf));
         assertTrue(BindingReflections.isRpcMethod(TestImplementation.class.getDeclaredMethod("rpcMethodTest")));
         assertEquals(TestImplementation.class, BindingReflections.findAugmentationTarget(TestImplementation.class));
