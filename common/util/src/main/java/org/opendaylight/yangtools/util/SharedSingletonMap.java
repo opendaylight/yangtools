@@ -24,6 +24,10 @@ import org.eclipse.jdt.annotation.NonNull;
  * Implementation of the {@link Map} interface which stores a single mapping. The key set is shared among all instances
  * which contain the same key. This implementation does not support null keys or values.
  *
+ * <p>
+ * In case the set of keys is statically known, you can use {@link SharedSingletonMapTemplate} to efficiently create
+ * {@link SharedSingletonMap} instances.
+ *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */

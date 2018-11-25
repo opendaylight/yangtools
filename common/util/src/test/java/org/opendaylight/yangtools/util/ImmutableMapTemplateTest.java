@@ -57,7 +57,7 @@ public class ImmutableMapTemplateTest {
 
     private static void assertOne(final ImmutableMapTemplate<String> template, final Class<?> mapClass) {
         assertEquals(ONE_KEYSET, template.keySet());
-        assertEquals("Single" + mapClass.getSimpleName() + "{keySet=[foo]}", template.toString());
+        assertEquals(mapClass.getSimpleName() + "{keySet=[foo]}", template.toString());
 
         // Successful instantiation
         Map<String, String> map = template.instantiateWithValues(BAR);
