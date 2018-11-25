@@ -534,9 +534,18 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             this.keyValues = ImmutableOffsetMap.unorderedCopyOf(keyValues);
         }
 
-        public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
+        public NodeIdentifierWithPredicates(final QName node, final ImmutableOffsetMap<QName, Object> keyValues) {
             super(node);
-            this.keyValues = SharedSingletonMap.unorderedOf(key, value);
+            this.keyValues = requireNonNull(keyValues);
+        }
+
+        public NodeIdentifierWithPredicates(final QName node, final SharedSingletonMap<QName, Object> keyValues) {
+            super(node);
+            this.keyValues = requireNonNull(keyValues);
+        }
+
+        public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
+            this(node, SharedSingletonMap.unorderedOf(key, value));
         }
 
         public Map<QName, Object> getKeyValues() {

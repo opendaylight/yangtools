@@ -36,6 +36,10 @@ import org.eclipse.jdt.annotation.Nullable;
  * a backing array. This is useful for situations where the same key set is shared across a multitude of maps, as this
  * class uses a global cache to share the key-to-offset mapping.
  *
+ * <p>
+ * In case the set of keys is statically known, you can use {@link ImmutableOffsetMapTemplate} to efficiently create
+ * {@link ImmutableOffsetMap} instances.
+ *
  * @param <K> the type of keys maintained by this map
  * @param <V> the type of mapped values
  */
