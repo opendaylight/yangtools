@@ -32,7 +32,6 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
     private final List<QName> keysInBindingOrder;
     private final ListSchemaNode schema;
     private final Class<?> identifiable;
-    private final MethodHandle ctorInvoker;
     private final MethodHandle ctor;
 
     IdentifiableItemCodec(final ListSchemaNode schema, final Class<? extends Identifier<?>> keyClass,
@@ -40,13 +39,14 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
         this.schema = schema;
         this.identifiable = identifiable;
 
+        final MethodHandle tmpCtor;
         try {
-            ctor = MethodHandles.publicLookup().unreflectConstructor(getConstructor(keyClass));
+            tmpCtor = MethodHandles.publicLookup().unreflectConstructor(getConstructor(keyClass));
         } catch (IllegalAccessException e) {
             throw new IllegalArgumentException("Missing constructor in class " + keyClass, e);
         }
-        final MethodHandle inv = MethodHandles.spreadInvoker(ctor.type(), 0);
-        this.ctorInvoker = inv.asType(inv.type().changeReturnType(Identifier.class));
+        final MethodHandle inv = MethodHandles.spreadInvoker(tmpCtor.type(), 0);
+        this.ctor = inv.asType(inv.type().changeReturnType(Identifier.class)).bindTo(tmpCtor);
 
         /*
          * We need to re-index to make sure we instantiate nodes in the order in which
@@ -99,7 +99,7 @@ final class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates,
 
         final Identifier<?> identifier;
         try {
-            identifier = (Identifier<?>) ctorInvoker.invokeExact(ctor, bindingValues);
+            identifier = (Identifier<?>) ctor.invokeExact(bindingValues);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new RuntimeException(e);
