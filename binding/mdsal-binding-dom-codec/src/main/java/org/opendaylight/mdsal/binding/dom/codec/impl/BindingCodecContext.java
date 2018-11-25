@@ -325,7 +325,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final QName name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }
-        return new IdentifiableItemCodec(schema, identifier, listClz, valueCtx);
+        return IdentifiableItemCodec.of(schema, identifier, listClz, valueCtx);
     }
 
     @SuppressWarnings("unchecked")
