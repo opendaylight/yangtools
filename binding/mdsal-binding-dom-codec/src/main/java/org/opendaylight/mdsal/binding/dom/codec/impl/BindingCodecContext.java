@@ -43,11 +43,9 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.Notification;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -69,8 +67,8 @@ import org.slf4j.LoggerFactory;
 final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
 
-    private final Codec<YangInstanceIdentifier, InstanceIdentifier<?>> instanceIdentifierCodec;
-    private final Codec<QName, Class<?>> identityCodec;
+    private final InstanceIdentifierCodec instanceIdentifierCodec;
+    private final IdentityCodec identityCodec;
     private final BindingNormalizedNodeCodecRegistry registry;
     private final BindingRuntimeContext context;
     private final SchemaRootCodecContext<?> root;
@@ -88,11 +86,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return context;
     }
 
-    Codec<YangInstanceIdentifier, InstanceIdentifier<?>> getInstanceIdentifierCodec() {
+    InstanceIdentifierCodec getInstanceIdentifierCodec() {
         return instanceIdentifierCodec;
     }
 
-    public Codec<QName, Class<?>> getIdentityCodec() {
+    IdentityCodec getIdentityCodec() {
         return identityCodec;
     }
 
@@ -319,8 +317,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     @Override
-    public Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> getPathArgumentCodec(final Class<?> listClz,
-            final ListSchemaNode schema) {
+    public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListSchemaNode schema) {
         final Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
                 Identifiable.class);
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
