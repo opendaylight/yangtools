@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
@@ -527,6 +528,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private static final long serialVersionUID = -4787195606494761540L;
 
         private final Map<QName, Object> keyValues;
+
+        public NodeIdentifierWithPredicates(final QName node) {
+            super(node);
+            this.keyValues = ImmutableMap.of();
+        }
 
         public NodeIdentifierWithPredicates(final QName node, final Map<QName, Object> keyValues) {
             super(node);
