@@ -12,7 +12,7 @@
     <parent>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>dom-parent</artifactId>
-        <version>3.0.2-SNAPSHOT</version>
+        <version>3.0.3-SNAPSHOT</version>
         <relativePath>../../dom/dom-parent</relativePath>
     </parent>
 
@@ -63,7 +63,7 @@
                                 <dependency>
                                     <groupId>org.opendaylight.mdsal</groupId>
                                     <artifactId>maven-sal-api-gen-plugin</artifactId>
-                                    <version>1.0.2-SNAPSHOT</version>
+                                    <version>1.0.3-SNAPSHOT</version>
                                     <type>jar</type>
                                 </dependency>
                             </dependencies>
