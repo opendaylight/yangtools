@@ -483,12 +483,12 @@ class ClassTemplate extends BaseTemplate {
         return '''
             @«Override.importedName»
             public int hashCode() {
-            «IF size != 1»
-                «hashCodeResult(genTO.hashCodeIdentifiers)»
-                return result;
-            «ELSE»
-                return «CodeHelpers.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
-            «ENDIF»
+                «IF size != 1»
+                    «hashCodeResult(genTO.hashCodeIdentifiers)»
+                    return result;
+                «ELSE»
+                    return «CodeHelpers.importedName».wrapperHashCode(«genTO.hashCodeIdentifiers.get(0).fieldName»);
+                «ENDIF»
             }
         '''
     }
