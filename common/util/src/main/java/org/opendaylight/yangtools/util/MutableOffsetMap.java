@@ -55,6 +55,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.orderedOffsets(source.keySet()), source);
         }
 
+        Ordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets);
+        }
+
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
@@ -93,6 +97,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.unorderedOffsets(source.keySet()), source);
         }
 
+        Unordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets);
+        }
+
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
@@ -125,7 +133,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
-    private static final Object REMOVED = new Object();
+    static final Object REMOVED = new Object();
 
     private final ImmutableMap<K, Integer> offsets;
     private HashMap<K, V> newKeys;
@@ -144,6 +152,12 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     MutableOffsetMap() {
         this(ImmutableMap.of(), EMPTY_ARRAY);
+    }
+
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets) {
+        this(offsets, new Object[offsets.size()]);
+        this.removed = objects.length;
+        needClone = false;
     }
 
     MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final Map<K, V> source) {
