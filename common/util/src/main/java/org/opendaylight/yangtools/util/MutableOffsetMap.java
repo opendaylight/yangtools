@@ -55,6 +55,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             super(OffsetMapCache.orderedOffsets(source.keySet()), source);
         }
 
+        Ordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets, new LinkedHashMap<>());
+        }
+
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
             super(offsets, objects);
         }
@@ -83,6 +87,12 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         HashMap<K, V> createNewKeys() {
             return new LinkedHashMap<>();
         }
+
+        private static Object[] removedObjects(final int size) {
+            final Object[] ret = new Object[size];
+            Arrays.fill(ret, REMOVED);
+            return ret;
+        }
     }
 
     static final class Unordered<K, V> extends MutableOffsetMap<K, V> {
@@ -91,6 +101,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
         Unordered(final Map<K, V> source) {
             super(OffsetMapCache.unorderedOffsets(source.keySet()), source);
+        }
+
+        Unordered(final ImmutableMap<K, Integer> offsets) {
+            super(offsets, new HashMap<>());
         }
 
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
@@ -125,7 +139,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
-    private static final Object REMOVED = new Object();
+    static final Object REMOVED = new Object();
 
     private final ImmutableMap<K, Integer> offsets;
     private HashMap<K, V> newKeys;
@@ -145,6 +159,13 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     @SuppressWarnings("unchecked")
     MutableOffsetMap() {
         this(ImmutableMap.of(), (V[]) EMPTY_ARRAY);
+    }
+
+    @SuppressWarnings("unchecked")
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets) {
+        this(offsets, (V[])new Object[offsets.size()]);
+        this.removed = objects.length;
+        needClone = false;
     }
 
     @SuppressWarnings("unchecked")
