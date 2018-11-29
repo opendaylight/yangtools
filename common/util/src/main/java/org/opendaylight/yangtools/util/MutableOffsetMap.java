@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Preconditions.checkState;
-import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -19,6 +18,7 @@ import java.util.AbstractMap;
 import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,15 +49,14 @@ import org.eclipse.jdt.annotation.Nullable;
 public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implements Cloneable, ModifiableMapPhase<K, V> {
     static final class Ordered<K, V> extends MutableOffsetMap<K, V> {
         Ordered() {
-            super(new LinkedHashMap<>());
         }
 
         Ordered(final Map<K, V> source) {
-            super(OffsetMapCache.orderedOffsets(source.keySet()), source, new LinkedHashMap<>());
+            super(OffsetMapCache.orderedOffsets(source.keySet()), source);
         }
 
         Ordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
-            super(offsets, objects, new LinkedHashMap<>());
+            super(offsets, objects);
         }
 
         @Override
@@ -79,19 +78,23 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         SharedSingletonMap<K, V> singletonMap() {
             return SharedSingletonMap.orderedCopyOf(this);
         }
+
+        @Override
+        HashMap<K, V> createNewKeys() {
+            return new LinkedHashMap<>();
+        }
     }
 
     static final class Unordered<K, V> extends MutableOffsetMap<K, V> {
         Unordered() {
-            super(new HashMap<>());
         }
 
         Unordered(final Map<K, V> source) {
-            super(OffsetMapCache.unorderedOffsets(source.keySet()), source, new HashMap<>());
+            super(OffsetMapCache.unorderedOffsets(source.keySet()), source);
         }
 
         Unordered(final ImmutableMap<K, Integer> offsets, final V[] objects) {
-            super(offsets, objects, new HashMap<>());
+            super(offsets, objects);
         }
 
         @Override
@@ -114,6 +117,11 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         SharedSingletonMap<K, V> singletonMap() {
             return SharedSingletonMap.unorderedCopyOf(this);
         }
+
+        @Override
+        HashMap<K, V> createNewKeys() {
+            return new HashMap<>();
+        }
     }
 
     private static final Object[] EMPTY_ARRAY = new Object[0];
@@ -129,21 +137,19 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     private transient volatile int modCount;
     private boolean needClone = true;
 
-    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects, final HashMap<K, V> newKeys) {
-        verify(newKeys.isEmpty());
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final V[] objects) {
         this.offsets = requireNonNull(offsets);
         this.objects = requireNonNull(objects);
-        this.newKeys = requireNonNull(newKeys);
     }
 
     @SuppressWarnings("unchecked")
-    MutableOffsetMap(final HashMap<K, V> newKeys) {
-        this(ImmutableMap.of(), (V[]) EMPTY_ARRAY, newKeys);
+    MutableOffsetMap() {
+        this(ImmutableMap.of(), (V[]) EMPTY_ARRAY);
     }
 
     @SuppressWarnings("unchecked")
-    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final Map<K, V> source, final HashMap<K, V> newKeys) {
-        this(offsets, (V[]) new Object[offsets.size()], newKeys);
+    MutableOffsetMap(final ImmutableMap<K, Integer> offsets, final Map<K, V> source) {
+        this(offsets, (V[]) new Object[offsets.size()]);
 
         for (Entry<K, V> e : source.entrySet()) {
             objects[offsets.get(e.getKey())] = requireNonNull(e.getValue());
@@ -218,7 +224,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public final int size() {
-        return offsets.size() + newKeys.size() - removed;
+        return offsets.size() + (newKeys == null ? 0 : newKeys.size()) - removed;
     }
 
     @Override
@@ -236,7 +242,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
         }
 
-        return newKeys.containsKey(key);
+        return newKeys != null && newKeys.containsKey(key);
     }
 
     @Override
@@ -257,7 +263,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
         }
 
-        return newKeys.get(key);
+        return newKeys == null ? null : newKeys.get(key);
     }
 
     private void cloneArray() {
@@ -296,7 +302,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
         }
 
-        final V ret = newKeys.put(key, value);
+        final V ret = newKeys().put(key, value);
         if (ret == null) {
             modCount++;
         }
@@ -327,7 +333,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
         }
 
-        final V ret = newKeys.remove(key);
+        final V ret = newKeys != null ? newKeys.remove(key) : null;
         if (ret != null) {
             modCount++;
         }
@@ -337,7 +343,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     @Override
     public final void clear() {
         if (size() != 0) {
-            newKeys.clear();
+            if (newKeys != null) {
+                newKeys.clear();
+            }
             cloneArray();
             Arrays.fill(objects, removedObject());
             removed = objects.length;
@@ -352,7 +360,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     @Override
     public @NonNull Map<K, V> toUnmodifiableMap() {
-        if (removed == 0 && newKeys.isEmpty()) {
+        if (removed == 0 && (newKeys == null || newKeys.isEmpty())) {
             // Make sure next modification clones the array, as we leak it to the map we return.
             needClone = true;
 
@@ -390,7 +398,9 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         } else {
             keyset.addAll(offsets.keySet());
         }
-        keyset.addAll(newKeys.keySet());
+        if (newKeys != null) {
+            keyset.addAll(newKeys.keySet());
+        }
 
         // Construct the values
         @SuppressWarnings("unchecked")
@@ -411,8 +421,10 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             System.arraycopy(objects, 0, values, 0, offsets.size());
             offset = offsets.size();
         }
-        for (V v : newKeys.values()) {
-            values[offset++] = v;
+        if (newKeys != null) {
+            for (V v : newKeys.values()) {
+                values[offset++] = v;
+            }
         }
 
         return modifiedMap(keyset, values);
@@ -429,7 +441,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             throw new IllegalStateException("Clone is expected to work", e);
         }
 
-        ret.newKeys = (HashMap<K, V>) newKeys.clone();
+        ret.newKeys = newKeys == null ? null : (HashMap<K, V>) newKeys.clone();
         ret.needClone = true;
         return ret;
     }
@@ -445,7 +457,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
             }
         }
 
-        return result + newKeys.hashCode();
+        return result + newKeysOrEmpty().hashCode();
     }
 
     @Override
@@ -460,14 +472,14 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         if (obj instanceof ImmutableOffsetMap) {
             final ImmutableOffsetMap<?, ?> om = (ImmutableOffsetMap<?, ?>) obj;
 
-            if (newKeys.isEmpty() && offsets.equals(om.offsets())) {
+            if ((newKeys == null || newKeys.isEmpty()) && offsets.equals(om.offsets())) {
                 return Arrays.deepEquals(objects, om.objects());
             }
         } else if (obj instanceof MutableOffsetMap) {
             final MutableOffsetMap<?, ?> om = (MutableOffsetMap<?, ?>) obj;
 
             if (offsets.equals(om.offsets)) {
-                return Arrays.deepEquals(objects, om.objects) && newKeys.equals(om.newKeys);
+                return Arrays.deepEquals(objects, om.objects) && newKeysOrEmpty().equals(om.newKeysOrEmpty());
             }
         }
 
@@ -482,7 +494,7 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
         try {
             // Ensure all newKeys are present. Note newKeys is guaranteed to
             // not contain null value.
-            for (Entry<K, V> e : newKeys.entrySet()) {
+            for (Entry<K, V> e : newKeysOrEmpty().entrySet()) {
                 if (!e.getValue().equals(other.get(e.getKey()))) {
                     return false;
                 }
@@ -519,9 +531,18 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
     }
 
     @VisibleForTesting
-    final Object newKeys() {
+    final HashMap<K, V> newKeys() {
+        if (newKeys == null) {
+            newKeys = createNewKeys();
+        }
         return newKeys;
     }
+
+    private final Map<K, V> newKeysOrEmpty() {
+        return newKeys != null ? newKeys : ImmutableMap.of();
+    }
+
+    abstract HashMap<K, V> createNewKeys();
 
     private final class EntrySet extends AbstractSet<Entry<K, V>> {
         @Override
@@ -610,7 +631,8 @@ public abstract class MutableOffsetMap<K, V> extends AbstractMap<K, V> implement
 
     private abstract class AbstractSetIterator<E> implements Iterator<E> {
         private final Iterator<Entry<K, Integer>> oldIterator = offsets.entrySet().iterator();
-        private final Iterator<K> newIterator = newKeys.keySet().iterator();
+        private final Iterator<K> newIterator = newKeys == null ? Collections.emptyIterator()
+                : newKeys.keySet().iterator();
         private int expectedModCount = modCount;
         private @Nullable K currentKey = null;
         private @Nullable K nextKey;
