@@ -120,14 +120,7 @@ public abstract class SingletonSet<E> implements Set<E>, Immutable, Serializable
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public final boolean containsAll(final Collection<?> c) {
-        if (c.isEmpty()) {
-            return true;
-        }
-        if (c.size() != 1) {
-            return false;
-        }
-
-        return otherContains(c);
+        return c.isEmpty() || c.size() == 1 && otherContains(c);
     }
 
     @Override
