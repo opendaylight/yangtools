@@ -161,8 +161,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
             return common;
         }
 
-        final int size = map.size();
-        if (size == 1) {
+        if (map.size() == 1) {
             // Efficient single-entry implementation
             final Entry<K, V> e = map.entrySet().iterator().next();
             return SharedSingletonMap.unorderedOf(e.getKey(), e.getValue());
@@ -282,8 +281,8 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
 
     @Override
     public final V get(final Object key) {
-        final Integer offset = offsets.get(key);
-        return offset == null ? null : objects[offset];
+        Integer offset;
+        return (offset = offsets.get(key)) == null ? null : objects[offset];
     }
 
     @Override
@@ -328,9 +327,7 @@ public abstract class ImmutableOffsetMap<K, V> implements UnmodifiableMapPhase<K
         final Iterator<K> it = offsets.keySet().iterator();
         int offset = 0;
         while (it.hasNext()) {
-            sb.append(it.next());
-            sb.append('=');
-            sb.append(objects[offset++]);
+            sb.append(it.next()).append('=').append(objects[offset++]);
 
             if (it.hasNext()) {
                 sb.append(", ");
