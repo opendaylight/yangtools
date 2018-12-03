@@ -136,14 +136,8 @@ final class ConstantArrayCollection<E> implements Collection<E>, Serializable {
 
     @Override
     public boolean equals(final Object obj) {
-        if (obj == this) {
-            return true;
-        }
-        if (!(obj instanceof ConstantArrayCollection)) {
-            return false;
-        }
-
-        return Arrays.equals(array, ((ConstantArrayCollection<?>) obj).array);
+        return obj == this || obj instanceof ConstantArrayCollection
+                && Arrays.equals(array, ((ConstantArrayCollection<?>) obj).array);
     }
 
     @Override
