@@ -56,7 +56,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private static final String COM_SUN_TRANSFORMER =
         "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
 
-    private static final TransformerFactory TRANSFORMER_FACTORY;
+    static final TransformerFactory TRANSFORMER_FACTORY;
 
     static {
         TransformerFactory fa = TransformerFactory.newInstance();
