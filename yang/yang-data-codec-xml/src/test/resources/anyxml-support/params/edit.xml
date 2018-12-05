@@ -1,0 +1,16 @@
+<input xmlns="urn:ietf:params:xml:ns:netconf:base:1.0">
+    <target>
+        <candidate/>
+    </target>
+    <default-operation>none</default-operation>
+    <config>
+        <interface-configurations xmlns="http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg">
+            <interface-configuration xmlns:xmpref="xml:namespace:prefix" simple="attribute">
+                <active xmpref:prefixed2="attribute2">pre</active>
+                <interface-name xmpref:prefixed3="attribute3">TenGigE0/0/0/0</interface-name>\n" +
+                <interface-mode-non-physical>default</interface-mode-non-physical>
+                <description>test</description>
+            </interface-configuration>
+        </interface-configurations>
+    </config>
+</input>
