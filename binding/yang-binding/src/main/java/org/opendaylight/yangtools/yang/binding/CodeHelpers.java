@@ -188,6 +188,30 @@ public final class CodeHelpers {
     /**
      * Throw an IllegalArgument exception describing a range violation.
      *
+     * @param expected String describing expected ranges
+     * @param actual Actual observed value
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidRange(final String expected, final int actual) {
+        // Not a code duplication: provides faster string concat via StringBuilder.append(int)
+        throw new IllegalArgumentException("Invalid range: " + actual + ", expected: " + expected + ".");
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a range violation.
+     *
+     * @param expected String describing expected ranges
+     * @param actual Actual observed value
+     * @throws IllegalArgumentException always
+     */
+    public static void throwInvalidRange(final String expected, final long actual) {
+        // Not a code duplication: provides faster string concat via StringBuilder.append(long)
+        throw new IllegalArgumentException("Invalid range: " + actual + ", expected: " + expected + ".");
+    }
+
+    /**
+     * Throw an IllegalArgument exception describing a range violation.
+     *
      * @param expected Objects describing expected ranges
      * @param actual Actual observed byte array
      * @throws IllegalArgumentException always
@@ -244,7 +268,7 @@ public final class CodeHelpers {
      * @param hash Wrapped object hash
      * @return Wrapper object hash
      */
-    private static int wrapHashCode(int hash) {
+    private static int wrapHashCode(final int hash) {
         return hash == 0 ? 31 : hash;
     }
 }
