@@ -11,7 +11,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.List;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -29,7 +28,7 @@ public final class BitBuilder implements Builder<Bit>, Mutable {
     private final SchemaPath schemaPath;
     private final Long position;
 
-    private List<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.of();
+    private ImmutableList<UnknownSchemaNode> unknownSchemaNodes = ImmutableList.of();
     private Status status = Status.CURRENT;
     private String description;
     private String reference;

@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeConstraint;
 
 final class ResolvedRangeConstraint<T extends Number & Comparable<T>> implements RangeConstraint<T>, Immutable {
     private final ConstraintMetaDefinition meta;
-    private final RangeSet<T> ranges;
+    private final ImmutableRangeSet<T> ranges;
 
     ResolvedRangeConstraint(final ConstraintMetaDefinition meta, final RangeSet<T> ranges) {
         this.meta = requireNonNull(meta);

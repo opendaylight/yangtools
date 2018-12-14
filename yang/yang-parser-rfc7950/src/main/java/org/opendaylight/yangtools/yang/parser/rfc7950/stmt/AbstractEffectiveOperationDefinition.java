@@ -30,8 +30,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 @Beta
 public abstract class AbstractEffectiveOperationDefinition<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveSchemaNode<D> implements OperationDefinition {
-    private final Set<TypeDefinition<?>> typeDefinitions;
-    private final Set<GroupingDefinition> groupings;
+    private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
+    private final ImmutableSet<GroupingDefinition> groupings;
     private final ContainerSchemaNode input;
     private final ContainerSchemaNode output;
 

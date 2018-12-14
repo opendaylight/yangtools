@@ -22,8 +22,8 @@ import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 
 @VisibleForTesting
 public final class EffectiveSchemaContext extends SimpleSchemaContext {
-    private final List<DeclaredStatement<?>> rootDeclaredStatements;
-    private final List<EffectiveStatement<?, ?>> rootEffectiveStatements;
+    private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
+    private final ImmutableList<EffectiveStatement<?, ?>> rootEffectiveStatements;
 
     private EffectiveSchemaContext(final Set<Module> modules, final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {

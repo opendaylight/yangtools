@@ -35,8 +35,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReferenc
 @Beta
 public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends DeclaredStatement<A>>
         extends AbstractEffectiveDocumentedNode<A, D> {
-    private final Map<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace;
-    private final Map<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
+    private final ImmutableMap<QName, DataTreeEffectiveStatement<?>> dataTreeNamespace;
+    private final ImmutableMap<QName, SchemaTreeEffectiveStatement<?>> schemaTreeNamespace;
 
     protected AbstractSchemaEffectiveDocumentedNode(final StmtContext<A, D, ?> ctx) {
         super(ctx);
@@ -64,7 +64,8 @@ public abstract class AbstractSchemaEffectiveDocumentedNode<A, D extends Declare
 
                 // This is a mighty hack to lower memory usage: if we consumed all schema tree children as data nodes,
                 // the two maps are equal and hence we can share the instance.
-                dataTreeNamespace = sameAsSchema ? (Map) schemaTreeNamespace : ImmutableMap.copyOf(dataChildren);
+                dataTreeNamespace = sameAsSchema ? (ImmutableMap) schemaTreeNamespace
+                        : ImmutableMap.copyOf(dataChildren);
             } else {
                 dataTreeNamespace = ImmutableMap.of();
             }

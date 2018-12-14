@@ -30,9 +30,9 @@ public final class LeafRefContext implements SchemaContextProvider {
     private final boolean isReferencedBy;
     private final boolean isReferencing;
 
-    private final Map<QName, LeafRefContext> referencingChilds;
-    private final Map<QName, LeafRefContext> referencedByChilds;
-    private final Map<QName, LeafRefContext> referencedByLeafRefCtx;
+    private final ImmutableMap<QName, LeafRefContext> referencingChilds;
+    private final ImmutableMap<QName, LeafRefContext> referencedByChilds;
+    private final ImmutableMap<QName, LeafRefContext> referencedByLeafRefCtx;
 
     // FIXME: this looks like it's related to absoluteLeafRefTargetPath, but the original use in LeafRefValidation
     //        fast path did not make it clear. Analyze the relationship between this field and

@@ -39,9 +39,9 @@ import org.slf4j.LoggerFactory;
 //        as new models are added to a schema context.
 abstract class DependencyResolver {
     private static final Logger LOG = LoggerFactory.getLogger(DependencyResolver.class);
-    private final Collection<SourceIdentifier> resolvedSources;
-    private final Collection<SourceIdentifier> unresolvedSources;
-    private final Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
+    private final ImmutableList<SourceIdentifier> resolvedSources;
+    private final ImmutableList<SourceIdentifier> unresolvedSources;
+    private final ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
 
     protected DependencyResolver(final Map<SourceIdentifier, YangModelDependencyInfo> depInfo) {
         final Collection<SourceIdentifier> resolved = new ArrayList<>(depInfo.size());

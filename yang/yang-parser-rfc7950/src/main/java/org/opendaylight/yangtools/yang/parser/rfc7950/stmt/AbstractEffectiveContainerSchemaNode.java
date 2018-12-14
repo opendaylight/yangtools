@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 public abstract class AbstractEffectiveContainerSchemaNode<D extends DeclaredStatement<QName>>
         extends AbstractEffectiveSimpleDataNodeContainer<D> implements ContainerSchemaNode {
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
 
     protected AbstractEffectiveContainerSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);

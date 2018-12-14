@@ -39,14 +39,14 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 @Immutable
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
-    private final Map<QNameModule, Module> moduleMap;
+    private final ImmutableMap<QNameModule, Module> moduleMap;
 
     //collection to be filled with filtered modules
-    private final Set<Module> filteredModules;
+    private final ImmutableSet<Module> filteredModules;
 
     //collections to be filled in with filtered data
-    private final SetMultimap<URI, Module> namespaceToModules;
-    private final SetMultimap<String, Module> nameToModules;
+    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableSetMultimap<String, Module> nameToModules;
 
     /**
      * Filters SchemaContext for yang modules.

@@ -74,25 +74,25 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final YangVersion yangVersion;
     private final String organization;
     private final String contact;
-    private final Set<ModuleImport> imports;
-    private final Set<FeatureDefinition> features;
-    private final @NonNull Set<NotificationDefinition> notifications;
-    private final Set<AugmentationSchemaNode> augmentations;
-    private final Set<RpcDefinition> rpcs;
-    private final Set<Deviation> deviations;
-    private final List<ExtensionDefinition> extensionNodes;
-    private final Set<IdentitySchemaNode> identities;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
-    private final Map<QName, DataSchemaNode> childNodes;
-    private final Set<GroupingDefinition> groupings;
-    private final Set<UsesNode> uses;
-    private final Set<TypeDefinition<?>> typeDefinitions;
-    private final Set<DataSchemaNode> publicChildNodes;
+    private final ImmutableSet<ModuleImport> imports;
+    private final ImmutableSet<FeatureDefinition> features;
+    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private final ImmutableSet<AugmentationSchemaNode> augmentations;
+    private final ImmutableSet<RpcDefinition> rpcs;
+    private final ImmutableSet<Deviation> deviations;
+    private final ImmutableList<ExtensionDefinition> extensionNodes;
+    private final ImmutableSet<IdentitySchemaNode> identities;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
+    private final ImmutableMap<QName, DataSchemaNode> childNodes;
+    private final ImmutableSet<GroupingDefinition> groupings;
+    private final ImmutableSet<UsesNode> uses;
+    private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
+    private final ImmutableSet<DataSchemaNode> publicChildNodes;
     private final SemVer semanticVersion;
 
     private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
         submoduleContextsToBuild;
-    private Set<Module> submodules;
+    private ImmutableSet<Module> submodules;
     private boolean sealed;
 
     protected AbstractEffectiveModule(final StmtContext<String, D, ? extends EffectiveStatement<String, ?>> ctx) {

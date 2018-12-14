@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -62,7 +63,7 @@ public abstract class AbstractSchemaRepository implements SchemaRepository, Sche
      * Schema source listeners.
      */
     @GuardedBy("this")
-    private final Collection<SchemaListenerRegistration> listeners = new ArrayList<>();
+    private final List<SchemaListenerRegistration> listeners = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     private static <T extends SchemaSourceRepresentation> ListenableFuture<T> fetchSource(

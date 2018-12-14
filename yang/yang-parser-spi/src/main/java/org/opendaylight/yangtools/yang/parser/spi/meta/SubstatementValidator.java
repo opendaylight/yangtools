@@ -19,8 +19,8 @@ import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 public final class SubstatementValidator {
-    private final Map<StatementDefinition, Cardinality> cardinalityMap;
-    private final Map<StatementDefinition, Cardinality> mandatoryStatements;
+    private final ImmutableMap<StatementDefinition, Cardinality> cardinalityMap;
+    private final ImmutableMap<StatementDefinition, Cardinality> mandatoryStatements;
     private final StatementDefinition currentStatement;
 
     private SubstatementValidator(final Builder builder) {

@@ -30,7 +30,7 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 
 @Beta
 public class CustomCrossSourceStatementReactorBuilder implements Builder<CrossSourceStatementReactor> {
-    private final Map<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
+    private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle.Builder> reactorSupportBundles;
     private final Map<ValidationBundleType, Collection<StatementDefinition>> reactorValidationBundles = new HashMap<>();
 
     /**

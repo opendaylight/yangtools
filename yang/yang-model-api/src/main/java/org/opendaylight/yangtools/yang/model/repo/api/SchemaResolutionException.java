@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import java.util.Collection;
-import java.util.Collections;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 
@@ -23,23 +22,23 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
  */
 @Beta
 public class SchemaResolutionException extends SchemaSourceException {
-
     private static final long serialVersionUID = 1L;
+
     private final SourceIdentifier failedSource;
-    private final @NonNull Multimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
-    private final @NonNull Collection<SourceIdentifier> resolvedSources;
+    private final @NonNull ImmutableMultimap<SourceIdentifier, ModuleImport> unsatisfiedImports;
+    private final @NonNull ImmutableList<SourceIdentifier> resolvedSources;
 
     public SchemaResolutionException(final @NonNull String message) {
         this(message, null);
     }
 
     public SchemaResolutionException(final @NonNull String message, final Throwable cause) {
-        this(message, null, cause, Collections.emptySet(), ImmutableMultimap.of());
+        this(message, null, cause, ImmutableList.of(), ImmutableMultimap.of());
     }
 
     public SchemaResolutionException(final @NonNull String message, final SourceIdentifier failedSource,
             final Throwable cause) {
-        this(message, failedSource, cause, Collections.emptySet(), ImmutableMultimap.of());
+        this(message, failedSource, cause, ImmutableList.of(), ImmutableMultimap.of());
     }
 
     public SchemaResolutionException(final @NonNull String message,

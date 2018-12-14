@@ -11,11 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.Nonnull;
@@ -201,7 +201,7 @@ public final class ContainerSchemaNodes {
     private static final class NotificationContainerSchemaNode extends AbstractContainerSchemaNode {
 
         private final NotificationDefinition notification;
-        private final Map<QName, DataSchemaNode> mapNodes;
+        private final ImmutableMap<QName, DataSchemaNode> mapNodes;
 
         private NotificationContainerSchemaNode(final NotificationDefinition notification) {
             super(notification);

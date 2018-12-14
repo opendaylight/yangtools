@@ -36,8 +36,8 @@ import org.opendaylight.yangtools.yang.model.api.UsesNode;
  */
 public final class EffectiveAugmentationSchema implements AugmentationSchemaNode {
     private final AugmentationSchemaNode delegate;
-    private final Set<DataSchemaNode> realChildSchemas;
-    private final Map<QName, DataSchemaNode> mappedChildSchemas;
+    private final ImmutableSet<DataSchemaNode> realChildSchemas;
+    private final ImmutableMap<QName, DataSchemaNode> mappedChildSchemas;
 
     public EffectiveAugmentationSchema(final AugmentationSchemaNode augmentSchema,
             final Set<DataSchemaNode> realChildSchemas) {

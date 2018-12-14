@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.EventListener;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
@@ -103,8 +104,8 @@ public abstract class StatementContextBase<A, D extends DeclaredStatement<A>, E 
 
     private Multimap<ModelProcessingPhase, OnPhaseFinished> phaseListeners = ImmutableMultimap.of();
     private Multimap<ModelProcessingPhase, ContextMutation> phaseMutation = ImmutableMultimap.of();
-    private Collection<Mutable<?, ?, ?>> effective = ImmutableList.of();
-    private Collection<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
+    private List<Mutable<?, ?, ?>> effective = ImmutableList.of();
+    private List<StmtContext<?, ?, ?>> effectOfStatement = ImmutableList.of();
     private StatementMap substatements = StatementMap.empty();
 
     private boolean isSupportedToBuildEffective = true;

@@ -32,7 +32,7 @@ public final class BitsStringCodec extends TypeDefinitionAwareCodec<Set<String>,
     private static final Joiner JOINER = Joiner.on(" ").skipNulls();
     private static final Splitter SPLITTER = Splitter.on(' ').omitEmptyStrings().trimResults();
 
-    private final Set<String> validBits;
+    private final ImmutableSet<String> validBits;
 
     @SuppressWarnings("unchecked")
     private BitsStringCodec(final Optional<BitsTypeDefinition> typeDef) {

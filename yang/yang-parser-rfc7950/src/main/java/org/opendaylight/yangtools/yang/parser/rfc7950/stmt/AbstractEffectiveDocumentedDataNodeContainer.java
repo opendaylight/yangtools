@@ -37,11 +37,11 @@ import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespac
 public abstract class AbstractEffectiveDocumentedDataNodeContainer<A, D extends DeclaredStatement<A>>
         extends AbstractSchemaEffectiveDocumentedNode<A, D> implements DataNodeContainer {
 
-    private final Map<QName, DataSchemaNode> childNodes;
-    private final Set<GroupingDefinition> groupings;
-    private final Set<UsesNode> uses;
-    private final Set<TypeDefinition<?>> typeDefinitions;
-    private final Set<DataSchemaNode> publicChildNodes;
+    private final ImmutableMap<QName, DataSchemaNode> childNodes;
+    private final ImmutableSet<GroupingDefinition> groupings;
+    private final ImmutableSet<UsesNode> uses;
+    private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
+    private final ImmutableSet<DataSchemaNode> publicChildNodes;
 
     protected AbstractEffectiveDocumentedDataNodeContainer(final StmtContext<A, D, ?> ctx) {
         super(ctx);

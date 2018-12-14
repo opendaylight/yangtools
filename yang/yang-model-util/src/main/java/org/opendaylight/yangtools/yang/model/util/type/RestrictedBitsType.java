@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 
 final class RestrictedBitsType extends AbstractRestrictedType<BitsTypeDefinition> implements BitsTypeDefinition {
-    private final @NonNull List<Bit> bits;
+    private final @NonNull ImmutableList<Bit> bits;
 
     RestrictedBitsType(final BitsTypeDefinition baseType, final SchemaPath path,
             final Collection<UnknownSchemaNode> unknownSchemaNodes, final Collection<Bit> bits) {

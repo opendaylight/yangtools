@@ -41,12 +41,13 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
 
     private final @NonNull SchemaSourceFilter filter;
     private final @NonNull StatementParserMode statementParserMode;
-    private final @Nullable Set<QName> supportedFeatures;
-    private final @Nullable SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
+    private final @Nullable ImmutableSet<QName> supportedFeatures;
+    private final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
 
     private SchemaContextFactoryConfiguration(final @NonNull SchemaSourceFilter filter,
-            final @NonNull StatementParserMode statementParserMode, final @Nullable Set<QName> supportedFeatures,
-            final @Nullable SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
+            final @NonNull StatementParserMode statementParserMode,
+            final @Nullable ImmutableSet<QName> supportedFeatures,
+            final @Nullable ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         this.filter = requireNonNull(filter);
         this.statementParserMode = requireNonNull(statementParserMode);
         this.supportedFeatures = supportedFeatures;
@@ -107,8 +108,8 @@ public final class SchemaContextFactoryConfiguration implements Immutable {
             implements org.opendaylight.yangtools.concepts.Builder<SchemaContextFactoryConfiguration> {
         private SchemaSourceFilter filter = SchemaSourceFilter.ALWAYS_ACCEPT;
         private StatementParserMode statementParserMode = StatementParserMode.DEFAULT_MODE;
-        private SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
-        private Set<QName> supportedFeatures;
+        private ImmutableSetMultimap<QNameModule, QNameModule> modulesDeviatedByModules;
+        private ImmutableSet<QName> supportedFeatures;
 
         /**
          * Set schema source filter which will filter available schema sources using the provided filter.

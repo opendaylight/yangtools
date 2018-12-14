@@ -12,7 +12,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -90,7 +89,7 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         }
     }
 
-    private static final Set<YangStmtMapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> TOP_REUSED_DEF_SET = ImmutableSet.of(
         YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF);
 
@@ -98,11 +97,11 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         return TOP_REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
-    private static final Set<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> NOCOPY_FROM_GROUPING_SET = ImmutableSet.of(
         YangStmtMapping.DESCRIPTION,
         YangStmtMapping.REFERENCE,
         YangStmtMapping.STATUS);
-    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
+    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(
         YangStmtMapping.TYPE,
         YangStmtMapping.TYPEDEF,
         YangStmtMapping.USES);
@@ -194,7 +193,8 @@ final class UsesStatementImpl extends AbstractDeclaredStatement<QName> implement
         }
     }
 
-    private static final Set<YangStmtMapping> ALLOWED_TO_ADD_BY_REFINE_DEF_SET = ImmutableSet.of(YangStmtMapping.MUST);
+    private static final ImmutableSet<YangStmtMapping> ALLOWED_TO_ADD_BY_REFINE_DEF_SET =
+            ImmutableSet.of(YangStmtMapping.MUST);
 
     private static boolean isAllowedToAddByRefine(final StatementDefinition publicDefinition) {
         return ALLOWED_TO_ADD_BY_REFINE_DEF_SET.contains(publicDefinition);

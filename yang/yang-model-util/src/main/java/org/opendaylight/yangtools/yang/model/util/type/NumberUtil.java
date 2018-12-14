@@ -7,17 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ImmutableMap;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.function.Function;
 
 final class NumberUtil {
     private static final Comparator<Number> NUMBER_COMPARATOR = (o1, o2) -> {
-        Preconditions.checkArgument(o1.getClass().equals(o2.getClass()), "Incompatible Number classes %s and %s",
+        checkArgument(o1.getClass().equals(o2.getClass()), "Incompatible Number classes %s and %s",
             o1.getClass(), o2.getClass());
 
         if (o1 instanceof Byte) {
@@ -37,7 +37,7 @@ final class NumberUtil {
         }
     };
 
-    private static final Map<Class<? extends Number>, Function<Number, Number>> CONVERTERS;
+    private static final ImmutableMap<Class<? extends Number>, Function<Number, Number>> CONVERTERS;
 
     static {
         final ImmutableMap.Builder<Class<? extends Number>, Function<Number, Number>> b = ImmutableMap.builder();

@@ -11,8 +11,8 @@ import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import javax.annotation.concurrent.NotThreadSafe;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 public abstract class AbstractParserErrorListener<E extends Exception> extends BaseErrorListener implements Mutable {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractParserErrorListener.class);
 
-    private final Collection<E> exceptions = new ArrayList<>();
+    private final List<E> exceptions = new ArrayList<>();
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")

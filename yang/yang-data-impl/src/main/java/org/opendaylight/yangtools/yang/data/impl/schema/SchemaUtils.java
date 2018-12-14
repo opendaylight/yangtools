@@ -157,7 +157,7 @@ public final class SchemaUtils {
     private static Optional<AugmentationSchemaNode> findAugment(final AugmentationTarget schema,
             final Set<QName> qnames) {
         for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
-            final Set<QName> qNamesFromAugment = ImmutableSet.copyOf(Collections2.transform(augment.getChildNodes(),
+            final ImmutableSet<QName> qNamesFromAugment = ImmutableSet.copyOf(Collections2.transform(augment.getChildNodes(),
                 DataSchemaNode::getQName));
 
             if (qNamesFromAugment.equals(qnames)) {

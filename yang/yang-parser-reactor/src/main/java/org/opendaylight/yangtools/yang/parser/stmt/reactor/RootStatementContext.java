@@ -17,8 +17,10 @@ import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -48,13 +50,13 @@ public class RootStatementContext<A, D extends DeclaredStatement<A>, E extends E
     private final A argument;
 
     private YangVersion rootVersion;
-    private Collection<SourceIdentifier> requiredSources = ImmutableSet.of();
+    private Set<SourceIdentifier> requiredSources = ImmutableSet.of();
     private SourceIdentifier rootIdentifier;
 
     /**
      * References to RootStatementContext of submodules which are included in this source.
      */
-    private Collection<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
+    private List<RootStatementContext<?, ?, ?>> includedContexts = ImmutableList.of();
 
     RootStatementContext(final SourceSpecificContext sourceContext, final StatementDefinitionContext<A, D, E> def,
         final StatementSourceReference ref, final String rawArgument) {

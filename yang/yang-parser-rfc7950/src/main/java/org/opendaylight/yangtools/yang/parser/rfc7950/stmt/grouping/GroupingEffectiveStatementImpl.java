@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.grouping;
 
 import com.google.common.collect.ImmutableList;
@@ -33,9 +32,9 @@ final class GroupingEffectiveStatementImpl
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
     private final boolean addedByUses;
-    private final @NonNull Set<ActionDefinition> actions;
-    private final @NonNull Set<NotificationDefinition> notifications;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableSet<ActionDefinition> actions;
+    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
 
     GroupingEffectiveStatementImpl(
             final StmtContext<QName, GroupingStatement, EffectiveStatement<QName, GroupingStatement>> ctx) {

@@ -19,7 +19,7 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
         extends AbstractImmutableNormalizedValueNode<K, V>
         implements AttributesContainer {
 
-    private final Map<QName, String> attributes;
+    private final ImmutableMap<QName, String> attributes;
 
     protected AbstractImmutableNormalizedValueAttrNode(final K nodeIdentifier, final V value,
             final Map<QName, String> attributes) {

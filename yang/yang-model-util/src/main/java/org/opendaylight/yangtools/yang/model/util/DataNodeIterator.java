@@ -33,25 +33,18 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
  */
 public class DataNodeIterator implements Iterator<DataSchemaNode> {
 
+    private final List<ListSchemaNode> allLists = new ArrayList<>();
+    private final List<ContainerSchemaNode> allContainers = new ArrayList<>();
+    private final List<ChoiceSchemaNode> allChoices = new ArrayList<>();
+    private final List<DataSchemaNode> allChilds = new ArrayList<>();
+    private final List<GroupingDefinition> allGroupings = new ArrayList<>();
+    private final List<TypeDefinition<?>> allTypedefs = new ArrayList<>();
     private final DataNodeContainer container;
-    private final List<ListSchemaNode> allLists;
-    private final List<ContainerSchemaNode> allContainers;
-    private final List<ChoiceSchemaNode> allChoices;
-    private final List<DataSchemaNode> allChilds;
-    private final List<GroupingDefinition> allGroupings;
-    private final List<TypeDefinition<?>> allTypedefs;
 
     public DataNodeIterator(final DataNodeContainer container) {
         if (container == null) {
             throw new IllegalArgumentException("Data Node Container MUST be specified and cannot be NULL!");
         }
-
-        this.allContainers = new ArrayList<>();
-        this.allLists = new ArrayList<>();
-        this.allChilds = new ArrayList<>();
-        this.allChoices = new ArrayList<>();
-        this.allGroupings = new ArrayList<>();
-        this.allTypedefs = new ArrayList<>();
 
         this.container = container;
         traverse(this.container);

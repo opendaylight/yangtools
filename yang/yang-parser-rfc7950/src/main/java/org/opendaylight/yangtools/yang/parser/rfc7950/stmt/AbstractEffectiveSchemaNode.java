@@ -22,7 +22,7 @@ public abstract class AbstractEffectiveSchemaNode<D extends DeclaredStatement<QN
         AbstractSchemaEffectiveDocumentedNode<QName, D> implements SchemaNode {
 
     private final @NonNull SchemaPath path;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
 
     protected AbstractEffectiveSchemaNode(final StmtContext<QName, D, ?> ctx) {
         super(ctx);

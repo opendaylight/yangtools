@@ -29,8 +29,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: hide this class
 public final class ContainerEffectiveStatementImpl extends AbstractEffectiveContainerSchemaNode<ContainerStatement>
         implements ContainerEffectiveStatement, DerivableSchemaNode {
-    private final @NonNull Set<ActionDefinition> actions;
-    private final @NonNull Set<NotificationDefinition> notifications;
+    private final @NonNull ImmutableSet<ActionDefinition> actions;
+    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
     private final @Nullable ContainerSchemaNode original;
     private final boolean presence;
 

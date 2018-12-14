@@ -220,7 +220,7 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private static Map<QName, String> getElementAttributes(final XMLStreamReader in) {
+    private static ImmutableMap<QName, String> getElementAttributes(final XMLStreamReader in) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
         final Map<QName, String> attributes = new LinkedHashMap<>();
 

@@ -28,8 +28,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
 
 public final class CrossSourceStatementReactor {
-    private final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
-    private final Map<ValidationBundleType, Collection<?>> supportedValidation;
+    private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supportedTerminology;
+    private final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation;
 
     CrossSourceStatementReactor(final Map<ModelProcessingPhase, StatementSupportBundle> supportedTerminology,
             final Map<ValidationBundleType, Collection<?>> supportedValidation) {

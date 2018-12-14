@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
-import java.util.Map;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementSource;
 import org.opendaylight.yangtools.yang.model.api.stmt.TypeStatement;
 
 final class BuiltinTypeStatement implements TypeStatement {
-    private static final Map<String, BuiltinTypeStatement> BUILTINS;
+    private static final ImmutableMap<String, BuiltinTypeStatement> BUILTINS;
 
     static {
         final Builder<String, BuiltinTypeStatement> builder = ImmutableMap.builder();

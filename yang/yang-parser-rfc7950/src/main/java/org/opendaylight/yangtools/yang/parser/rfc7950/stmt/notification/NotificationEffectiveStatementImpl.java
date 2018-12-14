@@ -35,11 +35,11 @@ final class NotificationEffectiveStatementImpl
         implements NotificationDefinition, NotificationEffectiveStatement {
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
-    private final Set<AugmentationSchemaNode> augmentations;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final ImmutableSet<AugmentationSchemaNode> augmentations;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final boolean augmenting;
     private final boolean addedByUses;
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
 
     NotificationEffectiveStatementImpl(
             final StmtContext<QName, NotificationStatement, EffectiveStatement<QName, NotificationStatement>> ctx) {
