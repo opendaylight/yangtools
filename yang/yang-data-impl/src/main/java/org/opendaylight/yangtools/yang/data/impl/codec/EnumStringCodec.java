@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.codec.EnumCodec;
@@ -25,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPai
 @Beta
 public final class EnumStringCodec extends TypeDefinitionAwareCodec<String, EnumTypeDefinition>
         implements EnumCodec<String> {
-    private final Map<String, String> values;
+    private final ImmutableMap<String, String> values;
 
     private EnumStringCodec(final Optional<EnumTypeDefinition> typeDef) {
         super(typeDef, String.class);

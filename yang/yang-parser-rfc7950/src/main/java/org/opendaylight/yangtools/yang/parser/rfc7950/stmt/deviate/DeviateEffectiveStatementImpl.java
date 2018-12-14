@@ -37,9 +37,9 @@ final class DeviateEffectiveStatementImpl extends DeclaredEffectiveStatementBase
     private final String deviatedDefault;
     private final Integer deviatedMaxElements;
     private final Integer deviatedMinElements;
-    private final Set<MustDefinition> deviatedMustDefinitions;
+    private final ImmutableSet<MustDefinition> deviatedMustDefinitions;
     private final TypeDefinition<?> deviatedType;
-    private final Collection<UniqueConstraint> deviatedUniqueConstraints;
+    private final ImmutableList<UniqueConstraint> deviatedUniqueConstraints;
     private final String deviatedUnits;
 
     private final byte deviatedConfig;

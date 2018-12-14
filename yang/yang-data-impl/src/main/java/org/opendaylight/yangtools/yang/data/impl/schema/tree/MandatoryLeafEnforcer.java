@@ -7,11 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableCollection.Builder;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableList;
-import java.util.Collection;
-import java.util.Optional;
+import com.google.common.collect.ImmutableList.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -31,18 +31,17 @@ import org.slf4j.LoggerFactory;
 // TODO: would making this Serializable be useful (for Functions and similar?)
 abstract class MandatoryLeafEnforcer implements Immutable {
     private static final class Strict extends MandatoryLeafEnforcer {
-        private final Collection<YangInstanceIdentifier> mandatoryNodes;
+        private final ImmutableList<YangInstanceIdentifier> mandatoryNodes;
 
-        Strict(final Collection<YangInstanceIdentifier> mandatoryNodes) {
-            this.mandatoryNodes = Preconditions.checkNotNull(mandatoryNodes);
+        Strict(final ImmutableList<YangInstanceIdentifier> mandatoryNodes) {
+            this.mandatoryNodes = requireNonNull(mandatoryNodes);
         }
 
         @Override
         void enforceOnData(final NormalizedNode<?, ?> data) {
             for (final YangInstanceIdentifier id : mandatoryNodes) {
-                final Optional<NormalizedNode<?, ?>> descandant = NormalizedNodes.findNode(data, id);
-                Preconditions.checkArgument(descandant.isPresent(), "Node %s is missing mandatory descendant %s",
-                        data.getIdentifier(), id);
+                checkArgument(NormalizedNodes.findNode(data, id).isPresent(),
+                    "Node %s is missing mandatory descendant %s", data.getIdentifier(), id);
             }
         }
     }
@@ -96,7 +95,7 @@ abstract class MandatoryLeafEnforcer implements Immutable {
 
         final Builder<YangInstanceIdentifier> builder = ImmutableList.builder();
         findMandatoryNodes(builder, YangInstanceIdentifier.EMPTY, schema, treeConfig.getTreeType());
-        final Collection<YangInstanceIdentifier> mandatoryNodes = builder.build();
+        final ImmutableList<YangInstanceIdentifier> mandatoryNodes = builder.build();
         return mandatoryNodes.isEmpty() ? NOOP_ENFORCER : new Strict(mandatoryNodes);
     }
 }

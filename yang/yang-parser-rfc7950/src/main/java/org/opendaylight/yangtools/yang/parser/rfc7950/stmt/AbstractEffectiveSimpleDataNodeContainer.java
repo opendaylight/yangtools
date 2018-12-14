@@ -32,8 +32,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public abstract class AbstractEffectiveSimpleDataNodeContainer<D extends DeclaredStatement<QName>> extends
         AbstractEffectiveDocumentedDataNodeContainer<QName, D> implements AugmentationTarget, DataSchemaNode {
 
-    private final Set<AugmentationSchemaNode> augmentations;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final ImmutableSet<AugmentationSchemaNode> augmentations;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final @NonNull SchemaPath path;
     private final boolean configuration;

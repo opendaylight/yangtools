@@ -41,10 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
-    private final Map<PathArgument, ModificationApplyOperation> childNodes;
+    private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
-    private final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
-    private final Map<PathArgument, CaseEnforcer> caseEnforcers;
+    private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
+    private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
     private final ChoiceNode emptyNode;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {

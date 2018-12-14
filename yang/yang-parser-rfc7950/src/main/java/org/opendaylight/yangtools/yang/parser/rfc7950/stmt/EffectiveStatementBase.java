@@ -14,7 +14,6 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -29,7 +28,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.StatementContextBase;
 
 public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> implements EffectiveStatement<A, D> {
-    private final @NonNull List<? extends EffectiveStatement<?, ?>> substatements;
+    private final @NonNull ImmutableList<? extends EffectiveStatement<?, ?>> substatements;
 
     /**
      * Constructor.

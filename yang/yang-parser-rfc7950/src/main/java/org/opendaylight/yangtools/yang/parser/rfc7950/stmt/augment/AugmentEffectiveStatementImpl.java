@@ -39,9 +39,9 @@ final class AugmentEffectiveStatementImpl
     private final SchemaPath targetPath;
     private final URI namespace;
     private final Revision revision;
-    private final @NonNull Set<ActionDefinition> actions;
-    private final @NonNull Set<NotificationDefinition> notifications;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableSet<ActionDefinition> actions;
+    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final RevisionAwareXPath whenCondition;
     private final AugmentationSchemaNode copyOf;
 

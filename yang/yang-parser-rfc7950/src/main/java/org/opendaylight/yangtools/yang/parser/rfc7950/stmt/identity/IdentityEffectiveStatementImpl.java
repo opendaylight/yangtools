@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 final class IdentityEffectiveStatementImpl extends AbstractEffectiveSchemaNode<IdentityStatement>
         implements IdentityEffectiveStatement, IdentitySchemaNode, MutableStatement {
-    private final Set<IdentitySchemaNode> derivedIdentities;
+    private final ImmutableSet<IdentitySchemaNode> derivedIdentities;
     private @NonNull Set<IdentitySchemaNode> baseIdentities;
     private boolean sealed;
 

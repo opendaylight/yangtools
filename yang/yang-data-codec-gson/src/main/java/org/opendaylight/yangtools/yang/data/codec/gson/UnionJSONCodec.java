@@ -54,7 +54,7 @@ abstract class UnionJSONCodec<T> implements JSONCodec<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnionJSONCodec.class);
 
-    private final List<JSONCodec<?>> codecs;
+    private final ImmutableList<JSONCodec<?>> codecs;
 
     UnionJSONCodec(final List<JSONCodec<?>> codecs) {
         this.codecs = ImmutableList.copyOf(codecs);

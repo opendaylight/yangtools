@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.deviate;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
 import com.google.common.collect.SetMultimap;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -83,15 +83,8 @@ abstract class AbstractDeviateStatementSupport extends AbstractStatementSupport<
                 .addOptional(YangStmtMapping.UNITS)
                 .build();
 
-    private static final Map<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP;
-
-    static {
-        final Builder<String, DeviateKind> keywordToDeviateMapBuilder = ImmutableMap.builder();
-        for (final DeviateKind deviate : DeviateKind.values()) {
-            keywordToDeviateMapBuilder.put(deviate.getKeyword(), deviate);
-        }
-        KEYWORD_TO_DEVIATE_MAP = keywordToDeviateMapBuilder.build();
-    }
+    private static final ImmutableMap<String, DeviateKind> KEYWORD_TO_DEVIATE_MAP =
+            Maps.uniqueIndex(Arrays.asList(DeviateKind.values()), DeviateKind::getKeyword);
 
     private static final Set<YangStmtMapping> SINGLETON_STATEMENTS = ImmutableSet.of(
             YangStmtMapping.UNITS, YangStmtMapping.CONFIG, YangStmtMapping.MANDATORY,

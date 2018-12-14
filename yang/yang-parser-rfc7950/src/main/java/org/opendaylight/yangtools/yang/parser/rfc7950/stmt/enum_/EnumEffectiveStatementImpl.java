@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 // FIXME: hide this class
 public final class EnumEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<String, EnumStatement>
         implements EnumEffectiveStatement {
-    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
     private final String name;
     private final Integer declaredValue;
 

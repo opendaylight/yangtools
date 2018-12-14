@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Verify.verify;
@@ -49,7 +48,7 @@ abstract class UnionXmlCodec<T> implements XmlCodec<T> {
 
     private static final Logger LOG = LoggerFactory.getLogger(UnionXmlCodec.class);
 
-    private final List<XmlCodec<?>> codecs;
+    private final ImmutableList<XmlCodec<?>> codecs;
 
     UnionXmlCodec(final List<XmlCodec<?>> codecs) {
         this.codecs = ImmutableList.copyOf(codecs);

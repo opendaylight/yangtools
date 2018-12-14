@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LengthConstraint;
 
 final class ResolvedLengthConstraint implements LengthConstraint {
     private final ConstraintMetaDefinition meta;
-    private final RangeSet<Integer> ranges;
+    private final ImmutableRangeSet<Integer> ranges;
 
     ResolvedLengthConstraint(final ConstraintMetaDefinition meta, final RangeSet<Integer> ranges) {
         this.meta = requireNonNull(meta);

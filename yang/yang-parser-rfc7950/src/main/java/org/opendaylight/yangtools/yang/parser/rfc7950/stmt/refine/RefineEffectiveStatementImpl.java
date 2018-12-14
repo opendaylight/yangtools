@@ -31,7 +31,7 @@ public final class RefineEffectiveStatementImpl
 
     private final @NonNull QName qname;
     private final @NonNull SchemaPath path;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final SchemaNode refineTargetNode;
 
     RefineEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, RefineStatement, ?> ctx) {

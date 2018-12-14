@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Pattern;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -324,14 +323,14 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
         return false;
     }
 
-    private static final Set<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
+    private static final ImmutableSet<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
         YangStmtMapping.WHEN, YangStmtMapping.DESCRIPTION, YangStmtMapping.REFERENCE, YangStmtMapping.STATUS);
 
     private static boolean needToCopyByAugment(final StmtContext<?, ?, ?> stmtContext) {
         return !NOCOPY_DEF_SET.contains(stmtContext.getPublicDefinition());
     }
 
-    private static final Set<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.TYPEDEF);
+    private static final ImmutableSet<YangStmtMapping> REUSED_DEF_SET = ImmutableSet.of(YangStmtMapping.TYPEDEF);
 
     private static boolean isReusedByAugment(final StmtContext<?, ?, ?> stmtContext) {
         return REUSED_DEF_SET.contains(stmtContext.getPublicDefinition());

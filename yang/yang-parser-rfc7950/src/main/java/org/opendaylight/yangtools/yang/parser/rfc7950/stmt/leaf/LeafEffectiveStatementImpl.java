@@ -36,7 +36,7 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 // FIXME: hide this class
 public final class LeafEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<LeafStatement>
         implements LeafEffectiveStatement, LeafSchemaNode, DerivableSchemaNode {
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
     private final LeafSchemaNode original;
     private final TypeDefinition<?> type;
     private final String defaultStr;

@@ -46,12 +46,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleCtxToModuleQName;
 
 final class ModuleEffectiveStatementImpl extends AbstractEffectiveModule<ModuleStatement>
         implements ModuleEffectiveStatement {
-    private final Map<String, SubmoduleEffectiveStatement> nameToSubmodule;
-    private final Map<QName, ExtensionEffectiveStatement> qnameToExtension;
-    private final Map<QName, FeatureEffectiveStatement> qnameToFeature;
-    private final Map<QName, IdentityEffectiveStatement> qnameToIdentity;
-    private final Map<String, ModuleEffectiveStatement> prefixToModule;
-    private final Map<QNameModule, String> namespaceToPrefix;
+    private final ImmutableMap<String, SubmoduleEffectiveStatement> nameToSubmodule;
+    private final ImmutableMap<QName, ExtensionEffectiveStatement> qnameToExtension;
+    private final ImmutableMap<QName, FeatureEffectiveStatement> qnameToFeature;
+    private final ImmutableMap<QName, IdentityEffectiveStatement> qnameToIdentity;
+    private final ImmutableMap<String, ModuleEffectiveStatement> prefixToModule;
+    private final ImmutableMap<QNameModule, String> namespaceToPrefix;
     private final @NonNull QNameModule qnameModule;
 
     ModuleEffectiveStatementImpl(

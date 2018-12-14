@@ -114,13 +114,8 @@ public final class TopologicalSort {
      */
     @Beta
     public static class NodeImpl implements Node {
-        private final Set<Edge> inEdges;
-        private final Set<Edge> outEdges;
-
-        public NodeImpl() {
-            inEdges = new HashSet<>();
-            outEdges = new HashSet<>();
-        }
+        private final Set<Edge> inEdges = new HashSet<>();
+        private final Set<Edge> outEdges = new HashSet<>();
 
         @Override
         public Set<Edge> getInEdges() {

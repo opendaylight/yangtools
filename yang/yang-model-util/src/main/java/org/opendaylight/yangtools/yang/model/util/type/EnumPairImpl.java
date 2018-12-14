@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition.EnumPair;
 
 final class EnumPairImpl implements EnumPair, Immutable {
-    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
     private final String description;
     private final String reference;
     private final @NonNull Status status;
@@ -28,7 +29,7 @@ final class EnumPairImpl implements EnumPair, Immutable {
     private final int value;
 
     EnumPairImpl(final String name, final int value, final String description, final String reference,
-            final Status status, final List<UnknownSchemaNode> unknownSchemaNodes) {
+            final Status status, final ImmutableList<UnknownSchemaNode> unknownSchemaNodes) {
         this.name = requireNonNull(name);
         this.value = value;
         this.description = description;

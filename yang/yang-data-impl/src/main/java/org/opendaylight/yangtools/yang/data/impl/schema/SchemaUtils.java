@@ -158,9 +158,8 @@ public final class SchemaUtils {
             final Set<QName> qnames) {
         for (final AugmentationSchemaNode augment : schema.getAvailableAugmentations()) {
             final Set<QName> qNamesFromAugment = ImmutableSet.copyOf(Collections2.transform(augment.getChildNodes(),
-                DataSchemaNode::getQName));
-
-            if (qNamesFromAugment.equals(qnames)) {
+                        DataSchemaNode::getQName));
+            if (qnames.equals(qNamesFromAugment)) {
                 return Optional.of(augment);
             }
         }

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
@@ -24,7 +25,7 @@ public final class StringTypeBuilder extends LengthRestrictedTypeBuilder<StringT
     }
 
     public StringTypeBuilder addPatternConstraint(final PatternConstraint constraint) {
-        patternConstraints.add(Preconditions.checkNotNull(constraint));
+        patternConstraints.add(requireNonNull(constraint));
         touch();
         return this;
     }

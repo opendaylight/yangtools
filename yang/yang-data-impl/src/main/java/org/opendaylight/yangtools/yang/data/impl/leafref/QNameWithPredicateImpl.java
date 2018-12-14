@@ -16,7 +16,7 @@ final class QNameWithPredicateImpl extends AbstractQNameWithPredicate {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<QNamePredicate> qnamePredicates;
+    private final ImmutableList<QNamePredicate> qnamePredicates;
     private final QNameModule moduleQname;
     private final String localName;
 

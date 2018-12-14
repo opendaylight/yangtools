@@ -30,7 +30,7 @@ public final class BitEffectiveStatementImpl extends AbstractEffectiveDocumented
     private final QName qname;
     private final SchemaPath schemaPath;
     private final Long declaredPosition;
-    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
 
     BitEffectiveStatementImpl(final StmtContext<QName, BitStatement, ?> ctx) {
         super(ctx);

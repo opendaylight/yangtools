@@ -31,7 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.type.RangeRestrictedTypeDefinit
 public abstract class RangeRestrictedTypeBuilder<T extends RangeRestrictedTypeDefinition<T, N>,
         N extends Number & Comparable<N>> extends AbstractRestrictedTypeBuilder<T> {
     private ConstraintMetaDefinition constraint;
-    private List<ValueRange> ranges;
+    private ImmutableList<ValueRange> ranges;
 
     RangeRestrictedTypeBuilder(final T baseType, final SchemaPath path) {
         super(baseType, path);

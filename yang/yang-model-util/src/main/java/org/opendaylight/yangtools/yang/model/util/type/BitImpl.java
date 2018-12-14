@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
 final class BitImpl implements Bit, Immutable {
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final @NonNull SchemaPath schemaPath;
     private final String description;
     private final String reference;
@@ -38,7 +39,7 @@ final class BitImpl implements Bit, Immutable {
         this.description = description;
         this.reference = reference;
         this.status = requireNonNull(status);
-        this.unknownNodes = requireNonNull(unknownNodes);
+        this.unknownNodes = ImmutableList.copyOf(unknownNodes);
     }
 
     @Override

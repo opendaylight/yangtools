@@ -70,7 +70,7 @@ final class ExtensionEffectiveStatementImpl extends AbstractEffectiveDocumentedN
     private final @Nullable String argument;
     private final @NonNull SchemaPath schemaPath;
 
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final boolean yin;
 
     private ExtensionEffectiveStatementImpl(

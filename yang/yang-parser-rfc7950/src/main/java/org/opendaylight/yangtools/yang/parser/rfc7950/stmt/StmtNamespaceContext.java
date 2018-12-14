@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 // TODO: this is a useful utility, so it may be useful to expose it either in this package, or yang.parser.spi.source.
 final class StmtNamespaceContext implements NamespaceContext {
     private final StmtContext<?, ?, ?> ctx;
-    private final BiMap<String, String> uriToPrefix;
+    private final ImmutableBiMap<String, String> uriToPrefix;
 
     private String localNamespaceURI;
 
@@ -37,7 +37,7 @@ final class StmtNamespaceContext implements NamespaceContext {
 
     private StmtNamespaceContext(final StmtContext<?, ?, ?> ctx, final BiMap<String, String> uriToPrefix) {
         this.ctx = requireNonNull(ctx);
-        this.uriToPrefix = ImmutableBiMap.copyOf(requireNonNull(uriToPrefix));
+        this.uriToPrefix = ImmutableBiMap.copyOf(uriToPrefix);
     }
 
     public static NamespaceContext create(final StmtContext<?, ?, ?> ctx) {

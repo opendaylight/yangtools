@@ -32,7 +32,7 @@ public abstract class UnknownEffectiveStatementBase<A, D extends UnknownStatemen
     private final boolean addedByAugmentation;
 
     private final ExtensionDefinition extension;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final QName nodeType;
     private final String nodeParameter;
 

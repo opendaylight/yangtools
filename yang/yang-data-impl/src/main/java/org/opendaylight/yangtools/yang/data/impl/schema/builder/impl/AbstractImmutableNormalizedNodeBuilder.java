@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V, R extends NormalizedNode<I, ?>>
         implements NormalizedNodeAttrBuilder<I,V,R> {
 
-    private Map<QName, String> attributes = Collections.emptyMap();
+    private Map<QName, String> attributes = ImmutableMap.of();
     private I nodeIdentifier;
     private V value;
 

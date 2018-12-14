@@ -32,10 +32,10 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  */
 @Beta
 public class SimpleSchemaContext extends AbstractSchemaContext {
-    private final SetMultimap<URI, Module> namespaceToModules;
-    private final SetMultimap<String, Module> nameToModules;
-    private final Map<QNameModule, Module> moduleMap;
-    private final Set<Module> modules;
+    private final ImmutableSetMultimap<URI, Module> namespaceToModules;
+    private final ImmutableSetMultimap<String, Module> nameToModules;
+    private final ImmutableMap<QNameModule, Module> moduleMap;
+    private final ImmutableSet<Module> modules;
 
     protected SimpleSchemaContext(final Set<Module> modules) {
         /*

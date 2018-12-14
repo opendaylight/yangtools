@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 
 final class RestrictedStringType extends AbstractLengthRestrictedType<StringTypeDefinition>
         implements StringTypeDefinition {
-    private final @NonNull List<PatternConstraint> patternConstraints;
+    private final @NonNull ImmutableList<PatternConstraint> patternConstraints;
 
     RestrictedStringType(final StringTypeDefinition baseType, final SchemaPath path,
         final Collection<UnknownSchemaNode> unknownSchemaNodes,

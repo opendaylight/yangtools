@@ -44,13 +44,13 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
     private static final String ORDER_BY_USER_KEYWORD = "user";
 
     private final boolean userOrdered;
-    private final List<QName> keyDefinition;
+    private final ImmutableList<QName> keyDefinition;
     private final ListSchemaNode original;
-    private final @NonNull Set<ActionDefinition> actions;
-    private final @NonNull Set<NotificationDefinition> notifications;
-    private final @NonNull Collection<UniqueConstraint> uniqueConstraints;
+    private final @NonNull ImmutableSet<ActionDefinition> actions;
+    private final @NonNull ImmutableSet<NotificationDefinition> notifications;
+    private final @NonNull ImmutableList<UniqueConstraint> uniqueConstraints;
     private final ElementCountConstraint elementCountConstraint;
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
 
     ListEffectiveStatementImpl(
             final StmtContext<QName, ListStatement, EffectiveStatement<QName, ListStatement>> ctx) {
@@ -89,7 +89,7 @@ public final class ListEffectiveStatementImpl extends AbstractEffectiveSimpleDat
 
         this.uniqueConstraints = ImmutableList.copyOf(allSubstatementsOfType(UniqueConstraint.class));
 
-        final ImmutableSet.Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
+        final Builder<ActionDefinition> actionsBuilder = ImmutableSet.builder();
         final Builder<NotificationDefinition> notificationsBuilder = ImmutableSet.builder();
         for (final EffectiveStatement<?, ?> effectiveStatement : effectiveSubstatements()) {
             if (effectiveStatement instanceof ActionDefinition) {

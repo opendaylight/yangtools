@@ -43,9 +43,9 @@ final class UsesEffectiveStatementImpl extends AbstractEffectiveDocumentedNode<Q
         implements UsesEffectiveStatement, UsesNode {
     private final @NonNull SchemaPath groupingPath;
     private final boolean addedByUses;
-    private final @NonNull Map<SchemaPath, SchemaNode> refines;
-    private final @NonNull Set<AugmentationSchemaNode> augmentations;
-    private final @NonNull List<UnknownSchemaNode> unknownNodes;
+    private final @NonNull ImmutableMap<SchemaPath, SchemaNode> refines;
+    private final @NonNull ImmutableSet<AugmentationSchemaNode> augmentations;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownNodes;
     private final @Nullable RevisionAwareXPath whenCondition;
 
     UsesEffectiveStatementImpl(final StmtContext<QName, UsesStatement, EffectiveStatement<QName, UsesStatement>> ctx) {

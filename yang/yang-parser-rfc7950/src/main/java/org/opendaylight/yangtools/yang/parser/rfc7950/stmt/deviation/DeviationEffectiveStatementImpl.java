@@ -33,8 +33,8 @@ final class DeviationEffectiveStatementImpl
     private final SchemaPath targetPath;
     private final String description;
     private final String reference;
-    private final @NonNull List<UnknownSchemaNode> unknownSchemaNodes;
-    private final List<DeviateDefinition> deviateDefinitions;
+    private final @NonNull ImmutableList<UnknownSchemaNode> unknownSchemaNodes;
+    private final ImmutableList<DeviateDefinition> deviateDefinitions;
 
     DeviationEffectiveStatementImpl(final StmtContext<SchemaNodeIdentifier, DeviationStatement, ?> ctx) {
         super(ctx);

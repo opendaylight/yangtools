@@ -25,7 +25,7 @@ public class OperationFailedException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    private final List<RpcError> errorList;
+    private final ImmutableList<RpcError> errorList;
 
     /**
      * Constructs a new instance with the specified detail message and errors.

@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Verify;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSetMultimap;
 import com.google.common.collect.SetMultimap;
@@ -78,17 +79,17 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
     private final Map<QName, StatementDefinitionContext<?, ?, ?>> modelDefinedStmtDefs = new HashMap<>();
     private final Map<Class<?>, NamespaceBehaviourWithListeners<?, ?, ?>> supportedNamespaces = new HashMap<>();
     private final List<MutableStatement> mutableStatementsToSeal = new ArrayList<>();
-    private final Map<ModelProcessingPhase, StatementSupportBundle> supports;
+    private final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports;
     private final Set<SourceSpecificContext> sources = new HashSet<>();
-    private final Set<YangVersion> supportedVersions;
+    private final ImmutableSet<YangVersion> supportedVersions;
     private final boolean enabledSemanticVersions;
 
     private Set<SourceSpecificContext> libSources = new HashSet<>();
     private ModelProcessingPhase currentPhase = ModelProcessingPhase.INIT;
     private ModelProcessingPhase finishedPhase = ModelProcessingPhase.INIT;
 
-    BuildGlobalContext(final Map<ModelProcessingPhase, StatementSupportBundle> supports,
-            final Map<ValidationBundleType, Collection<?>> supportedValidation,
+    BuildGlobalContext(final ImmutableMap<ModelProcessingPhase, StatementSupportBundle> supports,
+            final ImmutableMap<ValidationBundleType, Collection<?>> supportedValidation,
             final StatementParserMode statementParserMode) {
         this.supports = requireNonNull(supports, "BuildGlobalContext#supports cannot be null");
 

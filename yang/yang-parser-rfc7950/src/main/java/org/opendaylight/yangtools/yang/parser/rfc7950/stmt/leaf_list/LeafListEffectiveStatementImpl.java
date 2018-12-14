@@ -11,7 +11,6 @@ import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DerivableSchemaNode;
@@ -45,8 +44,8 @@ public final class LeafListEffectiveStatementImpl extends AbstractEffectiveDataS
     private final TypeDefinition<?> type;
     private final LeafListSchemaNode original;
     private final boolean userOrdered;
-    private final @NonNull Set<String> defaultValues;
-    private final Collection<MustDefinition> mustConstraints;
+    private final @NonNull ImmutableSet<String> defaultValues;
+    private final ImmutableSet<MustDefinition> mustConstraints;
     private final ElementCountConstraint elementCountConstraint;
 
     LeafListEffectiveStatementImpl(

@@ -36,10 +36,10 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
     private final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonDefinitions;
     private final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificDefinitions;
     private final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaceDefinitions;
-    private final Set<YangVersion> supportedVersions;
+    private final ImmutableSet<YangVersion> supportedVersions;
 
     private StatementSupportBundle(final StatementSupportBundle parent,
-            final Set<YangVersion> supportedVersions,
+            final ImmutableSet<YangVersion> supportedVersions,
             final ImmutableMap<QName, StatementSupport<?, ?, ?>> commonStatements,
             final ImmutableMap<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces,
             final ImmutableTable<YangVersion, QName, StatementSupport<?, ?, ?>> versionSpecificStatements) {
@@ -167,7 +167,7 @@ public final class StatementSupportBundle implements Immutable, NamespaceBehavio
                 .create();
         private final Map<Class<?>, NamespaceBehaviour<?, ?, ?>> namespaces = new HashMap<>();
 
-        private final Set<YangVersion> supportedVersions;
+        private final ImmutableSet<YangVersion> supportedVersions;
         private StatementSupportBundle parent;
 
         Builder(final Set<YangVersion> supportedVersions, final StatementSupportBundle parent) {

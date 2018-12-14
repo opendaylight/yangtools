@@ -32,7 +32,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 final class AnydataEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnydataStatement>
         implements AnydataEffectiveStatement, AnyDataSchemaNode, DerivableSchemaNode {
 
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
     private final AnyDataSchemaNode original;
     private final ContainerSchemaNode schema;
     private final boolean mandatory;

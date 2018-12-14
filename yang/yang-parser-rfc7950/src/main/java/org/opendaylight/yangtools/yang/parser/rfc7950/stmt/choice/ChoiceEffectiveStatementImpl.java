@@ -40,8 +40,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 final class ChoiceEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<ChoiceStatement>
         implements ChoiceEffectiveStatement, ChoiceSchemaNode, DerivableSchemaNode {
 
-    private final Set<AugmentationSchemaNode> augmentations;
-    private final SortedMap<QName, CaseSchemaNode> cases;
+    private final ImmutableSet<AugmentationSchemaNode> augmentations;
+    private final ImmutableSortedMap<QName, CaseSchemaNode> cases;
     private final CaseSchemaNode defaultCase;
     private final ChoiceSchemaNode original;
     private final boolean mandatory;

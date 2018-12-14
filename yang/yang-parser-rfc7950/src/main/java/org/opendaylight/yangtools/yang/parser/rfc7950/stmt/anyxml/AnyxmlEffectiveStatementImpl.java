@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 public class AnyxmlEffectiveStatementImpl extends AbstractEffectiveDataSchemaNode<AnyxmlStatement>
         implements AnyxmlEffectiveStatement, AnyXmlSchemaNode, DerivableSchemaNode {
 
-    private final Collection<MustDefinition> mustConstraints;
+    private final ImmutableSet<MustDefinition> mustConstraints;
     private final AnyXmlSchemaNode original;
     private final boolean mandatory;
 
