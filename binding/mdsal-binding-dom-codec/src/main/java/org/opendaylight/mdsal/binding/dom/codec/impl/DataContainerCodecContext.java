@@ -130,7 +130,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
         if (cacheSpecifier.isEmpty()) {
             return new NonCachingCodec<>(this);
         }
-        return new CachingNormalizedNodeCodec<>(this,ImmutableSet.copyOf(cacheSpecifier));
+        return new CachingNormalizedNodeCodec<>(this, ImmutableSet.copyOf(cacheSpecifier));
     }
 
     BindingStreamEventWriter createWriter(final NormalizedNodeStreamWriter domWriter) {

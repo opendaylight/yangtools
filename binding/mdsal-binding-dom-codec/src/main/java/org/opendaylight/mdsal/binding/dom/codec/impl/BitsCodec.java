@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import java.lang.invoke.MethodHandle;
@@ -33,15 +35,15 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
     private static final MethodType CONSTRUCTOR_INVOKE_TYPE = MethodType.methodType(Object.class, Boolean[].class);
 
     // Ordered by position
-    private final Map<String, Method> getters;
+    private final ImmutableMap<String, Method> getters;
     // Ordered by lexical name
-    private final Set<String> ctorArgs;
+    private final ImmutableSet<String> ctorArgs;
     private final MethodHandle ctor;
 
     private BitsCodec(final Class<?> typeClass, final MethodHandle ctor, final Set<String> ctorArgs,
             final Map<String, Method> getters) {
         super(typeClass);
-        this.ctor = Preconditions.checkNotNull(ctor);
+        this.ctor = requireNonNull(ctor);
         this.ctorArgs = ImmutableSet.copyOf(ctorArgs);
         this.getters = ImmutableMap.copyOf(getters);
     }
@@ -73,7 +75,7 @@ final class BitsCodec extends ReflectionBasedCodec implements SchemaUnawareCodec
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
     public Object deserialize(final Object input) {
-        Preconditions.checkArgument(input instanceof Set);
+        checkArgument(input instanceof Set);
         @SuppressWarnings("unchecked")
         final Set<String> casted = (Set<String>) input;
 

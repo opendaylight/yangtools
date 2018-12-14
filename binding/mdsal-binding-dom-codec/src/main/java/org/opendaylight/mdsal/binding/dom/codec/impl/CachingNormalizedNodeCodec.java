@@ -7,8 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
-import java.util.Set;
+import static java.util.Objects.requireNonNull;
+
+import com.google.common.collect.ImmutableSet;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,9 +20,9 @@ class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNo
     private final DataContainerCodecContext<D, ?> context;
 
     CachingNormalizedNodeCodec(final DataContainerCodecContext<D, ?> subtreeRoot,
-            final Set<Class<? extends DataObject>> cacheSpec) {
+            final ImmutableSet<Class<? extends DataObject>> cacheSpec) {
         super(cacheSpec);
-        this.context = Preconditions.checkNotNull(subtreeRoot);
+        this.context = requireNonNull(subtreeRoot);
     }
 
     @Override

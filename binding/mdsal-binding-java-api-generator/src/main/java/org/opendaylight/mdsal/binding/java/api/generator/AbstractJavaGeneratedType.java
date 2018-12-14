@@ -38,8 +38,8 @@ import org.opendaylight.mdsal.binding.model.api.WildcardType;
 @NotThreadSafe
 abstract class AbstractJavaGeneratedType {
     private final Map<JavaTypeName, @Nullable String> nameCache = new HashMap<>();
-    private final Map<String, NestedJavaGeneratedType> enclosedTypes;
-    private final Set<String> conflictingNames;
+    private final ImmutableMap<String, NestedJavaGeneratedType> enclosedTypes;
+    private final ImmutableSet<String> conflictingNames;
 
     private final JavaTypeName name;
 

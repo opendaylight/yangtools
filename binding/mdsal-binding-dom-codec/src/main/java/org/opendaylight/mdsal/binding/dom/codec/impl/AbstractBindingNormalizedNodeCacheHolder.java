@@ -7,11 +7,12 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import java.util.Set;
+import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
@@ -20,7 +21,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
 
-    private final Set<Class<? extends DataObject>> cachedValues;
+    private final ImmutableSet<Class<? extends DataObject>> cachedValues;
     private final LoadingCache<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache> caches = CacheBuilder
             .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache>() {
                 @Override
@@ -29,8 +30,8 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
                 }
             });
 
-    protected AbstractBindingNormalizedNodeCacheHolder(final Set<Class<? extends DataObject>> cacheSpec) {
-        cachedValues = Preconditions.checkNotNull(cacheSpec);
+    AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends DataObject>> cacheSpec) {
+        cachedValues = requireNonNull(cacheSpec);
     }
 
     BindingNormalizedNodeCache getCachingSerializer(final DataContainerCodecContext<?, ?> childCtx) {

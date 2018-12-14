@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.util.Map;
 import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.model.api.ConcreteType;
@@ -22,7 +21,7 @@ import org.slf4j.LoggerFactory;
 
 abstract class AbstractRangeGenerator<T extends Number & Comparable<T>> {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractRangeGenerator.class);
-    private static final Map<String, AbstractRangeGenerator<?>> GENERATORS;
+    private static final ImmutableMap<String, AbstractRangeGenerator<?>> GENERATORS;
 
     private static void addGenerator(final Builder<String, AbstractRangeGenerator<?>> builder,
             final AbstractRangeGenerator<?> generator) {
