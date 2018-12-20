@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Int8TypeDefinition;
@@ -76,6 +77,7 @@ public final class LeafInterner {
 
     private static boolean isLowCardinality(final TypeDefinition<?> type) {
         return type instanceof BooleanTypeDefinition
+                || type instanceof EmptyTypeDefinition
                 || type instanceof EnumTypeDefinition
                 || type instanceof IdentityrefTypeDefinition
                 || type instanceof Int8TypeDefinition
