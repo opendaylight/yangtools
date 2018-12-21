@@ -10,7 +10,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yang-model-validator</artifactId>
-    <version>2.0.6.7-SNAPSHOT</version>
+    <version>2.0.6.8-SNAPSHOT</version>
     <name>${project.artifactId}</name>
     <description>YANG model validator</description>
 
