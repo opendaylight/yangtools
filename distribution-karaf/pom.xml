@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright (c) 2016 Cisco Systems, Inc. and others. All rights reserved.
+  This program and the accompanying materials are made available under the
+  terms of the Eclipse Public License v1.0 which accompanies this distribution,
+  and is available at http://www.eclipse.org/legal/epl-v10.html -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>org.opendaylight.odlparent</groupId>
+        <artifactId>karaf4-parent</artifactId>
+        <version>3.1.5-SNAPSHOT</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>org.opendaylight.yangtools</groupId>
+    <artifactId>distribution-karaf</artifactId>
+    <version>2.0.15-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <!-- DO NOT install or deploy the karaf artifact -->
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-artifacts</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <!-- scope is compile so all features (there is only one) are installed
+                 into startup.properties and the feature repo itself is not installed -->
+             <groupId>org.apache.karaf.features</groupId>
+             <artifactId>framework</artifactId>
+             <type>kar</type>
+         </dependency>
+
+         <!-- Project local feautures -->
+         <dependency>
+             <groupId>org.opendaylight.yangtools</groupId>
+             <artifactId>features-yangtools</artifactId>
+             <classifier>features</classifier>
+             <type>xml</type>
+             <scope>runtime</scope>
+         </dependency>
+         <dependency>
+             <groupId>org.opendaylight.yangtools</groupId>
+             <artifactId>features-yangtools-experimental</artifactId>
+             <classifier>features</classifier>
+             <type>xml</type>
+             <scope>runtime</scope>
+         </dependency>
+     </dependencies>
+
+     <scm>
+         <connection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</connection>
+         <developerConnection>scm:git:ssh://git.opendaylight.org:29418/yangtools.git</developerConnection>
+         <tag>HEAD</tag>
+         <url>https://git.opendaylight.org/gerrit/gitweb?p=yangtools.git;a=summary</url>
+     </scm>
+</project>
