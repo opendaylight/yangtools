@@ -201,7 +201,7 @@ public final class BindingReflections {
     }
 
     /**
-     * Returns root package name for suplied package.
+     * Returns root package name for supplied package.
      *
      * @param pkg
      *            Package for which find model root package.
