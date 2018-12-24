@@ -40,41 +40,62 @@
     </modules>
 
     <profiles>
-      <profile>
-        <!--
-            This profile is to ensure we only build javadocs reports
-            when we plan to deploy Maven site for our project.
-        -->
-        <id>maven-site</id>
-        <activation>
-          <file>
-            <exists>${user.dir}/deploy-site.xml</exists>
-          </file>
-        </activation>
+        <profile>
+            <id>aggregate-javadoc</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>aggregate</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>aggregate-jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <!--
+                This profile is to ensure we only build javadocs reports
+                when we plan to deploy Maven site for our project.
+            -->
+            <id>maven-site</id>
+            <activation>
+                <file>
+                    <exists>${user.dir}/deploy-site.xml</exists>
+                </file>
+            </activation>
 
-        <build>
-          <plugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-javadoc-plugin</artifactId>
-              <inherited>false</inherited>
-              <executions>
-                <execution>
-                  <id>aggregate</id>
-                  <goals>
-                    <goal>aggregate</goal>
-                  </goals>
-                  <phase>package</phase>
-                  <configuration>
-                    <!-- Xerces-J has non-compliant javadocs -->
-                    <additionalparam>-Xdoclint:none</additionalparam>
-                  </configuration>
-              </execution>
-              </executions>
-            </plugin>
-          </plugins>
-        </build>
-      </profile>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <inherited>false</inherited>
+                        <executions>
+                            <execution>
+                                <id>aggregate</id>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <phase>package</phase>
+                                <configuration>
+                                    <!-- Xerces-J has non-compliant javadocs -->
+                                    <additionalparam>-Xdoclint:none</additionalparam>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
     </profiles>
-
 </project>
