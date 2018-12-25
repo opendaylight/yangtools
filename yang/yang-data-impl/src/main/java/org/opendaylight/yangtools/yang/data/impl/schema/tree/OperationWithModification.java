@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -19,8 +20,8 @@ final class OperationWithModification {
     private final ModifiedNode modification;
 
     private OperationWithModification(final ModificationApplyOperation op, final ModifiedNode mod) {
-        this.applyOperation = Preconditions.checkNotNull(op);
-        this.modification = Preconditions.checkNotNull(mod);
+        this.applyOperation = requireNonNull(op);
+        this.modification = requireNonNull(mod);
     }
 
     void write(final NormalizedNode<?, ?> value) {

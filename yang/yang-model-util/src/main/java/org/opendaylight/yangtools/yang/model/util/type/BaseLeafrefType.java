@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -21,7 +22,7 @@ final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> impl
     BaseLeafrefType(final SchemaPath path, final RevisionAwareXPath pathStatement, final boolean requireInstance,
             final List<UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
-        this.pathStatement = Preconditions.checkNotNull(pathStatement);
+        this.pathStatement = requireNonNull(pathStatement);
         this.requireInstance = requireInstance;
     }
 

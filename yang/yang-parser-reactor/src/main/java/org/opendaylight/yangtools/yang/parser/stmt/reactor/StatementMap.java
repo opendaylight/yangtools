@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 import java.util.AbstractCollection;
@@ -137,7 +136,7 @@ abstract class StatementMap {
         private int size;
 
         RegularAsCollection(final T[] elements) {
-            this.elements = Preconditions.checkNotNull(elements);
+            this.elements = requireNonNull(elements);
         }
 
         @Override

@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang2sources.plugin;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Maps;
@@ -47,7 +48,7 @@ final class ProcessorModuleReactor {
 
     ProcessorModuleReactor(final YangParser parser, final Collection<YangTextSchemaSource> modelsInProject,
         final Collection<ScannedDependency> dependencies) {
-        this.parser = Preconditions.checkNotNull(parser);
+        this.parser = requireNonNull(parser);
         this.modelsInProject = Maps.uniqueIndex(modelsInProject, YangTextSchemaSource::getIdentifier);
         this.dependencies = ImmutableList.copyOf(dependencies);
     }

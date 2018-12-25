@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition.Bit;
 
@@ -21,7 +22,7 @@ public class InvalidBitDefinitionException extends IllegalArgumentException {
 
     protected InvalidBitDefinitionException(final Bit offendingBit, final String message) {
         super(message);
-        this.offendingBit = Preconditions.checkNotNull(offendingBit);
+        this.offendingBit = requireNonNull(offendingBit);
     }
 
     public InvalidBitDefinitionException(final Bit offendingBit, final String format,

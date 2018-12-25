@@ -5,10 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.validator;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.File;
 import java.io.FileFilter;
@@ -88,7 +89,7 @@ final class SystemTestUtils {
 
     static SchemaContext parseYangSources(final Set<QName> supportedFeatures, final List<File> testFiles,
             final List<File> libFiles) throws IOException, YangParserException {
-        Preconditions.checkArgument(!testFiles.isEmpty(), "No yang sources");
+        checkArgument(!testFiles.isEmpty(), "No yang sources");
 
         final YangParser parser = PARSER_FACTORY.createParser();
         if (supportedFeatures != null) {
@@ -138,8 +139,8 @@ final class SystemTestUtils {
 
     @SuppressFBWarnings("NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE")
     private static List<File> searchYangFiles(final File dir) {
-        Preconditions.checkNotNull(dir);
-        Preconditions.checkArgument(dir.isDirectory(), "File %s is not a directory", dir.getPath());
+        requireNonNull(dir);
+        checkArgument(dir.isDirectory(), "File %s is not a directory", dir.getPath());
 
         final List<File> yangFiles = new ArrayList<>();
         for (final File file : dir.listFiles()) {
