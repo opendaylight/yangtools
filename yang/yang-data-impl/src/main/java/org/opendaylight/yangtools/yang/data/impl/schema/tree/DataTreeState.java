@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -24,16 +25,16 @@ final class DataTreeState {
     private final TreeNode root;
 
     private DataTreeState(final TreeNode root) {
-        this.root = Preconditions.checkNotNull(root);
+        this.root = requireNonNull(root);
         holder = new LatestOperationHolder();
         schemaContext = null;
     }
 
     private DataTreeState(final TreeNode root, final LatestOperationHolder holder, final SchemaContext schemaContext) {
         // It should be impossible to instantiate a new root without a SchemaContext
-        this.schemaContext = Preconditions.checkNotNull(schemaContext);
-        this.holder = Preconditions.checkNotNull(holder);
-        this.root = Preconditions.checkNotNull(root);
+        this.schemaContext = requireNonNull(schemaContext);
+        this.holder = requireNonNull(holder);
+        this.root = requireNonNull(root);
     }
 
     static DataTreeState createInitial(final TreeNode root) {

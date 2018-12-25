@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -42,8 +45,8 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     InMemoryDataTreeModification(final InMemoryDataTreeSnapshot snapshot,
             final RootModificationApplyOperation resolver) {
-        this.snapshot = Preconditions.checkNotNull(snapshot);
-        this.strategyTree = Preconditions.checkNotNull(resolver).snapshot();
+        this.snapshot = requireNonNull(snapshot);
+        this.strategyTree = requireNonNull(resolver).snapshot();
         this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), strategyTree.getChildPolicy());
 
         /*
@@ -174,7 +177,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     private void checkSealed() {
-        Preconditions.checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
+        checkState(sealed == 0, "Data Tree is sealed. No further modifications allowed.");
     }
 
     @Override
@@ -184,7 +187,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
     @Override
     public InMemoryDataTreeModification newModification() {
-        Preconditions.checkState(sealed == 1, "Attempted to chain on an unsealed modification");
+        checkState(sealed == 1, "Attempted to chain on an unsealed modification");
 
         if (rootNode.getOperation() == LogicalOperation.NONE) {
             // Simple fast case: just use the underlying modification
@@ -197,8 +200,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          */
         final TreeNode originalSnapshotRoot = snapshot.getRootNode();
         final Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
-        Preconditions.checkState(tempRoot.isPresent(),
-            "Data tree root is not present, possibly removed by previous modification");
+        checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
         final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(),
             tempRoot.get(), strategyTree);
@@ -259,7 +261,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     static void checkIdentifierReferencesData(final PathArgument arg, final NormalizedNode<?, ?> data) {
-        Preconditions.checkArgument(arg.equals(data.getIdentifier()),
+        checkArgument(arg.equals(data.getIdentifier()),
             "Instance identifier references %s but data identifier is %s", arg, data.getIdentifier());
     }
 
@@ -269,7 +271,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
 
         if (!path.isEmpty()) {
             arg = path.getLastPathArgument();
-            Preconditions.checkArgument(arg != null, "Instance identifier %s has invalid null path argument", path);
+            checkArgument(arg != null, "Instance identifier %s has invalid null path argument", path);
         } else {
             arg = rootNode.getIdentifier();
         }
@@ -286,7 +288,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     @Override
     public void ready() {
         final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
-        Preconditions.checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
+        checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
         AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);
         do {

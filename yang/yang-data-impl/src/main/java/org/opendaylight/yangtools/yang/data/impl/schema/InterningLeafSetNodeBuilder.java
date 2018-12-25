@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
@@ -20,12 +21,12 @@ final class InterningLeafSetNodeBuilder<T> extends ImmutableLeafSetNodeBuilder<T
     private final LeafsetEntryInterner interner;
 
     private InterningLeafSetNodeBuilder(final LeafsetEntryInterner interner) {
-        this.interner = Preconditions.checkNotNull(interner);
+        this.interner = requireNonNull(interner);
     }
 
     private InterningLeafSetNodeBuilder(final LeafsetEntryInterner interner, final int sizeHint) {
         super(sizeHint);
-        this.interner = Preconditions.checkNotNull(interner);
+        this.interner = requireNonNull(interner);
     }
 
     private static LeafsetEntryInterner getInterner(final DataSchemaNode schema) {

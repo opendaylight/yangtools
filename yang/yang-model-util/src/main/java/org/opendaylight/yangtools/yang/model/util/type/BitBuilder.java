@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util.type;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -34,8 +35,8 @@ public final class BitBuilder implements Builder<Bit>, Mutable {
     private String reference;
 
     private BitBuilder(final SchemaPath schemaPath, final Long position) {
-        this.schemaPath = Preconditions.checkNotNull(schemaPath);
-        this.position = Preconditions.checkNotNull(position);
+        this.schemaPath = requireNonNull(schemaPath);
+        this.position = requireNonNull(position);
     }
 
     public static BitBuilder create(final SchemaPath schemaPath, final Long position) {
@@ -53,7 +54,7 @@ public final class BitBuilder implements Builder<Bit>, Mutable {
     }
 
     public BitBuilder setStatus(final Status status) {
-        this.status = Preconditions.checkNotNull(status);
+        this.status = requireNonNull(status);
         return this;
     }
 

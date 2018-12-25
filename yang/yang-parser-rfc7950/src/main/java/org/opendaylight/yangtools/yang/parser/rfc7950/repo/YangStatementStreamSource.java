@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
@@ -75,8 +75,8 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     private YangStatementStreamSource(final SourceIdentifier identifier,  final StatementContext context,
             final String sourceName) {
-        this.identifier = Preconditions.checkNotNull(identifier);
-        this.context = Preconditions.checkNotNull(context);
+        this.identifier = requireNonNull(identifier);
+        this.context = requireNonNull(context);
         this.sourceName = sourceName;
     }
 

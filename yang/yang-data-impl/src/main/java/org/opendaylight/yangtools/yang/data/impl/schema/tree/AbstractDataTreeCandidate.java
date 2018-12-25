@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateTip;
@@ -17,7 +18,7 @@ abstract class AbstractDataTreeCandidate extends AbstractDataTreeTip implements 
     private final YangInstanceIdentifier rootPath;
 
     protected AbstractDataTreeCandidate(final YangInstanceIdentifier rootPath) {
-        this.rootPath = Preconditions.checkNotNull(rootPath);
+        this.rootPath = requireNonNull(rootPath);
     }
 
     @Override

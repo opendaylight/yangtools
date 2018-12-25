@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Iterables;
 import com.google.common.primitives.UnsignedInteger;
 import java.net.URI;
@@ -35,7 +36,7 @@ final class SchemaToStatementWriterAdaptor implements YangModuleWriter {
     private final StatementTextWriter writer;
 
     private SchemaToStatementWriterAdaptor(final StatementTextWriter writer) {
-        this.writer = Preconditions.checkNotNull(writer);
+        this.writer = requireNonNull(writer);
     }
 
     public static YangModuleWriter from(final StatementTextWriter writer) {

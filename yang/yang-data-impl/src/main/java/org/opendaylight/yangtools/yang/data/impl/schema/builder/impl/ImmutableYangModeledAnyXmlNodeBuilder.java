@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
@@ -26,7 +27,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
     private final ContainerSchemaNode contentSchema;
 
     private ImmutableYangModeledAnyXmlNodeBuilder(final YangModeledAnyXmlSchemaNode yangModeledAnyXMLSchemaNode) {
-        Preconditions.checkNotNull(yangModeledAnyXMLSchemaNode, "Yang modeled any xml node must not be null.");
+        requireNonNull(yangModeledAnyXMLSchemaNode, "Yang modeled any xml node must not be null.");
         super.withNodeIdentifier(NodeIdentifier.create(yangModeledAnyXMLSchemaNode.getQName()));
         this.contentSchema = yangModeledAnyXMLSchemaNode.getSchemaOfAnyXmlData();
     }
@@ -34,7 +35,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
     private ImmutableYangModeledAnyXmlNodeBuilder(final YangModeledAnyXmlSchemaNode yangModeledAnyXMLSchemaNode,
             final int sizeHint) {
         super(sizeHint);
-        Preconditions.checkNotNull(yangModeledAnyXMLSchemaNode, "Yang modeled any xml node must not be null.");
+        requireNonNull(yangModeledAnyXMLSchemaNode, "Yang modeled any xml node must not be null.");
         super.withNodeIdentifier(NodeIdentifier.create(yangModeledAnyXMLSchemaNode.getQName()));
         this.contentSchema = yangModeledAnyXMLSchemaNode.getSchemaOfAnyXmlData();
     }
@@ -63,8 +64,7 @@ public final class ImmutableYangModeledAnyXmlNodeBuilder extends
                 final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> value,
                 final Map<QName, String> attributes, final ContainerSchemaNode contentSchema) {
             super(value, nodeIdentifier, attributes);
-            this.contentSchema = Preconditions.checkNotNull(contentSchema,
-                "Schema of yang modeled anyXml content cannot be null.");
+            this.contentSchema = requireNonNull(contentSchema, "Schema of yang modeled anyXml content cannot be null.");
         }
 
         @Nonnull

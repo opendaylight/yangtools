@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collections;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -17,17 +18,16 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataV
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder {
-
     private final ListSchemaNode schema;
 
     protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema) {
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
     protected ImmutableMapNodeSchemaAwareBuilder(final ListSchemaNode schema, final ImmutableMapNode node) {
         super(node);
-        this.schema = Preconditions.checkNotNull(schema);
+        this.schema = requireNonNull(schema);
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
