@@ -51,8 +51,8 @@ final class SingleModuleYinStatementWriter implements StatementTextWriter {
         try {
             final String defaultNs = writer.getNamespaceContext().getNamespaceURI(XMLConstants.NULL_NS_URI);
             if (defaultNs == null) {
-                writer.setDefaultNamespace(YangConstants.RFC6020_YIN_NAMESPACE.toString());
-            } else if (!YangConstants.RFC6020_YIN_NAMESPACE.toString().equals(defaultNs)) {
+                writer.setDefaultNamespace(YangConstants.RFC6020_YIN_NAMESPACE_STRING);
+            } else if (!YangConstants.RFC6020_YIN_NAMESPACE_STRING.equals(defaultNs)) {
                 // FIXME: Implement support for exporting YIN as part of other XML document.
                 throw new UnsupportedOperationException(
                         "Not implemented support for nesting YIN in different XML element.");
@@ -198,7 +198,7 @@ final class SingleModuleYinStatementWriter implements StatementTextWriter {
 
     private void declareXmlNamespaces() {
         try {
-            writer.writeDefaultNamespace(YangConstants.RFC6020_YIN_NAMESPACE.toString());
+            writer.writeDefaultNamespace(YangConstants.RFC6020_YIN_NAMESPACE_STRING);
             for (final Entry<String, URI> nsDeclaration : prefixToNamespace.entrySet()) {
                 writer.writeNamespace(nsDeclaration.getKey(), nsDeclaration.getValue().toString());
             }
