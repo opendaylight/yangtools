@@ -380,8 +380,9 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      *
      * @return a QName with the same namespace and local name, but with no revision.
      */
-    public QName withoutRevision() {
-        return getRevision().isPresent() ? new QName(module.withoutRevision(), localName) : this;
+    public @QName withoutRevision() {
+        final QNameModule newModule;
+        return (newModule = module.withoutRevision()) == module ? this : new QName(newModule, localName);
     }
 
     /**
