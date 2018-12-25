@@ -55,13 +55,8 @@ public class QNameToStatementDefinitionMap implements QNameToStatementDefinition
     }
 
     private void putNoRev(final QName qname, final StatementSupport<?, ?, ?> support) {
-        final QName norev;
-        if (qname.getRevision() != null) {
-            norev = QName.create(qname.getNamespace(), qname.getLocalName()).intern();
-        } else {
-            norev = qname;
-        }
-        noRevQNameToSupport.put(norev, support);
+        final QName norev = qname.withoutRevision();
+        noRevQNameToSupport.put(norev != qname ? norev.intern() : qname, support);
     }
 
     @Override
