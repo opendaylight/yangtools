@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import java.io.Serializable;
 import java.util.Collection;
@@ -35,7 +36,7 @@ final class UnmodifiableChildrenMap
     private transient Collection<DataContainerChild<? extends PathArgument, ?>> values;
 
     private UnmodifiableChildrenMap(final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> delegate) {
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.delegate = requireNonNull(delegate);
     }
 
     /**

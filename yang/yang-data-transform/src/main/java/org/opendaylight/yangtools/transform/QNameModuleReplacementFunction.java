@@ -7,27 +7,26 @@
  */
 package org.opendaylight.yangtools.transform;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Map;
 import java.util.function.Function;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 class QNameModuleReplacementFunction implements Function<QName, QName> {
-
     private final Map<QNameModule, QNameModule> mapping;
 
-    QNameModuleReplacementFunction(Map<QNameModule, QNameModule> mapping) {
-        this.mapping = Preconditions.checkNotNull(mapping);
+    QNameModuleReplacementFunction(final Map<QNameModule, QNameModule> mapping) {
+        this.mapping = requireNonNull(mapping);
     }
 
     @Override
-    public QName apply(QName input) {
+    public QName apply(final QName input) {
         QNameModule potential = mapping.get(input.getModule());
         if (potential != null) {
             return QName.create(potential, input.getLocalName()).intern();
         }
         return input;
     }
-
 }

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.export;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
@@ -28,7 +29,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public final class YinExportTestUtils {
-
     private YinExportTestUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -41,9 +41,7 @@ public final class YinExportTestUtils {
 
     public static Document loadDocument(final String xmlPath) throws IOException, SAXException {
         final InputStream resourceAsStream = SchemaContextEmitterTest.class.getResourceAsStream(xmlPath);
-        final Document currentConfigElement = readXmlToDocument(resourceAsStream);
-        Preconditions.checkNotNull(currentConfigElement);
-        return currentConfigElement;
+        return requireNonNull(readXmlToDocument(resourceAsStream));
     }
 
     static Document readXmlToDocument(final InputStream xmlContent) throws IOException, SAXException {

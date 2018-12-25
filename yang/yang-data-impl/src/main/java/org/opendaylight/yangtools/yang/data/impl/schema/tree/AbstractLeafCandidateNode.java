@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -20,7 +21,7 @@ abstract class AbstractLeafCandidateNode implements DataTreeCandidateNode {
     private final NormalizedNode<?, ?> data;
 
     protected AbstractLeafCandidateNode(final NormalizedNode<?, ?> data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = requireNonNull(data);
     }
 
     protected final Optional<NormalizedNode<?, ?>> dataOptional() {

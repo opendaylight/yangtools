@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
+
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
@@ -142,9 +145,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @SuppressWarnings({"rawtypes","unchecked"})
     public void endNode() {
         final NormalizedNodeContainerBuilder finishedBuilder = builders.poll();
-        Preconditions.checkState(finishedBuilder != null, "Node which should be closed does not exists.");
+        checkState(finishedBuilder != null, "Node which should be closed does not exists.");
         final NormalizedNodeContainerBuilder current = getCurrent();
-        Preconditions.checkState(current != null, "Reached top level node, which could not be closed in this writer.");
+        checkState(current != null, "Reached top level node, which could not be closed in this writer.");
         final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
         current.addChild(product);
         nextSchema = null;
@@ -228,7 +231,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
         checkDataNodeContainer();
 
-        Preconditions.checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
+        checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
                 "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
         final DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> builder =
                 UNKNOWN_SIZE == childSizeHint
@@ -250,7 +253,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        Preconditions.checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
+        checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
                 || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
         final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder =
                 UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
@@ -270,7 +273,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
         if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            Preconditions.checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
+            checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
                 || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
         }
 
@@ -301,7 +304,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void startAugmentationNode(final AugmentationIdentifier identifier) {
         checkDataNodeContainer();
-        Preconditions.checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
+        checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
         enter(Builders.augmentationBuilder().withNodeIdentifier(identifier));
     }
 
@@ -309,7 +312,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         @SuppressWarnings("rawtypes")
         final NormalizedNodeContainerBuilder current = getCurrent();
         if (!(current instanceof NormalizedNodeResultBuilder)) {
-            Preconditions.checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
+            checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
         }
     }
 
@@ -366,6 +369,6 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
-        nextSchema = Preconditions.checkNotNull(schema);
+        nextSchema = requireNonNull(schema);
     }
 }

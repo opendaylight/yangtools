@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.util.HashSet;
 import java.util.Set;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -30,7 +31,7 @@ public class DataNodeContainerValidator {
     private final Set<QName> childNodes;
 
     public DataNodeContainerValidator(final DataNodeContainer schema) {
-        this.schema = Preconditions.checkNotNull(schema, "Schema was null");
+        this.schema = requireNonNull(schema, "Schema was null");
         this.childNodes = getChildNodes(schema);
 
         if (schema instanceof AugmentationTarget) {

@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.repo;
 
+import static com.google.common.base.Preconditions.checkState;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.yang.parser.rfc7950.repo.StatementSourceReferenceHandler.extractRef;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -61,8 +62,8 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     private final Node root;
 
     private YinStatementStreamSource(final SourceIdentifier identifier, final Node root) {
-        this.identifier = Preconditions.checkNotNull(identifier);
-        this.root = Preconditions.checkNotNull(root);
+        this.identifier = requireNonNull(identifier);
+        this.root = requireNonNull(root);
     }
 
     public static StatementStreamSource create(final YinXmlSchemaSource source) throws TransformerException {
@@ -95,7 +96,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
         final Optional<? extends ResumedStatement> optResumed = writer.resumeStatement(childId);
         if (optResumed.isPresent()) {
             final ResumedStatement resumed = optResumed.get();
-            Preconditions.checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
+            checkState(resumed.isFullyDefined(), "Statement %s is not fully defined", resumed);
             return true;
         }
 
