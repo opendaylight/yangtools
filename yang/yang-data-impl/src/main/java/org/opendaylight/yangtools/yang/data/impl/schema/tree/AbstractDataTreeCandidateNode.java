@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.Collections2;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +49,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     static Collection<DataTreeCandidateNode> deltaChildren(
             @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             @Nullable final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData) {
-        Preconditions.checkArgument(newData != null || oldData != null,
+        checkArgument(newData != null || oldData != null,
                 "No old or new data, modification type should be NONE and deltaChildren() mustn't be called.");
         if (newData == null) {
             return Collections2.transform(oldData.getValue(), AbstractRecursiveCandidateNode::deleteNode);
@@ -93,7 +95,7 @@ abstract class AbstractDataTreeCandidateNode implements DataTreeCandidateNode {
     private final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?,?>> data;
 
     protected AbstractDataTreeCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
-        this.data = Preconditions.checkNotNull(data);
+        this.data = requireNonNull(data);
     }
 
     protected final Optional<NormalizedNode<?, ?>> dataOptional() {

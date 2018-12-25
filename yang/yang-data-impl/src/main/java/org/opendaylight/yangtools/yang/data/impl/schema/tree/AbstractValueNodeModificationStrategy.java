@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -26,7 +26,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
 
     protected AbstractValueNodeModificationStrategy(final T schema,
             final Class<? extends NormalizedNode<?, ?>> nodeClass) {
-        this.nodeClass = Preconditions.checkNotNull(nodeClass);
+        this.nodeClass = requireNonNull(nodeClass);
         this.schema = schema;
     }
 

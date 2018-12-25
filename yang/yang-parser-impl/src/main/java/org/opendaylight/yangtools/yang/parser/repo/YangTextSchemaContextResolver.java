@@ -8,12 +8,12 @@
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFailedFluentFuture;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.ImmutableSet;
@@ -72,8 +72,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     private volatile Object contextVersion = version;
 
     private YangTextSchemaContextResolver(final SchemaRepository repository, final SchemaSourceRegistry registry) {
-        this.repository = Preconditions.checkNotNull(repository);
-        this.registry = Preconditions.checkNotNull(registry);
+        this.repository = requireNonNull(repository);
+        this.registry = requireNonNull(registry);
 
         final TextToASTTransformer t = TextToASTTransformer.create(repository, registry);
         transReg = registry.registerSchemaSourceListener(t);

@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Optional;
@@ -66,8 +68,8 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
     protected NoopDataTreeCandidate(final YangInstanceIdentifier rootPath, final ModifiedNode modificationRoot,
             final TreeNode afterRoot) {
         super(rootPath);
-        Preconditions.checkArgument(modificationRoot.getOperation() == LogicalOperation.NONE);
-        this.afterRoot = Preconditions.checkNotNull(afterRoot);
+        checkArgument(modificationRoot.getOperation() == LogicalOperation.NONE);
+        this.afterRoot = requireNonNull(afterRoot);
     }
 
     @Override

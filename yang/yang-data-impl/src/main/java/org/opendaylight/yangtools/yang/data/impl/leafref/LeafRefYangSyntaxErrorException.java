@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 public class LeafRefYangSyntaxErrorException extends Exception {
     private static final long serialVersionUID = 1L;
@@ -22,7 +22,7 @@ public class LeafRefYangSyntaxErrorException extends Exception {
 
     public LeafRefYangSyntaxErrorException(final String module, final int line, final int charPositionInLine,
             final String message, final Throwable cause) {
-        super(Preconditions.checkNotNull(message), cause);
+        super(requireNonNull(message), cause);
         this.module = module;
         this.line = line;
         this.charPositionInLine = charPositionInLine;

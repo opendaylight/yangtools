@@ -7,9 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.nodes;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Preconditions;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -20,7 +21,7 @@ public abstract class AbstractImmutableNormalizedNode<K extends PathArgument,V> 
     private final K nodeIdentifier;
 
     protected AbstractImmutableNormalizedNode(final K nodeIdentifier) {
-        this.nodeIdentifier = Preconditions.checkNotNull(nodeIdentifier, "nodeIdentifier");
+        this.nodeIdentifier = requireNonNull(nodeIdentifier, "nodeIdentifier");
     }
 
     @Override

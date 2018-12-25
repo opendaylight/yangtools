@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
@@ -35,7 +35,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
     protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
             final DataTreeConfiguration treeConfig) {
-        this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
+        this.nodeClass = requireNonNull(nodeClass , "nodeClass");
         this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
