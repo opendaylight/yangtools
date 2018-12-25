@@ -62,7 +62,7 @@ class StatementContextVisitor {
     QName getValidStatementDefinition(final String keywordText, final StatementSourceReference ref) {
         final int firstColon = keywordText.indexOf(':');
         if (firstColon == -1) {
-            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_NAMESPACE, keywordText));
+            final StatementDefinition def = stmtDef.get(QName.create(YangConstants.RFC6020_YIN_MODULE, keywordText));
             return def != null ? def.getStatementName() : null;
         }
 
