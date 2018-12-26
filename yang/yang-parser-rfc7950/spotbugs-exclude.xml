@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2018 Pantheon Technologies, s.r.o and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<FindBugsFilter>
+    <Match>
+        <Package name ="org.opendaylight.yangtools.antlrv4.code.gen"/>
+    </Match>
+
+    <!-- This comes from odlparent, unfortunately we cannot just augment the config :( -->
+    <Match>
+        <Or>
+            <!-- Anonymous inner classes are very common in ODL. -->
+            <Bug pattern="SIC_INNER_SHOULD_BE_STATIC_ANON" />
+
+            <!-- We use static slf4j Logger (this rule is from KengoTODA/findbugs-slf4j jp.skypencil.findbugs.slf4:bug-pattern) -->
+            <Bug pattern="SLF4J_LOGGER_SHOULD_BE_NON_STATIC" />
+
+            <!-- Guava 23.6+ uses @NullableDecl which FindBugs doesn't know about; fixed in SpotBugs 3.1.2+ -->
+            <Bug pattern="NP_NONNULL_PARAM_VIOLATION" />
+            <Bug pattern="NP_NULL_PARAM_DEREF" />
+            <Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE" />
+            <Bug pattern="RCN_REDUNDANT_NULLCHECK_OF_NONNULL_VALUE" />
+
+            <!-- https://github.com/spotbugs/spotbugs/issues/511. Strict reading of Object.equals() contract means that
+            evenever equals() behaviour is defined, all implementations need to adhere to it. The only reason
+            to override the method (assuming correct API design, of course) is to provide a more efficient
+            implementation. This rule would be forcing a @SuppressFBWarnings on perfectly compliant classes. -->
+            <Bug pattern="EQ_DOESNT_OVERRIDE_EQUALS"/>
+        </Or>
+    </Match>
+</FindBugsFilter>
