@@ -86,11 +86,7 @@ abstract class StatementMap {
 
         @Override
         StatementContextBase<?, ?, ?> get(final int index) {
-            if (index >= elements.length) {
-                return null;
-            }
-
-            return elements[index];
+            return index >= elements.length ? null : elements[index];
         }
 
         @Override
