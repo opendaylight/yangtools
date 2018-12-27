@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-triemap">
     <feature name="odl-yangtools-exp-xpath-impl">
-        <feature version="[4.0.5,5)">odl-antlr4</feature>
+        <feature version="[4.0.6,5)">odl-antlr4</feature>
     </feature>
 </features>
