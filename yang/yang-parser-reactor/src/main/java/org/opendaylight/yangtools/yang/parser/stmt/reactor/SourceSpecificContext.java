@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -202,7 +201,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
     }
 
     void startPhase(final ModelProcessingPhase phase) {
-        @Nullable final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
+        final ModelProcessingPhase previousPhase = phase.getPreviousPhase();
         verify(Objects.equals(previousPhase, finishedPhase),
             "Phase sequencing violation: previous phase should be %s, source %s has %s", previousPhase, source,
             finishedPhase);
@@ -268,7 +267,6 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         return null;
     }
 
-    @Nullable
     @Override
     public <K, V, N extends IdentifierNamespace<K, V>> Map<K, V> getAllFromLocalStorage(final Class<N> type) {
         final Map<K, V> potentialLocal = getRoot().getAllFromLocalStorage(type);

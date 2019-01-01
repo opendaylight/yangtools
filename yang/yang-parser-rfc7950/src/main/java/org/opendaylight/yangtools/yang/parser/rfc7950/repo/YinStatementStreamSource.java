@@ -19,7 +19,6 @@ import com.google.common.cache.LoadingCache;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -54,7 +53,7 @@ public final class YinStatementStreamSource implements StatementStreamSource {
     private static final LoadingCache<String, URI> URI_CACHE = CacheBuilder.newBuilder().weakValues().build(
         new CacheLoader<String, URI>() {
             @Override
-            public URI load(@Nonnull final String key) throws URISyntaxException {
+            public URI load(final String key) throws URISyntaxException {
                 return new URI(key);
             }
         });

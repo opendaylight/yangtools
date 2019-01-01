@@ -12,7 +12,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.NamespaceStorageNode;
 import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Registry;
@@ -62,7 +61,6 @@ abstract class NamespaceStorageSupport implements NamespaceStorageNode {
      * @return Value, or null if there is no element
      * @throws NamespaceNotAvailableException when the namespace is not available.
      */
-    @Nonnull
     public final <K, V, T extends K, N extends IdentifierNamespace<K, V>> V getFromNamespace(final Class<N> type,
             final T key) {
         return getBehaviourRegistry().getNamespaceBehaviour(type).getFrom(this, key);

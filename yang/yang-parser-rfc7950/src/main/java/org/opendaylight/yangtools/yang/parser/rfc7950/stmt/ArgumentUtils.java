@@ -18,11 +18,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.Nonnull;
 import javax.annotation.RegEx;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
@@ -90,7 +90,7 @@ public final class ArgumentUtils {
         }
     }
 
-    public static @Nonnull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
+    public static @NonNull Boolean parseBoolean(final StmtContext<?, ?, ?> ctx, final String input) {
         if ("true".equals(input)) {
             return Boolean.TRUE;
         } else if ("false".equals(input)) {

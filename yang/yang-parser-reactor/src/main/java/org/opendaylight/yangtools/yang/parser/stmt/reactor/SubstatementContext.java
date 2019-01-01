@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.util.OptionalBoolean;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -109,7 +108,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return parent.getBehaviourRegistry();
     }
 
-    @Nonnull
     @Override
     public RootStatementContext<?, ?, ?> getRoot() {
         return parent.getRoot();
@@ -168,7 +166,6 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
         return maybeParentPath.orElse(null);
     }
 
-    @Nonnull
     @Override
     public Optional<SchemaPath> getSchemaPath() {
         SchemaPath local = schemaPath;
