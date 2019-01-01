@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface Codec<P,I> extends Serializer<P, I>, Deserializer<I, P> {
+public interface Codec<P, I> extends Serializer<P, I>, Deserializer<I, P> {
     @Override
     I deserialize(P input);
 

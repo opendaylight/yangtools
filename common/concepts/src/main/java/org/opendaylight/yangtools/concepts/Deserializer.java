@@ -13,6 +13,9 @@ package org.opendaylight.yangtools.concepts;
  * @param <P> Product type
  * @param <I> Input type
  */
+//FIXME: 3.0.0: redesign/deprecate this class?
+//              - null should not be allowed as an input or return
+//              - we need error reporting
 public interface Deserializer<P, I> {
     /**
      * Produce an object base on input.

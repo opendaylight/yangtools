@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-public interface Serializer<P,I> {
+// FIXME: 3.0.0: redesign/deprecate this class?
+//               - null should not be allowed as an input or return
+//               - we need error reporting
+public interface Serializer<P, I> {
     P serialize(I input);
 }
