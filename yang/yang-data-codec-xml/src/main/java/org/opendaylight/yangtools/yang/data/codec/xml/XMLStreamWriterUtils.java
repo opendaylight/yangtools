@@ -5,16 +5,15 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.VisibleForTesting;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -54,7 +53,7 @@ abstract class XMLStreamWriterUtils {
      * @param parent module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final SchemaNode schemaNode,
+    void writeValue(final @NonNull XMLStreamWriter writer, final @NonNull SchemaNode schemaNode,
             final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(),
@@ -84,7 +83,7 @@ abstract class XMLStreamWriterUtils {
      * @param parent optional parameter of a module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    private void writeValue(@Nonnull final XMLStreamWriter writer, @Nonnull final TypeDefinition<?> type,
+    private void writeValue(final @NonNull XMLStreamWriter writer, final @NonNull TypeDefinition<?> type,
             final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(),
@@ -116,8 +115,8 @@ abstract class XMLStreamWriterUtils {
     }
 
     @VisibleForTesting
-    static void write(@Nonnull final XMLStreamWriter writer, @Nonnull final IdentityrefTypeDefinition type,
-                      @Nonnull final Object value, final QNameModule parent) throws XMLStreamException {
+    static void write(final @NonNull XMLStreamWriter writer, final @NonNull IdentityrefTypeDefinition type,
+            final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
 
@@ -138,8 +137,8 @@ abstract class XMLStreamWriterUtils {
         }
     }
 
-    private void write(@Nonnull final XMLStreamWriter writer, @Nonnull final InstanceIdentifierTypeDefinition type,
-                       @Nonnull final Object value) throws XMLStreamException {
+    private void write(final @NonNull XMLStreamWriter writer, final @NonNull InstanceIdentifierTypeDefinition type,
+            final @NonNull Object value) throws XMLStreamException {
         if (value instanceof YangInstanceIdentifier) {
             writeInstanceIdentifier(writer, (YangInstanceIdentifier)value);
         } else {

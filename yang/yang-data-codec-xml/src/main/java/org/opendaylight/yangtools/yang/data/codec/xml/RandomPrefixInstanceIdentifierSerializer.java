@@ -9,18 +9,19 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import java.net.URI;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.util.AbstractStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInstanceIdentifierCodec {
-    private final DataSchemaContextTree schemaTree;
+    private final @NonNull DataSchemaContextTree schemaTree;
     private final RandomPrefix prefixes;
 
-    RandomPrefixInstanceIdentifierSerializer(final SchemaContext schemaContext, final NamespaceContext nsContext) {
+    RandomPrefixInstanceIdentifierSerializer(final @NonNull SchemaContext schemaContext,
+        final NamespaceContext nsContext) {
         schemaTree = DataSchemaContextTree.from(schemaContext);
         prefixes = new RandomPrefix(nsContext);
     }
@@ -30,19 +31,17 @@ final class RandomPrefixInstanceIdentifierSerializer extends AbstractStringInsta
     }
 
     @Override
-    protected String prefixForNamespace(@Nonnull final URI namespace) {
+    protected String prefixForNamespace(final URI namespace) {
         return prefixes.encodePrefix(namespace);
     }
 
     @Override
-    protected QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
+    protected QName createQName(final String prefix, final String localName) {
         throw new UnsupportedOperationException("Not implemented");
     }
 
-    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return schemaTree;
     }
-
 }

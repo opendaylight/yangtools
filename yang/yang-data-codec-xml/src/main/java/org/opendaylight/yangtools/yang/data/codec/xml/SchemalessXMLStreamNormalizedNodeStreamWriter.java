@@ -12,7 +12,6 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Map;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -102,7 +101,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, @Nonnull final Object value,
+    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value,
             final Object context) throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }

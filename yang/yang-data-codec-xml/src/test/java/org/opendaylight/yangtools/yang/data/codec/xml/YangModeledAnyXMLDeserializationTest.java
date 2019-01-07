@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
@@ -15,9 +14,7 @@ import com.google.common.collect.ImmutableSet;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
 public class YangModeledAnyXMLDeserializationTest {
@@ -194,21 +190,13 @@ public class YangModeledAnyXMLDeserializationTest {
             return false;
         }
 
-        @Nonnull
         @Override
         public QName getQName() {
             return qname;
         }
 
-        @Nonnull
         @Override
         public SchemaPath getPath() {
-            return null;
-        }
-
-        @Nonnull
-        @Override
-        public List<UnknownSchemaNode> getUnknownSchemaNodes() {
             return null;
         }
 
@@ -222,13 +210,11 @@ public class YangModeledAnyXMLDeserializationTest {
             return Optional.empty();
         }
 
-        @Nonnull
         @Override
         public Status getStatus() {
-            return null;
+            return Status.CURRENT;
         }
 
-        @Nonnull
         @Override
         public ContainerSchemaNode getSchemaOfAnyXmlData() {
             return contentSchema;

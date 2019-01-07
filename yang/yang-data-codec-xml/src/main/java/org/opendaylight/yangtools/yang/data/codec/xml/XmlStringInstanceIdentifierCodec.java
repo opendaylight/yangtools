@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -15,10 +14,10 @@ import java.net.URI;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -32,9 +31,9 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
 
     private static final ThreadLocal<Deque<NamespaceContext>> TL_CONTEXT = new ThreadLocal<>();
 
-    private final DataSchemaContextTree dataContextTree;
-    private final XmlCodecFactory codecFactory;
-    private final SchemaContext context;
+    private final @NonNull DataSchemaContextTree dataContextTree;
+    private final @NonNull XmlCodecFactory codecFactory;
+    private final @NonNull SchemaContext context;
 
     XmlStringInstanceIdentifierCodec(final SchemaContext context, final XmlCodecFactory xmlCodecFactory) {
         this.context = requireNonNull(context);
@@ -43,19 +42,18 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     @Override
-    protected Module moduleForPrefix(@Nonnull final String prefix) {
+    protected Module moduleForPrefix(final String prefix) {
         final String prefixedNS = getNamespaceContext().getNamespaceURI(prefix);
         final Iterator<Module> modules = context.findModules(URI.create(prefixedNS)).iterator();
         return modules.hasNext() ? modules.next() : null;
     }
 
     @Override
-    protected String prefixForNamespace(@Nonnull final URI namespace) {
+    protected String prefixForNamespace(final URI namespace) {
         final Iterator<Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 
-    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;

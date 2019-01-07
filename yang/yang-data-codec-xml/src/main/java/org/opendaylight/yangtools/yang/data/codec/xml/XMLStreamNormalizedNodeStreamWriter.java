@@ -18,8 +18,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
@@ -32,6 +30,8 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXResult;
 import javax.xml.transform.stream.StreamResult;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -119,14 +119,14 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return SchemalessXMLStreamNormalizedNodeStreamWriter.newInstance(writer);
     }
 
-    abstract void writeValue(XMLStreamWriter xmlWriter, QName qname, @Nonnull Object value, T context)
+    abstract void writeValue(XMLStreamWriter xmlWriter, QName qname, @NonNull Object value, T context)
             throws IOException, XMLStreamException;
 
     abstract void startList(NodeIdentifier name);
 
     abstract void startListItem(PathArgument name) throws IOException;
 
-    private void writeAttributes(@Nonnull final Map<QName, String> attributes) throws IOException {
+    private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
         for (final Entry<QName, String> entry : attributes.entrySet()) {
             try {
                 final QName qname = entry.getKey();
@@ -171,12 +171,13 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    void writeElement(final QName qname, final Object value, @Nullable final Map<QName, String> attributes,
+    void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
             final T context) throws IOException {
         try {
             writeStartElement(qname);
-
-            writeAttributes(attributes);
+            if (attributes != null) {
+                writeAttributes(attributes);
+            }
             if (value != null) {
                 writeValue(writer, qname, value, context);
             }

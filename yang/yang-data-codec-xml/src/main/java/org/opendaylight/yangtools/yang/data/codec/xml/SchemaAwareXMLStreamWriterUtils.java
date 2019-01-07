@@ -14,6 +14,7 @@ import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
@@ -23,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 
 final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils implements SchemaContextProvider {
-    private final SchemaContext schemaContext;
+    private final @NonNull SchemaContext schemaContext;
 
     SchemaAwareXMLStreamWriterUtils(final SchemaContext schemaContext) {
         this.schemaContext = requireNonNull(schemaContext);
