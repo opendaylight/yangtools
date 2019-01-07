@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static com.google.common.base.Preconditions.checkArgument;
@@ -50,12 +49,11 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     @Override
-    protected String prefixForNamespace(@Nonnull final URI namespace) {
+    protected String prefixForNamespace(final URI namespace) {
         final Iterator<Module> modules = context.findModules(namespace).iterator();
         return modules.hasNext() ? modules.next().getName() : null;
     }
 
-    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;

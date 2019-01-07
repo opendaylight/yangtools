@@ -13,8 +13,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -80,11 +80,11 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      * @param child Child path argument
      * @return A child node, or null if not found
      */
-    @Nullable public abstract DataSchemaContextNode<?> getChild(PathArgument child);
+    public abstract @Nullable DataSchemaContextNode<?> getChild(PathArgument child);
 
-    @Nullable public abstract DataSchemaContextNode<?> getChild(QName child);
+    public abstract @Nullable DataSchemaContextNode<?> getChild(QName child);
 
-    @Nullable public DataSchemaNode getDataSchemaNode() {
+    public @Nullable DataSchemaNode getDataSchemaNode() {
         return dataSchemaNode;
     }
 
@@ -171,7 +171,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
      * DataContextNodeOperation for child as call for
      * {@link #fromDataSchemaNode(DataSchemaNode)}.
      */
-    @Nullable static DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
+    static @Nullable DataSchemaContextNode<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         for (AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
             if (aug.findDataChildByName(child.getQName()).isPresent()) {
@@ -181,7 +181,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
         return fromDataSchemaNode(child);
     }
 
-    @Nullable public static DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
+    public static @Nullable DataSchemaContextNode<?> fromDataSchemaNode(final DataSchemaNode potential) {
         if (potential instanceof ContainerSchemaNode) {
             return new ContainerContextNode((ContainerSchemaNode) potential);
         } else if (potential instanceof ListSchemaNode) {

@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -28,11 +26,9 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 public final class RpcAsContainer implements ContainerSchemaNode {
-
     private final RpcDefinition delegate;
 
     @Override
@@ -55,7 +51,6 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         return delegate.getGroupings();
     }
 
-    @Nonnull
     @Override
     public Status getStatus() {
         return delegate.getStatus();
@@ -73,22 +68,14 @@ public final class RpcAsContainer implements ContainerSchemaNode {
         delegate = parentNode;
     }
 
-    @Nonnull
     @Override
     public QName getQName() {
         return delegate.getQName();
     }
 
-    @Nonnull
     @Override
     public SchemaPath getPath() {
         return delegate.getPath();
-    }
-
-    @Nonnull
-    @Override
-    public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-        return Collections.emptyList();
     }
 
     @Override
@@ -106,12 +93,12 @@ public final class RpcAsContainer implements ContainerSchemaNode {
 
     @Override
     public Set<UsesNode> getUses() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override
     public Set<AugmentationSchemaNode> getAvailableAugmentations() {
-        return Collections.emptySet();
+        return ImmutableSet.of();
     }
 
     @Override

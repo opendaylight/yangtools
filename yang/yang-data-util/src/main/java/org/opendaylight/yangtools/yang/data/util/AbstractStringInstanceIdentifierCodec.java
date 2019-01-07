@@ -12,8 +12,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Map.Entry;
-import javax.annotation.Nonnull;
 import javax.xml.XMLConstants;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -93,7 +93,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      * @return DataSchemaContextTree associated with SchemaContext for which
      *         serialization / deserialization occurs.
      */
-    protected abstract @Nonnull DataSchemaContextTree getDataContextTree();
+    protected abstract @NonNull DataSchemaContextTree getDataContextTree();
 
     protected Object deserializeKeyValue(final DataSchemaNode schemaNode, final String value) {
         return value;
