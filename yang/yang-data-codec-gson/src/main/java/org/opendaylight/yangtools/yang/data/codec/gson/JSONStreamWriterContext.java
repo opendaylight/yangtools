@@ -13,7 +13,7 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -89,7 +89,7 @@ abstract class JSONStreamWriterContext {
      *
      * @return Namespace as URI
      */
-    protected abstract @Nonnull URI getNamespace();
+    protected abstract @NonNull URI getNamespace();
 
     /**
      * Emit the start of an element.

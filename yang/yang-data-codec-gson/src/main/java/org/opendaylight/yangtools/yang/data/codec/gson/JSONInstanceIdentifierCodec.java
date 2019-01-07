@@ -14,7 +14,6 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.util.AbstractModuleStringInstanceIdentifierCodec;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
@@ -47,7 +46,6 @@ class JSONInstanceIdentifierCodec extends AbstractModuleStringInstanceIdentifier
         return modules.hasNext() ? modules.next().getName() : null;
     }
 
-    @Nonnull
     @Override
     protected DataSchemaContextTree getDataContextTree() {
         return dataContextTree;
