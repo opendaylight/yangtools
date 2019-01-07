@@ -22,6 +22,30 @@
       "revId": "1f1b0b22176c41d3b2565a07ac78e613bf27bf52",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e697ce1c_c2d0e9d1",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 4540
+      },
+      "writtenOn": "2019-01-07T13:37:06Z",
+      "side": 1,
+      "message": "Oops, so it is. Is it OK to change the spec here, to make all the AbstraceNamespaceCodec hierarchy consistent? Or do we need some sort of transition?",
+      "parentUuid": "0398e803_4f5f3b0e",
+      "range": {
+        "startLine": 115,
+        "startChar": 38,
+        "endLine": 115,
+        "endChar": 46
+      },
+      "revId": "1f1b0b22176c41d3b2565a07ac78e613bf27bf52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
