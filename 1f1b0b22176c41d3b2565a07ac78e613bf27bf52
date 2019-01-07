@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "0398e803_4f5f3b0e",
+        "filename": "yang/yang-data-util/src/main/java/org/opendaylight/yangtools/yang/data/util/AbstractStringInstanceIdentifierCodec.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 115,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-01-07T13:12:13Z",
+      "side": 1,
+      "message": "This is conflicting with javadoc",
+      "range": {
+        "startLine": 115,
+        "startChar": 38,
+        "endLine": 115,
+        "endChar": 46
+      },
+      "revId": "1f1b0b22176c41d3b2565a07ac78e613bf27bf52",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
