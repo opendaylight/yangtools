@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 import static java.util.Objects.requireNonNull;
 
 import java.net.URI;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
@@ -34,7 +33,6 @@ abstract class JSONStreamWriterQNameContext extends JSONStreamWriterContext {
         return qname;
     }
 
-    @Nonnull
     @Override
     protected final URI getNamespace() {
         return qname.getNamespace();
