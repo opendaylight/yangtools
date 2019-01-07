@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -46,7 +46,7 @@ public final class LeafsetEntryInterner {
     }
 
     @SuppressWarnings("static-method")
-    public <T extends LeafSetEntryNode<?>> T intern(@Nonnull final T sample) {
+    public <T extends LeafSetEntryNode<?>> @NonNull T intern(final @NonNull T sample) {
         if (!sample.getAttributes().isEmpty()) {
             // Non-empty attributes, do not intern
             return sample;
@@ -69,7 +69,7 @@ public final class LeafsetEntryInterner {
      * @param schema Schema of the parent leaf set
      * @return An interner instance, or null if the leafset's type should not be interned.
      */
-    @Nullable public static LeafsetEntryInterner forSchema(@Nullable final LeafListSchemaNode schema) {
+    public static @Nullable LeafsetEntryInterner forSchema(final @Nullable LeafListSchemaNode schema) {
         if (schema != null) {
             final TypeDefinition<?> type = schema.getType();
             if (type instanceof BooleanTypeDefinition || type instanceof EnumTypeDefinition

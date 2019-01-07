@@ -10,7 +10,8 @@ package org.opendaylight.yangtools.yang.data.util;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -23,10 +24,10 @@ public abstract class AbstractModuleStringIdentityrefCodec extends AbstractStrin
      * @param prefix Prefix
      * @return module mapped to prefix, or null if the module cannot be resolved
      */
-    protected abstract Module moduleForPrefix(@Nonnull String prefix);
+    protected abstract @Nullable Module moduleForPrefix(@NonNull String prefix);
 
     @Override
-    protected final QName createQName(@Nonnull final String prefix, @Nonnull final String localName) {
+    protected final QName createQName(final String prefix, final String localName) {
         final Module module = moduleForPrefix(prefix);
         checkArgument(module != null, "Failed to lookup prefix %s", prefix);
 

@@ -12,8 +12,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.base.Splitter;
 import java.net.URI;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
@@ -26,7 +26,7 @@ abstract class AbstractNamespaceCodec {
      * @param namespace Namespace to map
      * @return Allocated unique prefix, or null if the prefix cannot be mapped.
      */
-    @Nullable protected abstract String prefixForNamespace(@Nonnull URI namespace);
+    protected abstract @Nullable String prefixForNamespace(@NonNull URI namespace);
 
     /**
      * Create a QName for a prefix and local name.
@@ -36,7 +36,7 @@ abstract class AbstractNamespaceCodec {
      * @return QName
      * @throws IllegalArgumentException if the prefix cannot be resolved
      */
-    @Nullable protected abstract QName createQName(@Nonnull String prefix, @Nonnull String localName);
+    protected abstract @Nullable QName createQName(@NonNull String prefix, @NonNull String localName);
 
     private static String getIdAndPrefixAsStr(final String pathPart) {
         int predicateStartIndex = pathPart.indexOf('[');

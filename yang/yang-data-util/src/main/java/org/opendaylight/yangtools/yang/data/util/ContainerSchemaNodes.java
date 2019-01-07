@@ -15,10 +15,8 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Maps;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ActionDefinition;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -33,7 +31,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.UsesNode;
 
 /**
@@ -85,13 +82,11 @@ public final class ContainerSchemaNodes {
             return false;
         }
 
-        @Nonnull
         @Override
         public QName getQName() {
             return schemaNode.getQName();
         }
 
-        @Nonnull
         @Override
         public SchemaPath getPath() {
             return schemaNode.getPath();
@@ -107,16 +102,9 @@ public final class ContainerSchemaNodes {
             return schemaNode.getReference();
         }
 
-        @Nonnull
         @Override
         public Status getStatus() {
             return schemaNode.getStatus();
-        }
-
-        @Nonnull
-        @Override
-        public List<UnknownSchemaNode> getUnknownSchemaNodes() {
-            return ImmutableList.of();
         }
 
         @Override

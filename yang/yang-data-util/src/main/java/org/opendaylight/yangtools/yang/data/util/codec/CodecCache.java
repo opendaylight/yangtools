@@ -8,8 +8,8 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
@@ -28,7 +28,7 @@ public abstract class CodecCache<T> {
      * @param schema Schema node
      * @return Cached codec, or null if no codec is cached.
      */
-    @Nullable abstract T lookupComplex(TypedDataSchemaNode schema);
+    abstract @Nullable T lookupComplex(TypedDataSchemaNode schema);
 
     /**
      * Lookup a simple codec for a type definition.
@@ -36,7 +36,7 @@ public abstract class CodecCache<T> {
      * @param type Type definition
      * @return Cached codec, or null if no codec is cached.
      */
-    @Nullable abstract T lookupSimple(TypeDefinition<?> type);
+    abstract @Nullable T lookupSimple(TypeDefinition<?> type);
 
     /**
      * Lookup-or-store a complex codec for a particular schema node.
@@ -45,7 +45,7 @@ public abstract class CodecCache<T> {
      * @param codec Codec to cache
      * @return Codec instance, either already-cached, or the codec presented as argument.
      */
-    @Nonnull abstract T getComplex(TypedDataSchemaNode schema, T codec);
+    abstract @NonNull T getComplex(TypedDataSchemaNode schema, T codec);
 
     /**
      * Lookup-or-store a simple codec for a particular schema node.
@@ -54,5 +54,5 @@ public abstract class CodecCache<T> {
      * @param codec Codec to cache
      * @return Codec instance, either already-cached, or the codec presented as argument.
      */
-    @Nonnull abstract T getSimple(TypeDefinition<?> type, T codec);
+    abstract @NonNull T getSimple(TypeDefinition<?> type, T codec);
 }

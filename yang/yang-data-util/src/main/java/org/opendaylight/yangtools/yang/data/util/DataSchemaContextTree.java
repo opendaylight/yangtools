@@ -11,7 +11,6 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -30,7 +29,7 @@ public final class DataSchemaContextTree {
     private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
                 @Override
-                public DataSchemaContextTree load(@Nonnull final SchemaContext key) throws Exception {
+                public DataSchemaContextTree load(final SchemaContext key) throws Exception {
                     return new DataSchemaContextTree(key);
                 }
             });
@@ -41,7 +40,7 @@ public final class DataSchemaContextTree {
         root = DataSchemaContextNode.from(ctx);
     }
 
-    @Nonnull public static DataSchemaContextTree from(@Nonnull final SchemaContext ctx) {
+    public static @NonNull DataSchemaContextTree from(final @NonNull SchemaContext ctx) {
         return TREES.getUnchecked(ctx);
     }
 

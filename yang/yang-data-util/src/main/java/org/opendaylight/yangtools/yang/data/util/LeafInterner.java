@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.util.Objects;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -67,7 +67,7 @@ public final class LeafInterner {
      * @param schema The leaf node's schema
      * @return An interner instance
      */
-    @Nonnull public static <T extends LeafNode<?>> Interner<T> forSchema(@Nullable final LeafSchemaNode schema) {
+    @NonNull public static <T extends LeafNode<?>> Interner<T> forSchema(final @Nullable LeafSchemaNode schema) {
         if (schema != null && isLowCardinality(schema.getType())) {
             return LeafInterner::intern;
         }
