@@ -14,7 +14,6 @@ import com.google.common.annotations.Beta;
 import java.util.Map.Entry;
 import javax.xml.XMLConstants;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -113,7 +112,7 @@ public abstract class AbstractStringInstanceIdentifierCodec extends AbstractName
      * @param localName Local name string
      * @return A newly-created QName
      */
-    protected QName createQName(final @Nullable QNameModule lastModule, final String localName) {
+    protected QName createQName(final @NonNull QNameModule lastModule, final String localName) {
         // This implementation handles both XML encoding, where we follow XML namespace rules and old JSON encoding,
         // which is the same thing: always encode prefixes
         return createQName(XMLConstants.DEFAULT_NS_PREFIX, localName);
