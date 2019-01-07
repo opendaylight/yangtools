@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -30,7 +31,7 @@ final class RFC7951JSONInstanceIdentifierCodec extends JSONInstanceIdentifierCod
     }
 
     @Override
-    protected QName createQName(final @Nullable QNameModule lastModule, final String localName) {
+    protected QName createQName(final @Nonnull QNameModule lastModule, final String localName) {
         checkArgument(lastModule != null, "Unprefixed leading name %s", localName);
         return QName.create(lastModule, localName);
     }
