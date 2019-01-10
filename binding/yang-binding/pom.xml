@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>yang-binding</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>Java binding for YANG</description>

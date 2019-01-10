@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>mdsal-binding-spec-util</artifactId>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.4-SNAPSHOT</version>
     <packaging>bundle</packaging>
 
     <dependencies>
