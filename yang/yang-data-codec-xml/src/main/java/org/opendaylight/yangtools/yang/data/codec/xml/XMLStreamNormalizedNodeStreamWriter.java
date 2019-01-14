@@ -43,6 +43,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter},
@@ -199,18 +200,25 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         if (value != null) {
             checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
             final DOMSource domSource = (DOMSource) value;
-            requireNonNull(domSource.getNode());
-            checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
-            checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
+            final Node domNode = requireNonNull(domSource.getNode());
+            checkArgument(domNode.getNodeName().equals(qname.getLocalName()));
+            checkArgument(domNode.getNamespaceURI().equals(qname.getNamespace().toString()));
+
+            final Transformer transformer;
             try {
                 // TODO can the transformer be a constant ? is it thread safe ?
-                final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+                transformer = TRANSFORMER_FACTORY.newTransformer();
+            } catch (TransformerException e) {
+                throw new IOException("Cannot instantiate a transformer", e);
+            }
+
+            try {
                 // Writer has to be wrapped in a wrapper that ignores endDocument event
                 // EndDocument event forbids any other modification to the writer so a nested anyXml breaks
                 // serialization
                 transformer.transform(domSource, new StAXResult(new DelegateWriterNoEndDoc(writer)));
             } catch (final TransformerException e) {
-                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + value, e);
+                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + domNode, e);
             }
         }
     }
