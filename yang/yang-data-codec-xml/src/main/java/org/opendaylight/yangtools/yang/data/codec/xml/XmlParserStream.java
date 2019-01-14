@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.data.codec.xml.XMLStreamNormalizedNodeStreamWriter.TRANSFORMER_FACTORY;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableMap;
@@ -36,6 +35,8 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.util.StreamReaderDelegate;
 import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
@@ -65,6 +66,8 @@ import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -76,8 +79,26 @@ import org.xml.sax.SAXException;
 @Beta
 @NotThreadSafe
 public final class XmlParserStream implements Closeable, Flushable {
-
+    private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
+    private static final String COM_SUN_TRANSFORMER =
+            "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl";
+
+    private static final TransformerFactory TRANSFORMER_FACTORY;
+
+    static {
+        TransformerFactory fa = TransformerFactory.newInstance();
+        if (!fa.getFeature(StAXSource.FEATURE)) {
+            LOG.warn("Platform-default TransformerFactory {} does not support StAXSource, attempting fallback to {}",
+                    fa, COM_SUN_TRANSFORMER);
+            fa = TransformerFactory.newInstance(COM_SUN_TRANSFORMER, null);
+            if (!fa.getFeature(StAXSource.FEATURE)) {
+                throw new TransformerFactoryConfigurationError("No TransformerFactory supporting StAXResult found.");
+            }
+        }
+
+        TRANSFORMER_FACTORY = fa;
+    }
 
     private final NormalizedNodeStreamWriter writer;
     private final XmlCodecFactory codecs;
