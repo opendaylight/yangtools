@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -43,6 +44,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter},
@@ -205,20 +207,107 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         if (value != null) {
             checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
             final DOMSource domSource = (DOMSource) value;
-            requireNonNull(domSource.getNode());
-            checkArgument(domSource.getNode().getNodeName().equals(qname.getLocalName()));
-            checkArgument(domSource.getNode().getNamespaceURI().equals(qname.getNamespace().toString()));
+            final Node domNode = requireNonNull(domSource.getNode());
+            checkArgument(domNode.getNodeName().equals(qname.getLocalName()));
+            checkArgument(domNode.getNamespaceURI().equals(qname.getNamespace().toString()));
+
             try {
-                // TODO can the transformer be a constant ? is it thread safe ?
-                final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-                // Writer has to be wrapped in a wrapper that ignores endDocument event
-                // EndDocument event forbids any other modification to the writer so a nested anyXml breaks
-                // serialization
-                transformer.transform(domSource, new StAXResult(new DelegateWriterNoEndDoc(writer)));
-            } catch (final TransformerException e) {
-                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + value, e);
+                writeStreamReader(new DOMSourceXMLStreamReader(domSource));
+            } catch (XMLStreamException e) {
+                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + domNode, e);
             }
         }
+    }
+
+    private void writeStreamReader(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        while (reader.hasNext()) {
+            final int event = reader.next();
+            switch (event) {
+                case XMLStreamConstants.START_ELEMENT:
+                    forwardStartElement(reader);
+                    break;
+                case XMLStreamConstants.END_ELEMENT:
+                    writer.writeEndElement();
+                    break;
+                case XMLStreamConstants.PROCESSING_INSTRUCTION:
+                    forwardProcessingInstruction(reader);
+                    break;
+                case XMLStreamConstants.CHARACTERS:
+                    writer.writeCharacters(reader.getText());
+                    break;
+                case XMLStreamConstants.COMMENT:
+                    writer.writeComment(reader.getText());
+                    break;
+                case XMLStreamConstants.SPACE:
+                    // Ignore insignificant whitespace
+                    break;
+                case XMLStreamConstants.START_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
+                    // We are embedded: ignore start/end document events
+                    break;
+                case XMLStreamConstants.ENTITY_REFERENCE:
+                    writer.writeEntityRef(reader.getLocalName());
+                    break;
+                case XMLStreamConstants.ATTRIBUTE:
+                    forwardAttributes(reader);
+                    break;
+                case XMLStreamConstants.DTD:
+                    writer.writeDTD(reader.getText());
+                    break;
+                case XMLStreamConstants.CDATA:
+                    writer.writeCData(reader.getText());
+                    break;
+                case XMLStreamConstants.NAMESPACE:
+                    forwardNamespaces(reader);
+                    break;
+                case XMLStreamConstants.NOTATION_DECLARATION:
+                case XMLStreamConstants.ENTITY_DECLARATION:
+                default:
+                    throw new IllegalStateException("Unhandled event " + event);
+            }
+        }
+    }
+
+    private void forwardAttributes(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        for (int i = 0; i < reader.getAttributeCount(); ++i) {
+            final String localName = reader.getAttributeLocalName(i);
+            final String value = reader.getAttributeValue(i);
+            final String prefix = reader.getAttributePrefix(i);
+            if (prefix != null) {
+                writer.writeAttribute(prefix, reader.getAttributeNamespace(i), localName, value);
+            } else {
+                writer.writeAttribute(localName, value);
+            }
+        }
+    }
+
+    private void forwardNamespaces(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        for (int i = 0; i < reader.getNamespaceCount(); ++i) {
+            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
+        }
+    }
+
+    private void forwardProcessingInstruction(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        final String target = reader.getPITarget();
+        final String data = reader.getPIData();
+        if (data != null) {
+            writer.writeProcessingInstruction(target, data);
+        } else {
+            writer.writeProcessingInstruction(target);
+        }
+    }
+
+    private void forwardStartElement(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
+        final String localName = reader.getLocalName();
+        final String prefix = reader.getPrefix();
+        if (prefix != null) {
+            writer.writeStartElement(prefix, localName, reader.getNamespaceURI());
+        } else {
+            writer.writeStartElement(localName);
+        }
+
+        forwardNamespaces(reader);
+        forwardAttributes(reader);
     }
 
     @Override
@@ -316,189 +405,6 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             writer.flush();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to flush writer", e);
-        }
-    }
-
-    /**
-     * Delegate writer that ignores writeEndDocument event. Used for AnyXml serialization.
-     */
-    private static final class DelegateWriterNoEndDoc implements XMLStreamWriter {
-        private final XMLStreamWriter writer;
-
-        DelegateWriterNoEndDoc(final XMLStreamWriter writer) {
-            this.writer = writer;
-        }
-
-        @Override
-        public void writeStartElement(final String localName) throws XMLStreamException {
-            writer.writeStartElement(localName);
-        }
-
-        @Override
-        public void writeStartElement(final String namespaceURI, final String localName) throws XMLStreamException {
-            writer.writeStartElement(namespaceURI, localName);
-        }
-
-        @Override
-        public void writeStartElement(final String prefix, final String localName, final String namespaceURI)
-                throws XMLStreamException {
-            writer.writeStartElement(prefix, localName, namespaceURI);
-        }
-
-        @Override
-        public void writeEmptyElement(final String namespaceURI, final String localName) throws XMLStreamException {
-            writer.writeEmptyElement(namespaceURI, localName);
-        }
-
-        @Override
-        public void writeEmptyElement(final String prefix, final String localName, final String namespaceURI)
-                throws XMLStreamException {
-            writer.writeEmptyElement(prefix, localName, namespaceURI);
-        }
-
-        @Override
-        public void writeEmptyElement(final String localName) throws XMLStreamException {
-            writer.writeEmptyElement(localName);
-        }
-
-        @Override
-        public void writeEndElement() throws XMLStreamException {
-            writer.writeEndElement();
-
-        }
-
-        @Override
-        public void writeEndDocument() throws XMLStreamException {
-            // End document is disabled
-        }
-
-        @Override
-        public void close() throws XMLStreamException {
-            writer.close();
-        }
-
-        @Override
-        public void flush() throws XMLStreamException {
-            writer.flush();
-        }
-
-        @Override
-        public void writeAttribute(final String localName, final String value) throws XMLStreamException {
-            writer.writeAttribute(localName, value);
-        }
-
-        @Override
-        public void writeAttribute(final String prefix, final String namespaceURI, final String localName,
-                                   final String value) throws XMLStreamException {
-            writer.writeAttribute(prefix, namespaceURI, localName, value);
-        }
-
-        @Override
-        public void writeAttribute(final String namespaceURI, final String localName, final String value)
-                throws XMLStreamException {
-            writer.writeAttribute(namespaceURI, localName, value);
-        }
-
-        @Override
-        public void writeNamespace(final String prefix, final String namespaceURI) throws XMLStreamException {
-            // Workaround for default namespace
-            // If a namespace is not prefixed, it is is still treated as prefix namespace.
-            // This results in the NamespaceSupport class ignoring the namespace since xmlns is not a valid prefix
-            // Write the namespace at least as an attribute
-            // TODO this is a hotfix, the transformer itself should write namespaces passing the namespace
-            // in writeStartElement method
-            if (prefix.equals("xml") || prefix.equals("xmlns")) {
-                writer.writeAttribute(prefix, namespaceURI);
-            } else {
-                writer.writeNamespace(prefix, namespaceURI);
-            }
-        }
-
-        @Override
-        public void writeDefaultNamespace(final String namespaceURI) throws XMLStreamException {
-            writer.writeDefaultNamespace(namespaceURI);
-        }
-
-        @Override
-        public void writeComment(final String data) throws XMLStreamException {
-            writer.writeComment(data);
-        }
-
-        @Override
-        public void writeProcessingInstruction(final String target) throws XMLStreamException {
-            writer.writeProcessingInstruction(target);
-        }
-
-        @Override
-        public void writeProcessingInstruction(final String target, final String data) throws XMLStreamException {
-            writer.writeProcessingInstruction(target, data);
-        }
-
-        @Override
-        public void writeCData(final String data) throws XMLStreamException {
-            writer.writeCData(data);
-        }
-
-        @Override
-        public void writeDTD(final String dtd) throws XMLStreamException {
-            writer.writeDTD(dtd);
-        }
-
-        @Override
-        public void writeEntityRef(final String name) throws XMLStreamException {
-            writer.writeEntityRef(name);
-        }
-
-        @Override
-        public void writeStartDocument() throws XMLStreamException {
-        }
-
-        @Override
-        public void writeStartDocument(final String version) throws XMLStreamException {
-        }
-
-        @Override
-        public void writeStartDocument(final String encoding, final String version) throws XMLStreamException {
-        }
-
-        @Override
-        public void writeCharacters(final String text) throws XMLStreamException {
-            writer.writeCharacters(text);
-        }
-
-        @Override
-        public void writeCharacters(final char[] text, final int start, final int len) throws XMLStreamException {
-            writer.writeCharacters(text, start, len);
-        }
-
-        @Override
-        public String getPrefix(final String uri) throws XMLStreamException {
-            return writer.getPrefix(uri);
-        }
-
-        @Override
-        public void setPrefix(final String prefix, final String uri) throws XMLStreamException {
-            // Disabled since it causes exceptions in the underlying writer
-        }
-
-        @Override
-        public void setDefaultNamespace(final String uri) throws XMLStreamException {
-            writer.setDefaultNamespace(uri);
-        }
-
-        @Override
-        public void setNamespaceContext(final NamespaceContext context) throws XMLStreamException {
-            writer.setNamespaceContext(context);
-        }
-
-        @Override
-        public NamespaceContext getNamespaceContext() {
-            return writer.getNamespaceContext();
-        }
-
-        @Override
-        public Object getProperty(final String name) {
-            return writer.getProperty(name);
         }
     }
 }
