@@ -52,6 +52,13 @@
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-legacy</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.fasterxml.woodstox</groupId>
+            <artifactId>woodstox-core</artifactId>
+            <version>5.2.0</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
