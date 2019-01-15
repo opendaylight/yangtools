@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
@@ -13,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -27,7 +27,11 @@ import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -40,33 +44,52 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class Bug8745Test {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
+
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    private final XMLOutputFactory factory;
+
+    public Bug8745Test(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/bug8745/foo.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
 
     @Test
     public void testParsingAttributes() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8745/foo.yang");
         final QName contWithAttributes = QName.create("foo", "cont-with-attributes");
         final ContainerSchemaNode contWithAttr = (ContainerSchemaNode) SchemaContextUtil.findDataSchemaNode(
-                schemaContext, SchemaPath.create(true, contWithAttributes));
+            SCHEMA_CONTEXT, SchemaPath.create(true, contWithAttributes));
 
         final Document doc = loadDocument("/bug8745/foo.xml");
         final DOMSource domSource = new DOMSource(doc.getDocumentElement());
 
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 
-        final XMLOutputFactory outputfactory = XMLOutputFactory.newInstance();
-        outputfactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-
-        final XMLStreamWriter xmlStreamWriter = outputfactory.createXMLStreamWriter(domResult);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, schemaContext);
+                xmlStreamWriter, SCHEMA_CONTEXT);
 
         final InputStream resourceAsStream = Bug8745Test.class.getResourceAsStream("/bug8745/foo.xml");
 //        final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, contWithAttr);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, contWithAttr);
         xmlParser.parse(reader);
 
         XMLUnit.setIgnoreWhitespace(true);

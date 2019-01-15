@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,8 +34,12 @@ import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -58,7 +63,12 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class NormalizedNodesToXmlTest {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
 
     private QNameModule bazModule;
 
@@ -84,6 +94,24 @@ public class NormalizedNodesToXmlTest {
     private QName myFirstKeyLeaf;
     private QName mySecondKeyLeaf;
     private QName myLeafInList3;
+
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    private final XMLOutputFactory factory;
+
+    public NormalizedNodesToXmlTest(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResource("/baz.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
 
     @Before
     public void setup() {
@@ -115,19 +143,14 @@ public class NormalizedNodesToXmlTest {
 
     @Test
     public void testNormalizedNodeToXmlSerialization() throws XMLStreamException, IOException, SAXException {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/baz.yang");
-
         final Document doc = loadDocument("/baz.xml");
 
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
 
-        final XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, schemaContext);
+                xmlStreamWriter, SCHEMA_CONTEXT);
 
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 xmlNormalizedNodeStreamWriter);

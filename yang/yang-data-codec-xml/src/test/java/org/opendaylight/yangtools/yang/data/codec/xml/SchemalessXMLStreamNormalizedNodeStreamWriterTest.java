@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,8 @@ import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -64,7 +67,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
+
+    private final XMLOutputFactory factory;
 
     private QNameModule foobarModule;
 
@@ -100,6 +110,10 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
     private QName myLeafInList3;
 
     private DOMSource anyxmlDomSource;
+
+    public SchemalessXMLStreamNormalizedNodeStreamWriterTest(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
+    }
 
     @Before
     public void setup() {
@@ -144,9 +158,6 @@ public class SchemalessXMLStreamNormalizedNodeStreamWriterTest {
         final Document doc = loadDocument("/foobar.xml");
 
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
-
-        final XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        factory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
 
         final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 

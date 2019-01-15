@@ -15,6 +15,7 @@ import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.util.Collection;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
@@ -26,7 +27,11 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -42,13 +47,35 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class DOMSourceXMLStreamReaderTest {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
+
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    private final XMLOutputFactory factory;
+
+    public DOMSourceXMLStreamReaderTest(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/dom-reader-test");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
 
     @Test
     public void test() throws Exception {
-        final SchemaContext schemaContext = YangParserTestUtils.parseYangResourceDirectory("/dom-reader-test");
         final ContainerSchemaNode outerContainerSchema = (ContainerSchemaNode) SchemaContextUtil
-                .findNodeInSchemaContext(schemaContext, ImmutableList.of(QName.create("foo-ns", "top-cont")));
+                .findNodeInSchemaContext(SCHEMA_CONTEXT, ImmutableList.of(QName.create("foo-ns", "top-cont")));
         assertNotNull(outerContainerSchema);
 
         // deserialization
@@ -58,7 +85,7 @@ public class DOMSourceXMLStreamReaderTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, outerContainerSchema);
         xmlParser.parse(domXMLReader);
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         assertNotNull(transformedInput);
@@ -66,12 +93,10 @@ public class DOMSourceXMLStreamReaderTest {
         // serialization
         //final StringWriter writer = new StringWriter();
         final DOMResult domResult = new DOMResult(UntrustedXML.newDocumentBuilder().newDocument());
-        final XMLOutputFactory outputFactory = XMLOutputFactory.newFactory();
-        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-        final XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(domResult);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(
-                xmlStreamWriter, schemaContext);
+                xmlStreamWriter, SCHEMA_CONTEXT);
 
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 xmlNormalizedNodeStreamWriter);
