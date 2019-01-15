@@ -66,6 +66,7 @@ public class Bug8803Test {
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 xmlNormalizedNodeStreamWriter);
         normalizedNodeWriter.write(transformedInput);
+        normalizedNodeWriter.flush();
 
         final String serializedXml = writer.toString();
         assertFalse(serializedXml.isEmpty());
