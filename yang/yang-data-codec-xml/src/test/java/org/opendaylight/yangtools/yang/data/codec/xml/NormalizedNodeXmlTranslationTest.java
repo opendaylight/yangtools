@@ -99,13 +99,6 @@ public class NormalizedNodeXmlTranslationTest {
     private static final String NAMESPACE = "urn:opendaylight:params:xml:ns:yang:controller:test";
     private static final Revision REVISION = Revision.of("2014-03-13");
 
-    static final XMLOutputFactory XML_FACTORY;
-
-    static {
-        XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
-    }
-
     private static ContainerNode augmentChoiceHell2() {
         final NodeIdentifier container = getNodeIdentifier("container");
         final QName augmentChoice1QName = QName.create(container.getNodeType(), "augment-choice1");
@@ -261,7 +254,16 @@ public class NormalizedNodeXmlTranslationTest {
     private final String xmlPath;
 
     @Test
+    public void testTranslationRepairing() throws Exception {
+        testTranslation(TestFactories.REPAIRING_OUTPUT_FACTORY);
+    }
+
+    @Test
     public void testTranslation() throws Exception {
+        testTranslation(TestFactories.DEFAULT_OUTPUT_FACTORY);
+    }
+
+    private void testTranslation(final XMLOutputFactory factory) throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
@@ -282,10 +284,7 @@ public class NormalizedNodeXmlTranslationTest {
         final Document document = UntrustedXML.newDocumentBuilder().newDocument();
         final DOMResult domResult = new DOMResult(document);
 
-        final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-
-        final XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(domResult);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter
                 .create(xmlStreamWriter, schema);

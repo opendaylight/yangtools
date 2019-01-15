@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -23,7 +22,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
@@ -54,8 +52,6 @@ public class XmlStreamUtilsTest {
         void accept(XMLStreamWriter writer) throws XMLStreamException;
     }
 
-    public static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newFactory();
-
     private static SchemaContext schemaContext;
     private static Module leafRefModule;
 
@@ -77,7 +73,7 @@ public class XmlStreamUtilsTest {
     @Test
     public void testWriteAttribute() throws Exception {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+        final XMLStreamWriter writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
         writer.writeStartElement("element");
 
         QName name = getAttrQName("namespace", "2012-12-12", "attr", Optional.of("prefix"));
@@ -138,7 +134,7 @@ public class XmlStreamUtilsTest {
 
     private static String createXml(XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+        final XMLStreamWriter writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
         consumer.accept(writer);
 

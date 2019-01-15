@@ -10,16 +10,17 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import javax.xml.stream.FactoryConfigurationError;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLAssert;
 import org.custommonkey.xmlunit.XMLUnit;
-import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -35,10 +36,15 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class SchemaOrderedNormalizedNodeWriterTest {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
 
     private static final String EXPECTED_1 = ""
-        + "<root>\n"
+        + "<root xmlns=\"foo\">\n"
         + "    <policy>\n"
         + "        <name>policy1</name>\n"
         + "        <rule>\n"
@@ -61,7 +67,7 @@ public class SchemaOrderedNormalizedNodeWriterTest {
 
 
     private static final String EXPECTED_2 = ""
-        + "<root>\n"
+        + "<root xmlns=\"order\">\n"
         + "    <id>id1</id>\n"
         + "    <cont>\n"
         + "        <content>content1</content>\n"
@@ -74,16 +80,17 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     private static final String POLICY_NODE = "policy";
     private static final String ORDER_NAMESPACE = "order";
 
+    private final XMLOutputFactory factory;
 
-    @Before
-    public void setUp() {
+    public SchemaOrderedNormalizedNodeWriterTest(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
         XMLUnit.setIgnoreWhitespace(true);
     }
 
     @Test
-    public void testWrite() throws XMLStreamException, FactoryConfigurationError, IOException, SAXException {
+    public void testWrite() throws XMLStreamException, IOException, SAXException {
         final StringWriter stringWriter = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(stringWriter);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
 
         SchemaContext schemaContext = getSchemaContext("/bug1848/foo.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
@@ -142,9 +149,9 @@ public class SchemaOrderedNormalizedNodeWriterTest {
     }
 
     @Test
-    public void testWriteOrder() throws Exception {
+    public void testWriteOrder() throws XMLStreamException, IOException, SAXException {
         final StringWriter stringWriter = new StringWriter();
-        final XMLStreamWriter xmlStreamWriter = XMLOutputFactory.newFactory().createXMLStreamWriter(stringWriter);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(stringWriter);
         SchemaContext schemaContext = getSchemaContext("/bug1848/order.yang");
         NormalizedNodeStreamWriter writer = XMLStreamNormalizedNodeStreamWriter.create(xmlStreamWriter, schemaContext);
 
