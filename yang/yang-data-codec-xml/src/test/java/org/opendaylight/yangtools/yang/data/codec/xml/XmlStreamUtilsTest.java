@@ -15,6 +15,7 @@ import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.net.URI;
 import java.util.AbstractMap;
 import java.util.HashMap;
@@ -23,6 +24,7 @@ import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLOutputFactory;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -47,6 +49,10 @@ import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 import org.w3c.dom.Document;
 
 public class XmlStreamUtilsTest {
+    @FunctionalInterface
+    interface XMLStreamWriterConsumer {
+        void accept(XMLStreamWriter writer) throws XMLStreamException;
+    }
 
     public static final XMLOutputFactory XML_OUTPUT_FACTORY = XMLOutputFactory.newFactory();
 
@@ -108,27 +114,38 @@ public class XmlStreamUtilsTest {
 
     @Test
     public void testWriteIdentityRef() throws Exception {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
-
-        writer.writeStartElement("element");
         final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.of("2000-01-01"));
-        XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
-        writer.writeEndElement();
 
-        writer.writeStartElement("elementDifferent");
-        XMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
-        writer.writeEndElement();
+        String xmlAsString = createXml(writer -> {
+            writer.writeStartElement("element");
+            XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
+            writer.writeEndElement();
+        });
 
-        writer.close();
-        out.close();
-
-        final String xmlAsString = new String(out.toByteArray()).replaceAll("\\s*", "");
         assertThat(xmlAsString, containsString("element>identity"));
+
+        xmlAsString = createXml(writer -> {
+            writer.writeStartElement("elementDifferent");
+            XMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
+            writer.writeEndElement();
+
+        });
 
         final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
         final Matcher matcher = prefixedIdentityPattern.matcher(xmlAsString);
         assertTrue("Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern, matcher.matches());
+    }
+
+    private static String createXml(XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
+        final ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final XMLStreamWriter writer = XML_OUTPUT_FACTORY.createXMLStreamWriter(out);
+
+        consumer.accept(writer);
+
+        writer.close();
+        out.close();
+
+        return new String(out.toByteArray()).replaceAll("\\s*", "");
     }
 
     /**

@@ -8,9 +8,11 @@
 
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableList;
@@ -157,8 +159,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate leaf.");
         } catch (IllegalStateException ex) {
-            assertEquals("Duplicate namespace \"foo-namespace\" element \"decimal64-leaf\" in XML input at: line 7 "
-                    + "column 25", ex.getMessage());
+            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"decimal64-leaf\" "
+                    + "in XML input at: line 7 column "));
         }
     }
 
@@ -177,8 +179,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate anyxml");
         } catch (IllegalStateException ex) {
-            assertEquals("Duplicate namespace \"foo-namespace\" element \"my-anyxml\" in XML input at: line 19 "
-                    + "column 20", ex.getMessage());
+            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"my-anyxml\" in XML "
+                    + "input at: line 19 column "));
         }
     }
 
@@ -197,8 +199,8 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("IllegalStateException should have been thrown because of duplicate container");
         } catch (IllegalStateException ex) {
-            assertEquals("Duplicate namespace \"foo-namespace\" element \"leaf-container\" in XML input at: line 13 "
-                    + "column 21", ex.getMessage());
+            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"leaf-container\" "
+                + "in XML input at: line 13 column "));
         }
     }
 
@@ -217,8 +219,7 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("elementGetText() function expects text only elment but "
-                        + "START_ELEMENT was encountered."));
+            assertThat(ex.getMessage(), containsString(" START_ELEMENT "));
         }
     }
 
@@ -237,8 +238,7 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated leaf element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("The element type \"my-leaf-1\" must be terminated by the matching "
-                        + "end-tag \"</my-leaf-1>\"."));
+            assertThat(ex.getMessage(), containsString("</my-leaf-1>"));
         }
     }
 
@@ -257,8 +257,7 @@ public class XmlToNormalizedNodesTest {
             xmlParser.parse(reader);
             fail("XMLStreamException should have been thrown because of unterminated container element.");
         } catch (XMLStreamException ex) {
-            assertTrue(ex.getMessage().contains("The element type \"my-container-1\" must be terminated by the "
-                        + "matching end-tag \"</my-container-1>\"."));
+            assertThat(ex.getMessage(), containsString("</my-container-1>"));
         }
     }
 
