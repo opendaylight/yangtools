@@ -15,7 +15,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
 import java.util.Optional;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -50,13 +49,6 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class Bug5446Test extends XMLTestCase {
-    private static final XMLOutputFactory XML_FACTORY;
-
-    static {
-        XML_FACTORY = XMLOutputFactory.newFactory();
-        XML_FACTORY.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.FALSE);
-    }
-
     private static final QNameModule FOO_MODULE = QNameModule.create(URI.create("foo"), Revision.of("2015-11-05"));
     private static final QName ROOT_QNAME = QName.create(FOO_MODULE, "root");
     private static final QName IP_ADDRESS_QNAME = QName.create(FOO_MODULE, "ip-address");
@@ -111,7 +103,7 @@ public class Bug5446Test extends XMLTestCase {
         NormalizedNodeStreamWriter normalizedNodeStreamWriter = null;
         XMLStreamWriter writer = null;
         try {
-            writer = XML_FACTORY.createXMLStreamWriter(result);
+            writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(result);
             normalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter.create(writer, context);
             normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(normalizedNodeStreamWriter);
 

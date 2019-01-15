@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.URI;
+import java.util.Collection;
 import java.util.Optional;
 import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamReader;
@@ -28,7 +29,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.custommonkey.xmlunit.XMLUnit;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -54,23 +59,41 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+@RunWith(Parameterized.class)
 public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
+    @Parameterized.Parameters(name = "{0}")
+    public static Collection<Object[]> data() {
+        return TestFactories.junitParameters();
+    }
 
     private final QNameModule bazModuleQName = QNameModule.create(URI.create("baz"));
     private final QName myAnyXMLDataBaz = QName.create(bazModuleQName, "my-anyxml-data");
     private final QName bazQName = QName.create(bazModuleQName, "baz");
     private final QName myContainer2QName = QName.create(bazModuleQName, "my-container-2");
-    private final SchemaContext schemaContext;
 
-    public YangModeledAnyXMLSerializationTest() {
-        schemaContext = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/serialization");
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    private final XMLOutputFactory factory;
+
+    public YangModeledAnyXMLSerializationTest(final String factoryMode, final XMLOutputFactory factory) {
+        this.factory = factory;
+    }
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = YangParserTestUtils.parseYangResourceDirectory("/anyxml-support/serialization");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
     }
 
     @Test
     public void testSerializationOfBaz() throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/anyxml-support/serialization/baz.xml");
-        final Module bazModule = schemaContext.findModules("baz").iterator().next();
+        final Module bazModule = SCHEMA_CONTEXT.findModules("baz").iterator().next();
         final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
                 QName.create(bazModule.getQNameModule(), "baz"));
         assertNotNull(bazCont);
@@ -81,7 +104,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
 
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
 
-        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, bazCont);
+        final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, bazCont);
         xmlParser.parse(reader);
 
         final NormalizedNode<?, ?> transformedInput = result.getResult();
@@ -97,7 +120,7 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) bazContainerChild.get();
 
         DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
-        SchemaNode myContainer2SchemaNode = SchemaContextUtil.findDataSchemaNode(schemaContext,
+        SchemaNode myContainer2SchemaNode = SchemaContextUtil.findDataSchemaNode(SCHEMA_CONTEXT,
                 SchemaPath.create(true, bazQName, myContainer2QName));
         assertTrue(myContainer2SchemaNode instanceof ContainerSchemaNode);
         assertEquals(myContainer2SchemaNode, schemaOfAnyXmlData);
@@ -105,13 +128,10 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final Document document = UntrustedXML.newDocumentBuilder().newDocument();
         final DOMResult domResult = new DOMResult(document);
 
-        final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
-        outputFactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);
-
-        final XMLStreamWriter xmlStreamWriter = outputFactory.createXMLStreamWriter(domResult);
+        final XMLStreamWriter xmlStreamWriter = factory.createXMLStreamWriter(domResult);
 
         final NormalizedNodeStreamWriter xmlNormalizedNodeStreamWriter = XMLStreamNormalizedNodeStreamWriter
-                .create(xmlStreamWriter, schemaContext);
+                .create(xmlStreamWriter, SCHEMA_CONTEXT);
 
         final NormalizedNodeWriter normalizedNodeWriter = NormalizedNodeWriter.forStreamWriter(
                 xmlNormalizedNodeStreamWriter);

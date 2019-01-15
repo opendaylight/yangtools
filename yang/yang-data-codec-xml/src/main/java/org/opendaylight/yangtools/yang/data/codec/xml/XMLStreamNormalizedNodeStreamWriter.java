@@ -161,13 +161,19 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     private void writeStartElement(final QName qname) throws XMLStreamException {
-        String ns = qname.getNamespace().toString();
+        final String ns = qname.getNamespace().toString();
+        final NamespaceContext context = writer.getNamespaceContext();
+        final boolean needDefaultNs;
+        if (context != null) {
+            final String parentNs = context.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
+            needDefaultNs = !ns.equals(parentNs);
+        } else {
+            needDefaultNs = false;
+        }
+
         writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
-        if (writer.getNamespaceContext() != null) {
-            String parentNs = writer.getNamespaceContext().getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
-            if (!ns.equals(parentNs)) {
-                writer.writeDefaultNamespace(ns);
-            }
+        if (needDefaultNs) {
+            writer.writeDefaultNamespace(ns);
         }
     }
 
