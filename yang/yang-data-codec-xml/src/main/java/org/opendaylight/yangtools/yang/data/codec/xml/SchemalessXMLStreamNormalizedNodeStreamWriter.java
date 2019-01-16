@@ -18,7 +18,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<Object> {
     private enum ContainerType {
@@ -33,12 +32,8 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     private final Deque<ContainerType> containerTypeStack = new ArrayDeque<>();
 
-    private SchemalessXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
+    SchemalessXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         super(writer);
-    }
-
-    static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer) {
-        return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
     @Override
@@ -101,30 +96,30 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value,
-            final Object context) throws XMLStreamException {
+    void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value, final Object context)
+            throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }
 
     @Override
-    protected void startList(final NodeIdentifier name) {
+    void startList(final NodeIdentifier name) {
         containerTypeStack.push(ContainerType.LIST);
     }
 
     @Override
-    protected void startListItem(final PathArgument name) throws IOException {
+    void startListItem(final PathArgument name) throws IOException {
         containerTypeStack.push(ContainerType.LIST_ITEM);
         startElement(name.getNodeType());
     }
 
     @Override
-    protected void endNode(final XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
+    public void endNode() throws IOException {
         ContainerType type = containerTypeStack.pop();
         switch (type) {
             case CONTAINER:
             case LIST_ITEM:
             case ANY_XML:
-                xmlWriter.writeEndElement();
+                endElement();
                 break;
             default:
                 break;

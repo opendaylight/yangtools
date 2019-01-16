@@ -56,8 +56,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
 
+    private final XMLStreamWriter writer;
     private final RandomPrefix prefixes;
-    final XMLStreamWriter writer;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         this.writer = requireNonNull(writer);
@@ -86,7 +86,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
             final SchemaPath path) {
-        return SchemaAwareXMLStreamNormalizedNodeStreamWriter.newInstance(writer, context, path);
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, path);
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static NormalizedNodeStreamWriter createSchemaless(final XMLStreamWriter writer) {
-        return SchemalessXMLStreamNormalizedNodeStreamWriter.newInstance(writer);
+        return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
     abstract void writeValue(XMLStreamWriter xmlWriter, QName qname, @NonNull Object value, T context)
@@ -159,7 +159,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
+    final void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
             final T context) throws IOException {
         try {
             writeStartElement(qname);
@@ -175,7 +175,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    void startElement(final QName qname) throws IOException {
+    final void startElement(final QName qname) throws IOException {
         try {
             writeStartElement(qname);
         } catch (XMLStreamException e) {
@@ -183,7 +183,15 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    void anyxmlNode(final QName qname, final Object value) throws IOException {
+    final void endElement() throws IOException {
+        try {
+            writer.writeEndElement();
+        } catch (XMLStreamException e) {
+            throw new IOException("Failed to end element", e);
+        }
+    }
+
+    final void anyxmlNode(final QName qname, final Object value) throws IOException {
         if (value != null) {
             checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
             final DOMSource domSource = (DOMSource) value;
@@ -355,17 +363,6 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             return result.getWriter().toString();
         } catch (IllegalArgumentException | TransformerException e) {
             throw new IllegalStateException("Unable to serialize xml element " + xml, e);
-        }
-    }
-
-    abstract void endNode(XMLStreamWriter xmlWriter) throws IOException, XMLStreamException;
-
-    @Override
-    public final void endNode() throws IOException {
-        try {
-            endNode(writer);
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to end element", e);
         }
     }
 
