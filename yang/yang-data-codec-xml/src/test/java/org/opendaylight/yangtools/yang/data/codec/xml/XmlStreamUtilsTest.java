@@ -72,7 +72,9 @@ public class XmlStreamUtilsTest {
 
         String xmlAsString = createXml(writer -> {
             writer.writeStartElement("element");
-            XMLStreamWriterUtils.write(writer, null, QName.create(parent, "identity"), parent);
+            final StreamWriterFacade facade = new StreamWriterFacade(writer);
+            XMLStreamWriterUtils.write(facade, null, QName.create(parent, "identity"), parent);
+            facade.flush();
             writer.writeEndElement();
         });
 
@@ -80,9 +82,10 @@ public class XmlStreamUtilsTest {
 
         xmlAsString = createXml(writer -> {
             writer.writeStartElement("elementDifferent");
-            XMLStreamWriterUtils.write(writer, null, QName.create("different:namespace", "identity"), parent);
+            final StreamWriterFacade facade = new StreamWriterFacade(writer);
+            XMLStreamWriterUtils.write(facade, null, QName.create("different:namespace", "identity"), parent);
+            facade.flush();
             writer.writeEndElement();
-
         });
 
         final Pattern prefixedIdentityPattern = Pattern.compile(".*\"different:namespace\">(.*):identity.*");
