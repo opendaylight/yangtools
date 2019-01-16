@@ -101,6 +101,26 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
+    /**
+     * Utility method for formatting an {@link Element} to a string.
+     *
+     * @deprecated This method not used anywhere, users are advised to use their own formatting.
+     */
+    @Deprecated
+    public static String toString(final Element xml) {
+        try {
+            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            final StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(new DOMSource(xml), result);
+
+            return result.getWriter().toString();
+        } catch (IllegalArgumentException | TransformerException e) {
+            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
+        }
+    }
+
     abstract void writeValue(@NonNull XMLStreamWriter xmlWriter, QName qname, @NonNull Object value, T context)
             throws IOException, XMLStreamException;
 
@@ -350,20 +370,6 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     @Override
     public final void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
         startList(name);
-    }
-
-    public static String toString(final Element xml) {
-        try {
-            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            transformer.transform(new DOMSource(xml), result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerException e) {
-            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
-        }
     }
 
     @Override
