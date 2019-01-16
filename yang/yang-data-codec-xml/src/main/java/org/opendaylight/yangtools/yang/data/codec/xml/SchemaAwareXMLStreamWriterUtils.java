@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import java.net.URI;
 import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -37,7 +36,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
     }
 
     @Override
-    void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value)
+    void writeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
         RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext,
             writer.getNamespaceContext());
