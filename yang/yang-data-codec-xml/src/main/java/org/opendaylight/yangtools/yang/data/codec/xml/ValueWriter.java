@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * A minimal facade for exposing just enough information from {@link XMLStreamWriter} for the purposes of encoding
@@ -32,4 +33,9 @@ abstract class ValueWriter {
 
     // Note: lookup results may change if there is other interaction
     abstract NamespaceContext getNamespaceContext();
+
+    // Utility shortcut
+    final void writeToStringCharacters(final @NonNull Object obj) throws XMLStreamException {
+        writeCharacters(obj.toString());
+    }
 }
