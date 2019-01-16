@@ -59,6 +59,10 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     private final XMLStreamWriter writer;
     private final RandomPrefix prefixes;
 
+    // QName of an element we delayed emitting. This only happens if it is a naked element, without any attributes,
+    // namespace declarations or value.
+    private QName delayedElement;
+
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
         this.writer = requireNonNull(writer);
         this.prefixes = new RandomPrefix(writer.getNamespaceContext());
@@ -109,6 +113,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     abstract void startListItem(PathArgument name) throws IOException;
 
     private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
+        if (attributes.isEmpty()) {
+            return;
+        }
+
+        flushStartElement();
         for (final Entry<QName, String> entry : attributes.entrySet()) {
             try {
                 final QName qname = entry.getKey();
@@ -142,50 +151,70 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return prefixes.encodePrefix(uri);
     }
 
-    private void writeStartElement(final QName qname) throws XMLStreamException {
-        final String ns = qname.getNamespace().toString();
-        final NamespaceContext context = writer.getNamespaceContext();
-        final boolean needDefaultNs;
-        if (context != null) {
-            final String parentNs = context.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
-            needDefaultNs = !ns.equals(parentNs);
-        } else {
-            needDefaultNs = false;
-        }
-
-        writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
-        if (needDefaultNs) {
-            writer.writeDefaultNamespace(ns);
+    private void flushStartElement() throws IOException {
+        if (delayedElement != null) {
+            try {
+                writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, delayedElement.getLocalName(),
+                    delayedElement.getNamespace().toString());
+            } catch (XMLStreamException e) {
+                throw new IOException("Unable to flush startElement", e);
+            }
+            delayedElement = null;
         }
     }
 
     final void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
             final T context) throws IOException {
-        try {
-            writeStartElement(qname);
-            if (attributes != null) {
-                writeAttributes(attributes);
-            }
-            if (value != null) {
-                writeValue(writer, qname, value, context);
-            }
-            writer.writeEndElement();
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to emit element", e);
+        startElement(qname);
+        if (attributes != null) {
+            writeAttributes(attributes);
         }
+        if (value != null) {
+            flushStartElement();
+            try {
+                writeValue(writer, qname, value, context);
+            } catch (XMLStreamException e) {
+                throw new IOException("Failed to write value", e);
+            }
+        }
+        endElement();
     }
 
     final void startElement(final QName qname) throws IOException {
-        try {
-            writeStartElement(qname);
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to start element", e);
+        flushStartElement();
+
+        final String ns = qname.getNamespace().toString();
+        final NamespaceContext context = writer.getNamespaceContext();
+        final boolean emitNamespace;
+        if (context != null) {
+            final String parentNs = context.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
+            emitNamespace = !ns.equals(parentNs);
+        } else {
+            // Play it safe
+            emitNamespace = true;
+        }
+
+        if (emitNamespace) {
+            try {
+                writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
+                writer.writeDefaultNamespace(ns);
+            } catch (XMLStreamException e) {
+                throw new IOException("Failed to start element", e);
+            }
+        } else {
+            delayedElement = qname;
         }
     }
 
     final void endElement() throws IOException {
         try {
-            writer.writeEndElement();
+            if (delayedElement != null) {
+                writer.writeEmptyElement(XMLConstants.DEFAULT_NS_PREFIX, delayedElement.getLocalName(),
+                    delayedElement.getNamespace().toString());
+                delayedElement = null;
+            } else {
+                writer.writeEndElement();
+            }
         } catch (XMLStreamException e) {
             throw new IOException("Failed to end element", e);
         }
@@ -199,6 +228,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             checkArgument(domNode.getNodeName().equals(qname.getLocalName()));
             checkArgument(domNode.getNamespaceURI().equals(qname.getNamespace().toString()));
 
+            flushStartElement();
             try {
                 writeStreamReader(new DOMSourceXMLStreamReader(domSource));
             } catch (XMLStreamException e) {
@@ -369,14 +399,19 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     @Override
     public final void close() throws IOException {
         try {
-            writer.close();
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to close writer", e);
+            flushStartElement();
+        } finally {
+            try {
+                writer.close();
+            } catch (XMLStreamException e) {
+                throw new IOException("Failed to close writer", e);
+            }
         }
     }
 
     @Override
     public final void flush() throws IOException {
+        flushStartElement();
         try {
             writer.flush();
         } catch (XMLStreamException e) {
