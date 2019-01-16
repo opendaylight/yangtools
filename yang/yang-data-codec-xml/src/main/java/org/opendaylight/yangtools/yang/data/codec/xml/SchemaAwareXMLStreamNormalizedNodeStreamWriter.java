@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
@@ -34,47 +33,42 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     private final SchemaTracker tracker;
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
-    private SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
+    SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
                                                            final SchemaPath path) {
         super(writer);
         this.tracker = SchemaTracker.create(context, path);
         this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
     }
 
-    static NormalizedNodeStreamWriter newInstance(final XMLStreamWriter writer, final SchemaContext context,
-            final SchemaPath path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, path);
-    }
-
     @Override
-    protected void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value,
+    void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value,
             final SchemaNode schemaNode) throws IOException, XMLStreamException {
         streamUtils.writeValue(xmlWriter, schemaNode, value, qname.getModule());
     }
 
     @Override
-    protected void startList(final NodeIdentifier name) {
+    void startList(final NodeIdentifier name) {
         tracker.startList(name);
     }
 
     @Override
-    protected void startListItem(final PathArgument name) throws IOException {
+    void startListItem(final PathArgument name) throws IOException {
         tracker.startListItem(name);
         startElement(name.getNodeType());
     }
 
     @Override
-    protected void endNode(final XMLStreamWriter xmlWriter) throws IOException, XMLStreamException {
+    public void endNode() throws IOException {
         final Object schema = tracker.endNode();
         if (schema instanceof ListSchemaNode) {
             // For lists, we only emit end element on the inner frame
             final Object parent = tracker.getParent();
             if (parent == schema) {
-                xmlWriter.writeEndElement();
+                endElement();
             }
         } else if (schema instanceof ContainerSchemaNode) {
             // Emit container end element
-            xmlWriter.writeEndElement();
+            endElement();
         }
     }
 
