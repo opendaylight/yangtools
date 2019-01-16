@@ -10,17 +10,9 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Strings;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.URI;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.xml.XMLConstants;
-import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
@@ -39,8 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
@@ -52,16 +42,12 @@ import org.w3c.dom.Node;
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
-    private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
 
-    private final @NonNull XMLStreamWriter writer;
-    private final RandomPrefix prefixes;
+    private final @NonNull StreamWriterFacade facade;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
-        this.writer = requireNonNull(writer);
-        this.prefixes = new RandomPrefix(writer.getNamespaceContext());
+        facade = new StreamWriterFacade(writer);
     }
 
     /**
@@ -101,83 +87,46 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
-    abstract void writeValue(@NonNull XMLStreamWriter xmlWriter, QName qname, @NonNull Object value, T context)
+    public static String toString(final Element xml) {
+        try {
+            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+
+            final StreamResult result = new StreamResult(new StringWriter());
+            transformer.transform(new DOMSource(xml), result);
+
+            return result.getWriter().toString();
+        } catch (IllegalArgumentException | TransformerException e) {
+            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
+        }
+    }
+
+    abstract void writeValue(@NonNull ValueWriter xmlWriter, QName qname, @NonNull Object value, T context)
             throws IOException, XMLStreamException;
 
     abstract void startList(NodeIdentifier name);
 
     abstract void startListItem(PathArgument name) throws IOException;
 
-    private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
-        for (final Entry<QName, String> entry : attributes.entrySet()) {
-            try {
-                final QName qname = entry.getKey();
-                final String namespace = qname.getNamespace().toString();
-
-                if (!Strings.isNullOrEmpty(namespace)) {
-                    final String prefix = getPrefix(qname.getNamespace(), namespace);
-                    writer.writeAttribute(prefix, namespace, qname.getLocalName(), entry.getValue());
-                } else {
-                    writer.writeAttribute(qname.getLocalName(), entry.getValue());
-                }
-            } catch (final XMLStreamException e) {
-                throw new IOException("Unable to emit attribute " + entry, e);
-            }
-        }
-    }
-
-    private String getPrefix(final URI uri, final String str) throws XMLStreamException {
-        final String prefix = writer.getPrefix(str);
-        if (prefix != null) {
-            return prefix;
-        }
-
-        // This is needed to recover from attributes emitted while the namespace was not declared. Ordinarily
-        // attribute namespaces would be bound in the writer, so the resulting XML is efficient, but we cannot rely
-        // on that having been done.
-        if (BROKEN_NAMESPACES.add(str)) {
-            LOG.info("Namespace {} was not bound, please fix the caller", str, new Throwable());
-        }
-
-        return prefixes.encodePrefix(uri);
-    }
-
-    private void writeStartElement(final QName qname) throws XMLStreamException {
-        final String ns = qname.getNamespace().toString();
-        final NamespaceContext context = writer.getNamespaceContext();
-        final boolean needDefaultNs;
-        if (context != null) {
-            final String parentNs = context.getNamespaceURI(XMLConstants.DEFAULT_NS_PREFIX);
-            needDefaultNs = !ns.equals(parentNs);
-        } else {
-            needDefaultNs = false;
-        }
-
-        writer.writeStartElement(XMLConstants.DEFAULT_NS_PREFIX, qname.getLocalName(), ns);
-        if (needDefaultNs) {
-            writer.writeDefaultNamespace(ns);
-        }
-    }
-
     final void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
             final T context) throws IOException {
-        try {
-            writeStartElement(qname);
-            if (attributes != null) {
-                writeAttributes(attributes);
-            }
-            if (value != null) {
-                writeValue(writer, qname, value, context);
-            }
-            writer.writeEndElement();
-        } catch (XMLStreamException e) {
-            throw new IOException("Failed to emit element", e);
+        startElement(qname);
+        if (attributes != null) {
+            writeAttributes(attributes);
         }
+        if (value != null) {
+            try {
+                writeValue(facade, qname, value, context);
+            } catch (XMLStreamException e) {
+                throw new IOException("Failed to write value", e);
+            }
+        }
+        endElement();
     }
 
     final void startElement(final QName qname) throws IOException {
         try {
-            writeStartElement(qname);
+            facade.writeStartElement(qname);
         } catch (XMLStreamException e) {
             throw new IOException("Failed to start element", e);
         }
@@ -185,7 +134,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     final void endElement() throws IOException {
         try {
-            writer.writeEndElement();
+            facade.writeEndElement();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to end element", e);
         }
@@ -200,102 +149,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             checkArgument(domNode.getNamespaceURI().equals(qname.getNamespace().toString()));
 
             try {
-                writeStreamReader(new DOMSourceXMLStreamReader(domSource));
+                facade.writeStreamReader(new DOMSourceXMLStreamReader(domSource));
             } catch (XMLStreamException e) {
                 throw new IOException("Unable to transform anyXml(" + qname + ") value: " + domNode, e);
             }
         }
-    }
-
-    private void writeStreamReader(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        while (reader.hasNext()) {
-            final int event = reader.next();
-            switch (event) {
-                case XMLStreamConstants.START_ELEMENT:
-                    forwardStartElement(reader);
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
-                    writer.writeEndElement();
-                    break;
-                case XMLStreamConstants.PROCESSING_INSTRUCTION:
-                    forwardProcessingInstruction(reader);
-                    break;
-                case XMLStreamConstants.CHARACTERS:
-                    writer.writeCharacters(reader.getText());
-                    break;
-                case XMLStreamConstants.COMMENT:
-                    writer.writeComment(reader.getText());
-                    break;
-                case XMLStreamConstants.SPACE:
-                    // Ignore insignificant whitespace
-                    break;
-                case XMLStreamConstants.START_DOCUMENT:
-                case XMLStreamConstants.END_DOCUMENT:
-                    // We are embedded: ignore start/end document events
-                    break;
-                case XMLStreamConstants.ENTITY_REFERENCE:
-                    writer.writeEntityRef(reader.getLocalName());
-                    break;
-                case XMLStreamConstants.ATTRIBUTE:
-                    forwardAttributes(reader);
-                    break;
-                case XMLStreamConstants.DTD:
-                    writer.writeDTD(reader.getText());
-                    break;
-                case XMLStreamConstants.CDATA:
-                    writer.writeCData(reader.getText());
-                    break;
-                case XMLStreamConstants.NAMESPACE:
-                    forwardNamespaces(reader);
-                    break;
-                case XMLStreamConstants.NOTATION_DECLARATION:
-                case XMLStreamConstants.ENTITY_DECLARATION:
-                default:
-                    throw new IllegalStateException("Unhandled event " + event);
-            }
-        }
-    }
-
-    private void forwardAttributes(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        for (int i = 0; i < reader.getAttributeCount(); ++i) {
-            final String localName = reader.getAttributeLocalName(i);
-            final String value = reader.getAttributeValue(i);
-            final String prefix = reader.getAttributePrefix(i);
-            if (prefix != null) {
-                writer.writeAttribute(prefix, reader.getAttributeNamespace(i), localName, value);
-            } else {
-                writer.writeAttribute(localName, value);
-            }
-        }
-    }
-
-    private void forwardNamespaces(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        for (int i = 0; i < reader.getNamespaceCount(); ++i) {
-            writer.writeNamespace(reader.getNamespacePrefix(i), reader.getNamespaceURI(i));
-        }
-    }
-
-    private void forwardProcessingInstruction(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        final String target = reader.getPITarget();
-        final String data = reader.getPIData();
-        if (data != null) {
-            writer.writeProcessingInstruction(target, data);
-        } else {
-            writer.writeProcessingInstruction(target);
-        }
-    }
-
-    private void forwardStartElement(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        final String localName = reader.getLocalName();
-        final String prefix = reader.getPrefix();
-        if (prefix != null) {
-            writer.writeStartElement(prefix, localName, reader.getNamespaceURI());
-        } else {
-            writer.writeStartElement(localName);
-        }
-
-        forwardNamespaces(reader);
-        forwardAttributes(reader);
     }
 
     @Override
@@ -352,24 +210,10 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         startList(name);
     }
 
-    public static String toString(final Element xml) {
-        try {
-            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            transformer.transform(new DOMSource(xml), result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerException e) {
-            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
-        }
-    }
-
     @Override
     public final void close() throws IOException {
         try {
-            writer.close();
+            facade.close();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to close writer", e);
         }
@@ -378,9 +222,19 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     @Override
     public final void flush() throws IOException {
         try {
-            writer.flush();
+            facade.flush();
         } catch (XMLStreamException e) {
             throw new IOException("Failed to flush writer", e);
+        }
+    }
+
+    private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
+        if (!attributes.isEmpty()) {
+            try {
+                facade.writeAttributes(attributes);
+            } catch (final XMLStreamException e) {
+                throw new IOException("Unable to emit attributes " + attributes, e);
+            }
         }
     }
 }

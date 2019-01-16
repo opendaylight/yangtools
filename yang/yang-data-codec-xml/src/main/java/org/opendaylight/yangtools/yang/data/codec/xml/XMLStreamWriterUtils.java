@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.VisibleForTesting;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -43,7 +42,7 @@ abstract class XMLStreamWriterUtils {
      * @param parent module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    void writeValue(final @NonNull XMLStreamWriter writer, final @NonNull SchemaNode schemaNode,
+    void writeValue(final @NonNull ValueWriter writer, final @NonNull SchemaNode schemaNode,
             final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", schemaNode.getQName().getNamespace(),
@@ -73,7 +72,7 @@ abstract class XMLStreamWriterUtils {
      * @param parent optional parameter of a module QName owning the leaf definition
      * @throws XMLStreamException if an encoding problem occurs
      */
-    private void writeValue(final @NonNull XMLStreamWriter writer, final @NonNull TypeDefinition<?> type,
+    private void writeValue(final @NonNull ValueWriter writer, final @NonNull TypeDefinition<?> type,
             final Object value, final QNameModule parent) throws XMLStreamException {
         if (value == null) {
             LOG.debug("Value of {}:{} is null, not encoding it", type.getQName().getNamespace(),
@@ -105,7 +104,7 @@ abstract class XMLStreamWriterUtils {
     }
 
     @VisibleForTesting
-    static void write(final @NonNull XMLStreamWriter writer, final @NonNull IdentityrefTypeDefinition type,
+    static void write(final @NonNull ValueWriter writer, final @NonNull IdentityrefTypeDefinition type,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
         if (value instanceof QName) {
             final QName qname = (QName) value;
@@ -127,7 +126,7 @@ abstract class XMLStreamWriterUtils {
         }
     }
 
-    private void write(final @NonNull XMLStreamWriter writer, final @NonNull InstanceIdentifierTypeDefinition type,
+    private void write(final @NonNull ValueWriter writer, final @NonNull InstanceIdentifierTypeDefinition type,
             final @NonNull Object value) throws XMLStreamException {
         if (value instanceof YangInstanceIdentifier) {
             writeInstanceIdentifier(writer, (YangInstanceIdentifier)value);
@@ -140,6 +139,6 @@ abstract class XMLStreamWriterUtils {
 
     abstract TypeDefinition<?> getBaseTypeForLeafRef(SchemaNode schemaNode, LeafrefTypeDefinition type);
 
-    abstract void writeInstanceIdentifier(XMLStreamWriter writer, YangInstanceIdentifier value)
+    abstract void writeInstanceIdentifier(@NonNull ValueWriter writer, YangInstanceIdentifier value)
             throws XMLStreamException;
 }

@@ -96,7 +96,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    void writeValue(final XMLStreamWriter xmlWriter, final QName qname, final Object value, final Object context)
+    void writeValue(final ValueWriter xmlWriter, final QName qname, final Object value, final Object context)
             throws XMLStreamException {
         xmlWriter.writeCharacters(value.toString());
     }

@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -27,8 +25,7 @@ final class SchemalessXMLStreamWriterUtils extends XMLStreamWriterUtils {
     }
 
     @Override
-    void writeInstanceIdentifier(final XMLStreamWriter writer, final YangInstanceIdentifier value)
-            throws XMLStreamException {
+    void writeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value) {
         throw new UnsupportedOperationException("Schema context not present in " + this + ", cannot serialize "
             + value);
     }
