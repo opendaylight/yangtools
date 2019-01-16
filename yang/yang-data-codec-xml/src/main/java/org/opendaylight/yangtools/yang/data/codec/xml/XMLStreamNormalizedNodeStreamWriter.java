@@ -87,6 +87,12 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
+    /**
+     * Utility method for formatting an {@link Element} to a string.
+     *
+     * @deprecated This method not used anywhere, users are advised to use their own formatting.
+     */
+    @Deprecated
     public static String toString(final Element xml) {
         try {
             final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
