@@ -83,9 +83,11 @@ final class XmlStringInstanceIdentifierCodec extends AbstractModuleStringInstanc
     }
 
     @Override
-    public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value)
-            throws XMLStreamException {
-        ctx.writeCharacters(serialize(value));
+    public void writeValue(final XMLStreamWriter ctx, final YangInstanceIdentifier value) throws XMLStreamException {
+        final String str = serialize(value);
+        if (str != null) {
+            XMLStreamWriterUtils.writeCharacters(ctx, str);
+        }
     }
 
     private static NamespaceContext getNamespaceContext() {

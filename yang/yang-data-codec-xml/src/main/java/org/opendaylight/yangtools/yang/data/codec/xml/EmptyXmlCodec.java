@@ -34,7 +34,7 @@ final class EmptyXmlCodec implements XmlCodec<Empty> {
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final Empty value) throws XMLStreamException {
+        // Just check if value is not null, but do not emit anything
         requireNonNull(value);
-        ctx.writeCharacters("");
     }
 }

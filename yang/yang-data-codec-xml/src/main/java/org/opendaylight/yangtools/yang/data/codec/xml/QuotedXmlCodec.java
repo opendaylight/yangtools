@@ -19,6 +19,9 @@ final class QuotedXmlCodec<T> extends AbstractXmlCodec<T> {
 
     @Override
     public void writeValue(final XMLStreamWriter ctx, final T value) throws XMLStreamException {
-        ctx.writeCharacters(serialize(value));
+        final String str = serialize(value);
+        if (str != null) {
+            XMLStreamWriterUtils.writeCharacters(ctx, str);
+        }
     }
 }
