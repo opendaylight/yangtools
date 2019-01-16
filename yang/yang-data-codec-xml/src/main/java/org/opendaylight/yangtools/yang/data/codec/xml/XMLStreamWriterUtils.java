@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.VisibleForTesting;
-import java.util.Map.Entry;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,15 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 abstract class XMLStreamWriterUtils {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamWriterUtils.class);
-
-    @VisibleForTesting
-    static void writeAttribute(final XMLStreamWriter writer, final Entry<QName, String> attribute,
-                               final RandomPrefix randomPrefix) throws XMLStreamException {
-        final QName key = attribute.getKey();
-        final String prefix = randomPrefix.encodePrefix(key.getNamespace());
-        writer.writeAttribute("xmlns:" + prefix, key.getNamespace().toString());
-        writer.writeAttribute(prefix, key.getNamespace().toString(), key.getLocalName(), attribute.getValue());
-    }
 
     /**
      * Write a value into a XML stream writer. This method assumes the start and end of element is

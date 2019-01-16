@@ -16,7 +16,6 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
-import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -24,8 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.XMLUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -44,7 +41,6 @@ import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.StringTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
-import org.w3c.dom.Document;
 
 public class XmlStreamUtilsTest {
     @FunctionalInterface
@@ -71,44 +67,6 @@ public class XmlStreamUtilsTest {
     }
 
     @Test
-    public void testWriteAttribute() throws Exception {
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final XMLStreamWriter writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
-        writer.writeStartElement("element");
-
-        QName name = getAttrQName("namespace", "2012-12-12", "attr", Optional.of("prefix"));
-        final Map.Entry<QName, String> attributeEntry = new AbstractMap.SimpleEntry<>(name, "value");
-
-        name = getAttrQName("namespace2", "2012-12-12", "attr", Optional.empty());
-        final Map.Entry<QName, String> attributeEntryNoPrefix = new AbstractMap.SimpleEntry<>(name, "value");
-
-        final RandomPrefix randomPrefix = new RandomPrefix(null);
-        XMLStreamWriterUtils.writeAttribute(writer, attributeEntry, randomPrefix);
-        XMLStreamWriterUtils.writeAttribute(writer, attributeEntryNoPrefix, randomPrefix);
-
-        writer.writeEndElement();
-        writer.close();
-        out.close();
-
-        final String xmlAsString = new String(out.toByteArray());
-
-        final Map<String, String> mappedPrefixes = mapPrefixed(randomPrefix.getPrefixes());
-        assertEquals(2, mappedPrefixes.size());
-        final String randomPrefixValue = mappedPrefixes.get("namespace2");
-
-        final String expectedXmlAsString = "<element xmlns:a=\"namespace\" a:attr=\"value\" xmlns:" + randomPrefixValue
-                + "=\"namespace2\" " + randomPrefixValue + ":attr=\"value\"></element>";
-
-        XMLUnit.setIgnoreAttributeOrder(true);
-        final Document control = XMLUnit.buildControlDocument(expectedXmlAsString);
-        final Document test = XMLUnit.buildTestDocument(xmlAsString);
-        final Diff diff = XMLUnit.compareXML(control, test);
-
-        final boolean identical = diff.identical();
-        assertTrue("Xml differs: " + diff.toString(), identical);
-    }
-
-    @Test
     public void testWriteIdentityRef() throws Exception {
         final QNameModule parent = QNameModule.create(URI.create("parent:uri"), Revision.of("2000-01-01"));
 
@@ -132,7 +90,7 @@ public class XmlStreamUtilsTest {
         assertTrue("Xml: " + xmlAsString + " should match: " + prefixedIdentityPattern, matcher.matches());
     }
 
-    private static String createXml(XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
+    private static String createXml(final XMLStreamWriterConsumer consumer) throws XMLStreamException, IOException {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final XMLStreamWriter writer = TestFactories.DEFAULT_OUTPUT_FACTORY.createXMLStreamWriter(out);
 
