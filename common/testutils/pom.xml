@@ -11,7 +11,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>testutils</artifactId>
-    <version>2.0.6.7-SNAPSHOT</version>
+    <version>2.0.6.7</version>
     <!-- Currently not needed, maybe later: <packaging>bundle</packaging> -->
 
     <dependencyManagement>
