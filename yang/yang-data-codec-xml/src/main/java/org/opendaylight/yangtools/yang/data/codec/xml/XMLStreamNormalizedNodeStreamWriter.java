@@ -108,7 +108,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     abstract void writeValue(@NonNull ValueWriter xmlWriter, QName qname, @NonNull Object value, T context)
-            throws IOException, XMLStreamException;
+            throws XMLStreamException;
 
     abstract void startList(NodeIdentifier name);
 

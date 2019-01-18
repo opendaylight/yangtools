@@ -42,7 +42,7 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
 
     @Override
     void writeValue(final ValueWriter xmlWriter, final QName qname, final Object value,
-            final SchemaNode schemaNode) throws IOException, XMLStreamException {
+            final SchemaNode schemaNode) throws XMLStreamException {
         streamUtils.writeValue(xmlWriter, schemaNode, value, qname.getModule());
     }
 
