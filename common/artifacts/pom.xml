@@ -19,7 +19,7 @@
 
     <groupId>org.opendaylight.yangtools</groupId>
     <artifactId>yangtools-artifacts</artifactId>
-    <version>2.0.16-SNAPSHOT</version>
+    <version>2.0.17-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <dependencyManagement>
@@ -27,218 +27,218 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>checkstyle-logging</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-util</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>concepts</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>object-cache-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>object-cache-guava</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>object-cache-noop</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-impl</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-transform</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-jaxen</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-gson</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-data-codec-xml</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-export</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-immutable</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-model-util</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-spi</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-reactor</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-impl</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-parser-rfc7950</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-test-util</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-maven-plugin-spi</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odlext-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odlext-parser-support</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>openconfig-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>openconfig-parser-support</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6536-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc6536-parser-support</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc7952-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc7952-parser-support</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8040-model-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>rfc8040-parser-support</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-api</artifactId>
-                <version>0.1.16-SNAPSHOT</version>
+                <version>0.1.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-impl</artifactId>
-                <version>0.1.16-SNAPSHOT</version>
+                <version>0.1.17-SNAPSHOT</version>
             </dependency>
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>util</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>triemap</artifactId>
-                <version>1.0.16-SNAPSHOT</version>
+                <version>1.0.17-SNAPSHOT</version>
             </dependency>
 
             <!-- Test utilities, not packaged in features -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>mockito-configuration</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>testutils</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <scope>test</scope>
             </dependency>
 
@@ -248,84 +248,84 @@
                 <artifactId>features-yangtools</artifactId>
                 <classifier>features</classifier>
                 <type>xml</type>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>features-yangtools-experimental</artifactId>
                 <classifier>features</classifier>
                 <type>xml</type>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
             </dependency>
 
             <!-- Stable features -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-triemap</artifactId>
-                <version>1.0.16-SNAPSHOT</version>
+                <version>1.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-util</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-common</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-parser-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-parser</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-data-api</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-data</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-codec</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-export</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-xpath</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
@@ -334,21 +334,21 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-exp-objcache</artifactId>
-                <version>2.0.16-SNAPSHOT</version>
+                <version>2.0.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-exp-xpath-api</artifactId>
-                <version>0.1.16-SNAPSHOT</version>
+                <version>0.1.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-exp-xpath-impl</artifactId>
-                <version>0.1.16-SNAPSHOT</version>
+                <version>0.1.17-SNAPSHOT</version>
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
