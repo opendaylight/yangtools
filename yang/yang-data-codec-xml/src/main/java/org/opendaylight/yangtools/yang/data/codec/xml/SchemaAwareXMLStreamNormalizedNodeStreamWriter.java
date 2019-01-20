@@ -8,6 +8,8 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
@@ -26,7 +28,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<SchemaNode>
         implements SchemaContextProvider {
@@ -34,9 +35,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     private final SchemaAwareXMLStreamWriterUtils streamUtils;
 
     SchemaAwareXMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer, final SchemaContext context,
-                                                           final SchemaPath path) {
+            final SchemaTracker tracker) {
         super(writer);
-        this.tracker = SchemaTracker.create(context, path);
+        this.tracker = requireNonNull(tracker);
         this.streamUtils = new SchemaAwareXMLStreamWriterUtils(context);
     }
 
