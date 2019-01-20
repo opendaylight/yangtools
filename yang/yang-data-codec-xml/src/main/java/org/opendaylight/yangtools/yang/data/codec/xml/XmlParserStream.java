@@ -52,8 +52,8 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
-import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.YangModeledAnyXmlNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -62,7 +62,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -140,11 +140,15 @@ public final class XmlParserStream implements Closeable, Flushable {
      */
     public static XmlParserStream create(final NormalizedNodeStreamWriter writer, final XmlCodecFactory codecs,
             final SchemaNode parentNode, final boolean strictParsing) {
-        if (parentNode instanceof RpcDefinition) {
-            return new XmlParserStream(writer, codecs, new RpcAsContainer((RpcDefinition) parentNode), strictParsing);
+        final DataSchemaNode parent;
+        if (parentNode instanceof DataSchemaNode) {
+            parent = (DataSchemaNode) parentNode;
+        } else if (parentNode instanceof OperationDefinition) {
+            parent = OperationAsContainer.of((OperationDefinition) parentNode);
+        } else {
+            throw new IllegalArgumentException("Illegal parent node " + parentNode);
         }
-        checkArgument(parentNode instanceof DataSchemaNode, "Instance of DataSchemaNode class awaited.");
-        return new XmlParserStream(writer, codecs, (DataSchemaNode) parentNode, strictParsing);
+        return new XmlParserStream(writer, codecs, parent, strictParsing);
     }
 
     /**
