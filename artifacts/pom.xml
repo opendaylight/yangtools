@@ -41,21 +41,6 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>object-cache-api</artifactId>
-                <version>2.1.9-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>object-cache-guava</artifactId>
-                <version>2.1.9-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>object-cache-noop</artifactId>
-                <version>2.1.9-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-common</artifactId>
                 <version>2.1.9-SNAPSHOT</version>
             </dependency>
