@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.codec;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Iterables;
@@ -16,6 +17,7 @@ import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -53,18 +55,8 @@ public final class SchemaTracker {
     private final Deque<Object> schemaStack = new ArrayDeque<>();
     private final DataNodeContainer root;
 
-    private SchemaTracker(final SchemaContext context, final SchemaPath path) {
-        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
-        checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
-        if (schemaNodes.size() > 1) {
-            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
-        }
-        final Optional<SchemaNode> current = schemaNodes.stream().filter(node -> node instanceof DataNodeContainer)
-                .findFirst();
-        checkArgument(current.isPresent(),
-                "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
-                path, current);
-        root = (DataNodeContainer) current.get();
+    private SchemaTracker(final DataNodeContainer root) {
+        this.root = requireNonNull(root);
     }
 
     /**
@@ -73,8 +65,19 @@ public final class SchemaTracker {
      * @param context Associated {@link SchemaContext}.
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static SchemaTracker create(final SchemaContext context) {
-        return create(context, SchemaPath.ROOT);
+    // FIXME: 3.0.0: remove this method
+    public static @NonNull SchemaTracker create(final SchemaContext context) {
+        return new SchemaTracker(context);
+    }
+
+    /**
+     * Create a new writer with the specified node as its root.
+     *
+     * @param root Root node
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull SchemaTracker create(final DataNodeContainer root) {
+        return new SchemaTracker(root);
     }
 
     /**
@@ -84,8 +87,19 @@ public final class SchemaTracker {
      * @param path schema path
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static SchemaTracker create(final SchemaContext context, final SchemaPath path) {
-        return new SchemaTracker(context, path);
+    public static @NonNull SchemaTracker create(final SchemaContext context, final SchemaPath path) {
+        final Collection<SchemaNode> schemaNodes = SchemaUtils.findParentSchemaNodesOnPath(context, path);
+        checkArgument(!schemaNodes.isEmpty(), "Unable to find schema node for supplied schema path: %s", path);
+        if (schemaNodes.size() > 1) {
+            LOG.warn("More possible schema nodes {} for supplied schema path {}", schemaNodes, path);
+        }
+        final Optional<DataNodeContainer> current = schemaNodes.stream()
+                .filter(node -> node instanceof DataNodeContainer).map(DataNodeContainer.class::cast)
+                .findFirst();
+        checkArgument(current.isPresent(),
+                "Schema path must point to container or list or an rpc input/output. Supplied path %s pointed to: %s",
+                path, current);
+        return new SchemaTracker(current.get());
     }
 
     public Object getParent() {

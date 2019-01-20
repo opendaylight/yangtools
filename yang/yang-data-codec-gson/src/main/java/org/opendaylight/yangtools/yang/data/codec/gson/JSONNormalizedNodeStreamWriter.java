@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -41,9 +42,9 @@ import org.w3c.dom.Text;
  */
 public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
     private static final class Exclusive extends JSONNormalizedNodeStreamWriter {
-        Exclusive(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
+        Exclusive(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
-            super(codecFactory, path, writer, rootContext);
+            super(codecFactory, tracker, writer, rootContext);
         }
 
         @Override
@@ -54,9 +55,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     private static final class Nested extends JSONNormalizedNodeStreamWriter {
-        Nested(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
+        Nested(final JSONCodecFactory codecFactory, final SchemaTracker tracker, final JsonWriter writer,
                 final JSONStreamWriterRootContext rootContext) {
-            super(codecFactory, path, writer, rootContext);
+            super(codecFactory, tracker, writer, rootContext);
         }
 
         @Override
@@ -85,11 +86,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     private final JsonWriter writer;
     private JSONStreamWriterContext context;
 
-    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaPath path, final JsonWriter writer,
-            final JSONStreamWriterRootContext rootContext) {
+    JSONNormalizedNodeStreamWriter(final JSONCodecFactory codecFactory, final SchemaTracker tracker,
+            final JsonWriter writer, final JSONStreamWriterRootContext rootContext) {
         this.writer = requireNonNull(writer);
         this.codecs = requireNonNull(codecFactory);
-        this.tracker = SchemaTracker.create(codecFactory.getSchemaContext(), path);
+        this.tracker = requireNonNull(tracker);
         this.context = requireNonNull(rootContext);
     }
 
@@ -116,7 +117,35 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new Exclusive(codecFactory, path, jsonWriter, new JSONStreamWriterExclusiveRootContext(initialNs));
+        return new Exclusive(codecFactory, SchemaTracker.create(codecFactory.getSchemaContext(), path), jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * <p>
+     * The codec factory can be reused between multiple writers.
+     *
+     * <p>
+     * Returned writer is exclusive user of JsonWriter, which means it will start
+     * top-level JSON element and ends it.
+     *
+     * <p>
+     * This instance of writer can be used only to emit one top level element,
+     * otherwise it will produce incorrect JSON. Closing this instance will close
+     * the writer too.
+     *
+     * @param codecFactory JSON codec factory
+     * @param rootNode Root node
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createExclusiveWriter(final JSONCodecFactory codecFactory,
+            final DataNodeContainer rootNode, final URI initialNs, final JsonWriter jsonWriter) {
+        return new Exclusive(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
+            new JSONStreamWriterExclusiveRootContext(initialNs));
     }
 
     /**
@@ -140,7 +169,33 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
             final SchemaPath path, final URI initialNs, final JsonWriter jsonWriter) {
-        return new Nested(codecFactory, path, jsonWriter, new JSONStreamWriterSharedRootContext(initialNs));
+        return new Nested(codecFactory, SchemaTracker.create(codecFactory.getSchemaContext(), path), jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
+    }
+
+    /**
+     * Create a new stream writer, which writes to the specified output stream.
+     *
+     * <p>
+     * The codec factory can be reused between multiple writers.
+     *
+     * <p>
+     * Returned writer can be used emit multiple top level element,
+     * but does not start / close parent JSON object, which must be done
+     * by user providing {@code jsonWriter} instance in order for
+     * JSON to be valid. Closing this instance <strong>will not</strong>
+     * close the wrapped writer; the caller must take care of that.
+     *
+     * @param codecFactory JSON codec factory
+     * @param rootNode Root node
+     * @param initialNs Initial namespace
+     * @param jsonWriter JsonWriter
+     * @return A stream writer instance
+     */
+    public static NormalizedNodeStreamWriter createNestedWriter(final JSONCodecFactory codecFactory,
+            final DataNodeContainer rootNode, final URI initialNs, final JsonWriter jsonWriter) {
+        return new Nested(codecFactory, SchemaTracker.create(rootNode), jsonWriter,
+            new JSONStreamWriterSharedRootContext(initialNs));
     }
 
     @Override
