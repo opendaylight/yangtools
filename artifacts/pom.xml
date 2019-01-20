@@ -337,6 +337,27 @@
                 <type>xml</type>
                 <classifier>features</classifier>
             </dependency>
+
+            <!-- Documentation -->
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-docs</artifactId>
+                <version>2.0.9-SNAPSHOT</version>
+                <type>zip</type>
+                <classifier>guides</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-docs</artifactId>
+                <version>2.0.9-SNAPSHOT</version>
+                <classifier>javadoc</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>yangtools-docs</artifactId>
+                <version>2.0.9-SNAPSHOT</version>
+                <classifier>sources</classifier>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
