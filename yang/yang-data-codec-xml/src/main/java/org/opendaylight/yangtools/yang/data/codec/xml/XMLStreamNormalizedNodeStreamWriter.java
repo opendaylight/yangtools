@@ -38,6 +38,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.slf4j.Logger;
@@ -89,8 +91,22 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @param context Associated {@link SchemaContext}.
      * @return A new {@link NormalizedNodeStreamWriter}
      */
-    public static NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context) {
-        return create(writer, context, SchemaPath.ROOT);
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer,
+            final SchemaContext context) {
+        return create(writer, context, context);
+    }
+
+    /**
+     * Create a new writer with the specified context and rooted at the specified node.
+     *
+     * @param writer Output {@link XMLStreamWriter}
+     * @param context Associated {@link SchemaContext}.
+     * @param rootNode Root node
+     * @return A new {@link NormalizedNodeStreamWriter}
+     */
+    public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
+            final DataNodeContainer rootNode) {
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(rootNode));
     }
 
     /**
@@ -99,12 +115,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      * @param writer Output {@link XMLStreamWriter}
      * @param context Associated {@link SchemaContext}.
      * @param path path
-     *
      * @return A new {@link NormalizedNodeStreamWriter}
      */
     public static @NonNull NormalizedNodeStreamWriter create(final XMLStreamWriter writer, final SchemaContext context,
             final SchemaPath path) {
-        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, path);
+        return new SchemaAwareXMLStreamNormalizedNodeStreamWriter(writer, context, SchemaTracker.create(context, path));
     }
 
     /**
