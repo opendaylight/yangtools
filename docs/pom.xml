@@ -1,0 +1,335 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- vi: set et smarttab sw=4 tabstop=4: -->
+<!--
+ Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.opendaylight.yangtools</groupId>
+        <artifactId>bundle-parent</artifactId>
+        <version>2.1.9-SNAPSHOT</version>
+        <relativePath>../bundle-parent</relativePath>
+    </parent>
+
+    <artifactId>docs</artifactId>
+    <packaging>jar</packaging>
+    <name>${project.artifactId}</name>
+    <description>YANG Tools documentation</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>concepts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-transform</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-jaxen</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-codec-gson</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-data-codec-xml</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-export</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-immutable</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-model-util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-spi</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-reactor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-parser-rfc7950</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-test-util</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-maven-plugin-spi</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odlext-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odlext-parser-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>openconfig-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>openconfig-parser-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc6536-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc6536-parser-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc7952-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc7952-parser-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8040-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8040-parser-support</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-xpath-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-xpath-impl</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>util</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>triemap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>testutils</artifactId>
+        </dependency>
+
+        <!-- Also add dependencies we are using -->
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.immutables</groupId>
+            <artifactId>value</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.sonatype.plexus</groupId>
+            <artifactId>plexus-build-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+				<groupId>org.asciidoctor</groupId>
+                <artifactId>asciidoctor-maven-plugin</artifactId>
+                <version>1.5.7.1</version>
+                <executions>
+					<execution>
+						<id>output-html</id>
+						<phase>generate-resources</phase>
+						<goals>
+							<goal>process-asciidoc</goal>
+						</goals>
+						<configuration>
+							<sourceHighlighter>coderay</sourceHighlighter>
+							<backend>html</backend>
+							<attributes>
+								<toc/>
+								<linkcss>false</linkcss>
+							</attributes>
+						</configuration>
+					</execution>
+                </executions>
+                <configuration>
+                    <attributes>
+                        <revnumber>${project.version}</revnumber>
+                        <revdate>${maven.build.timestamp}</revdate>
+                        <organization>${project.organization.name}</organization>
+                    </attributes>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptor>assembly/zip.xml</descriptor>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <!-- We do not want the jar to be created -->
+                <artifactId>maven-jar-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>unpack-sources</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>unpack-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <silent>true</silent>
+                            <classifier>sources</classifier>
+                            <includes>org/opendaylight/**</includes>
+                            <includeGroupIds>org.opendaylight.yangtools</includeGroupIds>
+                            <outputDirectory>${project.build.directory}/src</outputDirectory>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>add-source</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/src</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                    <!-- FIXME: remove override once odlparent ships 3.1.0+ -->
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <!-- FIXME: remove this section once we can activate javadoc-links profile -->
+                <configuration combine.children="append">
+                    <links>
+                        <link>https://static.javadoc.io/junit/junit/4.11/</link>
+                        <link>http://hamcrest.org/JavaHamcrest/javadoc/1.3/</link>
+                        <link>http://google.github.io/truth/api/0.42/</link>
+                        <link>https://www.slf4j.org/apidocs/</link>
+                        <link>https://xerces.apache.org/xerces2-j/javadocs/api/</link>
+                        <link>https://google.github.io/guava/releases/25.1-jre/api/docs/</link>
+                        <link>http://doc.akka.io/japi/akka/2.5.19/</link>
+                        <link>http://netty.io/4.1/api/</link>
+                        <link>https://commons.apache.org/proper/commons-lang/javadocs/api-2.6/</link>
+                        <link>https://commons.apache.org/proper/commons-lang/javadocs/api-3.8.1/</link>
+                        <link>https://commons.apache.org/proper/commons-codec/apidocs/</link>
+                    </links>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
