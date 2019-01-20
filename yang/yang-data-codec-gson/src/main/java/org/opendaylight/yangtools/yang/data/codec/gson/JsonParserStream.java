@@ -43,15 +43,15 @@ import org.opendaylight.yangtools.yang.data.util.LeafListNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.LeafNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListEntryNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.ListNodeDataWithSchema;
+import org.opendaylight.yangtools.yang.data.util.OperationAsContainer;
 import org.opendaylight.yangtools.yang.data.util.ParserStreamUtils;
-import org.opendaylight.yangtools.yang.data.util.RpcAsContainer;
 import org.opendaylight.yangtools.yang.data.util.SimpleNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
+import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -89,7 +89,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
      */
-    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory) {
         return new JsonParserStream(writer, codecFactory, codecFactory.getSchemaContext());
     }
@@ -104,14 +104,17 @@ public final class JsonParserStream implements Closeable, Flushable {
      * @return A new {@link JsonParserStream}
      * @throws NullPointerException if any of the arguments are null
      */
-    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull JSONCodecFactory codecFactory, final @NonNull SchemaNode parentNode) {
-        if (parentNode instanceof RpcDefinition) {
-            return new JsonParserStream(writer, codecFactory, new RpcAsContainer((RpcDefinition) parentNode));
+        final DataSchemaNode parent;
+        if (parentNode instanceof DataSchemaNode) {
+            parent = (DataSchemaNode) parentNode;
+        } else if (parentNode instanceof OperationDefinition) {
+            parent = OperationAsContainer.of((OperationDefinition) parentNode);
+        } else {
+            throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parentNode));
         }
-        checkArgument(parentNode instanceof DataSchemaNode, "An instance of DataSchemaNode is expected, %s supplied",
-            parentNode);
-        return new JsonParserStream(writer, codecFactory, (DataSchemaNode) parentNode);
+        return new JsonParserStream(writer, codecFactory, parent);
     }
 
     /**
@@ -125,8 +128,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory)} instead.
      */
-    @Deprecated
-    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+    @Deprecated public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull SchemaContext schemaContext) {
         return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
     }
@@ -143,8 +145,7 @@ public final class JsonParserStream implements Closeable, Flushable {
      *
      * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory, SchemaNode)} instead.
      */
-    @Deprecated
-    public static JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
+    @Deprecated public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
             final @NonNull SchemaContext schemaContext, final @NonNull SchemaNode parentNode) {
         return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext),
             parentNode);
