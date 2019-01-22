@@ -7,10 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
-import static com.google.common.base.Verify.verifyNotNull;
-
 import com.google.common.annotations.Beta;
-import com.google.common.base.VerifyException;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -44,28 +41,13 @@ public interface BindingNormalizedNodeSerializer {
     YangInstanceIdentifier toYangInstanceIdentifier(@NonNull InstanceIdentifier<?> binding);
 
     /**
-     * Translates supplied YANG Instance Identifier into Binding instance identifier. This method can return null
-     * if the instance identifier is not representable in Binding. If it is statically known this is not the case,
-     * use {@link #coerceFromYangInstanceIdentifier(YangInstanceIdentifier)}.
+     * Translates supplied YANG Instance Identifier into Binding instance identifier.
      *
      * @param dom YANG Instance Identifier
      * @return Binding Instance Identifier, or null if the instance identifier is not representable.
      */
     <T extends DataObject> @Nullable InstanceIdentifier<T> fromYangInstanceIdentifier(
             @NonNull YangInstanceIdentifier dom);
-
-    /**
-     * Translates supplied YANG Instance Identifier into Binding instance identifier.
-     *
-     * @param dom YANG Instance Identifier
-     * @return Binding Instance Identifier
-     * @throws VerifyException if the instance identifier is not representable.
-     */
-    @Beta
-    default <T extends DataObject> @NonNull InstanceIdentifier<T> coerceFromYangInstanceIdentifier(
-            final @NonNull YangInstanceIdentifier dom) {
-        return verifyNotNull(fromYangInstanceIdentifier(dom), "%s is not representable", dom);
-    }
 
     /**
      * Translates supplied Binding Instance Identifier and data into NormalizedNode representation.
@@ -167,9 +149,8 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action input
      * @throws NullPointerException if any of the arguments is null
      */
-    @Beta
-    default @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
-            final @NonNull Class<? extends Action<?, ?, ?>> action, final @NonNull RpcInput input) {
+    @Beta default @NonNull BindingLazyContainerNode<RpcInput> toLazyNormalizedNodeActionInput(
+            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcInput input) {
         return toLazyNormalizedNodeActionInput(action,
             new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), input);
     }
@@ -182,9 +163,8 @@ public interface BindingNormalizedNodeSerializer {
      * @return NormalizedNode representation of action input
      * @throws NullPointerException if any of the arguments is null
      */
-    @Beta
-    default @NonNull ContainerNode toNormalizedNodeActionInput(final @NonNull Class<? extends Action<?, ?, ?>> action,
-            @NonNull final RpcInput input) {
+    @Beta default @NonNull ContainerNode toNormalizedNodeActionInput(
+            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcInput input) {
         return toLazyNormalizedNodeActionInput(action,
             new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), input)
                 .getDelegate();
@@ -209,9 +189,8 @@ public interface BindingNormalizedNodeSerializer {
      * @param output Binding action output
      * @return NormalizedNode representation of action output
      */
-    @Beta
-    default @NonNull BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
-            final @NonNull Class<? extends Action<?, ?, ?>> action, final @NonNull RpcOutput output) {
+    @Beta default @NonNull BindingLazyContainerNode<RpcOutput> toLazyNormalizedNodeActionOutput(
+            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcOutput output) {
         return toLazyNormalizedNodeActionOutput(action,
             new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), output);
     }
@@ -222,9 +201,8 @@ public interface BindingNormalizedNodeSerializer {
      * @param output Binding action output
      * @return NormalizedNode representation of action output
      */
-    @Beta
-    default @NonNull ContainerNode toNormalizedNodeActionOutput(final @NonNull Class<? extends Action<?, ?, ?>> action,
-            final @NonNull RpcOutput output) {
+    @Beta default @NonNull ContainerNode toNormalizedNodeActionOutput(
+            @NonNull final Class<? extends Action<?, ?, ?>> action, @NonNull final RpcOutput output) {
         return toLazyNormalizedNodeActionOutput(action,
             new NodeIdentifier(YangConstants.operationInputQName(BindingReflections.getQNameModule(action))), output)
                 .getDelegate();
