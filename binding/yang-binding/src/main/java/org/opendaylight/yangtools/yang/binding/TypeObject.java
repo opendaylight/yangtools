@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2013 Cisco Systems, Inc. and others.  All rights reserved.
+ * Copyright (c) 2019 ZTE Corp. and others.  All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -8,11 +8,9 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Data container is an interface which has structured contents.
+ * TypeObject is a mark interface for all derived types.
  *
- * @author Tony Tkacik
+ * @author Jie Han
  */
-public interface DataObject extends DataContainer, BindingObject {
-
-
+public interface TypeObject extends BindingObject {
 }
