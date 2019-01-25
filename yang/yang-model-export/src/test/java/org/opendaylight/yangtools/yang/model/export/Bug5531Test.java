@@ -33,7 +33,7 @@ public class Bug5531Test {
 
         // write small module of size less than 8kB
         for (Module module : schema.getModules()) {
-            YinExportUtils.writeModuleToOutputStream(schema, module, bufferedOutputStream);
+            YinExportUtils.writeModuleAsYinText(module, bufferedOutputStream);
         }
 
         String output = byteArrayOutputStream.toString();

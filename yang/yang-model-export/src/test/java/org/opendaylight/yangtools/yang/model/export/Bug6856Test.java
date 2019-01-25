@@ -33,7 +33,7 @@ public class Bug6856Test {
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         final Module fooModule = schemaContext.findModule("foo", Revision.of("2017-02-28")).get();
-        YinExportUtils.writeModuleToOutputStream(schemaContext, fooModule, bufferedOutputStream);
+        YinExportUtils.writeModuleAsYinText(fooModule, bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
         assertNotNull(output);
@@ -53,7 +53,7 @@ public class Bug6856Test {
         final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(byteArrayOutputStream);
 
         final Module barModule = schemaContext.findModule("bar", Revision.of("2017-02-28")).get();
-        YinExportUtils.writeModuleToOutputStream(schemaContext, barModule, bufferedOutputStream);
+        YinExportUtils.writeModuleAsYinText(barModule, bufferedOutputStream);
 
         final String output = byteArrayOutputStream.toString();
         assertNotNull(output);
