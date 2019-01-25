@@ -39,7 +39,6 @@
         <module>features</module>
         <module>yang</module>
         <module>yang-validation-tool</module>
-        <module>third-party</module>
     </modules>
 
     <properties>

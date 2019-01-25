@@ -24,7 +24,6 @@
 
     <modules>
         <!-- Stable features -->
-        <module>odl-triemap</module>
         <module>odl-yangtools-codec</module>
         <module>odl-yangtools-common</module>
         <module>odl-yangtools-data-api</module>

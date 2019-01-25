@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-triemap">
+<features xmlns="http://karaf.apache.org/xmlns/features/v1.4.0" name="odl-yangtools-parser">
     <feature name="odl-yangtools-parser">
         <feature version="[4.0.8,5)">odl-antlr4</feature>
     </feature>

@@ -162,10 +162,6 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>util</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>triemap</artifactId>
-        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>

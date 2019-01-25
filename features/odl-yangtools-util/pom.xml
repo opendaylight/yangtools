@@ -37,8 +37,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-triemap</artifactId>
+            <groupId>tech.pantheon.triemap</groupId>
+            <artifactId>pt-triemap</artifactId>
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>

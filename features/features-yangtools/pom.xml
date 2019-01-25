@@ -38,12 +38,6 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-triemap</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-codec</artifactId>
             <classifier>features</classifier>
             <type>xml</type>
