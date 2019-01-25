@@ -52,14 +52,12 @@ abstract class AbstractYinExportTest {
     private void readAndValidateModule(final SchemaContext schemaContext, final Module module, final String yinDir)
             throws XMLStreamException, IOException, SAXException {
         final String fileName = YinExportUtils.wellFormedYinName(module.getName(), module.getRevision());
-        validateOutput(yinDir, fileName, exportLegacy(schemaContext, module));
         validateOutput(yinDir, fileName, export(module));
     }
 
     private void readAndValidateSubmodule(final SchemaContext schemaContext, final Module module,
             final Module submodule, final String yinDir) throws XMLStreamException, IOException, SAXException {
         final String fileName = YinExportUtils.wellFormedYinName(submodule.getName(), submodule.getRevision());
-        validateOutput(yinDir, fileName, exportLegacy(schemaContext, submodule));
         validateOutput(yinDir, fileName, export(module, submodule));
     }
 
@@ -72,13 +70,6 @@ abstract class AbstractYinExportTest {
     private static String export(final Module module, final Module submodule) throws XMLStreamException {
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         YinExportUtils.writeSubmoduleAsYinText(module, submodule, bos);
-        return new String(bos.toByteArray(), StandardCharsets.UTF_8);
-    }
-
-    private static String exportLegacy(final SchemaContext schemaContext, final Module module)
-            throws XMLStreamException {
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        YinExportUtils.writeModuleToOutputStream(schemaContext, module, bos);
         return new String(bos.toByteArray(), StandardCharsets.UTF_8);
     }
 

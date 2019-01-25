@@ -18,9 +18,7 @@ import java.net.URI;
 import java.util.Map;
 import java.util.Optional;
 import javax.xml.stream.XMLEventReader;
-import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
@@ -37,7 +35,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleEffectiveStatemen
 
 public final class YinExportUtils {
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-    private static final XMLOutputFactory OUTPUT_FACTORY = XMLOutputFactory.newFactory();
 
     private YinExportUtils() {
         throw new UnsupportedOperationException("Utility class");
@@ -109,50 +106,6 @@ public final class YinExportUtils {
             "Submodule %s is not a SubmoduleEffectiveStatement", submodule);
         writeReaderToOutput(YinXMLEventReaderFactory.defaultInstance().createXMLEventReader(
             (ModuleEffectiveStatement) parentModule, (SubmoduleEffectiveStatement)submodule), output);
-    }
-
-    /**
-     * Writes YIN representation of supplied module to specified output stream.
-     *
-     * @param ctx Schema Context which contains module and extension definitions to be used during export of model.
-     * @param module Module to be exported.
-     * @param str Output stream to which YIN representation of model will be written.
-     * @throws XMLStreamException when a streaming problem occurs
-     * @deprecated Use {@link #writeModuleAsYinText(Module, OutputStream)}
-     *             or {@link #writeSubmoduleAsYinText(Module, Module, OutputStream)} instead.
-     */
-    @Deprecated
-    public static void writeModuleToOutputStream(final SchemaContext ctx, final Module module, final OutputStream str)
-            throws XMLStreamException {
-        writeModuleToOutputStream(ctx, module, str, false);
-    }
-
-    /**
-     * Writes YIN representation of supplied module to specified output stream.
-     *
-     * @param ctx Schema Context which contains module and extension definitions to be used during export of model.
-     * @param module Module to be exported.
-     * @param str Output stream to which YIN representation of model will be written.
-     * @param emitInstantiated Option to emit also instantiated statements (e.g. statements added by uses or augment)
-     * @throws XMLStreamException when a streaming problem occurs
-     * @deprecated Use {@link #writeModuleAsYinText(Module, OutputStream)}
-     *             or {@link #writeSubmoduleAsYinText(Module, Module, OutputStream)} instead.
-     */
-    @Deprecated
-    public static void writeModuleToOutputStream(final SchemaContext ctx, final Module module, final OutputStream str,
-            final boolean emitInstantiated) throws XMLStreamException {
-        final XMLStreamWriter xmlStreamWriter = OUTPUT_FACTORY.createXMLStreamWriter(str);
-        writeModuleToOutputStream(ctx, module, xmlStreamWriter, emitInstantiated);
-        xmlStreamWriter.flush();
-    }
-
-    private static void writeModuleToOutputStream(final SchemaContext ctx, final Module module,
-            final XMLStreamWriter xmlStreamWriter, final boolean emitInstantiated) {
-        final URI moduleNs = module.getNamespace();
-        final Map<String, URI> prefixToNs = prefixToNamespace(ctx, module);
-        final StatementTextWriter yinWriter = SingleModuleYinStatementWriter.create(xmlStreamWriter, moduleNs,
-                prefixToNs);
-        SchemaContextEmitter.writeToStatementWriter(module, ctx, yinWriter, emitInstantiated);
     }
 
     private static Map<String, URI> prefixToNamespace(final SchemaContext ctx, final Module module) {
