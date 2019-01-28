@@ -13,7 +13,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -30,17 +30,15 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
      *
      * @param data Backing {@link NormalizedNode} data.
      */
-    NormalizedNodeDataTreeCandidateNode(@Nonnull final NormalizedNode<?, ?> data) {
+    NormalizedNodeDataTreeCandidateNode(final @NonNull NormalizedNode<?, ?> data) {
         this.data = requireNonNull(data);
     }
 
-    @Nonnull
     @Override
     public PathArgument getIdentifier() {
         return data.getIdentifier();
     }
 
-    @Nonnull
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         if (data instanceof NormalizedNodeContainer) {
@@ -61,19 +59,16 @@ final class NormalizedNodeDataTreeCandidateNode implements DataTreeCandidateNode
         return null;
     }
 
-    @Nonnull
     @Override
     public ModificationType getModificationType() {
         return ModificationType.WRITE;
     }
 
-    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return Optional.of(data);
     }
 
-    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return Optional.empty();
