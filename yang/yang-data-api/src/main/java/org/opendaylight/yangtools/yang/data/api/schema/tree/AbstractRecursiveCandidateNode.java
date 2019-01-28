@@ -5,21 +5,17 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 
 abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateNode {
-
-    protected AbstractRecursiveCandidateNode(
-            final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
+    AbstractRecursiveCandidateNode(final NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> data) {
         super(data);
     }
 
@@ -43,15 +39,6 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
     }
 
     @SuppressWarnings("unchecked")
-    static DataTreeCandidateNode unmodifiedNode(final NormalizedNode<?, ?> data) {
-        if (data instanceof NormalizedNodeContainer) {
-            return new RecursiveUnmodifiedCandidateNode(
-                (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>) data);
-        }
-        return new UnmodifiedLeafCandidateNode(data);
-    }
-
-    @SuppressWarnings("unchecked")
     static DataTreeCandidateNode writeNode(final NormalizedNode<?, ?> data) {
         if (data instanceof NormalizedNodeContainer) {
             return new RecursiveWriteCandidateNode(
@@ -60,23 +47,22 @@ abstract class AbstractRecursiveCandidateNode extends AbstractDataTreeCandidateN
         return new WriteLeafCandidateNode(data);
     }
 
-    protected static boolean isContainer(final NormalizedNode<?, ?> data) {
+    static boolean isContainer(final NormalizedNode<?, ?> data) {
         return data instanceof NormalizedNodeContainer;
     }
 
     @Override
     public final DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
-        final Optional<NormalizedNode<?, ?>> potential = getData().getChild(identifier);
+        final Optional<NormalizedNode<?, ?>> potential = data().getChild(identifier);
         if (potential.isPresent()) {
             return createChild(potential.get());
         }
         return null;
     }
 
-    @Nonnull
     @Override
     public final Collection<DataTreeCandidateNode> getChildNodes() {
-        return Collections2.transform(getData().getValue(), this::createChild);
+        return Collections2.transform(data().getValue(), this::createChild);
     }
 
     @SuppressWarnings("unchecked")

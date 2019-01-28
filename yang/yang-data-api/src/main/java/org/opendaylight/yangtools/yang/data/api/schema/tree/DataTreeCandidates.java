@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.slf4j.Logger;
@@ -29,12 +29,12 @@ public final class DataTreeCandidates {
         throw new UnsupportedOperationException();
     }
 
-    public static DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath,
+    public static @NonNull DataTreeCandidate newDataTreeCandidate(final YangInstanceIdentifier rootPath,
             final DataTreeCandidateNode rootNode) {
         return new DefaultDataTreeCandidate(rootPath, rootNode);
     }
 
-    public static DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
+    public static @NonNull DataTreeCandidate fromNormalizedNode(final YangInstanceIdentifier rootPath,
             final NormalizedNode<?, ?> node) {
         return new DefaultDataTreeCandidate(rootPath, new NormalizedNodeDataTreeCandidateNode(node));
     }
@@ -97,8 +97,8 @@ public final class DataTreeCandidates {
         private final YangInstanceIdentifier path;
         private final NodeIterator parent;
 
-        NodeIterator(@Nullable final NodeIterator parent, @Nonnull final YangInstanceIdentifier path,
-                @Nonnull final Iterator<DataTreeCandidateNode> iterator) {
+        NodeIterator(final @Nullable NodeIterator parent, final YangInstanceIdentifier path,
+                final Iterator<DataTreeCandidateNode> iterator) {
             this.iterator = requireNonNull(iterator);
             this.path = requireNonNull(path);
             this.parent = parent;
