@@ -318,7 +318,7 @@
                 <!-- FIXME: remove this section once we can activate javadoc-links profile -->
                 <configuration combine.children="append">
                     <links>
-                        <link>https://static.javadoc.io/junit/junit/4.11/</link>
+                        <link>https://junit.org/junit4/javadoc/4.11/</link>
                         <link>http://hamcrest.org/JavaHamcrest/javadoc/1.3/</link>
                         <link>http://google.github.io/truth/api/0.42/</link>
                         <link>https://www.slf4j.org/apidocs/</link>
