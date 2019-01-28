@@ -48,7 +48,7 @@ final class OperationWithModification {
     }
 
     void delete() {
-        modification.delete();
+        applyOperation.deleteModifiedNode(modification);
     }
 
     /**
