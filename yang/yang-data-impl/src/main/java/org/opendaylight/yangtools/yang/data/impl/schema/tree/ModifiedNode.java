@@ -9,6 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -316,8 +318,12 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
 
     @Override
     public String toString() {
-        return "NodeModification [identifier=" + identifier + ", modificationType="
-                + operation + ", childModification=" + children + "]";
+        final ToStringHelper helper = MoreObjects.toStringHelper(this).omitNullValues()
+                .add("identifier", identifier).add("operation", operation).add("modificationType", modType);
+        if (!children.isEmpty()) {
+            helper.add("childModification", children);
+        }
+        return helper.toString();
     }
 
     void resolveModificationType(@Nonnull final ModificationType type) {

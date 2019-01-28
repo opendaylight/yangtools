@@ -185,7 +185,7 @@ public class OrderedListTest {
             inMemoryDataTree.commit(inMemoryDataTree.prepare(treeModification));
         } catch (final IllegalArgumentException ex) {
             LOG.debug("IllegalArgumentException was thrown as expected", ex);
-            assertTrue(ex.getMessage().contains("Metadata not available for modification NodeModification"));
+            assertTrue(ex.getMessage().contains("Metadata not available for modification ModifiedNode"));
         }
 
         DataTreeSnapshot snapshotAfterCommits = inMemoryDataTree.takeSnapshot();
