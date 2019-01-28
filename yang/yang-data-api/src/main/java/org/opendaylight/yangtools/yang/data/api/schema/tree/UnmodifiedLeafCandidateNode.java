@@ -5,25 +5,23 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
-
-import static java.util.Objects.requireNonNull;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
-final class ReplaceLeafCandidateNode extends AbstractWriteCandidate {
-    private final NormalizedNode<?, ?> oldData;
-
-    ReplaceLeafCandidateNode(final NormalizedNode<?, ?> oldData, final NormalizedNode<?, ?> newData) {
-        super(newData);
-        this.oldData = requireNonNull(oldData);
+final class UnmodifiedLeafCandidateNode extends AbstractAvailableLeafCandidateNode {
+    UnmodifiedLeafCandidateNode(final NormalizedNode<?, ?> data) {
+        super(data);
     }
 
-    @Nonnull
+    @Override
+    public ModificationType getModificationType() {
+        return ModificationType.UNMODIFIED;
+    }
+
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
-        return Optional.of(oldData);
+        return dataOptional();
     }
 }
