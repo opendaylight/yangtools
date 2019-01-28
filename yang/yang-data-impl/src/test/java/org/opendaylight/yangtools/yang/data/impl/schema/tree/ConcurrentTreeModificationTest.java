@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertFalse;
@@ -31,11 +30,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConcurrentTreeModificationTest {
+public class ConcurrentTreeModificationTest extends AbstractTestModelTest {
     private static final Logger LOG = LoggerFactory.getLogger(ConcurrentTreeModificationTest.class);
 
     private static final Short ONE_ID = 1;
@@ -59,15 +57,13 @@ public class ConcurrentTreeModificationTest {
             .withChild(mapNodeBuilder(TestModel.INNER_LIST_QNAME).build())
             .build();
 
-    private SchemaContext schemaContext;
     private DataTree inMemoryDataTree;
+
 
     @Before
     public void prepare() {
-        schemaContext = TestModel.createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            schemaContext);
+            SCHEMA_CONTEXT);
     }
 
     private static ContainerNode createFooTestContainerNode() {

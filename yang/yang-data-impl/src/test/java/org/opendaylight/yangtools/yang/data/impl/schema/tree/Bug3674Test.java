@@ -24,13 +24,12 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
  *           DataTreeModification, but should appear as UNMODIFIED in the
  *           resulting DataTreeCandidate.
  */
-public class Bug3674Test {
+public class Bug3674Test extends AbstractTestModelTest {
     private DataTree tree;
 
     @Before
     public void setUp() {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            TestModel.createTestContext());
+        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
 
         // Create the top-level container
         final DataTreeModification mod = tree.takeSnapshot().newModification();

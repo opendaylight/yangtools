@@ -14,13 +14,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 
-public class DataTreeTransactionTest {
+public class DataTreeTransactionTest extends AbstractTestModelTest {
     private DataTree tree;
 
     @Before
     public void setUp() {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            TestModel.createTestContext());
+        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
     }
 
     @Test

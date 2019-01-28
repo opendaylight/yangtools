@@ -28,9 +28,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeSnapshot;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
-public class Bug2690Test {
+public class Bug2690Test extends AbstractTestModelTest {
     private static final YangInstanceIdentifier NAME_PATH = YangInstanceIdentifier.of(TestModel.NON_PRESENCE_QNAME)
             .node(TestModel.NAME_QNAME);
 
@@ -39,7 +38,7 @@ public class Bug2690Test {
     @Before
     public void prepare() {
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            YangParserTestUtils.parseYangResource("/odl-datastore-test.yang"));
+            SCHEMA_CONTEXT);
     }
 
     @Test

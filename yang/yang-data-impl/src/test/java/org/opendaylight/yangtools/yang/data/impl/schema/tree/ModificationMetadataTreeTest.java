@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /*
  * Schema structure of document is
@@ -57,7 +56,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *      }
  * }
  */
-public class ModificationMetadataTreeTest {
+public class ModificationMetadataTreeTest extends AbstractTestModelTest {
 
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
@@ -90,14 +89,11 @@ public class ModificationMetadataTreeTest {
                     .build())
                     .build();
 
-    private SchemaContext schemaContext;
     private RootModificationApplyOperation rootOper;
 
     @Before
     public void prepare() {
-        schemaContext = TestModel.createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,
+        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
@@ -121,7 +117,7 @@ public class ModificationMetadataTreeTest {
     public NormalizedNode<?, ?> createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new NodeIdentifier(schemaContext.getQName()))
+                .withNodeIdentifier(new NodeIdentifier(SCHEMA_CONTEXT.getQName()))
                 .withChild(createTestContainer()).build();
 
     }
@@ -139,7 +135,7 @@ public class ModificationMetadataTreeTest {
     @Test
     public void basicReadWrites() {
         final DataTreeModification modificationTree = new InMemoryDataTreeModification(
-            new InMemoryDataTreeSnapshot(schemaContext,
+            new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper), rootOper);
         final Optional<NormalizedNode<?, ?>> originalBarNode = modificationTree.readNode(OUTER_LIST_2_PATH);
         assertTrue(originalBarNode.isPresent());
@@ -166,7 +162,7 @@ public class ModificationMetadataTreeTest {
          * Creates empty Snapshot with associated schema context.
          */
         final DataTree t = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            schemaContext);
+            SCHEMA_CONTEXT);
 
         /**
          *

@@ -8,11 +8,11 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -39,12 +39,17 @@ public class Bug5968Test {
     private static final QName LIST_ID = QName.create(NS, REV, "list-id");
     private static final QName MANDATORY_LEAF = QName.create(NS, REV, "mandatory-leaf");
     private static final QName COMMON_LEAF = QName.create(NS, REV, "common-leaf");
-    private SchemaContext schemaContext;
 
-    @Before
-    public void init() {
-        this.schemaContext = TestModel.createTestContext("/bug5968/foo.yang");
-        assertNotNull("Schema context must not be null.", this.schemaContext);
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = TestModel.createTestContext("/bug5968/foo.yang");
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
     }
 
     private static DataTree initDataTree(final SchemaContext schemaContext, final boolean withMapNode)
@@ -76,7 +81,7 @@ public class Bug5968Test {
 
     @Test
     public void writeInvalidContainerTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(true);
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
@@ -100,7 +105,7 @@ public class Bug5968Test {
 
     @Test
     public void writeInvalidMapTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, true);
 
@@ -119,7 +124,7 @@ public class Bug5968Test {
 
     @Test
     public void writeInvalidMapEntryTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext, true);
+        final DataTree inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", null, "common-value");
@@ -180,7 +185,7 @@ public class Bug5968Test {
 
     @Test
     public void writeValidContainerTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(false);
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
@@ -196,7 +201,7 @@ public class Bug5968Test {
 
     @Test
     public void writeValidMapTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = emptyDataTree(schemaContext);
+        final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         writeMap(modificationTree, false);
 
@@ -208,7 +213,7 @@ public class Bug5968Test {
 
     @Test
     public void writeValidMapEntryTest() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree(schemaContext, true);
+        final DataTree inMemoryDataTree = initDataTree(SCHEMA_CONTEXT, true);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
 
         writeMapEntry(modificationTree, "1", "mandatory-value", "common-value");

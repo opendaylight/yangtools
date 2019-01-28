@@ -8,13 +8,11 @@
 
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
 import com.google.common.base.VerifyException;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -29,10 +27,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 // TODO: expand these tests to catch some more obscure cases
-public class ConfigStatementValidationTest {
+public class ConfigStatementValidationTest extends AbstractTestModelTest {
     private static final Short ONE_ID = 1;
     private static final Short TWO_ID = 2;
 
@@ -61,8 +58,6 @@ public class ConfigStatementValidationTest {
                     .build())
             .build();
 
-    private SchemaContext schemaContext;
-
     private static ContainerNode createFooTestContainerNode() {
         return ImmutableContainerNodeBuilder.create()
                 .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
@@ -75,16 +70,10 @@ public class ConfigStatementValidationTest {
                 .withChild(mapNodeBuilder(TestModel.OUTER_LIST_QNAME).withChild(BAR_NODE).build()).build();
     }
 
-    @Before
-    public void prepare() {
-        schemaContext = TestModel.createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
-    }
-
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnPathFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         final YangInstanceIdentifier ii = OUTER_LIST_1_PATH.node(
                 new YangInstanceIdentifier.NodeIdentifier(TestModel.INNER_LIST_QNAME)).node(
@@ -99,7 +88,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnDataFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createFooTestContainerNode());
         modificationTree.ready();
@@ -111,7 +100,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnDataLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, createBarTestContainerNode());
         modificationTree.ready();
@@ -123,7 +112,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = SchemaValidationFailedException.class)
     public void testOnPathCaseLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
                 TestModel.TEST_QNAME, "choice1"));
         final YangInstanceIdentifier.NodeIdentifier case2ContId = new YangInstanceIdentifier.NodeIdentifier(
@@ -143,7 +132,7 @@ public class ConfigStatementValidationTest {
     @Test(expected = VerifyException.class)
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+            DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
         final YangInstanceIdentifier.NodeIdentifier choice1Id = new YangInstanceIdentifier.NodeIdentifier(QName.create(
                 TestModel.TEST_QNAME, "choice1"));
         final YangInstanceIdentifier ii = TestModel.TEST_PATH.node(choice1Id);
