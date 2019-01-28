@@ -32,6 +32,16 @@ final class AutomaticLifecycleMixin {
 
     /**
      * This is a capture of
+     * {@link SchemaAwareApplyOperation#applyWrite(ModifiedNode, NormalizedNode, Optional, Version)}.
+     */
+    @FunctionalInterface
+    interface ApplyWrite {
+        TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue, Optional<TreeNode> storeMeta,
+                Version version);
+    }
+
+    /**
+     * This is a capture of
      * {@link ModificationApplyOperation#checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
      */
     @FunctionalInterface
@@ -52,53 +62,27 @@ final class AutomaticLifecycleMixin {
 
     }
 
-    static Optional<TreeNode> apply(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
-            final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
-        final Optional<TreeNode> ret;
-        if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
-            // Container is not present, let's take care of the 'magically appear' part of our job
-            ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
-
-            // Fake container got removed: that is a no-op
-            if (!ret.isPresent()) {
-                modification.resolveModificationType(ModificationType.UNMODIFIED);
-                return ret;
+    static Optional<TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
+            final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
+        // The only way a tree node can disappear is through delete (which we handle here explicitly) or through
+        // actions of disappearResult(). It is therefore safe to perform Optional.get() on the results of
+        // delegate.apply()
+        final TreeNode ret;
+        if (modification.getOperation() == LogicalOperation.DELETE) {
+            if (modification.getChildren().isEmpty()) {
+                return delegate.apply(modification, storeMeta, version);
             }
-
-            // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
-            if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {
-                modification.resolveModificationType(ModificationType.APPEARED);
-            }
+            // Delete with children, implies it really is an empty write
+            ret = writeDelegate.applyWrite(modification, emptyNode, storeMeta, version);
+        } else if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
+            ret = applyTouch(delegate, emptyNode, modification, storeMeta, version);
         } else {
-            // Container is present, run normal apply operation
-            ret = delegate.apply(modification, storeMeta, version);
-
-            // Container was explicitly deleted, no magic required
-            if (!ret.isPresent()) {
-                return ret;
-            }
+            // No special handling required here, run normal apply operation
+            ret = delegate.apply(modification, storeMeta, version).get();
         }
 
-        /*
-         * At this point ret is guaranteed to be present. We need to take care of the 'magically disappear' part of
-         * our job. Check if there are any child nodes left. If there are none, remove this container and turn the
-         * modification into a DISAPPEARED.
-         */
-        final NormalizedNode<?, ?> data = ret.get().getData();
-        final boolean empty;
-        if (data instanceof NormalizedNodeContainer) {
-            empty = ((NormalizedNodeContainer<?, ?, ?>) data).getValue().isEmpty();
-        } else if (data instanceof OrderedNodeContainer) {
-            empty = ((OrderedNodeContainer<?>) data).getSize() == 0;
-        } else {
-            throw new IllegalStateException("Unhandled data " + data);
-        }
-
-        if (empty) {
-            modification.resolveModificationType(ModificationType.DISAPPEARED);
-            return Optional.empty();
-        }
-        return ret;
+        return disappearResult(modification, ret, storeMeta);
     }
 
     static void checkApplicable(final CheckApplicable delegate, final NormalizedNode<?, ?> emptyNode,
@@ -112,7 +96,53 @@ final class AutomaticLifecycleMixin {
         }
     }
 
+    private static TreeNode applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
+            final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
+        // Container is not present, let's take care of the 'magically appear' part of our job
+        final Optional<TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
+
+        // If the delegate indicated SUBTREE_MODIFIED, account for the fake and report APPEARED
+        if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {
+            modification.resolveModificationType(ModificationType.APPEARED);
+        }
+        return ret.get();
+    }
+
+    private static Optional<TreeNode> disappearResult(final ModifiedNode modification, final TreeNode result,
+            final Optional<TreeNode> storeMeta) {
+        // Check if the result is in fact empty before pulling any tricks
+        if (!isEmpty(result)) {
+            return Optional.of(result);
+        }
+
+        // We are pulling the 'disappear' trick, but what we report can be three different things
+        final ModificationType finalType;
+        if (!storeMeta.isPresent()) {
+            // ... there was nothing in the datastore, no change
+            finalType = ModificationType.UNMODIFIED;
+        } else if (modification.getModificationType() == ModificationType.WRITE) {
+            // ... this was an empty write, possibly originally a delete
+            finalType = ModificationType.DELETE;
+        } else {
+            // ... it really disappeared
+            finalType = ModificationType.DISAPPEARED;
+        }
+        modification.resolveModificationType(finalType);
+        return Optional.empty();
+    }
+
     private static Optional<TreeNode> fakeMeta(final NormalizedNode<?, ?> emptyNode, final Version version) {
         return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
+    }
+
+    private static boolean isEmpty(final TreeNode treeNode) {
+        final NormalizedNode<?, ?> data = treeNode.getData();
+        if (data instanceof NormalizedNodeContainer) {
+            return ((NormalizedNodeContainer<?, ?, ?>) data).getValue().isEmpty();
+        }
+        if (data instanceof OrderedNodeContainer) {
+            return ((OrderedNodeContainer<?>) data).getSize() == 0;
+        }
+        throw new IllegalStateException("Unhandled data " + data);
     }
 }

@@ -8,12 +8,14 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import java.util.List;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
@@ -216,7 +218,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                     // structure is usually verified when the transaction is sealed. To preserve correctness, we have
                     // to run that validation here.
                     modification.resolveModificationType(ModificationType.WRITE);
-                    result = applyWrite(modification, currentMeta, version);
+                    result = applyWrite(modification, modification.getWrittenValue(), currentMeta, version);
                     verifyStructure(result.getData(), true);
                 } else {
                     result = applyMerge(modification, currentMeta.get(), version);
@@ -225,7 +227,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 return modification.setSnapshot(Optional.of(result));
             case WRITE:
                 modification.resolveModificationType(ModificationType.WRITE);
-                return modification.setSnapshot(Optional.of(applyWrite(modification, currentMeta, version)));
+                return modification.setSnapshot(Optional.of(applyWrite(modification,
+                    verifyNotNull(modification.getWrittenValue()), currentMeta, version)));
             case NONE:
                 modification.resolveModificationType(ModificationType.UNMODIFIED);
                 return currentMeta;
@@ -246,7 +249,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      */
     protected abstract TreeNode applyMerge(ModifiedNode modification, TreeNode currentMeta, Version version);
 
-    protected abstract TreeNode applyWrite(ModifiedNode modification, Optional<TreeNode> currentMeta, Version version);
+    protected abstract TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue,
+            Optional<TreeNode> currentMeta, Version version);
 
     /**
      * Apply a nested operation. Since there may not actually be a nested operation
