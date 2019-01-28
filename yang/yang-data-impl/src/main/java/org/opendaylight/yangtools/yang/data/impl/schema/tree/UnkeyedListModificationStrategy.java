@@ -38,7 +38,8 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, emptyNode, modification, storeMeta, version);
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+            version);
     }
 
     @Override
@@ -60,17 +61,14 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected TreeNode applyTouch(final ModifiedNode modification,
-            final TreeNode currentMeta, final Version version) {
+    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta, final Version version) {
         throw new UnsupportedOperationException("UnkeyedList does not support subtree change.");
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<TreeNode> currentMeta, final Version version) {
-        final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
-
         if (modification.getChildren().isEmpty()) {
             return newValueMeta;
         }

@@ -78,9 +78,8 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<TreeNode> currentMeta, final Version version) {
-        final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
         final TreeNode newValueMeta = TreeNodeFactory.createTreeNode(newValue, version);
 
         if (modification.getChildren().isEmpty()) {

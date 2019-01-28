@@ -43,9 +43,9 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
-        final TreeNode ret = super.applyWrite(modification, currentMeta, version);
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+            final Optional<TreeNode> currentMeta, final Version version) {
+        final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
         enforcer.enforceOnTreeNode(ret);
         return ret;
     }
