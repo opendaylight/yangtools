@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
@@ -57,15 +58,16 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
-        verifyStructure(modification.getWrittenValue(), true);
+        final NormalizedNode<?, ?> newValue = verifyNotNull(modification.getWrittenValue());
+        verifyStructure(newValue, true);
         modification.resolveModificationType(ModificationType.WRITE);
-        return applyWrite(modification, null, version);
+        return applyWrite(modification, newValue, null, version);
     }
 
     @Override
-    protected final TreeNode applyWrite(final ModifiedNode modification,
+    protected final TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<TreeNode> currentMeta, final Version version) {
-        return TreeNodeFactory.createTreeNode(modification.getWrittenValue(), version);
+        return TreeNodeFactory.createTreeNode(newValue, version);
     }
 
     @Override
