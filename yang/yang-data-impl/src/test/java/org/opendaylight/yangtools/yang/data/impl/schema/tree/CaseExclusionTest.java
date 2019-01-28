@@ -7,11 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -27,22 +28,28 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class CaseExclusionTest {
+    private static SchemaContext SCHEMA_CONTEXT;
 
-    private SchemaContext schemaContext;
+    private DataTree inMemoryDataTree;
 
-    @Before
-    public void prepare() {
-        schemaContext = TestModel.createTestContext("/case-exclusion-test.yang");
-        assertNotNull("Schema context must not be null.", schemaContext);
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = TestModel.createTestContext("/case-exclusion-test.yang");
     }
 
-    private DataTree initDataTree() {
-        return new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
+
+    @Before
+    public void before() {
+        inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
+            SCHEMA_CONTEXT);
     }
 
     @Test
     public void testCorrectCaseWrite() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree();
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -63,7 +70,6 @@ public class CaseExclusionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCaseExclusion() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree();
         final NodeIdentifier choice1Id = new NodeIdentifier(QName.create(TestModel.TEST_QNAME, "choice1"));
 
         final ContainerNode container = Builders
@@ -92,7 +98,6 @@ public class CaseExclusionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void testCaseExclusionOnChoiceWrite() throws DataValidationFailedException {
-        final DataTree inMemoryDataTree = initDataTree();
         // Container write
         final ContainerNode container = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME)).build();

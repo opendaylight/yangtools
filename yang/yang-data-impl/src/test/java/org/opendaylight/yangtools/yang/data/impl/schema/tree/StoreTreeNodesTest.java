@@ -30,11 +30,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StoreTreeNodesTest {
+public class StoreTreeNodesTest extends AbstractTestModelTest {
     private static final Logger LOG = LoggerFactory.getLogger(StoreTreeNodesTest.class);
 
     private static final Short ONE_ID = 1;
@@ -64,28 +63,25 @@ public class StoreTreeNodesTest {
                     .build())
                     .build();
 
-    private SchemaContext schemaContext;
     private RootModificationApplyOperation rootOper;
 
     @Before
     public void prepare() {
-        schemaContext = TestModel.createTestContext();
-        assertNotNull("Schema context must not be null.", schemaContext);
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(schemaContext,
+        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
     public NormalizedNode<?, ?> createDocumentOne() {
         return ImmutableContainerNodeBuilder
                 .create()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(schemaContext.getQName()))
+                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(SCHEMA_CONTEXT.getQName()))
                 .withChild(createTestContainer()).build();
 
     }
 
     @Test
     public void findNodeTestNodeFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<TreeNode> node = StoreTreeNodes.findNode(rootNode, OUTER_LIST_1_PATH);
@@ -94,7 +90,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void findNodeTestNodeNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
@@ -106,7 +102,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void findNodeCheckedTestNodeFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         TreeNode foundNode = null;
@@ -120,7 +116,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void findNodeCheckedTestNodeNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerList1InvalidPath = YangInstanceIdentifier.builder(TestModel.OUTER_LIST_PATH)
@@ -136,7 +132,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void findClosestOrFirstMatchTestNodeExists() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<TreeNode> expectedNode = StoreTreeNodes.findNode(rootNode, TWO_TWO_PATH);
@@ -148,7 +144,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void findClosestOrFirstMatchTestNodeDoesNotExist() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final YangInstanceIdentifier outerListInnerListPath = YangInstanceIdentifier.builder(OUTER_LIST_2_PATH)
@@ -168,7 +164,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void getChildTestChildFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),
@@ -178,7 +174,7 @@ public class StoreTreeNodesTest {
 
     @Test
     public void getChildTestChildNotFound() {
-        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(schemaContext,
+        final InMemoryDataTreeSnapshot inMemoryDataTreeSnapshot = new InMemoryDataTreeSnapshot(SCHEMA_CONTEXT,
                 TreeNodeFactory.createTreeNode(createDocumentOne(), Version.initial()), rootOper);
         final TreeNode rootNode = inMemoryDataTreeSnapshot.getRootNode();
         final Optional<TreeNode> node = StoreTreeNodes.getChild(Optional.ofNullable(rootNode),

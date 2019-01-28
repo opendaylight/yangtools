@@ -7,12 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
 import com.google.common.collect.ImmutableSet;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -28,8 +28,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class CaseAugmentTest {
-
-    private SchemaContext schemaContext;
     private static final QName CHOICE1_QNAME = QName.create(TestModel.TEST_QNAME, "choice1");
     private static final QName C1L1_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf1");
     private static final QName C1L2_QNAME = QName.create(TestModel.TEST_QNAME, "case1-leaf2");
@@ -39,15 +37,21 @@ public class CaseAugmentTest {
     private static final AugmentationIdentifier AUGMENT_ID = new AugmentationIdentifier(
         ImmutableSet.of(C1L2_QNAME, C1L3_QNAME));
 
-    @Before
-    public void prepare() {
-        schemaContext = TestModel.createTestContext("/case-augment-test.yang");
-        assertNotNull("Schema context must not be null.", schemaContext);
+    private static SchemaContext SCHEMA_CONTEXT;
+
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = TestModel.createTestContext("/case-augment-test.yang");
     }
 
-    private DataTree initDataTree() {
-        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
-            DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
+
+    private static DataTree initDataTree() {
+        DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_CONFIGURATION,
+            SCHEMA_CONTEXT);
         return inMemoryDataTree;
     }
 
