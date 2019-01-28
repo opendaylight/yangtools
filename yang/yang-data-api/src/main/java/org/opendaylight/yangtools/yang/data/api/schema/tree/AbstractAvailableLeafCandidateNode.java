@@ -5,10 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateNode {
@@ -16,7 +15,6 @@ abstract class AbstractAvailableLeafCandidateNode extends AbstractLeafCandidateN
         super(dataAfter);
     }
 
-    @Nonnull
     @Override
     public final Optional<NormalizedNode<?, ?>> getDataAfter() {
         return dataOptional();
