@@ -196,6 +196,12 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
+    void deleteModifiedNode(final ModifiedNode modification) {
+        // Normal delete for most cases
+        modification.delete();
+    }
+
+    @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         switch (modification.getOperation()) {

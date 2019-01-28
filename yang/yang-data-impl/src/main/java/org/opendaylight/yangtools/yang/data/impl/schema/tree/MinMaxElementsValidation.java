@@ -115,6 +115,11 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
     }
 
     @Override
+    void deleteModifiedNode(final ModifiedNode modification) {
+        delegate.deleteModifiedNode(modification);
+    }
+
+    @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return delegate.getChild(child);
     }
