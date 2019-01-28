@@ -14,6 +14,7 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -29,6 +30,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public class Bug2690Test extends AbstractTestModelTest {
+    private static final YangInstanceIdentifier NAME_PATH = YangInstanceIdentifier.of(TestModel.NON_PRESENCE_QNAME)
+            .node(TestModel.NAME_QNAME);
+
     private DataTree inMemoryDataTree;
 
     @Before
@@ -42,33 +46,63 @@ public class Bug2690Test extends AbstractTestModelTest {
         final MapEntryNode fooEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 1);
         final MapEntryNode barEntryNode = ImmutableNodes.mapEntry(TestModel.OUTER_LIST_QNAME, TestModel.ID_QNAME, 2);
         final MapNode mapNode1 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(fooEntryNode).build();
         final MapNode mapNode2 = ImmutableNodes.mapNodeBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.OUTER_LIST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(TestModel.OUTER_LIST_QNAME))
                 .withChild(barEntryNode).build();
 
         final ContainerNode cont1 = Builders.containerBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode1).build();
 
         final ContainerNode cont2 = Builders.containerBuilder()
-                .withNodeIdentifier(new YangInstanceIdentifier.NodeIdentifier(TestModel.TEST_QNAME))
+                .withNodeIdentifier(new NodeIdentifier(TestModel.TEST_QNAME))
                 .withChild(mapNode2).build();
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(TestModel.TEST_PATH, cont1);
         modificationTree.merge(TestModel.TEST_PATH, cont2);
-        modificationTree.ready();
-
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
+        commit(modificationTree);
 
         final DataTreeSnapshot snapshotAfterTx = inMemoryDataTree.takeSnapshot();
         final DataTreeModification modificationAfterTx = snapshotAfterTx.newModification();
         final Optional<NormalizedNode<?, ?>> readNode = modificationAfterTx.readNode(TestModel.OUTER_LIST_PATH);
         assertTrue(readNode.isPresent());
         assertEquals(2, ((NormalizedNodeContainer<?,?,?>)readNode.get()).getValue().size());
+    }
+
+    @Test
+    public void testDeleteStructuralAndWriteChild() throws DataValidationFailedException {
+        final DataTreeModification modificationTree = setupTestDeleteStructuralAndWriteChild();
+        verifyTestDeleteStructuralAndWriteChild(modificationTree);
+    }
+
+    @Test
+    public void testDeleteStructuralAndWriteChildWithCommit() throws DataValidationFailedException {
+        final DataTreeModification modificationTree = setupTestDeleteStructuralAndWriteChild();
+        commit(modificationTree);
+        verifyTestDeleteStructuralAndWriteChild(inMemoryDataTree.takeSnapshot());
+    }
+
+    private DataTreeModification setupTestDeleteStructuralAndWriteChild() {
+        final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
+        modificationTree.delete(YangInstanceIdentifier.of(TestModel.NON_PRESENCE_QNAME));
+        modificationTree.write(NAME_PATH, Builders.leafBuilder()
+            .withNodeIdentifier(new NodeIdentifier(TestModel.NAME_QNAME)).withValue("abc").build());
+        return modificationTree;
+    }
+
+    private static void verifyTestDeleteStructuralAndWriteChild(final DataTreeSnapshot snapshot) {
+        final Optional<NormalizedNode<?, ?>> readNode = snapshot.readNode(NAME_PATH);
+        assertTrue(readNode.isPresent());
+    }
+
+    private void commit(final DataTreeModification modificationTree) throws DataValidationFailedException {
+        modificationTree.ready();
+
+        inMemoryDataTree.validate(modificationTree);
+        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
+        inMemoryDataTree.commit(prepare);
     }
 }
