@@ -78,11 +78,11 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         emptyNode = ImmutableNodes.choiceNode(schema.getQName());
     }
 
-
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, emptyNode, modification, storeMeta, version);
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+            version);
     }
 
     @Override
@@ -149,9 +149,9 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
-        final TreeNode ret = super.applyWrite(modification, currentMeta, version);
+    protected TreeNode applyWrite(final ModifiedNode modification,  final NormalizedNode<?, ?> newValue,
+            final Optional<TreeNode> currentMeta, final Version version) {
+        final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
         enforceCases(ret);
         return ret;
     }
