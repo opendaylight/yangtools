@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
@@ -30,11 +29,9 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DataTreeCandidatesTest {
+public class DataTreeCandidatesTest extends AbstractTestModelTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataTreeCandidatesTest.class);
-
-    private static final SchemaContext SCHEMA_CONTEXT = TestModel.createTestContext();
 
     private DataTree dataTree;
 

@@ -8,10 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -28,18 +28,22 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class MandatoryLeafTest {
 
-    private SchemaContext schemaContext;
+    private static SchemaContext SCHEMA_CONTEXT;
 
-    @Before
-    public void prepare() {
-        schemaContext = TestModel.createTestContext("/mandatory-leaf-test.yang");
-        assertNotNull("Schema context must not be null.", schemaContext);
+    @BeforeClass
+    public static void beforeClass() {
+        SCHEMA_CONTEXT = TestModel.createTestContext("/mandatory-leaf-test.yang");
     }
 
-    private DataTree initDataTree(final boolean enableValidation) {
+    @AfterClass
+    public static void afterClass() {
+        SCHEMA_CONTEXT = null;
+    }
+
+    private static DataTree initDataTree(final boolean enableValidation) {
         return new InMemoryDataTreeFactory().create(
                 new DataTreeConfiguration.Builder(TreeType.CONFIGURATION).setMandatoryNodesValidation(enableValidation)
-                        .build(), schemaContext);
+                        .build(), SCHEMA_CONTEXT);
     }
 
     @Test

@@ -20,14 +20,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModifiedNodeDoesNotExistException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
-public class ErrorReportingTest {
+public class ErrorReportingTest extends AbstractTestModelTest {
 
     private DataTree tree;
 
     @Before
     public void setup() {
-        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL,
-            TestModel.createTestContext());
+        tree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, SCHEMA_CONTEXT);
     }
 
     @Test
