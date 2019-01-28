@@ -78,6 +78,10 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         emptyNode = ImmutableNodes.choiceNode(schema.getQName());
     }
 
+    @Override
+    void deleteModifiedNode(final ModifiedNode modification) {
+        modification.write(emptyNode);
+    }
 
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
