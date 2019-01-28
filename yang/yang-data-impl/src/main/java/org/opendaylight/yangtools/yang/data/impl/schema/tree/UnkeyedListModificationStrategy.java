@@ -36,6 +36,11 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     }
 
     @Override
+    void deleteModifiedNode(final ModifiedNode modification) {
+        modification.write(emptyNode);
+    }
+
+    @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
         return AutomaticLifecycleMixin.apply(super::apply, emptyNode, modification, storeMeta, version);

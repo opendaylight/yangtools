@@ -98,6 +98,14 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
     abstract void mergeIntoModifiedNode(ModifiedNode modification, NormalizedNode<?, ?> value, Version version);
 
     /**
+     * Stage a delete operation into a {@link ModifiedNode}, such that it conforms to the semantics of this node
+     * and works with {@link #apply(ModifiedNode, Optional, Version)}.
+     *
+     * @param modification Original modification node
+     */
+    abstract void deleteModifiedNode(ModifiedNode modification);
+
+    /**
      * Returns a suboperation for specified tree node.
      *
      * @return Reference to suboperation for specified tree node, {@link Optional#empty()}
