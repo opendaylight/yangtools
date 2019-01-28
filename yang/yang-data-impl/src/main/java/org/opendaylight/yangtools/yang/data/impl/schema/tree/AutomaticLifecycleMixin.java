@@ -81,8 +81,7 @@ final class AutomaticLifecycleMixin {
 
         /*
          * At this point ret is guaranteed to be present. We need to take care of the 'magically disappear' part of
-         * our job. Check if there are any child nodes left. If there are none, remove this container and turn the
-         * modification into a DISAPPEARED.
+         * our job. Check if there are any child nodes left.
          */
         final NormalizedNode<?, ?> data = ret.get().getData();
         final boolean empty;
@@ -93,12 +92,25 @@ final class AutomaticLifecycleMixin {
         } else {
             throw new IllegalStateException("Unhandled data " + data);
         }
-
-        if (empty) {
-            modification.resolveModificationType(ModificationType.DISAPPEARED);
-            return Optional.empty();
+        if (!empty) {
+            // We have some nodes, bail out
+            return ret;
         }
-        return ret;
+
+        // We are pulling the 'disappear' trick, but what we report can be three different things
+        final ModificationType finalType;
+        if (!storeMeta.isPresent()) {
+            // ... there was nothing in the datastore, no change
+            finalType = ModificationType.UNMODIFIED;
+        } else if (modification.getOperation() == LogicalOperation.WRITE) {
+            // ... this was an empty write, possibily originally a delete
+            finalType = ModificationType.DELETE;
+        } else {
+            // ... it really disappeared
+            finalType = ModificationType.DISAPPEARED;
+        }
+        modification.resolveModificationType(finalType);
+        return Optional.empty();
     }
 
     static void checkApplicable(final CheckApplicable delegate, final NormalizedNode<?, ?> emptyNode,

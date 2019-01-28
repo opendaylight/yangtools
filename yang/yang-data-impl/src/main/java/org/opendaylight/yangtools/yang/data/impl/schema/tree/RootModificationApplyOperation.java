@@ -112,6 +112,11 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
         getDelegate().mergeIntoModifiedNode(node, value, version);
     }
 
+    @Override
+    final void deleteModifiedNode(final ModifiedNode node) {
+        getDelegate().deleteModifiedNode(node);
+    }
+
     /**
      * Return the underlying delegate.
      *

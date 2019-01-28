@@ -59,6 +59,11 @@ final class AlwaysFailOperation extends ModificationApplyOperation {
     }
 
     @Override
+    void deleteModifiedNode(final ModifiedNode modification) {
+        throw ise();
+    }
+
+    @Override
     void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         throw ise();
     }
