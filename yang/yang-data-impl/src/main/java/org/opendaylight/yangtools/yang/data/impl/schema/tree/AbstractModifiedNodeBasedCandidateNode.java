@@ -14,12 +14,12 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 
@@ -51,7 +51,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return parent == null ? null : parent.getChild(id).orElse(null);
     }
 
-    private static boolean canHaveChildren(@Nullable final TreeNode oldMeta, @Nullable final TreeNode newMeta) {
+    private static boolean canHaveChildren(final @Nullable TreeNode oldMeta, final @Nullable TreeNode newMeta) {
         if (oldMeta != null) {
             return oldMeta.getData() instanceof NormalizedNodeContainer;
         }
@@ -63,7 +63,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
 
     @SuppressWarnings("unchecked")
     private static NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> getContainer(
-            @Nullable final TreeNode meta) {
+            final @Nullable TreeNode meta) {
         return meta == null ? null : (NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>>)meta.getData();
     }
 
@@ -73,7 +73,6 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    @Nonnull
     public Collection<DataTreeCandidateNode> getChildNodes() {
         switch (mod.getModificationType()) {
             case APPEARED:
@@ -88,7 +87,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
                 }
 
                 return Collections2.transform(getContainer(newMeta != null ? newMeta : oldMeta).getValue(),
-                    AbstractRecursiveCandidateNode::unmodifiedNode);
+                    DataTreeCandidateNodes::unmodified);
             case DELETE:
             case WRITE:
                 // This is unusual, the user is requesting we follow into an otherwise-terminal node.
@@ -96,14 +95,13 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
                 if (!canHaveChildren(oldMeta, newMeta)) {
                     return ImmutableList.of();
                 }
-                return AbstractDataTreeCandidateNode.deltaChildren(getContainer(oldMeta), getContainer(newMeta));
+                return DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta));
             default:
                 throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
     }
 
     @Override
-    @Nonnull
     public ModificationType getModificationType() {
         return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
@@ -113,13 +111,11 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    @Nonnull
     public final Optional<NormalizedNode<?, ?>> getDataAfter() {
         return optionalData(newMeta);
     }
 
     @Override
-    @Nonnull
     public final Optional<NormalizedNode<?, ?>> getDataBefore() {
         return optionalData(oldMeta);
     }
@@ -141,14 +137,13 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
                 }
                 final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta)
                         .getChild(identifier);
-                return maybeChild.isPresent() ? AbstractRecursiveCandidateNode.unmodifiedNode(maybeChild.get()) : null;
+                return maybeChild.isPresent() ? DataTreeCandidateNodes.unmodified(maybeChild.get()) : null;
             case DELETE:
             case WRITE:
                 if (!canHaveChildren(oldMeta, newMeta)) {
                     return null;
                 }
-                return AbstractDataTreeCandidateNode.deltaChild(getContainer(oldMeta), getContainer(newMeta),
-                    identifier);
+                return DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta), identifier);
             default:
                 throw new IllegalArgumentException("Unhandled modification type " + mod.getModificationType());
         }
@@ -160,7 +155,6 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         }
 
         @Override
-        @Nonnull
         public PathArgument getIdentifier() {
             return getMod().getIdentifier();
         }

@@ -5,19 +5,16 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.impl.schema.tree;
+package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 
 abstract class AbstractWriteCandidate extends AbstractAvailableLeafCandidateNode {
-    protected AbstractWriteCandidate(final NormalizedNode<?, ?> dataAfter) {
+    AbstractWriteCandidate(final NormalizedNode<?, ?> dataAfter) {
         super(dataAfter);
     }
 
     @Override
-    @Nonnull
     public final ModificationType getModificationType() {
         return ModificationType.WRITE;
     }
