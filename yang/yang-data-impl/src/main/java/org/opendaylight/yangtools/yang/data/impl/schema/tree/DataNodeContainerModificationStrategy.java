@@ -19,9 +19,7 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
@@ -34,9 +32,10 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Type of the container node
  */
-abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer>
+class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
         extends AbstractNodeContainerModificationStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataNodeContainerModificationStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
+
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
                 @Override
@@ -52,18 +51,15 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
                     return SchemaAwareApplyOperation.from(child, treeConfig);
                 }
             });
-    private final T schema;
+
     private final DataTreeConfiguration treeConfig;
+    private final T schema;
 
-    protected AbstractDataNodeContainerModificationStrategy(final T schema,
-            final Class<? extends NormalizedNode<?, ?>> nodeClass, final DataTreeConfiguration treeConfig) {
-        super(nodeClass, treeConfig);
-        this.schema = requireNonNull(schema,"schema");
-        this.treeConfig = requireNonNull(treeConfig,"treeConfig");
-    }
-
-    protected final T getSchema() {
-        return schema;
+    DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
+            final DataTreeConfiguration treeConfig) {
+        super(support, treeConfig);
+        this.schema = requireNonNull(schema, "schema");
+        this.treeConfig = requireNonNull(treeConfig, "treeConfig");
     }
 
     @Override
@@ -78,11 +74,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
-    protected abstract DataContainerNodeBuilder createBuilder(NormalizedNode<?, ?> original);
-
-    @Override
-    public String toString() {
+    public final String toString() {
         return getClass().getSimpleName() + " [" + schema + "]";
     }
 }
