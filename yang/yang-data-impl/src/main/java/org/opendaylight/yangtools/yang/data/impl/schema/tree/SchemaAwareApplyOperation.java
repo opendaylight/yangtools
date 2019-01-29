@@ -13,6 +13,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -21,6 +22,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -30,11 +33,15 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
+    private static final Single<AugmentationIdentifier, AugmentationNode> AUGMENTATION_SUPPORT =
+            new Single<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
+                    ImmutableAugmentationNodeBuilder::create);
 
     public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
@@ -62,12 +69,18 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                    return new AugmentationModificationStrategy(potential, resolvedTree, treeConfig);
+                    return from(potential, resolvedTree, treeConfig);
                 }
             }
         }
 
         return null;
+    }
+
+    static DataNodeContainerModificationStrategy<AugmentationSchemaNode> from(final AugmentationSchemaNode schema,
+            final DataNodeContainer resolved, final DataTreeConfiguration treeConfig) {
+        return new DataNodeContainerModificationStrategy<>(AUGMENTATION_SUPPORT,
+                EffectiveAugmentationSchema.create(schema, resolved), treeConfig);
     }
 
     static void checkConflicting(final ModificationPath path, final boolean condition, final String message)
@@ -83,23 +96,15 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         final SchemaAwareApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
-        } else if (schemaNode.isUserOrdered()) {
-            op = new OrderedMapModificationStrategy(schemaNode, treeConfig);
         } else {
-            op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
+            op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
     private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
-        final SchemaAwareApplyOperation op;
-        if (schemaNode.isUserOrdered()) {
-            op = new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        } else {
-            op = new UnorderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        }
-        return MinMaxElementsValidation.from(op, schemaNode);
+        return MinMaxElementsValidation.from(new LeafSetModificationStrategy(schemaNode, treeConfig), schemaNode);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
@@ -184,11 +189,6 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         if (!current.isPresent()) {
             LOG.trace("Delete operation turned to no-op on missing node {}", modification);
         }
-    }
-
-    @Override
-    protected ChildTrackingPolicy getChildPolicy() {
-        return ChildTrackingPolicy.UNORDERED;
     }
 
     @Override
