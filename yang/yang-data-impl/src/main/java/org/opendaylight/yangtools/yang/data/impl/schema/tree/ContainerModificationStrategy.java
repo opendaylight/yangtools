@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import com.google.common.base.Preconditions;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -22,21 +19,10 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * and by {@link StructuralContainerModificationStrategy} as a delegate.
  */
 class ContainerModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ContainerSchemaNode> {
+    private static final Single<NodeIdentifier, ContainerNode> SUPPORT = new Single<>(ContainerNode.class,
+            ImmutableContainerNodeBuilder::create, ImmutableContainerNodeBuilder::create);
+
     ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(schemaNode, ContainerNode.class, treeConfig);
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof ContainerNode);
-        return ImmutableContainerNodeBuilder.create((ContainerNode) original);
-    }
-
-    @Override
-    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        Preconditions.checkArgument(original instanceof ContainerNode);
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier())
-                .build();
+        super(ContainerNode.class, SUPPORT, schemaNode, treeConfig);
     }
 }

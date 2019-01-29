@@ -7,23 +7,25 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class ListEntryModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ListSchemaNode> {
+    private static final Single<NodeIdentifierWithPredicates, MapEntryNode> SUPPORT = new Single<>(MapEntryNode.class,
+            ImmutableMapEntryNodeBuilder::create, ImmutableMapEntryNodeBuilder::create);
+
     private final MandatoryLeafEnforcer enforcer;
 
     ListEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(schema, MapEntryNode.class, treeConfig);
+        super(MapEntryNode.class, SUPPORT, schema, treeConfig);
         enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
     }
 
@@ -55,19 +57,5 @@ final class ListEntryModificationStrategy extends AbstractDataNodeContainerModif
         final TreeNode ret = super.applyTouch(modification, currentMeta, version);
         enforcer.enforceOnTreeNode(ret);
         return ret;
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof MapEntryNode);
-        return ImmutableMapEntryNodeBuilder.create((MapEntryNode) original);
-    }
-
-    @Override
-    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof MapEntryNode);
-        return ImmutableMapEntryNodeBuilder.create().withNodeIdentifier(((MapEntryNode) original).getIdentifier())
-                .build();
     }
 }
