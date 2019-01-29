@@ -8,8 +8,10 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
+import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
@@ -29,18 +31,23 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 
 abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
-
-    private final Class<? extends NormalizedNode<?, ?>> nodeClass;
+    private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
 
-    protected AbstractNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
+    AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
             final DataTreeConfiguration treeConfig) {
-        this.nodeClass = Preconditions.checkNotNull(nodeClass , "nodeClass");
+        this.support = requireNonNull(support);
         this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
     @Override
+    protected final ChildTrackingPolicy getChildPolicy() {
+        return support.childPolicy;
+    }
+
+    @Override
     void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+        final Class<?> nodeClass = support.requiredClass;
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
         if (verifyChildrenStructure && verifyChildren) {
@@ -106,7 +113,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         mutable.setSubtreeVersion(version);
 
         @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder dataBuilder = createBuilder(newValue);
+        final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(newValue);
         final TreeNode result = mutateChildren(mutable, dataBuilder, version, modification.getChildren());
 
         // We are good to go except one detail: this is a single logical write, but
@@ -197,7 +204,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 // order of operation - parent changes are always resolved before
                 // children ones, and having node in TOUCH means children was modified
                 // before.
-                modification.updateValue(LogicalOperation.MERGE, createEmptyValue(value));
+                modification.updateValue(LogicalOperation.MERGE, support.createEmptyValue(value));
                 return;
             case MERGE:
                 // Merging into an existing node. Merge data children modifications (maybe recursively) and mark
@@ -244,7 +251,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         final Collection<ModifiedNode> children = modification.getChildren();
         if (!children.isEmpty()) {
             @SuppressWarnings("rawtypes")
-            final NormalizedNodeContainerBuilder dataBuilder = createBuilder(currentMeta.getData());
+            final NormalizedNodeContainerBuilder dataBuilder = support.createBuilder(currentMeta.getData());
             final MutableTreeNode newMeta = currentMeta.mutable();
             newMeta.setSubtreeVersion(version);
             final TreeNode ret = mutateChildren(newMeta, dataBuilder, version, children);
@@ -319,8 +326,12 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
         return verifyChildrenStructure;
     }
 
-    @SuppressWarnings("rawtypes")
-    protected abstract NormalizedNodeContainerBuilder createBuilder(NormalizedNode<?, ?> original);
+    @Override
+    public final String toString() {
+        return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
+    }
 
-    protected abstract NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original);
+    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return helper.add("support", support).add("verifyChildren", verifyChildrenStructure);
+    }
 }

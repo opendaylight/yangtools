@@ -20,14 +20,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
+    private static final Single<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
+            new Single<>(UnkeyedListEntryNode.class, ImmutableUnkeyedListEntryNodeBuilder::create,
+                    ImmutableUnkeyedListEntryNodeBuilder::create);
 
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        entryStrategy = Optional.of(new UnkeyedListItemModificationStrategy(schema, treeConfig));
+        entryStrategy = Optional.of(new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig));
     }
 
     @Override

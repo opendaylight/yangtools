@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
 import com.google.common.base.Preconditions;
 import com.google.common.base.Predicates;
 import com.google.common.base.Verify;
@@ -31,21 +29,24 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
-    private final Map<PathArgument, ModificationApplyOperation> childNodes;
+    private static final Single<NodeIdentifier, ChoiceNode> SUPPORT = new Single<>(ChoiceNode.class,
+            ImmutableChoiceNodeBuilder::create, ImmutableChoiceNodeBuilder::create);
+
+    private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
-    private final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
-    private final Map<PathArgument, CaseEnforcer> caseEnforcers;
+    private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
+    private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(ChoiceNode.class, treeConfig);
+        super(SUPPORT, treeConfig);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
@@ -58,7 +59,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                 }
                 for (final Entry<AugmentationIdentifier, AugmentationSchemaNode> e
                         : enforcer.getAugmentationEntries()) {
-                    childBuilder.put(e.getKey(), new AugmentationModificationStrategy(e.getValue(), caze, treeConfig));
+                    childBuilder.put(e.getKey(), SchemaAwareApplyOperation.from(e.getValue(), caze, treeConfig));
                     enforcerBuilder.put(e.getKey(), enforcer);
                 }
             }
@@ -77,13 +78,6 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         return Optional.ofNullable(childNodes.get(child));
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof ChoiceNode);
-        return ImmutableChoiceNodeBuilder.create((ChoiceNode) original);
     }
 
     @Override
@@ -143,12 +137,6 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         final TreeNode ret = super.applyTouch(modification, currentMeta, version);
         enforceCases(ret);
         return ret;
-    }
-
-    @Override
-    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof ChoiceNode);
-        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(((ChoiceNode) original).getIdentifier()).build();
     }
 }
 
