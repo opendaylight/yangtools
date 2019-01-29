@@ -8,22 +8,24 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.MapEntry;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class OrderedMapModificationStrategy extends AbstractMapModificationStrategy {
+    private static final MapEntry<OrderedMapNode> SUPPORT = new MapEntry<>(OrderedMapNode.class,
+            ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
+
     private final OrderedMapNode emptyNode;
 
     OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(OrderedMapNode.class, schema, treeConfig);
+        super(OrderedMapNode.class, SUPPORT, schema, treeConfig);
         emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
     }
 
@@ -44,19 +46,5 @@ final class OrderedMapModificationStrategy extends AbstractMapModificationStrate
     @Override
     protected ChildTrackingPolicy getChildPolicy() {
         return ChildTrackingPolicy.ORDERED;
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Override
-    protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        return original instanceof OrderedMapNode ? ImmutableOrderedMapNodeBuilder.create((OrderedMapNode) original)
-                : super.createBuilder(original);
-    }
-
-    @Override
-    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        return original instanceof OrderedMapNode ? ImmutableOrderedMapNodeBuilder.create()
-                .withNodeIdentifier(((OrderedMapNode) original).getIdentifier()).build()
-                : super.createEmptyValue(original);
     }
 }

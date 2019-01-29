@@ -7,18 +7,17 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -69,8 +68,11 @@ class ContainerModificationStrategy extends AbstractDataNodeContainerModificatio
         }
     }
 
+    private static final Single<NodeIdentifier, ContainerNode> SUPPORT = new Single<>(ContainerNode.class,
+            ImmutableContainerNodeBuilder::create, ImmutableContainerNodeBuilder::create);
+
     ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(schemaNode, ContainerNode.class, treeConfig);
+        super(ContainerNode.class, SUPPORT, schemaNode, treeConfig);
     }
 
     static ModificationApplyOperation of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
@@ -81,19 +83,5 @@ class ContainerModificationStrategy extends AbstractDataNodeContainerModificatio
         }
 
         return new StructuralContainerModificationStrategy(schema, treeConfig);
-    }
-
-    @Override
-    @SuppressWarnings("rawtypes")
-    protected final DataContainerNodeBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof ContainerNode);
-        return ImmutableContainerNodeBuilder.create((ContainerNode) original);
-    }
-
-    @Override
-    protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        Preconditions.checkArgument(original instanceof ContainerNode);
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(((ContainerNode) original).getIdentifier())
-                .build();
     }
 }
