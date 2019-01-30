@@ -7,13 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
@@ -27,27 +23,15 @@ final class AugmentationModificationStrategy
     private static final Single<AugmentationIdentifier, AugmentationNode> SUPPORT = new Single<>(AugmentationNode.class,
             ImmutableAugmentationNodeBuilder::create, ImmutableAugmentationNodeBuilder::create);
 
-    private final AugmentationNode emptyNode;
-
-    AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
+    private AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
         super(AugmentationNode.class, SUPPORT, EffectiveAugmentationSchema.create(schema, resolved), treeConfig);
-        emptyNode = Builders.augmentationBuilder()
-                .withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
-                .build();
     }
 
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+    static AutomaticLifecycleMixin of(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
+            final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new AugmentationModificationStrategy(schema, resolved, treeConfig),
+            Builders.augmentationBuilder().withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
+            .build());
     }
 }
