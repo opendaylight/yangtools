@@ -11,17 +11,52 @@ import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.MapEntry;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-abstract class AbstractMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
+class MapModificationStrategy extends AbstractNodeContainerModificationStrategy {
+    private static final MapEntry<OrderedMapNode> ORDERED_SUPPORT = new MapEntry<>(OrderedMapNode.class,
+            ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
+    private static final MapEntry<MapNode> UNORDERED_SUPPORT = new MapEntry<>(MapNode.class,
+            ImmutableMapNodeBuilder::create, ImmutableMapNodeBuilder::create);
+
+    private static final class Ordered extends MapModificationStrategy {
+        Ordered(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+            super(ORDERED_SUPPORT, schema, treeConfig);
+        }
+
+        @Override
+        protected ChildTrackingPolicy getChildPolicy() {
+            return ChildTrackingPolicy.ORDERED;
+        }
+    }
+
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    AbstractMapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
+    MapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
         final DataTreeConfiguration treeConfig) {
         super(support, treeConfig);
         entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
+    }
+
+    static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        final MapModificationStrategy strategy;
+        final MapNode emptyNode;
+        if (schema.isUserOrdered()) {
+            strategy = new Ordered(schema, treeConfig);
+            emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
+        } else {
+            strategy = new MapModificationStrategy(UNORDERED_SUPPORT, schema, treeConfig);
+            emptyNode = ImmutableNodes.mapNode(schema.getQName());
+        }
+
+        return new AutomaticLifecycleMixin(strategy, emptyNode);
     }
 
     // FIXME: this is a hack, originally introduced in

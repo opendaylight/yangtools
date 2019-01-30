@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class ListEntryModificationStrategy extends AbstractDataNodeContainerModificationStrategy<ListSchemaNode> {
+class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
     private static final class EnforcingMandatory extends ListEntryModificationStrategy {
         private final MandatoryLeafEnforcer enforcer;
 
