@@ -5,14 +5,8 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
-
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -20,12 +14,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class OrderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
-    private final Optional<ModificationApplyOperation> entryStrategy;
-
+final class OrderedMapModificationStrategy extends AbstractMapModificationStrategy {
     OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(OrderedMapNode.class, treeConfig);
-        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
+        super(OrderedMapNode.class, schema, treeConfig);
     }
 
     @Override
@@ -36,24 +27,14 @@ final class OrderedMapModificationStrategy extends AbstractNodeContainerModifica
     @SuppressWarnings("rawtypes")
     @Override
     protected NormalizedNodeContainerBuilder createBuilder(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof OrderedMapNode);
-        return ImmutableOrderedMapNodeBuilder.create((OrderedMapNode) original);
+        return original instanceof OrderedMapNode ? ImmutableOrderedMapNodeBuilder.create((OrderedMapNode) original)
+                : super.createBuilder(original);
     }
 
     @Override
     protected NormalizedNode<?, ?> createEmptyValue(final NormalizedNode<?, ?> original) {
-        checkArgument(original instanceof OrderedMapNode);
-        return ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(((OrderedMapNode) original).getIdentifier())
-                .build();
-    }
-
-    @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-        return identifier instanceof NodeIdentifierWithPredicates ? entryStrategy : Optional.empty();
-    }
-
-    @Override
-    public String toString() {
-        return "OrderedMapModificationStrategy [entry=" + entryStrategy + "]";
+        return original instanceof OrderedMapNode ? ImmutableOrderedMapNodeBuilder.create()
+                .withNodeIdentifier(((OrderedMapNode) original).getIdentifier()).build()
+                : super.createEmptyValue(original);
     }
 }
