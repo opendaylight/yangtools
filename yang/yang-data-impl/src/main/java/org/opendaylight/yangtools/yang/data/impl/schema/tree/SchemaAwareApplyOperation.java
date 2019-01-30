@@ -43,12 +43,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 "Supplied %s does not belongs to configuration tree.", schemaNode.getPath());
         }
         if (schemaNode instanceof ContainerSchemaNode) {
-            final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
-            if (containerSchema.isPresenceContainer()) {
-                return new PresenceContainerModificationStrategy(containerSchema, treeConfig);
-            }
-
-            return new StructuralContainerModificationStrategy(containerSchema, treeConfig);
+            return ContainerModificationStrategy.of((ContainerSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {

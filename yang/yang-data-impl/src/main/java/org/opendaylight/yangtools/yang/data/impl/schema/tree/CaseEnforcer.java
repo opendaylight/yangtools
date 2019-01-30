@@ -7,12 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import com.google.common.collect.Sets;
-import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -26,17 +27,30 @@ import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class CaseEnforcer implements Immutable {
-    private final Map<NodeIdentifier, DataSchemaNode> children;
-    private final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations;
-    private final MandatoryLeafEnforcer enforcer;
+class CaseEnforcer implements Immutable {
+    private static final class EnforcingMandatory extends CaseEnforcer {
+        private final MandatoryLeafEnforcer enforcer;
 
-    private CaseEnforcer(final Map<NodeIdentifier, DataSchemaNode> children,
-                         final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations,
-                         final MandatoryLeafEnforcer enforcer) {
-        this.children = Preconditions.checkNotNull(children);
-        this.augmentations = Preconditions.checkNotNull(augmentations);
-        this.enforcer = Preconditions.checkNotNull(enforcer);
+        EnforcingMandatory(final ImmutableMap<NodeIdentifier, DataSchemaNode> children,
+                final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations,
+                final MandatoryLeafEnforcer enforcer) {
+            super(children, augmentations);
+            this.enforcer = requireNonNull(enforcer);
+        }
+
+        @Override
+        void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
+            enforcer.enforceOnData(normalizedNode);
+        }
+    }
+
+    private final ImmutableMap<NodeIdentifier, DataSchemaNode> children;
+    private final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations;
+
+    CaseEnforcer(final ImmutableMap<NodeIdentifier, DataSchemaNode> children,
+            final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations) {
+        this.children = requireNonNull(children);
+        this.augmentations = requireNonNull(augmentations);
     }
 
     static CaseEnforcer forTree(final CaseSchemaNode schema, final DataTreeConfiguration treeConfig) {
@@ -57,33 +71,37 @@ final class CaseEnforcer implements Immutable {
             }
         }
 
-        final Map<NodeIdentifier, DataSchemaNode> children = childrenBuilder.build();
-        final Map<AugmentationIdentifier, AugmentationSchemaNode> augmentations = augmentationsBuilder.build();
-        return children.isEmpty() ? null
-                : new CaseEnforcer(children, augmentations, MandatoryLeafEnforcer.forContainer(schema, treeConfig));
+        final ImmutableMap<NodeIdentifier, DataSchemaNode> children = childrenBuilder.build();
+        if (children.isEmpty()) {
+            return null;
+        }
+        final ImmutableMap<AugmentationIdentifier, AugmentationSchemaNode> augmentations = augmentationsBuilder.build();
+        final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
+        return enforcer.isPresent() ? new EnforcingMandatory(children, augmentations, enforcer.get())
+                : new CaseEnforcer(children, augmentations);
     }
 
-    Set<Entry<NodeIdentifier, DataSchemaNode>> getChildEntries() {
+    final Set<Entry<NodeIdentifier, DataSchemaNode>> getChildEntries() {
         return children.entrySet();
     }
 
-    Set<NodeIdentifier> getChildIdentifiers() {
+    final Set<NodeIdentifier> getChildIdentifiers() {
         return children.keySet();
     }
 
-    Set<Entry<AugmentationIdentifier, AugmentationSchemaNode>> getAugmentationEntries() {
+    final Set<Entry<AugmentationIdentifier, AugmentationSchemaNode>> getAugmentationEntries() {
         return augmentations.entrySet();
     }
 
-    Set<AugmentationIdentifier> getAugmentationIdentifiers() {
+    final Set<AugmentationIdentifier> getAugmentationIdentifiers() {
         return augmentations.keySet();
     }
 
-    Set<PathArgument> getAllChildIdentifiers() {
+    final Set<PathArgument> getAllChildIdentifiers() {
         return Sets.union(children.keySet(), augmentations.keySet());
     }
 
     void enforceOnTreeNode(final NormalizedNode<?, ?> normalizedNode) {
-        enforcer.enforceOnData(normalizedNode);
+        // Default is no-op
     }
 }
