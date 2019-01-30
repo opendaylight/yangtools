@@ -15,17 +15,17 @@ final class NotUpgradableModificationApplyOperation extends RootModificationAppl
     }
 
     @Override
-    public ModificationApplyOperation getDelegate() {
+    ModificationApplyOperation delegate() {
         return delegate;
     }
 
     @Override
-    public void upgradeIfPossible() {
+    void upgradeIfPossible() {
         // Intentional noop
     }
 
     @Override
-    public RootModificationApplyOperation snapshot() {
+    RootModificationApplyOperation snapshot() {
         return this;
     }
 }
