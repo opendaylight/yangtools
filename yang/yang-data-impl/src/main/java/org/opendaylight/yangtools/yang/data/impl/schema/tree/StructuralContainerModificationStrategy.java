@@ -37,16 +37,18 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
      * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
      */
     private static final Version FAKE_VERSION = Version.initial();
+
     private final ContainerModificationStrategy delegate;
+    private final ContainerNode emptyNode;
 
     StructuralContainerModificationStrategy(final ContainerSchemaNode schemaNode,
         final DataTreeConfiguration treeConfig) {
         this.delegate = new ContainerModificationStrategy(schemaNode, treeConfig);
+        this.emptyNode = ImmutableNodes.containerNode(schemaNode.getQName());
     }
 
     private Optional<TreeNode> fakeMeta(final Version version) {
-        final ContainerNode container = ImmutableNodes.containerNode(delegate.getSchema().getQName());
-        return Optional.of(TreeNodeFactory.createTreeNode(container, version));
+        return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
     }
 
     @Override
