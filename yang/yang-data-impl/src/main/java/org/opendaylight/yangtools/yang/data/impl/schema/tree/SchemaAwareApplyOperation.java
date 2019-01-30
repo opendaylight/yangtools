@@ -174,7 +174,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param current current node in TreeNode for modification to apply
      * @throws DataValidationFailedException when a data dependency conflict is detected
      */
-    protected void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
+    private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
