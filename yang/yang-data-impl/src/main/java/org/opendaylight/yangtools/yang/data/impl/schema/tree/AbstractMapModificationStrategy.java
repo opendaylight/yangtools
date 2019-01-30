@@ -30,7 +30,7 @@ abstract class AbstractMapModificationStrategy extends AbstractNodeContainerModi
     AbstractMapModificationStrategy(final Class<? extends MapNode> nodeClass, final ListSchemaNode schema,
             final DataTreeConfiguration treeConfig) {
         super(nodeClass, treeConfig);
-        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
+        entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
     @Override
