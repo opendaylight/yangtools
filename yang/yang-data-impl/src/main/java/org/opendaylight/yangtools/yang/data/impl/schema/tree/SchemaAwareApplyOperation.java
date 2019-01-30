@@ -85,10 +85,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         final SchemaAwareApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
-        } else if (schemaNode.isUserOrdered()) {
-            op = new OrderedMapModificationStrategy(schemaNode, treeConfig);
         } else {
-            op = new UnorderedMapModificationStrategy(schemaNode, treeConfig);
+            op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
 
         return MinMaxElementsValidation.from(op, schemaNode);
@@ -96,13 +94,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
-        final SchemaAwareApplyOperation op;
-        if (schemaNode.isUserOrdered()) {
-            op = new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        } else {
-            op = new UnorderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        }
-        return MinMaxElementsValidation.from(op, schemaNode);
+        return MinMaxElementsValidation.from(LeafSetModificationStrategy.of(schemaNode, treeConfig), schemaNode);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -97,4 +98,9 @@ abstract class NormalizedNodeContainerSupport<K extends PathArgument, T extends 
     abstract NormalizedNodeContainerBuilder createBuilder(NormalizedNode<?, ?> original);
 
     abstract NormalizedNode<?, ?> createEmptyValue(NormalizedNode<?, ?> original);
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(this).add("requiredClass", requiredClass).toString();
+    }
 }

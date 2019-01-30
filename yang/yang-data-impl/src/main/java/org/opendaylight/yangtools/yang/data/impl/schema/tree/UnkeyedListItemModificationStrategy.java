@@ -19,6 +19,6 @@ final class UnkeyedListItemModificationStrategy extends AbstractDataNodeContaine
             ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
 
     UnkeyedListItemModificationStrategy(final ListSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(UnkeyedListEntryNode.class, SUPPORT, schemaNode, treeConfig);
+        super(SUPPORT, schemaNode, treeConfig);
     }
 }
