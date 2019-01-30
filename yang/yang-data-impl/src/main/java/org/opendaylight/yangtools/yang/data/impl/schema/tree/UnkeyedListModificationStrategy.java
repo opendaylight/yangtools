@@ -31,8 +31,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
     private final Optional<ModificationApplyOperation> entryStrategy;
 
     private UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        entryStrategy = Optional.of(new DataNodeContainerModificationStrategy<>(UnkeyedListEntryNode.class, SUPPORT,
-            schema, treeConfig));
+        entryStrategy = Optional.of(new DataNodeContainerModificationStrategy<>(SUPPORT, schema, treeConfig));
     }
 
     static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
