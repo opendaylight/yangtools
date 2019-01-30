@@ -96,13 +96,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
-        final SchemaAwareApplyOperation op;
-        if (schemaNode.isUserOrdered()) {
-            op = new OrderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        } else {
-            op = new UnorderedLeafSetModificationStrategy(schemaNode, treeConfig);
-        }
-        return MinMaxElementsValidation.from(op, schemaNode);
+        return MinMaxElementsValidation.from(LeafSetModificationStrategy.of(schemaNode, treeConfig), schemaNode);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,

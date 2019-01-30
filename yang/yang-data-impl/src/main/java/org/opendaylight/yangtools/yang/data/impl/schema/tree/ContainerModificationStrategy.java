@@ -72,7 +72,7 @@ class ContainerModificationStrategy extends AbstractDataNodeContainerModificatio
             ImmutableContainerNodeBuilder::create, ImmutableContainerNodeBuilder::create);
 
     ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(ContainerNode.class, SUPPORT, schemaNode, treeConfig);
+        super(SUPPORT, schemaNode, treeConfig);
     }
 
     static ModificationApplyOperation of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {

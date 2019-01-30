@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ChoiceModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
+final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private static final Single<NodeIdentifier, ChoiceNode> SUPPORT = new Single<>(ChoiceNode.class,
             ImmutableChoiceNodeBuilder::create, ImmutableChoiceNodeBuilder::create);
 
@@ -49,7 +49,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerSupportModif
     private final ChoiceNode emptyNode;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(ChoiceNode.class, SUPPORT, treeConfig);
+        super(SUPPORT, treeConfig);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();

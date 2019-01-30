@@ -11,17 +11,16 @@ import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.MapEntry;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-abstract class AbstractMapModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
-    final Optional<ModificationApplyOperation> entryStrategy;
+abstract class AbstractMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
+    private final Optional<ModificationApplyOperation> entryStrategy;
 
-    AbstractMapModificationStrategy(final Class<? extends MapNode> nodeClass, final MapEntry<?> support,
-            final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(nodeClass, support, treeConfig);
+    AbstractMapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
+        final DataTreeConfiguration treeConfig) {
+        super(support, treeConfig);
         entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 

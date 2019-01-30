@@ -67,7 +67,7 @@ class ListEntryModificationStrategy extends AbstractDataNodeContainerModificatio
             ImmutableMapEntryNodeBuilder::create, ImmutableMapEntryNodeBuilder::create);
 
     ListEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(MapEntryNode.class, SUPPORT, schema, treeConfig);
+        super(SUPPORT, schema, treeConfig);
     }
 
     static ListEntryModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {

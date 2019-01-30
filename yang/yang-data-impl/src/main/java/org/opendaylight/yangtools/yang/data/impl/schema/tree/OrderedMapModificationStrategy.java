@@ -25,7 +25,7 @@ final class OrderedMapModificationStrategy extends AbstractMapModificationStrate
     private final OrderedMapNode emptyNode;
 
     OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(OrderedMapNode.class, SUPPORT, schema, treeConfig);
+        super(SUPPORT, schema, treeConfig);
         emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
     }
 

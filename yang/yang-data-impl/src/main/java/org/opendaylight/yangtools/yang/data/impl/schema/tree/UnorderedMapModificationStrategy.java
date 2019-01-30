@@ -25,7 +25,7 @@ final class UnorderedMapModificationStrategy extends AbstractMapModificationStra
     private final MapNode emptyNode;
 
     UnorderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(MapNode.class, SUPPORT, schema, treeConfig);
+        super(SUPPORT, schema, treeConfig);
         emptyNode = ImmutableNodes.mapNode(schema.getQName());
     }
 
