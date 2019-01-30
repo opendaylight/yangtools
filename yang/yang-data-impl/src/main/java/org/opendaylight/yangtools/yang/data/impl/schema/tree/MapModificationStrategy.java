@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -16,9 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
@@ -33,7 +28,7 @@ class MapModificationStrategy extends AbstractNodeContainerModificationStrategy 
 
     private static final class Ordered extends MapModificationStrategy {
         Ordered(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-            super(ORDERED_SUPPORT, schema, treeConfig, ImmutableNodes.orderedMapNode(schema.getQName()));
+            super(ORDERED_SUPPORT, schema, treeConfig);
         }
 
         @Override
@@ -43,19 +38,25 @@ class MapModificationStrategy extends AbstractNodeContainerModificationStrategy 
     }
 
     private final Optional<ModificationApplyOperation> entryStrategy;
-    private final MapNode emptyNode;
 
     MapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
-        final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
+        final DataTreeConfiguration treeConfig) {
         super(support, treeConfig);
-        this.emptyNode = requireNonNull(emptyNode);
         entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
-    static MapModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        return schema.isUserOrdered() ?  new Ordered(schema, treeConfig)
-                : new MapModificationStrategy(UNORDERED_SUPPORT, schema, treeConfig,
-                    ImmutableNodes.mapNode(schema.getQName()));
+    static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        final MapModificationStrategy strategy;
+        final MapNode emptyNode;
+        if (schema.isUserOrdered()) {
+            strategy = new Ordered(schema, treeConfig);
+            emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
+        } else {
+            strategy = new MapModificationStrategy(UNORDERED_SUPPORT, schema, treeConfig);
+            emptyNode = ImmutableNodes.mapNode(schema.getQName());
+        }
+
+        return new AutomaticLifecycleMixin(strategy, emptyNode);
     }
 
     // FIXME: this is a hack, originally introduced in
@@ -71,20 +72,6 @@ class MapModificationStrategy extends AbstractNodeContainerModificationStrategy 
         // if we have one. If the entryStrategy cannot find this child we just return the absent
         // we get from it.
         return entryStrategy.get().getChild(identifier);
-    }
-
-    @Override
-    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
     }
 
     @Override
