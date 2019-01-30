@@ -7,12 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
@@ -25,24 +20,13 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * root anchors for that validation.
  */
 final class StructuralContainerModificationStrategy extends ContainerModificationStrategy {
-    private final ContainerNode emptyNode;
-
-    StructuralContainerModificationStrategy(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    private StructuralContainerModificationStrategy(final ContainerSchemaNode schema,
+            final DataTreeConfiguration treeConfig) {
         super(schema, treeConfig);
-        this.emptyNode = ImmutableNodes.containerNode(schema.getQName());
     }
 
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+    static AutomaticLifecycleMixin of(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new StructuralContainerModificationStrategy(schema, treeConfig),
+            ImmutableNodes.containerNode(schema.getQName()));
     }
 }
