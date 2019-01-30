@@ -166,15 +166,15 @@ final class MinMaxElementsValidation extends SchemaAwareApplyOperation {
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+            final Optional<TreeNode> currentMeta, final Version version) {
         final TreeNode validated = modification.getValidatedNode(this, currentMeta);
         if (validated != null) {
             return validated;
         }
 
         // FIXME: the result moved, make sure we enforce again
-        return delegate.applyWrite(modification, currentMeta, version);
+        return delegate.applyWrite(modification, newValue, currentMeta, version);
     }
 
     @Override

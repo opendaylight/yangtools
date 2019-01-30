@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
@@ -101,8 +102,9 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @return Currently-written value
      */
+    @Nonnull
     NormalizedNode<?, ?> getWrittenValue() {
-        return value;
+        return verifyNotNull(value);
     }
 
     /**

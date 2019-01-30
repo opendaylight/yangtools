@@ -131,9 +131,9 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     }
 
     @Override
-    protected TreeNode applyWrite(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
-        final TreeNode ret = super.applyWrite(modification, currentMeta, version);
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+            final Optional<TreeNode> currentMeta, final Version version) {
+        final TreeNode ret = super.applyWrite(modification, newValue, currentMeta, version);
         enforceCases(ret);
         return ret;
     }
