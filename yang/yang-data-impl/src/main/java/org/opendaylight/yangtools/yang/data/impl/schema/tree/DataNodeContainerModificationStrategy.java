@@ -33,9 +33,9 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Type of the container node
  */
-abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer>
+class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
         extends AbstractNodeContainerSupportModificationStrategy {
-    private static final Logger LOG = LoggerFactory.getLogger(AbstractDataNodeContainerModificationStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
 
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
             .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
@@ -56,7 +56,7 @@ abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeC
     private final DataTreeConfiguration treeConfig;
     private final T schema;
 
-    AbstractDataNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
+    DataNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
             final NormalizedNodeContainerSupport<?, ?> support, final T schema,
             final DataTreeConfiguration treeConfig) {
         super(nodeClass, support, treeConfig);
