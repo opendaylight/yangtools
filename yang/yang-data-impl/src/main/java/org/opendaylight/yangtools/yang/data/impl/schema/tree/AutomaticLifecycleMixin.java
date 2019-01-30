@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -21,35 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * Mixin-type support class for subclasses of {@link ModificationApplyOperation} which need to provide automatic
  * lifecycle management.
  */
-final class AutomaticLifecycleMixin {
-    /**
-     * This is a capture of {@link ModificationApplyOperation#apply(ModifiedNode, Optional, Version)}.
-     */
-    @FunctionalInterface
-    interface Apply {
-        Optional<TreeNode> apply(ModifiedNode modification, Optional<TreeNode> storeMeta, Version version);
-    }
-
-    /**
-     * This is a capture of
-     * {@link SchemaAwareApplyOperation#applyWrite(ModifiedNode, NormalizedNode, Optional, Version)}.
-     */
-    @FunctionalInterface
-    interface ApplyWrite {
-        TreeNode applyWrite(ModifiedNode modification, NormalizedNode<?, ?> newValue, Optional<TreeNode> storeMeta,
-                Version version);
-    }
-
-    /**
-     * This is a capture of
-     * {@link ModificationApplyOperation#checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
-     */
-    @FunctionalInterface
-    interface CheckApplicable {
-        void checkApplicable(ModificationPath path, NodeModification modification, Optional<TreeNode> current,
-                Version version) throws DataValidationFailedException;
-    }
-
+final class AutomaticLifecycleMixin extends NonApplyDelegatedModificationApplyOperation {
     /**
      * Fake TreeNode version used in
      * {@link #checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
@@ -58,12 +32,21 @@ final class AutomaticLifecycleMixin {
      */
     private static final Version FAKE_VERSION = Version.initial();
 
-    private AutomaticLifecycleMixin() {
+    private final SchemaAwareApplyOperation delegate;
+    private final NormalizedNode<?, ?> emptyNode;
 
+    AutomaticLifecycleMixin(final SchemaAwareApplyOperation delegate, final NormalizedNode<?, ?> emptyNode) {
+        this.delegate = requireNonNull(delegate);
+        this.emptyNode = requireNonNull(emptyNode);
     }
 
-    static Optional<TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
-            final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+    @Override
+    SchemaAwareApplyOperation delegate() {
+        return delegate;
+    }
+
+    @Override
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
         // The only way a tree node can disappear is through delete (which we handle here explicitly) or through
         // actions of disappearResult(). It is therefore safe to perform Optional.get() on the results of
@@ -74,9 +57,9 @@ final class AutomaticLifecycleMixin {
                 return delegate.apply(modification, storeMeta, version);
             }
             // Delete with children, implies it really is an empty write
-            ret = writeDelegate.applyWrite(modification, emptyNode, storeMeta, version);
+            ret = delegate.applyWrite(modification, emptyNode, storeMeta, version);
         } else if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
-            ret = applyTouch(delegate, emptyNode, modification, storeMeta, version);
+            ret = applyTouch(modification, storeMeta, version);
         } else {
             // No special handling required here, run normal apply operation
             ret = delegate.apply(modification, storeMeta, version).get();
@@ -85,9 +68,9 @@ final class AutomaticLifecycleMixin {
         return disappearResult(modification, ret, storeMeta);
     }
 
-    static void checkApplicable(final CheckApplicable delegate, final NormalizedNode<?, ?> emptyNode,
-            final ModificationPath path, final NodeModification modification, final Optional<TreeNode> current,
-            final Version version) throws DataValidationFailedException {
+    @Override
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (modification.getOperation() == LogicalOperation.TOUCH && !current.isPresent()) {
             // Structural containers are created as needed, so we pretend this container is here
             delegate.checkApplicable(path, modification, fakeMeta(emptyNode, FAKE_VERSION), version);
@@ -96,8 +79,8 @@ final class AutomaticLifecycleMixin {
         }
     }
 
-    private static TreeNode applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
-            final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
+    private TreeNode applyTouch(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
+            final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
         final Optional<TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
 

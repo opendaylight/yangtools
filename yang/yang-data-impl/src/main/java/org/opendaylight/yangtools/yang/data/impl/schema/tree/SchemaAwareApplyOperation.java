@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -23,6 +24,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
+import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -32,10 +37,15 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
+    private static final Single<AugmentationIdentifier, AugmentationNode> AUGMENTATION_SUPPORT =
+            new Single<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
+                    ImmutableAugmentationNodeBuilder::create);
+
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
 
     public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
@@ -49,7 +59,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
-            return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeConfig);
+            return ChoiceModificationStrategy.of((ChoiceSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof LeafSchemaNode) {
@@ -58,18 +68,26 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
 
-    public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
+    public static ModificationApplyOperation from(final DataNodeContainer resolvedTree,
             final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
             final DataTreeConfiguration treeConfig) {
         for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
-                    return new AugmentationModificationStrategy(potential, resolvedTree, treeConfig);
+                    return from(potential, resolvedTree, treeConfig);
                 }
             }
         }
 
         return null;
+    }
+
+    static AutomaticLifecycleMixin from(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
+            final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new DataNodeContainerModificationStrategy<>(AUGMENTATION_SUPPORT,
+                EffectiveAugmentationSchema.create(schema, resolved), treeConfig),
+            Builders.augmentationBuilder().withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
+            .build());
     }
 
     static void checkConflicting(final ModificationPath path, final boolean condition, final String message)
@@ -82,9 +100,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation op;
+        final ModificationApplyOperation op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
-            op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
+            op = UnkeyedListModificationStrategy.of(schemaNode, treeConfig);
         } else {
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
@@ -112,7 +130,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
+    final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
             case DELETE:
@@ -182,7 +200,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     }
 
     @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
         switch (modification.getOperation()) {
             case DELETE:
