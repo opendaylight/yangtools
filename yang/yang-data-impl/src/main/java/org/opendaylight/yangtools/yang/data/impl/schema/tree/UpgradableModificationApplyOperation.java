@@ -41,13 +41,12 @@ final class UpgradableModificationApplyOperation extends RootModificationApplyOp
     }
 
     @Override
-    ModificationApplyOperation getDelegate() {
+    ModificationApplyOperation delegate() {
         return delegate;
     }
 
     @Override
     RootModificationApplyOperation snapshot() {
-        return new UpgradableModificationApplyOperation(holder, getDelegate());
+        return new UpgradableModificationApplyOperation(holder, delegate);
     }
-
 }
