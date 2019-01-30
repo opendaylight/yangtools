@@ -16,13 +16,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
  * General container modification strategy. This is used by {@link EnforcingMandatory} in case of presence containers
- * with mandatory nodes, as it needs to tap into {@link SchemaAwareApplyOperation}'s operations, or subclassed
- * for the purposes of {@link StructuralContainerModificationStrategy}'s automatic lifecycle.
+ * with mandatory nodes, as it needs to tap into {@link SchemaAwareApplyOperation}'s operations, or wrapped through
+ * {@link AutomaticLifecycleMixin} when the container is a structural one.
  */
 class ContainerModificationStrategy extends DataNodeContainerModificationStrategy<ContainerSchemaNode> {
     private static final class EnforcingMandatory extends ContainerModificationStrategy {
@@ -79,6 +80,7 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
                     : new ContainerModificationStrategy(schema, treeConfig);
         }
 
-        return new StructuralContainerModificationStrategy(schema, treeConfig);
+        return new AutomaticLifecycleMixin(new ContainerModificationStrategy(schema, treeConfig),
+            ImmutableNodes.containerNode(schema.getQName()));
     }
 }
