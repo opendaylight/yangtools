@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 /**
  * A {@link ModificationApplyOperation} which delegates all invocations to a backing instance.
  */
-abstract class FullyDelegatedModificationApplyOperation extends DelegatingModificationApplyOperation {
+abstract class FullyDelegatedModificationApplyOperation extends NonApplyDelegatedModificationApplyOperation {
     @Override
     final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
             final Version version) {
@@ -27,10 +26,5 @@ abstract class FullyDelegatedModificationApplyOperation extends DelegatingModifi
     final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         delegate().checkApplicable(path, modification, current, version);
-    }
-
-    @Override
-    final void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        delegate().verifyStructure(modification, verifyChildren);
     }
 }

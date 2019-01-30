@@ -29,7 +29,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -45,9 +44,8 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     // FIXME: enforce leaves not coming from two case statements at the same time
     private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
-    private final ChoiceNode emptyNode;
 
-    ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    private ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(ChoiceNode.class, treeConfig);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
@@ -61,7 +59,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                 }
                 for (final Entry<AugmentationIdentifier, AugmentationSchemaNode> e
                         : enforcer.getAugmentationEntries()) {
-                    childBuilder.put(e.getKey(), new AugmentationModificationStrategy(e.getValue(), caze, treeConfig));
+                    childBuilder.put(e.getKey(), AugmentationModificationStrategy.of(e.getValue(), caze, treeConfig));
                     enforcerBuilder.put(e.getKey(), enforcer);
                 }
             }
@@ -75,21 +73,11 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
                 Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
         }
         exclusions = ImmutableMap.copyOf(exclusionsBuilder);
-        emptyNode = ImmutableNodes.choiceNode(schema.getQName());
     }
 
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+    static AutomaticLifecycleMixin of(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new ChoiceModificationStrategy(schema, treeConfig),
+            ImmutableNodes.choiceNode(schema.getQName()));
     }
 
     @Override
