@@ -45,10 +45,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                 schemaNode.getPath());
         }
         if (schemaNode instanceof ContainerSchemaNode) {
-            final ContainerSchemaNode containerSchema = (ContainerSchemaNode) schemaNode;
-            return containerSchema.isPresenceContainer()
-                    ? new PresenceContainerModificationStrategy(containerSchema, treeConfig)
-                            : new StructuralContainerModificationStrategy(containerSchema, treeConfig);
+            return ContainerModificationStrategy.of((ContainerSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ListSchemaNode) {
             return fromListSchemaNode((ListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof ChoiceSchemaNode) {
