@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.MapEntry;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-abstract class AbstractMapModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
+abstract class AbstractMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     final Optional<ModificationApplyOperation> entryStrategy;
 
     AbstractMapModificationStrategy(final Class<? extends MapNode> nodeClass, final MapEntry<?> support,
