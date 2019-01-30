@@ -7,13 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-
 /**
  * Represents a {@link ModificationApplyOperation} which is rooted at conceptual
  * top of data tree.
@@ -58,66 +51,29 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * update of schema and user actually writes data after schema update. During
  * update user did not invoked any operation.
  */
-abstract class RootModificationApplyOperation extends ModificationApplyOperation {
+abstract class RootModificationApplyOperation extends FullyDelegatedModificationApplyOperation {
 
-    @Override
-    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return getDelegate().getChild(child);
-    }
-
-    @Override
-    final void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        getDelegate().checkApplicable(path, modification, current, version);
-    }
-
-    @Override
-    final Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
-            final Version version) {
-        return getDelegate().apply(modification, currentMeta, version);
+    static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
+        if (resolver instanceof RootModificationApplyOperation) {
+            return ((RootModificationApplyOperation) resolver).snapshot();
+        }
+        return new NotUpgradableModificationApplyOperation(resolver);
     }
 
     @Override
     public final boolean equals(final Object obj) {
-        return getDelegate().equals(obj);
+        return delegate().equals(obj);
     }
 
     @Override
     public final int hashCode() {
-        return getDelegate().hashCode();
+        return delegate().hashCode();
     }
 
     @Override
     public final String toString() {
-        return getDelegate().toString();
+        return delegate().toString();
     }
-
-    @Override
-    final void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        getDelegate().verifyStructure(modification, verifyChildren);
-    }
-
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        getDelegate().recursivelyVerifyStructure(value);
-    }
-
-    @Override
-    final ChildTrackingPolicy getChildPolicy() {
-        return getDelegate().getChildPolicy();
-    }
-
-    @Override
-    final void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-        getDelegate().mergeIntoModifiedNode(node, value, version);
-    }
-
-    /**
-     * Return the underlying delegate.
-     *
-     * @return Underlying delegate.
-     */
-    abstract ModificationApplyOperation getDelegate();
 
     /**
      * Creates a snapshot from this modification, which may have separate
@@ -141,11 +97,4 @@ abstract class RootModificationApplyOperation extends ModificationApplyOperation
      * {@link LatestOperationHolder#setCurrent(ModificationApplyOperation)}.
      */
     abstract void upgradeIfPossible();
-
-    static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
-        if (resolver instanceof RootModificationApplyOperation) {
-            return ((RootModificationApplyOperation) resolver).snapshot();
-        }
-        return new NotUpgradableModificationApplyOperation(resolver);
-    }
 }
