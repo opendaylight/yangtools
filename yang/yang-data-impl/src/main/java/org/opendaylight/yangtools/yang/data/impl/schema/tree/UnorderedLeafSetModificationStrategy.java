@@ -9,9 +9,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -19,13 +16,9 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-final class UnorderedLeafSetModificationStrategy extends AbstractNodeContainerModificationStrategy {
-    private final Optional<ModificationApplyOperation> entryStrategy;
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+final class UnorderedLeafSetModificationStrategy extends AbstractLeafSetModificationStrategy {
     UnorderedLeafSetModificationStrategy(final LeafListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super((Class) LeafSetNode.class, treeConfig);
-        entryStrategy = Optional.of(new LeafSetEntryModificationStrategy(schema));
+        super(schema, treeConfig);
     }
 
     @SuppressWarnings("rawtypes")
@@ -40,10 +33,5 @@ final class UnorderedLeafSetModificationStrategy extends AbstractNodeContainerMo
         checkArgument(original instanceof LeafSetNode<?>);
         return ImmutableLeafSetNodeBuilder.create().withNodeIdentifier(((LeafSetNode<?>) original).getIdentifier())
                 .build();
-    }
-
-    @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-        return identifier instanceof NodeWithValue ? entryStrategy : Optional.empty();
     }
 }
