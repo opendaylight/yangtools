@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -16,9 +14,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
@@ -33,16 +28,14 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
             ChildTrackingPolicy.UNORDERED, ImmutableMapNodeBuilder::create, ImmutableMapNodeBuilder::create);
 
     private final Optional<ModificationApplyOperation> entryStrategy;
-    private final MapNode emptyNode;
 
     private MapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
-        final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
+        final DataTreeConfiguration treeConfig) {
         super(support, treeConfig);
-        this.emptyNode = requireNonNull(emptyNode);
         entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
-    static MapModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         final MapEntry<?> support;
         final MapNode emptyNode;
         if (schema.isUserOrdered()) {
@@ -52,7 +45,7 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
             support = UNORDERED_SUPPORT;
             emptyNode = ImmutableNodes.mapNode(schema.getQName());
         }
-        return new MapModificationStrategy(support, schema, treeConfig, emptyNode);
+        return new AutomaticLifecycleMixin(new MapModificationStrategy(support, schema, treeConfig), emptyNode);
     }
 
     // FIXME: this is a hack, originally introduced in
@@ -68,20 +61,6 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
         // if we have one. If the entryStrategy cannot find this child we just return the absent
         // we get from it.
         return entryStrategy.get().getChild(identifier);
-    }
-
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
     }
 
     @Override
