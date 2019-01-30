@@ -25,7 +25,7 @@ final class UnorderedMapModificationStrategy extends AbstractNodeContainerModifi
 
     private UnorderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(MapNode.class, treeConfig);
-        entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
+        entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
     static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
