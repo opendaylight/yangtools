@@ -19,7 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 // FIXME: getChild() and MapEntry here are hacks, originally introduced in
 //        Change-Id: I9dc02a1917f38e8a0d62279843974b9869c48693. DataTreeRoot needs to be fixed up to properly
 //        handle the lookup of through maps.
-abstract class AbstractMapModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
+abstract class AbstractMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     final Optional<ModificationApplyOperation> entryStrategy;
 
     AbstractMapModificationStrategy(final Class<? extends MapNode> nodeClass, final MapEntry<?> support,

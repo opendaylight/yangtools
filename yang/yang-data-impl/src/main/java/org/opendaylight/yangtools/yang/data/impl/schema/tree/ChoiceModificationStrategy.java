@@ -38,7 +38,7 @@ import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ChoiceModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
+final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private static final Single<NodeIdentifier, ChoiceNode> SUPPORT = new Single<>(ChoiceNode.class,
             ImmutableChoiceNodeBuilder::create, ImmutableChoiceNodeBuilder::create);
 

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> Type of the container node
  */
 abstract class AbstractDataNodeContainerModificationStrategy<T extends DataNodeContainer>
-        extends AbstractNodeContainerSupportModificationStrategy {
+        extends AbstractNodeContainerModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractDataNodeContainerModificationStrategy.class);
 
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
