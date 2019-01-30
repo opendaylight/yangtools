@@ -16,9 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
@@ -26,26 +23,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class OrderedMapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private final Optional<ModificationApplyOperation> entryStrategy;
-    private final OrderedMapNode emptyNode;
 
-    OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    private OrderedMapModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(OrderedMapNode.class, treeConfig);
         entryStrategy = Optional.of(new ListEntryModificationStrategy(schema, treeConfig));
-        emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
     }
 
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+    static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new OrderedMapModificationStrategy(schema, treeConfig),
+            ImmutableNodes.orderedMapNode(schema.getQName()));
     }
 
     @Override

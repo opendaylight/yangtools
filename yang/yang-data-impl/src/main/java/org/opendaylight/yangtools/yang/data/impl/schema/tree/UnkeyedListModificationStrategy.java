@@ -12,9 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.MutableTreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -26,27 +24,15 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUn
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
-
     private final Optional<ModificationApplyOperation> entryStrategy;
-    private final UnkeyedListNode emptyNode;
 
-    UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    private UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         entryStrategy = Optional.of(new UnkeyedListItemModificationStrategy(schema, treeConfig));
-        emptyNode = ImmutableNodes.listNode(schema.getQName());
     }
 
-    @Override
-    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
-            final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
-            version);
-    }
-
-    @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+    static AutomaticLifecycleMixin of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        return new AutomaticLifecycleMixin(new UnkeyedListModificationStrategy(schema, treeConfig),
+            ImmutableNodes.listNode(schema.getQName()));
     }
 
     @Override
