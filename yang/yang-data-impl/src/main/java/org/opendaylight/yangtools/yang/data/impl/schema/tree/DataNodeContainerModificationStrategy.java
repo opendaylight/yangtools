@@ -19,7 +19,6 @@ import java.util.concurrent.ExecutionException;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @param <T> Type of the container node
  */
 class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
-        extends AbstractNodeContainerSupportModificationStrategy {
+        extends AbstractNodeContainerModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
 
     private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
@@ -56,10 +55,9 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
     private final DataTreeConfiguration treeConfig;
     private final T schema;
 
-    DataNodeContainerModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass,
-            final NormalizedNodeContainerSupport<?, ?> support, final T schema,
+    DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
             final DataTreeConfiguration treeConfig) {
-        super(nodeClass, support, treeConfig);
+        super(support, treeConfig);
         this.schema = requireNonNull(schema, "schema");
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
     }

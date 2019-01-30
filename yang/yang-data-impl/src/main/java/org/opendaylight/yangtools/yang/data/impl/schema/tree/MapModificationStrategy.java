@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOr
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.MapEntry;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class MapModificationStrategy extends AbstractNodeContainerSupportModificationStrategy {
+class MapModificationStrategy extends AbstractNodeContainerModificationStrategy {
     private static final MapEntry<OrderedMapNode> ORDERED_SUPPORT = new MapEntry<>(OrderedMapNode.class,
             ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
     private static final MapEntry<MapNode> UNORDERED_SUPPORT = new MapEntry<>(MapNode.class,
@@ -28,7 +28,7 @@ class MapModificationStrategy extends AbstractNodeContainerSupportModificationSt
 
     private static final class Ordered extends MapModificationStrategy {
         Ordered(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-            super(OrderedMapNode.class, ORDERED_SUPPORT, schema, treeConfig);
+            super(ORDERED_SUPPORT, schema, treeConfig);
         }
 
         @Override
@@ -39,9 +39,9 @@ class MapModificationStrategy extends AbstractNodeContainerSupportModificationSt
 
     private final Optional<ModificationApplyOperation> entryStrategy;
 
-    MapModificationStrategy(final Class<? extends MapNode> nodeClass, final MapEntry<?> support,
-            final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(nodeClass, support, treeConfig);
+    MapModificationStrategy(final MapEntry<?> support, final ListSchemaNode schema,
+        final DataTreeConfiguration treeConfig) {
+        super(support, treeConfig);
         entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
@@ -52,7 +52,7 @@ class MapModificationStrategy extends AbstractNodeContainerSupportModificationSt
             strategy = new Ordered(schema, treeConfig);
             emptyNode = ImmutableNodes.orderedMapNode(schema.getQName());
         } else {
-            strategy = new MapModificationStrategy(MapNode.class, UNORDERED_SUPPORT, schema, treeConfig);
+            strategy = new MapModificationStrategy(UNORDERED_SUPPORT, schema, treeConfig);
             emptyNode = ImmutableNodes.mapNode(schema.getQName());
         }
 

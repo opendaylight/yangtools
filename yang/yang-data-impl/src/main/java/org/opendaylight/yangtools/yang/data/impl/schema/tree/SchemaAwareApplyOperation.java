@@ -84,9 +84,8 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
 
     static AutomaticLifecycleMixin from(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
-        return new AutomaticLifecycleMixin(
-            new DataNodeContainerModificationStrategy<>(AugmentationNode.class,
-                    AUGMENTATION_SUPPORT, EffectiveAugmentationSchema.create(schema, resolved), treeConfig),
+        return new AutomaticLifecycleMixin(new DataNodeContainerModificationStrategy<>(AUGMENTATION_SUPPORT,
+                EffectiveAugmentationSchema.create(schema, resolved), treeConfig),
             Builders.augmentationBuilder().withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
             .build());
     }
