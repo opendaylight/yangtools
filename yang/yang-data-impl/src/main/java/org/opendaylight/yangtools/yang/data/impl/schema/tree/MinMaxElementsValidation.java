@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class MinMaxElementsValidation extends ModificationApplyOperation {
+final class MinMaxElementsValidation extends DelegatingModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
 
     private final SchemaAwareApplyOperation delegate;
@@ -51,6 +51,11 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
 
         final ElementCountConstraint constraint = optConstraint.get();
         return new MinMaxElementsValidation(delegate, constraint.getMinElements(), constraint.getMaxElements());
+    }
+
+    @Override
+    ModificationApplyOperation delegate() {
+        return delegate;
     }
 
     @Override
@@ -102,26 +107,6 @@ final class MinMaxElementsValidation extends ModificationApplyOperation {
         if (verifyChildren) {
             checkChildren(modification);
         }
-    }
-
-    @Override
-    ChildTrackingPolicy getChildPolicy() {
-        return delegate.getChildPolicy();
-    }
-
-    @Override
-    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-        delegate.mergeIntoModifiedNode(node, value, version);
-    }
-
-    @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return delegate.getChild(child);
-    }
-
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        delegate.recursivelyVerifyStructure(value);
     }
 
     private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
