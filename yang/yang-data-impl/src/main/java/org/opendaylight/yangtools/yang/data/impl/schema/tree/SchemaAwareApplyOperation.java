@@ -82,7 +82,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
-    private static SchemaAwareApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
         final SchemaAwareApplyOperation op;
@@ -96,7 +96,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         return MinMaxElementsValidation.from(op, schemaNode);
     }
 
-    private static SchemaAwareApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
+    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final SchemaAwareApplyOperation op;
         if (schemaNode.isUserOrdered()) {
@@ -173,7 +173,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      * @param current current node in TreeNode for modification to apply
      * @throws DataValidationFailedException when a data dependency conflict is detected
      */
-    protected void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
+    private static void checkWriteApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
         if (original.isPresent() && current.isPresent()) {
