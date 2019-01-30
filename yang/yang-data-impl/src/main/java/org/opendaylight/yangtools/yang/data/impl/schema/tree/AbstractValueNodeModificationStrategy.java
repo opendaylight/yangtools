@@ -31,11 +31,6 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
-        checkArgument(nodeClass.isInstance(writtenValue), "Node should must be of type %s", nodeClass);
-    }
-
-    @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + " is leaf type node. Child nodes not allowed");
@@ -58,7 +53,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
             final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
         final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
-        verifyStructure(newValue, true);
+        verifyWrittenValue(newValue);
         modification.resolveModificationType(ModificationType.WRITE);
         return applyWrite(modification, newValue, null, version);
     }
@@ -92,7 +87,16 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        verifyStructure(value, false);
+    final void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+        verifyWrittenValue(writtenValue);
+    }
+
+    @Override
+    final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+        verifyWrittenValue(value);
+    }
+
+    private void verifyWrittenValue(final NormalizedNode<?, ?> value) {
+        checkArgument(nodeClass.isInstance(value), "Expected an instance of %s, have %s", nodeClass, value);
     }
 }
