@@ -69,15 +69,25 @@ abstract class ModificationApplyOperation implements StoreTreeNode<ModificationA
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
 
     /**
-     * Performs structural verification of NodeModification, such as written values / types uses
-     * right structural elements.
+     * Performs a quick structural verification of NodeModification, such as written values / types uses right
+     * structural elements.
      *
      * @param modification data to be verified.
-     * @param verifyChildren true if structure verification should be run against children.
      * @throws IllegalArgumentException If provided NodeModification does not adhere to the
      *         structure.
      */
-    abstract void verifyStructure(NormalizedNode<?, ?> modification, boolean verifyChildren);
+    abstract void quickVerifyStructure(NormalizedNode<?, ?> modification);
+
+    /**
+     * Performs a full structural verification of NodeModification, such as written values / types uses right
+     * structural elements. Unlike {@link #quickVerifyStructure(NormalizedNode)} this includes recursively checking
+     * children, too.
+     *
+     * @param modification data to be verified.
+     * @throws IllegalArgumentException If provided NodeModification does not adhere to the
+     *         structure.
+     */
+    abstract void fullVerifyStructure(NormalizedNode<?, ?> modification);
 
     /**
      * Return the tracking policy for this node's children.
