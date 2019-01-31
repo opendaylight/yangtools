@@ -25,12 +25,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 final class InMemoryDataTreeSnapshot extends AbstractCursorAware implements CursorAwareDataTreeSnapshot,
         SchemaContextProvider {
-    private final @NonNull RootModificationApplyOperation applyOper;
+    private final @NonNull RootApplyStrategy applyOper;
     private final @NonNull SchemaContext schemaContext;
     private final @NonNull TreeNode rootNode;
 
     InMemoryDataTreeSnapshot(final SchemaContext schemaContext, final TreeNode rootNode,
-            final RootModificationApplyOperation applyOper) {
+            final RootApplyStrategy applyOper) {
         this.schemaContext = requireNonNull(schemaContext);
         this.rootNode = requireNonNull(rootNode);
         this.applyOper = requireNonNull(applyOper);

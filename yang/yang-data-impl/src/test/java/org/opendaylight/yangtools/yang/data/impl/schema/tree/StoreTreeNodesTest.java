@@ -63,11 +63,11 @@ public class StoreTreeNodesTest extends AbstractTestModelTest {
                     .build())
                     .build();
 
-    private RootModificationApplyOperation rootOper;
+    private RootApplyStrategy rootOper;
 
     @Before
     public void prepare() {
-        rootOper = RootModificationApplyOperation.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
+        rootOper = RootApplyStrategy.from(SchemaAwareApplyOperation.from(SCHEMA_CONTEXT,
             DataTreeConfiguration.DEFAULT_OPERATIONAL));
     }
 
