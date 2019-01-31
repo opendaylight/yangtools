@@ -47,7 +47,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
             final RootModificationApplyOperation resolver) {
         this.snapshot = requireNonNull(snapshot);
         this.strategyTree = requireNonNull(resolver).snapshot();
-        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), strategyTree.getChildPolicy());
+        this.rootNode = ModifiedNode.createUnmodified(snapshot.getRootNode(), getStrategy().getChildPolicy());
 
         /*
          * We could allocate version beforehand, since Version contract
@@ -66,7 +66,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     ModificationApplyOperation getStrategy() {
-        return strategyTree;
+        return strategyTree.delegate();
     }
 
     @Override
@@ -141,7 +141,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         LOG.trace("Resolving modification apply strategy for {}", path);
 
         upgradeIfPossible();
-        return StoreTreeNodes.findNodeChecked(strategyTree, path);
+        return StoreTreeNodes.findNodeChecked(getStrategy(), path);
     }
 
     private OperationWithModification resolveModificationFor(final YangInstanceIdentifier path) {
@@ -157,7 +157,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * That is fine, as we will prune any empty TOUCH nodes in the last phase of the ready
          * process.
          */
-        ModificationApplyOperation operation = strategyTree;
+        ModificationApplyOperation operation = getStrategy();
         ModifiedNode modification = rootNode;
 
         int depth = 1;
@@ -199,7 +199,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
          * have same version each time this method is called.
          */
         final TreeNode originalSnapshotRoot = snapshot.getRootNode();
-        final Optional<TreeNode> tempRoot = strategyTree.apply(rootNode, Optional.of(originalSnapshotRoot), version);
+        final Optional<TreeNode> tempRoot = getStrategy().apply(rootNode, Optional.of(originalSnapshotRoot), version);
         checkState(tempRoot.isPresent(), "Data tree root is not present, possibly removed by previous modification");
 
         final InMemoryDataTreeSnapshot tempTree = new InMemoryDataTreeSnapshot(snapshot.getSchemaContext(),
@@ -290,7 +290,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
         final boolean wasRunning = SEALED_UPDATER.compareAndSet(this, 0, 1);
         checkState(wasRunning, "Attempted to seal an already-sealed Data Tree.");
 
-        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, strategyTree);
+        AbstractReadyIterator current = AbstractReadyIterator.create(rootNode, getStrategy());
         do {
             current = current.process(version);
         } while (current != null);

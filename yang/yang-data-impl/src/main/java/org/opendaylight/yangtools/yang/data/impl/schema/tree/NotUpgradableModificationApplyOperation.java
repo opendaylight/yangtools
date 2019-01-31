@@ -15,7 +15,7 @@ final class NotUpgradableModificationApplyOperation extends RootModificationAppl
     }
 
     @Override
-    ModificationApplyOperation delegate() {
+    protected ModificationApplyOperation delegate() {
         return delegate;
     }
 

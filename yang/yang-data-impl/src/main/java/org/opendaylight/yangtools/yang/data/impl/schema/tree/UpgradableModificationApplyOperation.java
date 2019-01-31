@@ -41,7 +41,7 @@ final class UpgradableModificationApplyOperation extends RootModificationApplyOp
     }
 
     @Override
-    ModificationApplyOperation delegate() {
+    protected ModificationApplyOperation delegate() {
         return delegate;
     }
 
