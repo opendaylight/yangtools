@@ -288,7 +288,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                     // The write has ended up being empty, such as a write of an empty list.
                     updateOperationType(LogicalOperation.DELETE);
                 } else {
-                    schema.verifyStructure(value, true);
+                    schema.fullVerifyStructure(value);
                 }
                 break;
             default:
