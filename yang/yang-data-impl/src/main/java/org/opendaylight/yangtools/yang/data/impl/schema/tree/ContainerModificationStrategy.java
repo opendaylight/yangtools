@@ -36,11 +36,8 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
-            super.verifyStructure(writtenValue, verifyChildren);
-            if (verifyChildren) {
-                enforcer.enforceOnData(writtenValue);
-            }
+        void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+            enforcer.enforceOnData(writtenValue);
         }
 
         @Override
