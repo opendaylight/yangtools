@@ -46,41 +46,57 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+    final void verifyValue(final NormalizedNode<?, ?> writtenValue) {
         final Class<?> nodeClass = support.requiredClass;
         checkArgument(nodeClass.isInstance(writtenValue), "Node %s is not of type %s", writtenValue, nodeClass);
         checkArgument(writtenValue instanceof NormalizedNodeContainer);
-        if (verifyChildrenStructure && verifyChildren) {
+    }
+
+    @Override
+    final void verifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        if (verifyChildrenStructure) {
             final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) writtenValue;
             for (final Object child : container.getValue()) {
                 checkArgument(child instanceof NormalizedNode);
                 final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
                 final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
                 if (childOp.isPresent()) {
-                    childOp.get().verifyStructure(castedChild, verifyChildren);
+                    childOp.get().fullVerifyStructure(castedChild);
                 } else {
                     throw new SchemaValidationFailedException(String.format(
                             "Node %s is not a valid child of %s according to the schema.",
                             castedChild.getIdentifier(), container.getIdentifier()));
                 }
             }
+
+            additionalVerifyValueChildren(writtenValue);
         }
     }
 
+    /**
+     * Perform additional verification on written value's child structure, like presence of mandatory children and
+     * exclusion. The default implementation does nothing.
+     *
+     * @param writtenValue Effective written value
+     */
+    void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        // Defaults to no-op
+    }
+
     @Override
-    protected void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    protected final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         final NormalizedNodeContainer<?, ?, ?> container = (NormalizedNodeContainer<?, ?, ?>) value;
         for (final Object child : container.getValue()) {
             checkArgument(child instanceof NormalizedNode);
             final NormalizedNode<?, ?> castedChild = (NormalizedNode<?, ?>) child;
             final Optional<ModificationApplyOperation> childOp = getChild(castedChild.getIdentifier());
-            if (childOp.isPresent()) {
-                childOp.get().recursivelyVerifyStructure(castedChild);
-            } else {
+            if (!childOp.isPresent()) {
                 throw new SchemaValidationFailedException(
                     String.format("Node %s is not a valid child of %s according to the schema.",
                         castedChild.getIdentifier(), container.getIdentifier()));
             }
+
+            childOp.get().recursivelyVerifyStructure(castedChild);
         }
     }
 
@@ -280,7 +296,7 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+    protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
             final YangInstanceIdentifier id = path.toInstanceIdentifier();
@@ -290,6 +306,14 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
 
         checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current.get(), version);
+    }
+
+    @Override
+    protected final void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        if (current.isPresent()) {
+            checkChildPreconditions(path, modification, current.get(), version);
+        }
     }
 
     /**
@@ -312,18 +336,6 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 path.pop();
             }
         }
-    }
-
-    @Override
-    protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        if (current.isPresent()) {
-            checkChildPreconditions(path, modification, current.get(), version);
-        }
-    }
-
-    protected boolean verifyChildrenStructure() {
-        return verifyChildrenStructure;
     }
 
     @Override

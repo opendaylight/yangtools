@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  */
 abstract class NonApplyDelegatedModificationApplyOperation extends DelegatingModificationApplyOperation {
     @Override
-    final void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        delegate().verifyStructure(modification, verifyChildren);
+    final void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate().fullVerifyStructure(modification);
     }
 }
