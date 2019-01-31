@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.collect.ForwardingObject;
+
 /**
  * Represents a {@link ModificationApplyOperation} which is rooted at conceptual
  * top of data tree.
@@ -51,14 +53,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * update of schema and user actually writes data after schema update. During
  * update user did not invoked any operation.
  */
-abstract class RootModificationApplyOperation extends FullyDelegatedModificationApplyOperation {
+abstract class RootModificationApplyOperation extends ForwardingObject {
 
     static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
-        if (resolver instanceof RootModificationApplyOperation) {
-            return ((RootModificationApplyOperation) resolver).snapshot();
-        }
         return new NotUpgradableModificationApplyOperation(resolver);
     }
+
+    @Override
+    protected abstract ModificationApplyOperation delegate();
 
     @Override
     public final boolean equals(final Object obj) {
