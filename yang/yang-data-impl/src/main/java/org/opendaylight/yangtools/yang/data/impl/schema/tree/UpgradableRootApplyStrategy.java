@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 /**
- * Implementation of Upgradable {@link RootModificationApplyOperation}
+ * Implementation of Upgradable {@link RootApplyStrategy}
  *
  * <p>
  * This implementation is associated with {@link LatestOperationHolder}
@@ -20,11 +20,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * unless client invoked {@link #upgradeIfPossible()} which will result in
  * changing delegate to the latest one.
  */
-final class UpgradableModificationApplyOperation extends RootModificationApplyOperation {
+final class UpgradableRootApplyStrategy extends RootApplyStrategy {
     private final LatestOperationHolder holder;
     private ModificationApplyOperation delegate;
 
-    UpgradableModificationApplyOperation(final LatestOperationHolder holder,
+    UpgradableRootApplyStrategy(final LatestOperationHolder holder,
         final ModificationApplyOperation delegate) {
         this.holder = holder;
         this.delegate = delegate;
@@ -41,12 +41,12 @@ final class UpgradableModificationApplyOperation extends RootModificationApplyOp
     }
 
     @Override
-    ModificationApplyOperation delegate() {
+    protected ModificationApplyOperation delegate() {
         return delegate;
     }
 
     @Override
-    RootModificationApplyOperation snapshot() {
-        return new UpgradableModificationApplyOperation(holder, delegate);
+    RootApplyStrategy snapshot() {
+        return new UpgradableRootApplyStrategy(holder, delegate);
     }
 }

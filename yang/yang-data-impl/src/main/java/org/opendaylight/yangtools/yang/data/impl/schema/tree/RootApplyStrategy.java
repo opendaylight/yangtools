@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import com.google.common.collect.ForwardingObject;
+
 /**
  * Represents a {@link ModificationApplyOperation} which is rooted at conceptual
  * top of data tree.
@@ -15,7 +17,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * This implementation differs from other implementations in this package that
  * is not immutable, but may be upgraded to newer state if available by
  * explicitly invoking {@link #upgradeIfPossible()} and also serves as factory
- * for deriving snapshot {@link RootModificationApplyOperation} which will not
+ * for deriving snapshot {@link RootApplyStrategy} which will not
  * be affected by upgrade of original one.
  *
  * <p>
@@ -51,14 +53,14 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  * update of schema and user actually writes data after schema update. During
  * update user did not invoked any operation.
  */
-abstract class RootModificationApplyOperation extends FullyDelegatedModificationApplyOperation {
+abstract class RootApplyStrategy extends ForwardingObject {
 
-    static RootModificationApplyOperation from(final ModificationApplyOperation resolver) {
-        if (resolver instanceof RootModificationApplyOperation) {
-            return ((RootModificationApplyOperation) resolver).snapshot();
-        }
-        return new NotUpgradableModificationApplyOperation(resolver);
+    static RootApplyStrategy from(final ModificationApplyOperation resolver) {
+        return new NotUpgradableRootApplyStrategy(resolver);
     }
+
+    @Override
+    protected abstract ModificationApplyOperation delegate();
 
     @Override
     public final boolean equals(final Object obj) {
@@ -82,16 +84,16 @@ abstract class RootModificationApplyOperation extends FullyDelegatedModification
      * <p>
      * Newly created snapshot uses backing implementation of this modification.
      *
-     * @return Derived {@link RootModificationApplyOperation} with separate
+     * @return Derived {@link RootApplyStrategy} with separate
      *         upgrade lifecycle.
      */
-    abstract RootModificationApplyOperation snapshot();
+    abstract RootApplyStrategy snapshot();
 
     /**
      * Upgrades backing implementation to latest available, if possible.
      *
      * <p>
-     * Latest implementation of {@link RootModificationApplyOperation} is
+     * Latest implementation of {@link RootApplyStrategy} is
      * managed by {@link LatestOperationHolder} which was used to construct this
      * operation and latest operation is updated by
      * {@link LatestOperationHolder#setCurrent(ModificationApplyOperation)}.
