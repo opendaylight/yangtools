@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-final class NotUpgradableModificationApplyOperation extends RootModificationApplyOperation {
+final class NotUpgradableRootApplyStrategy extends RootApplyStrategy {
     private final ModificationApplyOperation delegate;
 
-    NotUpgradableModificationApplyOperation(final ModificationApplyOperation delegate) {
+    NotUpgradableRootApplyStrategy(final ModificationApplyOperation delegate) {
         this.delegate = delegate;
     }
 
     @Override
-    ModificationApplyOperation delegate() {
+    protected ModificationApplyOperation delegate() {
         return delegate;
     }
 
@@ -25,7 +25,7 @@ final class NotUpgradableModificationApplyOperation extends RootModificationAppl
     }
 
     @Override
-    RootModificationApplyOperation snapshot() {
+    RootApplyStrategy snapshot() {
         return this;
     }
 }
