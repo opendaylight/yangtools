@@ -7,11 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import java.util.Optional;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
+
 /**
  * An implementation of apply operation which fails to do anything, consistently. An instance of this class is used by
  * the data tree if it does not have a SchemaContext attached and hence cannot perform anything meaningful.
  */
-final class AlwaysFailOperation extends FullyDelegatedModificationApplyOperation {
+final class AlwaysFailOperation extends NonApplyDelegatedModificationApplyOperation {
     static final ModificationApplyOperation INSTANCE = new AlwaysFailOperation();
 
     private AlwaysFailOperation() {
@@ -20,6 +25,22 @@ final class AlwaysFailOperation extends FullyDelegatedModificationApplyOperation
 
     @Override
     ModificationApplyOperation delegate() {
-        throw new IllegalStateException("Schema Context is not available.");
+        throw ise();
+    }
+
+    @Override
+    Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> currentMeta,
+            final Version version) {
+        throw ise();
+    }
+
+    @Override
+    void checkApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
+        throw ise();
+    }
+
+    private static IllegalStateException ise() {
+        return new IllegalStateException("Schema Context is not available.");
     }
 }
