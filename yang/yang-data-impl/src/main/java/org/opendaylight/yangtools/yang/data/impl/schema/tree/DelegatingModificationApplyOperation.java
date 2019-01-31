@@ -29,6 +29,11 @@ abstract class DelegatingModificationApplyOperation extends ModificationApplyOpe
     }
 
     @Override
+    final void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate().quickVerifyStructure(modification);
+    }
+
+    @Override
     final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         delegate().recursivelyVerifyStructure(value);
     }

@@ -135,6 +135,34 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         }
     }
 
+    @Override
+    final void quickVerifyStructure(final NormalizedNode<?, ?> writtenValue) {
+        verifyValue(writtenValue);
+    }
+
+    @Override
+    final void fullVerifyStructure(final NormalizedNode<?, ?> writtenValue) {
+        verifyValue(writtenValue);
+        verifyValueChildren(writtenValue);
+    }
+
+    /**
+     * Verify the a written value, without performing deeper tree validation.
+     *
+     * @param writtenValue Written value
+     */
+    abstract void verifyValue(NormalizedNode<?, ?> writtenValue);
+
+    /**
+     * Verify the children implied by a written value after the value itself has been verified by
+     * {@link #verifyValue(NormalizedNode)}. Default implementation does nothing.
+     *
+     * @param writtenValue Written value
+     */
+    void verifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        // Defaults to no-op
+    }
+
     protected void checkMergeApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final Optional<TreeNode> original = modification.getOriginal();
@@ -203,7 +231,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
                     // to run that validation here.
                     modification.resolveModificationType(ModificationType.WRITE);
                     result = applyWrite(modification, modification.getWrittenValue(), currentMeta, version);
-                    verifyStructure(result.getData(), true);
+                    fullVerifyStructure(result.getData());
                 } else {
                     result = applyMerge(modification, currentMeta.get(), version);
                 }

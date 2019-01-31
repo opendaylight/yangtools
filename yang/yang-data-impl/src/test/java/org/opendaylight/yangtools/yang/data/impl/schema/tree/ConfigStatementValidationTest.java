@@ -5,14 +5,12 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.leafNode;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import com.google.common.base.VerifyException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -124,12 +122,9 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(ii, case2Cont);
         modificationTree.ready();
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
     }
 
-    @Test(expected = VerifyException.class)
+    @Test(expected = SchemaValidationFailedException.class)
     public void testOnDataCaseLeafFail() throws DataValidationFailedException {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
             DataTreeConfiguration.DEFAULT_CONFIGURATION, SCHEMA_CONTEXT);
@@ -141,9 +136,7 @@ public class ConfigStatementValidationTest extends AbstractTestModelTest {
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(ii, choice1);
+
         modificationTree.ready();
-        inMemoryDataTree.validate(modificationTree);
-        final DataTreeCandidate prepare = inMemoryDataTree.prepare(modificationTree);
-        inMemoryDataTree.commit(prepare);
     }
 }

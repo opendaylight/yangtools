@@ -102,11 +102,9 @@ final class MinMaxElementsValidation extends DelegatingModificationApplyOperatio
     }
 
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        delegate.verifyStructure(modification, verifyChildren);
-        if (verifyChildren) {
-            checkChildren(modification);
-        }
+    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate.fullVerifyStructure(modification);
+        checkChildren(modification);
     }
 
     private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
