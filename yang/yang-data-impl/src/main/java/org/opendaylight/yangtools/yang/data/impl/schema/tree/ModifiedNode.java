@@ -282,7 +282,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
                     children.clear();
                 }
 
-                schema.verifyStructure(value, true);
+                schema.fullVerifyStructure(value);
                 break;
             default:
                 break;

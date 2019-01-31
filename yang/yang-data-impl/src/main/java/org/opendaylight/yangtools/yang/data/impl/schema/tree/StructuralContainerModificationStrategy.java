@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -30,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * it enforces presence of mandatory leaves, which is not something we want here, as structural containers are not
  * root anchors for that validation.
  */
-final class StructuralContainerModificationStrategy extends ModificationApplyOperation {
+final class StructuralContainerModificationStrategy extends NonApplyDelegatedModificationApplyOperation {
     /**
      * Fake TreeNode version used in
      * {@link #checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
@@ -48,8 +47,9 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
         this.emptyNode = ImmutableNodes.containerNode(schemaNode.getQName());
     }
 
-    private Optional<TreeNode> fakeMeta(final Version version) {
-        return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
+    @Override
+    ModificationApplyOperation delegate() {
+        return delegate;
     }
 
     @Override
@@ -86,30 +86,8 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
         }
     }
 
-    @Override
-    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        delegate.verifyStructure(modification, verifyChildren);
-    }
-
-    @Override
-    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
-        delegate.recursivelyVerifyStructure(value);
-    }
-
-    @Override
-    ChildTrackingPolicy getChildPolicy() {
-        return delegate.getChildPolicy();
-    }
-
-    @Override
-    void mergeIntoModifiedNode(final ModifiedNode modification, final NormalizedNode<?, ?> value,
-            final Version version) {
-        delegate.mergeIntoModifiedNode(modification, value, version);
-    }
-
-    @Override
-    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return delegate.getChild(child);
+    private Optional<TreeNode> fakeMeta(final Version version) {
+        return Optional.of(TreeNodeFactory.createTreeNode(emptyNode, version));
     }
 
     private TreeNode applyTouch(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
