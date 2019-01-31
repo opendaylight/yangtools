@@ -28,7 +28,7 @@ final class OperationWithModification {
         /**
          * Fast validation of structure, full validation on written data will be run during seal.
          */
-        applyOperation.verifyStructure(value, false);
+        applyOperation.quickVerifyStructure(value);
     }
 
     void merge(final NormalizedNode<?, ?> data, final Version version) {
@@ -42,7 +42,7 @@ final class OperationWithModification {
          * We perform only quick validation here, full validation will be applied as-needed during
          * preparation, as the merge is reconciled with current state.
          */
-        applyOperation.verifyStructure(data, false);
+        applyOperation.quickVerifyStructure(data);
         applyOperation.mergeIntoModifiedNode(modification, data, version);
     }
 

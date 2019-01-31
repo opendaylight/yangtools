@@ -87,8 +87,13 @@ final class StructuralContainerModificationStrategy extends ModificationApplyOpe
     }
 
     @Override
-    void verifyStructure(final NormalizedNode<?, ?> modification, final boolean verifyChildren) {
-        delegate.verifyStructure(modification, verifyChildren);
+    void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate.quickVerifyStructure(modification);
+    }
+
+    @Override
+    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate.fullVerifyStructure(modification);
     }
 
     @Override
