@@ -87,7 +87,7 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    final void verifyStructure(final NormalizedNode<?, ?> writtenValue, final boolean verifyChildren) {
+    final void verifyValue(final NormalizedNode<?, ?> writtenValue) {
         verifyWrittenValue(writtenValue);
     }
 
