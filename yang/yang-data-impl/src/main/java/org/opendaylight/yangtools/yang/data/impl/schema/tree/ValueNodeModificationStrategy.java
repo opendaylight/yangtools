@@ -20,36 +20,35 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
+final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
     private final Class<? extends NormalizedNode<?, ?>> nodeClass;
     private final T schema;
 
-    protected AbstractValueNodeModificationStrategy(final T schema,
-            final Class<? extends NormalizedNode<?, ?>> nodeClass) {
+    protected ValueNodeModificationStrategy(final Class<? extends NormalizedNode<?, ?>> nodeClass, final T schema) {
         this.nodeClass = requireNonNull(nodeClass);
-        this.schema = schema;
+        this.schema = requireNonNull(schema);
     }
 
     @Override
-    public final Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + " is leaf type node. Child nodes not allowed");
     }
 
     @Override
-    protected final ChildTrackingPolicy getChildPolicy() {
+    protected ChildTrackingPolicy getChildPolicy() {
         return ChildTrackingPolicy.NONE;
     }
 
     @Override
-    protected final TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
+    protected TreeNode applyTouch(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         throw new UnsupportedOperationException("Node " + schema.getPath()
                 + " is leaf type node. Subtree change is not allowed.");
     }
 
     @Override
-    protected final TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
+    protected TreeNode applyMerge(final ModifiedNode modification, final TreeNode currentMeta,
             final Version version) {
         // Just overwrite whatever was there, but be sure to run validation
         final NormalizedNode<?, ?> newValue = modification.getWrittenValue();
@@ -59,20 +58,19 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    protected final TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
+    protected TreeNode applyWrite(final ModifiedNode modification, final NormalizedNode<?, ?> newValue,
             final Optional<TreeNode> currentMeta, final Version version) {
         return TreeNodeFactory.createTreeNode(newValue, version);
     }
 
     @Override
-    protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws IncorrectDataStructureException {
         throw new IncorrectDataStructureException(path.toInstanceIdentifier(), "Subtree modification is not allowed.");
     }
 
     @Override
     void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
-
         switch (node.getOperation()) {
             // Delete performs a data dependency check on existence of the node. Performing a merge
             // on DELETE means we
@@ -87,12 +85,12 @@ abstract class AbstractValueNodeModificationStrategy<T extends DataSchemaNode> e
     }
 
     @Override
-    final void verifyValue(final NormalizedNode<?, ?> writtenValue) {
+    void verifyValue(final NormalizedNode<?, ?> writtenValue) {
         verifyWrittenValue(writtenValue);
     }
 
     @Override
-    final void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
         verifyWrittenValue(value);
     }
 
