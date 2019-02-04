@@ -58,7 +58,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         } else if (schemaNode instanceof LeafListSchemaNode) {
             return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof LeafSchemaNode) {
-            return new LeafModificationStrategy((LeafSchemaNode) schemaNode);
+            return new ValueNodeModificationStrategy<>(LeafNode.class, (LeafSchemaNode) schemaNode);
         }
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
