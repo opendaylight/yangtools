@@ -11,6 +11,7 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -35,7 +36,7 @@ final class LeafSetModificationStrategy extends AbstractNodeContainerModificatio
 
     LeafSetModificationStrategy(final LeafListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(schema.isUserOrdered() ? ORDERED_SUPPORT : UNORDERED_SUPPORT, treeConfig);
-        entryStrategy = Optional.of(new LeafSetEntryModificationStrategy(schema));
+        entryStrategy = Optional.of(new ValueNodeModificationStrategy<>(LeafSetEntryNode.class, schema));
     }
 
     @Override
