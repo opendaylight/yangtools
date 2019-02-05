@@ -7,17 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.util.concurrent.UncheckedExecutionException;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
-import javax.annotation.Nonnull;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
@@ -37,24 +34,14 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
         extends AbstractNodeContainerModificationStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
 
-    private final LoadingCache<PathArgument, ModificationApplyOperation> childCache = CacheBuilder.newBuilder()
-            .build(new CacheLoader<PathArgument, ModificationApplyOperation>() {
-                @Override
-                public ModificationApplyOperation load(@Nonnull final PathArgument key) {
-                    if (key instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
-                        return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
-                            (AugmentationIdentifier) key, treeConfig);
-                    }
-
-                    final DataSchemaNode child = schema.getDataChildByName(key.getNodeType());
-                    checkArgument(child != null, "Schema %s does not have a node for child %s", schema,
-                            key.getNodeType());
-                    return SchemaAwareApplyOperation.from(child, treeConfig);
-                }
-            });
-
     private final DataTreeConfiguration treeConfig;
     private final T schema;
+
+    @SuppressWarnings("rawtypes")
+    private static final AtomicReferenceFieldUpdater<DataNodeContainerModificationStrategy, ImmutableMap> UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(DataNodeContainerModificationStrategy.class, ImmutableMap.class,
+                "children");
+    private volatile ImmutableMap<PathArgument, ModificationApplyOperation> children = ImmutableMap.of();
 
     DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
             final DataTreeConfiguration treeConfig) {
@@ -65,12 +52,52 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
 
     @Override
     public final Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-        try {
-            return Optional.ofNullable(childCache.get(identifier));
-        } catch (ExecutionException | UncheckedExecutionException e) {
+        final ImmutableMap<PathArgument, ModificationApplyOperation> local = children;
+        final ModificationApplyOperation existing = local.get(identifier);
+        if (existing != null) {
+            return Optional.of(existing);
+        }
+
+        if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
+            return appendChild(local, identifier, SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
+                (AugmentationIdentifier) identifier, treeConfig));
+        }
+
+        final QName qname = identifier.getNodeType();
+        final Optional<DataSchemaNode> child = schema.findDataChildByName(qname);
+        if (!child.isPresent()) {
             LOG.trace("Child {} not present in container schema {} children {}", identifier, this,
-                schema.getChildNodes(), e);
+                schema.getChildNodes());
             return Optional.empty();
+        }
+
+        return appendChild(local, identifier, SchemaAwareApplyOperation.from(child.get(), treeConfig));
+    }
+
+    private Optional<ModificationApplyOperation> appendChild(
+            final ImmutableMap<PathArgument, ModificationApplyOperation> initial, final PathArgument identifier,
+            final ModificationApplyOperation computed) {
+
+        ImmutableMap<PathArgument, ModificationApplyOperation> previous = initial;
+        while (true) {
+            // Build up a new map based on observed snapshot and computed child
+            final Builder<PathArgument, ModificationApplyOperation> builder = ImmutableMap.builderWithExpectedSize(
+                previous.size() + 1);
+            builder.putAll(previous);
+            builder.put(identifier, computed);
+            final ImmutableMap<PathArgument, ModificationApplyOperation> updated = builder.build();
+
+            // Attempt to install the updated map
+            if (UPDATER.compareAndSet(this, previous, updated)) {
+                return Optional.of(computed);
+            }
+
+            // We have raced, acquire a new snapshot, recheck presence and retry if needed
+            previous = children;
+            final ModificationApplyOperation raced = previous.get(identifier);
+            if (raced != null) {
+                return Optional.of(raced);
+            }
         }
     }
 
