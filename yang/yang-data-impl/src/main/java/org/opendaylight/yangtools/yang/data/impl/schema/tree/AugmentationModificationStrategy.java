@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -24,8 +23,9 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationModificationStrategy
         extends DataNodeContainerModificationStrategy<AugmentationSchemaNode> {
-    private static final Single<AugmentationIdentifier, AugmentationNode> SUPPORT = new Single<>(AugmentationNode.class,
-            ImmutableAugmentationNodeBuilder::create, ImmutableAugmentationNodeBuilder::create);
+    private static final NormalizedNodeContainerSupport<AugmentationIdentifier, AugmentationNode> SUPPORT =
+            new NormalizedNodeContainerSupport<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
+                    ImmutableAugmentationNodeBuilder::create);
 
     private final AugmentationNode emptyNode;
 
