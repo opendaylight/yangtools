@@ -12,6 +12,8 @@ import com.google.common.base.Preconditions;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
@@ -22,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,8 +64,15 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
     }
 
     private ModificationApplyOperation getOperation(final DataSchemaNode rootSchemaNode) {
-        if (maskMandatory && rootSchemaNode instanceof ContainerSchemaNode) {
+        if (rootSchemaNode instanceof ContainerSchemaNode && maskMandatory) {
             return new ContainerModificationStrategy((ContainerSchemaNode) rootSchemaNode, treeConfig);
+        }
+        if (rootSchemaNode instanceof ListSchemaNode) {
+            final PathArgument arg = treeConfig.getRootPath().getLastPathArgument();
+            if (arg instanceof NodeIdentifierWithPredicates) {
+                return maskMandatory ? new ListEntryModificationStrategy((ListSchemaNode) rootSchemaNode, treeConfig)
+                        : ListEntryModificationStrategy.of((ListSchemaNode) rootSchemaNode, treeConfig);
+            }
         }
 
         return SchemaAwareApplyOperation.from(rootSchemaNode, treeConfig);

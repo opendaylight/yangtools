@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
@@ -40,8 +39,8 @@ import org.slf4j.LoggerFactory;
 
 abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
-    private static final Single<AugmentationIdentifier, AugmentationNode> AUGMENTATION_SUPPORT =
-            new Single<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
+    private static final NormalizedNodeContainerSupport<AugmentationIdentifier, AugmentationNode> AUGMENTATION_SUPPORT =
+            new NormalizedNodeContainerSupport<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
                     ImmutableAugmentationNodeBuilder::create);
 
     public static ModificationApplyOperation from(final DataSchemaNode schemaNode,
