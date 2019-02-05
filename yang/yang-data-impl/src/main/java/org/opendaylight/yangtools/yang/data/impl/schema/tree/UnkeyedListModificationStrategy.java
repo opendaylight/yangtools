@@ -23,13 +23,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
-    private static final Single<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
-            new Single<>(UnkeyedListEntryNode.class, ImmutableUnkeyedListEntryNodeBuilder::create,
-                    ImmutableUnkeyedListEntryNodeBuilder::create);
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
+            new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
+                    ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
 
     private final Optional<ModificationApplyOperation> entryStrategy;
     private final UnkeyedListNode emptyNode;
