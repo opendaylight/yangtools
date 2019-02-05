@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 class ListEntryModificationStrategy extends DataNodeContainerModificationStrategy<ListSchemaNode> {
@@ -60,8 +59,9 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
         }
     }
 
-    private static final Single<NodeIdentifierWithPredicates, MapEntryNode> SUPPORT = new Single<>(MapEntryNode.class,
-            ImmutableMapEntryNodeBuilder::create, ImmutableMapEntryNodeBuilder::create);
+    private static final NormalizedNodeContainerSupport<NodeIdentifierWithPredicates, MapEntryNode> SUPPORT =
+            new NormalizedNodeContainerSupport<>(MapEntryNode.class, ImmutableMapEntryNodeBuilder::create,
+                    ImmutableMapEntryNodeBuilder::create);
 
     ListEntryModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schema, treeConfig);
