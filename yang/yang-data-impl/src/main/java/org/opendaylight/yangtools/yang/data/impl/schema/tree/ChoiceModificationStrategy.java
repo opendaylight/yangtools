@@ -7,16 +7,14 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicates;
-import com.google.common.base.Verify;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.ImmutableList;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -25,7 +23,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
@@ -44,7 +41,6 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
 
     private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
-    private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
     private final ChoiceNode emptyNode;
 
@@ -69,13 +65,6 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
         }
         childNodes = childBuilder.build();
         caseEnforcers = enforcerBuilder.build();
-
-        final Map<CaseEnforcer, Collection<CaseEnforcer>> exclusionsBuilder = new HashMap<>();
-        for (final CaseEnforcer e : caseEnforcers.values()) {
-            exclusionsBuilder.put(e, ImmutableList.copyOf(
-                Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
-        }
-        exclusions = ImmutableMap.copyOf(exclusionsBuilder);
         emptyNode = ImmutableNodes.choiceNode(schema.getQName());
     }
 
@@ -108,28 +97,31 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     }
 
     private void enforceCases(final NormalizedNode<?, ?> normalizedNode) {
-        Verify.verify(normalizedNode instanceof ChoiceNode);
+        verify(normalizedNode instanceof ChoiceNode);
         final Collection<DataContainerChild<?, ?>> children = ((ChoiceNode) normalizedNode).getValue();
-        if (!children.isEmpty()) {
-            final DataContainerChild<?, ?> firstChild = children.iterator().next();
-            final CaseEnforcer enforcer = Verify.verifyNotNull(caseEnforcers.get(firstChild.getIdentifier()),
-                "Case enforcer cannot be null. Most probably, child node %s of choice node %s does not belong "
-                + "in current tree type.", firstChild.getIdentifier(), normalizedNode.getIdentifier());
-
-            // Make sure no leaves from other cases are present
-            for (final CaseEnforcer other : exclusions.get(enforcer)) {
-                for (final PathArgument id : other.getAllChildIdentifiers()) {
-                    final Optional<NormalizedNode<?, ?>> maybeChild = NormalizedNodes.getDirectChild(normalizedNode,
-                        id);
-                    Preconditions.checkArgument(!maybeChild.isPresent(),
-                        "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
-                        firstChild.getIdentifier(), enforcer, id, other, maybeChild.orElse(null));
-                }
-            }
-
-            // Make sure all mandatory children are present
-            enforcer.enforceOnTreeNode(normalizedNode);
+        if (children.isEmpty()) {
+            return;
         }
+
+        final Iterator<DataContainerChild<?, ?>> it = children.iterator();
+        final DataContainerChild<?, ?> firstChild = it.next();
+        final Object firstId = firstChild.getIdentifier();
+        final CaseEnforcer enforcer = verifyNotNull(caseEnforcers.get(firstId), "Case enforcer cannot be null. "
+                + "Most probably, child node %s of choice node %s does not belong in current tree type.", firstId,
+                normalizedNode.getIdentifier());
+
+        // Make sure all other leaves fall into the same enforcer
+        while (it.hasNext()) {
+            final DataContainerChild<?, ?> otherChild = it.next();
+            final Object otherId = otherChild.getIdentifier();
+            final CaseEnforcer otherEnforcer = caseEnforcers.get(otherId);
+            checkArgument(enforcer.equals(otherEnforcer),
+                "Child %s (from case %s) implies non-presence of child %s (from case %s), which is %s",
+                firstId, enforcer, otherId, otherEnforcer, otherChild);
+        }
+
+        // Make sure all mandatory children are present
+        enforcer.enforceOnTreeNode(normalizedNode);
     }
 
     @Override
