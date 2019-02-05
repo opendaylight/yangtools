@@ -17,7 +17,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -65,8 +64,9 @@ class ContainerModificationStrategy extends DataNodeContainerModificationStrateg
         }
     }
 
-    private static final Single<NodeIdentifier, ContainerNode> SUPPORT = new Single<>(ContainerNode.class,
-            ImmutableContainerNodeBuilder::create, ImmutableContainerNodeBuilder::create);
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, ContainerNode> SUPPORT =
+            new NormalizedNodeContainerSupport<>(ContainerNode.class, ImmutableContainerNodeBuilder::create,
+                    ImmutableContainerNodeBuilder::create);
 
     ContainerModificationStrategy(final ContainerSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, schemaNode, treeConfig);
