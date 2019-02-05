@@ -17,18 +17,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Single;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafSetModificationStrategy extends AbstractNodeContainerModificationStrategy {
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static final Single<NodeIdentifier, OrderedLeafSetNode<?>> ORDERED_SUPPORT =
-            new Single(OrderedLeafSetNode.class, ChildTrackingPolicy.ORDERED,
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedLeafSetNode<?>> ORDERED_SUPPORT =
+            new NormalizedNodeContainerSupport(OrderedLeafSetNode.class, ChildTrackingPolicy.ORDERED,
                 foo -> ImmutableOrderedLeafSetNodeBuilder.create((OrderedLeafSetNode<?>)foo),
                 ImmutableOrderedLeafSetNodeBuilder::create);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static final Single<NodeIdentifier, LeafSetNode<?>> UNORDERED_SUPPORT =
-            new Single(LeafSetNode.class,
+    private static final NormalizedNodeContainerSupport<NodeIdentifier, LeafSetNode<?>> UNORDERED_SUPPORT =
+            new NormalizedNodeContainerSupport(LeafSetNode.class,
                 foo -> ImmutableLeafSetNodeBuilder.create((LeafSetNode<?>)foo),
                 ImmutableLeafSetNodeBuilder::create);
 
