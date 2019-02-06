@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -23,9 +23,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedMapNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class MapModificationStrategy extends AbstractNodeContainerModificationStrategy {
+final class MapModificationStrategy extends Invisible<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedMapNode> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport<>(OrderedMapNode.class, ChildTrackingPolicy.ORDERED,
                     ImmutableOrderedMapNodeBuilder::create, ImmutableOrderedMapNodeBuilder::create);
@@ -33,14 +34,12 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
             new NormalizedNodeContainerSupport<>(MapNode.class, ImmutableMapNodeBuilder::create,
                     ImmutableMapNodeBuilder::create);
 
-    private final Optional<ModificationApplyOperation> entryStrategy;
-    private final MapNode emptyNode;
+    private final @NonNull MapNode emptyNode;
 
     private MapModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final ListSchemaNode schema,
         final DataTreeConfiguration treeConfig, final MapNode emptyNode) {
-        super(support, treeConfig);
+        super(support, treeConfig, ListEntryModificationStrategy.of(schema, treeConfig));
         this.emptyNode = requireNonNull(emptyNode);
-        entryStrategy = Optional.of(ListEntryModificationStrategy.of(schema, treeConfig));
     }
 
     static MapModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
@@ -58,7 +57,7 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final YangInstanceIdentifier.PathArgument identifier) {
-        return identifier instanceof NodeIdentifierWithPredicates ? entryStrategy : Optional.empty();
+        return identifier instanceof NodeIdentifierWithPredicates ? entryStrategy() : Optional.empty();
     }
 
     @Override
@@ -73,10 +72,5 @@ final class MapModificationStrategy extends AbstractNodeContainerModificationStr
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
             version);
-    }
-
-    @Override
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("entry", entryStrategy.get());
     }
 }

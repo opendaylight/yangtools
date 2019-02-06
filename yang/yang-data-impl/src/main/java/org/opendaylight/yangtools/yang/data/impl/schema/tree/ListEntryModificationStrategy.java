@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -67,7 +68,8 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
         super(SUPPORT, schema, treeConfig);
     }
 
-    static ListEntryModificationStrategy of(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
+    static @NonNull ListEntryModificationStrategy of(final ListSchemaNode schema,
+            final DataTreeConfiguration treeConfig) {
         final Optional<MandatoryLeafEnforcer> enforcer = MandatoryLeafEnforcer.forContainer(schema, treeConfig);
         return enforcer.isPresent() ? new EnforcingMandatory(schema, treeConfig, enforcer.get())
                 : new ListEntryModificationStrategy(schema, treeConfig);
