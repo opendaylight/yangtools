@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -30,12 +31,13 @@ public final class ImmutableContainerNodeSchemaAwareBuilder extends ImmutableCon
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema) {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(
+            final ContainerSchemaNode schema) {
         return new ImmutableContainerNodeSchemaAwareBuilder(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(final ContainerSchemaNode schema,
-            final ContainerNode node) {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> create(
+            final ContainerSchemaNode schema, final ContainerNode node) {
         if (!(node instanceof ImmutableContainerNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

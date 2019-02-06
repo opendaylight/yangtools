@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
@@ -17,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableN
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
 
-    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create() {
+    public static <T> @NonNull NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();
     }
 

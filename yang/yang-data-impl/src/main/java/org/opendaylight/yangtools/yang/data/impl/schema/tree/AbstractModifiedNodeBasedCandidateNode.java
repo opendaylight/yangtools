@@ -14,6 +14,7 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -106,7 +107,7 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
         return verifyNotNull(mod.getModificationType(), "Node %s does not have resolved modification type", mod);
     }
 
-    private static Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
+    private static @NonNull Optional<NormalizedNode<?, ?>> optionalData(final TreeNode meta) {
         return meta == null ? Optional.empty() : Optional.of(meta.getData());
     }
 

@@ -14,8 +14,8 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import javax.annotation.Nonnull;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -95,7 +95,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      * @param builder Builder to which data will be written.
      * @return {@link NormalizedNodeStreamWriter} which writes data
      */
-    public static NormalizedNodeStreamWriter from(final NormalizedNodeContainerBuilder<?, ?, ?, ?> builder) {
+    public static @NonNull NormalizedNodeStreamWriter from(final NormalizedNodeContainerBuilder<?, ?, ?, ?> builder) {
         return new ImmutableNormalizedNodeStreamWriter(builder);
     }
 
@@ -368,7 +368,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void nextDataSchemaNode(@Nonnull final DataSchemaNode schema) {
+    public void nextDataSchemaNode(final DataSchemaNode schema) {
         nextSchema = requireNonNull(schema);
     }
 }

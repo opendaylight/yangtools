@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -36,7 +37,7 @@ public class ImmutableAugmentationNodeSchemaAwareBuilder extends ImmutableAugmen
         return super.withChild(validator.validateChild(child));
     }
 
-    public static DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
+    public static @NonNull DataContainerNodeBuilder<AugmentationIdentifier, AugmentationNode> create(
             final AugmentationSchemaNode schema) {
         return new ImmutableAugmentationNodeSchemaAwareBuilder(schema);
     }

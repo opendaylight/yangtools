@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -98,8 +98,7 @@ public final class SchemaUtils {
         return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
     }
 
-    @Nullable
-    public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
+    public static @Nullable DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
             final boolean strictMode) {
         if (strictMode) {
             return findSchemaForChild(schema, qname);
@@ -443,8 +442,7 @@ public final class SchemaUtils {
      * @throws IllegalArgumentException
      *             if the schema node does not allow children
      */
-    @Nullable
-    public static SchemaNode findDataChildSchemaByQName(final SchemaNode node, final QName qname) {
+    public static @Nullable SchemaNode findDataChildSchemaByQName(final SchemaNode node, final QName qname) {
         if (node instanceof DataNodeContainer) {
             SchemaNode child = ((DataNodeContainer) node).getDataChildByName(qname);
             if (child == null && node instanceof SchemaContext) {

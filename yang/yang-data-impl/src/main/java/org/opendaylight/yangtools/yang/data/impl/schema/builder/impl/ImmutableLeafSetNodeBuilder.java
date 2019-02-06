@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -49,15 +50,15 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
         return new ImmutableLeafSetNodeBuilder<>();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final int sizeHint) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final int sizeHint) {
         return new ImmutableLeafSetNodeBuilder<>(sizeHint);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
         if (!(node instanceof ImmutableLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

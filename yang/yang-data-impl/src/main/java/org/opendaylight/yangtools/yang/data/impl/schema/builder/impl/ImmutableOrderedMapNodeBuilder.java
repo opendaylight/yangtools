@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -50,15 +51,15 @@ public class ImmutableOrderedMapNodeBuilder implements CollectionNodeBuilder<Map
         this.dirty = true;
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create() {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create() {
         return new ImmutableOrderedMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final int sizeHint) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final int sizeHint) {
         return new ImmutableOrderedMapNodeBuilder(sizeHint);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final MapNode node) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final MapNode node) {
         if (!(node instanceof ImmutableOrderedMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

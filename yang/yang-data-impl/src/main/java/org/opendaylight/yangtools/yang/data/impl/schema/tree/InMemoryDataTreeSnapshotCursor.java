@@ -13,7 +13,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -30,7 +29,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
-    public void enter(@Nonnull final PathArgument child) {
+    public void enter(final PathArgument child) {
         final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.getDirectChild(stack.peek(), child);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", child);
 
@@ -41,7 +40,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
 
     @Override
     @SuppressWarnings("checkstyle:illegalCatch")
-    public void enter(@Nonnull final Iterable<PathArgument> path) {
+    public void enter(final Iterable<PathArgument> path) {
         final Optional<NormalizedNode<?, ?>> maybeChildNode = NormalizedNodes.findNode(stack.peek(), path);
         checkArgument(maybeChildNode.isPresent(), "Child %s not found", path);
 
@@ -74,7 +73,7 @@ final class InMemoryDataTreeSnapshotCursor extends AbstractCursor<InMemoryDataTr
     }
 
     @Override
-    public Optional<NormalizedNode<?, ?>> readNode(@Nonnull final PathArgument child) {
+    public Optional<NormalizedNode<?, ?>> readNode(final PathArgument child) {
         return NormalizedNodes.findNode(stack.peek(), child);
     }
 }
