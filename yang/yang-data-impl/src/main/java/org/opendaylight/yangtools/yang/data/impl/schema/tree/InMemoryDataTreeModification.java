@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -254,7 +253,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public void applyToCursor(@Nonnull final DataTreeModificationCursor cursor) {
+    public void applyToCursor(final DataTreeModificationCursor cursor) {
         for (final ModifiedNode child : rootNode.getChildren()) {
             applyNode(cursor, child);
         }
@@ -280,7 +279,7 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public DataTreeModificationCursor createCursor(@Nonnull final YangInstanceIdentifier path) {
+    public DataTreeModificationCursor createCursor(final YangInstanceIdentifier path) {
         final OperationWithModification op = resolveModificationFor(path);
         return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
     }

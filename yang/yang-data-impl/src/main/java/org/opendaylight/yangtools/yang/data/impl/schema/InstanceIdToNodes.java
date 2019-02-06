@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.ModifyAction;
@@ -73,7 +74,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      * @param operation Optional modify operation to be set on the last child
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
-    abstract NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
+    abstract @NonNull NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
             Optional<NormalizedNode<?, ?>> deepestChild, Optional<Entry<QName, ModifyAction>> operation);
 
     abstract boolean isMixin();

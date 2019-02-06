@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
@@ -34,11 +35,11 @@ public final class ImmutableLeafSetNodeSchemaAwareBuilder<T> extends ImmutableLe
         super.withNodeIdentifier(new NodeIdentifier(schema.getQName()));
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema) {
         return new ImmutableLeafSetNodeSchemaAwareBuilder<>(schema);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema,
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafListSchemaNode schema,
             final LeafSetNode<T> node) {
         if (!(node instanceof ImmutableLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
