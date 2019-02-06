@@ -9,18 +9,20 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +32,10 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Type of the container node
  */
-class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
-        extends AbstractNodeContainerModificationStrategy {
+class DataNodeContainerModificationStrategy<T extends DataNodeContainer & WithStatus> extends Visible<T> {
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerModificationStrategy.class);
 
-    private final DataTreeConfiguration treeConfig;
-    private final T schema;
+    private final @NonNull DataTreeConfiguration treeConfig;
 
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<DataNodeContainerModificationStrategy, ImmutableMap> UPDATER =
@@ -45,8 +45,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
 
     DataNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support, final T schema,
             final DataTreeConfiguration treeConfig) {
-        super(support, treeConfig);
-        this.schema = requireNonNull(schema, "schema");
+        super(support, treeConfig, schema);
         this.treeConfig = requireNonNull(treeConfig, "treeConfig");
     }
 
@@ -63,6 +62,7 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
     }
 
     private ModificationApplyOperation resolveChild(final PathArgument identifier) {
+        final T schema = getSchema();
         if (identifier instanceof AugmentationIdentifier && schema instanceof AugmentationTarget) {
             return SchemaAwareApplyOperation.from(schema, (AugmentationTarget) schema,
                 (AugmentationIdentifier) identifier, treeConfig);
@@ -110,10 +110,5 @@ class DataNodeContainerModificationStrategy<T extends DataNodeContainer>
                 return Optional.of(raced);
             }
         }
-    }
-
-    @Override
-    ToStringHelper addToStringAttributes(final ToStringHelper helper) {
-        return super.addToStringAttributes(helper).add("schema", schema);
     }
 }

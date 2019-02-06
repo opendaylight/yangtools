@@ -17,9 +17,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-final class LeafSetModificationStrategy extends AbstractNodeContainerModificationStrategy {
+final class LeafSetModificationStrategy extends Invisible<LeafListSchemaNode> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedLeafSetNode<?>> ORDERED_SUPPORT =
             new NormalizedNodeContainerSupport(OrderedLeafSetNode.class, ChildTrackingPolicy.ORDERED,
@@ -31,15 +32,13 @@ final class LeafSetModificationStrategy extends AbstractNodeContainerModificatio
                 foo -> ImmutableLeafSetNodeBuilder.create((LeafSetNode<?>)foo),
                 ImmutableLeafSetNodeBuilder::create);
 
-    private final Optional<ModificationApplyOperation> entryStrategy;
-
     LeafSetModificationStrategy(final LeafListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(schema.isUserOrdered() ? ORDERED_SUPPORT : UNORDERED_SUPPORT, treeConfig);
-        entryStrategy = Optional.of(new ValueNodeModificationStrategy<>(LeafSetEntryNode.class, schema));
+        super(schema.isUserOrdered() ? ORDERED_SUPPORT : UNORDERED_SUPPORT, treeConfig,
+                new ValueNodeModificationStrategy<>(LeafSetEntryNode.class, schema));
     }
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument identifier) {
-        return identifier instanceof NodeWithValue ? entryStrategy : Optional.empty();
+        return identifier instanceof NodeWithValue ? entryStrategy() : Optional.empty();
     }
 }

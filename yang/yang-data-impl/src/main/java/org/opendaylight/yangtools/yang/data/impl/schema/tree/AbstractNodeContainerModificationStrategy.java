@@ -15,6 +15,7 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -29,8 +30,54 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
-abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareApplyOperation {
+abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
+        extends SchemaAwareApplyOperation<T> {
+    abstract static class Invisible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
+        private final @NonNull SchemaAwareApplyOperation<T> entryStrategy;
+
+        Invisible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
+                final SchemaAwareApplyOperation<T> entryStrategy) {
+            super(support, treeConfig);
+            this.entryStrategy = requireNonNull(entryStrategy);
+        }
+
+        @Override
+        final T getSchema() {
+            return entryStrategy.getSchema();
+        }
+
+        final Optional<ModificationApplyOperation> entryStrategy() {
+            return Optional.of(entryStrategy);
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("entry", entryStrategy);
+        }
+    }
+
+    abstract static class Visible<T extends WithStatus> extends AbstractNodeContainerModificationStrategy<T> {
+        private final @NonNull T schema;
+
+        Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
+            final T schema) {
+            super(support, treeConfig);
+            this.schema = requireNonNull(schema);
+        }
+
+        @Override
+        final T getSchema() {
+            return schema;
+        }
+
+        @Override
+        ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+            return super.addToStringAttributes(helper).add("schema", schema);
+        }
+    }
+
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
 
