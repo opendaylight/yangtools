@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
@@ -53,7 +54,7 @@ public class ImmutableChoiceNodeSchemaAwareBuilder extends ImmutableChoiceNodeBu
         return super.build();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceSchemaNode schema) {
         return new ImmutableChoiceNodeSchemaAwareBuilder(schema);
     }
 }

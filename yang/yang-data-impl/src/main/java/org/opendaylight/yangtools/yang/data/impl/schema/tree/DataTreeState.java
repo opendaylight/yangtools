@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -22,7 +23,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 final class DataTreeState {
     private final LatestOperationHolder holder;
     private final SchemaContext schemaContext;
-    private final TreeNode root;
+    private final @NonNull TreeNode root;
 
     private DataTreeState(final TreeNode root) {
         this.root = requireNonNull(root);
@@ -41,7 +42,7 @@ final class DataTreeState {
         return new DataTreeState(root);
     }
 
-    TreeNode getRoot() {
+    @NonNull TreeNode getRoot() {
         return root;
     }
 

@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collections;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -31,11 +32,12 @@ public class ImmutableMapNodeSchemaAwareBuilder extends ImmutableMapNodeBuilder 
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema) {
         return new ImmutableMapNodeSchemaAwareBuilder(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema, final MapNode node) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final ListSchemaNode schema,
+            final MapNode node) {
         if (!(node instanceof ImmutableMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -46,11 +47,11 @@ public class ImmutableMapNodeBuilder implements CollectionNodeBuilder<MapEntryNo
         this.value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create() {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create() {
         return new ImmutableMapNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, MapNode> create(final int sizeHint) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, MapNode> create(final int sizeHint) {
         return new ImmutableMapNodeBuilder(sizeHint);
     }
 

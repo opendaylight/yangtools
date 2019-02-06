@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -40,15 +41,16 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         this.dirty = true;
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
+    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create() {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
+    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final int sizeHint) {
         return new ImmutableUnkeyedListNodeBuilder();
     }
 
-    public static CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(final UnkeyedListNode node) {
+    public static @NonNull CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> create(
+            final UnkeyedListNode node) {
         if (!(node instanceof ImmutableUnkeyedListNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

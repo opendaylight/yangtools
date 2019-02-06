@@ -16,8 +16,8 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.annotation.Nonnull;
 import javax.annotation.concurrent.NotThreadSafe;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -104,8 +104,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      *
      * @return Currently-written value
      */
-    @Nonnull
-    NormalizedNode<?, ?> getWrittenValue() {
+    @NonNull NormalizedNode<?, ?> getWrittenValue() {
         return verifyNotNull(value);
     }
 
@@ -119,11 +118,11 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return Optional.ofNullable(children.get(child));
     }
 
-    private Optional<TreeNode> metadataFromSnapshot(@Nonnull final PathArgument child) {
+    private Optional<TreeNode> metadataFromSnapshot(final @NonNull PathArgument child) {
         return original.isPresent() ? original.get().getChild(child) : Optional.empty();
     }
 
-    private Optional<TreeNode> metadataFromData(@Nonnull final PathArgument child, final Version modVersion) {
+    private Optional<TreeNode> metadataFromData(final @NonNull PathArgument child, final Version modVersion) {
         if (writtenOriginal == null) {
             // Lazy instantiation, as we do not want do this for all writes. We are using the modification's version
             // here, as that version is what the SchemaAwareApplyOperation will see when dealing with the resulting
@@ -143,7 +142,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @param modVersion Version allocated by the calling {@link InMemoryDataTreeModification}
      * @return Before-image tree node as observed by that child.
      */
-    private Optional<TreeNode> findOriginalMetadata(@Nonnull final PathArgument child, final Version modVersion) {
+    private Optional<TreeNode> findOriginalMetadata(final @NonNull PathArgument child, final Version modVersion) {
         switch (operation) {
             case DELETE:
                 // DELETE implies non-presence
@@ -171,8 +170,8 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
      * @return {@link ModifiedNode} for specified child, with {@link #getOriginal()}
      *         containing child metadata if child was present in original data.
      */
-    ModifiedNode modifyChild(@Nonnull final PathArgument child, @Nonnull final ModificationApplyOperation childOper,
-            @Nonnull final Version modVersion) {
+    ModifiedNode modifyChild(final @NonNull PathArgument child, final @NonNull ModificationApplyOperation childOper,
+            final @NonNull Version modVersion) {
         clearSnapshot();
         if (operation == LogicalOperation.NONE) {
             updateOperationType(LogicalOperation.TOUCH);
@@ -328,7 +327,7 @@ final class ModifiedNode extends NodeModification implements StoreTreeNode<Modif
         return helper.toString();
     }
 
-    void resolveModificationType(@Nonnull final ModificationType type) {
+    void resolveModificationType(final @NonNull ModificationType type) {
         modType = type;
     }
 

@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateTip;
@@ -26,9 +25,9 @@ abstract class AbstractDataTreeTip implements DataTreeTip {
      *
      * @return Current tip root node, may not be null.
      */
-    @Nonnull protected abstract TreeNode getTipRoot();
+    protected abstract @NonNull TreeNode getTipRoot();
 
-    @NonNull abstract YangInstanceIdentifier getRootPath();
+    abstract @NonNull YangInstanceIdentifier getRootPath();
 
     @Override
     public final void validate(final DataTreeModification modification) throws DataValidationFailedException {
