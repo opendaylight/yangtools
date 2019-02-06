@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -45,15 +46,16 @@ public class ImmutableMapEntryNodeBuilder
         fillQnames(node.getValue(), childrenQNamesToPaths);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
         return new ImmutableMapEntryNodeBuilder();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(final int sizeHint) {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+            final int sizeHint) {
         return new ImmutableMapEntryNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final MapEntryNode node) {
         if (!(node instanceof ImmutableMapEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));

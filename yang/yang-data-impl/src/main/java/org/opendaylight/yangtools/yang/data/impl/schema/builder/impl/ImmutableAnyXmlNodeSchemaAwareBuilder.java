@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import javax.xml.transform.dom.DOMSource;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
@@ -19,7 +20,7 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(
+    public static @NonNull NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(
             final AnyXmlSchemaNode schema) {
         return new ImmutableAnyXmlNodeSchemaAwareBuilder(schema);
     }

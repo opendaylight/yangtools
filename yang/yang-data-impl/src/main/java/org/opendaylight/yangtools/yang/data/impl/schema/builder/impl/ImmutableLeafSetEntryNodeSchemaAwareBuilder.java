@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
@@ -22,7 +23,7 @@ public final class ImmutableLeafSetEntryNodeSchemaAwareBuilder<T> extends Immuta
         this.schema = requireNonNull(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(
+    public static <T> @NonNull NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> create(
             final LeafListSchemaNode schema) {
         return new ImmutableLeafSetEntryNodeSchemaAwareBuilder<>(schema);
     }
