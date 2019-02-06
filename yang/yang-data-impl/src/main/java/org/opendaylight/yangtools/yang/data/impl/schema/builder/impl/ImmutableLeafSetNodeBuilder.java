@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.MapAdaptor;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -50,15 +50,15 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         value = MapAdaptor.getDefaultInstance().takeSnapshot(node.children);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
         return new ImmutableLeafSetNodeBuilder<>();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final int sizeHint) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final int sizeHint) {
         return new ImmutableLeafSetNodeBuilder<>(sizeHint);
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
         if (!(node instanceof ImmutableLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -113,9 +113,9 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
         return withChildValue(childValue, Collections.emptyMap());
     }
 
-    protected static final class ImmutableLeafSetNode<T> extends
-            AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
-            Immutable, LeafSetNode<T> {
+    protected static final class ImmutableLeafSetNode<T>
+            extends AbstractImmutableNormalizedValueNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>>
+            implements LeafSetNode<T> {
 
         private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 

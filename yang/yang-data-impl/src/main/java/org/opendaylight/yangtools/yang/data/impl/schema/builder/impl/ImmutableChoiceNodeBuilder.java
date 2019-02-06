@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -29,15 +30,15 @@ public class ImmutableChoiceNodeBuilder extends AbstractImmutableDataContainerNo
         super(node);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create() {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create() {
         return new ImmutableChoiceNodeBuilder();
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final int sizeHint) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final int sizeHint) {
         return new ImmutableChoiceNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> create(final ChoiceNode node) {
         if (!(node instanceof ImmutableChoiceNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }

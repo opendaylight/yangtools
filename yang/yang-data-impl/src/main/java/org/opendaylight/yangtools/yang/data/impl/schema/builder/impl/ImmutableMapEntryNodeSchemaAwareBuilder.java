@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -52,7 +53,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         return super.build();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }

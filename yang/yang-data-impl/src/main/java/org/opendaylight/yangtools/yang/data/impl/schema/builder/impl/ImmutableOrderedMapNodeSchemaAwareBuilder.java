@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.base.Preconditions;
 import java.util.Collections;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -33,11 +34,11 @@ public class ImmutableOrderedMapNodeSchemaAwareBuilder extends ImmutableOrderedM
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema) {
         return new ImmutableOrderedMapNodeSchemaAwareBuilder(schema);
     }
 
-    public static CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema,
+    public static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> create(final ListSchemaNode schema,
         final MapNode node) {
         if (!(node instanceof ImmutableOrderedMapNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));

@@ -13,7 +13,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import org.opendaylight.yangtools.concepts.Immutable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.UnmodifiableCollection;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -43,11 +43,11 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         dirty = true;
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create() {
         return new ImmutableOrderedLeafSetNodeBuilder<>();
     }
 
-    public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
+    public static <T> @NonNull ListNodeBuilder<T, LeafSetEntryNode<T>> create(final LeafSetNode<T> node) {
         if (!(node instanceof ImmutableOrderedLeafSetNode<?>)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
         }
@@ -112,9 +112,9 @@ public class ImmutableOrderedLeafSetNodeBuilder<T> implements ListNodeBuilder<T,
         return withChildValue(childValue, Collections.emptyMap());
     }
 
-    protected static final class ImmutableOrderedLeafSetNode<T> extends
-            AbstractImmutableNormalizedNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>> implements
-            Immutable, OrderedLeafSetNode<T> {
+    protected static final class ImmutableOrderedLeafSetNode<T>
+            extends AbstractImmutableNormalizedNode<NodeIdentifier, Collection<LeafSetEntryNode<T>>>
+            implements OrderedLeafSetNode<T> {
 
         private final Map<NodeWithValue, LeafSetEntryNode<T>> children;
 
