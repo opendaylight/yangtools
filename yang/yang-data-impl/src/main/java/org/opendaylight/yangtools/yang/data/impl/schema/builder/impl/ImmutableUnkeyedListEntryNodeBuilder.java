@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -31,15 +32,16 @@ public class ImmutableUnkeyedListEntryNodeBuilder
         super(node);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create() {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create() {
         return new ImmutableUnkeyedListEntryNodeBuilder();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(final int sizeHint) {
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+            final int sizeHint) {
         return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
             final UnkeyedListEntryNode node) {
         if (!(node instanceof ImmutableUnkeyedListEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));

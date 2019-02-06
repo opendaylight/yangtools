@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.api;
 
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
@@ -21,7 +22,7 @@ public interface DataContainerNodeBuilder<I extends PathArgument, R extends Data
     @Override
     DataContainerNodeBuilder<I, R> withNodeIdentifier(I nodeIdentifier);
 
-    DataContainerNodeBuilder<I, R> withChild(DataContainerChild<?, ?> child);
+    @NonNull DataContainerNodeBuilder<I, R> withChild(DataContainerChild<?, ?> child);
 
-    DataContainerNodeBuilder<I, R> withoutChild(PathArgument key);
+    @NonNull DataContainerNodeBuilder<I, R> withoutChild(PathArgument key);
 }
