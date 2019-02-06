@@ -30,12 +30,13 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Visible;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ChoiceModificationStrategy extends AbstractNodeContainerModificationStrategy {
+final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
             new NormalizedNodeContainerSupport<>(ChoiceNode.class, ImmutableChoiceNodeBuilder::create,
                     ImmutableChoiceNodeBuilder::create);
@@ -45,12 +46,12 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
 
-    ChoiceModificationStrategy(final ChoiceSchemaNode schemaNode, final DataTreeConfiguration treeConfig) {
-        super(SUPPORT, treeConfig);
+    ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
+        super(SUPPORT, treeConfig, schema);
 
         final Builder<PathArgument, ModificationApplyOperation> childBuilder = ImmutableMap.builder();
         final Builder<PathArgument, CaseEnforcer> enforcerBuilder = ImmutableMap.builder();
-        for (final CaseSchemaNode caze : schemaNode.getCases().values()) {
+        for (final CaseSchemaNode caze : schema.getCases().values()) {
             final CaseEnforcer enforcer = CaseEnforcer.forTree(caze, treeConfig);
             if (enforcer != null) {
                 for (final Entry<NodeIdentifier, DataSchemaNode> e : enforcer.getChildEntries()) {

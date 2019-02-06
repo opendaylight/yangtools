@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import com.google.common.base.Preconditions;
 import java.util.List;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,6 +31,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -37,7 +39,7 @@ import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
+abstract class SchemaAwareApplyOperation<T extends WithStatus> extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaAwareApplyOperation.class);
     private static final NormalizedNodeContainerSupport<AugmentationIdentifier, AugmentationNode> AUGMENTATION_SUPPORT =
             new NormalizedNodeContainerSupport<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
@@ -63,9 +65,9 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
         throw new IllegalArgumentException("Not supported schema node type for " + schemaNode.getClass());
     }
 
-    public static SchemaAwareApplyOperation from(final DataNodeContainer resolvedTree,
-            final AugmentationTarget augSchemas, final AugmentationIdentifier identifier,
-            final DataTreeConfiguration treeConfig) {
+    public static DataNodeContainerModificationStrategy<AugmentationSchemaNode> from(
+            final DataNodeContainer resolvedTree, final AugmentationTarget augSchemas,
+            final AugmentationIdentifier identifier, final DataTreeConfiguration treeConfig) {
         for (final AugmentationSchemaNode potential : augSchemas.getAvailableAugmentations()) {
             for (final DataSchemaNode child : potential.getChildNodes()) {
                 if (identifier.getPossibleChildNames().contains(child.getQName())) {
@@ -93,7 +95,7 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
     private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation op;
+        final SchemaAwareApplyOperation<?> op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
         } else {
@@ -299,6 +301,12 @@ abstract class SchemaAwareApplyOperation extends ModificationApplyOperation {
      */
     protected abstract void checkTouchApplicable(ModificationPath path, NodeModification modification,
             Optional<TreeNode> current, Version version) throws DataValidationFailedException;
+
+    /**
+     * Return the {@link WithStatus}-subclass schema associated with this operation.
+     * @return A model node
+     */
+    abstract @NonNull T getSchema();
 
     /**
      * Checks if supplied schema node belong to specified Data Tree type. All nodes belong to the operational tree,

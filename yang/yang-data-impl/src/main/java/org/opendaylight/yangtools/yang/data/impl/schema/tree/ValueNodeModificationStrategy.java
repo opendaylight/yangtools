@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ValueNode;
@@ -21,13 +22,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation {
+final class ValueNodeModificationStrategy<T extends DataSchemaNode> extends SchemaAwareApplyOperation<T> {
     private final Class<? extends ValueNode> nodeClass;
-    private final T schema;
+    private final @NonNull T schema;
 
     ValueNodeModificationStrategy(final Class<? extends ValueNode> nodeClass, final T schema) {
         this.nodeClass = requireNonNull(nodeClass);
         this.schema = requireNonNull(schema);
+    }
+
+    @Override
+    T getSchema() {
+        return schema;
     }
 
     @Override

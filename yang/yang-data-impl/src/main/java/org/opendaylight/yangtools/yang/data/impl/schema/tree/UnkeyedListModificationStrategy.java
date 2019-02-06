@@ -22,15 +22,20 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
+final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation<ListSchemaNode> {
     private static final NormalizedNodeContainerSupport<NodeIdentifier, UnkeyedListEntryNode> ITEM_SUPPORT =
             new NormalizedNodeContainerSupport<>(UnkeyedListEntryNode.class,
                     ImmutableUnkeyedListEntryNodeBuilder::create, ImmutableUnkeyedListEntryNodeBuilder::create);
 
-    private final Optional<ModificationApplyOperation> entryStrategy;
+    private final DataNodeContainerModificationStrategy<ListSchemaNode> entryStrategy;
 
     UnkeyedListModificationStrategy(final ListSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        entryStrategy = Optional.of(new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig));
+        entryStrategy = new DataNodeContainerModificationStrategy<>(ITEM_SUPPORT, schema, treeConfig);
+    }
+
+    @Override
+    ListSchemaNode getSchema() {
+        return entryStrategy.getSchema();
     }
 
     @Override
@@ -115,7 +120,7 @@ final class UnkeyedListModificationStrategy extends SchemaAwareApplyOperation {
 
     @Override
     public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
-        return child instanceof NodeIdentifier ? entryStrategy : Optional.empty();
+        return child instanceof NodeIdentifier ? Optional.of(entryStrategy) : Optional.empty();
     }
 
     @Override
