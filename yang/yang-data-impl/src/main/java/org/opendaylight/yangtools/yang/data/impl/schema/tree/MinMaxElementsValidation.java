@@ -28,18 +28,18 @@ import org.slf4j.LoggerFactory;
 final class MinMaxElementsValidation extends DelegatingModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
 
-    private final SchemaAwareApplyOperation delegate;
+    private final SchemaAwareApplyOperation<?> delegate;
     private final int minElements;
     private final int maxElements;
 
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation delegate, final Integer minElements,
+    private MinMaxElementsValidation(final SchemaAwareApplyOperation<?> delegate, final Integer minElements,
             final Integer maxElements) {
         this.delegate = requireNonNull(delegate);
         this.minElements = minElements != null ? minElements : 0;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
 
-    static ModificationApplyOperation from(final SchemaAwareApplyOperation delegate, final DataSchemaNode schema) {
+    static ModificationApplyOperation from(final SchemaAwareApplyOperation<?> delegate, final DataSchemaNode schema) {
         if (!(schema instanceof ElementCountConstraintAware)) {
             return delegate;
         }
