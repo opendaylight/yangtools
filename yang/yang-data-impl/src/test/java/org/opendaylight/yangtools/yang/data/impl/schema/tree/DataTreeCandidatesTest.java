@@ -10,19 +10,24 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.util.Collection;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTree;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidate;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidateNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeCandidates;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModificationCursor;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.TreeType;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -70,8 +75,7 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
                 .withValue("testing-value")
                 .build();
 
-        final InMemoryDataTreeModification modification = (InMemoryDataTreeModification) innerDataTree.takeSnapshot()
-                .newModification();
+        final DataTreeModification modification = innerDataTree.takeSnapshot().newModification();
         modification.write(TestModel.VALUE_PATH, leaf);
 
         modification.ready();
@@ -97,5 +101,85 @@ public class DataTreeCandidatesTest extends AbstractTestModelTest {
 
         final LeafNode<?> readLeaf = (LeafNode<?>) newModification.readNode(TestModel.INNER_VALUE_PATH).get();
         assertEquals(readLeaf, leaf);
+    }
+
+    @Test
+    public void testEmptyMergeOnContainer() throws DataValidationFailedException {
+        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
+        modification.ready();
+        dataTree.validate(modification);
+
+        // The entire transaction needs to fizzle to a no-op
+        DataTreeCandidate candidate = dataTree.prepare(modification);
+        DataTreeCandidateNode node = candidate.getRootNode();
+        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+
+        // 'test'
+        assertUnmodified(1, node.getChildNodes());
+    }
+
+    @Test
+    public void testEmptyWriteOnContainer() throws DataValidationFailedException {
+        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        modification.write(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
+        modification.ready();
+        dataTree.validate(modification);
+
+        // The entire transaction needs to fizzle to a no-op
+        DataTreeCandidate candidate = dataTree.prepare(modification);
+        DataTreeCandidateNode node = candidate.getRootNode();
+        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+
+        // 'test'
+        assertUnmodified(1, node.getChildNodes());
+    }
+
+    @Test
+    public void testEmptyMergesOnDeleted() throws DataValidationFailedException {
+        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        modification.delete(TestModel.NON_PRESENCE_PATH);
+        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.choiceNode(TestModel.DEEP_CHOICE_QNAME));
+        modification.ready();
+        dataTree.validate(modification);
+
+        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        assertEquals(YangInstanceIdentifier.EMPTY, candidate.getRootPath());
+        final DataTreeCandidateNode node = candidate.getRootNode();
+        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+
+        // 'test'
+        assertUnmodified(1, node.getChildNodes());
+    }
+
+    @Test
+    public void testEmptyMergesOnExisting() throws DataValidationFailedException {
+        // Make sure 'non-presence' is present
+        DataTreeModification modification = dataTree.takeSnapshot().newModification();
+        modification.write(TestModel.NAME_PATH, ImmutableNodes.leafNode(TestModel.NAME_QNAME, "foo"));
+        modification.ready();
+        dataTree.validate(modification);
+        dataTree.commit(dataTree.prepare(modification));
+
+        // Issue an empty merge on it and a child choice
+        modification = dataTree.takeSnapshot().newModification();
+        modification.merge(TestModel.NON_PRESENCE_PATH, ImmutableNodes.containerNode(TestModel.NON_PRESENCE_QNAME));
+        modification.merge(TestModel.DEEP_CHOICE_PATH, ImmutableNodes.choiceNode(TestModel.DEEP_CHOICE_QNAME));
+        modification.ready();
+        dataTree.validate(modification);
+
+        // The entire transaction needs to fizzle to a no-op
+        final DataTreeCandidate candidate = dataTree.prepare(modification);
+        assertEquals(YangInstanceIdentifier.EMPTY, candidate.getRootPath());
+        final DataTreeCandidateNode node = candidate.getRootNode();
+        assertEquals(ModificationType.UNMODIFIED, node.getModificationType());
+
+        // 'non-presence' and 'test'
+        assertUnmodified(2, node.getChildNodes());
+    }
+
+    private static void assertUnmodified(final int expSize, final Collection<DataTreeCandidateNode> nodes) {
+        assertEquals(expSize, nodes.size());
+        nodes.forEach(node -> assertEquals(ModificationType.UNMODIFIED, node.getModificationType()));
     }
 }

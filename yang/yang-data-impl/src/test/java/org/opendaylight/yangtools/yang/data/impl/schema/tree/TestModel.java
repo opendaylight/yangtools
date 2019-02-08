@@ -36,6 +36,10 @@ public final class TestModel {
     public static final YangInstanceIdentifier INNER_CONTAINER_PATH = TEST_PATH.node(INNER_CONTAINER_QNAME);
     public static final YangInstanceIdentifier VALUE_PATH = YangInstanceIdentifier.of(VALUE_QNAME);
     public static final YangInstanceIdentifier INNER_VALUE_PATH = INNER_CONTAINER_PATH.node(VALUE_QNAME);
+    public static final YangInstanceIdentifier NON_PRESENCE_PATH = YangInstanceIdentifier.of(NON_PRESENCE_QNAME);
+    public static final YangInstanceIdentifier DEEP_CHOICE_PATH = NON_PRESENCE_PATH.node(DEEP_CHOICE_QNAME);
+    public static final YangInstanceIdentifier NAME_PATH = NON_PRESENCE_PATH.node(NAME_QNAME);
+
     public static final QName TWO_QNAME = QName.create(TEST_QNAME, "two");
     public static final QName THREE_QNAME = QName.create(TEST_QNAME, "three");
 

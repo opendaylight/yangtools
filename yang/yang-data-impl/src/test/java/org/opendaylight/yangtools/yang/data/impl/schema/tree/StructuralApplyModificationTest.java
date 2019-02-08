@@ -109,12 +109,8 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
     public void testNestedStrucutralNodes() throws DataValidationFailedException {
         final DataTreeModification addListEntryModification = inMemoryDataTree.takeSnapshot().newModification();
 
-        final YangInstanceIdentifier path = YangInstanceIdentifier.create(
-            getNId(TestModel.NON_PRESENCE_QNAME),
-            getNId(TestModel.DEEP_CHOICE_QNAME),
-            getNId(TestModel.A_LIST_QNAME),
-            getNId(TestModel.A_LIST_QNAME, TestModel.A_NAME_QNAME, "1")
-        );
+        final YangInstanceIdentifier path = TestModel.DEEP_CHOICE_PATH.node(TestModel.A_LIST_QNAME)
+            .node(getNId(TestModel.A_LIST_QNAME, TestModel.A_NAME_QNAME, "1"));
 
         addListEntryModification.write(path,
             Builders.mapEntryBuilder()
@@ -127,9 +123,8 @@ public final class StructuralApplyModificationTest extends AbstractTestModelTest
 
         // Check parent structure auto created
         assertNodeExistence(path, true);
-        assertNodeExistence(YangInstanceIdentifier.create(getNId(TestModel.NON_PRESENCE_QNAME)), true);
-        assertNodeExistence(YangInstanceIdentifier.create(
-            getNId(TestModel.NON_PRESENCE_QNAME), getNId(TestModel.DEEP_CHOICE_QNAME)), true);
+        assertNodeExistence(TestModel.NON_PRESENCE_PATH, true);
+        assertNodeExistence(TestModel.DEEP_CHOICE_PATH, true);
     }
 
     private void assertNodeExistence(final YangInstanceIdentifier outerListParentPath, final boolean shouldBePresent) {

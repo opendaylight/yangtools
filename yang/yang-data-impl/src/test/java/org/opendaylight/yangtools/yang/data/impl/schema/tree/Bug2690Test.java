@@ -13,7 +13,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -30,9 +29,6 @@ import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 
 public class Bug2690Test extends AbstractTestModelTest {
-    private static final YangInstanceIdentifier NAME_PATH = YangInstanceIdentifier.of(TestModel.NON_PRESENCE_QNAME)
-            .node(TestModel.NAME_QNAME);
-
     private DataTree inMemoryDataTree;
 
     @Before
@@ -87,14 +83,13 @@ public class Bug2690Test extends AbstractTestModelTest {
 
     private DataTreeModification setupTestDeleteStructuralAndWriteChild() {
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
-        modificationTree.delete(YangInstanceIdentifier.of(TestModel.NON_PRESENCE_QNAME));
-        modificationTree.write(NAME_PATH, Builders.leafBuilder()
-            .withNodeIdentifier(new NodeIdentifier(TestModel.NAME_QNAME)).withValue("abc").build());
+        modificationTree.delete(TestModel.NON_PRESENCE_PATH);
+        modificationTree.write(TestModel.NAME_PATH, ImmutableNodes.leafNode(TestModel.NAME_QNAME, "abc"));
         return modificationTree;
     }
 
     private static void verifyTestDeleteStructuralAndWriteChild(final DataTreeSnapshot snapshot) {
-        final Optional<NormalizedNode<?, ?>> readNode = snapshot.readNode(NAME_PATH);
+        final Optional<NormalizedNode<?, ?>> readNode = snapshot.readNode(TestModel.NAME_PATH);
         assertTrue(readNode.isPresent());
     }
 
