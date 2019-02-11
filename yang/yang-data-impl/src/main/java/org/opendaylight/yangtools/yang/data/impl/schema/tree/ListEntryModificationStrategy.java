@@ -30,7 +30,7 @@ class ListEntryModificationStrategy extends DataNodeContainerModificationStrateg
         }
 
         @Override
-        void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
             enforcer.enforceOnData(writtenValue);
         }
 

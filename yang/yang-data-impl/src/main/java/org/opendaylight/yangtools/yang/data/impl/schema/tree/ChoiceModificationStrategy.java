@@ -99,7 +99,7 @@ final class ChoiceModificationStrategy extends AbstractNodeContainerModification
     }
 
     @Override
-    void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void optionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
         enforceCases(writtenValue);
     }
 
