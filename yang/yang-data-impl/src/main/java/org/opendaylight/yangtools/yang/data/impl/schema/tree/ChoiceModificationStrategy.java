@@ -101,7 +101,7 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void optionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
         enforceCases(writtenValue);
     }
 
