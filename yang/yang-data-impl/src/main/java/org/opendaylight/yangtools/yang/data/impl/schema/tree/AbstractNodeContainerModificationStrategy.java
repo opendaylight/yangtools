@@ -69,17 +69,28 @@ abstract class AbstractNodeContainerModificationStrategy extends SchemaAwareAppl
                 }
             }
 
-            additionalVerifyValueChildren(writtenValue);
+            optionalVerifyValueChildren(writtenValue);
         }
+        mandatoryVerifyValueChildren(writtenValue);
     }
 
     /**
      * Perform additional verification on written value's child structure, like presence of mandatory children and
-     * exclusion. The default implementation does nothing.
+     * exclusion. The default implementation does nothing and is not invoked for non-CONFIG data trees.
      *
      * @param writtenValue Effective written value
      */
-    void additionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+    void optionalVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
+        // Defaults to no-op
+    }
+
+    /**
+     * Perform additional verification on written value's child structure, like presence of mandatory children.
+     * The default implementation does nothing.
+     *
+     * @param writtenValue Effective written value
+     */
+    void mandatoryVerifyValueChildren(final NormalizedNode<?, ?> writtenValue) {
         // Defaults to no-op
     }
 
