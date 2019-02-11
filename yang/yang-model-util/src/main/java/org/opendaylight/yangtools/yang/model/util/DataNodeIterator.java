@@ -191,9 +191,4 @@ public class DataNodeIterator implements Iterator<DataSchemaNode> {
     public DataSchemaNode next() {
         return allChilds.iterator().next();
     }
-
-    @Override
-    public void remove() {
-        throw new UnsupportedOperationException();
-    }
 }
