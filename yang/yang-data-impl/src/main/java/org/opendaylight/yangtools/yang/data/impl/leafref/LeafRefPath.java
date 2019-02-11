@@ -226,11 +226,6 @@ public abstract class LeafRefPath implements Immutable {
                 current = current.parent;
                 return ret;
             }
-
-            @Override
-            public void remove() {
-                throw new UnsupportedOperationException("Component removal not supported");
-            }
         };
     }
 
