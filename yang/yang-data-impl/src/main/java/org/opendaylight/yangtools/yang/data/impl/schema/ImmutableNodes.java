@@ -65,16 +65,17 @@ public final class ImmutableNodes {
      * @return An unordered Map node
      */
     public static @NonNull MapNode mapNode(final QName name) {
+        return mapNode(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create an immutable map node.
+     *
+     * @param name QName which will be used as node identifier
+     * @return An unordered Map node
+     */
+    public static @NonNull MapNode mapNode(final NodeIdentifier name) {
         return mapNodeBuilder(name).build();
-    }
-
-    private static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapNodeBuilder(
-            final QName qname) {
-        return orderedMapNodeBuilder().withNodeIdentifier(NodeIdentifier.create(qname));
-    }
-
-    private static @NonNull CollectionNodeBuilder<MapEntryNode, OrderedMapNode> orderedMapNodeBuilder() {
-        return ImmutableOrderedMapNodeBuilder.create();
     }
 
     /**
@@ -84,7 +85,17 @@ public final class ImmutableNodes {
      * @return An ordered Map node
      */
     public static @NonNull OrderedMapNode orderedMapNode(final QName name) {
-        return orderedMapNodeBuilder(name).build();
+        return orderedMapNode(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create immutable ordered map node.
+     *
+     * @param name Node identifier
+     * @return An ordered Map node
+     */
+    public static @NonNull OrderedMapNode orderedMapNode(final NodeIdentifier name) {
+        return ImmutableOrderedMapNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
     /**
@@ -125,7 +136,7 @@ public final class ImmutableNodes {
         return ImmutableMapEntryNodeBuilder.create();
     }
 
-    public static @NonNull MapEntryNode mapEntry(final QName nodeName,final QName keyName,final Object keyValue) {
+    public static @NonNull MapEntryNode mapEntry(final QName nodeName, final QName keyName, final Object keyValue) {
         return mapEntryBuilder(nodeName, keyName, keyValue).build();
     }
 
@@ -136,7 +147,17 @@ public final class ImmutableNodes {
      * @return A container node
      */
     public static @NonNull ContainerNode containerNode(final QName name) {
-        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name)).build();
+        return containerNode(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create an immutable container node.
+     *
+     * @param name Node identifier
+     * @return A container node
+     */
+    public static @NonNull ContainerNode containerNode(final NodeIdentifier name) {
+        return ImmutableContainerNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
     /**
@@ -146,7 +167,17 @@ public final class ImmutableNodes {
      * @return A choice node
      */
     public static @NonNull ChoiceNode choiceNode(final QName name) {
-        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name)).build();
+        return choiceNode(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create an immutable choice node.
+     *
+     * @param name Node identifier
+     * @return A choice node
+     */
+    public static @NonNull ChoiceNode choiceNode(final NodeIdentifier name) {
+        return ImmutableChoiceNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
     /**
@@ -156,7 +187,17 @@ public final class ImmutableNodes {
      * @return An unkeyed list node
      */
     public static @NonNull UnkeyedListNode listNode(final QName name) {
-        return ImmutableUnkeyedListNodeBuilder.create().withNodeIdentifier(NodeIdentifier.create(name)).build();
+        return listNode(NodeIdentifier.create(name));
+    }
+
+    /**
+     * Create an immutable list node.
+     *
+     * @param name Node identifier
+     * @return An unkeyed list node
+     */
+    public static @NonNull UnkeyedListNode listNode(final NodeIdentifier name) {
+        return ImmutableUnkeyedListNodeBuilder.create().withNodeIdentifier(name).build();
     }
 
     /**
