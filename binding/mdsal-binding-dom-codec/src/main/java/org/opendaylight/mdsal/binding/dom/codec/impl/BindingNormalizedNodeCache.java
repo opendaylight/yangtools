@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -23,8 +24,8 @@ final class BindingNormalizedNodeCache extends CacheLoader<DataObject, Normalize
 
     BindingNormalizedNodeCache(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
             final DataContainerCodecContext<?, ?> subtreeRoot) {
-        this.cacheHolder = Preconditions.checkNotNull(cacheHolder, "cacheHolder");
-        this.subtreeRoot = Preconditions.checkNotNull(subtreeRoot, "subtreeRoot");
+        this.cacheHolder = requireNonNull(cacheHolder, "cacheHolder");
+        this.subtreeRoot = requireNonNull(subtreeRoot, "subtreeRoot");
     }
 
     @Override

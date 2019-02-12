@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -35,8 +37,8 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     BindingToNormalizedStreamWriter(final NodeCodecContext<?> rootNodeSchema,
             final NormalizedNodeStreamWriter delegate) {
-        this.rootNodeSchema = Preconditions.checkNotNull(rootNodeSchema);
-        this.delegate = Preconditions.checkNotNull(delegate);
+        this.rootNodeSchema = requireNonNull(rootNodeSchema);
+        this.delegate = requireNonNull(delegate);
     }
 
     static BindingToNormalizedStreamWriter create(final NodeCodecContext<?> schema,

@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import org.opendaylight.mdsal.binding.dom.codec.gen.spi.AbstractSource;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.generator.impl.GeneratedClassLoadingStrategy;
@@ -35,7 +36,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
      * @param generator Parent generator
      */
     DataObjectSerializerSource(final AbstractGenerator generator) {
-        this.generator = Preconditions.checkNotNull(generator);
+        this.generator = requireNonNull(generator);
     }
 
     @SuppressWarnings("unchecked")

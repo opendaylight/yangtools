@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.gen.spi;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Definition of static property for generated class.
@@ -27,9 +27,9 @@ public class StaticConstantDefinition {
     private final Object value;
 
     public StaticConstantDefinition(final String name, final Class<?> type, final Object value) {
-        this.name = Preconditions.checkNotNull(name);
-        this.type = Preconditions.checkNotNull(type);
-        this.value = Preconditions.checkNotNull(value);
+        this.name = requireNonNull(name);
+        this.type = requireNonNull(type);
+        this.value = requireNonNull(value);
     }
 
     public String getName() {

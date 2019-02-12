@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.util;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -27,7 +28,7 @@ public final class ChoiceDispatchSerializer implements DataObjectSerializerImple
 
     @SuppressWarnings("rawtypes")
     private ChoiceDispatchSerializer(final Class choiceClass) {
-        this.choiceClass = Preconditions.checkNotNull(choiceClass);
+        this.choiceClass = requireNonNull(choiceClass);
     }
 
     public static ChoiceDispatchSerializer from(final Class<? extends DataContainer> choiceClass) {

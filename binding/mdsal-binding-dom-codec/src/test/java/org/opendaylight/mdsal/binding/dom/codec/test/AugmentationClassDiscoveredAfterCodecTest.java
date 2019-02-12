@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.test;
 
+import static java.util.Objects.requireNonNull;
 import static org.junit.Assert.assertNotNull;
 
-import com.google.common.base.Preconditions;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -121,7 +121,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
         }
 
         protected ClassExcludingClassLoadingStrategy(final GeneratedClassLoadingStrategy delegate) {
-            this.delegate = Preconditions.checkNotNull(delegate);
+            this.delegate = requireNonNull(delegate);
         }
 
         @Override

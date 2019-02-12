@@ -8,8 +8,8 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Verify.verify;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
 import com.google.common.base.Verify;
@@ -219,8 +219,8 @@ final class SchemaRootCodecContext<D extends DataObject> extends DataContainerCo
 
     private ActionCodecContext prepareActionContext(final int inputOffset, final int outputOffset,
             final int expectedArgsLength, final Class<? extends Action<?, ?, ?>> action, final Class<?> actionType) {
-        final ParameterizedType paramType = checkNotNull(ClassLoaderUtils.findParameterizedType(action, actionType),
-            "There does not exist any ParameterType in %s", action);
+        final ParameterizedType paramType = requireNonNull(ClassLoaderUtils.findParameterizedType(action, actionType),
+            () -> "There does not exist any ParameterType in " + action);
         final Type[] args = paramType.getActualTypeArguments();
         checkArgument(args.length == expectedArgsLength, "Unexpected (%s) Action generatic arguments", args.length);
         final ActionDefinition schema = factory().getRuntimeContext().getActionDefinition(action);

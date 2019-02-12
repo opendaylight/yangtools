@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.java.api.generator;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
-import com.google.common.base.Preconditions;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Table;
 import java.io.File;
@@ -79,7 +78,7 @@ public final class GeneratorJavaFile {
      * @param types set of types for which JAVA code should be generated
      */
     public GeneratorJavaFile(final Collection<? extends Type> types) {
-        this.types = Preconditions.checkNotNull(types);
+        this.types = requireNonNull(types);
         generators.add(new InterfaceGenerator());
         generators.add(new TOGenerator());
         generators.add(new EnumGenerator());

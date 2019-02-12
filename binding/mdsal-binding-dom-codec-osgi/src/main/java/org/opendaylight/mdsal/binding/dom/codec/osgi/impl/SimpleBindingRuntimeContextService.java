@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import javax.annotation.concurrent.GuardedBy;
@@ -39,8 +39,8 @@ final class SimpleBindingRuntimeContextService extends
     SimpleBindingRuntimeContextService(final BundleContext context, final ClassLoadingStrategy strategy,
         final SchemaSourceProvider<YangTextSchemaSource> sourceProvider) {
         super(context, BindingRuntimeContextListener.class, null);
-        this.sourceProvider = checkNotNull(sourceProvider);
-        this.strategy = checkNotNull(strategy);
+        this.sourceProvider = requireNonNull(sourceProvider);
+        this.strategy = requireNonNull(strategy);
     }
 
     @Override

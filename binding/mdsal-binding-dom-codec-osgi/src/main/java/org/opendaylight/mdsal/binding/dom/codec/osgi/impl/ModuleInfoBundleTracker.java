@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
@@ -46,7 +46,7 @@ final class ModuleInfoBundleTracker implements BundleTrackerCustomizer<Collectio
     private volatile boolean starting = true;
 
     ModuleInfoBundleTracker(final OsgiModuleInfoRegistry moduleInfoRegistry) {
-        this.moduleInfoRegistry = checkNotNull(moduleInfoRegistry);
+        this.moduleInfoRegistry = requireNonNull(moduleInfoRegistry);
     }
 
     void finishStart() {

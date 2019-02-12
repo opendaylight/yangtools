@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -34,9 +35,9 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
     private EncapsulatedValueCodec(final Class<?> typeClz, final MethodHandle constructor, final MethodHandle getter,
             final Class<?> valueType) {
         super(typeClz);
-        this.constructor = Preconditions.checkNotNull(constructor);
-        this.getter = Preconditions.checkNotNull(getter);
-        this.valueType = Preconditions.checkNotNull(valueType);
+        this.constructor = requireNonNull(constructor);
+        this.getter = requireNonNull(getter);
+        this.valueType = requireNonNull(valueType);
     }
 
     static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz, TypeDefinition<?> typeDef) {

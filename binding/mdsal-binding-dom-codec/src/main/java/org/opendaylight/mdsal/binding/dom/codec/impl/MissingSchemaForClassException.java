@@ -7,7 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
+
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
@@ -27,7 +28,7 @@ public final class MissingSchemaForClassException extends MissingSchemaException
 
     private MissingSchemaForClassException(final Class<?> clz) {
         super(String.format("Schema is not available for %s", clz));
-        this.bindingClass = Preconditions.checkNotNull(clz);
+        this.bindingClass = requireNonNull(clz);
     }
 
     static MissingSchemaForClassException forClass(final Class<?> clz) {

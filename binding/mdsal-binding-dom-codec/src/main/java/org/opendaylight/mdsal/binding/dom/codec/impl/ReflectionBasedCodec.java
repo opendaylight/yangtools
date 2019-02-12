@@ -7,14 +7,14 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static java.util.Objects.requireNonNull;
 
 abstract class ReflectionBasedCodec extends ValueTypeCodec {
 
     private final Class<?> typeClass;
 
     ReflectionBasedCodec(final Class<?> typeClass) {
-        this.typeClass = Preconditions.checkNotNull(typeClass);
+        this.typeClass = requireNonNull(typeClass);
     }
 
     protected final Class<?> getTypeClass() {

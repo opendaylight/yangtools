@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.base.Preconditions;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -18,7 +20,7 @@ final class IdentityCodec implements Codec<QName, Class<?>> {
     private final BindingRuntimeContext context;
 
     IdentityCodec(final BindingRuntimeContext context) {
-        this.context = Preconditions.checkNotNull(context);
+        this.context = requireNonNull(context);
     }
 
     @Override

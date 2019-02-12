@@ -7,7 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.osgi.impl;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static java.util.Objects.requireNonNull;
 
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.mdsal.binding.generator.api.ModuleInfoRegistry;
@@ -37,9 +37,9 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
     OsgiModuleInfoRegistry(final ModuleInfoRegistry moduleInfoRegistry,
         final SchemaContextProvider schemaContextProvider, final SimpleBindingRuntimeContextService runtimeContext) {
 
-        this.moduleInfoRegistry = checkNotNull(moduleInfoRegistry);
-        this.schemaContextProvider = checkNotNull(schemaContextProvider);
-        this.runtimeContext = checkNotNull(runtimeContext);
+        this.moduleInfoRegistry = requireNonNull(moduleInfoRegistry);
+        this.schemaContextProvider = requireNonNull(schemaContextProvider);
+        this.runtimeContext = requireNonNull(runtimeContext);
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")
@@ -70,7 +70,7 @@ final class OsgiModuleInfoRegistry implements ModuleInfoRegistry {
         private final ObjectRegistration<YangModuleInfo> inner;
 
         ObjectRegistrationWrapper(final ObjectRegistration<YangModuleInfo> inner) {
-            this.inner = checkNotNull(inner);
+            this.inner = requireNonNull(inner);
         }
 
         @Override
