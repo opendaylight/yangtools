@@ -25,37 +25,30 @@ import org.opendaylight.yangtools.yang.model.api.ElementCountConstraintAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class MinMaxElementsValidation extends DelegatingModificationApplyOperation {
+final class MinMaxElementsValidation<T extends DataSchemaNode & ElementCountConstraintAware>
+        extends ModificationApplyOperation {
     private static final Logger LOG = LoggerFactory.getLogger(MinMaxElementsValidation.class);
 
-    private final SchemaAwareApplyOperation<?> delegate;
+    private final SchemaAwareApplyOperation<T> delegate;
     private final int minElements;
     private final int maxElements;
 
-    private MinMaxElementsValidation(final SchemaAwareApplyOperation<?> delegate, final Integer minElements,
+    private MinMaxElementsValidation(final SchemaAwareApplyOperation<T> delegate, final Integer minElements,
             final Integer maxElements) {
         this.delegate = requireNonNull(delegate);
         this.minElements = minElements != null ? minElements : 0;
         this.maxElements = maxElements != null ? maxElements : Integer.MAX_VALUE;
     }
 
-    static ModificationApplyOperation from(final SchemaAwareApplyOperation<?> delegate, final DataSchemaNode schema) {
-        if (!(schema instanceof ElementCountConstraintAware)) {
-            return delegate;
-        }
-        final Optional<ElementCountConstraint> optConstraint = ((ElementCountConstraintAware) schema)
-                .getElementCountConstraint();
+    static <T extends DataSchemaNode & ElementCountConstraintAware> ModificationApplyOperation from(
+            final SchemaAwareApplyOperation<T> delegate) {
+        final Optional<ElementCountConstraint> optConstraint = delegate.getSchema().getElementCountConstraint();
         if (!optConstraint.isPresent()) {
             return delegate;
         }
 
         final ElementCountConstraint constraint = optConstraint.get();
-        return new MinMaxElementsValidation(delegate, constraint.getMinElements(), constraint.getMaxElements());
-    }
-
-    @Override
-    ModificationApplyOperation delegate() {
-        return delegate;
+        return new MinMaxElementsValidation<>(delegate, constraint.getMinElements(), constraint.getMaxElements());
     }
 
     @Override
@@ -105,6 +98,31 @@ final class MinMaxElementsValidation extends DelegatingModificationApplyOperatio
     void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
         delegate.fullVerifyStructure(modification);
         checkChildren(modification);
+    }
+
+    @Override
+    public Optional<ModificationApplyOperation> getChild(final PathArgument child) {
+        return delegate.getChild(child);
+    }
+
+    @Override
+    ChildTrackingPolicy getChildPolicy() {
+        return delegate.getChildPolicy();
+    }
+
+    @Override
+    void mergeIntoModifiedNode(final ModifiedNode node, final NormalizedNode<?, ?> value, final Version version) {
+        delegate.mergeIntoModifiedNode(node, value, version);
+    }
+
+    @Override
+    void quickVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate.quickVerifyStructure(modification);
+    }
+
+    @Override
+    void recursivelyVerifyStructure(final NormalizedNode<?, ?> value) {
+        delegate.recursivelyVerifyStructure(value);
     }
 
     private void validateMinMaxElements(final ModificationPath path, final NormalizedNode<?, ?> value)
