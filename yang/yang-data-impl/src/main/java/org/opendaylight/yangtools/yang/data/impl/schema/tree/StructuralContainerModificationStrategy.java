@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * it enforces presence of mandatory leaves, which is not something we want here, as structural containers are not
  * root anchors for that validation.
  */
-final class StructuralContainerModificationStrategy extends NonApplyDelegatedModificationApplyOperation {
+final class StructuralContainerModificationStrategy extends DelegatingModificationApplyOperation {
     /**
      * Fake TreeNode version used in
      * {@link #checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
@@ -50,6 +50,11 @@ final class StructuralContainerModificationStrategy extends NonApplyDelegatedMod
     @Override
     ModificationApplyOperation delegate() {
         return delegate;
+    }
+
+    @Override
+    void fullVerifyStructure(final NormalizedNode<?, ?> modification) {
+        delegate.fullVerifyStructure(modification);
     }
 
     @Override
