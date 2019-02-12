@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
+import org.opendaylight.yangtools.yang.data.api.schema.tree.ConflictingModificationAppliedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
@@ -77,6 +78,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             return super.addToStringAttributes(helper).add("schema", schema);
         }
     }
+
+    /**
+     * Fake TreeNode version used in
+     * {@link #checkTouchApplicable(ModificationPath, NodeModification, Optional, Version)}
+     * It is okay to use a global constant, as the delegate will ignore it anyway.
+     */
+    private static final Version FAKE_VERSION = Version.initial();
 
     private final NormalizedNodeContainerSupport<?, ?> support;
     private final boolean verifyChildrenStructure;
@@ -354,7 +362,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         if (!modification.getOriginal().isPresent() && !current.isPresent()) {
             final YangInstanceIdentifier id = path.toInstanceIdentifier();
@@ -364,6 +372,23 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
         checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
         checkChildPreconditions(path, modification, current.get(), version);
+    }
+
+    /**
+     * Checks is supplied {@link NodeModification} is applicable for Subtree Modification. This variant is used by
+     * subclasses which support automatic lifecycle.
+     *
+     * @param path Path to current node
+     * @param modification Node modification which should be applied.
+     * @param current Current state of data tree
+     * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
+     * @throws org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException If subtree
+     *         modification is not applicable (e.g. leaf node).
+     */
+    final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+            final Optional<TreeNode> current, final Version version, final NormalizedNode<?, ?> emptyNode)
+                    throws DataValidationFailedException {
+        checkChildPreconditions(path, modification, touchMeta(current, emptyNode), version);
     }
 
     @Override
@@ -394,6 +419,10 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 path.pop();
             }
         }
+    }
+
+    private static TreeNode touchMeta(final Optional<TreeNode> current, final NormalizedNode<?, ?> emptyNode) {
+        return current.isPresent() ? current.get() : TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
     }
 
     @Override

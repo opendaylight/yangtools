@@ -11,7 +11,6 @@ import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedNodeContainer;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.ModificationType;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNodeFactory;
@@ -40,24 +39,6 @@ final class AutomaticLifecycleMixin {
                 Version version);
     }
 
-    /**
-     * This is a capture of
-     * {@link ModificationApplyOperation#checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
-     */
-    @FunctionalInterface
-    interface CheckApplicable {
-        void checkApplicable(ModificationPath path, NodeModification modification, Optional<TreeNode> current,
-                Version version) throws DataValidationFailedException;
-    }
-
-    /**
-     * Fake TreeNode version used in
-     * {@link #checkApplicable(ModificationPath, NodeModification, Optional, Version)}.
-     * It is okay to use a global constant, as the delegate will ignore it anyway. For
-     * {@link #apply(ModifiedNode, Optional, Version)} we will use the appropriate version as provided to us.
-     */
-    private static final Version FAKE_VERSION = Version.initial();
-
     private AutomaticLifecycleMixin() {
 
     }
@@ -83,17 +64,6 @@ final class AutomaticLifecycleMixin {
         }
 
         return disappearResult(modification, ret, storeMeta);
-    }
-
-    static void checkApplicable(final CheckApplicable delegate, final NormalizedNode<?, ?> emptyNode,
-            final ModificationPath path, final NodeModification modification, final Optional<TreeNode> current,
-            final Version version) throws DataValidationFailedException {
-        if (modification.getOperation() == LogicalOperation.TOUCH && !current.isPresent()) {
-            // Structural containers are created as needed, so we pretend this container is here
-            delegate.checkApplicable(path, modification, fakeMeta(emptyNode, FAKE_VERSION), version);
-        } else {
-            delegate.checkApplicable(path, modification, current, version);
-        }
     }
 
     private static TreeNode applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,

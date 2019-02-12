@@ -45,9 +45,8 @@ final class AugmentationModificationStrategy
     }
 
     @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
+    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        AutomaticLifecycleMixin.checkApplicable(super::checkApplicable, emptyNode, path, modification, current,
-            version);
+        checkTouchApplicable(path, modification, current, version, emptyNode);
     }
 }
