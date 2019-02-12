@@ -111,7 +111,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     }
 
     @Override
-    void checkApplicable(final ModificationPath path, final NodeModification modification,
+    final void checkApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         switch (modification.getOperation()) {
             case DELETE:
@@ -302,7 +302,7 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
      * @param node Schema node
      * @return {@code true} if the node matches the tree type, {@code false} otherwise.
      */
-    static boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
+    static final boolean belongsToTree(final TreeType treeType, final DataSchemaNode node) {
         return treeType == TreeType.OPERATIONAL || node.isConfiguration();
     }
 }
