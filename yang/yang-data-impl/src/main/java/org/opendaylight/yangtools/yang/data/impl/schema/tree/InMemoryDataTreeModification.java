@@ -65,7 +65,11 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     ModificationApplyOperation getStrategy() {
-        return strategyTree.delegate();
+        final ModificationApplyOperation ret = strategyTree.delegate();
+        if (ret == null) {
+            throw new IllegalStateException("Schema Context is not available.");
+        }
+        return ret;
     }
 
     @Override

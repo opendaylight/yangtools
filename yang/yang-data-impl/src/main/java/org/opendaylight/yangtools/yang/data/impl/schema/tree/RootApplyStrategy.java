@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import com.google.common.collect.ForwardingObject;
+import java.util.Objects;
 
 /**
  * Represents a {@link ModificationApplyOperation} which is rooted at conceptual
@@ -64,17 +65,17 @@ abstract class RootApplyStrategy extends ForwardingObject {
 
     @Override
     public final boolean equals(final Object obj) {
-        return delegate().equals(obj);
+        return Objects.equals(delegate(), obj);
     }
 
     @Override
     public final int hashCode() {
-        return delegate().hashCode();
+        return Objects.hashCode(delegate());
     }
 
     @Override
     public final String toString() {
-        return delegate().toString();
+        return Objects.toString(delegate());
     }
 
     /**

@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
+import static java.util.Objects.requireNonNull;
+
 /**
  * Holder and factory for upgradable root modifications.
  *
@@ -15,7 +17,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
  */
 final class LatestOperationHolder {
 
-    private ModificationApplyOperation current = AlwaysFailOperation.INSTANCE;
+    private ModificationApplyOperation current;
 
     /**
      * Return latest backing implementation.
@@ -39,7 +41,7 @@ final class LatestOperationHolder {
      * @param newApplyOper New backing implementation
      */
     void setCurrent(final ModificationApplyOperation newApplyOper) {
-        current = newApplyOper;
+        current = requireNonNull(newApplyOper);
     }
 
     /**
