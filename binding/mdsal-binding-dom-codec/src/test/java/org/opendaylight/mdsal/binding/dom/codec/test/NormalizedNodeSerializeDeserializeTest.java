@@ -22,9 +22,9 @@ import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.ma
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapEntryBuilder;
 import static org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes.mapNodeBuilder;
 
-import com.google.common.collect.Maps;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -197,7 +197,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
 
         final Entry<InstanceIdentifier<?>, DataObject> entryWithAugments = registry.fromNormalizedNode(BI_TOP_PATH,
             topNormalizedWithAugments);
-        Map<Class<? extends Augmentation<Top>>, Augmentation<Top>> augments = Maps.newHashMap();
+        Map<Class<? extends Augmentation<Top>>, Augmentation<Top>> augments = new HashMap<>();
         augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
         augments.put(Top2.class, new Top2Builder().setAugmentedInt(AUGMENT_INT_VALUE).build());
         Top topWithAugments = topWithAugments(augments);
@@ -205,7 +205,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
         assertEquals(topWithAugments, entryWithAugments.getValue());
         assertEquals(entryWithAugments.getValue(), topWithAugments);
 
-        augments = Maps.newHashMap();
+        augments = new HashMap<>();
         augments.put(Top1.class, new Top1Builder().setAugmentedString(AUGMENT_STRING_VALUE).build());
         augments.put(Top2.class, new Top2Builder().setAugmentedInt(999).build());
         topWithAugments = topWithAugments(augments);
