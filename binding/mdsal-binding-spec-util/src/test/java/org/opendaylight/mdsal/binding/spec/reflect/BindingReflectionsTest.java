@@ -38,7 +38,7 @@ public class BindingReflectionsTest {
                 BindingReflections.getModelRootPackageName("org.opendaylight.yang.gen.v1.test.rev990939"));
         assertEquals("ModuleInfoClassName should be equal to string", "test.$YangModuleInfoImpl",
                 BindingReflections.getModuleInfoClassName("test"));
-        assertEquals("Module info should be empty Set", Collections.EMPTY_SET,
+        assertEquals("Module info should be empty Set", Collections.emptySet(),
                 BindingReflections.loadModuleInfos());
         assertFalse("Should not be RpcType", BindingReflections.isRpcType(DataObject.class));
         assertFalse("Should not be AugmentationChild", BindingReflections.isAugmentationChild(DataObject.class));
