@@ -12,9 +12,9 @@ import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.collect.ImmutableList
 import com.google.common.collect.Lists
-import com.google.common.io.BaseEncoding
 import java.beans.ConstructorProperties
 import java.util.ArrayList
+import java.util.Base64;
 import java.util.Collections
 import java.util.List
 import java.util.Map
@@ -330,8 +330,7 @@ class ClassTemplate extends BaseTemplate {
             «IF !("org.opendaylight.yangtools.yang.binding.InstanceIdentifier".equals(prop.returnType.fullyQualifiedName))»
             public static «genTO.name» getDefaultInstance(String defaultValue) {
                 «IF "byte[]".equals(prop.returnType.name)»
-                    «BaseEncoding.importedName» baseEncoding = «BaseEncoding.importedName».base64();
-                    return new «genTO.name»(baseEncoding.decode(defaultValue));
+                    return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
                 «ELSEIF "java.lang.String".equals(prop.returnType.fullyQualifiedName)»
                     return new «genTO.name»(defaultValue);
                 «ELSEIF allProperties.size > 1»
