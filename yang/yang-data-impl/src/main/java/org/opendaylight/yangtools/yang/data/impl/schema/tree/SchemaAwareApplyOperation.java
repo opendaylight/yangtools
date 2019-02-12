@@ -54,7 +54,8 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
         } else if (schemaNode instanceof ChoiceSchemaNode) {
             return new ChoiceModificationStrategy((ChoiceSchemaNode) schemaNode, treeConfig);
         } else if (schemaNode instanceof LeafListSchemaNode) {
-            return fromLeafListSchemaNode((LeafListSchemaNode) schemaNode, treeConfig);
+            return MinMaxElementsValidation.from(new LeafSetModificationStrategy((LeafListSchemaNode) schemaNode,
+                treeConfig));
         } else if (schemaNode instanceof LeafSchemaNode) {
             return new ValueNodeModificationStrategy<>(LeafNode.class, (LeafSchemaNode) schemaNode);
         }
@@ -85,19 +86,14 @@ abstract class SchemaAwareApplyOperation<T extends WithStatus> extends Modificat
     private static ModificationApplyOperation fromListSchemaNode(final ListSchemaNode schemaNode,
             final DataTreeConfiguration treeConfig) {
         final List<QName> keyDefinition = schemaNode.getKeyDefinition();
-        final SchemaAwareApplyOperation<?> op;
+        final SchemaAwareApplyOperation<ListSchemaNode> op;
         if (keyDefinition == null || keyDefinition.isEmpty()) {
             op = new UnkeyedListModificationStrategy(schemaNode, treeConfig);
         } else {
             op = MapModificationStrategy.of(schemaNode, treeConfig);
         }
 
-        return MinMaxElementsValidation.from(op, schemaNode);
-    }
-
-    private static ModificationApplyOperation fromLeafListSchemaNode(final LeafListSchemaNode schemaNode,
-            final DataTreeConfiguration treeConfig) {
-        return MinMaxElementsValidation.from(new LeafSetModificationStrategy(schemaNode, treeConfig), schemaNode);
+        return MinMaxElementsValidation.from(op);
     }
 
     protected static void checkNotConflicting(final ModificationPath path, final TreeNode original,
