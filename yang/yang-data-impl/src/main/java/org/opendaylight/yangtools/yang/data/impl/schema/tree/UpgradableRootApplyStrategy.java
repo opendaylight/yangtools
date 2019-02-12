@@ -33,7 +33,7 @@ final class UpgradableRootApplyStrategy extends RootApplyStrategy {
     @Override
     void upgradeIfPossible() {
         ModificationApplyOperation holderCurrent = holder.getCurrent();
-        if (holderCurrent != delegate) {
+        if (holderCurrent != null && holderCurrent != delegate) {
             // FIXME: Allow update only if there is addition of models, not
             // removals.
             delegate = holderCurrent;
