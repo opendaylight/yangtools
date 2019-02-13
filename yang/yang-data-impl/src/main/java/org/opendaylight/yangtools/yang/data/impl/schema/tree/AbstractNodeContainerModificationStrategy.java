@@ -16,6 +16,7 @@ import com.google.common.base.Verify;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -362,33 +363,41 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
+    protected final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        if (!modification.getOriginal().isPresent() && !current.isPresent()) {
-            final YangInstanceIdentifier id = path.toInstanceIdentifier();
-            throw new ModifiedNodeDoesNotExistException(id,
-                String.format("Node %s does not exist. Cannot apply modification to its children.", id));
+        final TreeNode currentNode;
+        if (!current.isPresent()) {
+            currentNode = defaultTreeNode();
+            if (currentNode == null) {
+                if (!modification.getOriginal().isPresent()) {
+                    final YangInstanceIdentifier id = path.toInstanceIdentifier();
+                    throw new ModifiedNodeDoesNotExistException(id,
+                        String.format("Node %s does not exist. Cannot apply modification to its children.", id));
+                }
+
+                throw new ConflictingModificationAppliedException(path.toInstanceIdentifier(),
+                    "Node was deleted by other transaction.");
+            }
+        } else {
+            currentNode = current.get();
         }
 
-        checkConflicting(path, current.isPresent(), "Node was deleted by other transaction.");
-        checkChildPreconditions(path, modification, current.get(), version);
+        checkChildPreconditions(path, modification, currentNode, version);
     }
 
     /**
-     * Checks is supplied {@link NodeModification} is applicable for Subtree Modification. This variant is used by
-     * subclasses which support automatic lifecycle.
+     * Return the default tree node. Default implementation does nothing, but can be overridden to call
+     * {@link #defaultTreeNode(NormalizedNode)}.
      *
-     * @param path Path to current node
-     * @param modification Node modification which should be applied.
-     * @param current Current state of data tree
-     * @throws ConflictingModificationAppliedException If subtree was changed in conflicting way
-     * @throws org.opendaylight.yangtools.yang.data.api.schema.tree.IncorrectDataStructureException If subtree
-     *         modification is not applicable (e.g. leaf node).
+     * @return Default empty tree node, or null if no default is available
      */
-    final void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version, final NormalizedNode<?, ?> emptyNode)
-                    throws DataValidationFailedException {
-        checkChildPreconditions(path, modification, touchMeta(current, emptyNode), version);
+    @Nullable TreeNode defaultTreeNode() {
+        // Defaults to no recovery
+        return null;
+    }
+
+    static final TreeNode defaultTreeNode(final NormalizedNode<?, ?> emptyNode) {
+        return TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
     }
 
     @Override
@@ -419,10 +428,6 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 path.pop();
             }
         }
-    }
-
-    private static TreeNode touchMeta(final Optional<TreeNode> current, final NormalizedNode<?, ?> emptyNode) {
-        return current.isPresent() ? current.get() : TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
     }
 
     @Override
