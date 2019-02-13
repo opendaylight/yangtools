@@ -8,43 +8,27 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
-import org.opendaylight.yangtools.yang.data.api.schema.AugmentationNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
-import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Augmentation;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 final class AugmentationModificationStrategy
         extends DataNodeContainerModificationStrategy<AugmentationSchemaNode> {
-    private static final NormalizedNodeContainerSupport<AugmentationIdentifier, AugmentationNode> SUPPORT =
-            new NormalizedNodeContainerSupport<>(AugmentationNode.class, ImmutableAugmentationNodeBuilder::create,
-                    ImmutableAugmentationNodeBuilder::create);
-
-    private final AugmentationNode emptyNode;
+    private static final Augmentation SUPPORT = new Augmentation();
 
     AugmentationModificationStrategy(final AugmentationSchemaNode schema, final DataNodeContainer resolved,
             final DataTreeConfiguration treeConfig) {
         super(SUPPORT, EffectiveAugmentationSchema.create(schema, resolved), treeConfig);
-        emptyNode = Builders.augmentationBuilder()
-                .withNodeIdentifier(DataSchemaContextNode.augmentationIdentifierFrom(schema))
-                .build();
     }
 
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode(), modification, storeMeta,
             version);
-    }
-
-    @Override
-    TreeNode defaultTreeNode() {
-        return defaultTreeNode(emptyNode);
     }
 }
