@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
@@ -41,7 +42,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
         Invisible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
                 final SchemaAwareApplyOperation<T> entryStrategy) {
-            super(support, treeConfig);
+            super(support, treeConfig, support.defaultEmptyValue(entryStrategy.getSchema()));
             this.entryStrategy = requireNonNull(entryStrategy);
         }
 
@@ -65,7 +66,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
 
         Visible(final NormalizedNodeContainerSupport<?, ?> support, final DataTreeConfiguration treeConfig,
             final T schema) {
-            super(support, treeConfig);
+            super(support, treeConfig, support.defaultEmptyValue(schema));
             this.schema = requireNonNull(schema);
         }
 
@@ -88,17 +89,23 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
     private static final Version FAKE_VERSION = Version.initial();
 
     private final NormalizedNodeContainerSupport<?, ?> support;
+    private final @Nullable TreeNode defaultTreeNode;
     private final boolean verifyChildrenStructure;
 
     AbstractNodeContainerModificationStrategy(final NormalizedNodeContainerSupport<?, ?> support,
-            final DataTreeConfiguration treeConfig) {
+            final DataTreeConfiguration treeConfig, final NormalizedNode<?, ?> emptyNode) {
         this.support = requireNonNull(support);
+        this.defaultTreeNode = emptyNode != null ? TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION) : null;
         this.verifyChildrenStructure = treeConfig.getTreeType() == TreeType.CONFIGURATION;
     }
 
     @Override
     protected final ChildTrackingPolicy getChildPolicy() {
         return support.childPolicy;
+    }
+
+    final @NonNull NormalizedNode<?, ?> emptyNode() {
+        return verifyNotNull(defaultTreeNode).getData();
     }
 
     @Override
@@ -367,7 +374,7 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
             final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
         final TreeNode currentNode;
         if (!current.isPresent()) {
-            currentNode = defaultTreeNode();
+            currentNode = defaultTreeNode;
             if (currentNode == null) {
                 if (!modification.getOriginal().isPresent()) {
                     final YangInstanceIdentifier id = path.toInstanceIdentifier();
@@ -376,28 +383,13 @@ abstract class AbstractNodeContainerModificationStrategy<T extends WithStatus>
                 }
 
                 throw new ConflictingModificationAppliedException(path.toInstanceIdentifier(),
-                    "Node was deleted by other transaction.");
+                        "Node was deleted by other transaction.");
             }
         } else {
             currentNode = current.get();
         }
 
         checkChildPreconditions(path, modification, currentNode, version);
-    }
-
-    /**
-     * Return the default tree node. Default implementation does nothing, but can be overridden to call
-     * {@link #defaultTreeNode(NormalizedNode)}.
-     *
-     * @return Default empty tree node, or null if no default is available
-     */
-    @Nullable TreeNode defaultTreeNode() {
-        // Defaults to no recovery
-        return null;
-    }
-
-    static final TreeNode defaultTreeNode(final NormalizedNode<?, ?> emptyNode) {
-        return TreeNodeFactory.createTreeNode(emptyNode, FAKE_VERSION);
     }
 
     @Override
