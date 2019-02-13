@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -30,24 +29,22 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Visible;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Automatic;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
-    private static final NormalizedNodeContainerSupport<NodeIdentifier, ChoiceNode> SUPPORT =
-            new NormalizedNodeContainerSupport<>(ChoiceNode.class, ImmutableChoiceNodeBuilder::create,
-                    ImmutableChoiceNodeBuilder::create);
+    private static final Automatic<ChoiceNode, ChoiceSchemaNode> SUPPORT = new Automatic<>(ChoiceNode.class,
+            ChoiceSchemaNode.class, ImmutableChoiceNodeBuilder::create, ImmutableChoiceNodeBuilder::create);
 
     private final ImmutableMap<PathArgument, ModificationApplyOperation> childNodes;
     // FIXME: enforce leaves not coming from two case statements at the same time
     private final ImmutableMap<CaseEnforcer, Collection<CaseEnforcer>> exclusions;
     private final ImmutableMap<PathArgument, CaseEnforcer> caseEnforcers;
-    private final @NonNull ChoiceNode emptyNode;
 
     ChoiceModificationStrategy(final ChoiceSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(SUPPORT, treeConfig, schema);
@@ -77,19 +74,13 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
                 Collections2.filter(caseEnforcers.values(), Predicates.not(Predicates.equalTo(e)))));
         }
         exclusions = ImmutableMap.copyOf(exclusionsBuilder);
-        emptyNode = ImmutableNodes.choiceNode(schema.getQName());
     }
 
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode(), modification, storeMeta,
             version);
-    }
-
-    @Override
-    TreeNode defaultTreeNode() {
-        return defaultTreeNode(emptyNode);
     }
 
     @Override
