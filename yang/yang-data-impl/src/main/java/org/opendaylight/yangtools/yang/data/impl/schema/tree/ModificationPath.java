@@ -49,4 +49,9 @@ final class ModificationPath implements Mutable {
     YangInstanceIdentifier toInstanceIdentifier() {
         return YangInstanceIdentifier.builder(root).append(Arrays.asList(entries).subList(0, used)).build();
     }
+
+    @Override
+    public String toString() {
+        return toInstanceIdentifier().toString();
+    }
 }
