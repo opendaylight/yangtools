@@ -28,7 +28,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodes;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -89,9 +88,8 @@ final class ChoiceModificationStrategy extends Visible<ChoiceSchemaNode> {
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        checkTouchApplicable(path, modification, current, version, emptyNode);
+    TreeNode defaultTreeNode() {
+        return defaultTreeNode(emptyNode);
     }
 
     @Override
