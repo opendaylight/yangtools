@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
-import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
@@ -40,8 +39,7 @@ final class StructuralContainerModificationStrategy extends ContainerModificatio
     }
 
     @Override
-    protected void checkTouchApplicable(final ModificationPath path, final NodeModification modification,
-            final Optional<TreeNode> current, final Version version) throws DataValidationFailedException {
-        checkTouchApplicable(path, modification, current, version, emptyNode);
+    TreeNode defaultTreeNode() {
+        return defaultTreeNode(emptyNode);
     }
 }
