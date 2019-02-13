@@ -18,19 +18,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguratio
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.AbstractNodeContainerModificationStrategy.Invisible;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Manual;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafSetModificationStrategy extends Invisible<LeafListSchemaNode> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static final NormalizedNodeContainerSupport<NodeIdentifier, OrderedLeafSetNode<?>> ORDERED_SUPPORT =
-            new NormalizedNodeContainerSupport(OrderedLeafSetNode.class, ChildTrackingPolicy.ORDERED,
-                foo -> ImmutableOrderedLeafSetNodeBuilder.create((OrderedLeafSetNode<?>)foo),
-                ImmutableOrderedLeafSetNodeBuilder::create);
+    private static final Manual<NodeIdentifier, OrderedLeafSetNode<?>> ORDERED_SUPPORT = new Manual(
+        OrderedLeafSetNode.class, ChildTrackingPolicy.ORDERED,
+        foo -> ImmutableOrderedLeafSetNodeBuilder.create((OrderedLeafSetNode<?>)foo),
+        ImmutableOrderedLeafSetNodeBuilder::create);
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private static final NormalizedNodeContainerSupport<NodeIdentifier, LeafSetNode<?>> UNORDERED_SUPPORT =
-            new NormalizedNodeContainerSupport(LeafSetNode.class,
-                foo -> ImmutableLeafSetNodeBuilder.create((LeafSetNode<?>)foo),
-                ImmutableLeafSetNodeBuilder::create);
+    private static final Manual<NodeIdentifier, LeafSetNode<?>> UNORDERED_SUPPORT = new Manual(LeafSetNode.class,
+        foo -> ImmutableLeafSetNodeBuilder.create((LeafSetNode<?>)foo), ImmutableLeafSetNodeBuilder::create);
 
     LeafSetModificationStrategy(final LeafListSchemaNode schema, final DataTreeConfiguration treeConfig) {
         super(schema.isUserOrdered() ? ORDERED_SUPPORT : UNORDERED_SUPPORT, treeConfig,
