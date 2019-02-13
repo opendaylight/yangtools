@@ -12,7 +12,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeConfiguration;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.TreeNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
-import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.tree.NormalizedNodeContainerSupport.Automatic;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
 /**
@@ -24,22 +25,17 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
  * root anchors for that validation.
  */
 final class StructuralContainerModificationStrategy extends ContainerModificationStrategy {
-    private final ContainerNode emptyNode;
+    private static final Automatic<ContainerNode, ContainerSchemaNode> SUPPORT = new Automatic<>(ContainerNode.class,
+            ContainerSchemaNode.class, ImmutableContainerNodeBuilder::create, ImmutableContainerNodeBuilder::create);
 
     StructuralContainerModificationStrategy(final ContainerSchemaNode schema, final DataTreeConfiguration treeConfig) {
-        super(schema, treeConfig);
-        this.emptyNode = ImmutableNodes.containerNode(schema.getQName());
+        super(SUPPORT, schema, treeConfig);
     }
 
     @Override
     Optional<TreeNode> apply(final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode, modification, storeMeta,
+        return AutomaticLifecycleMixin.apply(super::apply, this::applyWrite, emptyNode(), modification, storeMeta,
             version);
-    }
-
-    @Override
-    TreeNode defaultTreeNode() {
-        return defaultTreeNode(emptyNode);
     }
 }
