@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -22,12 +22,12 @@ abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgum
     private Map<QName, String> attributes;
 
     AbstractImmutableDataContainerNodeAttrBuilder() {
-        this.attributes = Collections.emptyMap();
+        this.attributes = ImmutableMap.of();
     }
 
     AbstractImmutableDataContainerNodeAttrBuilder(final int sizeHint) {
         super(sizeHint);
-        this.attributes = Collections.emptyMap();
+        this.attributes = ImmutableMap.of();
     }
 
     AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerAttrNode<I> node) {
