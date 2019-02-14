@@ -25,6 +25,7 @@ abstract class ChildTrackingPolicy {
     static final ChildTrackingPolicy NONE = new ChildTrackingPolicy() {
         @Override
         Map<PathArgument, ModifiedNode> createMap() {
+            // We cannot use ImmutableMap, as we need a functioning Map.clear()
             return Collections.emptyMap();
         }
     };

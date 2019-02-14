@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -110,7 +110,7 @@ public class ImmutableLeafSetNodeBuilder<T> implements ListNodeBuilder<T, LeafSe
 
     @Override
     public ListNodeBuilder<T, LeafSetEntryNode<T>> withChildValue(final T childValue) {
-        return withChildValue(childValue, Collections.emptyMap());
+        return withChildValue(childValue, ImmutableMap.of());
     }
 
     protected static final class ImmutableLeafSetNode<T> extends

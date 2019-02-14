@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -313,7 +312,7 @@ public final class SchemaUtils {
     public static Set<DataSchemaNode> getRealSchemasForAugment(final AugmentationTarget targetSchema,
             final AugmentationSchemaNode augmentSchema) {
         if (!targetSchema.getAvailableAugmentations().contains(augmentSchema)) {
-            return Collections.emptySet();
+            return ImmutableSet.of();
         }
         if (targetSchema instanceof DataNodeContainer) {
             return getRealSchemasForAugment((DataNodeContainer)targetSchema, augmentSchema);
