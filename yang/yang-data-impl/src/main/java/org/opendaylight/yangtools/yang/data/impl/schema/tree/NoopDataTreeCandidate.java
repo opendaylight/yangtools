@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -35,7 +35,7 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
 
         @Override
         public Collection<DataTreeCandidateNode> getChildNodes() {
-            return Collections.emptyList();
+            return ImmutableList.of();
         }
 
         @Override
