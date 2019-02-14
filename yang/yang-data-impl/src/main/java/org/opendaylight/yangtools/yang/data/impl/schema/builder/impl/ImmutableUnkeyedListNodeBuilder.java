@@ -125,8 +125,8 @@ public class ImmutableUnkeyedListNodeBuilder implements CollectionNodeBuilder<Un
         }
 
         @Override
-        public Collection<UnkeyedListEntryNode> getValue() {
-            return Collections.emptySet();
+        public ImmutableList<UnkeyedListEntryNode> getValue() {
+            return ImmutableList.of();
         }
 
         @Override
