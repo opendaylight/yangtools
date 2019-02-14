@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import java.util.Collections;
+import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ abstract class ChildTrackingPolicy {
     static final ChildTrackingPolicy NONE = new ChildTrackingPolicy() {
         @Override
         Map<PathArgument, ModifiedNode> createMap() {
-            return Collections.emptyMap();
+            return ImmutableMap.of();
         }
     };
     /**
