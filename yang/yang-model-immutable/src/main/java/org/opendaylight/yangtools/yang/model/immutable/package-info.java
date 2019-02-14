@@ -49,9 +49,17 @@
 @Style(
     builderVisibility =  BuilderVisibility.PUBLIC,
     strictBuilder = true,
-    visibility = ImplementationVisibility.PRIVATE)
+    visibility = ImplementationVisibility.PRIVATE,
+    allowedClasspathAnnotations = { Override.class,
+            SuppressWarnings.class, SuppressFBWarnings.class,
+            NotThreadSafe.class, Immutable.class,
+            Generated.class })
 package org.opendaylight.yangtools.yang.model.immutable;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
+import org.immutables.value.Generated;
 import org.immutables.value.Value.Include;
 import org.immutables.value.Value.Style;
 import org.immutables.value.Value.Style.BuilderVisibility;
