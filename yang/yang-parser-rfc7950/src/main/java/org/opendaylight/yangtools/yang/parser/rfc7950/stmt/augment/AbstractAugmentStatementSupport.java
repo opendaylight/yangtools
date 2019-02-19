@@ -213,8 +213,11 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
      *         statement, otherwise false
      */
     private static boolean isConditionalAugmentStmt(final StmtContext<?, ?, ?> ctx) {
-        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT
-                && StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
+        return ctx.getPublicDefinition() == YangStmtMapping.AUGMENT && hasWhenSubstatement(ctx);
+    }
+
+    private static boolean hasWhenSubstatement(final StmtContext<?, ?, ?> ctx) {
+        return StmtContextUtils.findFirstSubstatement(ctx, WhenStatement.class) != null;
     }
 
     private static void copyStatement(final Mutable<?, ?, ?> original, final StatementContextBase<?, ?, ?> target,
@@ -238,7 +241,7 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
         }
 
         if (!skipCheckOfMandatoryNodes && typeOfCopy == CopyType.ADDED_BY_AUGMENTATION
-                && reguiredCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
+                && requireCheckOfMandatoryNodes(sourceCtx, targetCtx)) {
             checkForMandatoryNodes(sourceCtx);
         }
 
@@ -277,23 +280,25 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                 sourceCtx.rawStatementArgument());
     }
 
-    private static boolean reguiredCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
+    private static boolean requireCheckOfMandatoryNodes(final StmtContext<?, ?, ?> sourceCtx,
             Mutable<?, ?, ?> targetCtx) {
         /*
          * If the statement argument is not QName, it cannot be mandatory
          * statement, therefore return false and skip mandatory nodes validation
          */
-        if (!(sourceCtx.getStatementArgument() instanceof QName)) {
+        final Object arg = sourceCtx.getStatementArgument();
+        if (!(arg instanceof QName)) {
             return false;
         }
-        final QName sourceStmtQName = (QName) sourceCtx.getStatementArgument();
+        final QName sourceStmtQName = (QName) arg;
 
         // RootStatementContext, for example
         final Mutable<?, ?, ?> root = targetCtx.getRoot();
         do {
-            Verify.verify(targetCtx.getStatementArgument() instanceof QName,
-                    "Argument of augment target statement must be QName.");
-            final QName targetStmtQName = (QName) targetCtx.getStatementArgument();
+            final Object targetArg = targetCtx.getStatementArgument();
+            Verify.verify(targetArg instanceof QName, "Argument of augment target statement must be QName, not %s",
+                targetArg);
+            final QName targetStmtQName = (QName) targetArg;
             /*
              * If target is from another module, return true and perform mandatory nodes validation
              */
@@ -314,6 +319,22 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
                     || StmtContextUtils.isNotMandatoryNodeOfType(targetCtx, YangStmtMapping.LIST)) {
                 return false;
             }
+
+            // This could be an augmentation stacked on top of a previous augmentation from the same module, which is
+            // conditional -- in which case we do not run further checks
+            if (targetCtx.getCopyHistory().getLastOperation() == CopyType.ADDED_BY_AUGMENTATION) {
+                final Optional<StmtContext<?, ?, ?>> optOriginal = targetCtx.getOriginalCtx();
+                if (optOriginal.isPresent()) {
+                    final StmtContext<?, ?, ?> original = optOriginal.get();
+                    final Object origArg = original.coerceStatementArgument();
+                    Verify.verify(origArg instanceof QName, "Unexpected statement argument %s", origArg);
+
+                    if (sourceStmtQName.getModule().equals(((QName) origArg).getModule())
+                            && hasWhenSubstatement(getParentAugmentation(original))) {
+                        return false;
+                    }
+                }
+            }
         } while ((targetCtx = targetCtx.getParentContext()) != root);
 
         /*
@@ -321,6 +342,14 @@ abstract class AbstractAugmentStatementSupport extends AbstractStatementSupport<
          * therefore return false and skip mandatory nodes validation.
          */
         return false;
+    }
+
+    private static StmtContext<?, ?, ?> getParentAugmentation(final StmtContext<?, ?, ?> child) {
+        StmtContext<?, ?, ?> parent = Verify.verifyNotNull(child.getParentContext(), "Child %s has not parent", child);
+        while (parent.getPublicDefinition() != YangStmtMapping.AUGMENT) {
+            parent = Verify.verifyNotNull(parent.getParentContext(), "Failed to find augmentation parent of %s", child);
+        }
+        return parent;
     }
 
     private static final ImmutableSet<YangStmtMapping> NOCOPY_DEF_SET = ImmutableSet.of(YangStmtMapping.USES,
