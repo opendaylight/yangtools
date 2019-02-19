@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.parser.stmt.reactor;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.MoreObjects;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
 import java.util.AbstractCollection;
@@ -247,4 +248,9 @@ abstract class StatementMap {
     abstract @NonNull StatementMap ensureCapacity(int expectedLimit);
 
     abstract int capacity();
+
+    @Override
+    public final String toString() {
+        return MoreObjects.toStringHelper(StatementMap.class).add("values", values()).toString();
+    }
 }
