@@ -1,0 +1,18 @@
+submodule sub-module-1 {
+  yang-version 1.1;
+
+  belongs-to mainmodule {
+      prefix mm;
+  }
+
+  import another-module {
+      prefix am;
+  }
+
+  augment '/am:another-container' {
+      when "am:type = 'test'";
+      container first-augment {
+
+      }
+  }
+}
