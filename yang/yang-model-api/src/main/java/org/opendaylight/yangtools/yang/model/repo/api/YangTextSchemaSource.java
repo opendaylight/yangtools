@@ -25,8 +25,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
- * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation
- * as an {@link InputStream}.
+ * YANG text schema source representation. Exposes an RFC6020 or RFC7950 text representation as an {@link InputStream}.
  */
 @Beta
 public abstract class YangTextSchemaSource extends ByteSource implements YangSchemaSourceRepresentation {
@@ -94,8 +93,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
-    // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
-    public static @NonNull ResourceYangTextSchemaSource forResource(final String resourceName) {
+    public static @NonNull YangTextSchemaSource forResource(final String resourceName) {
         return forResource(YangTextSchemaSource.class, resourceName);
     }
 
@@ -108,8 +106,7 @@ public abstract class YangTextSchemaSource extends ByteSource implements YangSch
      * @return A new instance.
      * @throws IllegalArgumentException if the resource does not exist or if the name has invalid format
      */
-    // FIXME: 3.0.0: YANGTOOLS-849: return YangTextSchemaSource
-    public static @NonNull ResourceYangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
+    public static @NonNull YangTextSchemaSource forResource(final Class<?> clazz, final String resourceName) {
         final String fileName = resourceName.substring(resourceName.lastIndexOf('/') + 1);
         final SourceIdentifier identifier = identifierFromFilename(fileName);
         final URL url = Resources.getResource(clazz, resourceName);
