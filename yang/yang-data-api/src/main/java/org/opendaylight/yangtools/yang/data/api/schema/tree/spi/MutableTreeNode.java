@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
@@ -15,14 +16,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.StoreTreeNode;
  * A mutable tree node. This is a transient view materialized from a pre-existing node. Modifications are isolated. Once
  * this object is {@link #seal()}ed, any interactions with it will result in undefined behavior.
  */
-// FIXME: 3.0.0: Use @NonNullByDefault
+// FIXME: 4.0.0: Use @NonNullByDefault
 public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
     /**
      * Set the data component of the node.
      *
      * @param data New data component, may not be null.
+     * @throws NullPointerException if {@code data} is null
      */
-    // FIXME: 3.0.0: document NullPointerException being thrown
     void setData(NormalizedNode<?, ?> data);
 
     /**
@@ -30,8 +31,8 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * has modified some of this node's children.
      *
      * @param subtreeVersion New subtree version.
+     * @throws NullPointerException if {@code subtreeVersion} is null
      */
-    // FIXME: 3.0.0: document NullPointerException being thrown
     void setSubtreeVersion(Version subtreeVersion);
 
     /**
@@ -39,17 +40,17 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      * succeeds even if a conflicting child is already present.
      *
      * @param child New child node.
+     * @throws NullPointerException if {@code child} is null
      */
-    // FIXME: 3.0.0: document NullPointerException being thrown
     void addChild(TreeNode child);
 
     /**
      * Remove a child node. This acts as delete-or-nothing operation, e.g. it
      * succeeds even if the corresponding child is not present.
      *
-     * @param id Child identificator.
+     * @param id Child identifier.
+     * @throws NullPointerException if {@code id} is null
      */
-    // FIXME: 3.0.0: document NullPointerException being thrown
     void removeChild(PathArgument id);
 
     /**
@@ -59,5 +60,5 @@ public interface MutableTreeNode extends StoreTreeNode<TreeNode> {
      *
      * @return Read-only view of this node.
      */
-    TreeNode seal();
+    @NonNull TreeNode seal();
 }
