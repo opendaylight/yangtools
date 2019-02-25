@@ -9,37 +9,32 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
 public interface BodyDeclaredStatement extends NotificationStatementAwareDeclaredStatement<String>,
-        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<String>, BodyGroup {
-    @Override
-    default Collection<? extends ExtensionStatement> getExtensions() {
+        DataDefinitionAwareDeclaredStatement.WithReusableDefinitions<String> {
+    default @NonNull Collection<? extends ExtensionStatement> getExtensions() {
         return declaredSubstatements(ExtensionStatement.class);
     }
 
-    @Override
-    default Collection<? extends FeatureStatement> getFeatures() {
+    default @NonNull Collection<? extends FeatureStatement> getFeatures() {
         return declaredSubstatements(FeatureStatement.class);
     }
 
-    @Override
-    default Collection<? extends IdentityStatement> getIdentities() {
+    default @NonNull Collection<? extends IdentityStatement> getIdentities() {
         return declaredSubstatements(IdentityStatement.class);
     }
 
-    @Override
-    default Collection<? extends AugmentStatement> getAugments() {
+    default @NonNull Collection<? extends AugmentStatement> getAugments() {
         return declaredSubstatements(AugmentStatement.class);
     }
 
-    @Override
-    default Collection<? extends RpcStatement> getRpcs() {
+    default @NonNull Collection<? extends RpcStatement> getRpcs() {
         return declaredSubstatements(RpcStatement.class);
     }
 
-    @Override
-    default Collection<? extends DeviationStatement> getDeviations() {
+    default @NonNull Collection<? extends DeviationStatement> getDeviations() {
         return declaredSubstatements(DeviationStatement.class);
     }
 }

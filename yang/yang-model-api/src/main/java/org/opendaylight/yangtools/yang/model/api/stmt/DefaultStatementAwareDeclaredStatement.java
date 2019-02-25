@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
@@ -16,10 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
  * Marker interface for statements which may contain a 'default' statement, as defined in RFC7950.
  */
 @Beta
-public interface DefaultStatementAwareDeclaredStatement extends DeclaredStatement<QName>, DefaultStatementContainer {
-    @Override
-    default DefaultStatement getDefault() {
-        final Optional<DefaultStatement> opt = findFirstDeclaredSubstatement(DefaultStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+public interface DefaultStatementAwareDeclaredStatement extends DeclaredStatement<QName> {
+    /**
+     * Return a {@link DefaultStatement} child, if present.
+     *
+     * @return A {@link DefaultStatement}, or empty if none is present.
+     */
+    default @NonNull Optional<DefaultStatement> getDefault() {
+        return findFirstDeclaredSubstatement(DefaultStatement.class);
     }
 }

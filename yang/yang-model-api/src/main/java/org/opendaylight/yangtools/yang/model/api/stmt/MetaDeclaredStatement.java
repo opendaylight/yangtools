@@ -14,16 +14,12 @@ import java.util.Optional;
  * Common interface for statements which contain either a description/reference or a description/reference/status combo.
  */
 @Beta
-public interface MetaDeclaredStatement<T> extends DocumentedDeclaredStatement<T>, MetaGroup {
-    @Override
-    default OrganizationStatement getOrganization() {
-        final Optional<OrganizationStatement> opt = findFirstDeclaredSubstatement(OrganizationStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+public interface MetaDeclaredStatement<T> extends DocumentedDeclaredStatement<T> {
+    default Optional<OrganizationStatement> getOrganization() {
+        return findFirstDeclaredSubstatement(OrganizationStatement.class);
     }
 
-    @Override
-    default ContactStatement getContact() {
-        final Optional<ContactStatement> opt = findFirstDeclaredSubstatement(ContactStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default Optional<ContactStatement> getContact() {
+        return findFirstDeclaredSubstatement(ContactStatement.class);
     }
 }

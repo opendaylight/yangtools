@@ -9,22 +9,20 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Marker interface for statements which may contain a 'mandatory' statement, as defined in RFC7950.
  */
 @Beta
-public interface MandatoryStatementAwareDeclaredStatement<T> extends DeclaredStatement<T>,
-        MandatoryStatementContainer {
+public interface MandatoryStatementAwareDeclaredStatement<T> extends DeclaredStatement<T> {
     /**
      * Return a {@link MandatoryStatement} child, if present.
      *
-     * @return A {@link MandatoryStatement}, or null if none is present.
+     * @return A {@link MandatoryStatement}, or empty if none is present.
      */
-    @Override
-    default MandatoryStatement getMandatory() {
-        final Optional<MandatoryStatement> opt = findFirstDeclaredSubstatement(MandatoryStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @NonNull Optional<MandatoryStatement> getMandatory() {
+        return findFirstDeclaredSubstatement(MandatoryStatement.class);
     }
 }
