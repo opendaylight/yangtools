@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.common.RpcError.ErrorType;
  *
  * @param <T> the result value type
  */
-public final class RpcResultBuilder<T> extends RpcResultBuilderCompat<T> implements Builder<RpcResult<T>> {
+public final class RpcResultBuilder<T> implements Builder<RpcResult<T>> {
 
     private static class RpcResultImpl<T> implements RpcResult<T>, Serializable {
         private static final long serialVersionUID = 1L;
@@ -420,7 +420,6 @@ public final class RpcResultBuilder<T> extends RpcResultBuilderCompat<T> impleme
      *
      * @return Future for RpcResult built by RpcResultBuilder
      */
-    @Override
     public FluentFuture<RpcResult<T>> buildFuture() {
         return FluentFuture.from(Futures.immediateFuture(build()));
     }
