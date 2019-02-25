@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
-import java.util.Optional;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -55,11 +54,6 @@ public abstract class ForwardingStatementSupport<A, D extends DeclaredStatement<
     @Override
     public void onStatementAdded(final Mutable<A, D, E> stmt) {
         delegate().onStatementAdded(stmt);
-    }
-
-    @Override
-    public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return delegate().getImplicitParentFor(stmtDef);
     }
 
     @Override

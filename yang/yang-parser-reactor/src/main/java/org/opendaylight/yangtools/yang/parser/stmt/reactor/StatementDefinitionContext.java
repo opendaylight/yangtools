@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.IdentifierNamespace;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementFactory;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
@@ -58,7 +59,8 @@ public class StatementDefinitionContext<A, D extends DeclaredStatement<A>, E ext
     }
 
     public Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return support.getImplicitParentFor(stmtDef);
+        return support instanceof ImplicitParentAwareStatementSupport
+                ? ((ImplicitParentAwareStatementSupport) support).getImplicitParentFor(stmtDef) : Optional.empty();
     }
 
     public boolean onStatementAdded(final Mutable<A, D, E> stmt) {
