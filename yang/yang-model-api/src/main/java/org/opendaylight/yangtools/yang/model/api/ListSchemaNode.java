@@ -24,9 +24,9 @@ public interface ListSchemaNode extends DataNodeContainer, AugmentationTarget, D
     /**
      * Returns the list of leaf identifiers.
      *
-     * @return List of QNames of leaf identifiers of this list
+     * @return List of QNames of leaf identifiers of this list, empty if the list has no keys.
      */
-    List<QName> getKeyDefinition();
+    @NonNull List<QName> getKeyDefinition();
 
     /**
      * YANG 'ordered-by' statement. It defines whether the order of entries within a list are determined by the user

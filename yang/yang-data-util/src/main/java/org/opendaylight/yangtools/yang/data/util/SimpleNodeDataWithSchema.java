@@ -18,11 +18,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * <p>
  * Represents a simple node with value (anyxml, leaf, leaf-list entry).
  */
-public abstract class SimpleNodeDataWithSchema extends AbstractNodeDataWithSchema {
+public abstract class SimpleNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T> {
 
     private Object value;
 
-    public SimpleNodeDataWithSchema(final DataSchemaNode dataSchemaNode) {
+    public SimpleNodeDataWithSchema(final T dataSchemaNode) {
         super(dataSchemaNode);
     }
 
