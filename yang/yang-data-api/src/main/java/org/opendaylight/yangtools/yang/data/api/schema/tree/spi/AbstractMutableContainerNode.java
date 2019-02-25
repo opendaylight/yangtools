@@ -59,7 +59,7 @@ abstract class AbstractMutableContainerNode implements MutableTreeNode {
 
     @Override
     public final void removeChild(final PathArgument id) {
-        children.remove(id);
+        children.remove(requireNonNull(id));
     }
 
     @Override
