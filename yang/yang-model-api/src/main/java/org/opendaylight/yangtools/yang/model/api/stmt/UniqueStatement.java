@@ -9,13 +9,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import static com.google.common.base.Verify.verifyNotNull;
 
-import java.util.Collection;
+import java.util.Set;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier.Relative;
 
-public interface UniqueStatement extends DeclaredStatement<Collection<SchemaNodeIdentifier.Relative>> {
+public interface UniqueStatement extends DeclaredStatement<Set<SchemaNodeIdentifier.Relative>> {
 
-    default Collection<Relative> getTag() {
+    default Set<Relative> getTag() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
