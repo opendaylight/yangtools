@@ -28,7 +28,6 @@ import java.util.Set;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -185,14 +184,11 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              if the namespace URI of an XML element contains a syntax error
      * @throws IOException
      *              if an error occurs while parsing the value of an anyxml node
-     * @throws ParserConfigurationException
-     *              if an error occurs while parsing the value of an anyxml node
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
-    // FIXME: 3.0.0 remove ParserConfigurationException
     public XmlParserStream parse(final XMLStreamReader reader) throws XMLStreamException, URISyntaxException,
-            IOException, ParserConfigurationException, SAXException {
+            IOException, SAXException {
         if (reader.hasNext()) {
             reader.nextTag();
             final AbstractNodeDataWithSchema nodeDataWithSchema;
@@ -233,15 +229,12 @@ public final class XmlParserStream implements Closeable, Flushable {
      *              if the namespace URI of an XML element contains a syntax error
      * @throws IOException
      *              if an error occurs while parsing the value of an anyxml node
-     * @throws ParserConfigurationException
-     *              if an error occurs while parsing the value of an anyxml node
      * @throws SAXException
      *              if an error occurs while parsing the value of an anyxml node
      */
     @Beta
-    // FIXME: 3.0.0 remove ParserConfigurationException
-    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException,
-        IOException, ParserConfigurationException, SAXException {
+    public XmlParserStream traverse(final DOMSource src) throws XMLStreamException, URISyntaxException, IOException,
+            SAXException {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
