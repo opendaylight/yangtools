@@ -34,9 +34,8 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
  * @param <E>
  *            Effective Statement representation
  */
-// FIXME: 3.0.0: do not extends ImplicitParentAwareStatementSupport
 public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        extends StatementDefinition, StatementFactory<A, D, E>, ImplicitParentAwareStatementSupport {
+        extends StatementDefinition, StatementFactory<A, D, E> {
 
     /**
      * Returns public statement definition, which will be present in built statements.
@@ -83,12 +82,6 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
      *            Context of added statement. No substatements are available.
      */
     void onStatementAdded(StmtContext.Mutable<A, D, E> stmt);
-
-    // FIXME: 3.0.0: remove this default method
-    @Override
-    default Optional<StatementSupport<?, ?, ?>> getImplicitParentFor(final StatementDefinition stmtDef) {
-        return Optional.empty();
-    }
 
     /**
      * Invoked when statement is closed during {@link ModelProcessingPhase#SOURCE_PRE_LINKAGE} phase, only substatements
