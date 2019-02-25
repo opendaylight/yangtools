@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.unique;
 import com.google.common.base.CharMatcher;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableSet;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -25,8 +24,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
-public final class UniqueStatementSupport extends AbstractStatementSupport<Collection<Relative>, UniqueStatement,
-        EffectiveStatement<Collection<Relative>, UniqueStatement>> {
+public final class UniqueStatementSupport extends AbstractStatementSupport<Set<Relative>, UniqueStatement,
+        EffectiveStatement<Set<Relative>, UniqueStatement>> {
     /**
      * Support 'sep' ABNF rule in RFC7950 section 14. CRLF pattern is used to squash line-break from CRLF to LF form
      * and then we use SEP_SPLITTER, which can operate on single characters.
@@ -58,14 +57,13 @@ public final class UniqueStatementSupport extends AbstractStatementSupport<Colle
     }
 
     @Override
-    public UniqueStatement createDeclared(final StmtContext<Collection<Relative>, UniqueStatement, ?> ctx) {
+    public UniqueStatement createDeclared(final StmtContext<Set<Relative>, UniqueStatement, ?> ctx) {
         return new UniqueStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<Collection<Relative>, UniqueStatement> createEffective(
-            final StmtContext<Collection<Relative>, UniqueStatement, EffectiveStatement<Collection<Relative>,
-            UniqueStatement>> ctx) {
+    public EffectiveStatement<Set<Relative>, UniqueStatement> createEffective(
+            final StmtContext<Set<Relative>, UniqueStatement, EffectiveStatement<Set<Relative>, UniqueStatement>> ctx) {
         return new UniqueEffectiveStatementImpl(ctx);
     }
 
