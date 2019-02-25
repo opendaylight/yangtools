@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.parser.spi.meta;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
@@ -45,11 +44,6 @@ import org.opendaylight.yangtools.yang.parser.spi.source.ModuleNameToModuleQName
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class StmtContextUtils {
-    private static final CharMatcher IDENTIFIER_START =
-            CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
-    private static final CharMatcher NOT_IDENTIFIER_PART =
-            IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
-
     private StmtContextUtils() {
         throw new UnsupportedOperationException("Utility class");
     }
@@ -519,7 +513,6 @@ public final class StmtContextUtils {
     public static QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
                 "Identifier may not be an empty string");
-        checkIdentifierString(ctx, str);
         return internedQName(ctx, str);
     }
 
@@ -538,7 +531,6 @@ public final class StmtContextUtils {
 
         final int colon = str.indexOf(':');
         if (colon == -1) {
-            checkIdentifierString(ctx, str);
             return internedQName(ctx, str);
         }
 
@@ -548,7 +540,6 @@ public final class StmtContextUtils {
         final String localName = str.substring(colon + 1);
         SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
             "String '%s' has an empty identifier", str);
-        checkIdentifierString(ctx, localName);
 
         final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
         if (module != null) {
@@ -569,18 +560,20 @@ public final class StmtContextUtils {
         throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", str);
     }
 
-    private static void checkIdentifierString(final StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(!IDENTIFIER_START.matches(str.charAt(0)) || NOT_IDENTIFIER_PART.indexIn(str, 1) != -1,
-            ctx.getStatementSourceReference(), "String '%s' is not a valid identifier", str);
-    }
-
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
         return internedQName(ctx, StmtContextUtils.getRootModuleQName(ctx), localName);
     }
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
             final String localName) {
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(module, localName));
+        final QName template;
+        try {
+            template = QName.create(module, localName);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid identifier '%s'", localName);
+        }
+
+        return ctx.getFromNamespace(QNameCacheNamespace.class, template);
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

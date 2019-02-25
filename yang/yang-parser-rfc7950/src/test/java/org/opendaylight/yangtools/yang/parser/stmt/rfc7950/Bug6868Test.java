@@ -97,7 +97,7 @@ public class Bug6868Test {
             fail("Test should fail due to invalid Yang 1.0");
         } catch (final SomeModifiersUnresolvedException e) {
             assertTrue(e.getCause().getMessage()
-                    .startsWith("String '(not foo) or (bar and baz)' is not a valid identifier "));
+                    .startsWith("Invalid identifier '(not foo) or (bar and baz)' [at "));
         }
     }
 }

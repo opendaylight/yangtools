@@ -17,9 +17,13 @@ import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatementBase<String, UnrecognizedStatement>
         implements UnrecognizedEffectiveStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(UnrecognizedEffectiveStatementImpl.class);
 
     private final QName maybeQNameArgument;
     private final @NonNull SchemaPath path;
@@ -36,7 +40,8 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
             QName maybeQNameArgumentInit = null;
             try {
                 maybeQNameArgumentInit = StmtContextUtils.qnameFromArgument(ctx, argument());
-            } catch (IllegalArgumentException e) {
+            } catch (SourceException e) {
+                LOG.debug("Not constructing QName from {}", argument(), e);
                 maybeQNameArgumentInit = getNodeType();
             }
             this.maybeQNameArgument = maybeQNameArgumentInit;
