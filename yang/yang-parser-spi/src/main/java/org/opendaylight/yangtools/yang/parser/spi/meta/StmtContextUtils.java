@@ -519,7 +519,6 @@ public final class StmtContextUtils {
     public static QName parseIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
         SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
                 "Identifier may not be an empty string");
-        checkIdentifierString(ctx, str);
         return internedQName(ctx, str);
     }
 
@@ -538,7 +537,6 @@ public final class StmtContextUtils {
 
         final int colon = str.indexOf(':');
         if (colon == -1) {
-            checkIdentifierString(ctx, str);
             return internedQName(ctx, str);
         }
 
@@ -548,7 +546,6 @@ public final class StmtContextUtils {
         final String localName = str.substring(colon + 1);
         SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
             "String '%s' has an empty identifier", str);
-        checkIdentifierString(ctx, localName);
 
         final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
         if (module != null) {
@@ -569,18 +566,20 @@ public final class StmtContextUtils {
         throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", str);
     }
 
-    private static void checkIdentifierString(final StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(!IDENTIFIER_START.matches(str.charAt(0)) || NOT_IDENTIFIER_PART.indexIn(str, 1) != -1,
-            ctx.getStatementSourceReference(), "String '%s' is not a valid identifier", str);
-    }
-
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
         return internedQName(ctx, StmtContextUtils.getRootModuleQName(ctx), localName);
     }
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
             final String localName) {
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(module, localName));
+        final QName template;
+        try {
+            template = QName.create(module, localName);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid identifier %s", localName);
+        }
+
+        return ctx.getFromNamespace(QNameCacheNamespace.class, template);
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

@@ -33,12 +33,12 @@ public class BitImplTest {
         final URI uriB1 = new URI("some:uriB1");
         final URI uriB2 = new URI("some:uriB2");
 
-        QName qnameA1 = QName.create(uriA1, Revision.of("2000-01-01"), "some nameA1");
-        QName qnameA2 = QName.create(uriA2, Revision.of("2002-01-01"), "some nameA2");
+        QName qnameA1 = QName.create(uriA1, Revision.of("2000-01-01"), "someNameA1");
+        QName qnameA2 = QName.create(uriA2, Revision.of("2002-01-01"), "someNameA2");
         SchemaPath schemaPathA = SchemaPath.create(true, qnameA1, qnameA2);
 
-        final QName qnameB1 = QName.create(uriB1, Revision.of("2000-01-01"), "some nameB1");
-        final QName qnameB2 = QName.create(uriB2, Revision.of("2002-01-01"), "some nameB2");
+        final QName qnameB1 = QName.create(uriB1, Revision.of("2000-01-01"), "someNameB1");
+        final QName qnameB2 = QName.create(uriB2, Revision.of("2002-01-01"), "someNameB2");
         final SchemaPath schemaPathB = SchemaPath.create(true, qnameB1, qnameB2);
 
         BitImpl biA = new BitImpl(schemaPathA, 55L, "description", "reference", Status.CURRENT, emptyList());
