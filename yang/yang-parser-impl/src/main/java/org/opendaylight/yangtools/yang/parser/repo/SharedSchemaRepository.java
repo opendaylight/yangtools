@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
 
@@ -33,15 +32,6 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
 @Beta
 @MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
-    @Deprecated
-    private final LoadingCache<SchemaSourceFilter, SchemaContextFactory> cacheByFilter = CacheBuilder.newBuilder()
-            .softValues().build(new CacheLoader<SchemaSourceFilter, SchemaContextFactory>() {
-                @Override
-                public SchemaContextFactory load(final SchemaSourceFilter key) {
-                    return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
-                }
-            });
-
     private final LoadingCache<SchemaContextFactoryConfiguration, SchemaContextFactory> cacheByConfig = CacheBuilder
             .newBuilder().softValues()
             .build(new CacheLoader<SchemaContextFactoryConfiguration, SchemaContextFactory>() {
@@ -60,12 +50,6 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     @Override
     public @NonNull String getIdentifier() {
         return id;
-    }
-
-    @Override
-    @Deprecated
-    public @NonNull SchemaContextFactory createSchemaContextFactory(final @NonNull SchemaSourceFilter filter) {
-        return cacheByFilter.getUnchecked(filter);
     }
 
     @Override

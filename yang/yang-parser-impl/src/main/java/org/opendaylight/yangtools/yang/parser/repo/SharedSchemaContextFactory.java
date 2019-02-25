@@ -40,7 +40,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.parser.impl.DefaultReactors;
@@ -61,14 +60,6 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             .weakValues().build();
     private final @NonNull SchemaRepository repository;
     private final @NonNull SchemaContextFactoryConfiguration config;
-
-    // FIXME SchemaRepository should be the type for repository parameter instead of SharedSchemaRepository
-    //       (final implementation)
-    @Deprecated
-    SharedSchemaContextFactory(final @NonNull SharedSchemaRepository repository,
-            final @NonNull SchemaSourceFilter filter) {
-        this(repository, SchemaContextFactoryConfiguration.builder().setFilter(filter).build());
-    }
 
     SharedSchemaContextFactory(final @NonNull SchemaRepository repository,
         final @NonNull SchemaContextFactoryConfiguration config) {
