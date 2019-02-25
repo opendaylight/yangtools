@@ -12,39 +12,33 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.annotations.Beta;
 import java.util.Collection;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 
 /**
  * Common interface for action and rpc statements.
  */
 @Beta
-public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>, OperationGroup,
+public interface OperationDeclaredStatement extends DocumentedDeclaredStatement.WithStatus<QName>,
         IfFeatureAwareDeclaredStatement<QName> {
-    @Override
-    default QName getName() {
+    default @NonNull QName getName() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
 
-    @Override
-    default InputStatement getInput() {
-        final Optional<InputStatement> opt = findFirstDeclaredSubstatement(InputStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @NonNull Optional<InputStatement> getInput() {
+        return findFirstDeclaredSubstatement(InputStatement.class);
     }
 
-    @Override
-    default OutputStatement getOutput() {
-        final Optional<OutputStatement> opt = findFirstDeclaredSubstatement(OutputStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @NonNull Optional<OutputStatement> getOutput() {
+        return findFirstDeclaredSubstatement(OutputStatement.class);
     }
 
-    @Override
-    default Collection<? extends TypedefStatement> getTypedefs() {
+    default @NonNull Collection<? extends TypedefStatement> getTypedefs() {
         return declaredSubstatements(TypedefStatement.class);
     }
 
-    @Override
-    default Collection<? extends GroupingStatement> getGroupings() {
+    default @NonNull Collection<? extends GroupingStatement> getGroupings() {
         return declaredSubstatements(GroupingStatement.class);
     }
 }

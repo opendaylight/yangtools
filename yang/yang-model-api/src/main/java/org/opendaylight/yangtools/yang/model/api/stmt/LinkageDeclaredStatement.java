@@ -9,17 +9,16 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface LinkageDeclaredStatement extends DeclaredStatement<String>, LinkageGroup {
-    @Override
-    default Collection<? extends ImportStatement> getImports() {
+public interface LinkageDeclaredStatement extends DeclaredStatement<String> {
+    default @NonNull Collection<? extends ImportStatement> getImports() {
         return declaredSubstatements(ImportStatement.class);
     }
 
-    @Override
-    default Collection<? extends IncludeStatement> getIncludes() {
+    default @NonNull Collection<? extends IncludeStatement> getIncludes() {
         return declaredSubstatements(IncludeStatement.class);
     }
 }

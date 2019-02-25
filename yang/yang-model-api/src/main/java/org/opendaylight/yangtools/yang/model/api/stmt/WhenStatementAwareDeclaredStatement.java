@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
-public interface WhenStatementAwareDeclaredStatement<A> extends IfFeatureAwareDeclaredStatement<A>,
-        ConditionalDataDefinition {
-    @Override
-    default WhenStatement getWhenStatement() {
-        final Optional<WhenStatement> opt = findFirstDeclaredSubstatement(WhenStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+public interface WhenStatementAwareDeclaredStatement<A> extends IfFeatureAwareDeclaredStatement<A> {
+    default @NonNull Optional<WhenStatement> getWhenStatement() {
+        return findFirstDeclaredSubstatement(WhenStatement.class);
     }
 }

@@ -9,13 +9,18 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface NotificationStatementAwareDeclaredStatement<A> extends DeclaredStatement<A>,
-        NotificationStatementContainer {
-    @Override
-    default Collection<? extends NotificationStatement> getNotifications() {
+public interface NotificationStatementAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+    /**
+     * Return collection of {@link NotificationStatement}. For RFC6020, this method returns an empty collection for
+     * statements which do not allow for must statement children.
+     *
+     * @return collection of notification statements
+     */
+    default @NonNull Collection<? extends NotificationStatement> getNotifications() {
         return declaredSubstatements(NotificationStatement.class);
     }
 }

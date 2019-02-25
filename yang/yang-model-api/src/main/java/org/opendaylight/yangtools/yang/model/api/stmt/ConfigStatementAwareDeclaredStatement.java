@@ -9,13 +9,17 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 @Beta
-public interface ConfigStatementAwareDeclaredStatement<A> extends DeclaredStatement<A>, ConfigStatementContainer {
-    @Override
-    default ConfigStatement getConfig() {
-        final Optional<ConfigStatement> opt = findFirstDeclaredSubstatement(ConfigStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+public interface ConfigStatementAwareDeclaredStatement<A> extends DeclaredStatement<A> {
+    /**
+     * Return a {@link ConfigStatement} child, if present.
+     *
+     * @return A {@link ConfigStatement}, or empty if none is present.
+     */
+    default @NonNull Optional<ConfigStatement> getConfig() {
+        return findFirstDeclaredSubstatement(ConfigStatement.class);
     }
 }

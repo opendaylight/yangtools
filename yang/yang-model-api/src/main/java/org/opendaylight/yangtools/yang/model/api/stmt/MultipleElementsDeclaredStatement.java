@@ -9,24 +9,19 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 
 @Beta
-public interface MultipleElementsDeclaredStatement extends DataDefinitionStatement, MultipleElementsGroup {
-    @Override
-    default MinElementsStatement getMinElements() {
-        final Optional<MinElementsStatement> opt = findFirstDeclaredSubstatement(MinElementsStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+public interface MultipleElementsDeclaredStatement extends DataDefinitionStatement {
+    default @NonNull Optional<MinElementsStatement> getMinElements() {
+        return findFirstDeclaredSubstatement(MinElementsStatement.class);
     }
 
-    @Override
-    default MaxElementsStatement getMaxElements() {
-        final Optional<MaxElementsStatement> opt = findFirstDeclaredSubstatement(MaxElementsStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @NonNull Optional<MaxElementsStatement> getMaxElements() {
+        return findFirstDeclaredSubstatement(MaxElementsStatement.class);
     }
 
-    @Override
-    default OrderedByStatement getOrderedBy() {
-        final Optional<OrderedByStatement> opt = findFirstDeclaredSubstatement(OrderedByStatement.class);
-        return opt.isPresent() ? opt.get() : null;
+    default @NonNull Optional<OrderedByStatement> getOrderedBy() {
+        return findFirstDeclaredSubstatement(OrderedByStatement.class);
     }
 }
