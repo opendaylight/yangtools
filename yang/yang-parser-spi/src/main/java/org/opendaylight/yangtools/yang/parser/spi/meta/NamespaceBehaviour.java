@@ -344,8 +344,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
     }
 
     @Override
-    // FIXME: 3.0.0: make this final
-    public String toString() {
+    public final String toString() {
         return addToStringAttributes(MoreObjects.toStringHelper(this)).toString();
     }
 
