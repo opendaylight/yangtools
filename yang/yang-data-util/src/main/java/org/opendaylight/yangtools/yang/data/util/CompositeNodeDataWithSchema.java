@@ -37,33 +37,33 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Represents a node which is composed of multiple simpler nodes.
  */
-public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
+public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T> {
 
     /**
      * nodes which were added to schema via augmentation and are present in data input.
      */
-    private final Multimap<AugmentationSchemaNode, AbstractNodeDataWithSchema> augmentationsToChild =
+    private final Multimap<AugmentationSchemaNode, AbstractNodeDataWithSchema<?>> augmentationsToChild =
         ArrayListMultimap.create();
 
     /**
      * remaining data nodes (which aren't added via augment). Every of one them should have the same QName.
      */
-    private final List<AbstractNodeDataWithSchema> children = new ArrayList<>();
+    private final List<AbstractNodeDataWithSchema<?>> children = new ArrayList<>();
 
-    public CompositeNodeDataWithSchema(final DataSchemaNode schema) {
+    public CompositeNodeDataWithSchema(final T schema) {
         super(schema);
     }
 
-    private AbstractNodeDataWithSchema addChild(final DataSchemaNode schema) {
-        AbstractNodeDataWithSchema newChild = addSimpleChild(schema);
+    private AbstractNodeDataWithSchema<?> addChild(final DataSchemaNode schema) {
+        AbstractNodeDataWithSchema<?> newChild = addSimpleChild(schema);
         return newChild == null ? addCompositeChild(schema) : newChild;
     }
 
-    public void addChild(final AbstractNodeDataWithSchema newChild) {
+    public void addChild(final AbstractNodeDataWithSchema<?> newChild) {
         children.add(newChild);
     }
 
-    public AbstractNodeDataWithSchema addChild(final Deque<DataSchemaNode> schemas) {
+    public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas) {
         Preconditions.checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
 
         // Pop the first node...
@@ -90,14 +90,14 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         }
 
         // looking for existing choice
-        final Collection<AbstractNodeDataWithSchema> childNodes;
+        final Collection<AbstractNodeDataWithSchema<?>> childNodes;
         if (augSchema != null) {
             childNodes = augmentationsToChild.get(augSchema);
         } else {
             childNodes = children;
         }
 
-        CompositeNodeDataWithSchema caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
+        CompositeNodeDataWithSchema<?> caseNodeDataWithSchema = findChoice(childNodes, choiceCandidate, caseCandidate);
         if (caseNodeDataWithSchema == null) {
             ChoiceNodeDataWithSchema choiceNodeDataWithSchema = new ChoiceNodeDataWithSchema(choiceNode);
             childNodes.add(choiceNodeDataWithSchema);
@@ -107,16 +107,16 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return caseNodeDataWithSchema.addChild(schemas);
     }
 
-    private AbstractNodeDataWithSchema addSimpleChild(final DataSchemaNode schema) {
-        SimpleNodeDataWithSchema newChild = null;
+    private AbstractNodeDataWithSchema<?> addSimpleChild(final DataSchemaNode schema) {
+        SimpleNodeDataWithSchema<?> newChild = null;
         if (schema instanceof LeafSchemaNode) {
-            newChild = new LeafNodeDataWithSchema(schema);
+            newChild = new LeafNodeDataWithSchema((LeafSchemaNode) schema);
         } else if (schema instanceof AnyXmlSchemaNode) {
             // YangModeledAnyXmlSchemaNode is handled by addCompositeChild method.
             if (schema instanceof YangModeledAnyXmlSchemaNode) {
                 return null;
             }
-            newChild = new AnyXmlNodeDataWithSchema(schema);
+            newChild = new AnyXmlNodeDataWithSchema((AnyXmlSchemaNode) schema);
         } else {
             return null;
         }
@@ -133,10 +133,10 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return newChild;
     }
 
-    private static CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema> childNodes,
+    private static CaseNodeDataWithSchema findChoice(final Collection<AbstractNodeDataWithSchema<?>> childNodes,
             final DataSchemaNode choiceCandidate, final DataSchemaNode caseCandidate) {
         if (childNodes != null) {
-            for (AbstractNodeDataWithSchema nodeDataWithSchema : childNodes) {
+            for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childNodes) {
                 if (nodeDataWithSchema instanceof ChoiceNodeDataWithSchema
                         && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
                     CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
@@ -153,26 +153,26 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
         return null;
     }
 
-    AbstractNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
-        final CompositeNodeDataWithSchema newChild;
+    AbstractNodeDataWithSchema<?> addCompositeChild(final DataSchemaNode schema) {
+        final CompositeNodeDataWithSchema<?> newChild;
 
         if (schema instanceof ListSchemaNode) {
-            newChild = new ListNodeDataWithSchema(schema);
+            newChild = new ListNodeDataWithSchema((ListSchemaNode) schema);
         } else if (schema instanceof LeafListSchemaNode) {
-            newChild = new LeafListNodeDataWithSchema(schema);
+            newChild = new LeafListNodeDataWithSchema((LeafListSchemaNode) schema);
         } else if (schema instanceof ContainerSchemaNode) {
-            newChild = new ContainerNodeDataWithSchema(schema);
+            newChild = new ContainerNodeDataWithSchema((ContainerSchemaNode) schema);
         } else if (schema instanceof YangModeledAnyXmlSchemaNode) {
             newChild = new YangModeledAnyXmlNodeDataWithSchema((YangModeledAnyXmlSchemaNode)schema);
         } else {
-            newChild = new CompositeNodeDataWithSchema(schema);
+            newChild = new CompositeNodeDataWithSchema<>(schema);
         }
 
         addCompositeChild(newChild);
         return newChild;
     }
 
-    void addCompositeChild(final CompositeNodeDataWithSchema newChild) {
+    void addCompositeChild(final CompositeNodeDataWithSchema<?> newChild) {
         AugmentationSchemaNode augSchema = findCorrespondingAugment(getSchema(), newChild.getSchema());
         if (augSchema != null) {
             augmentationsToChild.put(augSchema, newChild);
@@ -191,18 +191,18 @@ public class CompositeNodeDataWithSchema extends AbstractNodeDataWithSchema {
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        for (AbstractNodeDataWithSchema child : children) {
+        for (AbstractNodeDataWithSchema<?> child : children) {
             child.write(writer);
         }
-        for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema>> augmentationToChild
+        for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema<?>>> augmentationToChild
                 : augmentationsToChild.asMap().entrySet()) {
-            final Collection<AbstractNodeDataWithSchema> childsFromAgumentation = augmentationToChild.getValue();
+            final Collection<AbstractNodeDataWithSchema<?>> childsFromAgumentation = augmentationToChild.getValue();
             if (!childsFromAgumentation.isEmpty()) {
                 // FIXME: can we get the augmentation schema?
                 writer.startAugmentationNode(DataSchemaContextNode.augmentationIdentifierFrom(
                     augmentationToChild.getKey()));
 
-                for (AbstractNodeDataWithSchema nodeDataWithSchema : childsFromAgumentation) {
+                for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
                     nodeDataWithSchema.write(writer);
                 }
 

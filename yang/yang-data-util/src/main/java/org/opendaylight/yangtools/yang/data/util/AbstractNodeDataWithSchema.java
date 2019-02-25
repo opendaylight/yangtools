@@ -14,6 +14,7 @@ import com.google.common.annotations.Beta;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -24,11 +25,11 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * This class is to be used only by respective XML and JSON parsers in yang-data-codec-xml and yang-data-codec-gson.
  */
 @Beta
-public abstract class AbstractNodeDataWithSchema {
-    private final DataSchemaNode schema;
+public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
+    private final T schema;
     private Map<QName, String> attributes;
 
-    public AbstractNodeDataWithSchema(final DataSchemaNode schema) {
+    public AbstractNodeDataWithSchema(final T schema) {
         this.schema = requireNonNull(schema);
     }
 
@@ -37,7 +38,7 @@ public abstract class AbstractNodeDataWithSchema {
      *
      * @return Associated schema node.
      */
-    public final DataSchemaNode getSchema() {
+    public final @NonNull T getSchema() {
         return schema;
     }
 
@@ -92,7 +93,7 @@ public abstract class AbstractNodeDataWithSchema {
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final AbstractNodeDataWithSchema other = (AbstractNodeDataWithSchema) obj;
+        final AbstractNodeDataWithSchema<?> other = (AbstractNodeDataWithSchema<?>) obj;
         return schema.equals(other.schema);
     }
 

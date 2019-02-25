@@ -19,7 +19,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * <p>
  * Represents a YANG-modeled-anyxml node.
  */
-public final class YangModeledAnyXmlNodeDataWithSchema extends CompositeNodeDataWithSchema {
+public final class YangModeledAnyXmlNodeDataWithSchema
+        extends CompositeNodeDataWithSchema<YangModeledAnyXmlSchemaNode> {
 
     public YangModeledAnyXmlNodeDataWithSchema(final YangModeledAnyXmlSchemaNode yangModeledAnyXml) {
         super(yangModeledAnyXml);

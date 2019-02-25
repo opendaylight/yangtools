@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
  * Utility class used for tracking parser state as needed by a StAX-like parser.
@@ -19,9 +19,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * <p>
  * Represents a YANG leaf node.
  */
-public class LeafNodeDataWithSchema extends SimpleNodeDataWithSchema {
+public class LeafNodeDataWithSchema extends SimpleNodeDataWithSchema<LeafSchemaNode> {
 
-    public LeafNodeDataWithSchema(final DataSchemaNode schema) {
+    public LeafNodeDataWithSchema(final LeafSchemaNode schema) {
         super(schema);
     }
 

@@ -124,7 +124,8 @@ public final class JsonParserStream implements Closeable, Flushable {
         try {
             reader.peek();
             isEmpty = false;
-            final CompositeNodeDataWithSchema compositeNodeDataWithSchema = new CompositeNodeDataWithSchema(parentNode);
+            final CompositeNodeDataWithSchema<?> compositeNodeDataWithSchema =
+                    new CompositeNodeDataWithSchema<>(parentNode);
             read(reader, compositeNodeDataWithSchema);
             compositeNodeDataWithSchema.write(writer);
 
@@ -198,7 +199,7 @@ public final class JsonParserStream implements Closeable, Flushable {
         parent.setValue(domSource);
     }
 
-    public void read(final JsonReader in, AbstractNodeDataWithSchema parent) throws IOException {
+    public void read(final JsonReader in, AbstractNodeDataWithSchema<?> parent) throws IOException {
         switch (in.peek()) {
             case STRING:
             case NUMBER:
@@ -217,7 +218,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                     if (parent instanceof LeafNodeDataWithSchema) {
                         read(in, parent);
                     } else {
-                        final AbstractNodeDataWithSchema newChild = newArrayEntry(parent);
+                        final AbstractNodeDataWithSchema<?> newChild = newArrayEntry(parent);
                         read(in, newChild);
                     }
                 }
@@ -257,7 +258,7 @@ public final class JsonParserStream implements Closeable, Flushable {
                         localName, getCurrentNamespace(), parentSchema.getPath());
 
 
-                    final AbstractNodeDataWithSchema newChild = ((CompositeNodeDataWithSchema) parent)
+                    final AbstractNodeDataWithSchema<?> newChild = ((CompositeNodeDataWithSchema<?>) parent)
                             .addChild(childDataSchemaNodes);
                     if (newChild instanceof AnyXmlNodeDataWithSchema) {
                         readAnyXmlValue(in, (AnyXmlNodeDataWithSchema) newChild, jsonElementName);
@@ -273,27 +274,27 @@ public final class JsonParserStream implements Closeable, Flushable {
         }
     }
 
-    private static boolean isArray(final AbstractNodeDataWithSchema parent) {
+    private static boolean isArray(final AbstractNodeDataWithSchema<?> parent) {
         return parent instanceof ListNodeDataWithSchema || parent instanceof LeafListNodeDataWithSchema;
     }
 
-    private static AbstractNodeDataWithSchema newArrayEntry(final AbstractNodeDataWithSchema parent) {
-        AbstractNodeDataWithSchema newChild;
+    private static AbstractNodeDataWithSchema<?> newArrayEntry(final AbstractNodeDataWithSchema<?> parent) {
+        AbstractNodeDataWithSchema<?> newChild;
         if (parent instanceof ListNodeDataWithSchema) {
-            newChild = new ListEntryNodeDataWithSchema(parent.getSchema());
+            newChild = ListEntryNodeDataWithSchema.forSchema(((ListNodeDataWithSchema) parent).getSchema());
         } else if (parent instanceof LeafListNodeDataWithSchema) {
-            newChild = new LeafListEntryNodeDataWithSchema(parent.getSchema());
+            newChild = new LeafListEntryNodeDataWithSchema(((LeafListNodeDataWithSchema) parent).getSchema());
         } else {
             throw new IllegalStateException("Found an unexpected array nested under " + parent.getSchema().getQName());
         }
-        ((CompositeNodeDataWithSchema) parent).addChild(newChild);
+        ((CompositeNodeDataWithSchema<?>) parent).addChild(newChild);
         return newChild;
     }
 
-    private void setValue(final AbstractNodeDataWithSchema parent, final String value) {
+    private void setValue(final AbstractNodeDataWithSchema<?> parent, final String value) {
         checkArgument(parent instanceof SimpleNodeDataWithSchema, "Node %s is not a simple type",
                 parent.getSchema().getQName());
-        final SimpleNodeDataWithSchema parentSimpleNode = (SimpleNodeDataWithSchema) parent;
+        final SimpleNodeDataWithSchema<?> parentSimpleNode = (SimpleNodeDataWithSchema<?>) parent;
         checkArgument(parentSimpleNode.getValue() == null, "Node '%s' has already set its value to '%s'",
                 parentSimpleNode.getSchema().getQName(), parentSimpleNode.getValue());
 

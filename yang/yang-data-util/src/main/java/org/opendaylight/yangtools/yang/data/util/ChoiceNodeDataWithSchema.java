@@ -16,8 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 /**
  * childs - empty augment - only one element can be.
  */
-class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
-
+class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema<ChoiceSchemaNode> {
     private CaseNodeDataWithSchema caseNodeDataWithSchema;
 
     ChoiceNodeDataWithSchema(final ChoiceSchemaNode schema) {
@@ -25,7 +24,7 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
     }
 
     @Override
-    protected CompositeNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
+    protected CaseNodeDataWithSchema addCompositeChild(final DataSchemaNode schema) {
         CaseNodeDataWithSchema newChild = new CaseNodeDataWithSchema((CaseSchemaNode) schema);
         caseNodeDataWithSchema = newChild;
         addCompositeChild(newChild);
@@ -43,5 +42,4 @@ class ChoiceNodeDataWithSchema extends CompositeNodeDataWithSchema {
         super.write(writer);
         writer.endNode();
     }
-
 }

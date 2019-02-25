@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
@@ -19,15 +18,15 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Represents a YANG list node.
  */
-public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema {
+public class ListNodeDataWithSchema extends CompositeNodeDataWithSchema<ListSchemaNode> {
 
-    public ListNodeDataWithSchema(final DataSchemaNode schema) {
+    public ListNodeDataWithSchema(final ListSchemaNode schema) {
         super(schema);
     }
 
     @Override
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
-        final ListSchemaNode schema = (ListSchemaNode) getSchema();
+        final ListSchemaNode schema = getSchema();
         writer.nextDataSchemaNode(schema);
         if (schema.getKeyDefinition().isEmpty()) {
             writer.startUnkeyedList(provideNodeIdentifier(), childSizeHint());

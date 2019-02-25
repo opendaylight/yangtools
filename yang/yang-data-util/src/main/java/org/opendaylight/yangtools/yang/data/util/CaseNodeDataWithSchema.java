@@ -9,10 +9,8 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 
-class CaseNodeDataWithSchema extends CompositeNodeDataWithSchema {
-
+class CaseNodeDataWithSchema extends CompositeNodeDataWithSchema<CaseSchemaNode> {
     CaseNodeDataWithSchema(final CaseSchemaNode schema) {
         super(schema);
     }
-
 }
