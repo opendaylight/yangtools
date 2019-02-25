@@ -19,24 +19,21 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 @Beta
 public interface SchemaRepository {
     /**
-     * Instantiate a new {@link SchemaContextFactory}, which will filter available schema sources using the provided
-     * filter.
-     *
-     * @param filter Filter which acts as the gating function before a schema source is considered by the factory
-     *               for inclusion in the {@link SchemaContext} it produces.
-     * @return A new schema context factory.
-     * @deprecated Use {@link #createSchemaContextFactory(SchemaContextFactoryConfiguration)} instead.
-     */
-    @Deprecated
-    @NonNull SchemaContextFactory createSchemaContextFactory(@NonNull SchemaSourceFilter filter);
-
-    /**
      * Returns {@link SchemaContextFactory} with supplied configuration.
      *
      * @param config configuration of schema context factory.
      * @return schema context factory.
      */
     @NonNull SchemaContextFactory createSchemaContextFactory(@NonNull SchemaContextFactoryConfiguration config);
+
+    /**
+     * Returns {@link SchemaContextFactory} with {@link SchemaContextFactoryConfiguration#getDefault()}.
+     *
+     * @return schema context factory.
+     */
+    default @NonNull SchemaContextFactory createSchemaContextFactory() {
+        return createSchemaContextFactory(SchemaContextFactoryConfiguration.getDefault());
+    }
 
     <T extends SchemaSourceRepresentation> @NonNull ListenableFuture<T> getSchemaSource(@NonNull SourceIdentifier id,
             @NonNull Class<T> represetation);

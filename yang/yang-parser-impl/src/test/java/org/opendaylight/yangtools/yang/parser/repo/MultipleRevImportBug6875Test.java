@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -22,8 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
@@ -55,10 +52,7 @@ public class MultipleRevImportBug6875Test {
         setAndRegister(sharedSchemaRepository, bar2);
         setAndRegister(sharedSchemaRepository, bar3);
 
-        final SchemaContextFactory fact = sharedSchemaRepository
-                .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
-
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact
+        final ListenableFuture<SchemaContext> schemaContextFuture = sharedSchemaRepository.createSchemaContextFactory()
                 .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId()));
         assertTrue(schemaContextFuture.isDone());
 
@@ -98,10 +92,8 @@ public class MultipleRevImportBug6875Test {
         setAndRegister(sharedSchemaRepository, bar1);
         setAndRegister(sharedSchemaRepository, bar2);
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(
-                SchemaSourceFilter.ALWAYS_ACCEPT);
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
-                ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId()));
+        final ListenableFuture<SchemaContext> schemaContextFuture = sharedSchemaRepository.createSchemaContextFactory()
+                .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId()));
         assertTrue(schemaContextFuture.isDone());
 
         try {

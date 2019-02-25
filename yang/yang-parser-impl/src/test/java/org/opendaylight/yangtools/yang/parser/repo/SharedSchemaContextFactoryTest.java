@@ -15,24 +15,25 @@ import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mock;
+import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
 
+@RunWith(MockitoJUnitRunner.StrictStubs.class)
 public class SharedSchemaContextFactoryTest {
 
     private final SharedSchemaRepository repository = new SharedSchemaRepository("test");
 
-    @Mock
-    private SchemaSourceFilter filter;
+    private final SchemaContextFactoryConfiguration config = SchemaContextFactoryConfiguration.getDefault();
     private SourceIdentifier s1;
     private SourceIdentifier s2;
 
@@ -58,7 +59,7 @@ public class SharedSchemaContextFactoryTest {
     @Test
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
-            filter);
+            config);
         final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(s1, s1, s2));
         assertNotNull(schemaContext.get());
@@ -83,7 +84,7 @@ public class SharedSchemaContextFactoryTest {
                 sIdWithoutRevision, ASTSchemaSource.class, PotentialSchemaSource.Costs.IMMEDIATE.getValue()));
 
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
-            filter);
+            config);
         final ListenableFuture<SchemaContext> schemaContext =
                 sharedSchemaContextFactory.createSchemaContext(Arrays.asList(sIdWithoutRevision, provider.getId()));
         assertNotNull(schemaContext.get());

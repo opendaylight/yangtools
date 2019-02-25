@@ -37,10 +37,10 @@ import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceException;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -212,7 +212,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      *         new schema context was successfully built.
      */
     public Optional<SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
-        final SchemaContextFactory factory = repository.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
+        final SchemaContextFactory factory = repository.createSchemaContextFactory(config(statementParserMode));
         Optional<SchemaContext> sc;
         Object ver;
         do {
@@ -299,7 +299,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
         final ListenableFuture<SchemaContext> future = repository
-                .createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT)
+                .createSchemaContextFactory(config(statementParserMode))
                 .createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode);
 
         try {
@@ -319,5 +319,9 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     @Override
     public void close() {
         transReg.close();
+    }
+
+    private static SchemaContextFactoryConfiguration config(final StatementParserMode statementParserMode) {
+        return SchemaContextFactoryConfiguration.builder().setStatementParserMode(statementParserMode).build();
     }
 }

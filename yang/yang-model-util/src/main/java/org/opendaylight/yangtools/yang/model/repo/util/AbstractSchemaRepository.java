@@ -30,7 +30,6 @@ import java.util.Map;
 import javax.annotation.concurrent.GuardedBy;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -43,9 +42,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base class for {@link SchemaRepository} implementations. It handles registration
- * and lookup of schema sources, subclasses need only to provide their own
- * {@link #createSchemaContextFactory(SchemaSourceFilter)} implementation.
+ * Abstract base class for {@link SchemaRepository} implementations. It handles registration and lookup of schema
+ * sources, subclasses need only to provide their own {@link #createSchemaContextFactory()} implementation.
  */
 @Beta
 public abstract class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {

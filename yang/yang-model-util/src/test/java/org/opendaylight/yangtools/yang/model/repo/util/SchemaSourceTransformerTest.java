@@ -24,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangSchemaSourceRepresentation;
@@ -142,12 +141,6 @@ public class SchemaSourceTransformerTest {
     }
 
     private class Provider extends AbstractSchemaRepository {
-        @Deprecated
-        @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
-            return mock(SchemaContextFactory.class);
-        }
-
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
             return mock(SchemaContextFactory.class);
@@ -155,12 +148,6 @@ public class SchemaSourceTransformerTest {
     }
 
     private class Consumer extends AbstractSchemaRepository {
-        @Deprecated
-        @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaSourceFilter filter) {
-            return mock(SchemaContextFactory.class);
-        }
-
         @Override
         public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
             return mock(SchemaContextFactory.class);

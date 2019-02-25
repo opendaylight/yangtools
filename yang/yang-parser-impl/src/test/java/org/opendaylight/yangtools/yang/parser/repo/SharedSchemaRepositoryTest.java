@@ -20,7 +20,6 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
-import static org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter.ALWAYS_ACCEPT;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
@@ -94,7 +93,7 @@ public class SharedSchemaRepositoryTest {
             remoteInetTypesYang.getId(), ASTSchemaSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
+        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
         final ListenableFuture<SchemaContext> schemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
@@ -110,8 +109,7 @@ public class SharedSchemaRepositoryTest {
         assertSchemaContext(firstSchemaContext, 1);
 
         // Try same schema second time
-        final ListenableFuture<SchemaContext> secondSchemaFuture = sharedSchemaRepository
-                .createSchemaContextFactory(ALWAYS_ACCEPT)
+        final ListenableFuture<SchemaContext> secondSchemaFuture = sharedSchemaRepository.createSchemaContextFactory()
                 .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
         // Verify second schema created successfully immediately
@@ -136,7 +134,7 @@ public class SharedSchemaRepositoryTest {
                 getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
+        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
         final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture = fact
                 .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId(), remoteTopologyYang.getId()));
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
@@ -159,7 +157,7 @@ public class SharedSchemaRepositoryTest {
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
+        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
 
         // Make source appear
         final Throwable ex = new IllegalStateException("failed schema");
@@ -194,8 +192,7 @@ public class SharedSchemaRepositoryTest {
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory(ALWAYS_ACCEPT);
-
+        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
         final ListenableFuture<SchemaContext> schemaContextFuture =
                 fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
 
@@ -292,7 +289,8 @@ public class SharedSchemaRepositoryTest {
 
         // Request schema to make repository notify the cache
         final ListenableFuture<SchemaContext> schemaFuture = sharedSchemaRepository
-                .createSchemaContextFactory(ALWAYS_ACCEPT).createSchemaContext(ImmutableList.of(runningId));
+                .createSchemaContextFactory()
+                .createSchemaContext(ImmutableList.of(runningId));
         Futures.addCallback(schemaFuture, new FutureCallback<SchemaContext>() {
             @Override
             public void onSuccess(final SchemaContext result) {

@@ -18,7 +18,6 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceFilter;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.spi.PotentialSchemaSource;
@@ -38,7 +37,7 @@ public class SimpleModuleTest {
         final TextToASTTransformer astTransformer = TextToASTTransformer.create(schemaRegistry, schemaRegistry);
         schemaRegistry.registerSchemaSourceListener(astTransformer);
 
-        schemaContextFactory = schemaRegistry.createSchemaContextFactory(SchemaSourceFilter.ALWAYS_ACCEPT);
+        schemaContextFactory = schemaRegistry.createSchemaContextFactory();
         allTestSources = new HashSet<>();
         final SchemaListenerRegistration reg = schemaRegistry.registerSchemaSourceListener(new SchemaSourceListener() {
 
