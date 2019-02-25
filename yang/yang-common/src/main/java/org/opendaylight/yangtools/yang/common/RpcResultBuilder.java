@@ -420,7 +420,6 @@ public final class RpcResultBuilder<T> extends RpcResultBuilderCompat<T> impleme
      *
      * @return Future for RpcResult built by RpcResultBuilder
      */
-    @Override
     public FluentFuture<RpcResult<T>> buildFuture() {
         return FluentFuture.from(Futures.immediateFuture(build()));
     }
