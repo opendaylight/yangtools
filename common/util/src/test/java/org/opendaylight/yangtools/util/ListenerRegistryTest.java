@@ -9,11 +9,9 @@ package org.opendaylight.yangtools.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.Iterables;
+import com.google.common.collect.ImmutableSet;
 import java.util.EventListener;
-import java.util.Iterator;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,17 +31,17 @@ public class ListenerRegistryTest {
     public void init() {
         testEventListener = new TestEventListener() {};
         extendedTestEventListener = new ExtendedTestEventListener() {};
-        registry = new ListenerRegistry<>();
+        registry = ListenerRegistry.create();
     }
 
     @Test
     public void testCreateNewInstance() {
-        assertNotNull("Intance of listener registry shouldn't be null.", registry);
+        assertNotNull("Intance of listener registry should not be null.", registry);
     }
 
     @Test
     public void tetGetListenersMethod() {
-        assertTrue("Listener registry should have any listeners.", Iterables.isEmpty(registry.getListeners()));
+        assertEquals("Listener registry should have any listeners.", ImmutableSet.of(), registry.getRegistrations());
     }
 
     @Test
@@ -59,22 +57,9 @@ public class ListenerRegistryTest {
 
     @Test
     public void testRegisterWithType() {
-        final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = registry.registerWithType(
+        final ListenerRegistration<ExtendedTestEventListener> listenerRegistration = registry.register(
             extendedTestEventListener);
         assertEquals("Listeners should be the same.", extendedTestEventListener, listenerRegistration.getInstance());
-    }
-
-    @Test
-    public void testIteratorMethod() {
-        final Iterator<ListenerRegistration<TestEventListener>> listenerIterator = registry.iterator();
-        assertNotNull("Listener iterator shouldn't be null.", listenerIterator);
-    }
-
-    @Test
-    public void testCreateMethod() {
-        final ListenerRegistry<EventListener> emptyRegistry = ListenerRegistry.create();
-        assertTrue("List of listeners in listener registry should be empty.",
-            Iterables.isEmpty(emptyRegistry.getListeners()));
     }
 
     interface TestEventListener extends EventListener {
