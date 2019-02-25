@@ -51,7 +51,6 @@ import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.w3c.dom.Document;
@@ -114,42 +113,6 @@ public final class JsonParserStream implements Closeable, Flushable {
             throw new IllegalArgumentException("Illegal parent node " + requireNonNull(parentNode));
         }
         return new JsonParserStream(writer, codecFactory, parent);
-    }
-
-    /**
-     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link SchemaContext}. The stream will be logically rooted at the top of the supplied SchemaContext.
-     *
-     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param schemaContext {@link SchemaContext} to use
-     * @return A new {@link JsonParserStream}
-     * @throws NullPointerException if any of the arguments are null
-     *
-     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory)} instead.
-     */
-    @Deprecated
-    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull SchemaContext schemaContext) {
-        return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext));
-    }
-
-    /**
-     * Create a new {@link JsonParserStream} backed by specified {@link NormalizedNodeStreamWriter}
-     * and {@link SchemaContext}. The stream will be logically rooted at the specified parent node.
-     *
-     * @param writer NormalizedNodeStreamWriter to use for instantiation of normalized nodes
-     * @param schemaContext {@link SchemaContext} to use
-     * @param parentNode Logical root node
-     * @return A new {@link JsonParserStream}
-     * @throws NullPointerException if any of the arguments are null
-     *
-     * @deprecated Use {@link #create(NormalizedNodeStreamWriter, JSONCodecFactory, SchemaNode)} instead.
-     */
-    @Deprecated
-    public static @NonNull JsonParserStream create(final @NonNull NormalizedNodeStreamWriter writer,
-            final @NonNull SchemaContext schemaContext, final @NonNull SchemaNode parentNode) {
-        return create(writer, JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext),
-            parentNode);
     }
 
     public JsonParserStream parse(final JsonReader reader) {
