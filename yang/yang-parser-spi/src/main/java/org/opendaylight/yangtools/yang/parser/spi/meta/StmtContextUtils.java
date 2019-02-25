@@ -548,7 +548,6 @@ public final class StmtContextUtils {
         final String localName = str.substring(colon + 1);
         SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
             "String '%s' has an empty identifier", str);
-        checkIdentifierString(ctx, localName);
 
         final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
         if (module != null) {
@@ -580,7 +579,14 @@ public final class StmtContextUtils {
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final QNameModule module,
             final String localName) {
-        return ctx.getFromNamespace(QNameCacheNamespace.class, QName.create(module, localName));
+        final QName template;
+        try {
+            template = QName.create(module, localName);
+        } catch (IllegalArgumentException e) {
+            throw new SourceException(ctx.getStatementSourceReference(), e, "Invalid identifier %s", localName);
+        }
+
+        return ctx.getFromNamespace(QNameCacheNamespace.class, template);
     }
 
     public static QNameModule getRootModuleQName(final StmtContext<?, ?, ?> ctx) {

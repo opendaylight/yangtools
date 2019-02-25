@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.common;
 import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.base.CharMatcher;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -30,14 +31,16 @@ import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
- * The QName from XML consists of local name of element and XML namespace, but
- * for our use, we added module revision to it.
+ * The QName from XML consists of local name of element and XML namespace, but for our use, we added module revision to
+ * it.
  *
  * <p>
- * In YANG context QName is full name of defined node, type, procedure or
- * notification. QName consists of XML namespace, YANG model revision and local
- * name of defined type. It is used to prevent name clashes between nodes with
- * same local name, but from different schemas.
+ * In YANG context QName is full name of defined node, type, procedure or notification. QName consists of XML namespace,
+ * YANG model revision and local name of defined type. It is used to prevent name clashes between nodes with same local
+ * name, but from different schemas.
+ *
+ * <p>
+ * The local name must conform to <a href="https://tools.ietf.org/html/rfc7950#section-6.2">RFC7950 Section 6.2</a>.
  *
  * <ul>
  * <li><b>XMLNamespace</b> - {@link #getNamespace()} - the namespace assigned to the YANG module which
@@ -47,11 +50,6 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * <li><b>LocalName</b> - {@link #getLocalName()} - the YANG schema identifier which were defined for this
  * node in the YANG module</li>
  * </ul>
- *
- * <p>
- * QName may also have <code>prefix</code> assigned, but prefix does not
- * affect equality and identity of two QNames and carry only information
- * which may be useful for serializers / deserializers.
  */
 public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
@@ -69,7 +67,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
-    private static final char[] ILLEGAL_CHARACTERS = { '?', '(', ')', '&', ':' };
+    private static final CharMatcher IDENTIFIER_START =
+            CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
+    private static final CharMatcher NOT_IDENTIFIER_PART =
+            IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
 
     private final @NonNull QNameModule module;
     private final @NonNull String localName;
@@ -95,13 +96,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static @NonNull String checkLocalName(final String localName) {
         checkArgument(localName != null, "Parameter 'localName' may not be null.");
         checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
-
-        for (final char c : ILLEGAL_CHARACTERS) {
-            if (localName.indexOf(c) != -1) {
-                throw new IllegalArgumentException("Parameter 'localName':'" + localName
-                    + "' contains illegal character '" + c + "'");
-            }
-        }
+        checkArgument(!IDENTIFIER_START.matches(localName.charAt(0)) || NOT_IDENTIFIER_PART.indexIn(localName, 1) != -1,
+                "String '%s' is not a valid identifier", localName);
         return localName;
     }
 
