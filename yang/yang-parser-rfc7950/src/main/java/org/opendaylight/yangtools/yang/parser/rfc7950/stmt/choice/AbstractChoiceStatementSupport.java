@@ -16,13 +16,15 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ChoiceStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.YangValidationBundles;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ImplicitParentAwareStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 
 abstract class AbstractChoiceStatementSupport extends
-        AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>> {
+        AbstractQNameStatementSupport<ChoiceStatement, EffectiveStatement<QName, ChoiceStatement>>
+        implements ImplicitParentAwareStatementSupport {
     AbstractChoiceStatementSupport() {
         super(YangStmtMapping.CHOICE);
     }

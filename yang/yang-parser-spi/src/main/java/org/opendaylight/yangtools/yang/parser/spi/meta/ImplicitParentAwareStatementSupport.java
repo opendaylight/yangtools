@@ -19,7 +19,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * @author Robert Varga
  */
 @Beta
-// FIXME: 3.0.0: make this interface extend StatementSupport
 public interface ImplicitParentAwareStatementSupport {
     /**
      * Returns implicit parent statement support for supplied statement definition, if it is defined. This allows
