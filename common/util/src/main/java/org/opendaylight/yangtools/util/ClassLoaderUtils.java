@@ -16,6 +16,7 @@ import com.google.common.collect.Iterables;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -179,52 +180,65 @@ public final class ClassLoaderUtils {
         return loadClass(tccl, name);
     }
 
-    // FIXME: 3.0.0: Document and return Optional
-    public static Class<?> tryToLoadClassWithTCCL(final String fullyQualifiedClassName) {
+    public static Optional<Class<?>> tryToLoadClassWithTCCL(final String fullyQualifiedClassName) {
         final Thread thread = Thread.currentThread();
         final ClassLoader tccl = thread.getContextClassLoader();
         if (tccl == null) {
             LOG.debug("Thread {} does not have a Context Class Loader, not loading class {}", thread,
                 fullyQualifiedClassName);
-            return null;
+            return Optional.empty();
         }
 
         try {
-            return loadClass(tccl, fullyQualifiedClassName);
+            return Optional.of(loadClass(tccl, fullyQualifiedClassName));
         } catch (final ClassNotFoundException e) {
             LOG.debug("Failed to load class {}", fullyQualifiedClassName, e);
-            return null;
+            return Optional.empty();
         }
     }
 
     @SuppressWarnings("unchecked")
-    public static <S, G, P> Class<P> findFirstGenericArgument(final Class<S> scannedClass, final Class<G> genericType) {
+    public static <S, G, P> Optional<Class<P>> findFirstGenericArgument(final Class<S> scannedClass,
+            final Class<G> genericType) {
         return getWithClassLoader(scannedClass.getClassLoader(), () -> {
-            final ParameterizedType augmentationGeneric = findParameterizedType(scannedClass, genericType);
-            return augmentationGeneric != null ? (Class<P>) augmentationGeneric.getActualTypeArguments()[0] : null;
+            return findParameterizedType(scannedClass, genericType)
+                    .map(ptype -> (Class<P>) ptype.getActualTypeArguments()[0]);
         });
     }
 
-    // FIXME: 3.0.0: Document and return Optional
-    public static ParameterizedType findParameterizedType(final Class<?> subclass, final Class<?> genericType) {
-        requireNonNull(subclass);
+    /**
+     * Find the parameterized instantiation of a particular interface implemented by a class.
+     *
+     * @param subclass Implementing class
+     * @param genericType Interface to search for
+     * @return Parameterized interface as implemented by the class, if present
+     */
+    public static Optional<ParameterizedType> findParameterizedType(final Class<?> subclass,
+            final Class<?> genericType) {
         requireNonNull(genericType);
 
         for (final Type type : subclass.getGenericInterfaces()) {
-            if (type instanceof ParameterizedType && genericType.equals(((ParameterizedType) type).getRawType())) {
-                return (ParameterizedType) type;
+            if (type instanceof ParameterizedType) {
+                final ParameterizedType ptype = (ParameterizedType) type;
+                if (genericType.equals(ptype.getRawType())) {
+                    return Optional.of(ptype);
+                }
             }
         }
 
         LOG.debug("Class {} does not declare interface {}", subclass, genericType);
-        return null;
+        return Optional.empty();
     }
 
-    // FIXME: 3.0.0: Document and return Optional
-    public static Type getFirstGenericParameter(final Type type) {
-        if (type instanceof ParameterizedType) {
-            return ((ParameterizedType) type).getActualTypeArguments()[0];
-        }
-        return null;
+    /**
+     * Extract the first generic type argument for a Type. If the type is not parameterized, this method returns empty.
+     *
+     * @param type Type to examine
+     * @return First generic type argument, if present
+     * @throws NullPointerException if {@code type} is null
+     */
+    public static Optional<Type> getFirstGenericParameter(final Type type) {
+        return requireNonNull(type) instanceof ParameterizedType
+                ? Optional.of(((ParameterizedType) type).getActualTypeArguments()[0]) : Optional.empty();
     }
 }
