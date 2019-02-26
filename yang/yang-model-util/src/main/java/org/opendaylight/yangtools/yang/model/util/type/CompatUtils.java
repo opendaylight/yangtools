@@ -13,7 +13,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
@@ -168,11 +167,6 @@ public final class CompatUtils {
             // Other types cannot be constrained, return the base type
             return baseType;
         }
-    }
-
-    // FIXME: 3.0.0: remove this method
-    public static @NonNull TypeDefinition<?> compatLeafType(final @NonNull LeafSchemaNode leaf) {
-        return compatType(leaf);
     }
 
     private static BinaryTypeDefinition baseTypeIfNotConstrained(final @NonNull BinaryTypeDefinition type) {
