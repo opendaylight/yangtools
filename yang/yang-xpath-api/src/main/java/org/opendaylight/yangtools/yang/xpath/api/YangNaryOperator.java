@@ -11,9 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Collection;
-import java.util.Set;
 
 /**
  * YANG XPath binary operator.
@@ -41,20 +39,6 @@ public enum YangNaryOperator {
      */
     UNION("|");
 
-    @SuppressFBWarnings(value = "SE_INNER_CLASS", justification = "Outer class is a retained enumeration")
-    private final class Expr extends YangNaryExpr {
-        private static final long serialVersionUID = 1L;
-
-        Expr(final Set<YangExpr> exprs) {
-            super(exprs);
-        }
-
-        @Override
-        public YangNaryOperator getOperator() {
-            return YangNaryOperator.this;
-        }
-    }
-
     private final String str;
 
     YangNaryOperator(final String str) {
@@ -67,7 +51,7 @@ public enum YangNaryOperator {
     }
 
     public YangExpr exprWith(final Collection<YangExpr> exprs) {
-        final Set<YangExpr> set = ImmutableSet.copyOf(exprs);
-        return set.size() == 1 ? set.iterator().next() : new Expr(set);
+        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(exprs);
+        return set.size() == 1 ? set.iterator().next() : new YangNaryExpr(this, set);
     }
 }

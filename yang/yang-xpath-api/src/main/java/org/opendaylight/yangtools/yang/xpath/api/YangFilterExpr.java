@@ -22,9 +22,9 @@ public class YangFilterExpr implements YangExpr, YangPredicateAware {
     private static final class WithPredicates extends YangFilterExpr {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
-        WithPredicates(final YangExpr expr, final Set<YangExpr> predicates) {
+        WithPredicates(final YangExpr expr, final ImmutableSet<YangExpr> predicates) {
             super(expr);
             this.predicates = requireNonNull(predicates);
         }
@@ -57,11 +57,6 @@ public class YangFilterExpr implements YangExpr, YangPredicateAware {
 
     public final YangExpr getExpr() {
         return expr;
-    }
-
-    @Override
-    public Set<YangExpr> getPredicates() {
-        return ImmutableSet.of();
     }
 
     @Override
