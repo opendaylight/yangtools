@@ -12,10 +12,27 @@ import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
+/**
+ * An XPath expression.
+ *
+ * @author Robert Varga
+ */
 @Beta
 public interface YangXPathExpression extends Immutable {
-
+    /**
+     * Return the root {@link YangExpr}.
+     *
+     * @return Root expression.
+     */
     YangExpr getRootExpr();
+
+    /**
+     * Return the {@link YangXPathMathMode} used in this expression. All {@link YangNumberExpr} objects used by this
+     * expression are expected to be handled by this mode's {@link YangXPathMathSupport}.
+     *
+     * @return YangXPathMathMode
+     */
+    YangXPathMathMode getMathMode();
 
     /**
      * Attempt to interpret a {@link YangLiteralExpr} referenced by this expression as a {@link QName}. This method
@@ -32,12 +49,12 @@ public interface YangXPathExpression extends Immutable {
      * at evaluation.
      *
      * @param expr Literal to be reinterpreted
-     * @return QName representation of the literal
+     * @return YangQNameExpr result of interpretation
      * @throws XPathExpressionException when the literal cannot be interpreted as a QName
      */
-    QName interpretAsQName(YangLiteralExpr expr) throws XPathExpressionException;
+    YangQNameExpr interpretAsQName(YangLiteralExpr expr) throws XPathExpressionException;
 
-    // API design: this really should be YangInstanceIdentifier without AugmentationIdentifier. Implementations are
-    //             strongly encouraged to validate it as such.
+    // FIXME: this really should be YangInstanceIdentifier without AugmentationIdentifier. Implementations are
+    //        strongly encouraged to validate it as such.
     YangLocationPath interpretAsInstanceIdentifier(YangLiteralExpr expr) throws XPathExpressionException;
 }

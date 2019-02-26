@@ -11,9 +11,21 @@ import com.google.common.annotations.Beta;
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.xpath.XPathExpressionException;
 
+/**
+ * Interface for converting a String into a {@link YangXPathExpression}.
+ *
+ * @author Robert Varga
+ */
 @Beta
 @NotThreadSafe
 public interface YangXPathParser {
-
+    /**
+     * Parse a string containing an XPath expression.
+     *
+     * @param xpath XPath expression string
+     * @return A parsed {@link YangXPathExpression}
+     * @throws NullPointerException if {@code xpath} is null
+     * @throws XPathExpressionException when the expression cannot be parsed
+     */
     YangXPathExpression parseExpression(String xpath) throws XPathExpressionException;
 }
