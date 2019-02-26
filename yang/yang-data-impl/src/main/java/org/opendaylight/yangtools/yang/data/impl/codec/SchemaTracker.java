@@ -60,17 +60,6 @@ public final class SchemaTracker {
     }
 
     /**
-     * Create a new writer with the specified context as its root.
-     *
-     * @param context Associated {@link SchemaContext}.
-     * @return A new {@link NormalizedNodeStreamWriter}
-     */
-    // FIXME: 3.0.0: remove this method
-    public static @NonNull SchemaTracker create(final SchemaContext context) {
-        return new SchemaTracker(context);
-    }
-
-    /**
      * Create a new writer with the specified node as its root.
      *
      * @param root Root node
