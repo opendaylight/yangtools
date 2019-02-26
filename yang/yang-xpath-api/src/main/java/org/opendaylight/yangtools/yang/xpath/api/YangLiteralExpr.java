@@ -28,22 +28,9 @@ import org.eclipse.jdt.annotation.Nullable;
  * @author Robert Varga
  */
 @Beta
-public class YangLiteralExpr implements YangExpr {
-    private static final class Empty extends YangLiteralExpr {
-        private static final long serialVersionUID = 1L;
-
-        Empty() {
-            super("");
-        }
-
-        @SuppressWarnings("static-method")
-        Object readResolve() {
-            return empty();
-        }
-    }
-
+public final class YangLiteralExpr implements YangExpr {
     private static final long serialVersionUID = 1L;
-    private static final YangLiteralExpr EMPTY = new Empty();
+    private static final YangLiteralExpr EMPTY = new YangLiteralExpr("");
 
     private final String literal;
 
@@ -51,30 +38,34 @@ public class YangLiteralExpr implements YangExpr {
         this.literal = requireNonNull(literal);
     }
 
-    public static final YangLiteralExpr empty() {
+    public static YangLiteralExpr empty() {
         return EMPTY;
     }
 
-    public static final YangLiteralExpr of(final String literal) {
+    public static YangLiteralExpr of(final String literal) {
         return literal.isEmpty() ? EMPTY : new YangLiteralExpr(literal);
     }
 
-    public final String getLiteral() {
+    public String getLiteral() {
         return literal;
     }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return literal.hashCode();
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         return this == obj || obj instanceof YangLiteralExpr && literal.equals(((YangLiteralExpr) obj).literal);
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return literal;
+    }
+
+    protected Object readResolve() {
+        return literal.isEmpty() ? EMPTY : this;
     }
 }
