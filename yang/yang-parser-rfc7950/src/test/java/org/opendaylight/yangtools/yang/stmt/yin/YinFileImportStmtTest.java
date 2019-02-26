@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.hamcrest.CoreMatchers.anyOf;
-import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -20,8 +19,8 @@ import java.util.Iterator;
 import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
@@ -35,7 +34,6 @@ public class YinFileImportStmtTest {
     public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
         context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
         assertEquals(9, context.getModules().size());
-
     }
 
     @Test
@@ -43,17 +41,21 @@ public class YinFileImportStmtTest {
         Module testModule = TestUtils.findModule(context, "ietf-netconf-monitoring").get();
         assertNotNull(testModule);
 
-        Set<ModuleImport> imports = testModule.getImports();
-        assertEquals(2, imports.size());
+        Set<String> imports = testModule.getBoundPrefixes();
+        assertEquals(3, imports.size());
 
-        Iterator<ModuleImport> importsIterator = imports.iterator();
-        ModuleImport moduleImport = importsIterator.next();
+        Iterator<String> it = imports.iterator();
+        assertNextImport(testModule, it, "foo", null);
+        assertNextImport(testModule, it, "inet", null);
+        assertNextImport(testModule, it, "yang", null);
+        assertFalse(it.hasNext());
+    }
 
-        assertThat(moduleImport.getModuleName(), anyOf(is("ietf-yang-types"), is("ietf-inet-types")));
-        assertThat(moduleImport.getPrefix(), anyOf(is("yang"), is("inet")));
-
-        moduleImport = importsIterator.next();
-        assertThat(moduleImport.getModuleName(), anyOf(is("ietf-yang-types"), is("ietf-inet-types")));
-        assertThat(moduleImport.getPrefix(), anyOf(is("yang"), is("inet")));
+    private static void assertNextImport(final Module module, final Iterator<String> it, final String expectedPrefix,
+            final QNameModule expectedModule) {
+        assertTrue(it.hasNext());
+        final String prefix = it.next();
+        assertEquals(expectedPrefix, prefix);
+        assertEquals(expectedModule, module.findModuleForPrefix(prefix).get());
     }
 }

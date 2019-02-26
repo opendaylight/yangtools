@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import javax.annotation.concurrent.Immutable;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -161,14 +162,29 @@ public interface Module extends DataNodeContainer, DocumentedNode, NotificationN
     Optional<String> getContact();
 
     /**
-     * Returns imports which represents YANG modules which are imported to this
-     * module via <b>import</b> statement.
+     * Returns the set of prefixes bound in this module. This set must contain at least {@link #getPrefix()}.
      *
-     * @return set of module imports which are specified in the module as the
-     *         argument of YANG {@link Module <b><font
-     *         color="#9400d3">import</font></b>} keywords.
+     * @return Set of bound prefixes, cannot be null.
      */
-    Set<ModuleImport> getImports();
+    @NonNull Set<String> getBoundPrefixes();
+
+    /**
+     * Return QNameModule to which a particular prefix is bound.
+     *
+     * @param prefix Prefix to look up
+     * @return QNameModule bound to specified prefix
+     * @throws NullPointerException if {@code prefix} is null
+     */
+    @NonNull Optional<QNameModule> findModuleForPrefix(String prefix);
+
+    /**
+     * Return a prefix to which a particular QNameModule is bound in this module.
+     *
+     * @param module QNameModule to look up
+     * @return Prefix to which the QNameModule is bound
+     * @throws NullPointerException if {@code module} is null
+     */
+    @NonNull Optional<String> findPrefixForModule(QNameModule module);
 
     Set<Module> getSubmodules();
 

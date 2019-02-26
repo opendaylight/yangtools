@@ -7,6 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.collect.HashBasedTable;
 import com.google.common.collect.Lists;
@@ -21,13 +24,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import org.opendaylight.yangtools.util.TopologicalSort;
 import org.opendaylight.yangtools.util.TopologicalSort.Node;
 import org.opendaylight.yangtools.util.TopologicalSort.NodeImpl;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,17 +72,17 @@ public final class ModuleDependencySort {
     public static List<Module> sort(final Collection<Module> modules) {
         final List<Node> sorted = sortInternal(modules);
         // Cast to Module from Node and return
-        return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getReference());
+        return Lists.transform(sorted, input -> input == null ? null : ((ModuleNodeImpl) input).getModule());
     }
 
     private static List<Node> sortInternal(final Collection<Module> modules) {
-        final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
+        final Table<URI, Optional<Revision>, ModuleNodeImpl> moduleGraph = createModuleGraph(modules);
         return TopologicalSort.sort(new HashSet<>(moduleGraph.values()));
     }
 
-    private static Table<String, Optional<Revision>, ModuleNodeImpl> createModuleGraph(
+    private static Table<URI, Optional<Revision>, ModuleNodeImpl> createModuleGraph(
             final Collection<Module> builders) {
-        final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
+        final Table<URI, Optional<Revision>, ModuleNodeImpl> moduleGraph = HashBasedTable.create();
 
         processModules(moduleGraph, builders);
         processDependencies(moduleGraph, builders);
@@ -89,16 +93,17 @@ public final class ModuleDependencySort {
     /**
      * Extract module:revision from modules.
      */
-    private static void processDependencies(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
+    private static void processDependencies(final Table<URI, Optional<Revision>, ModuleNodeImpl> moduleGraph,
             final Collection<Module> mmbs) {
         final Map<URI, Module> allNS = new HashMap<>();
 
         // Create edges in graph
         for (final Module module : mmbs) {
-            final Map<String, Optional<Revision>> imported = new HashMap<>();
+            final Map<URI, Optional<Revision>> imported = new HashMap<>();
             final String fromName = module.getName();
-            final URI ns = module.getNamespace();
-            final Optional<Revision> fromRevision = module.getRevision();
+            final QNameModule revNamespace = module.getQNameModule();
+            final URI ns = revNamespace.getNamespace();
+            final Optional<Revision> fromRevision = revNamespace.getRevision();
 
             // check for existence of module with same namespace
             final Module prev = allNS.putIfAbsent(ns, module);
@@ -111,12 +116,12 @@ public final class ModuleDependencySort {
             }
 
             // no need to check if other Type of object, check is performed in process modules
-            for (final ModuleImport imprt : allImports(module)) {
-                final String toName = imprt.getModuleName();
+            for (final QNameModule imprt : allImports(module)) {
+                final URI toNs = imprt.getNamespace();
                 final Optional<Revision> toRevision = imprt.getRevision();
 
-                final ModuleNodeImpl from = moduleGraph.get(fromName, fromRevision);
-                final ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toName,
+                final ModuleNodeImpl from = moduleGraph.get(ns, fromRevision);
+                final ModuleNodeImpl to = getModuleByNameAndRevision(moduleGraph, fromName, fromRevision, toNs,
                     toRevision);
 
                 /*
@@ -124,87 +129,85 @@ public final class ModuleDependencySort {
                  * revisions then throw exception
                  */
                 if (module.getYangVersion() == YangVersion.VERSION_1) {
-                    final Optional<Revision> impRevision = imported.get(toName);
+                    final Optional<Revision> impRevision = imported.get(toNs);
                     if (impRevision != null && impRevision.isPresent() && !impRevision.equals(toRevision)
                             && toRevision.isPresent()) {
                         throw new IllegalArgumentException(String.format(
-                            "Module:%s imported twice with different revisions:%s, %s", toName,
+                            "Module:%s imported twice with different revisions:%s, %s", to.getName(),
                             formatRevDate(impRevision), formatRevDate(toRevision)));
                     }
                 }
 
-                imported.put(toName, toRevision);
-
+                imported.put(toNs, toRevision);
                 from.addEdge(to);
             }
         }
     }
 
-    private static Collection<ModuleImport> allImports(final Module mod) {
-        if (mod.getSubmodules().isEmpty()) {
-            return mod.getImports();
-        }
-
-        final Collection<ModuleImport> concat = new LinkedHashSet<>();
-        concat.addAll(mod.getImports());
+    private static Collection<QNameModule> allImports(final Module mod) {
+        final Set<QNameModule> ret = new LinkedHashSet<>();
+        addAllImports(ret, mod);
         for (Module sub : mod.getSubmodules()) {
-            concat.addAll(sub.getImports());
+            addAllImports(ret, sub);
         }
-        return concat;
+        return ret;
+    }
+
+    private static void addAllImports(final Set<QNameModule> set, final Module mod) {
+        for (String prefix : mod.getBoundPrefixes()) {
+            if (!prefix.equals(mod.getPrefix())) {
+                set.add(mod.findModuleForPrefix(prefix).get());
+            }
+        }
     }
 
     /**
      * Get imported module by its name and revision from moduleGraph.
      */
     private static ModuleNodeImpl getModuleByNameAndRevision(
-            final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph, final String fromName,
-            final Optional<Revision> fromRevision, final String toName, final Optional<Revision> toRevision) {
+            final Table<URI, Optional<Revision>, ModuleNodeImpl> moduleGraph, final String fromName,
+            final Optional<Revision> fromRevision, final URI toNs, final Optional<Revision> toRevision) {
 
-        final ModuleNodeImpl exact = moduleGraph.get(toName, toRevision);
+        final ModuleNodeImpl exact = moduleGraph.get(toNs, toRevision);
         if (exact != null) {
             return exact;
         }
 
         // If revision is not specified in import, but module exists with different revisions, take first one
         if (!toRevision.isPresent()) {
-            final Map<Optional<Revision>, ModuleNodeImpl> modulerevs = moduleGraph.row(toName);
+            final Map<Optional<Revision>, ModuleNodeImpl> modulerevs = moduleGraph.row(toNs);
 
             if (!modulerevs.isEmpty()) {
                 final ModuleNodeImpl first = modulerevs.values().iterator().next();
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Import:{}:{} by module:{}:{} does not specify revision, using:{}:{}"
-                            + " for module dependency sort", toName, formatRevDate(toRevision), fromName,
+                            + " for module dependency sort", toNs, formatRevDate(toRevision), fromName,
                             formatRevDate(fromRevision), first.getName(), formatRevDate(first.getRevision()));
                 }
                 return first;
             }
         }
 
-        LOG.warn("Not existing module imported:{}:{} by:{}:{}", toName, formatRevDate(toRevision), fromName,
+        LOG.warn("Not existing module imported:{}:{} by:{}:{}", toNs, formatRevDate(toRevision), fromName,
             formatRevDate(fromRevision));
         LOG.warn("Available models: {}", moduleGraph);
-        throw new IllegalArgumentException(String.format("Not existing module imported:%s:%s by:%s:%s", toName,
+        throw new IllegalArgumentException(String.format("Not existing module imported:%s:%s by:%s:%s", toNs,
             formatRevDate(toRevision), fromName, formatRevDate(fromRevision)));
     }
 
     /**
      * Extract dependencies from modules to fill dependency graph.
      */
-    private static void processModules(final Table<String, Optional<Revision>, ModuleNodeImpl> moduleGraph,
+    private static void processModules(final Table<URI, Optional<Revision>, ModuleNodeImpl> moduleGraph,
             final Iterable<Module> modules) {
 
         // Process nodes
         for (final Module momb : modules) {
-
-            final String name = momb.getName();
-            final Optional<Revision> rev = momb.getRevision();
-            final Map<Optional<Revision>, ModuleNodeImpl> revs = moduleGraph.row(name);
-            if (revs.containsKey(rev)) {
-                throw new IllegalArgumentException(String.format("Module:%s with revision:%s declared twice", name,
-                    formatRevDate(rev)));
-            }
-
-            revs.put(rev, new ModuleNodeImpl(name, rev.orElse(null), momb));
+            final QNameModule mod = momb.getQNameModule();
+            final Optional<Revision> rev = mod.getRevision();
+            final Map<Optional<Revision>, ModuleNodeImpl> revs = moduleGraph.row(mod.getNamespace());
+            checkArgument(!revs.containsKey(rev), "Namespace %s is declared in twice (module %s)", mod, momb.getName());
+            revs.put(rev, new ModuleNodeImpl(momb));
         }
     }
 
@@ -213,31 +216,27 @@ public final class ModuleDependencySort {
     }
 
     private static final class ModuleNodeImpl extends NodeImpl {
-        private final String name;
-        private final Revision revision;
-        private final Module originalObject;
+        private final Module module;
 
-        ModuleNodeImpl(final String name, final Revision revision, final Module module) {
-            this.name = name;
-            this.revision = revision;
-            this.originalObject = module;
+        ModuleNodeImpl(final Module module) {
+            this.module = requireNonNull(module);
+        }
+
+        Module getModule() {
+            return module;
         }
 
         String getName() {
-            return name;
+            return module.getName();
         }
 
         Optional<Revision> getRevision() {
-            return Optional.ofNullable(revision);
+            return module.getRevision();
         }
 
         @Override
         public int hashCode() {
-            final int prime = 31;
-            int result = 1;
-            result = prime * result + Objects.hashCode(name);
-            result = prime * result + Objects.hashCode(revision);
-            return result;
+            return Objects.hash(module.getName(), module.getRevision());
         }
 
         @Override
@@ -245,37 +244,16 @@ public final class ModuleDependencySort {
             if (this == obj) {
                 return true;
             }
-            if (obj == null) {
-                return false;
-            }
-            if (getClass() != obj.getClass()) {
+            if (!(obj instanceof ModuleNodeImpl)) {
                 return false;
             }
             final ModuleNodeImpl other = (ModuleNodeImpl) obj;
-            if (name == null) {
-                if (other.name != null) {
-                    return false;
-                }
-            } else if (!name.equals(other.name)) {
-                return false;
-            }
-            if (revision == null) {
-                if (other.revision != null) {
-                    return false;
-                }
-            } else if (!revision.equals(other.revision)) {
-                return false;
-            }
-            return true;
+            return getName().equals(other.getName()) && getRevision().equals(other.getRevision());
         }
 
         @Override
         public String toString() {
-            return "Module [name=" + name + ", revision=" + formatRevDate(getRevision()) + "]";
-        }
-
-        public Module getReference() {
-            return originalObject;
+            return "Module [name=" + getName() + ", revision=" + formatRevDate(getRevision()) + "]";
         }
     }
 }

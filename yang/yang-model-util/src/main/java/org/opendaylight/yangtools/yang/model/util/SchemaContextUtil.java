@@ -36,7 +36,6 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
@@ -621,14 +620,7 @@ public final class SchemaContextUtil {
         if (prefix.equals(module.getPrefix())) {
             return module;
         }
-
-        final Set<ModuleImport> imports = module.getImports();
-        for (final ModuleImport mi : imports) {
-            if (prefix.equals(mi.getPrefix())) {
-                return context.findModule(mi.getModuleName(), mi.getRevision()).orElse(null);
-            }
-        }
-        return null;
+        return module.findModuleForPrefix(prefix).flatMap(context::findModule).orElse(null);
     }
 
     /**

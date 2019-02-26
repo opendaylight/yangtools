@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.Verify;
+import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
@@ -24,6 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -31,6 +33,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.openconfig.model.api.OpenConfigVersionEffectiveStatement;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -42,7 +45,6 @@ import org.opendaylight.yangtools.yang.model.api.FeatureDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -64,17 +66,21 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.MutableStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.source.IncludedSubmoduleNameToModuleCtx;
+import org.opendaylight.yangtools.yang.parser.spi.source.PrefixToModule;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Beta
 public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String>> extends
         AbstractSchemaEffectiveDocumentedNode<String, D> implements Module, MutableStatement {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractEffectiveModule.class);
+
     private final String name;
     private final String prefix;
     private final YangVersion yangVersion;
     private final String organization;
     private final String contact;
-    private final ImmutableSet<ModuleImport> imports;
     private final ImmutableSet<FeatureDefinition> features;
     private final @NonNull ImmutableSet<NotificationDefinition> notifications;
     private final ImmutableSet<AugmentationSchemaNode> augmentations;
@@ -88,6 +94,8 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     private final ImmutableSet<UsesNode> uses;
     private final ImmutableSet<TypeDefinition<?>> typeDefinitions;
     private final ImmutableSet<DataSchemaNode> publicChildNodes;
+    private final ImmutableMap<String, QNameModule> prefixToModule;
+    private final ImmutableMap<QNameModule, String> moduleToPrefix;
     private final SemVer semanticVersion;
 
     private Set<StmtContext<?, SubmoduleStatement, EffectiveStatement<String, SubmoduleStatement>>>
@@ -186,7 +194,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
         final List<UnknownSchemaNode> unknownNodesInit = new ArrayList<>();
         final Set<AugmentationSchemaNode> augmentationsInit = new LinkedHashSet<>();
-        final Set<ModuleImport> importsInit = new HashSet<>();
         final Set<NotificationDefinition> notificationsInit = new HashSet<>();
         final Set<RpcDefinition> rpcsInit = new HashSet<>();
         final Set<Deviation> deviationsInit = new HashSet<>();
@@ -206,9 +213,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
             }
             if (effectiveStatement instanceof AugmentationSchemaNode) {
                 augmentationsInit.add((AugmentationSchemaNode) effectiveStatement);
-            }
-            if (effectiveStatement instanceof ModuleImport) {
-                importsInit.add((ModuleImport) effectiveStatement);
             }
             if (effectiveStatement instanceof NotificationDefinition) {
                 notificationsInit.add((NotificationDefinition) effectiveStatement);
@@ -266,7 +270,6 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
 
         this.unknownNodes = ImmutableList.copyOf(unknownNodesInit);
         this.augmentations = ImmutableSet.copyOf(augmentationsInit);
-        this.imports = ImmutableSet.copyOf(importsInit);
         this.notifications = ImmutableSet.copyOf(notificationsInit);
         this.rpcs = ImmutableSet.copyOf(rpcsInit);
         this.deviations = ImmutableSet.copyOf(deviationsInit);
@@ -280,6 +283,30 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
         this.typeDefinitions = ImmutableSet.copyOf(mutableTypeDefinitions);
         this.uses = ImmutableSet.copyOf(mutableUses);
 
+        this.prefixToModule = constructPrefixToModule(ctx.getAllFromNamespace(PrefixToModule.class));
+        this.moduleToPrefix = constructModuleToPrefix(prefixToModule);
+    }
+
+    private static ImmutableMap<String, QNameModule> constructPrefixToModule(final Map<String, QNameModule> input) {
+        try {
+            return ImmutableBiMap.copyOf(input);
+        } catch (IllegalArgumentException e) {
+            LOG.debug("Non-bijective mapping detected in {}, fall back to two distinct maps", input, e);
+            return ImmutableMap.copyOf(input);
+        }
+    }
+
+    private static ImmutableMap<QNameModule, String> constructModuleToPrefix(
+            final ImmutableMap<String, QNameModule> input) {
+        if (input instanceof ImmutableBiMap) {
+            return ((ImmutableBiMap<String, QNameModule>) input).inverse();
+        }
+
+        final Map<QNameModule, String> tmp = new LinkedHashMap<>();
+        for (Entry<String, QNameModule> entry : input.entrySet()) {
+            tmp.putIfAbsent(entry.getValue(), entry.getKey());
+        }
+        return ImmutableMap.copyOf(tmp);
     }
 
     @Override
@@ -318,8 +345,18 @@ public abstract class AbstractEffectiveModule<D extends DeclaredStatement<String
     }
 
     @Override
-    public Set<ModuleImport> getImports() {
-        return imports;
+    public Set<String> getBoundPrefixes() {
+        return prefixToModule.keySet();
+    }
+
+    @Override
+    public Optional<QNameModule> findModuleForPrefix(final String prefix) {
+        return Optional.ofNullable(prefixToModule.get(requireNonNull(prefix)));
+    }
+
+    @Override
+    public Optional<String> findPrefixForModule(final QNameModule module) {
+        return Optional.ofNullable(moduleToPrefix.get(requireNonNull(module)));
     }
 
     @Override
