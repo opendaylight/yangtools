@@ -13,8 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
@@ -160,13 +158,6 @@ public final class ClassLoaderUtils {
     @Deprecated
     public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
         return callWithClassLoader(cls, function);
-    }
-
-    // FIXME: 3.0.0: Remove or improve this to be an explicit cast to a receiver <T>?
-    public static Object construct(final Constructor<?> constructor, final List<Object> objects)
-            throws InstantiationException, IllegalAccessException, InvocationTargetException {
-        final Object[] initargs = objects.toArray();
-        return constructor.newInstance(initargs);
     }
 
     /**
