@@ -125,42 +125,6 @@ public final class ClassLoaderUtils {
     }
 
     /**
-     * Runs {@link Supplier} with provided {@link ClassLoader}.
-     *
-     * <p>
-     * Invokes supplies function and makes sure that original {@link ClassLoader}
-     * is context {@link ClassLoader} after execution.
-     *
-     * @param cls {@link ClassLoader} to be used.
-     * @param function Function to be executed.
-     * @return Result of supplier invocation.
-     *
-     * @deprecated Use {@link #getWithClassLoader(ClassLoader, Supplier)} instead.
-     */
-    @Deprecated
-    public static <V> V withClassLoader(final ClassLoader cls, final Supplier<V> function) {
-        return getWithClassLoader(cls, function);
-    }
-
-    /**
-     * Runs {@link Callable} with provided {@link ClassLoader}.
-     *
-     * <p>
-     * Invokes supplies function and makes sure that original {@link ClassLoader}
-     * is context {@link ClassLoader} after execution.
-     *
-     * @param cls {@link ClassLoader} to be used.
-     * @param function Function to be executed.
-     * @return Result of callable invocation.
-     *
-     * @deprecated Use {@link #callWithClassLoader(ClassLoader, Callable)} instead.
-     */
-    @Deprecated
-    public static <V> V withClassLoader(final ClassLoader cls, final Callable<V> function) throws Exception {
-        return callWithClassLoader(cls, function);
-    }
-
-    /**
      * Loads class using this supplied classloader.
      *
      * @param name String name of class.
