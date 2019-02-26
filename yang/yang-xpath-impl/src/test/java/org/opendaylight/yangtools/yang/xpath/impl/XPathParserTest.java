@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 @SuppressWarnings("null")
 public class XPathParserTest {
@@ -27,11 +28,11 @@ public class XPathParserTest {
         "foo", QNameModule.create(URI.create("foo")),
         "bar", QNameModule.create(URI.create("bar")));
 
-    private @Nullable XPathParser<?> parser;
+    private @Nullable AntlrXPathParser parser;
 
     @Before
     public void before() {
-        parser = new BigDecimalXPathParser(DEF_NS, NAMESPACES::get);
+        parser = new AntlrXPathParser(YangXPathMathMode.IEEE754, DEF_NS, NAMESPACES::get);
     }
 
     @Test
