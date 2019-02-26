@@ -10,17 +10,22 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.getChild;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.illegalShape;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyAtLeastChildren;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyChildCount;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTerminal;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyToken;
+import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyTree;
 
-import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -28,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -36,13 +40,12 @@ import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -57,22 +60,13 @@ import org.opendaylight.yangtools.yang.xpath.api.YangNaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangNegateExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNumberExpr;
-import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangVariableReferenceExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathNodeType;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.EqQuotedStringContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.InstanceIdentifierContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.KeyPredicateContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.KeyPredicateExprContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.LeafListPredicateContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.LeafListPredicateExprContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.NodeIdentifierContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PathArgumentContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PosContext;
-import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.QuotedStringContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.AbbreviatedStepContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.AbsoluteLocationPathNorootContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.AdditiveExprContext;
@@ -107,8 +101,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Robert Varga
  */
-abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathParser {
-    private static final Logger LOG = LoggerFactory.getLogger(XPathParser.class);
+final class AntlrXPathParser implements YangXPathParser {
+    private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParser.class);
     private static final Map<String, YangBinaryOperator> BINARY_OPERATORS = Maps.uniqueIndex(
         Arrays.asList(YangBinaryOperator.values()), YangBinaryOperator::toString);
     private static final Map<String, YangXPathNodeType> NODE_TYPES = Maps.uniqueIndex(Arrays.asList(
@@ -121,10 +115,14 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     // Cached for checks in hot path
     private static final AxisStep SELF_STEP = YangXPathAxis.SELF.asStep();
 
-    private final QNameSupport qnameSupport;
+    private final YangXPathMathMode mathMode;
+    private final YangXPathMathSupport<?> mathSupport;
+    private final YangNamespaceContext namespaceContext;
 
-    XPathParser(final QNameModule implicitNamespace, final Function<String, QNameModule> prefixes) {
-        qnameSupport = new QNameSupport(implicitNamespace, prefixes);
+    AntlrXPathParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+        this.mathMode = requireNonNull(mathMode);
+        this.mathSupport = mathMode.getSupport();
+        this.namespaceContext = requireNonNull(namespaceContext);
     }
 
     @Override
@@ -159,7 +157,7 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             throw errors.get(0);
         }
 
-        return new AntlrYangXPathExpression(qnameSupport, expr, xpath);
+        return new AntlrYangXPathExpression(namespaceContext, mathMode, expr, xpath);
     }
 
     /**
@@ -182,24 +180,6 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
         }
         return YangNaryOperator.OR.exprWith(tmp);
     }
-
-    /**
-     * Create a {@link YangNumberExpr} backed by specified string.
-     *
-     * @param str String, matching {@link xpathParser#Number} production.
-     * @return number expression
-     * @throws NullPointerException if {@code str} is null
-     */
-    abstract N createNumber(String str);
-
-    /**
-     * Create a {@link YangNumberExpr} representing the negated value of a number.
-     *
-     * @param number input number
-     * @return negated number expression
-     * @throws NullPointerException if {@code number} is null
-     */
-    abstract N negateNumber(N number);
 
     private YangExpr parseAdditive(final AdditiveExprContext expr) {
         final Iterator<ParseTree> it = expr.children.iterator();
@@ -243,7 +223,7 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
                 parsed = QName.create(YangConstants.RFC6020_YIN_MODULE, name.getChild(0).getText());
                 break;
             case 3:
-                parsed = qnameSupport.createQName(name.getChild(0).getText(), name.getChild(2).getText());
+                parsed = namespaceContext.createQName(name.getChild(0).getText(), name.getChild(2).getText());
                 break;
             default:
                 throw illegalShape(name);
@@ -385,112 +365,12 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
         switch (term.getSymbol().getType()) {
             case xpathParser.Literal:
                 // We have to strip quotes
-                return parseLiteral(text.substring(1, text.length() - 1));
+                return YangLiteralExpr.of(text.substring(1, text.length() - 1));
             case xpathParser.Number:
-                return createNumber(text);
+                return mathSupport.createNumber(text);
             default:
                 throw illegalShape(term);
         }
-    }
-
-    private YangLiteralExpr parseLiteral(final String text) {
-        if (text.isEmpty()) {
-            return YangLiteralExpr.empty();
-        }
-        if (text.charAt(0) == '/') {
-            return parseLocationLiteral(text);
-        }
-        return parseQNameLiteral(text);
-    }
-
-    private YangLiteralExpr parseLocationLiteral(final String text) {
-        final xpathLexer lexer = new xpathLexer(CharStreams.fromString(text));
-        final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
-        lexer.removeErrorListeners();
-        parser.removeErrorListeners();
-
-        // FIXME: add listeners
-
-        final InstanceIdentifierContext id = parser.instanceIdentifier();
-        final int length = id.getChildCount();
-        final List<Step> steps = new ArrayList<>(length / 2);
-        for (int i = 1; i < length; i += 2) {
-            steps.add(parsePathArgument(getChild(id, PathArgumentContext.class, i)));
-        }
-
-        return new InstanceIdentifierLiteralExpr(text, steps);
-    }
-
-    private Step parsePathArgument(final PathArgumentContext expr) {
-        final QName qname = parseInstanceIdentifierQName(getChild(expr, NodeIdentifierContext.class, 0));
-        switch (expr.getChildCount()) {
-            case 1:
-                return YangXPathAxis.CHILD.asStep(qname, ImmutableSet.of());
-            case 2:
-                return YangXPathAxis.CHILD.asStep(qname,
-                    parsePathArgumentPredicate(getChild(expr, instanceIdentifierParser.PredicateContext.class, 1)));
-            default:
-                throw illegalShape(expr);
-        }
-    }
-
-    private Collection<YangExpr> parsePathArgumentPredicate(final instanceIdentifierParser.PredicateContext expr) {
-        final ParseTree first = expr.getChild(0);
-        if (first instanceof LeafListPredicateContext) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(YangLocationPath.self(),
-                parseEqStringValue(getChild(((LeafListPredicateContext) first)
-                    .getChild(LeafListPredicateExprContext.class, 0), EqQuotedStringContext.class, 1))));
-        } else if (first instanceof PosContext) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(Functions.POSITION,
-                createNumber(((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0)
-                    .getText())));
-        }
-
-        final int length = expr.getChildCount();
-        final List<YangExpr> ret = new ArrayList<>(length);
-        for (int i = 0; i < length; ++i) {
-            final KeyPredicateExprContext pred = getChild(expr, KeyPredicateContext.class, i)
-                    .getChild(KeyPredicateExprContext.class, 0);
-            ret.add(YangBinaryOperator.EQUALS.exprWith(
-                YangQNameExpr.of(parseInstanceIdentifierQName(getChild(pred, NodeIdentifierContext.class, 0))),
-                parseEqStringValue(getChild(pred, EqQuotedStringContext.class, 1))));
-
-        }
-
-        return ret;
-    }
-
-    private YangLiteralExpr parseEqStringValue(final EqQuotedStringContext expr) {
-        return parseLiteral(verifyToken(getChild(expr, QuotedStringContext.class, expr.getChildCount() - 1), 1,
-            instanceIdentifierParser.STRING).getText());
-    }
-
-    private QName parseInstanceIdentifierQName(final NodeIdentifierContext expr) {
-        return qnameSupport.createQName(verifyToken(expr, 0, instanceIdentifierParser.Identifier).getText(),
-            verifyToken(expr, 2, instanceIdentifierParser.Identifier).getText());
-    }
-
-    private YangLiteralExpr parseQNameLiteral(final String text) {
-        final int firstColon = text.indexOf(':');
-        if (firstColon != -1) {
-            // If we have two colons this node cannot be interpreted as a QName -- this may explode at evaluation-time,
-            // but that's fine as it will just result in evaluation error. Users do have unit tests, right?
-            final int secondColon = text.indexOf(':', firstColon + 1);
-            if (secondColon == -1) {
-                final Optional<QNameModule> optNamespace = qnameSupport.resolvePrefix(text.substring(0, firstColon));
-                // If we cannot resolve the namespace at evaluation-time has to deal with it.
-                if (optNamespace.isPresent()) {
-                    try {
-                        return new QNameLiteralExpr(text, QName.create(optNamespace.get(),
-                            text.substring(firstColon + 1)));
-                    } catch (IllegalArgumentException e) {
-                        LOG.trace("Cannot interpret {} as a QName", text, e);
-                        return YangLiteralExpr.of(text);
-                    }
-                }
-            }
-        }
-        return YangLiteralExpr.of(text);
     }
 
     private YangExpr parseUnary(final UnaryExprNoRootContext expr) {
@@ -502,7 +382,8 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             return ret;
         }
 
-        return ret instanceof YangNumberExpr ? negateNumber((N) ret) : YangNegateExpr.of(ret);
+        return ret instanceof YangNumberExpr ? mathSupport.negateNumber((YangNumberExpr<?, ?>) ret)
+                : YangNegateExpr.of(ret);
     }
 
     private YangExpr parseUnion(final UnionExprNoRootContext expr) {
@@ -554,20 +435,9 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             final YangExpr right) {
         if (left instanceof YangNumberExpr && right instanceof YangNumberExpr) {
             // Constant folding on numbers -- precision plays a role here
-            return simplifyNumbers(operator, (N) left, (N) right);
+            return mathSupport.tryEvaluate(operator, (YangNumberExpr<?, ?>)left, (YangNumberExpr<?, ?>)right);
         }
         return Optional.empty();
-    }
-
-    Optional<YangExpr> simplifyNumbers(final YangBinaryOperator operator, final N left, final N right) {
-        switch (operator) {
-            case EQUALS:
-                return Optional.of(YangBooleanConstantExpr.of(left.getNumber().equals(right.getNumber())));
-            case NOT_EQUALS:
-                return Optional.of(YangBooleanConstantExpr.of(!left.getNumber().equals(right.getNumber())));
-            default:
-                return Optional.empty();
-        }
     }
 
     private YangExpr parseEqualityExpr(final YangExpr left, final Iterator<ParseTree> it) {
@@ -610,9 +480,9 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     private QName parseQName(final QNameContext expr) {
         switch (expr.getChildCount()) {
             case 1:
-                return qnameSupport.createQName(getChild(expr, NCNameContext.class, 0).getText());
+                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText());
             case 3:
-                return qnameSupport.createQName(getChild(expr, NCNameContext.class, 0).getText(),
+                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText(),
                     getChild(expr, NCNameContext.class, 2).getText());
             default:
                 throw illegalShape(expr);
@@ -683,18 +553,6 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
         return parseOperator(it.next());
     }
 
-    private static <T extends ParseTree> T getChild(final ParseTree parent, final Class<T> type, final int offset) {
-        return verifyTree(type, parent.getChild(offset));
-    }
-
-    private static Token verifyToken(final ParseTree parent, final int offset, final int expected) {
-        final TerminalNode node = verifyTerminal(parent.getChild(offset));
-        final Token ret = node.getSymbol();
-        final int type = ret.getType();
-        verify(type == expected, "Item %s has type %s, expected %s", node, type, expected);
-        return ret;
-    }
-
     private static int getTerminalType(final ParseTree parent, final int offset) {
         return verifyTerminal(parent.getChild(offset)).getSymbol().getType();
     }
@@ -707,37 +565,5 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     private static YangBinaryOperator parseOperator(final ParseTree tree) {
         final String str = verifyTerminal(tree).getText();
         return verifyNotNull(BINARY_OPERATORS.get(str), "Unhandled operator %s", str);
-    }
-
-    private static void verifyChildCount(final ParseTree tree, final int expected) {
-        if (tree.getChildCount() != expected) {
-            throw illegalShape(tree);
-        }
-    }
-
-    private static int verifyAtLeastChildren(final ParseTree tree, final int expected) {
-        final int count = tree.getChildCount();
-        if (count < expected) {
-            throw illegalShape(tree);
-        }
-        return count;
-    }
-
-    private static TerminalNode verifyTerminal(final ParseTree tree) {
-        if (tree instanceof TerminalNode) {
-            return (TerminalNode) tree;
-        }
-        throw new VerifyException(String.format("'%s' is not a terminal node", tree.getText()));
-    }
-
-    private static <T extends ParseTree> T verifyTree(final Class<T> type, final ParseTree tree) {
-        if (type.isInstance(tree)) {
-            return type.cast(tree);
-        }
-        throw new VerifyException(String.format("'%s' does not have expected type %s", tree.getText(), type));
-    }
-
-    private static VerifyException illegalShape(final ParseTree tree) {
-        return new VerifyException(String.format("Invalid parser shape of '%s'", tree.getText()));
     }
 }

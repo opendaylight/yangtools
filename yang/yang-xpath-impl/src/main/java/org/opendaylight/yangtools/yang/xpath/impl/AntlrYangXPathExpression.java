@@ -10,21 +10,31 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static java.util.Objects.requireNonNull;
 
 import javax.xml.xpath.XPathExpressionException;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 final class AntlrYangXPathExpression implements YangXPathExpression {
-    private final QNameSupport qnameSupport;
+    private final YangNamespaceContext namespaceContext;
+    private final YangXPathMathMode mathMode;
     private final YangExpr rootExpr;
     private final String origStr;
 
-    AntlrYangXPathExpression(final QNameSupport qnameSupport, final YangExpr rootExpr, final String origStr) {
-        this.qnameSupport = requireNonNull(qnameSupport);
+    AntlrYangXPathExpression(final YangNamespaceContext namespaceContext, final YangXPathMathMode mathMode,
+            final YangExpr rootExpr, final String origStr) {
+        this.namespaceContext = requireNonNull(namespaceContext);
+        this.mathMode = requireNonNull(mathMode);
         this.rootExpr = requireNonNull(rootExpr);
         this.origStr = requireNonNull(origStr);
+    }
+
+    @Override
+    public YangXPathMathMode getMathMode() {
+        return mathMode;
     }
 
     @Override
@@ -33,26 +43,13 @@ final class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     @Override
-    public QName interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
-        // We are eagerly interpreting PrefixedName-compliant strings, hence they have a specific subclass
-        if (expr instanceof QNameLiteralExpr) {
-            return ((QNameLiteralExpr) expr).getQName();
-        }
-
-        try {
-            // Deal with UnprefixedNames by interpreting them in implicit namespace
-            return qnameSupport.createQName(expr.getLiteral());
-        } catch (IllegalArgumentException e) {
-            throw new XPathExpressionException(e);
-        }
+    public YangQNameExpr interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
+        return LiteralExprUtils.interpretAsQName(namespaceContext, expr);
     }
 
     @Override
     public YangLocationPath interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
-        if (expr instanceof InstanceIdentifierLiteralExpr) {
-            return YangLocationPath.of(true, ((InstanceIdentifierLiteralExpr)expr).getSteps());
-        }
-        throw new XPathExpressionException("Invalid instance-identifier " + expr);
+        return new InstanceIdentifierParser(namespaceContext, mathMode).interpretAsInstanceIdentifier(expr);
     }
 
     @Override

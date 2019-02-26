@@ -11,33 +11,41 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableSet;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
 
+/**
+ * A {@link YangExpr} combining a {@link YangNaryOperator} with a set of expressions.
+ */
 @Beta
-public abstract class YangNaryExpr implements YangExpr {
+public final class YangNaryExpr implements YangExpr {
     private static final long serialVersionUID = 1L;
 
-    private final Set<YangExpr> expressions;
+    private final YangNaryOperator operator;
+    private final ImmutableSet<YangExpr> expressions;
 
-    YangNaryExpr(final Set<YangExpr> expressions) {
+    YangNaryExpr(final YangNaryOperator operator, final ImmutableSet<YangExpr> expressions) {
+        this.operator = requireNonNull(operator);
         this.expressions = requireNonNull(expressions);
     }
 
-    public final Set<YangExpr> getExpressions() {
+    public Set<YangExpr> getExpressions() {
         return expressions;
     }
 
-    public abstract YangNaryOperator getOperator();
+    public YangNaryOperator getOperator() {
+        return operator;
+    }
 
     @Override
-    public final int hashCode() {
+    public int hashCode() {
         return Objects.hash(getOperator(), expressions);
     }
 
     @Override
-    public final boolean equals(final @Nullable Object obj) {
+    public boolean equals(final @Nullable Object obj) {
         if (this == obj) {
             return true;
         }
@@ -49,10 +57,10 @@ public abstract class YangNaryExpr implements YangExpr {
     }
 
     @Override
-    public final String toString() {
+    public String toString() {
         return MoreObjects.toStringHelper(YangNaryExpr.class)
-                .add("operator", getOperator())
-                .add("expressions", getExpressions())
+                .add("operator", operator)
+                .add("expressions", expressions)
                 .toString();
     }
 }

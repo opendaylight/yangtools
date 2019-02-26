@@ -44,6 +44,14 @@
             <groupId>org.antlr</groupId>
             <artifactId>antlr4-runtime</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.kohsuke.metainf-services</groupId>
+            <artifactId>metainf-services</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
@@ -63,6 +71,17 @@
                     <outputDirectory>${project.build.directory}/generated-sources/antlr/org/opendaylight/yangtools/yang/xpath/impl</outputDirectory>
                     <visitor>false</visitor>
                     <listener>false</listener>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
+                        <Bundle-Activator>org.opendaylight.yangtools.yang.xpath.impl.Activator</Bundle-Activator>
+                    </instructions>
                 </configuration>
             </plugin>
             <plugin>

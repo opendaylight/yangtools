@@ -9,29 +9,32 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 
 import static org.junit.Assert.assertEquals;
 
-import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableBiMap;
 import java.net.URI;
-import java.util.Map;
 import javax.xml.xpath.XPathExpressionException;
 import org.eclipse.jdt.annotation.Nullable;
 import org.junit.Before;
 import org.junit.Test;
+import org.opendaylight.yangtools.yang.common.BiMapYangNamespaceContext;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 
 @SuppressWarnings("null")
 public class XPathParserTest {
-    private static final QNameModule DEF_NS = QNameModule.create(URI.create("defaultns"));
-    private static final Map<String, QNameModule> NAMESPACES = ImmutableMap.of(
+    private static final QNameModule DEFNS = QNameModule.create(URI.create("defaultns"));
+    private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
+        "def", DEFNS,
         "foo", QNameModule.create(URI.create("foo")),
-        "bar", QNameModule.create(URI.create("bar")));
+        "bar", QNameModule.create(URI.create("bar"))), DEFNS);
 
-    private @Nullable XPathParser<?> parser;
+    private @Nullable AntlrXPathParser parser;
 
     @Before
     public void before() {
-        parser = new BigDecimalXPathParser(DEF_NS, NAMESPACES::get);
+        parser = new AntlrXPathParser(YangXPathMathMode.IEEE754, CONTEXT);
     }
 
     @Test
