@@ -234,7 +234,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources, statementParserMode);
+                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources);
                 try {
                     sc = Optional.of(f.get());
                     break;
@@ -300,7 +300,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             throws SchemaResolutionException {
         final ListenableFuture<SchemaContext> future = repository
                 .createSchemaContextFactory(config(statementParserMode))
-                .createSchemaContext(ImmutableSet.copyOf(requiredSources), statementParserMode);
+                .createSchemaContext(ImmutableSet.copyOf(requiredSources));
 
         try {
             return future.get();

@@ -34,7 +34,6 @@ import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
@@ -65,18 +64,6 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         final @NonNull SchemaContextFactoryConfiguration config) {
         this.repository = requireNonNull(repository);
         this.config = requireNonNull(config);
-    }
-
-    @Override
-    @Deprecated
-    public @NonNull ListenableFuture<SchemaContext> createSchemaContext(
-            final Collection<SourceIdentifier> requiredSources,
-            final StatementParserMode statementParserMode, final Set<QName> supportedFeatures) {
-        return createSchemaContext(requiredSources,
-                statementParserMode == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
-                new AssembleSources(SchemaContextFactoryConfiguration.builder()
-                        .setFilter(config.getSchemaSourceFilter()).setStatementParserMode(statementParserMode)
-                        .setSupportedFeatures(supportedFeatures).build()));
     }
 
     @Override

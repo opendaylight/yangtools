@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.TextToASTTransformer;
@@ -42,9 +43,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
         final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
+                sharedSchemaRepository.createSchemaContextFactory(
+                SchemaContextFactoryConfiguration.builder().setSupportedFeatures(supportedFeatures).build())
+                .createSchemaContext(ImmutableList.of(foobar.getId()));
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
@@ -115,8 +117,6 @@ public class SharedSchemaRepositoryWithFeaturesTest {
 
     @Test
     public void testSharedSchemaRepositoryWithNoFeaturesSupported() throws Exception {
-        final Set<QName> supportedFeatures = ImmutableSet.of();
-
         final SharedSchemaRepository sharedSchemaRepository = new SharedSchemaRepository(
                 "shared-schema-repo-with-features-test");
 
@@ -125,9 +125,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
         final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(foobar.getId()), supportedFeatures);
+                sharedSchemaRepository.createSchemaContextFactory(
+                    SchemaContextFactoryConfiguration.builder().setSupportedFeatures(ImmutableSet.of()).build())
+                .createSchemaContext(ImmutableList.of(foobar.getId()));
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
