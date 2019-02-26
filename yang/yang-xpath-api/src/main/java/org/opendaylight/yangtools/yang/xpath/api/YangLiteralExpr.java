@@ -29,21 +29,8 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public class YangLiteralExpr implements YangExpr {
-    private static final class Empty extends YangLiteralExpr {
-        private static final long serialVersionUID = 1L;
-
-        Empty() {
-            super("");
-        }
-
-        @SuppressWarnings("static-method")
-        Object readResolve() {
-            return empty();
-        }
-    }
-
     private static final long serialVersionUID = 1L;
-    private static final YangLiteralExpr EMPTY = new Empty();
+    private static final YangLiteralExpr EMPTY = new YangLiteralExpr("");
 
     private final String literal;
 
@@ -76,5 +63,9 @@ public class YangLiteralExpr implements YangExpr {
     @Override
     public final String toString() {
         return literal;
+    }
+
+    protected Object readResolve() {
+        return literal.isEmpty() ? EMPTY : this;
     }
 }

@@ -11,18 +11,21 @@ import static java.util.Objects.requireNonNull;
 
 import javax.xml.xpath.XPathExpressionException;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
 
 final class AntlrYangXPathExpression implements YangXPathExpression {
-    private final QNameSupport qnameSupport;
+    private final YangNamespaceContext namespaceContext;
     private final YangExpr rootExpr;
     private final String origStr;
 
-    AntlrYangXPathExpression(final QNameSupport qnameSupport, final YangExpr rootExpr, final String origStr) {
-        this.qnameSupport = requireNonNull(qnameSupport);
+    AntlrYangXPathExpression(final YangNamespaceContext namespaceContext, final YangExpr rootExpr,
+            final String origStr) {
+        this.namespaceContext = requireNonNull(namespaceContext);
         this.rootExpr = requireNonNull(rootExpr);
         this.origStr = requireNonNull(origStr);
     }
@@ -33,18 +36,21 @@ final class AntlrYangXPathExpression implements YangXPathExpression {
     }
 
     @Override
-    public QName interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
+    public YangQNameExpr interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
         // We are eagerly interpreting PrefixedName-compliant strings, hence they have a specific subclass
+        final QName qname;
         if (expr instanceof QNameLiteralExpr) {
-            return ((QNameLiteralExpr) expr).getQName();
+            qname = ((QNameLiteralExpr) expr).getQName();
+        } else {
+            try {
+                // Deal with UnprefixedNames by interpreting them in implicit namespace
+                qname = namespaceContext.createQName(expr.getLiteral());
+            } catch (IllegalArgumentException | IllegalStateException e) {
+                throw new XPathExpressionException(e);
+            }
         }
 
-        try {
-            // Deal with UnprefixedNames by interpreting them in implicit namespace
-            return qnameSupport.createQName(expr.getLiteral());
-        } catch (IllegalArgumentException e) {
-            throw new XPathExpressionException(e);
-        }
+        return YangQNameExpr.of(qname);
     }
 
     @Override
