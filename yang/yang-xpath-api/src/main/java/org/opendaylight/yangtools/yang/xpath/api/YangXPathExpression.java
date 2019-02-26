@@ -32,10 +32,10 @@ public interface YangXPathExpression extends Immutable {
      * at evaluation.
      *
      * @param expr Literal to be reinterpreted
-     * @return QName representation of the literal
+     * @return YangQNameExpr result of interpretation
      * @throws XPathExpressionException when the literal cannot be interpreted as a QName
      */
-    QName interpretAsQName(YangLiteralExpr expr) throws XPathExpressionException;
+    YangQNameExpr interpretAsQName(YangLiteralExpr expr) throws XPathExpressionException;
 
     // API design: this really should be YangInstanceIdentifier without AugmentationIdentifier. Implementations are
     //             strongly encouraged to validate it as such.

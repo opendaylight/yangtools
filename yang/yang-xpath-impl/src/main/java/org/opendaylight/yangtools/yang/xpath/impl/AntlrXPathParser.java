@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.impl;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
+import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.VerifyException;
 import com.google.common.collect.ImmutableList;
@@ -28,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
@@ -43,6 +43,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -61,6 +62,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangVariableReferenceExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathSupport;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathNodeType;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
 import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.EqQuotedStringContext;
@@ -107,8 +110,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Robert Varga
  */
-abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathParser {
-    private static final Logger LOG = LoggerFactory.getLogger(XPathParser.class);
+final class AntlrXPathParser implements YangXPathParser {
+    private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParser.class);
     private static final Map<String, YangBinaryOperator> BINARY_OPERATORS = Maps.uniqueIndex(
         Arrays.asList(YangBinaryOperator.values()), YangBinaryOperator::toString);
     private static final Map<String, YangXPathNodeType> NODE_TYPES = Maps.uniqueIndex(Arrays.asList(
@@ -121,10 +124,12 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     // Cached for checks in hot path
     private static final AxisStep SELF_STEP = YangXPathAxis.SELF.asStep();
 
-    private final QNameSupport qnameSupport;
+    private final YangXPathMathSupport<?> mathSupport;
+    private final YangNamespaceContext namespaceContext;
 
-    XPathParser(final QNameModule implicitNamespace, final Function<String, QNameModule> prefixes) {
-        qnameSupport = new QNameSupport(implicitNamespace, prefixes);
+    AntlrXPathParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+        this.mathSupport = mathMode.getSupport();
+        this.namespaceContext = requireNonNull(namespaceContext);
     }
 
     @Override
@@ -159,7 +164,7 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             throw errors.get(0);
         }
 
-        return new AntlrYangXPathExpression(qnameSupport, expr, xpath);
+        return new AntlrYangXPathExpression(namespaceContext, expr, xpath);
     }
 
     /**
@@ -182,24 +187,6 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
         }
         return YangNaryOperator.OR.exprWith(tmp);
     }
-
-    /**
-     * Create a {@link YangNumberExpr} backed by specified string.
-     *
-     * @param str String, matching {@link xpathParser#Number} production.
-     * @return number expression
-     * @throws NullPointerException if {@code str} is null
-     */
-    abstract N createNumber(String str);
-
-    /**
-     * Create a {@link YangNumberExpr} representing the negated value of a number.
-     *
-     * @param number input number
-     * @return negated number expression
-     * @throws NullPointerException if {@code number} is null
-     */
-    abstract N negateNumber(N number);
 
     private YangExpr parseAdditive(final AdditiveExprContext expr) {
         final Iterator<ParseTree> it = expr.children.iterator();
@@ -243,7 +230,7 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
                 parsed = QName.create(YangConstants.RFC6020_YIN_MODULE, name.getChild(0).getText());
                 break;
             case 3:
-                parsed = qnameSupport.createQName(name.getChild(0).getText(), name.getChild(2).getText());
+                parsed = namespaceContext.createQName(name.getChild(0).getText(), name.getChild(2).getText());
                 break;
             default:
                 throw illegalShape(name);
@@ -387,7 +374,7 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
                 // We have to strip quotes
                 return parseLiteral(text.substring(1, text.length() - 1));
             case xpathParser.Number:
-                return createNumber(text);
+                return mathSupport.createNumber(text);
             default:
                 throw illegalShape(term);
         }
@@ -441,9 +428,8 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
                 parseEqStringValue(getChild(((LeafListPredicateContext) first)
                     .getChild(LeafListPredicateExprContext.class, 0), EqQuotedStringContext.class, 1))));
         } else if (first instanceof PosContext) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(Functions.POSITION,
-                createNumber(((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0)
-                    .getText())));
+            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(Functions.POSITION, mathSupport.createNumber(
+                ((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0).getText())));
         }
 
         final int length = expr.getChildCount();
@@ -466,7 +452,8 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     }
 
     private QName parseInstanceIdentifierQName(final NodeIdentifierContext expr) {
-        return qnameSupport.createQName(verifyToken(expr, 0, instanceIdentifierParser.Identifier).getText(),
+        return namespaceContext.createQName(
+            verifyToken(expr, 0, instanceIdentifierParser.Identifier).getText(),
             verifyToken(expr, 2, instanceIdentifierParser.Identifier).getText());
     }
 
@@ -477,7 +464,8 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             // but that's fine as it will just result in evaluation error. Users do have unit tests, right?
             final int secondColon = text.indexOf(':', firstColon + 1);
             if (secondColon == -1) {
-                final Optional<QNameModule> optNamespace = qnameSupport.resolvePrefix(text.substring(0, firstColon));
+                final Optional<QNameModule> optNamespace = namespaceContext.findNamespaceForPrefix(
+                    text.substring(0, firstColon));
                 // If we cannot resolve the namespace at evaluation-time has to deal with it.
                 if (optNamespace.isPresent()) {
                     try {
@@ -502,7 +490,8 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             return ret;
         }
 
-        return ret instanceof YangNumberExpr ? negateNumber((N) ret) : YangNegateExpr.of(ret);
+        return ret instanceof YangNumberExpr ? mathSupport.negateNumber((YangNumberExpr<?, ?>) ret)
+                : YangNegateExpr.of(ret);
     }
 
     private YangExpr parseUnion(final UnionExprNoRootContext expr) {
@@ -554,20 +543,9 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
             final YangExpr right) {
         if (left instanceof YangNumberExpr && right instanceof YangNumberExpr) {
             // Constant folding on numbers -- precision plays a role here
-            return simplifyNumbers(operator, (N) left, (N) right);
+            return mathSupport.tryEvaluate(operator, (YangNumberExpr<?, ?>)left, (YangNumberExpr<?, ?>)right);
         }
         return Optional.empty();
-    }
-
-    Optional<YangExpr> simplifyNumbers(final YangBinaryOperator operator, final N left, final N right) {
-        switch (operator) {
-            case EQUALS:
-                return Optional.of(YangBooleanConstantExpr.of(left.getNumber().equals(right.getNumber())));
-            case NOT_EQUALS:
-                return Optional.of(YangBooleanConstantExpr.of(!left.getNumber().equals(right.getNumber())));
-            default:
-                return Optional.empty();
-        }
     }
 
     private YangExpr parseEqualityExpr(final YangExpr left, final Iterator<ParseTree> it) {
@@ -610,9 +588,9 @@ abstract class XPathParser<N extends YangNumberExpr<N, ?>> implements YangXPathP
     private QName parseQName(final QNameContext expr) {
         switch (expr.getChildCount()) {
             case 1:
-                return qnameSupport.createQName(getChild(expr, NCNameContext.class, 0).getText());
+                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText());
             case 3:
-                return qnameSupport.createQName(getChild(expr, NCNameContext.class, 0).getText(),
+                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText(),
                     getChild(expr, NCNameContext.class, 2).getText());
             default:
                 throw illegalShape(expr);

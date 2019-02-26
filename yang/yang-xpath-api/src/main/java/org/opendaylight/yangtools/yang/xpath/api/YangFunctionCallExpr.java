@@ -25,26 +25,11 @@ import org.opendaylight.yangtools.yang.common.YangConstants;
  * @author Robert Varga
  */
 @Beta
-public abstract class YangFunctionCallExpr implements YangExpr {
-    static class NoArgs extends YangFunctionCallExpr {
+public class YangFunctionCallExpr implements YangExpr {
+    private static final class WithArgs extends YangFunctionCallExpr {
         private static final long serialVersionUID = 1L;
 
-        private final QName name;
-
-        NoArgs(final QName name) {
-            this.name = requireNonNull(name);
-        }
-
-        @Override
-        public QName getName() {
-            return name;
-        }
-    }
-
-    private static final class WithArgs extends NoArgs {
-        private static final long serialVersionUID = 1L;
-
-        private final List<YangExpr> arguments;
+        private final ImmutableList<YangExpr> arguments;
 
         WithArgs(final QName name, final List<YangExpr> arguments) {
             super(name);
@@ -59,19 +44,23 @@ public abstract class YangFunctionCallExpr implements YangExpr {
 
     private static final long serialVersionUID = 1L;
 
-    YangFunctionCallExpr() {
-        // Hidden
+    private final QName name;
+
+    YangFunctionCallExpr(final QName name) {
+        this.name = requireNonNull(name);
     }
 
     public static YangFunctionCallExpr of(final QName name) {
-        return new NoArgs(name);
+        return new YangFunctionCallExpr(name);
     }
 
     public static YangFunctionCallExpr of(final QName name, final List<YangExpr> arguments) {
         return arguments.isEmpty() ? of(name) : new WithArgs(name, arguments);
     }
 
-    public abstract QName getName();
+    public final QName getName() {
+        return name;
+    }
 
     public List<YangExpr> getArguments() {
         return ImmutableList.of();
