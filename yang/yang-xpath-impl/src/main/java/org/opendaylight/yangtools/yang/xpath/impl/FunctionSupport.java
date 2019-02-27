@@ -8,16 +8,24 @@
 package org.opendaylight.yangtools.yang.xpath.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunctionCallExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNumberExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathSupport;
 
-final class Functions {
+/**
+ * This class provides support for validating function call arguments as well as compile-time evaluation.
+ */
+final class FunctionSupport {
+    static final YangFunctionCallExpr POSITION = YangFunctionCallExpr.of(YangFunction.POSITION.getIdentifier());
+
     private static final YangFunctionCallExpr CURRENT = YangFunctionCallExpr.of(YangFunction.CURRENT.getIdentifier());
     private static final YangFunctionCallExpr LAST = YangFunctionCallExpr.of(YangFunction.LAST.getIdentifier());
     private static final YangFunctionCallExpr LOCAL_NAME = YangFunctionCallExpr.of(
@@ -28,16 +36,19 @@ final class Functions {
     private static final YangFunctionCallExpr NORMALIZE_SPACE = YangFunctionCallExpr.of(
         YangFunction.NORMALIZE_SPACE.getIdentifier());
     private static final YangFunctionCallExpr NUMBER = YangFunctionCallExpr.of(YangFunction.NUMBER.getIdentifier());
-    static final YangFunctionCallExpr POSITION = YangFunctionCallExpr.of(YangFunction.POSITION.getIdentifier());
     private static final YangFunctionCallExpr STRING = YangFunctionCallExpr.of(YangFunction.STRING.getIdentifier());
     private static final YangFunctionCallExpr STRING_LENGTH = YangFunctionCallExpr.of(
         YangFunction.STRING_LENGTH.getIdentifier());
 
-    private Functions() {
+    private final YangXPathMathSupport<?> mathSupport;
+    private final YangNamespaceContext namespaceContext;
 
+    FunctionSupport(final YangNamespaceContext namespaceContext, final YangXPathMathSupport<?> mathSupport) {
+        this.namespaceContext = requireNonNull(namespaceContext);
+        this.mathSupport = requireNonNull(mathSupport);
     }
 
-    static YangExpr functionToExpr(final YangFunction func, final List<YangExpr> args) {
+    YangExpr functionToExpr(final YangFunction func, final List<YangExpr> args) {
         switch (func) {
             case BIT_IS_SET:
                 checkArgument(args.size() == 2, "bit-is-set(node-set, string) takes two arguments");
@@ -158,9 +169,11 @@ final class Functions {
             return arg;
         }
         if (arg instanceof YangLiteralExpr) {
-            return YangBooleanConstantExpr.of(((YangLiteralExpr) arg).getLiteral().isEmpty());
+            return YangBooleanConstantExpr.of(!((YangLiteralExpr) arg).getLiteral().isEmpty());
         }
+
         // TODO: handling YangNumberExpr requires math support
+
         return YangFunctionCallExpr.of(YangFunction.BOOLEAN.getIdentifier(), args);
     }
 
@@ -210,7 +223,7 @@ final class Functions {
     }
 
     private static YangExpr normalizeSpaceExpr(final List<YangExpr> args) {
-        checkArgument(args.size() <= 1, "number(object?) takes at most one argument");
+        checkArgument(args.size() <= 1, "normalize-space(object?) takes at most one argument");
         if (args.isEmpty()) {
             return NORMALIZE_SPACE;
         }
@@ -222,7 +235,7 @@ final class Functions {
         return YangFunctionCallExpr.of(YangFunction.NORMALIZE_SPACE.getIdentifier(), args);
     }
 
-    private static YangExpr numberExpr(final List<YangExpr> args) {
+    private YangExpr numberExpr(final List<YangExpr> args) {
         checkArgument(args.size() <= 1, "number(object?) takes at most one argument");
         if (args.isEmpty()) {
             return NUMBER;
@@ -232,8 +245,14 @@ final class Functions {
         if (arg instanceof YangNumberExpr) {
             return arg;
         }
+        if (arg instanceof YangLiteralExpr) {
+            return mathSupport.createNumber(((YangLiteralExpr) arg).getLiteral());
+        }
+        if (arg instanceof YangBooleanConstantExpr) {
+            final boolean value = ((YangBooleanConstantExpr) arg).getValue();
+            return mathSupport.createNumber(value ? 1 : 0);
+        }
 
-        // TODO: constant literal folding requires math support
         return YangFunctionCallExpr.of(YangFunction.NUMBER.getIdentifier(), args);
     }
 
@@ -280,18 +299,27 @@ final class Functions {
         if (arg instanceof YangLiteralExpr) {
             return arg;
         }
+        if (arg instanceof YangBooleanConstantExpr) {
+            return ((YangBooleanConstantExpr) arg).asStringLiteral();
+        }
 
         // TODO: handling YangNumberExpr requires math support
         return YangFunctionCallExpr.of(YangFunction.STRING.getIdentifier(), args);
     }
 
-    private static YangExpr stringLengthExpr(final List<YangExpr> args) {
-        checkArgument(args.size() <= 1, "string(object?) takes at most one argument");
+    private YangExpr stringLengthExpr(final List<YangExpr> args) {
+        checkArgument(args.size() <= 1, "string-length(object?) takes at most one argument");
         if (args.isEmpty()) {
             return STRING_LENGTH;
         }
 
-        // TODO: constant literal requires math support
+        YangExpr first = args.get(0);
+        if (first instanceof YangBooleanConstantExpr) {
+            first = ((YangBooleanConstantExpr) first).asStringLiteral();
+        }
+        if (first instanceof YangLiteralExpr) {
+            return mathSupport.createNumber(((YangLiteralExpr) first).getLiteral().length());
+        }
 
         return YangFunctionCallExpr.of(YangFunction.STRING_LENGTH.getIdentifier(), args);
     }
