@@ -44,7 +44,7 @@ final class AntlrYangXPathExpression implements YangXPathExpression {
 
     @Override
     public YangQNameExpr interpretAsQName(final YangLiteralExpr expr) throws XPathExpressionException {
-        return LiteralExprUtils.interpretAsQName(namespaceContext, expr);
+        return Utils.interpretAsQName(namespaceContext, expr);
     }
 
     @Override
