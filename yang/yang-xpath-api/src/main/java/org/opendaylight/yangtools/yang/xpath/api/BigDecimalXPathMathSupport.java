@@ -10,17 +10,14 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import java.math.BigDecimal;
 
 final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigDecimalNumberExpr> {
-    private static final BigDecimalXPathMathSupport INSTANCE = new BigDecimalXPathMathSupport();
+    static final BigDecimalXPathMathSupport INSTANCE = new BigDecimalXPathMathSupport();
+
     private static final BigDecimalNumberExpr ZERO = BigDecimalNumberExpr.of(BigDecimal.ZERO);
     private static final BigDecimalNumberExpr ONE = BigDecimalNumberExpr.of(BigDecimal.ONE);
     private static final BigDecimalNumberExpr TEN = BigDecimalNumberExpr.of(BigDecimal.TEN);
 
     private BigDecimalXPathMathSupport() {
         super(BigDecimalNumberExpr.class);
-    }
-
-    static BigDecimalXPathMathSupport getInstance() {
-        return INSTANCE;
     }
 
     @Override
@@ -52,12 +49,12 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
     }
 
     @Override
-    BigDecimalNumberExpr doNegate(final BigDecimalNumberExpr number) {
+    protected BigDecimalNumberExpr doNegateNumber(final BigDecimalNumberExpr number) {
         return BigDecimalNumberExpr.of(number.getNumber().negate());
     }
 
     @Override
-    YangExpr evaluate(final YangBinaryOperator operator, final BigDecimalNumberExpr left,
+    protected YangExpr doEvaluate(final YangBinaryOperator operator, final BigDecimalNumberExpr left,
             final BigDecimalNumberExpr right) {
         final BigDecimal l = left.getNumber();
         final BigDecimal r = right.getNumber();

@@ -44,9 +44,8 @@ import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.Predi
 import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.QuotedStringContext;
 
 final class InstanceIdentifierParser {
-
     private final YangNamespaceContext namespaceContext;
-    private final YangXPathMathSupport<?> mathSupport;
+    private final YangXPathMathSupport mathSupport;
 
     InstanceIdentifierParser(final YangNamespaceContext namespaceContext, final YangXPathMathMode mathMode) {
         this.namespaceContext = requireNonNull(namespaceContext);
