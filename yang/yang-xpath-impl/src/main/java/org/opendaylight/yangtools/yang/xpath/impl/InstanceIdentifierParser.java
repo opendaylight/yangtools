@@ -90,8 +90,9 @@ final class InstanceIdentifierParser {
                 parseEqStringValue(getChild(((LeafListPredicateContext) first)
                     .getChild(LeafListPredicateExprContext.class, 0), EqQuotedStringContext.class, 1))));
         } else if (first instanceof PosContext) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(Functions.POSITION, mathSupport.createNumber(
-                ((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0).getText())));
+            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(FunctionSupport.POSITION,
+                mathSupport.createNumber(((PosContext) first).getToken(instanceIdentifierParser.PositiveIntegerValue, 0)
+                    .getText())));
         }
 
         final int length = expr.getChildCount();

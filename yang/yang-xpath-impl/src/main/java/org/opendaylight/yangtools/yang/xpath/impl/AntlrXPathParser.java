@@ -118,11 +118,13 @@ final class AntlrXPathParser implements YangXPathParser {
     private final YangXPathMathMode mathMode;
     private final YangXPathMathSupport<?> mathSupport;
     private final YangNamespaceContext namespaceContext;
+    private final FunctionSupport functionSupport;
 
     AntlrXPathParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
         this.mathMode = requireNonNull(mathMode);
         this.mathSupport = mathMode.getSupport();
         this.namespaceContext = requireNonNull(namespaceContext);
+        this.functionSupport = new FunctionSupport(namespaceContext, mathSupport);
     }
 
     @Override
@@ -232,7 +234,7 @@ final class AntlrXPathParser implements YangXPathParser {
         final List<YangExpr> args = ImmutableList.copyOf(Lists.transform(expr.expr(), this::parseExpr));
         final YangFunction func = YANG_FUNCTIONS.get(parsed);
         if (func != null) {
-            return Functions.functionToExpr(func, args);
+            return functionSupport.functionToExpr(func, args);
         }
 
         checkArgument(!YangConstants.RFC6020_YIN_MODULE.equals(parsed.getModule()), "Unknown default function %s",
