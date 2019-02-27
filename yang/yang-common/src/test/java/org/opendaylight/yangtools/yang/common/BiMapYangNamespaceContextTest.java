@@ -1,0 +1,88 @@
+/*
+ * Copyright (c) 2019 Pantheon Technologies, s.r.o.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.common;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import com.google.common.collect.ImmutableBiMap;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.util.Optional;
+import org.junit.Test;
+
+public class BiMapYangNamespaceContextTest {
+    private static final QNameModule FOO = QNameModule.create(URI.create("foo"));
+    private static final QNameModule BAR = QNameModule.create(URI.create("bar"));
+    private static final QNameModule BAZ = QNameModule.create(URI.create("baz"));
+
+    private final BiMapYangNamespaceContext context = new BiMapYangNamespaceContext(FOO,
+        ImmutableBiMap.of("foo", FOO, "bar", BAR));
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testUnmappedDefault() {
+        new BiMapYangNamespaceContext(FOO, ImmutableBiMap.of());
+    }
+
+    @Test
+    public void testDefaultNamespace() {
+        assertEquals(Optional.of(FOO), context.getDefaultNamespace());
+    }
+
+    @Test
+    public void testEquals() {
+        assertTrue(context.equals(context));
+        assertTrue(context.equals(new BiMapYangNamespaceContext(FOO, ImmutableBiMap.of("foo", FOO, "bar", BAR))));
+        assertFalse(context.equals(null));
+        assertFalse(context.equals(new BiMapYangNamespaceContext(FOO, ImmutableBiMap.of("foo", FOO))));
+        assertFalse(context.equals(new BiMapYangNamespaceContext(BAR, ImmutableBiMap.of("bar", BAR))));
+    }
+
+    @Test
+    public void testPrefixForNamespace() {
+        assertEquals(Optional.of("foo"), context.findPrefixForNamespace(FOO));
+        assertEquals(Optional.of("bar"), context.findPrefixForNamespace(BAR));
+        assertEquals(Optional.empty(), context.findPrefixForNamespace(BAZ));
+    }
+
+    @Test
+    public void testNamespaceForPrefix() {
+        assertEquals(Optional.of(FOO), context.findNamespaceForPrefix("foo"));
+        assertEquals(Optional.of(BAR), context.findNamespaceForPrefix("bar"));
+        assertEquals(Optional.empty(), context.findNamespaceForPrefix("baz"));
+    }
+
+    @Test
+    public void testReadWrite() throws IOException {
+        final byte[] bytes;
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            try (DataOutputStream dos = new DataOutputStream(bos)) {
+                context.writeTo(dos);
+            }
+            bytes = bos.toByteArray();
+        }
+
+        final BiMapYangNamespaceContext other;
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(bytes))) {
+            other = BiMapYangNamespaceContext.readFrom(dis);
+        }
+
+        assertEquals(context, other);
+    }
+
+    @Test
+    public void testCreateQName() {
+        assertEquals(QName.create(FOO, "foo"), context.createQName("foo"));
+        assertEquals(QName.create(FOO, "some"), context.createQName("foo", "some"));
+    }
+}
