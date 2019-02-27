@@ -8,19 +8,26 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * A number-bearing expression.
  */
 @Beta
-public abstract class YangNumberExpr<T extends YangNumberExpr<T, N>, N extends Number> implements YangExpr {
+public abstract class YangNumberExpr implements YangExpr {
     private static final long serialVersionUID = 1L;
 
     YangNumberExpr() {
         // Hidden to prevent external subclassing
     }
 
-    public abstract N getNumber();
+    public abstract Number getNumber();
 
-    public abstract YangXPathMathSupport<T> getSupport();
+    public abstract YangXPathMathSupport getSupport();
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(@Nullable Object obj);
 }
