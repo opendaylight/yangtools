@@ -11,7 +11,7 @@ import com.google.common.annotations.Beta;
 import java.util.Optional;
 
 @Beta
-public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
+public interface YangXPathMathSupport {
     /**
      * Create a {@link YangNumberExpr} backed by specified string.
      *
@@ -20,7 +20,7 @@ public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
      * @throws NullPointerException if {@code str} is null
      * @throws NumberFormatException if the string does not represent a valid number
      */
-    N createNumber(String str);
+    YangNumberExpr createNumber(String str);
 
     /**
      * Create a {@link YangNumberExpr} for specified integer.
@@ -28,7 +28,7 @@ public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
      * @param value integer value
      * @return number expression
      */
-    N createNumber(int value);
+    YangNumberExpr createNumber(int value);
 
     /**
      * Create a {@link YangNumberExpr} representing the negated value of a number.
@@ -38,7 +38,7 @@ public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
      * @throws NullPointerException if {@code number} is null
      * @throws IllegalArgumentException if {@code number} has unrecognized type
      */
-    N negateNumber(YangNumberExpr<?, ?> number);
+    YangNumberExpr negateNumber(YangNumberExpr number);
 
     /**
      * Attempt to evaluate an  operator and its left- and right-handside.
@@ -49,5 +49,5 @@ public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
      * @return Evaluation result, if evaluation succeeded
      * @throws NullPointerException if any of the arguments is null
      */
-    Optional<YangExpr> tryEvaluate(YangBinaryOperator operator, YangNumberExpr<?, ?> left, YangNumberExpr<?, ?> right);
+    Optional<YangExpr> tryEvaluate(YangBinaryOperator operator, YangNumberExpr left, YangNumberExpr right);
 }
