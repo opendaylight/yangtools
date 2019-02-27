@@ -116,7 +116,7 @@ final class AntlrXPathParser implements YangXPathParser {
     private static final AxisStep SELF_STEP = YangXPathAxis.SELF.asStep();
 
     private final YangXPathMathMode mathMode;
-    private final YangXPathMathSupport<?> mathSupport;
+    private final YangXPathMathSupport mathSupport;
     private final YangNamespaceContext namespaceContext;
     private final FunctionSupport functionSupport;
 
@@ -368,9 +368,7 @@ final class AntlrXPathParser implements YangXPathParser {
             // Even number of '-' tokens cancel out
             return ret;
         }
-
-        return ret instanceof YangNumberExpr ? mathSupport.negateNumber((YangNumberExpr<?, ?>) ret)
-                : YangNegateExpr.of(ret);
+        return ret instanceof YangNumberExpr ? mathSupport.negateNumber((YangNumberExpr) ret) : YangNegateExpr.of(ret);
     }
 
     private YangExpr parseUnion(final UnionExprNoRootContext expr) {
@@ -422,7 +420,7 @@ final class AntlrXPathParser implements YangXPathParser {
             final YangExpr right) {
         if (left instanceof YangNumberExpr && right instanceof YangNumberExpr) {
             // Constant folding on numbers -- precision plays a role here
-            return mathSupport.tryEvaluate(operator, (YangNumberExpr<?, ?>)left, (YangNumberExpr<?, ?>)right);
+            return mathSupport.tryEvaluate(operator, (YangNumberExpr)left, (YangNumberExpr)right);
         }
         return Optional.empty();
     }

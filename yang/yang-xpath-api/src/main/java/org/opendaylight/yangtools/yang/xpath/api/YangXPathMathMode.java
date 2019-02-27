@@ -23,14 +23,14 @@ public enum YangXPathMathMode {
      * All number expressions are treated as {@code double}. This in spirit of XPath 1.0 -- any number expression
      * starts its life as a double, making all operations subject to IEEE754 rounding and range rules.
      */
-    IEEE754(DoubleXPathMathSupport.getInstance()),
+    IEEE754(DoubleXPathMathSupport.INSTANCE),
 
     /**
      * All number expressions are treated as infinite-precision numbers. This follows the spirit of YANG 1.1 --
      * where mostly have integral types and decimal64 mapped to BigDecimal. Non-decimal numbers are mapped either to
      * {@code int}, {@code long} or {@code BigInteger}.
      */
-    EXACT(BigDecimalXPathMathSupport.getInstance());
+    EXACT(BigDecimalXPathMathSupport.INSTANCE);
 
     /*
      * FIXME: 3.0.0: specify and implement this:
@@ -41,9 +41,9 @@ public enum YangXPathMathMode {
      */
     // ODL_COMMON;
 
-    private YangXPathMathSupport<?> support;
+    private YangXPathMathSupport support;
 
-    YangXPathMathMode(final YangXPathMathSupport<?> support) {
+    YangXPathMathMode(final YangXPathMathSupport support) {
         this.support = requireNonNull(support);
     }
 
@@ -52,7 +52,7 @@ public enum YangXPathMathMode {
      *
      * @return YangXPathMathSupport supporting this mode.
      */
-    public YangXPathMathSupport<?> getSupport() {
+    public YangXPathMathSupport getSupport() {
         return support;
     }
 }
