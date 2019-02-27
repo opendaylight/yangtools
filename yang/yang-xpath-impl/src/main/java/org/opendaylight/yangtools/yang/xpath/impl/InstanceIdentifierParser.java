@@ -55,12 +55,15 @@ final class InstanceIdentifierParser {
     YangLocationPath interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(expr.getLiteral()));
         final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
+        final CapturingErrorListener listener = new CapturingErrorListener();
         lexer.removeErrorListeners();
+        lexer.addErrorListener(listener);
         parser.removeErrorListeners();
-
-        // FIXME: add listeners
+        parser.addErrorListener(listener);
 
         final InstanceIdentifierContext id = parser.instanceIdentifier();
+        listener.reportError();
+
         final int length = id.getChildCount();
         final List<Step> steps = new ArrayList<>(length / 2);
         for (int i = 1; i < length; i += 2) {
