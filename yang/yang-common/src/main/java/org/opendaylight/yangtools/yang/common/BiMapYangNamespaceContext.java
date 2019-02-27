@@ -24,9 +24,9 @@ import java.util.Optional;
 import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
- * A BiMap-based implementation of {@link YangNamespaceContext}. This implementation requires the default namespace
- * to be present.
+ * A BiMap-based implementation of {@link YangNamespaceContext}.
  *
+ * @author Robert Varga
  */
 @Beta
 public final class BiMapYangNamespaceContext implements YangNamespaceContext, WritableObject {
@@ -35,16 +35,23 @@ public final class BiMapYangNamespaceContext implements YangNamespaceContext, Wr
     private final ImmutableBiMap<String, QNameModule> mapping;
     private final QNameModule defaultNamespace;
 
-    public BiMapYangNamespaceContext(final QNameModule defaultNamespace, final BiMap<String, QNameModule> mapping) {
-        this.defaultNamespace = requireNonNull(defaultNamespace);
-        checkArgument(mapping.containsValue(defaultNamespace), "Mapping %s does not contain default namespace %s",
-            mapping, defaultNamespace);
+    public BiMapYangNamespaceContext(final BiMap<String, QNameModule> mapping) {
+        this(mapping, null);
+    }
+
+    public BiMapYangNamespaceContext(final BiMap<String, QNameModule> mapping,
+            final QNameModule defaultNamespace) {
+        this.defaultNamespace = defaultNamespace;
         this.mapping = ImmutableBiMap.copyOf(mapping);
+        if (defaultNamespace != null) {
+            checkArgument(this.mapping.containsValue(defaultNamespace),
+                "Mapping %s does not contain default namespace %s", this.mapping, defaultNamespace);
+        }
     }
 
     @Override
     public Optional<QNameModule> getDefaultNamespace() {
-        return Optional.of(defaultNamespace);
+        return Optional.ofNullable(defaultNamespace);
     }
 
     @Override
@@ -59,7 +66,13 @@ public final class BiMapYangNamespaceContext implements YangNamespaceContext, Wr
 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
-        defaultNamespace.writeTo(out);
+        if (defaultNamespace != null) {
+            out.writeBoolean(true);
+            defaultNamespace.writeTo(out);
+        } else {
+            out.writeBoolean(false);
+        }
+
         out.writeInt(mapping.size());
         for (Entry<String, QNameModule> entry : mapping.entrySet()) {
             out.writeUTF(entry.getKey());
@@ -68,7 +81,8 @@ public final class BiMapYangNamespaceContext implements YangNamespaceContext, Wr
     }
 
     public static BiMapYangNamespaceContext readFrom(final DataInput in) throws IOException {
-        final QNameModule defaultNamespace = QNameModule.readFrom(in);
+        final boolean haveDefault = in.readBoolean();
+        final QNameModule defaultNamespace = haveDefault ? QNameModule.readFrom(in) : null;
         final int size = in.readInt();
         final Builder<String, QNameModule> builder = ImmutableBiMap.builder();
         for (int i = 0; i < size; ++i) {
@@ -77,7 +91,7 @@ public final class BiMapYangNamespaceContext implements YangNamespaceContext, Wr
             builder.put(prefix, namespace);
         }
 
-        return new BiMapYangNamespaceContext(defaultNamespace, builder.build());
+        return new BiMapYangNamespaceContext(builder.build(), defaultNamespace);
     }
 
     @Override
