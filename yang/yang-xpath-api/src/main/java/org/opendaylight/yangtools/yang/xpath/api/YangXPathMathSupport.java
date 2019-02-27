@@ -23,6 +23,14 @@ public interface YangXPathMathSupport<N extends YangNumberExpr<N, ?>> {
     N createNumber(String str);
 
     /**
+     * Create a {@link YangNumberExpr} for specified integer
+     *
+     * @param value integer value
+     * @return number expression
+     */
+    N createNumber(int value);
+
+    /**
      * Create a {@link YangNumberExpr} representing the negated value of a number.
      *
      * @param number input number
