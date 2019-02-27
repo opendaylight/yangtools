@@ -12,7 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.math.BigDecimal;
 import org.eclipse.jdt.annotation.Nullable;
 
-final class BigDecimalNumberExpr extends YangNumberExpr<BigDecimalNumberExpr, BigDecimal> {
+final class BigDecimalNumberExpr extends YangNumberExpr {
     private static final long serialVersionUID = 1L;
 
     private final BigDecimal number;
@@ -32,7 +32,7 @@ final class BigDecimalNumberExpr extends YangNumberExpr<BigDecimalNumberExpr, Bi
 
     @Override
     public BigDecimalXPathMathSupport getSupport() {
-        return BigDecimalXPathMathSupport.getInstance();
+        return BigDecimalXPathMathSupport.INSTANCE;
     }
 
     @Override
