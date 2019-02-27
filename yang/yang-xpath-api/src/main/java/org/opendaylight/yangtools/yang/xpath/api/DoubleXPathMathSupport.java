@@ -24,6 +24,11 @@ final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNu
     }
 
     @Override
+    public DoubleNumberExpr createNumber(final int value) {
+        return DoubleNumberExpr.of(value);
+    }
+
+    @Override
     DoubleNumberExpr doNegate(final DoubleNumberExpr number) {
         return DoubleNumberExpr.of(-number.getValue());
     }

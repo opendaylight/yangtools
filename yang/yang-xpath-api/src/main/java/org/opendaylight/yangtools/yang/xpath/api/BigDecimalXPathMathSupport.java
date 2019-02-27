@@ -38,6 +38,20 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
     }
 
     @Override
+    public BigDecimalNumberExpr createNumber(final int value) {
+        switch (value) {
+            case 0:
+                return ZERO;
+            case 1:
+                return ONE;
+            case 10:
+                return TEN;
+            default:
+                return BigDecimalNumberExpr.of(BigDecimal.valueOf(value));
+        }
+    }
+
+    @Override
     BigDecimalNumberExpr doNegate(final BigDecimalNumberExpr number) {
         return BigDecimalNumberExpr.of(number.getNumber().negate());
     }
