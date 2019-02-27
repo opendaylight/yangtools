@@ -34,15 +34,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.xpath.XPathExpressionException;
-import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.RecognitionException;
-import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
@@ -133,32 +129,14 @@ final class AntlrXPathParser implements YangXPathParser {
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(xpath));
         final xpathParser parser = new xpathParser(new CommonTokenStream(lexer));
 
-        final List<XPathExpressionException> errors = new ArrayList<>();
-        final BaseErrorListener listener = new BaseErrorListener() {
-            @Override
-            public void syntaxError(final @Nullable Recognizer<?, ?> recognizer, final @Nullable Object offendingSymbol,
-                    final int line, final int charPositionInLine, final @Nullable String msg,
-                    final @Nullable RecognitionException cause) {
-                final XPathExpressionException ex = new XPathExpressionException(msg);
-                ex.initCause(cause);
-                if (errors.isEmpty()) {
-                    errors.add(ex);
-                } else {
-                    errors.get(0).addSuppressed(ex);
-                }
-            }
-        };
-
+        final CapturingErrorListener listener = new CapturingErrorListener();
         lexer.removeErrorListeners();
         lexer.addErrorListener(listener);
         parser.removeErrorListeners();
         parser.addErrorListener(listener);
 
         final YangExpr expr = parseExpr(parser.main().expr());
-        if (!errors.isEmpty()) {
-            throw errors.get(0);
-        }
-
+        listener.reportError();
         return new AntlrYangXPathExpression(namespaceContext, mathMode, expr, xpath);
     }
 
