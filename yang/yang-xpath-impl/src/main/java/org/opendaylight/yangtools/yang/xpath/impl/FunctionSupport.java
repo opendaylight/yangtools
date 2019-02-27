@@ -40,10 +40,10 @@ final class FunctionSupport {
     private static final YangFunctionCallExpr STRING_LENGTH = YangFunctionCallExpr.of(
         YangFunction.STRING_LENGTH.getIdentifier());
 
-    private final YangXPathMathSupport<?> mathSupport;
+    private final YangXPathMathSupport mathSupport;
     private final YangNamespaceContext namespaceContext;
 
-    FunctionSupport(final YangNamespaceContext namespaceContext, final YangXPathMathSupport<?> mathSupport) {
+    FunctionSupport(final YangNamespaceContext namespaceContext, final YangXPathMathSupport mathSupport) {
         this.namespaceContext = requireNonNull(namespaceContext);
         this.mathSupport = requireNonNull(mathSupport);
     }

@@ -8,14 +8,10 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNumberExpr> {
-    private static final DoubleXPathMathSupport INSTANCE = new DoubleXPathMathSupport();
+    static final DoubleXPathMathSupport INSTANCE = new DoubleXPathMathSupport();
 
     private DoubleXPathMathSupport() {
         super(DoubleNumberExpr.class);
-    }
-
-    static DoubleXPathMathSupport getInstance() {
-        return INSTANCE;
     }
 
     @Override
@@ -29,12 +25,13 @@ final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNu
     }
 
     @Override
-    DoubleNumberExpr doNegate(final DoubleNumberExpr number) {
+    protected DoubleNumberExpr doNegateNumber(final DoubleNumberExpr number) {
         return DoubleNumberExpr.of(-number.getValue());
     }
 
     @Override
-    YangExpr evaluate(final YangBinaryOperator operator, final DoubleNumberExpr left, final DoubleNumberExpr right) {
+    protected YangExpr doEvaluate(final YangBinaryOperator operator, final DoubleNumberExpr left,
+            final DoubleNumberExpr right) {
         final double l = left.getValue();
         final double r = right.getValue();
 

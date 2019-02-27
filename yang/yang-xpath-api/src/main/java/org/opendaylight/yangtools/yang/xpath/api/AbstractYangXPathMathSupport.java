@@ -12,23 +12,29 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
 
-abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr<N, ?>> implements YangXPathMathSupport<N> {
+/**
+ * Type-safe shim to ensure concrete {@link YangXPathMathSupport} implementations get handed properly-typed
+ * YangNumberExprs.
+ *
+ * @param <N> Type of YangNumberExpr
+ * @author Robert Varga
+ */
+public abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr> implements YangXPathMathSupport {
     private final Class<N> numberClass;
 
-    AbstractYangXPathMathSupport(final Class<N> numberClass) {
+    protected AbstractYangXPathMathSupport(final Class<N> numberClass) {
         this.numberClass = requireNonNull(numberClass);
     }
 
     @Override
-    public final N negateNumber(final YangNumberExpr<?, ?> number) {
+    public final N negateNumber(final YangNumberExpr number) {
         checkArgument(numberClass.isInstance(requireNonNull(number)), "Expected %s have %s", numberClass, number);
-        return doNegate(numberClass.cast(number));
+        return doNegateNumber(numberClass.cast(number));
     }
 
-
     @Override
-    public final Optional<YangExpr> tryEvaluate(final YangBinaryOperator operator,
-            final YangNumberExpr<?, ?> left, final YangNumberExpr<?, ?> right) {
+    public final Optional<YangExpr> tryEvaluate(final YangBinaryOperator operator, final YangNumberExpr left,
+            final YangNumberExpr right) {
         if (!numberClass.isInstance(left) || !numberClass.isInstance(right)) {
             requireNonNull(operator);
             requireNonNull(left);
@@ -36,10 +42,16 @@ abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr<N, ?>> impl
             return Optional.empty();
         }
 
-        return Optional.of(evaluate(requireNonNull(operator), numberClass.cast(left), numberClass.cast(right)));
+        return Optional.of(doEvaluate(requireNonNull(operator), numberClass.cast(left), numberClass.cast(right)));
     }
 
-    abstract N doNegate(N number);
+    /**
+     * Create a {@link YangNumberExpr} representing the negated value of a number.
+     *
+     * @param number input number
+     * @return negated number expression
+     */
+    protected abstract N doNegateNumber(N number);
 
     /**
      * Evaluate an  operator and its left- and right-handside.
@@ -49,5 +61,5 @@ abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr<N, ?>> impl
      * @param right Right hand-side
      * @return Evaluation result
      */
-    abstract YangExpr evaluate(YangBinaryOperator operator, N left, N right);
+    protected abstract YangExpr doEvaluate(YangBinaryOperator operator, N left, N right);
 }

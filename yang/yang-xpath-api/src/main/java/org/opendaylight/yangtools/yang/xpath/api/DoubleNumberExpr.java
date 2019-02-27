@@ -10,7 +10,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.eclipse.jdt.annotation.Nullable;
 
-final class DoubleNumberExpr extends YangNumberExpr<DoubleNumberExpr, Double> {
+final class DoubleNumberExpr extends YangNumberExpr {
     private static final long serialVersionUID = 1L;
 
     private final double value;
@@ -34,7 +34,7 @@ final class DoubleNumberExpr extends YangNumberExpr<DoubleNumberExpr, Double> {
 
     @Override
     public DoubleXPathMathSupport getSupport() {
-        return DoubleXPathMathSupport.getInstance();
+        return DoubleXPathMathSupport.INSTANCE;
     }
 
     @Override
@@ -56,5 +56,4 @@ final class DoubleNumberExpr extends YangNumberExpr<DoubleNumberExpr, Double> {
     public String toString() {
         return String.valueOf(value);
     }
-
 }
