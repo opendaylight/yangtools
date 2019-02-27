@@ -29,19 +29,21 @@ public enum YangBooleanConstantExpr implements YangConstantExpr<Boolean> {
     /**
      * A constant {@code false} expression.
      */
-    FALSE(Boolean.FALSE, YangFunction.FALSE),
+    FALSE(Boolean.FALSE, YangFunction.FALSE, "false"),
     /**
      * A constant {@code true} expression.
      */
-    TRUE(Boolean.TRUE, YangFunction.TRUE);
+    TRUE(Boolean.TRUE, YangFunction.TRUE, "true");
 
     private final YangFunctionCallExpr function;
+    private final YangLiteralExpr literal;
     private final Boolean value;
 
     @SuppressWarnings("null")
-    YangBooleanConstantExpr(final @Nullable Boolean value, final YangFunction function) {
+    YangBooleanConstantExpr(final @Nullable Boolean value, final YangFunction function, final String literal) {
         this.value = requireNonNull(value);
         this.function = YangFunctionCallExpr.of(function.getIdentifier());
+        this.literal = YangLiteralExpr.of(literal);
     }
 
     @Override
@@ -61,6 +63,16 @@ public enum YangBooleanConstantExpr implements YangConstantExpr<Boolean> {
      */
     public YangFunctionCallExpr asFunction() {
         return function;
+    }
+
+    /**
+     * Convert this constant into a string literal, i.e. the result of calling {@code string(boolean)} function on this
+     * constant.
+     *
+     * @return Literal expression.
+     */
+    public YangLiteralExpr asStringLiteral() {
+        return literal;
     }
 
     public static YangBooleanConstantExpr of(final boolean bool) {
