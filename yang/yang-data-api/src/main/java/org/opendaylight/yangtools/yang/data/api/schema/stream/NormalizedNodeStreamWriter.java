@@ -13,6 +13,7 @@ import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
 import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.concepts.ExtensibleObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -77,7 +78,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * and resources needlessly.
  *
  */
-public interface NormalizedNodeStreamWriter extends Closeable, Flushable {
+public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
+        ExtensibleObject<NormalizedNodeStreamWriter, NormalizedNodeStreamWriterExtension> {
 
     /**
      * Methods in this interface allow users to hint the underlying
