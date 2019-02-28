@@ -27,7 +27,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamMetadataWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -43,7 +43,7 @@ import org.w3c.dom.Node;
  * schema-less and merely outputs values using toString. The latter is intended for debugging
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
-public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
+public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamMetadataWriter {
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
 
     private final @NonNull StreamWriterFacade facade;

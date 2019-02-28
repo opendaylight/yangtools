@@ -20,8 +20,8 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     protected abstract NormalizedNodeStreamWriter delegate();
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().leafNode(name, value);
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        delegate().startLeafNode(name);
     }
 
     @Override
@@ -35,8 +35,8 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        delegate().leafSetEntryNode(name, value);
+    public void startLeafSetEntryNode(final QName name) throws IOException {
+        delegate().startLeafSetEntryNode(name);
     }
 
     @Override
@@ -81,8 +81,8 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().anyxmlNode(name, value);
+    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
+        delegate().startAnyxmlNode(name);
     }
 
     @Override
@@ -93,6 +93,11 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     @Override
     public void endNode() throws IOException {
         delegate().endNode();
+    }
+
+    @Override
+    public void scalarValue(final Object value) throws IOException {
+        delegate().scalarValue(value);
     }
 
     @Override

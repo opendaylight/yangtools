@@ -14,9 +14,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
 public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends ForwardingNormalizedNodeStreamWriter
-        implements NormalizedNodeStreamAttributeWriter {
+        implements NormalizedNodeStreamMetadataWriter {
     @Override
-    protected abstract NormalizedNodeStreamAttributeWriter delegate();
+    protected abstract NormalizedNodeStreamMetadataWriter delegate();
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)

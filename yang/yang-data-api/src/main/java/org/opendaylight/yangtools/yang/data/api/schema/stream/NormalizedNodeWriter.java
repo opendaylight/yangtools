@@ -132,8 +132,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
             final QName name = nodeAsLeafList.getIdentifier().getNodeType();
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(name, nodeAsLeafList.getValue(),
+            if (writer instanceof NormalizedNodeStreamMetadataWriter) {
+                ((NormalizedNodeStreamMetadataWriter) writer).leafSetEntryNode(name, nodeAsLeafList.getValue(),
                         nodeAsLeafList.getAttributes());
             } else {
                 writer.leafSetEntryNode(name, nodeAsLeafList.getValue());
@@ -141,8 +141,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(),
+            if (writer instanceof NormalizedNodeStreamMetadataWriter) {
+                ((NormalizedNodeStreamMetadataWriter) writer).leafNode(nodeAsLeaf.getIdentifier(),
                     nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
             } else {
                 writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
@@ -174,8 +174,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
-        if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-            ((NormalizedNodeStreamAttributeWriter) writer)
+        if (writer instanceof NormalizedNodeStreamMetadataWriter) {
+            ((NormalizedNodeStreamMetadataWriter) writer)
                     .startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
         } else {
             writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
@@ -186,8 +186,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(),
+            if (writer instanceof NormalizedNodeStreamMetadataWriter) {
+                ((NormalizedNodeStreamMetadataWriter) writer).startContainerNode(n.getIdentifier(),
                     childSizeHint(n.getValue()), n.getAttributes());
             } else {
                 writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
@@ -196,8 +196,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         }
         if (node instanceof YangModeledAnyXmlNode) {
             final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(n.getIdentifier(),
+            if (writer instanceof NormalizedNodeStreamMetadataWriter) {
+                ((NormalizedNodeStreamMetadataWriter) writer).startYangModeledAnyXmlNode(n.getIdentifier(),
                     childSizeHint(n.getValue()), n.getAttributes());
             } else {
                 writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
@@ -261,8 +261,8 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
-            if (nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(),
+            if (nnWriter instanceof NormalizedNodeStreamMetadataWriter) {
+                ((NormalizedNodeStreamMetadataWriter) nnWriter).startMapEntryNode(node.getIdentifier(),
                     childSizeHint(node.getValue()), node.getAttributes());
             } else {
                 nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));

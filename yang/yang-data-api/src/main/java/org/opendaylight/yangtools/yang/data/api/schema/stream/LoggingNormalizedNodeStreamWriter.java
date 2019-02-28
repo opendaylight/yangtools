@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -111,29 +111,21 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
-    public void leafSetEntryNode(final QName name, final Object value) {
-        LOG.debug("{}{}({}) ", ind(), value, value.getClass().getSimpleName());
+    public void startLeafSetEntryNode(final QName name) {
+        LOG.debug("{}(entry)", ind());
+        incIndent();
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) {
-        if (value == null) {
-            LOG.debug("{}{}(leaf(null))=null", ind(), name);
-        } else {
-            LOG.debug("{}{}(leaf({}))={}", ind(), name, value.getClass().getSimpleName(), value);
-        }
+    public void startLeafNode(final NodeIdentifier name) {
+        LOG.debug("{}{}(leaf)", ind(), name);
+        incIndent();
     }
 
     @Override
     public void endNode() {
         decIndent();
         LOG.debug("{}(end)", ind());
-    }
-
-    @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) {
-        LOG.debug("{}{}(anyxml)={}", ind(), name, value);
     }
 
     @Override
@@ -150,5 +142,16 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void close() {
         LOG.debug("<<END-OF-STREAM>>");
+    }
+
+    @Override
+    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
+        LOG.debug("{}{}(anyxml)", ind(), name);
+        incIndent();
+    }
+
+    @Override
+    public void scalarValue(final Object value) throws IOException {
+        LOG.debug("{}({})={}", ind(), value.getClass().getSimpleName(), value);
     }
 }
