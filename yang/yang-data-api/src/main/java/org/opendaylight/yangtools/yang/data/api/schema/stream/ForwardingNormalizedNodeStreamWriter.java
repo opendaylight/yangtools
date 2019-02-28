@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ForwardingObject;
 import java.io.IOException;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -18,6 +19,11 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
         implements NormalizedNodeStreamWriter {
     @Override
     protected abstract NormalizedNodeStreamWriter delegate();
+
+    @Override
+    public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+        return delegate().getExtensions();
+    }
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
