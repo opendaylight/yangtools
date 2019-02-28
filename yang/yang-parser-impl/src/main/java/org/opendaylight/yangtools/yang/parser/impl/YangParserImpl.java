@@ -67,14 +67,14 @@ final class YangParserImpl implements YangParser {
     @Override
     public YangParser addSource(final SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException {
         buildAction.addSources(sourceToStatementStream(source));
-        return null;
+        return this;
     }
 
     @Override
     public YangParser addLibSource(final SchemaSourceRepresentation source) throws IOException,
             YangSyntaxErrorException {
         buildAction.addLibSources(sourceToStatementStream(source));
-        return null;
+        return this;
     }
 
     @Override
