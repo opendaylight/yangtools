@@ -74,6 +74,8 @@
         <module>rfc6536-parser-support</module>
 
         <!-- Metadata (annotation) metamodel support -->
+        <module>rfc7952-data-api</module>
+        <module>rfc7952-data-util</module>
         <module>rfc7952-model-api</module>
         <module>rfc7952-model-netconf</module>
         <module>rfc7952-parser-support</module>
