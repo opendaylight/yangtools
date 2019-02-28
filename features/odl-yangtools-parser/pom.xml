@@ -62,6 +62,10 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc7952-netconf-compat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc7952-parser-support</artifactId>
         </dependency>
         <dependency>

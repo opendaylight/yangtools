@@ -75,6 +75,7 @@
 
         <!-- Metadata (annotation) metamodel support -->
         <module>rfc7952-model-api</module>
+        <module>rfc7952-model-netconf</module>
         <module>rfc7952-parser-support</module>
 
         <!-- RFC8040 (yang-data) metamodel support -->
