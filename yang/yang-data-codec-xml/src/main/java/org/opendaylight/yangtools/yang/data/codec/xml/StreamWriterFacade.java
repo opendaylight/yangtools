@@ -175,14 +175,22 @@ final class StreamWriterFacade extends ValueWriter {
     void writeStreamReader(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
         flushElement();
 
+        // We track depth, as we do not want to output the top-most element
+        int depth = 0;
         while (reader.hasNext()) {
             final int event = reader.next();
             switch (event) {
                 case XMLStreamConstants.START_ELEMENT:
-                    forwardStartElement(reader);
+                    if (depth != 0) {
+                        forwardStartElement(reader);
+                    }
+                    ++depth;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
-                    writer.writeEndElement();
+                    if (depth != 0) {
+                        writer.writeEndElement();
+                    }
+                    --depth;
                     break;
                 case XMLStreamConstants.PROCESSING_INSTRUCTION:
                     forwardProcessingInstruction(reader);
