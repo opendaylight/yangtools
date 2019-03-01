@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Optional;
 import java.util.Set;
+import javax.xml.transform.dom.DOMSource;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -83,11 +84,11 @@ public class NormalizedNodeWriterTest {
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafSetEntryNode));
 
         final NormalizedNode<?, ?> mockedLeafNode = mock(LeafNode.class);
-        assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
         doReturn("leaf-value-1").when(mockedLeafNode).getValue();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedLeafNode));
 
         final NormalizedNode<?, ?> mockedAnyXmlNode = mock(AnyXmlNode.class);
+        doReturn(new DOMSource()).when(mockedAnyXmlNode).getValue();
         assertNotNull(orderedNormalizedNodeWriter.write(mockedAnyXmlNode));
 
         final NormalizedNode<?, ?> mockedContainerNode = mock(ContainerNode.class);
