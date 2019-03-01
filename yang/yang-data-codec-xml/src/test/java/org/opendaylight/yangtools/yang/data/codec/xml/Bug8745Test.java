@@ -85,10 +85,7 @@ public class Bug8745Test {
         final NormalizedNodeStreamWriter streamWriter = XMLStreamNormalizedNodeStreamWriter.create(
                 xmlStreamWriter, SCHEMA_CONTEXT);
 
-        final InputStream resourceAsStream = Bug8745Test.class.getResourceAsStream("/bug8745/foo.xml");
-//        final XMLStreamReader reader = inputFactory.createXMLStreamReader(resourceAsStream);
         final XMLStreamReader reader = new DOMSourceXMLStreamReader(domSource);
-
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, SCHEMA_CONTEXT, contWithAttr);
         xmlParser.parse(reader);
 
