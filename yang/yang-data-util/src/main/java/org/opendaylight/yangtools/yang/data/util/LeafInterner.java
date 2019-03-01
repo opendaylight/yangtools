@@ -10,8 +10,7 @@ package org.opendaylight.yangtools.yang.data.util;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
-import java.util.Objects;
-import org.eclipse.jdt.annotation.NonNull;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -65,14 +64,14 @@ public final class LeafInterner {
      * different types, otherwise they may produce unexpected results.
      *
      * @param schema The leaf node's schema
-     * @return An interner instance
+     * @return An interner instance, if applicable
      */
-    @NonNull public static <T extends LeafNode<?>> Interner<T> forSchema(final @Nullable LeafSchemaNode schema) {
+    public static <T extends LeafNode<?>> Optional<Interner<T>> forSchema(final @Nullable LeafSchemaNode schema) {
         if (schema != null && isLowCardinality(schema.getType())) {
-            return LeafInterner::intern;
+            return Optional.of(LeafInterner::intern);
         }
 
-        return Objects::requireNonNull;
+        return Optional.empty();
     }
 
     private static boolean isLowCardinality(final TypeDefinition<?> type) {
