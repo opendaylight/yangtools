@@ -59,11 +59,12 @@ public abstract class ListEntryNodeDataWithSchema extends CompositeNodeDataWithS
             final NodeIdentifierWithPredicates identifier = new NodeIdentifierWithPredicates(getSchema().getQName(),
                 predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue()));
 
-            if (writer instanceof NormalizedNodeStreamAttributeWriter && getAttributes() != null) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startMapEntryNode(identifier, childSizeHint(),
-                    getAttributes());
-            } else {
-                writer.startMapEntryNode(identifier, childSizeHint());
+            writer.startMapEntryNode(identifier, childSizeHint());
+            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
+                final Map<QName, String> attrs = getAttributes();
+                if (attrs != null) {
+                    ((NormalizedNodeStreamAttributeWriter) writer).attributes(attrs);
+                }
             }
 
             super.write(writer);

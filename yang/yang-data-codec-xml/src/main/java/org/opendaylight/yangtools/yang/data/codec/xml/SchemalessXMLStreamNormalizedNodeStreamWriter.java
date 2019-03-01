@@ -9,14 +9,12 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
-import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNormalizedNodeStreamWriter<Object> {
@@ -25,9 +23,11 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
         LEAF_SET,
         LIST,
         LIST_ITEM,
-        ANY_XML,
+        YANG_MODELED_ANY_XML,
         CHOICE,
-        AUGMENTATION
+        AUGMENTATION,
+        SCALAR,
+        ANY_XML,
     }
 
     private final Deque<ContainerType> containerTypeStack = new ArrayDeque<>();
@@ -37,25 +37,15 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
-            throws IOException {
-        writeElement(name.getNodeType(), value, attributes, null);
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        containerTypeStack.push(ContainerType.SCALAR);
+        startElement(name.getNodeType());
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        writeElement(name.getNodeType(), value, Collections.emptyMap(), null);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
-            throws IOException {
-        writeElement(name, value, attributes, null);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        writeElement(name, value, Collections.emptyMap(), null);
+    public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
+        containerTypeStack.push(ContainerType.SCALAR);
+        startElement(name.getNodeType());
     }
 
     @Override
@@ -85,19 +75,19 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        anyxmlNode(name.getNodeType(), value);
-    }
-
-    @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
         containerTypeStack.push(ContainerType.ANY_XML);
         startElement(name.getNodeType());
     }
 
     @Override
-    void writeValue(final ValueWriter xmlWriter, final QName qname, final Object value, final Object context)
-            throws XMLStreamException {
+    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+        containerTypeStack.push(ContainerType.YANG_MODELED_ANY_XML);
+        startElement(name.getNodeType());
+    }
+
+    @Override
+    void writeValue(final ValueWriter xmlWriter, final Object value, final Object context) throws XMLStreamException {
         xmlWriter.writeToStringCharacters(value);
     }
 
@@ -112,12 +102,29 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
         startElement(name.getNodeType());
     }
 
+
+    @Override
+    public void nodeValue(Object value) throws IOException {
+        final ContainerType type = containerTypeStack.peek();
+        switch (type) {
+            case ANY_XML:
+                anyxmlValue(value);
+                break;
+            case SCALAR:
+                writeValue(value, null);
+                break;
+            default:
+                throw new IllegalStateException("Unexpected scalar in " + type);
+        }
+    }
+
     @Override
     public void endNode() throws IOException {
         ContainerType type = containerTypeStack.pop();
         switch (type) {
             case CONTAINER:
             case LIST_ITEM:
+            case SCALAR:
             case ANY_XML:
                 endElement();
                 break;
