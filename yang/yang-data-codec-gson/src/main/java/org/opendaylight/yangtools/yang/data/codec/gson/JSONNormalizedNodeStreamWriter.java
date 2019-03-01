@@ -17,18 +17,18 @@ import java.net.URI;
 import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
-import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -199,12 +199,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public final void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        final LeafSchemaNode schema = tracker.leafNode(name);
-        final JSONCodec<?> codec = codecs.codecFor(schema);
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        tracker.startLeafNode(name);
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-        writeValue(value, codec);
     }
 
     @Override
@@ -214,11 +212,9 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public final void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
-        final JSONCodec<?> codec = codecs.codecFor(schema);
+    public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
+        tracker.startLeafSetEntryNode(name);
         context.emittingChild(codecs.getSchemaContext(), writer);
-        writeValue(value, codec);
     }
 
     @Override
@@ -283,14 +279,10 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public final void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        // FIXME: should have a codec based on this :)
-        tracker.anyxmlNode(name);
-
+    public final void startAnyxmlNode(final NodeIdentifier name) throws IOException {
+        tracker.startAnyxmlNode(name);
         context.emittingChild(codecs.getSchemaContext(), writer);
         context.writeChildJsonIdentifier(codecs.getSchemaContext(), writer, name.getNodeType());
-
-        writeAnyXmlValue((DOMSource) value);
     }
 
     @Override
@@ -317,6 +309,20 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     final void closeWriter() throws IOException {
         writer.close();
+    }
+
+    @Override
+    public void nodeValue(final Object value) throws IOException {
+        final Object current = tracker.getParent();
+        if (current instanceof TypedDataSchemaNode) {
+            final JSONCodec<?> codec = codecs.codecFor((TypedDataSchemaNode) current);
+            writeValue(value, codec);
+        } else if (current instanceof AnyXmlSchemaNode) {
+            // FIXME: should have a codec based on this :)
+            writeAnyXmlValue((DOMSource) value);
+        } else {
+            throw new IllegalStateException("Cannot emit scalar for " + current);
+        }
     }
 
     @SuppressWarnings("unchecked")

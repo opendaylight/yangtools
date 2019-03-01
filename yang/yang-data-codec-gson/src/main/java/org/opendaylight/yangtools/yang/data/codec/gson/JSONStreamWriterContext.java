@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkState;
 
 import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
@@ -27,7 +28,9 @@ abstract class JSONStreamWriterContext {
     private final JSONStreamWriterContext parent;
     private final boolean mandatory;
     private final int depth;
-    private boolean emittedMyself = false;
+
+    private boolean emittedMyself;
+    private boolean inChild;
 
     /**
      * Construct a new context.
@@ -112,7 +115,7 @@ abstract class JSONStreamWriterContext {
     private void emitMyself(final SchemaContext schema, final JsonWriter writer) throws IOException {
         if (!emittedMyself) {
             if (parent != null) {
-                parent.emittingChild(schema, writer);
+                parent.emitMyself(schema, writer);
             }
 
             emitStart(schema, writer);
@@ -130,7 +133,9 @@ abstract class JSONStreamWriterContext {
      * @throws IOException when writer reports it
      */
     final void emittingChild(final SchemaContext schema, final JsonWriter writer) throws IOException {
+        checkState(!inChild, "Duplicate child encountered");
         emitMyself(schema, writer);
+        inChild = true;
     }
 
     /**
@@ -144,10 +149,13 @@ abstract class JSONStreamWriterContext {
      * @throws IllegalArgumentException if this node cannot be ended (e.g. root)
      */
     final JSONStreamWriterContext endNode(final SchemaContext schema, final JsonWriter writer) throws IOException {
+        if (inChild) {
+            inChild = false;
+            return this;
+        }
         if (!emittedMyself && mandatory) {
             emitMyself(schema, writer);
         }
-
         if (emittedMyself) {
             emitEnd(writer);
         }
