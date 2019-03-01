@@ -11,10 +11,12 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
 
 public class ImmutableLeafSetEntryNodeBuilder<T>
@@ -22,6 +24,19 @@ public class ImmutableLeafSetEntryNodeBuilder<T>
 
     public static <T> @NonNull ImmutableLeafSetEntryNodeBuilder<T> create() {
         return new ImmutableLeafSetEntryNodeBuilder<>();
+    }
+
+    @Override
+    public NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> withValue(final T withValue) {
+        final NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> ret = super.withValue(withValue);
+        final Optional<NodeWithValue> optId = tryNodeIdentifier();
+        if (optId.isPresent()) {
+            final NodeWithValue id = optId.get();
+            if (!Objects.deepEquals(id.getValue(), withValue)) {
+                withNodeIdentifier(new NodeWithValue<>(id.getNodeType(), withValue));
+            }
+        }
+        return ret;
     }
 
     @Override

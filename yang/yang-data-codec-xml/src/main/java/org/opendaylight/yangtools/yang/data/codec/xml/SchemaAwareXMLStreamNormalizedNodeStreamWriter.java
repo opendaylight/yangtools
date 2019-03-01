@@ -8,11 +8,11 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -42,9 +42,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    void writeValue(final ValueWriter xmlWriter, final QName qname, final Object value,
-            final SchemaNode schemaNode) throws XMLStreamException {
-        streamUtils.writeValue(xmlWriter, schemaNode, value, qname.getModule());
+    void writeValue(final ValueWriter xmlWriter, final Object value, final SchemaNode schemaNode)
+            throws XMLStreamException {
+        streamUtils.writeValue(xmlWriter, schemaNode, value, schemaNode.getQName().getModule());
     }
 
     @Override
@@ -74,25 +74,20 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        final LeafSchemaNode schema = tracker.leafNode(name);
-        writeElement(schema.getQName(), value, Collections.emptyMap(), schema);
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        tracker.startLeafNode(name);
+        startElement(name.getNodeType());
     }
+
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
-        throws IOException {
-        final LeafSchemaNode schema = tracker.leafNode(name);
-        writeElement(schema.getQName(), value, attributes, schema);
-    }
+    public void startLeafSetEntryNode(final QName name) throws IOException {
+        tracker.startLeafSetEntryNode(name);
+        startElement(name);
 
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
-            throws IOException {
-        final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
-        writeElement(schema.getQName(), value, attributes, schema);
-    }
+        // TODO Auto-generated method stub
 
+    }
     @Override
     public void leafSetEntryNode(final QName name, final Object value) throws IOException {
         final LeafListSchemaNode schema = tracker.leafSetEntryNode(name);
@@ -132,13 +127,22 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        final AnyXmlSchemaNode schema = tracker.anyxmlNode(name);
-        anyxmlNode(schema.getQName(), value);
+    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
+        tracker.startAnyxmlNode(name);
+        startElement(name.getNodeType());
     }
 
     @Override
     public SchemaContext getSchemaContext() {
         return streamUtils.getSchemaContext();
+    }
+
+    @Override
+    public void scalarValue(final Object value) throws IOException {
+        final Object current = tracker.getParent();
+        checkState(current instanceof LeafSchemaNode || current instanceof AnyXmlSchemaNode
+            || current instanceof LeafListSchemaNode, "Unexpected scala value %s with %s", value, current);
+        final SchemaNode schema = (SchemaNode) current;
+        writeValue(value, schema);
     }
 }
