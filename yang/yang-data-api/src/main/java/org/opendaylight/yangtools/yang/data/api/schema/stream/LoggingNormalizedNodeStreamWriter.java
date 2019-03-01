@@ -7,15 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.stream;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.Strings;
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
-
+        startMapNode(name, childSizeHint);
     }
 
     @Override
@@ -88,8 +89,7 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        LOG.debug("{}{}(leaf-list)", ind(), name);
-        incIndent();
+        startLeafSet(name, childSizeHint);
     }
 
     @Override
@@ -111,18 +111,15 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
-    public void leafSetEntryNode(final QName name, final Object value) {
-        LOG.debug("{}{}({}) ", ind(), value, value.getClass().getSimpleName());
+    public void startLeafSetEntryNode(final NodeWithValue<?> name) {
+        LOG.debug("{}{}(entry}", ind(), name.getNodeType());
+        incIndent();
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) {
-        if (value == null) {
-            LOG.debug("{}{}(leaf(null))=null", ind(), name);
-        } else {
-            LOG.debug("{}{}(leaf({}))={}", ind(), name, value.getClass().getSimpleName(), value);
-        }
+    public void startLeafNode(final NodeIdentifier name) {
+        LOG.debug("{}{}(leaf)", ind(), name);
+        incIndent();
     }
 
     @Override
@@ -132,8 +129,9 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) {
-        LOG.debug("{}{}(anyxml)={}", ind(), name, value);
+    public void startAnyxmlNode(final NodeIdentifier name) {
+        LOG.debug("{}{}(anyxml)", ind(), name);
+        incIndent();
     }
 
     @Override
@@ -150,5 +148,10 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
     @Override
     public void close() {
         LOG.debug("<<END-OF-STREAM>>");
+    }
+
+    @Override
+    public void scalarValue(final Object value) {
+        LOG.debug("{}({})={}", ind(), requireNonNull(value).getClass().getSimpleName(), value);
     }
 }

@@ -33,6 +33,7 @@ import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -52,7 +53,7 @@ import org.slf4j.LoggerFactory;
 @Beta
 public final class SchemaTracker {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaTracker.class);
-    private final Deque<Object> schemaStack = new ArrayDeque<>();
+    private final Deque<WithStatus> schemaStack = new ArrayDeque<>();
     private final DataNodeContainer root;
 
     private SchemaTracker(final DataNodeContainer root) {
@@ -154,7 +155,7 @@ public final class SchemaTracker {
     public void startListItem(final PathArgument name) throws IOException {
         final Object schema = getParent();
         checkArgument(schema instanceof ListSchemaNode, "List item is not appropriate");
-        schemaStack.push(schema);
+        schemaStack.push((ListSchemaNode) schema);
     }
 
     public LeafSchemaNode leafNode(final NodeIdentifier name) throws IOException {
@@ -162,6 +163,10 @@ public final class SchemaTracker {
 
         checkArgument(schema instanceof LeafSchemaNode, "Node %s is not a leaf", schema.getPath());
         return (LeafSchemaNode) schema;
+    }
+
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        schemaStack.push(leafNode(name));
     }
 
     public LeafListSchemaNode startLeafSet(final NodeIdentifier name) {
@@ -240,6 +245,10 @@ public final class SchemaTracker {
         final SchemaNode schema = getSchema(name);
         checkArgument(schema instanceof AnyXmlSchemaNode, "Node %s is not anyxml", schema.getPath());
         return (AnyXmlSchemaNode)schema;
+    }
+
+    public void startAnyxmlNode(final NodeIdentifier name) {
+        schemaStack.push(anyxmlNode(name));
     }
 
     public Object endNode() {

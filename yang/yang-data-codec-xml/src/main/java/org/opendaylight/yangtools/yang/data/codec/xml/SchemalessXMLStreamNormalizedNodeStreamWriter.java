@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -37,20 +36,8 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value, final Map<QName, String> attributes)
-            throws IOException {
-        writeElement(name.getNodeType(), value, attributes, null);
-    }
-
-    @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
         writeElement(name.getNodeType(), value, Collections.emptyMap(), null);
-    }
-
-    @Override
-    public void leafSetEntryNode(final QName name, final Object value, final Map<QName, String> attributes)
-            throws IOException {
-        writeElement(name, value, attributes, null);
     }
 
     @Override
@@ -96,8 +83,7 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    void writeValue(final ValueWriter xmlWriter, final QName qname, final Object value, final Object context)
-            throws XMLStreamException {
+    void writeValue(final ValueWriter xmlWriter, final Object value, final Object context) throws XMLStreamException {
         xmlWriter.writeToStringCharacters(value);
     }
 

@@ -131,26 +131,30 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     protected boolean wasProcessAsSimpleNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
-            final QName name = nodeAsLeafList.getIdentifier().getNodeType();
+            writer.startLeafSetEntryNode(nodeAsLeafList.getIdentifier());
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafSetEntryNode(name, nodeAsLeafList.getValue(),
-                        nodeAsLeafList.getAttributes());
-            } else {
-                writer.leafSetEntryNode(name, nodeAsLeafList.getValue());
+                ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeafList.getAttributes());
             }
+            writer.scalarValue(nodeAsLeafList.getValue());
+            writer.endNode();
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
+            writer.startLeafNode(nodeAsLeaf.getIdentifier());
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).leafNode(nodeAsLeaf.getIdentifier(),
-                    nodeAsLeaf.getValue(), nodeAsLeaf.getAttributes());
-            } else {
-                writer.leafNode(nodeAsLeaf.getIdentifier(), nodeAsLeaf.getValue());
+                ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeaf.getAttributes());
             }
+            writer.scalarValue(nodeAsLeaf.getValue());
+            writer.endNode();
             return true;
         } else if (node instanceof AnyXmlNode) {
             final AnyXmlNode anyXmlNode = (AnyXmlNode)node;
-            writer.anyxmlNode(anyXmlNode.getIdentifier(), anyXmlNode.getValue());
+            writer.startAnyxmlNode(anyXmlNode.getIdentifier());
+            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
+                ((NormalizedNodeStreamAttributeWriter) writer).attributes(anyXmlNode.getAttributes());
+            }
+            writer.scalarValue(anyXmlNode.getValue());
+            writer.endNode();
             return true;
         }
 
@@ -174,11 +178,9 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     }
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
+        writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
         if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-            ((NormalizedNodeStreamAttributeWriter) writer)
-                    .startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()), node.getAttributes());
-        } else {
-            writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+            ((NormalizedNodeStreamAttributeWriter) writer).attributes(node.getAttributes());
         }
         return writeChildren(node.getValue());
     }
@@ -186,21 +188,17 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
     protected boolean wasProcessedAsCompositeNode(final NormalizedNode<?, ?> node) throws IOException {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
+            writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startContainerNode(n.getIdentifier(),
-                    childSizeHint(n.getValue()), n.getAttributes());
-            } else {
-                writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
+                ((NormalizedNodeStreamAttributeWriter) writer).attributes(n.getAttributes());
             }
             return writeChildren(n.getValue());
         }
         if (node instanceof YangModeledAnyXmlNode) {
             final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
+            writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(n.getIdentifier(),
-                    childSizeHint(n.getValue()), n.getAttributes());
-            } else {
-                writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
+                ((NormalizedNodeStreamAttributeWriter) writer).attributes(n.getAttributes());
             }
             return writeChildren(n.getValue());
         }
@@ -261,11 +259,9 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         @Override
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
+            nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
             if (nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) nnWriter).startMapEntryNode(node.getIdentifier(),
-                    childSizeHint(node.getValue()), node.getAttributes());
-            } else {
-                nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
+                ((NormalizedNodeStreamAttributeWriter) nnWriter).attributes(node.getAttributes());
             }
 
             final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();

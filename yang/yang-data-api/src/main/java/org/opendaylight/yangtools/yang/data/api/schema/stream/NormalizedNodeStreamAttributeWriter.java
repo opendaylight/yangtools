@@ -10,27 +10,12 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import java.io.IOException;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
  * Extension to the NormalizedNodeStreamWriter with attribute support.
  */
+// FIXME: remove this interface
 public interface NormalizedNodeStreamAttributeWriter extends NormalizedNodeStreamWriter {
 
-    void leafNode(YangInstanceIdentifier.NodeIdentifier name, Object value, Map<QName, String> attributes)
-            throws IOException;
-
-    void leafSetEntryNode(QName name, Object value, Map<QName, String> attributes) throws IOException;
-
-    void startContainerNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint,
-            Map<QName, String> attributes) throws IOException;
-
-    void startYangModeledAnyXmlNode(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint,
-            Map<QName, String> attributes) throws IOException;
-
-    void startUnkeyedListItem(YangInstanceIdentifier.NodeIdentifier name, int childSizeHint,
-            Map<QName, String> attributes) throws IOException;
-
-    void startMapEntryNode(YangInstanceIdentifier.NodeIdentifierWithPredicates identifier, int childSizeHint,
-            Map<QName, String> attributes) throws IOException;
+    void attributes(Map<QName, String> attributes) throws IOException;
 }
