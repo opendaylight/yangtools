@@ -133,7 +133,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
             final T context) throws IOException {
         startElement(qname);
         if (attributes != null) {
-            writeAttributes(attributes);
+            attributes(attributes);
         }
         if (value != null) {
             try {
@@ -178,36 +178,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     @Override
-    public final void startContainerNode(final NodeIdentifier name, final int childSizeHint,
-                                         final Map<QName, String> attributes) throws IOException {
-        startContainerNode(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
-    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint,
-                                                 final Map<QName, String> attributes) throws IOException {
-        startYangModeledAnyXmlNode(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
-    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint,
-                                           final Map<QName, String> attributes) throws IOException {
-        startUnkeyedListItem(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
     public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         startListItem(name);
-    }
-
-    @Override
-    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint,
-                                        final Map<QName, String> attributes) throws IOException {
-        startMapEntryNode(identifier, childSizeHint);
-        writeAttributes(attributes);
     }
 
     @Override
@@ -249,7 +221,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
+    @Override
+    public final void attributes(final Map<QName, String> attributes) throws IOException {
         if (!attributes.isEmpty()) {
             try {
                 facade.writeAttributes(attributes);

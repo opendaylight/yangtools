@@ -14,18 +14,17 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
-import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -45,6 +44,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
@@ -53,9 +54,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOr
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableUnkeyedListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableYangModeledAnyXmlNodeBuilder;
-import org.opendaylight.yangtools.yang.data.util.LeafInterner;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
 /**
  * Implementation of {@link NormalizedNodeStreamWriter}, which constructs immutable instances of
@@ -72,7 +71,7 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
 
     @SuppressWarnings("rawtypes")
-    private final Deque<NormalizedNodeContainerBuilder> builders = new ArrayDeque<>();
+    private final Deque<NormalizedNodeBuilder> builders = new ArrayDeque<>();
     private DataSchemaNode nextSchema;
 
     @SuppressWarnings("rawtypes")
@@ -121,32 +120,49 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
-    protected Deque<NormalizedNodeContainerBuilder> getBuilders() {
+    protected Deque<NormalizedNodeBuilder> getBuilders() {
         return builders;
     }
 
     @SuppressWarnings("rawtypes")
-    protected NormalizedNodeContainerBuilder getCurrent() {
+    protected NormalizedNodeBuilder getCurrent() {
         return builders.peek();
     }
 
     @SuppressWarnings("rawtypes")
-    private void enter(final NormalizedNodeContainerBuilder next) {
+    protected NormalizedNodeContainerBuilder getCurrentContainer() {
+        final NormalizedNodeBuilder current = getCurrent();
+        if (current == null) {
+            return null;
+        }
+        checkState(current instanceof NormalizedNodeContainerBuilder, "%s is not a node container", current);
+        return (NormalizedNodeContainerBuilder) current;
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected NormalizedNodeBuilder getCurrentScalar() {
+        final NormalizedNodeBuilder current = getCurrent();
+        checkState(!(current instanceof NormalizedNodeContainerBuilder), "Unexpected node container %s", current);
+        return current;
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void enter(final NormalizedNodeBuilder next) {
         builders.push(next);
         nextSchema = null;
     }
 
     @SuppressWarnings("unchecked")
     protected void writeChild(final NormalizedNode<?, ?> child) {
-        getCurrent().addChild(child);
+        getCurrentContainer().addChild(child);
     }
 
     @Override
     @SuppressWarnings({"rawtypes","unchecked"})
     public void endNode() {
-        final NormalizedNodeContainerBuilder finishedBuilder = builders.poll();
+        final NormalizedNodeBuilder finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        final NormalizedNodeContainerBuilder current = getCurrent();
+        final NormalizedNodeContainerBuilder current = getCurrentContainer();
         checkState(current != null, "Reached top level node, which could not be closed in this writer.");
         final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
         current.addChild(product);
@@ -154,18 +170,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) {
+    public void startLeafNode(final NodeIdentifier name) {
         checkDataNodeContainer();
 
-        final LeafNode<Object> sample = ImmutableNodes.leafNode(name, value);
-        final LeafNode<?> node;
-        if (nextSchema instanceof LeafSchemaNode) {
-            node = LeafInterner.forSchema((LeafSchemaNode)nextSchema).intern(sample);
-        } else {
-            node = sample;
-        }
-
-        writeChild(node);
+        // FIXME: add interning
+        //      if (nextSchema instanceof LeafSchemaNode) {
+        //      node = LeafInterner.forSchema((LeafSchemaNode)nextSchema).intern(sample);
+        enter(ImmutableLeafNodeBuilder.create().withNodeIdentifier(name));
         nextSchema = null;
     }
 
@@ -180,21 +191,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value) {
-        if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder) {
-            @SuppressWarnings("unchecked")
-            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
-                (ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent();
-            builder.withChildValue(value);
-        } else if (getCurrent() instanceof ImmutableLeafSetNodeBuilder) {
-            @SuppressWarnings("unchecked")
-            ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
-                (ImmutableLeafSetNodeBuilder<Object>) getCurrent();
-            builder.withChildValue(value);
-        } else {
-            throw new IllegalArgumentException("LeafSetEntryNode is not valid for parent " + getCurrent());
-        }
-
+    public void startLeafSetEntryNode(final QName name) {
+        @SuppressWarnings("rawtypes")
+        final NormalizedNodeBuilder current = getCurrent();
+        checkArgument(current instanceof ImmutableOrderedLeafSetNodeBuilder
+            || current instanceof ImmutableLeafSetNodeBuilder, "LeafSetEntryNode is not valid for parent %s", current);
+        enter(ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(
+            new NodeWithValue<>(name, Empty.getInstance())));
         nextSchema = null;
     }
 
@@ -207,13 +210,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) {
+    public void startAnyxmlNode(final NodeIdentifier name) {
         checkDataNodeContainer();
-
-        final AnyXmlNode node = ImmutableAnyXmlNodeBuilder.create().withNodeIdentifier(name)
-                .withValue((DOMSource) value).build();
-        writeChild(node);
-
+        enter(ImmutableAnyXmlNodeBuilder.create().withNodeIdentifier(name));
         nextSchema = null;
     }
 
@@ -310,7 +309,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     private void checkDataNodeContainer() {
         @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder current = getCurrent();
+        final NormalizedNodeContainerBuilder current = getCurrentContainer();
         if (!(current instanceof NormalizedNodeResultBuilder)) {
             checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
         }
@@ -370,5 +369,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     @Override
     public void nextDataSchemaNode(final DataSchemaNode schema) {
         nextSchema = requireNonNull(schema);
+    }
+
+    @Override
+    public void scalarValue(final Object value) {
+        getCurrentScalar().withValue(value);
     }
 }

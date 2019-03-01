@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.Map;
+import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -27,6 +28,10 @@ abstract class AbstractImmutableNormalizedNodeBuilder<I extends PathArgument, V,
     protected final I getNodeIdentifier() {
         checkState(nodeIdentifier != null, "Identifier has not been set");
         return nodeIdentifier;
+    }
+
+    protected final Optional<I> tryNodeIdentifier() {
+        return Optional.ofNullable(nodeIdentifier);
     }
 
     protected final V getValue() {
