@@ -22,7 +22,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -122,27 +121,19 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    abstract void writeValue(@NonNull ValueWriter xmlWriter, QName qname, @NonNull Object value, T context)
-            throws XMLStreamException;
-
     abstract void startList(NodeIdentifier name);
 
     abstract void startListItem(PathArgument name) throws IOException;
 
-    final void writeElement(final QName qname, final Object value, final @Nullable Map<QName, String> attributes,
-            final T context) throws IOException {
-        startElement(qname);
-        if (attributes != null) {
-            writeAttributes(attributes);
+    abstract void writeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
+            throws XMLStreamException;
+
+    final void writeValue(final @NonNull Object value, final T context) throws IOException {
+        try {
+            writeValue(facade, value, context);
+        } catch (XMLStreamException e) {
+            throw new IOException("Failed to write value", e);
         }
-        if (value != null) {
-            try {
-                writeValue(facade, qname, value, context);
-            } catch (XMLStreamException e) {
-                throw new IOException("Failed to write value", e);
-            }
-        }
-        endElement();
     }
 
     final void startElement(final QName qname) throws IOException {
@@ -161,53 +152,23 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    final void anyxmlNode(final QName qname, final Object value) throws IOException {
+    final void anyxmlValue(final Object value) throws IOException {
         if (value != null) {
             checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
             final DOMSource domSource = (DOMSource) value;
             final Node domNode = requireNonNull(domSource.getNode());
-            checkArgument(domNode.getNodeName().equals(qname.getLocalName()));
-            checkArgument(domNode.getNamespaceURI().equals(qname.getNamespace().toString()));
 
             try {
                 facade.writeStreamReader(new DOMSourceXMLStreamReader(domSource));
             } catch (XMLStreamException e) {
-                throw new IOException("Unable to transform anyXml(" + qname + ") value: " + domNode, e);
+                throw new IOException("Unable to transform anyXml value: " + domNode, e);
             }
         }
     }
 
     @Override
-    public final void startContainerNode(final NodeIdentifier name, final int childSizeHint,
-                                         final Map<QName, String> attributes) throws IOException {
-        startContainerNode(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
-    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint,
-                                                 final Map<QName, String> attributes) throws IOException {
-        startYangModeledAnyXmlNode(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
-    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint,
-                                           final Map<QName, String> attributes) throws IOException {
-        startUnkeyedListItem(name, childSizeHint);
-        writeAttributes(attributes);
-    }
-
-    @Override
     public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
         startListItem(name);
-    }
-
-    @Override
-    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint,
-                                        final Map<QName, String> attributes) throws IOException {
-        startMapEntryNode(identifier, childSizeHint);
-        writeAttributes(attributes);
     }
 
     @Override
@@ -249,7 +210,8 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    private void writeAttributes(final @NonNull Map<QName, String> attributes) throws IOException {
+    @Override
+    public final void attributes(final Map<QName, String> attributes) throws IOException {
         if (!attributes.isEmpty()) {
             try {
                 facade.writeAttributes(attributes);

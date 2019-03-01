@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 /**
@@ -55,7 +56,6 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
             protected QName transform(final QName key) {
                 return transformation.apply(key);
             }
-
         };
     }
 
@@ -85,8 +85,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
-    public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().leafNode(transform(name), value);
+    public void startLeafNode(final NodeIdentifier name) throws IOException {
+        delegate().startLeafNode(transform(name));
     }
 
     @Override
@@ -100,8 +100,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
-    public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        delegate().leafSetEntryNode(transform(name), value);
+    public void startLeafSetEntryNode(final NodeWithValue<?> name) throws IOException {
+        delegate().startLeafSetEntryNode(transform(name));
     }
 
     @Override
@@ -146,8 +146,8 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     }
 
     @Override
-    public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().anyxmlNode(transform(name), value);
+    public void startAnyxmlNode(final NodeIdentifier name) throws IOException {
+        delegate().startAnyxmlNode(transform(name));
     }
 
     @Override
@@ -170,6 +170,11 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
         delegate().flush();
     }
 
+    @Override
+    public void nodeValue(final Object value) throws IOException {
+        delegate().nodeValue(value);
+    }
+
     /**
      * Transforms a QName to new mapping.
      *
@@ -183,6 +188,10 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
 
     private NodeIdentifier transform(final NodeIdentifier name) {
         return new NodeIdentifier(transform(name.getNodeType()));
+    }
+
+    private <T> NodeWithValue<T> transform(final NodeWithValue<T> name) {
+        return new NodeWithValue<>(transform(name.getNodeType()), name.getValue());
     }
 
     private AugmentationIdentifier transform(final AugmentationIdentifier identifier) {
