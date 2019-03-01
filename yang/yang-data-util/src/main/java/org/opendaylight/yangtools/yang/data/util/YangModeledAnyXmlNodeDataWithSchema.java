@@ -30,13 +30,10 @@ public final class YangModeledAnyXmlNodeDataWithSchema
     public void write(final NormalizedNodeStreamWriter writer) throws IOException {
         writer.nextDataSchemaNode(getSchema());
 
+        writer.startYangModeledAnyXmlNode(provideNodeIdentifier(), childSizeHint());
         if (writer instanceof NormalizedNodeStreamAttributeWriter && getAttributes() != null) {
-            ((NormalizedNodeStreamAttributeWriter) writer).startYangModeledAnyXmlNode(provideNodeIdentifier(),
-                    childSizeHint(), getAttributes());
-        } else {
-            writer.startYangModeledAnyXmlNode(provideNodeIdentifier(), childSizeHint());
+            ((NormalizedNodeStreamAttributeWriter) writer).attributes(getAttributes());
         }
-
         super.write(writer);
         writer.endNode();
     }
