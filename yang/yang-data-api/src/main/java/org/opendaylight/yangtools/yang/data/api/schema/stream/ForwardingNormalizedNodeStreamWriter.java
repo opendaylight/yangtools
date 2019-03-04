@@ -61,7 +61,7 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public final void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
+    public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
         delegate().startMapNode(name, childSizeHint);
     }
 
