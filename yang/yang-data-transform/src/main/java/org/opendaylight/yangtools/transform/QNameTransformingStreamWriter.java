@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.transform;
 
-import com.google.common.collect.ForwardingObject;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,6 +18,7 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.ForwardingNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 
 /**
@@ -28,11 +28,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * This class serves as base for Normalized Node Stream Writer decorators with option to transform
  * QNames by user-implemented {@link #transform(QName)} function.
  */
-public abstract class QNameTransformingStreamWriter extends ForwardingObject implements NormalizedNodeStreamWriter {
+public abstract class QNameTransformingStreamWriter extends ForwardingNormalizedNodeStreamWriter {
 
     // FIXME: Probably use loading cache to decrease memory
-    @Override
-    protected abstract NormalizedNodeStreamWriter delegate();
 
     /**
      * Returns decorator, which uses supplied function to transform QNames.
@@ -87,88 +85,73 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
 
     @Override
     public void leafNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().leafNode(transform(name), value);
+        super.leafNode(transform(name), value);
     }
 
     @Override
     public void startLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startLeafSet(transform(name), childSizeHint);
+        super.startLeafSet(transform(name), childSizeHint);
     }
 
     @Override
     public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startOrderedLeafSet(transform(name), childSizeHint);
+        super.startOrderedLeafSet(transform(name), childSizeHint);
     }
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value) throws IOException {
-        delegate().leafSetEntryNode(transform(name), value);
+        super.leafSetEntryNode(transform(name), value);
     }
 
     @Override
     public void startContainerNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startContainerNode(transform(name), childSizeHint);
+        super.startContainerNode(transform(name), childSizeHint);
     }
 
     @Override
     public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startUnkeyedList(transform(name), childSizeHint);
+        super.startUnkeyedList(transform(name), childSizeHint);
     }
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startUnkeyedListItem(transform(name), childSizeHint);
+        super.startUnkeyedListItem(transform(name), childSizeHint);
     }
 
     @Override
     public void startMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startMapNode(transform(name), childSizeHint);
+        super.startMapNode(transform(name), childSizeHint);
     }
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint)
             throws IOException {
-        delegate().startMapEntryNode(transform(identifier), childSizeHint);
+        super.startMapEntryNode(transform(identifier), childSizeHint);
     }
 
     @Override
     public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startOrderedMapNode(transform(name), childSizeHint);
+        super.startOrderedMapNode(transform(name), childSizeHint);
     }
 
     @Override
     public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startChoiceNode(transform(name), childSizeHint);
+        super.startChoiceNode(transform(name), childSizeHint);
     }
 
     @Override
     public void startAugmentationNode(final AugmentationIdentifier identifier) throws IOException {
-        delegate().startAugmentationNode(transform(identifier));
+        super.startAugmentationNode(transform(identifier));
     }
 
     @Override
     public void anyxmlNode(final NodeIdentifier name, final Object value) throws IOException {
-        delegate().anyxmlNode(transform(name), value);
+        super.anyxmlNode(transform(name), value);
     }
 
     @Override
     public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) throws IOException {
-        delegate().startYangModeledAnyXmlNode(transform(name), childSizeHint);
-    }
-
-    @Override
-    public void endNode() throws IOException {
-        delegate().endNode();
-    }
-
-    @Override
-    public void close() throws IOException {
-        delegate().close();
-    }
-
-    @Override
-    public void flush() throws IOException {
-        delegate().flush();
+        super.startYangModeledAnyXmlNode(transform(name), childSizeHint);
     }
 
     /**
@@ -183,7 +166,9 @@ public abstract class QNameTransformingStreamWriter extends ForwardingObject imp
     protected abstract @Nonnull QName transform(@Nonnull QName key);
 
     private NodeIdentifier transform(final NodeIdentifier name) {
-        return new NodeIdentifier(transform(name.getNodeType()));
+        final QName original = name.getNodeType();
+        final QName transformed = transform(original);
+        return transformed == original ? name : new NodeIdentifier(transformed);
     }
 
     private AugmentationIdentifier transform(final AugmentationIdentifier identifier) {
