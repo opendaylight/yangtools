@@ -21,21 +21,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
-import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
-import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
@@ -66,9 +54,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * written to this builder.
  */
 public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
-
     @SuppressWarnings("rawtypes")
     private final Deque<NormalizedNodeBuilder> builders = new ArrayDeque<>();
+
     private DataSchemaNode nextSchema;
 
     @SuppressWarnings("rawtypes")
@@ -117,190 +105,187 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
-    @SuppressWarnings("rawtypes")
-    protected NormalizedNodeBuilder getCurrent() {
-        return builders.peek();
+    @Override
+    @SuppressWarnings({"rawtypes","unchecked"})
+    public final void endNode() {
+        final NormalizedNodeBuilder finishedBuilder = builders.poll();
+        checkState(finishedBuilder != null, "Node which should be closed does not exists.");
+        final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
+        nextSchema = null;
+        appendChild(product);
+    }
+
+    @Override
+    public final void startLeafNode(final NodeIdentifier name) {
+        checkDataNodeContainer();
+        enter(name, InterningLeafNodeBuilder.forSchema(nextSchema));
+        nextSchema = null;
+    }
+
+    @Override
+    public final void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? InterningLeafSetNodeBuilder.create(nextSchema)
+                : InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint));
+    }
+
+    @Override
+    public final void startLeafSetEntryNode(final NodeWithValue<?> name) {
+        @SuppressWarnings("rawtypes")
+        final NormalizedNodeBuilder current = getCurrent();
+        checkArgument(current instanceof ImmutableOrderedLeafSetNodeBuilder
+            || current instanceof ImmutableLeafSetNodeBuilder, "LeafSetEntryNode is not valid for parent %s", current);
+        enter(name, ImmutableLeafSetEntryNodeBuilder.create());
+        nextSchema = null;
+    }
+
+    @Override
+    public final void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, Builders.orderedLeafSetBuilder());
+    }
+
+    @Override
+    public final void startAnyxmlNode(final NodeIdentifier name) {
+        checkDataNodeContainer();
+        enter(name, ImmutableAnyXmlNodeBuilder.create());
+        nextSchema = null;
+    }
+
+    @Override
+    public final void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableContainerNodeBuilder.create()
+                : ImmutableContainerNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+
+        checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
+                "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
+        final YangModeledAnyXmlSchemaNode anyxmlSchema = (YangModeledAnyXmlSchemaNode) nextSchema;
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema)
+                : ImmutableYangModeledAnyXmlNodeBuilder.create(anyxmlSchema, childSizeHint));
+    }
+
+    @Override
+    public final void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListNodeBuilder.create()
+                : ImmutableUnkeyedListNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
+        checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
+                || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
+                : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startMapNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableMapNodeBuilder.create()
+                : ImmutableMapNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
+        if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
+            checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
+                || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
+        }
+
+        enter(identifier, UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
+                : ImmutableMapEntryNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableOrderedMapNodeBuilder.create()
+                : ImmutableOrderedMapNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
+        checkDataNodeContainer();
+        enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableChoiceNodeBuilder.create()
+                : ImmutableChoiceNodeBuilder.create(childSizeHint));
+    }
+
+    @Override
+    public final void startAugmentationNode(final AugmentationIdentifier identifier) {
+        checkDataNodeContainer();
+        checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
+        enter(identifier, Builders.augmentationBuilder());
+    }
+
+    @Override
+    public final void flush() {
+        // no-op
+    }
+
+    @Override
+    public final void close() {
+        // no-op
+    }
+
+    @Override
+    public final void nextDataSchemaNode(final DataSchemaNode schema) {
+        nextSchema = requireNonNull(schema);
     }
 
     @SuppressWarnings("rawtypes")
-    protected final NormalizedNodeContainerBuilder getCurrentContainer() {
+    protected final NormalizedNodeBuilder getCurrent() {
+        return builders.peek();
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    protected void appendChild(final NormalizedNode<PathArgument, ?> product) {
+        final NormalizedNodeContainerBuilder current = currentContainer();
+        checkState(current != null, "Reached top level node, which could not be closed in this writer.");
+        current.addChild(product);
+    }
+
+    protected void enter(final PathArgument name) {
+        // Defaults to no-op
+    }
+
+    @SuppressWarnings("rawtypes")
+    private void enter(final PathArgument identifier, final NormalizedNodeBuilder next) {
+        builders.push(next.withNodeIdentifier(identifier));
+        nextSchema = null;
+        enter(identifier);
+    }
+
+    @Override
+    @SuppressWarnings("rawtypes")
+    public final void nodeValue(final Object value) {
+        final NormalizedNodeBuilder current = getCurrent();
+        checkState(!(current instanceof NormalizedNodeContainerBuilder), "Unexpected node container %s", current);
+        current.withValue(value);
+    }
+
+    private void checkDataNodeContainer() {
+        @SuppressWarnings("rawtypes")
+        final NormalizedNodeContainerBuilder current = currentContainer();
+        if (!(current instanceof NormalizedNodeResultBuilder)) {
+            checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
+        }
+    }
+
+    @SuppressWarnings("rawtypes")
+    private NormalizedNodeContainerBuilder currentContainer() {
         final NormalizedNodeBuilder current = getCurrent();
         if (current == null) {
             return null;
         }
         checkState(current instanceof NormalizedNodeContainerBuilder, "%s is not a node container", current);
         return (NormalizedNodeContainerBuilder) current;
-    }
-
-    @SuppressWarnings("rawtypes")
-    protected NormalizedNodeBuilder getCurrentScalar() {
-        final NormalizedNodeBuilder current = getCurrent();
-        checkState(!(current instanceof NormalizedNodeContainerBuilder), "Unexpected node container %s", current);
-        return current;
-    }
-
-    @SuppressWarnings("rawtypes")
-    private void enter(final NormalizedNodeBuilder next) {
-        builders.push(next);
-        nextSchema = null;
-    }
-
-    @SuppressWarnings("unchecked")
-    protected void writeChild(final NormalizedNode<?, ?> child) {
-        getCurrentContainer().addChild(child);
-    }
-
-    @Override
-    @SuppressWarnings({"rawtypes","unchecked"})
-    public void endNode() {
-        final NormalizedNodeBuilder finishedBuilder = builders.poll();
-        checkState(finishedBuilder != null, "Node which should be closed does not exists.");
-        final NormalizedNodeContainerBuilder current = getCurrentContainer();
-        checkState(current != null, "Reached top level node, which could not be closed in this writer.");
-        final NormalizedNode<PathArgument, ?> product = finishedBuilder.build();
-        current.addChild(product);
-        nextSchema = null;
-    }
-
-    @Override
-    public void startLeafNode(final NodeIdentifier name) {
-        checkDataNodeContainer();
-        enter(InterningLeafNodeBuilder.forSchema(nextSchema).withNodeIdentifier(name));
-        nextSchema = null;
-    }
-
-    @Override
-    public void startLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = UNKNOWN_SIZE == childSizeHint
-                ? InterningLeafSetNodeBuilder.create(nextSchema)
-                        : InterningLeafSetNodeBuilder.create(nextSchema, childSizeHint);
-        builder.withNodeIdentifier(name);
-        enter(builder);
-    }
-
-    @Override
-    public void startLeafSetEntryNode(final NodeWithValue<?> name) {
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeBuilder current = getCurrent();
-        checkArgument(current instanceof ImmutableOrderedLeafSetNodeBuilder
-            || current instanceof ImmutableLeafSetNodeBuilder, "LeafSetEntryNode is not valid for parent %s", current);
-        enter(ImmutableLeafSetEntryNodeBuilder.create().withNodeIdentifier(name));
-        nextSchema = null;
-    }
-
-    @Override
-    public void startOrderedLeafSet(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-        final ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder = Builders.orderedLeafSetBuilder();
-        builder.withNodeIdentifier(name);
-        enter(builder);
-    }
-
-    @Override
-    public void startAnyxmlNode(final NodeIdentifier name) {
-        checkDataNodeContainer();
-        enter(ImmutableAnyXmlNodeBuilder.create().withNodeIdentifier(name));
-        nextSchema = null;
-    }
-
-    @Override
-    public void startContainerNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder =
-                UNKNOWN_SIZE == childSizeHint ? ImmutableContainerNodeBuilder.create()
-                        : ImmutableContainerNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startYangModeledAnyXmlNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        checkArgument(nextSchema instanceof YangModeledAnyXmlSchemaNode,
-                "Schema of this node should be instance of YangModeledAnyXmlSchemaNode");
-        final DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> builder =
-                UNKNOWN_SIZE == childSizeHint
-                ? ImmutableYangModeledAnyXmlNodeBuilder.create((YangModeledAnyXmlSchemaNode) nextSchema)
-                        : ImmutableYangModeledAnyXmlNodeBuilder.create(
-                (YangModeledAnyXmlSchemaNode) nextSchema, childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startUnkeyedList(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        final CollectionNodeBuilder<UnkeyedListEntryNode, UnkeyedListNode> builder =
-                UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListNodeBuilder.create()
-                        : ImmutableUnkeyedListNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
-                || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder =
-                UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
-                        : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startMapNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        final CollectionNodeBuilder<MapEntryNode, MapNode> builder = UNKNOWN_SIZE == childSizeHint
-                ? ImmutableMapNodeBuilder.create() : ImmutableMapNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
-        if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
-                || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
-        }
-
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder =
-                UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
-                        : ImmutableMapEntryNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(identifier));
-    }
-
-    @Override
-    public void startOrderedMapNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        final CollectionNodeBuilder<MapEntryNode, OrderedMapNode> builder = UNKNOWN_SIZE == childSizeHint
-                ? ImmutableOrderedMapNodeBuilder.create() : ImmutableOrderedMapNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startChoiceNode(final NodeIdentifier name, final int childSizeHint) {
-        checkDataNodeContainer();
-
-        final DataContainerNodeBuilder<NodeIdentifier, ChoiceNode> builder = UNKNOWN_SIZE == childSizeHint
-                ? ImmutableChoiceNodeBuilder.create() : ImmutableChoiceNodeBuilder.create(childSizeHint);
-        enter(builder.withNodeIdentifier(name));
-    }
-
-    @Override
-    public void startAugmentationNode(final AugmentationIdentifier identifier) {
-        checkDataNodeContainer();
-        checkArgument(!(getCurrent() instanceof ImmutableAugmentationNodeBuilder));
-        enter(Builders.augmentationBuilder().withNodeIdentifier(identifier));
-    }
-
-    private void checkDataNodeContainer() {
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeContainerBuilder current = getCurrentContainer();
-        if (!(current instanceof NormalizedNodeResultBuilder)) {
-            checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
-        }
     }
 
     @SuppressWarnings("rawtypes")
@@ -342,25 +327,5 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         public NormalizedNodeContainerBuilder removeChild(final PathArgument key) {
             throw new UnsupportedOperationException();
         }
-    }
-
-    @Override
-    public void flush() {
-        // no-op
-    }
-
-    @Override
-    public void close() {
-        // no-op
-    }
-
-    @Override
-    public void nextDataSchemaNode(final DataSchemaNode schema) {
-        nextSchema = requireNonNull(schema);
-    }
-
-    @Override
-    public void nodeValue(final Object value) {
-        getCurrentScalar().withValue(value);
     }
 }
