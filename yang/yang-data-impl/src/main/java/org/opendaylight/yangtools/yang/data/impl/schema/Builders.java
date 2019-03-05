@@ -27,10 +27,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.api.schema.YangModeledAnyXmlNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
@@ -70,34 +69,34 @@ public final class Builders {
         throw new UnsupportedOperationException("Utilities class should not be instantiated");
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder() {
         return ImmutableLeafNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder(
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> leafBuilder(
             final LeafSchemaNode schema) {
         return ImmutableLeafNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
+    public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder() {
         return ImmutableLeafSetEntryNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
+    public static <T> NormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> leafSetEntryBuilder(
             final LeafListSchemaNode schema) {
         return ImmutableLeafSetEntryNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder() {
         return ImmutableAnyXmlNodeBuilder.create();
     }
 
-    public static <T> NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
+    public static <T> NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> anyXmlBuilder(
             final AnyXmlSchemaNode schema) {
         return ImmutableAnyXmlNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static <T> DataContainerNodeAttrBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
+    public static <T> DataContainerNodeBuilder<NodeIdentifier, YangModeledAnyXmlNode> yangModeledAnyXmlBuilder(
             final YangModeledAnyXmlSchemaNode schema) {
         return ImmutableYangModeledAnyXmlNodeBuilder.create(schema);
     }
@@ -127,35 +126,35 @@ public final class Builders {
         return ImmutableLeafSetNodeSchemaAwareBuilder.create(schema, node);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder() {
         return ImmutableContainerNodeBuilder.create();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
             final ContainerNode node) {
         return ImmutableContainerNodeBuilder.create(node);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
             final ContainerSchemaNode schema) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder(
             final ContainerSchemaNode schema, final ContainerNode node) {
         return ImmutableContainerNodeSchemaAwareBuilder.create(schema, node);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder() {
         return ImmutableMapEntryNodeBuilder.create();
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final MapEntryNode mapEntryNode) {
         return ImmutableMapEntryNodeBuilder.create(mapEntryNode);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
+    public static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder(
             final ListSchemaNode schema) {
         return ImmutableMapEntryNodeSchemaAwareBuilder.create(schema);
     }
@@ -206,7 +205,7 @@ public final class Builders {
         return ImmutableChoiceNodeSchemaAwareBuilder.create(schema);
     }
 
-    public static DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
+    public static DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> unkeyedListEntryBuilder() {
         return ImmutableUnkeyedListEntryNodeBuilder.create();
     }
 }

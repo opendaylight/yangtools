@@ -20,14 +20,14 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ImmutableMapEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> {
     private static final Logger LOG = LoggerFactory.getLogger(ImmutableMapEntryNodeBuilder.class);
     protected final Map<QName, PathArgument> childrenQNamesToPaths;
 
@@ -46,16 +46,16 @@ public class ImmutableMapEntryNodeBuilder
         fillQnames(node.getValue(), childrenQNamesToPaths);
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create() {
         return new ImmutableMapEntryNodeBuilder();
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final int sizeHint) {
         return new ImmutableMapEntryNodeBuilder(sizeHint);
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final MapEntryNode node) {
         if (!(node instanceof ImmutableMapEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
@@ -80,7 +80,7 @@ public class ImmutableMapEntryNodeBuilder
 
 
     @Override
-    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
+    public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withValue(
             final Collection<DataContainerChild<? extends PathArgument, ?>> withValue) {
         fillQnames(withValue, childrenQNamesToPaths);
         return super.withValue(withValue);
@@ -91,7 +91,7 @@ public class ImmutableMapEntryNodeBuilder
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
+    public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
             final DataContainerChild<?, ?> child) {
         // Augmentation nodes cannot be keys, and do not have to be present in childrenQNamesToPaths map
         if (!isAugment(child.getIdentifier())) {
@@ -117,16 +117,15 @@ public class ImmutableMapEntryNodeBuilder
             }
         }
 
-        return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
+        return new ImmutableMapEntryNode(getNodeIdentifier(), buildValue());
     }
 
     private static final class ImmutableMapEntryNode
-            extends AbstractImmutableDataContainerAttrNode<NodeIdentifierWithPredicates> implements MapEntryNode {
+            extends AbstractImmutableDataContainerNode<NodeIdentifierWithPredicates> implements MapEntryNode {
 
         ImmutableMapEntryNode(final NodeIdentifierWithPredicates nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
-                final Map<QName, String> attributes) {
-            super(children, nodeIdentifier, attributes);
+                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+            super(children, nodeIdentifier);
         }
     }
 }

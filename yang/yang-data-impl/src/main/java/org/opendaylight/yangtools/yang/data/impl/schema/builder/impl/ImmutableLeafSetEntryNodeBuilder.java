@@ -9,13 +9,11 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import java.util.Map;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public class ImmutableLeafSetEntryNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeWithValue, T, LeafSetEntryNode<T>> {
@@ -26,15 +24,14 @@ public class ImmutableLeafSetEntryNodeBuilder<T>
 
     @Override
     public LeafSetEntryNode<T> build() {
-        return new ImmutableLeafSetEntryNode<>(getNodeIdentifier(), getValue(), getAttributes());
+        return new ImmutableLeafSetEntryNode<>(getNodeIdentifier(), getValue());
     }
 
     private static final class ImmutableLeafSetEntryNode<T>
-            extends AbstractImmutableNormalizedValueAttrNode<NodeWithValue, T> implements LeafSetEntryNode<T> {
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeWithValue, T> implements LeafSetEntryNode<T> {
 
-        ImmutableLeafSetEntryNode(final NodeWithValue nodeIdentifier, final T value,
-                final Map<QName, String> attributes) {
-            super(nodeIdentifier, value, attributes);
+        ImmutableLeafSetEntryNode(final NodeWithValue nodeIdentifier, final T value) {
+            super(nodeIdentifier, value);
             checkArgument(Objects.deepEquals(nodeIdentifier.getValue(), value),
                     "Node identifier contains different value: %s than value itself: %s", nodeIdentifier, value);
         }

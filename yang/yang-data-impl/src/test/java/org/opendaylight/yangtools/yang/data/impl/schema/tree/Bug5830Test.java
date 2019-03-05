@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug5830Test {
@@ -227,7 +227,7 @@ public class Bug5830Test {
     }
 
     private static DataContainerChild<?, ?> createTaskDataContainer(final boolean withMandatoryNode) {
-        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
         if (withMandatoryNode) {
@@ -237,7 +237,7 @@ public class Bug5830Test {
     }
 
     private static DataContainerChild<?, ?> createTaskDataMultipleContainer(final boolean withPresenceContianer) {
-        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> nonPresenceContainerBuilder = Builders
                 .containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(NON_PRESENCE_CONTAINER))
                 .withChild(
@@ -249,7 +249,7 @@ public class Bug5830Test {
                     .withNodeIdentifier(new NodeIdentifier(PRESENCE_CONTAINER_2)).build());
         }
 
-        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> taskDataBuilder = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(TASK_DATA))
                 .withChild(ImmutableNodes.leafNode(OTHER_DATA, "foo"));
         taskDataBuilder.withChild(ImmutableNodes.leafNode(MANDATORY_DATA, "mandatory-data-value"));

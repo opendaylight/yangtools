@@ -29,7 +29,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailed
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug5968MergeTest {
@@ -57,7 +57,7 @@ public class Bug5968MergeTest {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.merge(
@@ -84,7 +84,7 @@ public class Bug5968MergeTest {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(true);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -198,7 +198,7 @@ public class Bug5968MergeTest {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(false);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -285,7 +285,7 @@ public class Bug5968MergeTest {
         }
     }
 
-    private static DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> createEmptyMapEntryBuilder(
+    private static DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createEmptyMapEntryBuilder(
             final Object listIdValue) throws DataValidationFailedException {
         return Builders.mapEntryBuilder()
                 .withNodeIdentifier(new NodeIdentifierWithPredicates(MY_LIST, ImmutableMap.of(LIST_ID, listIdValue)))
@@ -296,7 +296,7 @@ public class Bug5968MergeTest {
         return Builders.mapBuilder().withNodeIdentifier(new NodeIdentifier(MY_LIST));
     }
 
-    private static DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createContainerBuilder() {
+    private static DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createContainerBuilder() {
         return Builders.containerBuilder().withNodeIdentifier(new NodeIdentifier(ROOT));
     }
 

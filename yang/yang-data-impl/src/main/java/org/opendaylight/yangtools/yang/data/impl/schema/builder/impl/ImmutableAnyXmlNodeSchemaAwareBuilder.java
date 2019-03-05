@@ -11,7 +11,7 @@ import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 
 public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXmlNodeBuilder {
@@ -20,18 +20,18 @@ public final class ImmutableAnyXmlNodeSchemaAwareBuilder extends ImmutableAnyXml
         super.withNodeIdentifier(NodeIdentifier.create(schema.getQName()));
     }
 
-    public static @NonNull NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(
+    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create(
             final AnyXmlSchemaNode schema) {
         return new ImmutableAnyXmlNodeSchemaAwareBuilder(schema);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withValue(final DOMSource withValue) {
+    public NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withValue(final DOMSource withValue) {
         return super.withValue(withValue);
     }
 
     @Override
-    public NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withNodeIdentifier(
+    public NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> withNodeIdentifier(
             final NodeIdentifier withNodeIdentifier) {
         throw new UnsupportedOperationException("Node identifier created from schema");
     }

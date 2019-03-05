@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * Schema of this node is described by instance of
  * {@link org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode}.
  */
-public interface ContainerNode extends AttributesContainer, DataContainerNode<NodeIdentifier>,
+public interface ContainerNode extends DataContainerNode<NodeIdentifier>,
         DataContainerChild<NodeIdentifier, Collection<DataContainerChild<? extends PathArgument, ?>>> {
 
 }

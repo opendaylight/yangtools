@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 
@@ -33,7 +33,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
     @Override
     final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
             final Optional<NormalizedNode<?, ?>> deepestChild) {
-        final NormalizedNodeAttrBuilder<? extends PathArgument, Object,
+        final NormalizedNodeBuilder<? extends PathArgument, Object,
                 ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
 
         if (deepestChild.isPresent()) {
@@ -53,7 +53,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         return false;
     }
 
-    abstract NormalizedNodeAttrBuilder<? extends PathArgument, Object,
+    abstract NormalizedNodeBuilder<? extends PathArgument, Object,
             ? extends NormalizedNode<? extends PathArgument, Object>> getBuilder(PathArgument node);
 
     static final class LeafNormalization extends InstanceIdToSimpleNodes<NodeIdentifier> {
@@ -62,7 +62,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
 
         @Override
-        NormalizedNodeAttrBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
+        NormalizedNodeBuilder<NodeIdentifier, Object, LeafNode<Object>> getBuilder(final PathArgument node) {
             return Builders.leafBuilder().withNodeIdentifier(getIdentifier());
         }
     }
@@ -73,7 +73,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
         }
 
         @Override
-        NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final PathArgument node) {
+        NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> getBuilder(final PathArgument node) {
             checkArgument(node instanceof NodeWithValue);
             return Builders.leafSetEntryBuilder().withNodeIdentifier((NodeWithValue<?>) node)
                     .withValue(((NodeWithValue<?>) node).getValue());

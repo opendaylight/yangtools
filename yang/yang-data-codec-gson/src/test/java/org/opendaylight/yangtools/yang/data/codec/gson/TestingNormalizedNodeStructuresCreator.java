@@ -31,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 
@@ -43,7 +42,7 @@ public final class TestingNormalizedNodeStructuresCreator {
     @SafeVarargs
     static NormalizedNode<?, ?> cont1Node(
             final DataContainerChild<? extends PathArgument, ?>... children) {
-        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> cont1 = Builders.containerBuilder();
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> cont1 = Builders.containerBuilder();
         cont1.withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "cont1")));
 
         cont1.withValue(Arrays.asList(children));
@@ -58,7 +57,7 @@ public final class TestingNormalizedNodeStructuresCreator {
     }
 
     private static UnkeyedListEntryNode lst12Entry1Node() {
-        DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> lst12Entry1Builder = Builders
+        DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> lst12Entry1Builder = Builders
                 .unkeyedListEntryBuilder();
         lst12Entry1Builder
                 .withNodeIdentifier(new NodeIdentifier(QName.create("ns:complex:json", "2014-08-11", "lst12")));
@@ -175,7 +174,7 @@ public final class TestingNormalizedNodeStructuresCreator {
 
     private static DataContainerChild<? extends PathArgument, ?> childLst11() {
 
-        DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> lst11Entry1Builder = Builders
+        DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> lst11Entry1Builder = Builders
                 .mapEntryBuilder();
 
         Map<QName, Object> key = new HashMap<>();

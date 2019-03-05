@@ -32,7 +32,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
@@ -138,10 +137,10 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
-        DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
+        DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> createBuilder(
                 final PathArgument currentArg) {
             final NodeIdentifierWithPredicates arg = (NodeIdentifierWithPredicates) currentArg;
-            final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
+            final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder = Builders
                     .mapEntryBuilder().withNodeIdentifier(arg);
             for (final Entry<QName, Object> keyValue : arg.getKeyValues().entrySet()) {
                 builder.addChild(Builders.leafBuilder()
@@ -163,7 +162,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
-        DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> createBuilder(
+        DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> createBuilder(
                 final PathArgument compositeNode) {
             return Builders.unkeyedListEntryBuilder().withNodeIdentifier(getIdentifier());
         }
@@ -180,7 +179,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         }
 
         @Override
-        DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createBuilder(final PathArgument compositeNode) {
+        DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createBuilder(final PathArgument compositeNode) {
             return Builders.containerBuilder().withNodeIdentifier(getIdentifier());
         }
 
