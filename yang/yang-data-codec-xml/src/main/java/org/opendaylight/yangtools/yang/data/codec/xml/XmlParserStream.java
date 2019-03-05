@@ -279,6 +279,7 @@ public final class XmlParserStream implements Closeable, Flushable {
                     attributes.put(QName.create(uri, localName), attrValue);
                 }
             } else {
+                StreamWriterFacade.warnLegacyAttribute(localName);
                 attributes.put(QName.create(NormalizedMetadata.LEGACY_ATTRIBUTE_NAMESPACE, localName), attrValue);
             }
         }

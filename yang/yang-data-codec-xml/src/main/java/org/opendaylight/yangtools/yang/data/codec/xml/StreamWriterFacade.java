@@ -128,12 +128,7 @@ final class StreamWriterFacade extends ValueWriter {
             // FIXME: remove this handling once we have complete mapping to metadata
             if (namespace.isEmpty()) {
                 // Legacy attribute, which is expected to be a String
-                if (LEGACY_ATTRIBUTES.add(localName)) {
-                    LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix "
-                        + "this warning by defining a proper YANG annotation to cover it", localName,
-                        new Throwable("Call stack"));
-                }
-
+                warnLegacyAttribute(localName);
                 if (!(value instanceof String)) {
                     if (BROKEN_ATTRIBUTES.add(localName)) {
                         LOG.warn("Unbound annotation {} does not have a String value, ignoring it. Please fix the "
@@ -250,6 +245,14 @@ final class StreamWriterFacade extends ValueWriter {
                 default:
                     throw new IllegalStateException("Unhandled event " + event);
             }
+        }
+    }
+
+    static void warnLegacyAttribute(final String localName) {
+        if (LEGACY_ATTRIBUTES.add(localName)) {
+            LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix this "
+                    + "warning by defining a proper YANG annotation to cover it", localName,
+                    new Throwable("Call stack"));
         }
     }
 

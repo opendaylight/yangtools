@@ -7,13 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 
 /**
  * Instance of Map entry, this node does not contains value, but child nodes.
  */
-public interface MapEntryNode extends AttributesContainer, DataContainerNode<NodeIdentifierWithPredicates> {
+public interface MapEntryNode extends DataContainerNode<NodeIdentifierWithPredicates> {
     /**
      * Returns identifier of this node in parent map node
      *
