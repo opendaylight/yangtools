@@ -7,8 +7,11 @@
  */
 package org.opendaylight.yangtools.rfc7952.data.api;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -17,12 +20,14 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 
 /**
  * RFC7952 metadata counterpart to a {@link NormalizedNode}. This interface is meant to be used as a companion to
  * a NormalizedNode instance, hence it does not support iterating over its structure like it is possible with
- * {@link NormalizedNode#getValue()}.
+ * {@link NormalizedNode#getValue()}. Children may be inquired through {@link #getChild(PathArgument)}, similar to
+ * {@link NormalizedNodeContainer}.
  *
  * <p>
  * This model of metadata <em>does not</em> have the RFC7952 restriction on metadata attachment to {@code list}s and
@@ -40,4 +45,16 @@ public interface NormalizedMetadata extends Identifiable<PathArgument>, Immutabl
      * @return The set of annotations attached to the corresponding data node.
      */
     @NonNull Map<QName, Object> getAnnotations();
+
+    /**
+     * Returns child node identified by provided key. Default implementation returns {@link Optional#empty()}.
+     *
+     * @param child Path argument identifying child node
+     * @return Optional with child node if child exists, {@link Optional#empty()} if it does not.
+     * @throws NullPointerException if {@code child} is null
+     */
+    default Optional<NormalizedMetadata> getChild(final PathArgument child) {
+        requireNonNull(child);
+        return Optional.empty();
+    }
 }
