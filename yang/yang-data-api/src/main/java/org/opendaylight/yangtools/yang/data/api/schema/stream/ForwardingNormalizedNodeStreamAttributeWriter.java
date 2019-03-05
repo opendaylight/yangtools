@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.util.Map;
 import org.opendaylight.yangtools.yang.common.QName;
 
+// FIXME: YANGTOOLS-961: remove this class
+@Deprecated
 public abstract class ForwardingNormalizedNodeStreamAttributeWriter extends ForwardingNormalizedNodeStreamWriter
         implements NormalizedNodeStreamAttributeWriter {
     @Override

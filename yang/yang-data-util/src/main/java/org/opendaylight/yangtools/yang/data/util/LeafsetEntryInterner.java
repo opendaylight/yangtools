@@ -47,11 +47,6 @@ public final class LeafsetEntryInterner {
 
     @SuppressWarnings("static-method")
     public <T extends LeafSetEntryNode<?>> @NonNull T intern(final @NonNull T sample) {
-        if (!sample.getAttributes().isEmpty()) {
-            // Non-empty attributes, do not intern
-            return sample;
-        }
-
         /*
          * We do not perform type checks here as they are implied by #forSchema(LeafListSchemaNode). Any misuse can
          * result in inappropriate candidates being interned, but the alternative would be quite a bit slower.
