@@ -16,7 +16,6 @@ import java.util.Deque;
 import java.util.Map;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataContainer;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -150,12 +149,11 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
 
     private @Nullable NormalizedMetadata findMetadata(final PathArgument name) {
         final NormalizedMetadata current = stack.peek();
-        if (current instanceof NormalizedMetadataContainer) {
-            return ((NormalizedMetadataContainer) current).getChild(name).orElse(null);
+        if (current == null) {
+            // This may either be the first entry or unattached metadata nesting
+            return stack.isEmpty() ? metadata : null;
         }
-
-        // This may either be the first entry or unattached metadata nesting
-        return stack.isEmpty() ? metadata : null;
+        return current.getChild(name).orElse(null);
     }
 
     private void emitAnnotations(final Map<QName, Object> annotations) throws IOException {
