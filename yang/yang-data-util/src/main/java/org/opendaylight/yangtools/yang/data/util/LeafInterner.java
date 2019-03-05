@@ -49,15 +49,10 @@ public final class LeafInterner {
     }
 
     private static <T extends LeafNode<?>> T intern(final T sample) {
-        if (sample.getAttributes().isEmpty()) {
-            @SuppressWarnings("unchecked")
-            final T ret = (T) INTERNER.intern(sample);
-            LOG.trace("Interned object {} to {}", sample, ret);
-            return ret;
-        }
-
-        // Non-empty attributes, do not intern
-        return sample;
+        @SuppressWarnings("unchecked")
+        final T ret = (T) INTERNER.intern(sample);
+        LOG.trace("Interned object {} to {}", sample, ret);
+        return ret;
     }
 
     /**
