@@ -15,24 +15,22 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 abstract class AbstractImmutableDataContainerNodeAttrBuilder<I extends PathArgument, R extends DataContainerNode<I>>
         extends AbstractImmutableDataContainerNodeBuilder<I, R> implements DataContainerNodeAttrBuilder<I, R> {
-    private Map<QName, String> attributes;
+    private Map<QName, String> attributes = ImmutableMap.of();
 
     AbstractImmutableDataContainerNodeAttrBuilder() {
-        this.attributes = ImmutableMap.of();
+
     }
 
     AbstractImmutableDataContainerNodeAttrBuilder(final int sizeHint) {
         super(sizeHint);
-        this.attributes = ImmutableMap.of();
     }
 
-    AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerAttrNode<I> node) {
+    AbstractImmutableDataContainerNodeAttrBuilder(final AbstractImmutableDataContainerNode<I> node) {
         super(node);
-        this.attributes = node.getAttributes();
     }
 
     protected final Map<QName, String> getAttributes() {
