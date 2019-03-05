@@ -34,7 +34,7 @@ import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -184,7 +184,7 @@ public class DataTreeCandidateValidatorTest2 {
 
         final ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container.getDataChildByName(deviceType);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr = Builders
                 .containerBuilder(container);
 
         final MapNode devTypeMap = createDevTypeList(devTypeListSchemaNode);
@@ -210,7 +210,7 @@ public class DataTreeCandidateValidatorTest2 {
         final LeafNode<String> typeLeaf = ImmutableNodes.leafNode(type, typeVal);
         final LeafNode<String> descLeaf = ImmutableNodes.leafNode(desc, descVal);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devTypeMapEntryBldr = Builders
                 .mapEntryBuilder(devTypeListSchemaNode);
 
         devTypeMapEntryBldr.addChild(typeLeaf);
@@ -223,7 +223,7 @@ public class DataTreeCandidateValidatorTest2 {
 
         final ListSchemaNode chipsListSchemaNode = (ListSchemaNode) container.getDataChildByName(chip);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
                 .containerBuilder(container);
 
         final MapNode chipsMap = createChipsList(chipsListSchemaNode);
@@ -248,7 +248,7 @@ public class DataTreeCandidateValidatorTest2 {
         final LeafNode<String> devTypeLeaf = ImmutableNodes.leafNode(devType, devTypeVal);
         final LeafNode<String> chipDescLeaf = ImmutableNodes.leafNode(chipDesc, chipDescVal);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> chipsMapEntryBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> chipsMapEntryBldr = Builders
                 .mapEntryBuilder(chipsListSchemaNode);
 
         chipsMapEntryBldr.addChild(devTypeLeaf);
@@ -261,7 +261,7 @@ public class DataTreeCandidateValidatorTest2 {
 
         final ListSchemaNode devicesListSchemaNode = (ListSchemaNode) container.getDataChildByName(device);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
                 .containerBuilder(container);
 
         final MapNode devicesMap = createDeviceList(devicesListSchemaNode);
@@ -296,7 +296,7 @@ public class DataTreeCandidateValidatorTest2 {
         final LeafNode<Integer> snValLeaf = ImmutableNodes.leafNode(sn, snVal);
         final LeafNode<String> defaultIpLeaf = ImmutableNodes.leafNode(defaultIp, defaultIpVal);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> devicesMapEntryBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> devicesMapEntryBldr = Builders
                 .mapEntryBuilder(devicesListSchemaNode);
 
         devicesMapEntryBldr.addChild(typeTextLeaf);

@@ -28,7 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 public class Bug5968Test {
@@ -57,7 +57,7 @@ public class Bug5968Test {
         final DataTree inMemoryDataTree = new InMemoryDataTreeFactory().create(
                 DataTreeConfiguration.DEFAULT_CONFIGURATION, schemaContext);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT));
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
         modificationTree.write(
@@ -84,7 +84,7 @@ public class Bug5968Test {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(true);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();
@@ -188,7 +188,7 @@ public class Bug5968Test {
         final DataTree inMemoryDataTree = emptyDataTree(SCHEMA_CONTEXT);
 
         final MapNode myList = createMap(false);
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> root = Builders.containerBuilder()
                 .withNodeIdentifier(new NodeIdentifier(ROOT)).withChild(myList);
 
         final DataTreeModification modificationTree = inMemoryDataTree.takeSnapshot().newModification();

@@ -7,18 +7,16 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public class ImmutableLeafNodeBuilder<T>
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> {
 
-    public static <T> @NonNull NormalizedNodeAttrBuilder<NodeIdentifier, T, LeafNode<T>> create() {
+    public static <T> @NonNull NormalizedNodeBuilder<NodeIdentifier, T, LeafNode<T>> create() {
         return new ImmutableLeafNodeBuilder<>();
     }
 
@@ -27,24 +25,23 @@ public class ImmutableLeafNodeBuilder<T>
     public LeafNode<T> build() {
         final T value = getValue();
         if (value instanceof byte[]) {
-            return (LeafNode<T>) new ImmutableBinaryLeafNode(getNodeIdentifier(), (byte[]) value, getAttributes());
+            return (LeafNode<T>) new ImmutableBinaryLeafNode(getNodeIdentifier(), (byte[]) value);
         }
 
-        return new ImmutableLeafNode<>(getNodeIdentifier(), value, getAttributes());
+        return new ImmutableLeafNode<>(getNodeIdentifier(), value);
     }
 
     private static final class ImmutableLeafNode<T>
-            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, T> implements LeafNode<T> {
-        ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value, final Map<QName, String> attributes) {
-            super(nodeIdentifier, value, attributes);
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, T> implements LeafNode<T> {
+        ImmutableLeafNode(final NodeIdentifier nodeIdentifier, final T value) {
+            super(nodeIdentifier, value);
         }
     }
 
     private static final class ImmutableBinaryLeafNode
-            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, byte[]> implements LeafNode<byte[]> {
-        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value,
-            final Map<QName, String> attributes) {
-            super(nodeIdentifier, value, attributes);
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, byte[]> implements LeafNode<byte[]> {
+        ImmutableBinaryLeafNode(final NodeIdentifier nodeIdentifier, final byte[] value) {
+            super(nodeIdentifier, value);
         }
 
         @Override

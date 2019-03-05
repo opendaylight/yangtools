@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.DataTreeModification
 import org.opendaylight.yangtools.yang.data.api.schema.tree.DataValidationFailedException;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.test.util.YangParserTestUtils;
 
@@ -142,12 +142,12 @@ public class Bug4295Test {
         modification.write(path, createInnerListBuilder().build());
     }
 
-    private DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
+    private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createRootContainerBuilder() {
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(
                 new YangInstanceIdentifier.NodeIdentifier(root));
     }
 
-    private DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
+    private DataContainerNodeBuilder<NodeIdentifier, ContainerNode> createSubRootContainerBuilder() {
         return ImmutableContainerNodeBuilder.create().withNodeIdentifier(
                 new YangInstanceIdentifier.NodeIdentifier(subRoot));
     }
