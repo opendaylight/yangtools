@@ -9,13 +9,12 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 public class ImmutableContainerNodeBuilder
         extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> {
@@ -50,16 +49,15 @@ public class ImmutableContainerNodeBuilder
 
     @Override
     public ContainerNode build() {
-        return new ImmutableContainerNode(getNodeIdentifier(), buildValue(), getAttributes());
+        return new ImmutableContainerNode(getNodeIdentifier(), buildValue());
     }
 
-    protected static final class ImmutableContainerNode extends AbstractImmutableDataContainerAttrNode<NodeIdentifier>
+    protected static final class ImmutableContainerNode extends AbstractImmutableDataContainerNode<NodeIdentifier>
             implements ContainerNode {
 
         ImmutableContainerNode(final NodeIdentifier nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
-                final Map<QName, String> attributes) {
-            super(children, nodeIdentifier, attributes);
+                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+            super(children, nodeIdentifier);
         }
     }
 }

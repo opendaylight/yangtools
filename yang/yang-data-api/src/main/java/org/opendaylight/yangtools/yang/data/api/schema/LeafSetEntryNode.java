@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 
 /**
@@ -21,8 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
  * @param <T>
  *            Value type
  */
-public interface LeafSetEntryNode<T> extends AttributesContainer, NormalizedNode<NodeWithValue, T>,
-        ValueNode<NodeWithValue, T> {
+public interface LeafSetEntryNode<T> extends NormalizedNode<NodeWithValue, T>, ValueNode<NodeWithValue, T> {
     /**
      * Returns {@link NodeWithValue} which identifies this leaf set entry.
      * Returned {@link NodeWithValue} contains same value as this node.

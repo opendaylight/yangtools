@@ -14,7 +14,8 @@ import org.opendaylight.yangtools.yang.common.QName;
 /**
  * Extension to the NormalizedNodeStreamWriter with attribute support.
  */
-// FIXME: remove this interface
+// FIXME: YANGTOOLS-961: remove this class
+@Deprecated
 public interface NormalizedNodeStreamAttributeWriter extends NormalizedNodeStreamWriter {
 
     void attributes(Map<QName, String> attributes) throws IOException;
