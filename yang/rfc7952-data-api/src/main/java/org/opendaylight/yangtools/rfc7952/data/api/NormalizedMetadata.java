@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
 public interface NormalizedMetadata extends Identifiable<PathArgument>, Immutable {
     /**
      * Return the set of annotations defined in this metadata node. Values are expected to be effectively-immutable
-     * scalar types, like {@link String}s, {@link Number}s and similar.
+     * scalar types, like {@link String}s, {@link Number}s and similar. The map must also be effectively-immutable.
      *
      * @return The set of annotations attached to the corresponding data node.
      */

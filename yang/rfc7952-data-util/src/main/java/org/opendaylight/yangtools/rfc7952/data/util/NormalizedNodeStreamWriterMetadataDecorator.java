@@ -9,11 +9,11 @@ package org.opendaylight.yangtools.rfc7952.data.util;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
-import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataContainer;
@@ -160,13 +160,7 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
 
     private void emitAnnotations(final Map<QName, Object> annotations) throws IOException {
         if (!annotations.isEmpty()) {
-            metaWriter.startMetadata(annotations.size());
-            for (Entry<QName, Object> entry : annotations.entrySet()) {
-                metaWriter.startMetadataEntry(entry.getKey(), null);
-                writer.nodeValue(entry.getValue());
-                writer.endNode();
-            }
-            writer.endNode();
+            metaWriter.metadata(ImmutableMap.copyOf(annotations));
         }
     }
 }
