@@ -8,13 +8,12 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 
 /**
  * An AnyxmlNode with data in {@link DOMSource} format.
  */
 // FIXME: 4.0.0: YANGTOOLS-976: rename to DOMSourceAnyxmlNode
-public interface AnyXmlNode extends AttributesContainer, AnyxmlNode<DOMSource> {
+public interface AnyXmlNode extends AnyxmlNode<DOMSource> {
     @Override
     default Class<DOMSource> getValueObjectModel() {
         return DOMSource.class;
