@@ -40,10 +40,9 @@ import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefValidation;
 import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.tree.InMemoryDataTreeFactory;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -388,7 +387,7 @@ public class DataTreeCandidateValidatorTest {
         final ContainerSchemaNode con1Con = (ContainerSchemaNode) odlCon
                 .getDataChildByName(con1);
         final LeafNode<String> l1Leaf = ImmutableNodes.leafNode(l1, "l1 value");
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder = Builders
                 .containerBuilder(con1Con);
         containerBuilder.addChild(l1Leaf);
         final ContainerNode con1Node = containerBuilder.build();
@@ -472,7 +471,7 @@ public class DataTreeCandidateValidatorTest {
 
         choiceBuilder.addChild(mapBuilder.build());
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> containerBuilder = Builders
                 .containerBuilder();
         containerBuilder.withNodeIdentifier(new NodeIdentifier(con3));
 
@@ -483,7 +482,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static MapEntryNode createList3Entry(final String keyVal,
             final String l3Val1, final String l3Val2, final String l3Val3) {
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
         mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
                 list3InChoice, k, keyVal));
@@ -504,7 +503,7 @@ public class DataTreeCandidateValidatorTest {
 
     private static LeafSetEntryNode<Object> createLeafSetEntry(
             final QName qname, final String val) {
-        final NormalizedNodeAttrBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder = Builders
+        final NormalizedNodeBuilder<NodeWithValue, Object, LeafSetEntryNode<Object>> leafSetEntryBuilder = Builders
                 .leafSetEntryBuilder();
         leafSetEntryBuilder.withNodeIdentifier(new NodeWithValue<>(qname, val));
         leafSetEntryBuilder.withValue(val);
@@ -543,7 +542,7 @@ public class DataTreeCandidateValidatorTest {
             final String leafrefInChoiceVal,
             final String leafrefInChoiceToChoiceVal) {
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> mapEntryBuilder = Builders
                 .mapEntryBuilder();
 
         mapEntryBuilder.withNodeIdentifier(new NodeIdentifierWithPredicates(
@@ -603,7 +602,7 @@ public class DataTreeCandidateValidatorTest {
         final ListSchemaNode contributorListSchemaNode = (ListSchemaNode) contributorContSchemaNode
                 .getDataChildByName(contributor);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
                 .containerBuilder(contributorContSchemaNode);
 
         final MapNode contributorMap = createContributorList(contributorListSchemaNode);
@@ -695,7 +694,7 @@ public class DataTreeCandidateValidatorTest {
         final ListSchemaNode projListSchemaNode = (ListSchemaNode) container
                 .getDataChildByName(project);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> odlProjectContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> odlProjectContainerBldr = Builders
                 .containerBuilder(container);
 
         final MapNode projectMap = createProjectList(projListSchemaNode);
@@ -745,7 +744,7 @@ public class DataTreeCandidateValidatorTest {
         final LeafNode<String> ownerLeafRef = ImmutableNodes.leafNode(owner,
                 ownerVal);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> projMapEntryBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> projMapEntryBldr = Builders
                 .mapEntryBuilder(projListSchemaNode);
 
         projMapEntryBldr.addChild(nameLeaf);
@@ -763,7 +762,7 @@ public class DataTreeCandidateValidatorTest {
         final ListSchemaNode contributorListSchemaNode = (ListSchemaNode) contributorContSchemaNode
                 .getDataChildByName(contributor);
 
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
                 .containerBuilder(contributorContSchemaNode);
 
         final MapNode contributorMap = createBasicContributorList(contributorListSchemaNode);

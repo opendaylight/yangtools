@@ -7,33 +7,30 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
-import java.util.Map;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedValueAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableNormalizedSimpleValueNode;
 
 public class ImmutableAnyXmlNodeBuilder
         extends AbstractImmutableNormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> {
 
-    public static @NonNull NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create() {
+    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, DOMSource, AnyXmlNode> create() {
         return new ImmutableAnyXmlNodeBuilder();
     }
 
     @Override
     public AnyXmlNode build() {
-        return new ImmutableXmlNode(getNodeIdentifier(), getValue(), getAttributes());
+        return new ImmutableXmlNode(getNodeIdentifier(), getValue());
     }
 
     private static final class ImmutableXmlNode
-            extends AbstractImmutableNormalizedValueAttrNode<NodeIdentifier, DOMSource> implements AnyXmlNode {
+            extends AbstractImmutableNormalizedSimpleValueNode<NodeIdentifier, DOMSource> implements AnyXmlNode {
 
-        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value,
-                final Map<QName, String> attributes) {
-            super(nodeIdentifier, value, attributes);
+        ImmutableXmlNode(final NodeIdentifier nodeIdentifier, final DOMSource value) {
+            super(nodeIdentifier, value);
         }
     }
 }
