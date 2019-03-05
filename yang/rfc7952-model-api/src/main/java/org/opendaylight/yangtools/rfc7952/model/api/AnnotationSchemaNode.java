@@ -12,6 +12,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.util.Map;
 import java.util.Optional;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -33,7 +34,11 @@ public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
      *         by the SchemaContext..
      * @throws NullPointerException if any of the arguments is null
      */
-    static Optional<AnnotationSchemaNode> find(final SchemaContext context, final QName qname) {
+    static @NonNull Optional<AnnotationSchemaNode> find(final SchemaContext context, final QName qname) {
+        if (context instanceof AnnotationSchemaNodeAware) {
+            return ((AnnotationSchemaNodeAware) context).findAnnotation(qname);
+        }
+
         return context.findModule(qname.getModule()).flatMap(module -> {
             return module.getUnknownSchemaNodes().stream()
                     .filter(AnnotationSchemaNode.class::isInstance)
@@ -49,13 +54,12 @@ public interface AnnotationSchemaNode extends UnknownSchemaNode, TypeAware {
      * @return {@link AnnotationSchemaNode}s supported by the SchemaContext..
      * @throws NullPointerException if context is null
      */
-    static Map<QName, AnnotationSchemaNode> findAll(final SchemaContext context) {
+    static @NonNull Map<QName, AnnotationSchemaNode> findAll(final SchemaContext context) {
         final Builder<QName, AnnotationSchemaNode> builder = ImmutableMap.builder();
         for (Module module : context.getModules()) {
             for (UnknownSchemaNode node : module.getUnknownSchemaNodes()) {
                 if (node instanceof AnnotationSchemaNode) {
-                    final AnnotationSchemaNode annotation = (AnnotationSchemaNode) node;
-                    builder.put(annotation.getQName(), annotation);
+                    builder.put(node.getQName(), (AnnotationSchemaNode) node);
                 }
             }
         }

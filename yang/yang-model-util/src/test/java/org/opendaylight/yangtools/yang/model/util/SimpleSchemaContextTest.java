@@ -78,6 +78,7 @@ public class SimpleSchemaContextTest {
         doReturn(mod.toString()).when(ret).toString();
         doReturn(ImmutableSet.of()).when(ret).getImports();
         doReturn(ImmutableSet.of()).when(ret).getSubmodules();
+        doReturn(ImmutableList.of()).when(ret).getUnknownSchemaNodes();
         return ret;
     }
 }
