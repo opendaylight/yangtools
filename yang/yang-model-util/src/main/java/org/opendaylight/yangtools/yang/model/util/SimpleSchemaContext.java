@@ -7,6 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
@@ -20,8 +22,12 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNodeAwareSchemaContext;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 
@@ -31,11 +37,12 @@ import org.opendaylight.yangtools.yang.model.api.Module;
  * any extensive analysis to ensure the resulting object complies to SchemaContext interface.
  */
 @Beta
-public class SimpleSchemaContext extends AbstractSchemaContext {
+public class SimpleSchemaContext extends AbstractSchemaContext implements AnnotationSchemaNodeAwareSchemaContext {
     private final ImmutableSetMultimap<URI, Module> namespaceToModules;
     private final ImmutableSetMultimap<String, Module> nameToModules;
     private final ImmutableMap<QNameModule, Module> moduleMap;
     private final ImmutableSet<Module> modules;
+    private final ImmutableMap<QName, AnnotationSchemaNode> annotations;
 
     protected SimpleSchemaContext(final Set<Module> modules) {
         /*
@@ -71,6 +78,7 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
         namespaceToModules = ImmutableSetMultimap.copyOf(nsMap);
         nameToModules = ImmutableSetMultimap.copyOf(nameMap);
         moduleMap = moduleMapBuilder.build();
+        annotations = ImmutableMap.copyOf(AnnotationSchemaNode.findAll(this));
     }
 
     /**
@@ -84,6 +92,11 @@ public class SimpleSchemaContext extends AbstractSchemaContext {
     @Override
     public final Set<Module> getModules() {
         return modules;
+    }
+
+    @Override
+    public final Optional<AnnotationSchemaNode> findAnnotation(final QName qname) {
+        return Optional.ofNullable(annotations.get(requireNonNull(qname)));
     }
 
     @Override
