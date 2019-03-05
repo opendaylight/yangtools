@@ -12,12 +12,10 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Objects;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArgument,V>
-        extends AbstractImmutableNormalizedValueNode<K, V>
-        implements AttributesContainer {
+        extends AbstractImmutableNormalizedValueNode<K, V> {
 
     private final ImmutableMap<QName, String> attributes;
 
@@ -27,12 +25,10 @@ public abstract class AbstractImmutableNormalizedValueAttrNode<K extends PathArg
         this.attributes = ImmutableMap.copyOf(attributes);
     }
 
-    @Override
     public final Map<QName, String> getAttributes() {
         return attributes;
     }
 
-    @Override
     public final Object getAttributeValue(final QName value) {
         return attributes.get(value);
     }
