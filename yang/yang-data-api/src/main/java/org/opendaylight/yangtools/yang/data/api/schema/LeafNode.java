@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
@@ -20,8 +19,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
  *
  * @param <T> Value type
  */
-public interface LeafNode<T> extends AttributesContainer, DataContainerChild<NodeIdentifier, T>,
-        ValueNode<NodeIdentifier, T> {
+public interface LeafNode<T> extends DataContainerChild<NodeIdentifier, T>, ValueNode<NodeIdentifier, T> {
     /**
      * Returns value of this leaf node.
      *
