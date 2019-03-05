@@ -9,16 +9,15 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import java.util.Map;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
-import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerAttrNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 
 public class ImmutableUnkeyedListEntryNodeBuilder
-        extends AbstractImmutableDataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> {
+        extends AbstractImmutableDataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> {
 
     protected ImmutableUnkeyedListEntryNodeBuilder() {
 
@@ -32,16 +31,16 @@ public class ImmutableUnkeyedListEntryNodeBuilder
         super(node);
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create() {
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create() {
         return new ImmutableUnkeyedListEntryNodeBuilder();
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
             final int sizeHint) {
         return new ImmutableUnkeyedListEntryNodeBuilder(sizeHint);
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifier, UnkeyedListEntryNode> create(
             final UnkeyedListEntryNode node) {
         if (!(node instanceof ImmutableUnkeyedListEntryNode)) {
             throw new UnsupportedOperationException(String.format("Cannot initialize from class %s", node.getClass()));
@@ -51,16 +50,15 @@ public class ImmutableUnkeyedListEntryNodeBuilder
 
     @Override
     public UnkeyedListEntryNode build() {
-        return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue(), getAttributes());
+        return new ImmutableUnkeyedListEntryNode(getNodeIdentifier(), buildValue());
     }
 
     protected static final class ImmutableUnkeyedListEntryNode
-            extends AbstractImmutableDataContainerAttrNode<NodeIdentifier> implements UnkeyedListEntryNode {
+            extends AbstractImmutableDataContainerNode<NodeIdentifier> implements UnkeyedListEntryNode {
 
         ImmutableUnkeyedListEntryNode(final NodeIdentifier nodeIdentifier,
-                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children,
-                final Map<QName, String> attributes) {
-            super(children, nodeIdentifier, attributes);
+                final Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> children) {
+            super(children, nodeIdentifier);
         }
     }
 }

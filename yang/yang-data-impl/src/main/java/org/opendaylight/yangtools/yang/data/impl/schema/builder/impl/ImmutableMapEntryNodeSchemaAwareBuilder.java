@@ -20,7 +20,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataNodeContainerValidator;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.valid.DataValidationException.IllegalListKeyException;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
@@ -41,7 +41,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
     }
 
     @Override
-    public DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
+    public DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> withChild(
             final DataContainerChild<?, ?> child) {
         validator.validateChild(child.getIdentifier());
         return super.withChild(child);
@@ -53,7 +53,7 @@ public final class ImmutableMapEntryNodeSchemaAwareBuilder extends ImmutableMapE
         return super.build();
     }
 
-    public static @NonNull DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
+    public static @NonNull DataContainerNodeBuilder<NodeIdentifierWithPredicates, MapEntryNode> create(
             final ListSchemaNode schema) {
         return new ImmutableMapEntryNodeSchemaAwareBuilder(schema);
     }

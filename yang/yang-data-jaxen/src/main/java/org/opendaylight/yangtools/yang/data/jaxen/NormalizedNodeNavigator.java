@@ -14,9 +14,7 @@ import com.google.common.base.Verify;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.io.BaseEncoding;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
 import java.util.Set;
@@ -28,7 +26,6 @@ import org.jaxen.XPath;
 import org.jaxen.saxpath.SAXPathException;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.DataContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
@@ -228,34 +225,34 @@ final class NormalizedNodeNavigator extends DefaultNavigator implements NamedAcc
 
     @Override
     public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode) {
-        final NormalizedNode<?, ?> node = contextNode(contextNode);
-        if (node instanceof AttributesContainer) {
-            final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
-            if (attributes.isEmpty()) {
-                return null;
-            }
-
-            return attributes.entrySet().iterator();
-        }
-
+        // FIXME: how do we mix in metadata?
+        //      final NormalizedNode<?, ?> node = contextNode(contextNode);
+        //      if (node instanceof AttributesContainer) {
+        //          final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
+        //          if (attributes.isEmpty()) {
+        //              return null;
+        //          }
+        //
+        //          return attributes.entrySet().iterator();
+        //      }
         return null;
     }
 
     @Override
     public Iterator<? extends Entry<?, ?>> getAttributeAxisIterator(final Object contextNode, final String localName,
             final String namespacePrefix, final String namespaceURI) {
-        final NormalizedNode<?, ?> node = contextNode(contextNode);
-        if (node instanceof AttributesContainer) {
-            final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
-            if (attributes.isEmpty()) {
-                return null;
-            }
-
-            final QName qname = resolveQName(node, namespacePrefix, localName);
-            final String value = attributes.get(qname);
-            return value == null ? null : Iterators.singletonIterator(new SimpleImmutableEntry<>(qname, value));
-        }
-
+        // FIXME: how do we mix in metadata?
+        //      final NormalizedNode<?, ?> node = contextNode(contextNode);
+        //      if (node instanceof AttributesContainer) {
+        //          final Map<QName, String> attributes = ((AttributesContainer) node).getAttributes();
+        //          if (attributes.isEmpty()) {
+        //              return null;
+        //          }
+        //
+        //          final QName qname = resolveQName(node, namespacePrefix, localName);
+        //          final String value = attributes.get(qname);
+        //          return value == null ? null : Iterators.singletonIterator(new SimpleImmutableEntry<>(qname, value));
+        //      }
         return null;
     }
 
