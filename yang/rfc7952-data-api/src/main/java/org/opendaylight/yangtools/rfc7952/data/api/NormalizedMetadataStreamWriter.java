@@ -8,27 +8,16 @@
 package org.opendaylight.yangtools.rfc7952.data.api;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 
 /**
  * Extension to the NormalizedNodeStreamWriter with metadata support. Semantically this extends the event model of
- * {@link NormalizedNodeStreamWriter} with two new events:
- * <ul>
- * <li>{@link #startMetadata(int)} is within the scope of any open node and starts a block of metadata entries. It
- * is recommended to emit this block before any other events. Only
- * {@link #startMetadataEntry(QName, AnnotationSchemaNode)} and {@link NormalizedNodeStreamWriter#endNode()} are valid
- * in this node. This event may be emitted at most once for any open node.
- * </li>
- * <li>{@link #startMetadataEntry(QName, AnnotationSchemaNode)} to start a metadata entry. Its value is must be emitted
- * via {@link NormalizedNodeStreamWriter#nodeValue(Object)} before the entry is closed via
- * {@link NormalizedNodeStreamWriter#endNode()}.
- * </ul>
+ * {@link NormalizedNodeStreamWriter} with a new event, {@link #metadata(ImmutableMap)}. This event is valid on any
+ * open node. This event may be emitted only once.
  *
  * <p>
  * Note that some implementations of this interface, notably those targeting streaming XML, may require metadata to
@@ -42,29 +31,17 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 @Beta
 public interface NormalizedMetadataStreamWriter extends NormalizedNodeStreamWriterExtension {
     /**
-     * Start the metadata block for the currently-open node. Allowed events are
-     * {@link #startMetadataEntry(QName, AnnotationSchemaNode)} and {@link NormalizedNodeStreamWriter#endNode()}.
+     * Emit a block of metadata associated with the currently-open node. The argument is a map of annotation names,
+     * as defined {@code md:annotation} extension. Values are normalized objects, which are required to be
+     * effectively-immutable.
      *
-     * @param childSizeHint Non-negative count of expected direct child nodes or
-     *                      {@link NormalizedNodeStreamWriter#UNKNOWN_SIZE} if count is unknown. This is only hint and
-     *                      should not fail writing of child events, if there are more events than count.
-     * @throws IllegalStateException if current node already has a metadata block or cannot receive metadata -- for
-     *                               example because {@link #requireMetadataFirst()} was not honored.
+     * @param metadata Metadata block
+     * @throws NullPointerException if {@code metadata} is null
+     * @throws IllegalStateException when this method is invoked outside of an open node or metadata has already been
+     *                               emitted.
      * @throws IOException if an underlying IO error occurs
      */
-    void startMetadata(int childSizeHint) throws IOException;
-
-    /**
-     * Start a new metadata entry. The value of the metadata entry should be emitted through
-     * {@link NormalizedNodeStreamWriter#nodeValue(Object)}.
-     *
-     * @param name Metadata name, as defined through {@code md:annotation}
-     * @param schema Effective {@code md:annotation} schema, or null if unknown to the caller
-     * @throws NullPointerException if {@code name} is null
-     * @throws IllegalStateException when this method is invoked outside of a metadata block
-     * @throws IOException if an underlying IO error occurs
-     */
-    void startMetadataEntry(@NonNull QName name, @Nullable AnnotationSchemaNode schema) throws IOException;
+    void metadata(ImmutableMap<QName, Object> metadata) throws IOException;
 
     /**
      * Indicate whether metadata is required to be emitted just after an entry is open. The default implementation
