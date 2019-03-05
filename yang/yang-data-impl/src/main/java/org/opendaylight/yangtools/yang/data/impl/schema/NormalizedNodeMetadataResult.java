@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.impl.schema;
+
+import com.google.common.annotations.Beta;
+import java.util.Optional;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+
+/**
+ * A NormalizedNodeResult which also holds NormalizedMetadata structure.
+ *
+ * @author Robert Varga
+ */
+@Beta
+public class NormalizedNodeMetadataResult extends NormalizedNodeResult {
+    private NormalizedMetadata metadata;
+
+    public final Optional<NormalizedMetadata> getMetadata() {
+        return Optional.ofNullable(metadata);
+    }
+
+    void setResult(final NormalizedNode<?, ?> result, final NormalizedMetadata metadata) {
+        super.setResult(result);
+        this.metadata = metadata;
+    }
+}
