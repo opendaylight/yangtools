@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
@@ -25,6 +26,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +35,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import java.util.function.Function;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
@@ -181,6 +184,40 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     public static YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
+    }
+
+    /**
+     * Create a {@link YangInstanceIdentifier} by taking a snapshot of provided path and iterating it backwards.
+     *
+     * @param pathTowardsRoot Path towards root
+     * @return A {@link YangInstanceIdentifier} instance
+     * @throws NullPointerException if {@code pathTowardsRoot} or any of its members is null
+     */
+    public static YangInstanceIdentifier createReverse(final Deque<PathArgument> pathTowardsRoot) {
+        return createReverse(pathTowardsRoot, Objects::requireNonNull);
+    }
+
+    /**
+     * Create a {@link YangInstanceIdentifier} by walking specified stack backwards and extracting path components
+     * from it.
+     *
+     * @param stackTowardsRoot Stack towards root,
+     * @return A {@link YangInstanceIdentifier} instance
+     * @throws NullPointerException if {@code pathTowardsRoot} is null
+     */
+    public static <T> YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
+            final Function<T, PathArgument> function) {
+        if (stackTowardsRoot.isEmpty()) {
+            return EMPTY;
+        }
+
+        final ImmutableList.Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(
+            stackTowardsRoot.size());
+        final Iterator<? extends T> it = stackTowardsRoot.descendingIterator();
+        while (it.hasNext()) {
+            builder.add(function.apply(it.next()));
+        }
+        return YangInstanceIdentifier.create(builder.build());
     }
 
     boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
