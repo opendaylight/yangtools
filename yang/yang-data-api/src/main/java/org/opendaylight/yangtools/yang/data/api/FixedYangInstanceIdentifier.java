@@ -7,26 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static java.util.Objects.requireNonNull;
-
 import com.google.common.collect.ImmutableList;
+import java.io.Externalizable;
 import java.io.ObjectStreamException;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.opendaylight.yangtools.util.AbstractFixedLinearPath;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
-final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
+final class FixedYangInstanceIdentifier extends AbstractFixedLinearPath<YangInstanceIdentifier, PathArgument>
+        implements YangInstanceIdentifier {
+
     static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.of(),
             new HashCodeBuilder<>().build());
     private static final long serialVersionUID = 1L;
 
-    private final ImmutableList<PathArgument> path;
-    private transient volatile YangInstanceIdentifier parent;
-
     private FixedYangInstanceIdentifier(final ImmutableList<PathArgument> path, final int hash) {
-        super(hash);
-        this.path = requireNonNull(path, "path must not be null.");
+        super(hash, path);
     }
 
     static FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
@@ -34,107 +31,37 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
     }
 
     @Override
-    public boolean isEmpty() {
-        return path.isEmpty();
+    public FixedYangInstanceIdentifier toOptimized() {
+        return this;
     }
 
     @Override
-    public FixedYangInstanceIdentifier clone() {
-        try {
-            return (FixedYangInstanceIdentifier) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException("clone() should be supported", e);
-        }
+    public Externalizable toExternalizable() {
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
-    public YangInstanceIdentifier getParent() {
-        if (path.isEmpty()) {
-            return null;
-        }
-
-        YangInstanceIdentifier ret = parent;
-        if (ret == null) {
-            ret = YangInstanceIdentifier.create(path.subList(0, path.size() - 1));
-            parent = ret;
-        }
-
-        return ret;
-    }
-
-    @Nonnull
-    @Override
-    public YangInstanceIdentifier getAncestor(final int depth) {
-        checkArgument(depth >= 0, "Negative depth is not allowed");
-        checkArgument(depth <= path.size(), "Depth %s exceeds maximum depth %s", depth, path.size());
-
-        if (depth == path.size()) {
-            return this;
-        }
-        if (depth == path.size() - 1) {
-            // Use the parent cache
-            return getParent();
-        }
-        return YangInstanceIdentifier.create(path.subList(0, depth));
+    protected YangInstanceIdentifier createPath(final List<PathArgument> fromRoot) {
+        return YangInstanceIdentifier.create(fromRoot);
     }
 
     @Override
-    public List<PathArgument> getPathArguments() {
-        return path;
+    protected String computeToString(final List<PathArgument> pathFromRoot) {
+        return AbstractPathArgument.computeToString(getPathFromRoot());
     }
 
     @Override
-    public List<PathArgument> getReversePathArguments() {
-        return path.reverse();
-    }
-
-    @Nonnull
-    @Override
-    List<PathArgument> tryPathArguments() {
-        return path;
-    }
-
-    @Nonnull
-    @Override
-    List<PathArgument> tryReversePathArguments() {
-        return path.reverse();
+    protected YangInstanceIdentifier emptyPath() {
+        return EMPTY_INSTANCE;
     }
 
     @Override
-    public PathArgument getLastPathArgument() {
-        return path.isEmpty() ? null : path.get(path.size() - 1);
-    }
-
-    @Nonnull
-    @Override
-    YangInstanceIdentifier createRelativeIdentifier(final int skipFromRoot) {
-        if (skipFromRoot == path.size()) {
-            return EMPTY_INSTANCE;
-        }
-
-        final ImmutableList<PathArgument> newPath = path.subList(skipFromRoot, path.size());
-        final HashCodeBuilder<PathArgument> hash = new HashCodeBuilder<>();
-        for (PathArgument a : newPath) {
-            hash.addArgument(a);
-        }
-
-        return new FixedYangInstanceIdentifier(newPath, hash.build());
+    protected YangInstanceIdentifier thisPath() {
+        return this;
     }
 
     private Object readResolve() throws ObjectStreamException {
-        return path.isEmpty() ? EMPTY_INSTANCE : this;
-    }
-
-    @Override
-    boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
-        if (other instanceof FixedYangInstanceIdentifier) {
-            return path.equals(((FixedYangInstanceIdentifier) other).path);
-        }
-        return super.pathArgumentsEqual(other);
-    }
-
-    @Override
-    public FixedYangInstanceIdentifier toOptimized() {
-        return this;
+        return isEmpty() ? EMPTY_INSTANCE : this;
     }
 }

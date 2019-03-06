@@ -1,28 +1,29 @@
 /*
- * Copyright (c) 2015 Cisco Systems, Inc. and others. All rights reserved.
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api;
+package org.opendaylight.yangtools.util;
 
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.UnmodifiableIterator;
+import com.google.common.annotations.Beta;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.Nonnull;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
+import org.opendaylight.yangtools.concepts.Immutable;
+import org.opendaylight.yangtools.concepts.LinearPath;
 
-final class StackedPathArguments extends PathArgumentList {
-    private final List<PathArgument> base;
-    private final List<PathArgument> stack;
+@Beta
+public final class PathComponentsFromRoot<C extends Comparable<C> & Immutable> extends AbstractPathComponents<C> {
+    private final List<C> base;
+    private final List<C> stack;
 
-    StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
+    public PathComponentsFromRoot(final LinearPath<?, C> base, final List<C> stack) {
         verify(!stack.isEmpty());
-        this.base = base.getPathArguments();
+        this.base = base.getPathFromRoot();
         this.stack = stack;
     }
 
@@ -34,12 +35,12 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public boolean contains(final Object o) {
-        final PathArgument srch = (PathArgument) requireNonNull(o);
+        final C srch = (C) requireNonNull(o);
         return stack.contains(srch) || base.contains(srch);
     }
 
     @Override
-    public PathArgument get(final int index) {
+    public C get(final int index) {
         if (index < base.size()) {
             return base.get(index);
         }
@@ -49,7 +50,7 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int indexOf(final Object o) {
-        final PathArgument srch = (PathArgument) requireNonNull(o);
+        final C srch = (C) requireNonNull(o);
 
         int ret = base.indexOf(srch);
         if (ret == -1) {
@@ -64,7 +65,7 @@ final class StackedPathArguments extends PathArgumentList {
     @Override
     @SuppressWarnings("checkstyle:parameterName")
     public int lastIndexOf(final Object o) {
-        final PathArgument srch = (PathArgument) requireNonNull(o);
+        final C srch = (C) requireNonNull(o);
 
         final int ret = stack.lastIndexOf(srch);
         if (ret != -1) {
@@ -74,17 +75,16 @@ final class StackedPathArguments extends PathArgumentList {
         return base.lastIndexOf(srch);
     }
 
-    @Nonnull
     @Override
-    public UnmodifiableIterator<PathArgument> iterator() {
-        return new IteratorImpl(base, stack);
+    public Iterator<C> iterator() {
+        return new IteratorImpl<>(base, stack);
     }
 
-    private static final class IteratorImpl extends UnmodifiableIterator<PathArgument> {
-        private final Iterator<PathArgument> stack;
-        private final Iterator<PathArgument> base;
+    private static final class IteratorImpl<T> implements Iterator<T> {
+        private final Iterator<T> stack;
+        private final Iterator<T> base;
 
-        IteratorImpl(final Iterable<PathArgument> base, final Iterable<PathArgument> stack) {
+        IteratorImpl(final Iterable<T> base, final Iterable<T> stack) {
             this.base = base.iterator();
             this.stack = stack.iterator();
         }
@@ -95,7 +95,7 @@ final class StackedPathArguments extends PathArgumentList {
         }
 
         @Override
-        public PathArgument next() {
+        public T next() {
             if (base.hasNext()) {
                 return base.next();
             }
