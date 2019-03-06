@@ -242,7 +242,7 @@ public final class ImmutableNodes {
             final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Entry<QName, ModifyAction>> operation) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
-        final Iterator<PathArgument> it = id.getPathArguments().iterator();
+        final Iterator<PathArgument> it = id.getPathFromRoot().iterator();
         if (it.hasNext()) {
             topLevelElement = it.next();
             final DataSchemaNode dataChildByName = ctx.getDataChildByName(topLevelElement.getNodeType());

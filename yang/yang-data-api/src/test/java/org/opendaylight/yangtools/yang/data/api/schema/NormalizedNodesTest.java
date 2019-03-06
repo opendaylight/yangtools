@@ -83,7 +83,7 @@ public class NormalizedNodesTest {
         assertEquals(Optional.empty(), NormalizedNodes.findNode(childPath, mockedDataContainerNode, rootPath));
 
         final Optional<YangInstanceIdentifier> relativePath = childPath.relativeTo(rootPath);
-        final PathArgument[] pathArguments = relativePath.get().getPathArguments().toArray(new PathArgument[2]);
+        final PathArgument[] pathArguments = relativePath.get().getPathFromRoot().toArray(new PathArgument[2]);
 
         assertEquals(mockedLeafNode, NormalizedNodes.findNode(Optional.of(mockedDataContainerNode),
                 pathArguments).get());

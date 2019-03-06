@@ -67,7 +67,7 @@ public final class DataSchemaContextTree {
     @Deprecated
     public @Nullable DataSchemaContextNode<?> getChild(final YangInstanceIdentifier path) {
         DataSchemaContextNode<?> currentOp = root;
-        for (PathArgument arg : path.getPathArguments()) {
+        for (PathArgument arg : path.getPathFromRoot()) {
             currentOp = currentOp.getChild(arg);
             if (currentOp == null) {
                 return null;

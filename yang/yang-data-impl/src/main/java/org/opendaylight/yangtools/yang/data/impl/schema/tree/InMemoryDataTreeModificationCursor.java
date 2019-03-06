@@ -46,7 +46,7 @@ final class InMemoryDataTreeModificationCursor extends AbstractCursor<InMemoryDa
 
         // Node not found, construct its path
         final Collection<PathArgument> path = new ArrayList<>();
-        path.addAll(getRootPath().getPathArguments());
+        path.addAll(getRootPath().getPathFromRoot());
 
         final Iterator<OperationWithModification> it = stack.descendingIterator();
         // Skip the first entry, as it's already accounted for in rootPath

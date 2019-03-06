@@ -446,7 +446,7 @@ public final class LeafRefValidation {
     private static Optional<NormalizedNode<?, ?>> findParentNode(
             final Optional<NormalizedNode<?, ?>> root, final YangInstanceIdentifier path) {
         Optional<NormalizedNode<?, ?>> currentNode = root;
-        final Iterator<PathArgument> pathIterator = path.getPathArguments().iterator();
+        final Iterator<PathArgument> pathIterator = path.getPathFromRoot().iterator();
         while (pathIterator.hasNext()) {
             final PathArgument childPathArgument = pathIterator.next();
             if (pathIterator.hasNext() && currentNode.isPresent()) {

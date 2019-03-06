@@ -38,7 +38,7 @@ public final class StoreTreeNodes {
      */
     public static <T extends StoreTreeNode<T>> Optional<T> findNode(final T tree, final YangInstanceIdentifier path) {
         Optional<T> current = Optional.of(tree);
-        Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
+        Iterator<PathArgument> pathIter = path.getPathFromRoot().iterator();
         while (current.isPresent() && pathIter.hasNext()) {
             current = current.get().getChild(pathIter.next());
         }
@@ -49,7 +49,7 @@ public final class StoreTreeNodes {
         T current = tree;
 
         int depth = 1;
-        for (PathArgument pathArg : path.getPathArguments()) {
+        for (PathArgument pathArg : path.getPathFromRoot()) {
             Optional<T> potential = current.getChild(pathArg);
             if (!potential.isPresent()) {
                 throw new IllegalArgumentException(String.format("Child %s is not present in tree.",
@@ -81,7 +81,7 @@ public final class StoreTreeNodes {
         Optional<T> current = Optional.of(tree);
 
         int nesting = 0;
-        Iterator<PathArgument> pathIter = path.getPathArguments().iterator();
+        Iterator<PathArgument> pathIter = path.getPathFromRoot().iterator();
         while (current.isPresent() && pathIter.hasNext() && !predicate.test(current.get())) {
             parent = current;
             current = current.get().getChild(pathIter.next());

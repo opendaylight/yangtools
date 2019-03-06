@@ -117,10 +117,10 @@ public class PathArgumentListTest {
             new YangInstanceIdentifier.NodeIdentifierWithPredicates(qNameList , entryLeaf);
         final YangInstanceIdentifier yangInstanceIdentifier = YangInstanceIdentifier.of(qNameRoot).node(qNameList)
                 .node(nodeIdentifierWithPredicates).node(qNameLeaf);
-        final PathArgument pathArgumentToRoot = yangInstanceIdentifier.getAncestor(1).getPathArguments().iterator()
+        final PathArgument pathArgumentToRoot = yangInstanceIdentifier.getAncestor(1).getPathFromRoot().iterator()
                 .next();
         final StackedPathArguments stackedPathArguments = (StackedPathArguments)yangInstanceIdentifier
-            .getPathArguments();
+            .getPathFromRoot();
         assertTrue(yangInstanceIdentifier.pathArgumentsEqual(yangInstanceIdentifier));
         assertEquals(pathArgumentToRoot, stackedPathArguments.get(0));
         assertEquals(4, stackedPathArguments.size());
@@ -129,7 +129,7 @@ public class PathArgumentListTest {
         assertEquals(0, stackedPathArguments.lastIndexOf(pathArgumentToRoot));
 
         final StackedReversePathArguments stackedReversePathArguments =
-            (StackedReversePathArguments)yangInstanceIdentifier.getReversePathArguments();
+            (StackedReversePathArguments)yangInstanceIdentifier.getPathTowardsRoot();
         final QName rootQname = pathArgumentToRoot.getNodeType();
         final QName leafQname = stackedReversePathArguments.get(0).getNodeType();
         assertEquals(qNameRoot, rootQname);
@@ -141,9 +141,7 @@ public class PathArgumentListTest {
 
         final StackedYangInstanceIdentifier stackedYangInstanceIdentifier = (StackedYangInstanceIdentifier)
                 yangInstanceIdentifier;
-        final StackedYangInstanceIdentifier stackedYangInstanceIdentifierClone = stackedYangInstanceIdentifier.clone();
         final YangInstanceIdentifier yangInstanceIdentifier1 = stackedYangInstanceIdentifier.getAncestor(4);
-        assertEquals(stackedYangInstanceIdentifier, stackedYangInstanceIdentifierClone);
         assertEquals(stackedReversePathArguments, yangInstanceIdentifier1.getReversePathArguments());
 
         try {

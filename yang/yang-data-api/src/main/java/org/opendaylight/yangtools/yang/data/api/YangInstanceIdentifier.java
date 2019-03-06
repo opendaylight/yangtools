@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
@@ -22,7 +21,6 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Sets;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,20 +30,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.Path;
+import org.opendaylight.yangtools.concepts.LinearPath;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.SharedSingletonMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 
 /**
@@ -87,88 +81,49 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 // FIXME: FixedYangInstanceIdentifier needs YangInstanceIdentifier initialized, but that includes initializing
 //        this field. Figure out a way out of this pickle.
 @SuppressFBWarnings("IC_SUPERCLASS_USES_SUBCLASS_DURING_INITIALIZATION")
-public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentifier>, Immutable, Serializable {
+public interface YangInstanceIdentifier
+        extends LinearPath<YangInstanceIdentifier, YangInstanceIdentifier.PathArgument>, Serializable {
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
      */
-    public static final YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
-
-    private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
-            AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
-    private static final long serialVersionUID = 4L;
-
-    private final int hash;
-    private transient volatile String toStringCache = null;
-
-    // Package-private to prevent outside subclassing
-    YangInstanceIdentifier(final int hash) {
-        this.hash = hash;
-    }
-
-    @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
-
-    @Nonnull abstract Collection<PathArgument> tryPathArguments();
-
-    @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
-
-    /**
-     * Check if this instance identifier has empty path arguments, e.g. it is
-     * empty and corresponds to {@link #EMPTY}.
-     *
-     * @return True if this instance identifier is empty, false otherwise.
-     */
-    public abstract boolean isEmpty();
-
-    /**
-     * Return an optimized version of this identifier, useful when the identifier
-     * will be used very frequently.
-     *
-     * @return A optimized equivalent instance.
-     */
-    @Beta
-    public abstract YangInstanceIdentifier toOptimized();
-
-    /**
-     * Return the conceptual parent {@link YangInstanceIdentifier}, which has
-     * one item less in {@link #getPathArguments()}.
-     *
-     * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #EMPTY}.
-     */
-    @Nullable public abstract YangInstanceIdentifier getParent();
-
-    /**
-     * Return the ancestor {@link YangInstanceIdentifier} with a particular depth, e.g. number of path arguments.
-     *
-     * @param depth Ancestor depth
-     * @return Ancestor {@link YangInstanceIdentifier}
-     * @throws IllegalArgumentException if the specified depth is negative or is greater than the depth of this object.
-     */
-    @Nonnull public abstract YangInstanceIdentifier getAncestor(int depth);
+    YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
 
     /**
      * Returns an ordered iteration of path arguments.
      *
      * @return Immutable iteration of path arguments.
+     * @deprecated Use {@link #getPathFromRoot()} instead.
      */
-    public abstract List<PathArgument> getPathArguments();
+    @Deprecated
+    default List<PathArgument> getPathArguments() {
+        return getPathFromRoot();
+    }
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
      * when walking up a tree organized this way.
      *
      * @return Immutable iterable of path arguments in reverse order.
+     * @deprecated Use {@link #getPathTowardsRoot()} instead.
      */
-    public abstract List<PathArgument> getReversePathArguments();
+    @Deprecated
+    default List<PathArgument> getReversePathArguments() {
+        return getPathTowardsRoot();
+    }
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
      * to the last element of the iterable returned by {@link #getPathArguments()}.
      *
      * @return The last past argument, or null if there are no PathArguments.
+     * @deprecated Use {@link #getLastComponent()} instead.
      */
-    public abstract PathArgument getLastPathArgument();
+    @Deprecated
+    default PathArgument getLastPathArgument() {
+        return getLastComponent();
+    }
 
-    public static YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
+    static YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
             return EMPTY;
         }
@@ -181,7 +136,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 
-    public static YangInstanceIdentifier create(final PathArgument... path) {
+    static YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
     }
@@ -193,7 +148,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return A {@link YangInstanceIdentifier} instance
      * @throws NullPointerException if {@code pathTowardsRoot} or any of its members is null
      */
-    public static YangInstanceIdentifier createReverse(final Deque<PathArgument> pathTowardsRoot) {
+    static YangInstanceIdentifier createReverse(final Deque<PathArgument> pathTowardsRoot) {
         return createReverse(pathTowardsRoot, Objects::requireNonNull);
     }
 
@@ -205,7 +160,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return A {@link YangInstanceIdentifier} instance
      * @throws NullPointerException if {@code pathTowardsRoot} is null
      */
-    public static <T> YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
+    static <T> YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
             final Function<T, PathArgument> function) {
         if (stackTowardsRoot.isEmpty()) {
             return EMPTY;
@@ -220,33 +175,13 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return YangInstanceIdentifier.create(builder.build());
     }
 
-    boolean pathArgumentsEqual(final YangInstanceIdentifier other) {
-        return Iterables.elementsEqual(getPathArguments(), other.getPathArguments());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof YangInstanceIdentifier)) {
-            return false;
-        }
-        YangInstanceIdentifier other = (YangInstanceIdentifier) obj;
-        if (this.hashCode() != obj.hashCode()) {
-            return false;
-        }
-
-        return pathArgumentsEqual(other);
-    }
-
     /**
      * Constructs a new Instance Identifier with new {@link NodeIdentifier} added to the end of path arguments.
      *
      * @param name QName of {@link NodeIdentifier}
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public final YangInstanceIdentifier node(final QName name) {
+    default YangInstanceIdentifier node(final QName name) {
         return node(new NodeIdentifier(name));
     }
 
@@ -256,134 +191,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param arg Path argument which should be added to the end
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public final YangInstanceIdentifier node(final PathArgument arg) {
-        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
-    }
-
-    /**
-     * Get the relative path from an ancestor. This method attempts to perform
-     * the reverse of concatenating a base (ancestor) and a path.
-     *
-     * @param ancestor
-     *            Ancestor against which the relative path should be calculated
-     * @return This object's relative path from parent, or Optional.absent() if
-     *         the specified parent is not in fact an ancestor of this object.
-     */
-    public Optional<YangInstanceIdentifier> relativeTo(final YangInstanceIdentifier ancestor) {
-        if (this == ancestor) {
-            return Optional.of(EMPTY);
-        }
-        if (ancestor.isEmpty()) {
-            return Optional.of(this);
-        }
-
-        final Iterator<PathArgument> lit = getPathArguments().iterator();
-        final Iterator<PathArgument> oit = ancestor.getPathArguments().iterator();
-        int common = 0;
-
-        while (oit.hasNext()) {
-            // Ancestor is not really an ancestor
-            if (!lit.hasNext() || !lit.next().equals(oit.next())) {
-                return Optional.empty();
-            }
-
-            ++common;
-        }
-
-        if (common == 0) {
-            return Optional.of(this);
-        }
-        if (!lit.hasNext()) {
-            return Optional.of(EMPTY);
-        }
-
-        return Optional.of(createRelativeIdentifier(common));
-    }
-
-    @Override
-    public final boolean contains(@Nonnull final YangInstanceIdentifier other) {
-        if (this == other) {
-            return true;
-        }
-
-        checkArgument(other != null, "other should not be null");
-        final Iterator<PathArgument> lit = getPathArguments().iterator();
-        final Iterator<PathArgument> oit = other.getPathArguments().iterator();
-
-        while (lit.hasNext()) {
-            if (!oit.hasNext()) {
-                return false;
-            }
-
-            if (!lit.next().equals(oit.next())) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    @Override
-    public final String toString() {
-        /*
-         * The toStringCache is safe, since the object contract requires
-         * immutability of the object and all objects referenced from this
-         * object.
-         * Used lists, maps are immutable. Path Arguments (elements) are also
-         * immutable, since the PathArgument contract requires immutability.
-         * The cache is thread-safe - if multiple computations occurs at the
-         * same time, cache will be overwritten with same result.
-         */
-        String ret = toStringCache;
-        if (ret == null) {
-            final StringBuilder builder = new StringBuilder("/");
-            PathArgument prev = null;
-            for (PathArgument argument : getPathArguments()) {
-                if (prev != null) {
-                    builder.append('/');
-                }
-                builder.append(argument.toRelativeString(prev));
-                prev = argument;
-            }
-
-            ret = builder.toString();
-            TOSTRINGCACHE_UPDATER.lazySet(this, ret);
-        }
-        return ret;
-    }
-
-    @Override
-    public final int hashCode() {
-        /*
-         * The caching is safe, since the object contract requires
-         * immutability of the object and all objects referenced from this
-         * object.
-         * Used lists, maps are immutable. Path Arguments (elements) are also
-         * immutable, since the PathArgument contract requires immutability.
-         */
-        return hash;
-    }
-
-    private static int hashCode(final Object value) {
-        if (value == null) {
-            return 0;
-        }
-
-        if (byte[].class.equals(value.getClass())) {
-            return Arrays.hashCode((byte[]) value);
-        }
-
-        if (value.getClass().isArray()) {
-            int hash = 0;
-            int length = Array.getLength(value);
-            for (int i = 0; i < length; i++) {
-                hash += Objects.hashCode(Array.get(value, i));
-            }
-
-            return hash;
-        }
-
-        return Objects.hashCode(value);
+    default YangInstanceIdentifier node(final PathArgument arg) {
+        return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hashCode(), arg));
     }
 
     // Static factories & helpers
@@ -395,7 +204,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param name QName of first node identifier
      * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
      */
-    public static YangInstanceIdentifier of(final QName name) {
+    static YangInstanceIdentifier of(final QName name) {
         return create(new NodeIdentifier(name));
     }
 
@@ -404,7 +213,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return new builder for InstanceIdentifier with empty path arguments.
      */
-    public static InstanceIdentifierBuilder builder() {
+    static InstanceIdentifierBuilder builder() {
         return new YangInstanceIdentifierBuilder();
     }
 
@@ -414,8 +223,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param origin InstanceIdentifier from which path arguments are copied.
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
-    public static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
-        return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
+    static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
+        return new YangInstanceIdentifierBuilder(origin.getPathFromRoot(), origin.hashCode());
     }
 
     /**
@@ -463,71 +272,6 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @return String representation
          */
         String toRelativeString(PathArgument previous);
-    }
-
-    private abstract static class AbstractPathArgument implements PathArgument {
-        private static final long serialVersionUID = -4546547994250849340L;
-        private final QName nodeType;
-        private transient int hashValue;
-        private transient volatile boolean hashGuard = false;
-
-        protected AbstractPathArgument(final QName nodeType) {
-            this.nodeType = requireNonNull(nodeType);
-        }
-
-        @Override
-        public final QName getNodeType() {
-            return nodeType;
-        }
-
-        @Override
-        @SuppressWarnings("checkstyle:parameterName")
-        public int compareTo(@Nonnull final PathArgument o) {
-            return nodeType.compareTo(o.getNodeType());
-        }
-
-        protected int hashCodeImpl() {
-            return 31 + getNodeType().hashCode();
-        }
-
-        @Override
-        public final int hashCode() {
-            if (!hashGuard) {
-                hashValue = hashCodeImpl();
-                hashGuard = true;
-            }
-
-            return hashValue;
-        }
-
-        @Override
-        public boolean equals(final Object obj) {
-            if (this == obj) {
-                return true;
-            }
-            if (obj == null || this.getClass() != obj.getClass()) {
-                return false;
-            }
-
-            return getNodeType().equals(((AbstractPathArgument)obj).getNodeType());
-        }
-
-        @Override
-        public String toString() {
-            return getNodeType().toString();
-        }
-
-        @Override
-        public String toRelativeString(final PathArgument previous) {
-            if (previous instanceof AbstractPathArgument) {
-                final QNameModule mod = previous.getNodeType().getModule();
-                if (getNodeType().getModule().equals(mod)) {
-                    return getNodeType().getLocalName();
-                }
-            }
-
-            return getNodeType().toString();
-        }
     }
 
     /**
@@ -605,7 +349,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             result = prime * result;
 
             for (Entry<QName, Object> entry : keyValues.entrySet()) {
-                result += Objects.hashCode(entry.getKey()) + YangInstanceIdentifier.hashCode(entry.getValue());
+                result += Objects.hashCode(entry.getKey()) + valueHashCode(entry.getValue());
             }
             return result;
         }
@@ -671,7 +415,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         protected int hashCodeImpl() {
             final int prime = 31;
             int result = super.hashCodeImpl();
-            result = prime * result + YangInstanceIdentifier.hashCode(value);
+            result = prime * result + valueHashCode(value);
             return result;
         }
 

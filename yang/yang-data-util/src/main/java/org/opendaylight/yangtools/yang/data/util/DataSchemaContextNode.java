@@ -98,7 +98,7 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     public final @NonNull Optional<@NonNull DataSchemaContextNode<?>> findChild(
             final @NonNull YangInstanceIdentifier path) {
         DataSchemaContextNode<?> currentOp = this;
-        for (PathArgument arg : path.getPathArguments()) {
+        for (PathArgument arg : path.getPathFromRoot()) {
             currentOp = currentOp.getChild(arg);
             if (currentOp == null) {
                 return Optional.empty();

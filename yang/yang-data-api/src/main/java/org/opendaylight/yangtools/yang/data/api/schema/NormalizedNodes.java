@@ -84,7 +84,7 @@ public final class NormalizedNodes {
         requireNonNull(tree, "Tree must not be null");
         requireNonNull(path, "Path must not be null");
 
-        return findNode(Optional.of(tree), path.getPathArguments());
+        return findNode(Optional.of(tree), path.getPathFromRoot());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
