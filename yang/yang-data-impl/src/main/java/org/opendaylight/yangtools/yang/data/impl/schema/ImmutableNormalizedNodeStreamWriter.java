@@ -117,17 +117,13 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return new ImmutableNormalizedNodeStreamWriter(result);
     }
 
-    protected Deque<NormalizedNodeBuilder> getBuilders() {
-        return builders;
-    }
-
     @SuppressWarnings("rawtypes")
     protected NormalizedNodeBuilder getCurrent() {
         return builders.peek();
     }
 
     @SuppressWarnings("rawtypes")
-    protected NormalizedNodeContainerBuilder getCurrentContainer() {
+    protected final NormalizedNodeContainerBuilder getCurrentContainer() {
         final NormalizedNodeBuilder current = getCurrent();
         if (current == null) {
             return null;
