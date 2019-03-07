@@ -82,6 +82,10 @@
         <!-- RFC8040 (yang-data) metamodel support -->
         <module>rfc8040-model-api</module>
         <module>rfc8040-parser-support</module>
+
+        <!-- RFC8528 (mount-point) metamodel support -->
+        <module>rfc8528-model-api</module>
+        <module>rfc8528-parser-support</module>
     </modules>
 
 </project>

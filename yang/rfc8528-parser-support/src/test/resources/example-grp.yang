@@ -1,0 +1,12 @@
+module example-grp {
+    namespace "http://example.org/example-grp";
+    prefix "eg";
+    import ietf-yang-schema-mount {
+        prefix "yangmnt";
+    }
+    grouping grp {
+        container grp-cont {
+            yangmnt:mount-point grp;
+        }
+    }
+}

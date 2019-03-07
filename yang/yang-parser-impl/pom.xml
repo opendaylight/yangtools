@@ -98,6 +98,14 @@
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>rfc8040-parser-support</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8528-model-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>rfc8528-parser-support</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>

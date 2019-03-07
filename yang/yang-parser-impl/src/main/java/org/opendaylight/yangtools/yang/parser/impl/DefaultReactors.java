@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
 import org.opendaylight.yangtools.rfc8040.parser.YangDataStatementSupport;
+import org.opendaylight.yangtools.rfc8528.parser.MountPointStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.CustomCrossSourceStatementReactorBuilder;
 import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
@@ -80,6 +81,9 @@ public final class DefaultReactors {
 
                 // RFC8040 yang-data support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, YangDataStatementSupport.getInstance())
+
+                // RFC8528 yang-data support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION, MountPointStatementSupport.getInstance())
 
                 // OpenConfig extensions support (except openconfig-version)
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
