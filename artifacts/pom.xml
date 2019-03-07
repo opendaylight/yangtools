@@ -193,6 +193,17 @@
 
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>rfc8528-model-api</artifactId>
+                <version>2.1.9-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>rfc8528-parser-support</artifactId>
+                <version>2.1.9-SNAPSHOT</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-api</artifactId>
                 <version>0.2.9-SNAPSHOT</version>
             </dependency>
