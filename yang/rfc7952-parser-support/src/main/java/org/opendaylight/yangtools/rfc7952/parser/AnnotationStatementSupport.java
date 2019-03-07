@@ -29,29 +29,28 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 public final class AnnotationStatementSupport
-        extends AbstractStatementSupport<String, AnnotationStatement, AnnotationEffectiveStatement> {
+        extends AbstractStatementSupport<QName, AnnotationStatement, AnnotationEffectiveStatement> {
 
-    private static final class Declared extends AbstractDeclaredStatement<String> implements AnnotationStatement {
-        Declared(final StmtContext<String, ?, ?> context) {
+    private static final class Declared extends AbstractDeclaredStatement<QName> implements AnnotationStatement {
+        Declared(final StmtContext<QName, ?, ?> context) {
             super(context);
         }
 
         @Override
-        public String getArgument() {
+        public QName getArgument() {
             return argument();
         }
     }
 
-    private static final class Effective extends UnknownEffectiveStatementBase<String, AnnotationStatement>
+    private static final class Effective extends UnknownEffectiveStatementBase<QName, AnnotationStatement>
             implements AnnotationEffectiveStatement {
 
         private final TypeDefinition<?> type;
         private final SchemaPath path;
 
-        Effective(final StmtContext<String, AnnotationStatement, ?> ctx) {
+        Effective(final StmtContext<QName, AnnotationStatement, ?> ctx) {
             super(ctx);
-            path = ctx.coerceParentContext().getSchemaPath().get().createChild(
-                StmtContextUtils.parseIdentifier(ctx, argument()));
+            path = ctx.coerceParentContext().getSchemaPath().get().createChild(argument());
 
             final TypeEffectiveStatement<?> typeStmt = SourceException.throwIfNull(
                 firstSubstatementOfType(TypeEffectiveStatement.class), ctx.getStatementSourceReference(),
@@ -105,24 +104,23 @@ public final class AnnotationStatementSupport
     }
 
     @Override
-    public AnnotationStatement createDeclared(final StmtContext<String, AnnotationStatement, ?> ctx) {
+    public AnnotationStatement createDeclared(final StmtContext<QName, AnnotationStatement, ?> ctx) {
         return new Declared(ctx);
     }
 
     @Override
     public AnnotationEffectiveStatement createEffective(
-            final StmtContext<String, AnnotationStatement, AnnotationEffectiveStatement> ctx) {
+            final StmtContext<QName, AnnotationStatement, AnnotationEffectiveStatement> ctx) {
         return new Effective(ctx);
     }
 
     @Override
-    public String parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        // FIXME: validate this is in fact an identifier as per RFC7950 Section 6.2
-        return value;
+    public QName parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        return StmtContextUtils.parseIdentifier(ctx, value);
     }
 
     @Override
-    public void onStatementAdded(final Mutable<String, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
+    public void onStatementAdded(final Mutable<QName, AnnotationStatement, AnnotationEffectiveStatement> stmt) {
         final StatementDefinition parentDef = stmt.coerceParentContext().getPublicDefinition();
         SourceException.throwIf(YangStmtMapping.MODULE != parentDef && YangStmtMapping.SUBMODULE != parentDef,
                 stmt.getStatementSourceReference(),

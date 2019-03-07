@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc7952.model.api;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 
 /**
@@ -15,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
  * <a href="https://tools.ietf.org/html/rfc7952">RFC7952</a>.
  */
 @Beta
-public interface AnnotationEffectiveStatement extends EffectiveStatement<String, AnnotationStatement>,
+public interface AnnotationEffectiveStatement extends EffectiveStatement<QName, AnnotationStatement>,
         AnnotationSchemaNode {
 
 }
