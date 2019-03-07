@@ -1,0 +1,18 @@
+module example-uses {
+    namespace "http://example.org/example-uses";
+    prefix "eu";
+    import example-grp {
+        prefix "eg";
+    }
+    import ietf-yang-schema-mount {
+        prefix "yangmnt";
+    }
+    container cont {
+        yangmnt:mount-point cont;
+        yangmnt:mount-point cont;
+    }
+    list list {
+        yangmnt:mount-point list;
+    }
+    uses eg:grp;
+}
