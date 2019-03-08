@@ -3,6 +3,8 @@
     <namespace uri="anydata" />
     <prefix value="ad" />
     <yang-version value="1.1" />
+    <feature name="my-feature-1"/>
+    <feature name="my-feature-2"/>
     <anydata name="my-anydata">
         <when condition="1!=0" />
         <must condition="1=1" />

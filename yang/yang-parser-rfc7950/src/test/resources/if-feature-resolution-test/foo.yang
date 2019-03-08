@@ -6,6 +6,11 @@ module foo {
         prefix br;
     }
 
+    feature foo-feature;
+    feature test-feature-1;
+    feature test-feature-2;
+    feature test-feature-3;
+
     container test-container-a {
         if-feature foo-feature;
 

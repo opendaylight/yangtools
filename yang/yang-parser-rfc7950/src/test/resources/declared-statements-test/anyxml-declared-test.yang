@@ -2,6 +2,8 @@ module anyxml-declared-test {
     namespace "anyxml-declared-test";
     prefix "axdt";
 
+    feature foobar-feature;
+
     anyxml foobar {
         when "foo = 'bar'" {
             description "when description";
