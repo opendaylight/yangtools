@@ -7,6 +7,13 @@ module foo {
         if-feature identity-feature;
     }
 
+    feature identity-feature;
+    feature mandatory-leaf;
+    feature ssh;
+    feature tls;
+    feature two;
+    feature three;
+
     container root {
         uses grp {
             refine grp-leaf {

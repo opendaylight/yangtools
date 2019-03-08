@@ -9,6 +9,8 @@ module foobar {
 
     revision 2017-06-01;
 
+    feature feat;
+
     rc:yang-data "my-yang-data" {
         container cont {
             if-feature feat;

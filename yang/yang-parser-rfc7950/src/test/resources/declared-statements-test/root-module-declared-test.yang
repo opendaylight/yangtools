@@ -33,6 +33,8 @@ module root-module-declared-test {
         reference "test reference";
     }
 
+    feature required-feature;
+
     identity test-base-id;
 
     identity test-id {
