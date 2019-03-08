@@ -7,7 +7,9 @@
  */
 package org.opendaylight.yangtools.rfc7952.parser;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationEffectiveStatement;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationStatement;
 import org.opendaylight.yangtools.rfc7952.model.api.MetadataStatements;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -43,10 +45,10 @@ public final class AnnotationStatementSupport
     }
 
     private static final class Effective extends UnknownEffectiveStatementBase<QName, AnnotationStatement>
-            implements AnnotationEffectiveStatement {
+            implements AnnotationEffectiveStatement, AnnotationSchemaNode {
 
-        private final TypeDefinition<?> type;
-        private final SchemaPath path;
+        private final @NonNull TypeDefinition<?> type;
+        private final @NonNull SchemaPath path;
 
         Effective(final StmtContext<QName, AnnotationStatement, ?> ctx) {
             super(ctx);
@@ -78,6 +80,11 @@ public final class AnnotationStatementSupport
 
         @Override
         public TypeDefinition<?> getType() {
+            return type;
+        }
+
+        @Override
+        public TypeDefinition<?> getTypeDefinition() {
             return type;
         }
     }
