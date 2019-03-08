@@ -570,7 +570,7 @@ public class YangParserTest {
     @Test
     public void testFeature() {
         final Set<FeatureDefinition> features = baz.getFeatures();
-        assertEquals(1, features.size());
+        assertEquals(3, features.size());
     }
 
     @Test
