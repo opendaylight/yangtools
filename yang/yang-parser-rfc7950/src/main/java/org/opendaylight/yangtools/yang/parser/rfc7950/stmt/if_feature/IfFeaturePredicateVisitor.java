@@ -9,8 +9,9 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Set;
-import java.util.function.Predicate;
+import com.google.common.collect.ImmutableSet;
+import java.util.ArrayList;
+import java.util.List;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
@@ -22,43 +23,53 @@ import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionParser.If_
 import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionParser.If_feature_factorContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionParser.If_feature_termContext;
 import org.opendaylight.yangtools.antlrv4.code.gen.IfFeatureExpressionParserBaseVisitor;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 
 @NonNullByDefault
-final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisitor<Predicate<Set<QName>>> {
+final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisitor<IfFeatureExpr> {
     private final StmtContext<?, ?, ?> stmtCtx;
 
     private IfFeaturePredicateVisitor(final StmtContext<?, ?, ?> ctx) {
         this.stmtCtx = requireNonNull(ctx);
     }
 
-    static Predicate<Set<QName>> parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
+    static IfFeatureExpr parseIfFeatureExpression(final StmtContext<?, ?, ?> ctx, final String value) {
         final IfFeatureExpressionLexer lexer = new IfFeatureExpressionLexer(CharStreams.fromString(value));
         final IfFeatureExpressionParser parser = new IfFeatureExpressionParser(new CommonTokenStream(lexer));
-        return new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(lexer, parser,
+        final IfFeatureExpr ret = new IfFeaturePredicateVisitor(ctx).visit(SourceExceptionParser.parse(lexer, parser,
             parser::if_feature_expr, ctx.getStatementSourceReference()));
+
+        return ret;
     }
 
     @Override
-    public Predicate<Set<QName>> visitIf_feature_expr(final @Nullable If_feature_exprContext ctx) {
-        final Predicate<Set<QName>> term = visitIf_feature_term(ctx.if_feature_term());
-        final If_feature_exprContext expr = ctx.if_feature_expr();
-        return expr == null ? term : term.or(visitIf_feature_expr(expr));
+    public IfFeatureExpr visitIf_feature_expr(final @Nullable If_feature_exprContext ctx) {
+        return IfFeatureExpr.or(ctx.if_feature_term().stream()
+            .map(this::visitIf_feature_term)
+            .collect(ImmutableSet.toImmutableSet()));
     }
 
     @Override
-    public Predicate<Set<QName>> visitIf_feature_term(final @Nullable If_feature_termContext ctx) {
-        final Predicate<Set<QName>> factor = visitIf_feature_factor(ctx.if_feature_factor());
-        final If_feature_termContext term = ctx.if_feature_term();
-        return term == null ? factor : factor.and(visitIf_feature_term(term));
+    public IfFeatureExpr visitIf_feature_term(final @Nullable If_feature_termContext ctx) {
+        final IfFeatureExpr factor = visitIf_feature_factor(ctx.if_feature_factor());
+        final List<If_feature_termContext> terms = ctx.if_feature_term();
+        if (terms == null || terms.isEmpty()) {
+            return factor;
+        }
+        final List<IfFeatureExpr> factors = new ArrayList<>(terms.size() + 1);
+        factors.add(factor);
+        for (If_feature_termContext term : terms) {
+            factors.add(visitIf_feature_term(term));
+        }
+        return IfFeatureExpr.and(ImmutableSet.copyOf(factors));
     }
 
     @Override
-    public Predicate<Set<QName>> visitIf_feature_factor(final @Nullable If_feature_factorContext ctx) {
+    public IfFeatureExpr visitIf_feature_factor(final @Nullable If_feature_factorContext ctx) {
         if (ctx.if_feature_expr() != null) {
             return visitIf_feature_expr(ctx.if_feature_expr());
         } else if (ctx.if_feature_factor() != null) {
@@ -72,8 +83,7 @@ final class IfFeaturePredicateVisitor extends IfFeatureExpressionParserBaseVisit
     }
 
     @Override
-    public Predicate<Set<QName>> visitIdentifier_ref_arg(final @Nullable Identifier_ref_argContext ctx) {
-        final QName featureQName = StmtContextUtils.parseNodeIdentifier(stmtCtx, ctx.getText());
-        return setQNames -> setQNames.contains(featureQName);
+    public IfFeatureExpr visitIdentifier_ref_arg(final @Nullable Identifier_ref_argContext ctx) {
+        return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(stmtCtx, ctx.getText()));
     }
 }

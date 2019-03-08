@@ -13,6 +13,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
@@ -39,9 +40,7 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
         if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
             return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
         }
-
-        final QName qname = StmtContextUtils.parseNodeIdentifier(ctx, value);
-        return setQNames -> setQNames.contains(qname);
+        return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(ctx, value));
     }
 
     @Override
