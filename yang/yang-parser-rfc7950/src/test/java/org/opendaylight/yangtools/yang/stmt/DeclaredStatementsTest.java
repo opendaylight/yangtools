@@ -307,7 +307,7 @@ public class DeclaredStatementsTest {
         assertEquals("ext-argument", argumentStatement.getName().getLocalName());
         assertTrue(argumentStatement.getYinElement().getValue());
 
-        assertEquals(1, moduleStatement.getFeatures().size());
+        assertEquals(2, moduleStatement.getFeatures().size());
         final FeatureStatement featureStatement = moduleStatement.getFeatures().iterator().next();
         assertEquals(Status.CURRENT, featureStatement.getStatus().get().getValue());
         assertEquals("test description", featureStatement.getDescription().get().getText());

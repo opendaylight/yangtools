@@ -2,6 +2,8 @@ module bar {
     namespace "bar-namespace";
     prefix "bar-prefix";
 
+    feature imp-feature;
+
     container bar-cont {
         leaf bar-cont-leaf {
             type string;
