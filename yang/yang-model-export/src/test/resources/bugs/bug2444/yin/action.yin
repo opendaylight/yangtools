@@ -3,6 +3,8 @@
     <namespace uri="action" />
     <prefix value="ac" />
     <yang-version value="1.1" />
+    <feature name="my-feature-1"/>
+    <feature name="my-feature-2"/>
     <container name="root">
         <action name="a">
             <if-feature name="my-feature-1 or my-feature-2" />

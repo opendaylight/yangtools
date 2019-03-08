@@ -2,6 +2,9 @@ module choice-declared-test {
     namespace "choice-declared-test";
     prefix "chdt";
 
+    feature foo-feature;
+    feature foobar-feature;
+
     choice test-choice {
         default case-two;
         config false;

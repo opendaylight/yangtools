@@ -3,6 +3,9 @@ module anydata {
     prefix ad;
     yang-version 1.1;
 
+    feature my-feature-1;
+    feature my-feature-2;
+
     anydata my-anydata {
         when "1!=0";
         must "1=1";

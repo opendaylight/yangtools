@@ -3,6 +3,9 @@ module action {
     prefix ac;
     yang-version 1.1;
 
+    feature my-feature-1;
+    feature my-feature-2;
+
     container root {
         action a {
             if-feature "my-feature-1 or my-feature-2";

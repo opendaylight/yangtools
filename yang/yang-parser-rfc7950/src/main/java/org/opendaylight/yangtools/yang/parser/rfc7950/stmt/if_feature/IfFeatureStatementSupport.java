@@ -7,6 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
+import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
+
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -15,13 +22,24 @@ import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
+import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.InferenceException;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceAction;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.InferenceContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelActionBuilder.Prerequisite;
+import org.opendaylight.yangtools.yang.parser.spi.meta.ModelProcessingPhase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class IfFeatureStatementSupport extends AbstractStatementSupport<Predicate<Set<QName>>, IfFeatureStatement,
         EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> {
+    private static final Logger LOG = LoggerFactory.getLogger(IfFeatureStatementSupport.class);
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
         .build();
@@ -36,11 +54,45 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
     }
 
     @Override
-    public Predicate<Set<QName>> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public IfFeatureExpr parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
             return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
         }
         return IfFeatureExpr.isPresent(StmtContextUtils.parseNodeIdentifier(ctx, value));
+    }
+
+    @Override
+    public void onFullDefinitionDeclared(final Mutable<Predicate<Set<QName>>, IfFeatureStatement,
+            EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+
+        final ModelActionBuilder verifyFeatures = stmt.newInferenceAction(ModelProcessingPhase.EFFECTIVE_MODEL);
+        final Map<Prerequisite<?>, QName> backRef = new HashMap<>();
+        final Predicate<Set<QName>> argument = stmt.getStatementArgument();
+        verify(argument instanceof IfFeatureExpr, "Unexpected argument %s", argument);
+        for (QName feature : ((IfFeatureExpr) argument).getReferencedFeatures()) {
+            backRef.put(verifyFeatures.requiresCtx(stmt, FeatureNamespace.class, feature,
+                ModelProcessingPhase.EFFECTIVE_MODEL), feature);
+        }
+
+        verifyFeatures.apply(new InferenceAction() {
+            @Override
+            public void apply(final InferenceContext ctx) {
+                LOG.debug("Resolved all feature references in {}", backRef.values());
+            }
+
+            @Override
+            public void prerequisiteFailed(final Collection<? extends Prerequisite<?>> failed) {
+                final Set<QName> unresolvedFeatures = new HashSet<>();
+                for (Prerequisite<?> prereq : failed) {
+                    unresolvedFeatures.add(verifyNotNull(backRef.get(prereq)));
+                }
+
+                throw new InferenceException(stmt.getStatementSourceReference(),
+                    "Failed to resolve feature references %s in \"%s\"", unresolvedFeatures,
+                    stmt.rawStatementArgument());
+            }
+        });
     }
 
     @Override
