@@ -3,6 +3,9 @@ module correct-list-keys-test {
     namespace "correct-list-keys-test";
     prefix "test";
 
+    feature feature-b;
+    feature feature-d;
+
     list valid-list-a {
         leaf a1 {
             type string;

@@ -21,6 +21,8 @@ module simple-nodes {
 
     // NOTE: simple comment
 
+    feature has-name;
+
     anyxml data {
         config false;
         description "anyxml desc";
