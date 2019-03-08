@@ -16,8 +16,8 @@ options{
 }
 
 
-if_feature_expr: if_feature_term (SEP OR SEP if_feature_expr)?;
-if_feature_term: if_feature_factor (SEP AND SEP if_feature_term)?;
+if_feature_expr: if_feature_term (SEP OR SEP if_feature_term)*;
+if_feature_term: if_feature_factor (SEP AND SEP if_feature_term)*;
 if_feature_factor: NOT SEP if_feature_factor
                  | LP SEP? if_feature_expr SEP? RP
                  | identifier_ref_arg;
