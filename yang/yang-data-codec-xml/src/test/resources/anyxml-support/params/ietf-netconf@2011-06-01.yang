@@ -50,6 +50,12 @@ module ietf-netconf {
       "RFC 6241: Network Configuration Protocol";
   }
 
+  // NETCONF capabilities defined as features
+  feature writable-running;
+  feature candidate;
+  feature validate;
+  feature url;
+
   // NETCONF Simple Types
 
   typedef edit-operation-type {

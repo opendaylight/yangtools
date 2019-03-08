@@ -2,6 +2,9 @@ module foobar {
     namespace "foobar-namespace";
     prefix "foobar-prefix";
 
+    feature test-feature-1;
+    feature foobar-feature;
+
     container test-container-a {
         if-feature test-feature-1;
 
