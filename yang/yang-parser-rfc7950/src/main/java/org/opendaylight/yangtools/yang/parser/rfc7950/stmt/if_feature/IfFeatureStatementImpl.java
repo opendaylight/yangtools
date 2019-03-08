@@ -7,16 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
-import java.util.Set;
-import java.util.function.Predicate;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureExpr;
 import org.opendaylight.yangtools.yang.model.api.stmt.IfFeatureStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<Set<QName>>>
-        implements IfFeatureStatement {
-    IfFeatureStatementImpl(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> context) {
+final class IfFeatureStatementImpl extends AbstractDeclaredStatement<IfFeatureExpr> implements IfFeatureStatement {
+    IfFeatureStatementImpl(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> context) {
         super(context);
     }
 }
