@@ -2,6 +2,8 @@ module container-declared-test {
     namespace "container-declared-test";
     prefix "cdt";
 
+    feature foo-feature;
+
     container test-container {
         when "foo = 'bar'";
         if-feature foo-feature;
