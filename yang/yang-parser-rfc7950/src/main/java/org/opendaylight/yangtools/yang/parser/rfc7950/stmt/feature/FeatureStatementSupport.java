@@ -11,8 +11,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractQNameStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext.Mutable;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
@@ -41,8 +43,14 @@ public final class FeatureStatementSupport
     }
 
     @Override
-    public FeatureStatement createDeclared(
-            final StmtContext<QName, FeatureStatement, ?> ctx) {
+    public void onFullDefinitionDeclared(final Mutable<QName, FeatureStatement,
+            EffectiveStatement<QName, FeatureStatement>> stmt) {
+        super.onFullDefinitionDeclared(stmt);
+        stmt.addContext(FeatureNamespace.class, stmt.coerceStatementArgument(), stmt);
+    }
+
+    @Override
+    public FeatureStatement createDeclared(final StmtContext<QName, FeatureStatement, ?> ctx) {
         return new FeatureStatementImpl(ctx);
     }
 
