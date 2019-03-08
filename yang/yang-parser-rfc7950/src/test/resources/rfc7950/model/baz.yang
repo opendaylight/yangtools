@@ -58,6 +58,9 @@ module baz {
              store syslog messages.";
     }
 
+    feature candidate;
+    feature startup;
+
     extension c-define {
         description "Takes as argument a name string. Makes the code generator use the given name in the #define.";
         argument "name" {
