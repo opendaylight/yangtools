@@ -113,6 +113,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.when.WhenStatementSup
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yang_version.YangVersionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.yin_element.YinElementStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.ExtensionNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.FeatureNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.GroupingNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.IdentityNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.ModuleNamespace;
@@ -281,6 +282,7 @@ public final class RFC7950Reactors {
             .addSupport(MandatoryStatementSupport.getInstance())
             .addSupport(AnyxmlStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, AnydataStatementSupport.getInstance())
+            .addSupport(FeatureNamespace.BEHAVIOUR)
             .addSupport(IfFeatureStatementSupport.getInstance())
             .addSupport(UsesStatementSupport.getInstance())
             .addSupport(GroupingNamespace.BEHAVIOUR)
