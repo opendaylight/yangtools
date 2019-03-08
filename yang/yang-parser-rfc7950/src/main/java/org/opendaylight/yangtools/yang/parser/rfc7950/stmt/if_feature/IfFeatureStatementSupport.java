@@ -7,9 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.if_feature;
 
-import java.util.Set;
-import java.util.function.Predicate;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
@@ -20,8 +17,8 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class IfFeatureStatementSupport extends AbstractStatementSupport<Predicate<Set<QName>>, IfFeatureStatement,
-        EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> {
+public final class IfFeatureStatementSupport extends AbstractStatementSupport<IfFeatureExpr, IfFeatureStatement,
+        EffectiveStatement<IfFeatureExpr, IfFeatureStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(
         YangStmtMapping.IF_FEATURE)
         .build();
@@ -36,7 +33,7 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
     }
 
     @Override
-    public Predicate<Set<QName>> parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+    public IfFeatureExpr parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
         if (YangVersion.VERSION_1_1.equals(ctx.getRootVersion())) {
             return IfFeaturePredicateVisitor.parseIfFeatureExpression(ctx, value);
         }
@@ -44,14 +41,14 @@ public final class IfFeatureStatementSupport extends AbstractStatementSupport<Pr
     }
 
     @Override
-    public IfFeatureStatement createDeclared(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> ctx) {
+    public IfFeatureStatement createDeclared(final StmtContext<IfFeatureExpr, IfFeatureStatement, ?> ctx) {
         return new IfFeatureStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement> createEffective(
-            final StmtContext<Predicate<Set<QName>>, IfFeatureStatement,
-            EffectiveStatement<Predicate<Set<QName>>, IfFeatureStatement>> ctx) {
+    public EffectiveStatement<IfFeatureExpr, IfFeatureStatement> createEffective(
+            final StmtContext<IfFeatureExpr, IfFeatureStatement,
+            EffectiveStatement<IfFeatureExpr, IfFeatureStatement>> ctx) {
         return new IfFeatureEffectiveStatementImpl(ctx);
     }
 

@@ -10,16 +10,13 @@ package org.opendaylight.yangtools.yang.model.api.stmt;
 import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.annotations.Beta;
-import java.util.Set;
-import java.util.function.Predicate;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
 /**
  * Represents YANG if-feature statement. The "if-feature" statement makes its parent statement conditional.
  */
-public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QName>>> {
+public interface IfFeatureStatement extends DeclaredStatement<IfFeatureExpr> {
     /**
      * In YANG 1.1 (RFC7950) implementation of IfFeatureStatement, the argument is a boolean expression over feature
      * names defined by "feature" statements. Hence, add implementation to return a predicate on a collection
@@ -28,7 +25,7 @@ public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QNam
      * @return Predicate on a collection of QNames against which to evaluate
      */
     @Beta
-    default @NonNull Predicate<Set<QName>> getIfFeaturePredicate() {
+    default @NonNull IfFeatureExpr getIfFeaturePredicate() {
         // FIXME: YANGTOOLS-908: verifyNotNull() should not be needed here
         return verifyNotNull(argument());
     }
