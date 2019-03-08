@@ -26,6 +26,7 @@ public final class NACMConstants {
     private static final String MODULE_NAME = "ietf-netconf-acm";
     private static final URI MODULE_NAMESPACE = URI.create("urn:ietf:params:xml:ns:yang:ietf-netconf-acm");
     private static final Revision RFC6536_REVISION = Revision.of("2012-02-22");
+    private static final Revision RFC8341_REVISION = Revision.of("2018-02-14");
 
     /**
      * Runtime RFC6536 identity.
@@ -33,10 +34,21 @@ public final class NACMConstants {
     public static final QNameModule RFC6536_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC6536_REVISION).intern();
 
     /**
+     * Runtime RFC8341 identity.
+     */
+    public static final QNameModule RFC8341_MODULE = QNameModule.create(MODULE_NAMESPACE, RFC8341_REVISION).intern();
+
+    /**
      * RFC6536 model source name.
      */
     public static final SourceIdentifier RFC6536_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
         RFC6536_REVISION);
+
+    /**
+     * RFC8341 model source name.
+     */
+    public static final SourceIdentifier RFC8341_SOURCE = RevisionSourceIdentifier.create(MODULE_NAME,
+        RFC8341_REVISION);
 
     /**
      * Normative prefix to use when importing {@link #RFC6536_SOURCE}.
@@ -53,6 +65,6 @@ public final class NACMConstants {
      * @return Collection of identifiers.
      */
     public static Collection<SourceIdentifier> knownModelSources() {
-        return ImmutableList.of(RFC6536_SOURCE);
+        return ImmutableList.of(RFC6536_SOURCE, RFC8341_SOURCE);
     }
 }
