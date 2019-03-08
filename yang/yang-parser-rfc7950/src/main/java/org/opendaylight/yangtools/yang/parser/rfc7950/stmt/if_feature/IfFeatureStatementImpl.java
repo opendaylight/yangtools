@@ -19,9 +19,4 @@ final class IfFeatureStatementImpl extends AbstractDeclaredStatement<Predicate<S
     IfFeatureStatementImpl(final StmtContext<Predicate<Set<QName>>, IfFeatureStatement, ?> context) {
         super(context);
     }
-
-    @Override
-    public Predicate<Set<QName>> getIfFeaturePredicate() {
-        return argument();
-    }
 }

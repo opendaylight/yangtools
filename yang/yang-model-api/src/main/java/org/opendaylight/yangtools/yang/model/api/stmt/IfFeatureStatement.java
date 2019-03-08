@@ -29,5 +29,7 @@ public interface IfFeatureStatement extends DeclaredStatement<Predicate<Set<QNam
      */
     @Beta
     @Nonnull
-    Predicate<Set<QName>> getIfFeaturePredicate();
+    default Predicate<Set<QName>> getIfFeaturePredicate() {
+        return argument();
+    }
 }
