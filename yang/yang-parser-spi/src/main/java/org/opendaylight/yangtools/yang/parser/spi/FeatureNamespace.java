@@ -7,10 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.spi;
 
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.FeatureStatement;
+import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
 /**
  * Feature namespace. All feature names defined in a module and its submodules share the
@@ -19,5 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.StatementNamespace;
  */
 public interface FeatureNamespace
     extends StatementNamespace<QName, FeatureStatement, EffectiveStatement<QName, FeatureStatement>> {
+    NamespaceBehaviour<QName, StmtContext<?, FeatureStatement, EffectiveStatement<QName, FeatureStatement>>,
+            @NonNull FeatureNamespace> BEHAVIOUR = NamespaceBehaviour.global(FeatureNamespace.class);
 
 }
