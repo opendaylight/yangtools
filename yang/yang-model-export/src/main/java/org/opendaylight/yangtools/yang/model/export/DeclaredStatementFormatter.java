@@ -13,8 +13,6 @@ import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.HashSet;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
@@ -28,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement.Q
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 @NonNullByDefault
 public final class DeclaredStatementFormatter implements Immutable {
     private static final DeclaredStatementFormatter DEFAULT = new DeclaredStatementFormatter(ImmutableSet.of(), true);
@@ -78,7 +75,6 @@ public final class DeclaredStatementFormatter implements Immutable {
      * Builder class for instantiation of a customized {@link DeclaredStatementFormatter}.
      */
     @Beta
-    @NotThreadSafe
     public static final class Builder
             implements org.opendaylight.yangtools.concepts.Builder<DeclaredStatementFormatter> {
         private final Set<StatementDefinition> ignoredStatements = new HashSet<>(4);

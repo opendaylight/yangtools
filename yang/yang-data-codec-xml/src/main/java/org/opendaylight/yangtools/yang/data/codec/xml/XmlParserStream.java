@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.Location;
@@ -77,7 +76,6 @@ import org.xml.sax.SAXException;
  * the XML source are wrapped in a root element.
  */
 @Beta
-@NotThreadSafe
 public final class XmlParserStream implements Closeable, Flushable {
     private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
