@@ -23,7 +23,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Identifier;
@@ -59,11 +59,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     static final String QNAME_LEFT_PARENTHESIS = "(";
     static final String QNAME_RIGHT_PARENTHESIS = ")";
 
-    @RegEx
+    @Regex
     private static final String QNAME_STRING_FULL = "^\\((.+)\\?revision=(.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_FULL = Pattern.compile(QNAME_STRING_FULL);
 
-    @RegEx
+    @Regex
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
