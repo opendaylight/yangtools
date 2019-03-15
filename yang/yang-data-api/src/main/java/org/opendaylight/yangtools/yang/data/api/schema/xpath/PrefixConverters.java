@@ -16,8 +16,8 @@ import com.google.common.collect.ImmutableBiMap;
 import com.google.common.collect.ImmutableBiMap.Builder;
 import com.google.common.collect.Maps;
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
@@ -41,7 +41,7 @@ public final class PrefixConverters {
      * @param module Module in which the XPath is defined
      * @return A new Converter
      */
-    public static @Nonnull Converter<String, QNameModule> create(final SchemaContext ctx, final Module module) {
+    public static @NonNull Converter<String, QNameModule> create(final SchemaContext ctx, final Module module) {
         // Always check for null ctx
         requireNonNull(ctx, "Schema context may not be null");
 
