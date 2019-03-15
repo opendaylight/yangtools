@@ -14,7 +14,6 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collection;
 import java.util.Iterator;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class StackedReversePathArguments extends PathArgumentList {
@@ -86,7 +85,6 @@ final class StackedReversePathArguments extends PathArgumentList {
         return ret;
     }
 
-    @Nonnull
     @Override
     public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(identifier);
