@@ -14,8 +14,8 @@ import com.google.common.collect.Collections2;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Stream;
-import javax.annotation.Nullable;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Represents declared statement.

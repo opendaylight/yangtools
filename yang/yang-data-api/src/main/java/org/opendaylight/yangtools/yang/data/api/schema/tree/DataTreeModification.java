@@ -7,7 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -58,5 +58,5 @@ public interface DataTreeModification extends DataTreeSnapshot {
      *
      * @param cursor cursor to which this modification
      */
-    void applyToCursor(@Nonnull DataTreeModificationCursor cursor);
+    void applyToCursor(@NonNull DataTreeModificationCursor cursor);
 }
