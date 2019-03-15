@@ -12,8 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -25,37 +23,31 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
         this.identifier = requireNonNull(identifier, "Identifier should not be null");
     }
 
-    @Nonnull
     @Override
     public PathArgument getIdentifier() {
         return identifier;
     }
 
-    @Nonnull
     @Override
     public Collection<DataTreeCandidateNode> getChildNodes() {
         return ImmutableList.of();
     }
 
-    @Nullable
     @Override
     public DataTreeCandidateNode getModifiedChild(final PathArgument childIdentifier) {
         return null;
     }
 
-    @Nonnull
     @Override
     public ModificationType getModificationType() {
         return ModificationType.UNMODIFIED;
     }
 
-    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataAfter() {
         return Optional.empty();
     }
 
-    @Nonnull
     @Override
     public Optional<NormalizedNode<?, ?>> getDataBefore() {
         return Optional.empty();

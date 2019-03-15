@@ -16,7 +16,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Variant;
@@ -28,7 +27,6 @@ import org.opendaylight.yangtools.concepts.Variant;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
 public abstract class CanonicalValueViolation implements Serializable {
     public static class Regular extends CanonicalValueViolation {
         private static final long serialVersionUID = 1L;

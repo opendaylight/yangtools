@@ -33,14 +33,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Function;
-import javax.annotation.concurrent.Immutable;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
-@Immutable
 public final class FilteringSchemaContextProxy extends AbstractSchemaContext {
     private final ImmutableMap<QNameModule, Module> moduleMap;
 

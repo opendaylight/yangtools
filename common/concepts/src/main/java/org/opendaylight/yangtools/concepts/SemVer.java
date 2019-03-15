@@ -12,7 +12,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import com.google.common.annotations.Beta;
 import java.io.Serializable;
 import java.util.Objects;
-import javax.annotation.Nonnegative;
+import org.checkerframework.checker.index.qual.NonNegative;
 import org.eclipse.jdt.annotation.NonNull;
 
 /**
@@ -34,16 +34,16 @@ public final class SemVer implements Comparable<SemVer>, Serializable {
         this.patch = patch;
     }
 
-    public static @NonNull SemVer create(final @Nonnegative int major) {
+    public static @NonNull SemVer create(final @NonNegative int major) {
         return create(major, 0);
     }
 
-    public static @NonNull SemVer create(final @Nonnegative int major, final @Nonnegative int minor) {
+    public static @NonNull SemVer create(final @NonNegative int major, final @NonNegative int minor) {
         return create(major, minor, 0);
     }
 
-    public static @NonNull  SemVer create(final @Nonnegative int major, final @Nonnegative int minor,
-            final @Nonnegative int patch) {
+    public static @NonNull  SemVer create(final @NonNegative int major, final @NonNegative int minor,
+            final @NonNegative int patch) {
         return new SemVer(major, minor, patch);
     }
 
