@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
@@ -48,12 +48,12 @@ public final class ArgumentUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(ArgumentUtils.class);
 
-    @RegEx
+    @Regex
     private static final String YANG_XPATH_FUNCTIONS_STRING =
             "(re-match|deref|derived-from(-or-self)?|enum-value|bit-is-set)([ \t\r\n]*)(\\()";
     private static final Pattern YANG_XPATH_FUNCTIONS_PATTERN = Pattern.compile(YANG_XPATH_FUNCTIONS_STRING);
 
-    @RegEx
+    @Regex
     private static final String PATH_ABS_STR = "/[^/].*";
     private static final Pattern PATH_ABS = Pattern.compile(PATH_ABS_STR);
     private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings().trimResults();
