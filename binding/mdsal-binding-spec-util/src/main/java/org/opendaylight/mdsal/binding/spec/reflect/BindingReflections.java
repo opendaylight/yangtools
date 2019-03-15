@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -56,7 +56,7 @@ public final class BindingReflections {
 
     private static final long EXPIRATION_TIME = 60;
 
-    @RegEx
+    @Regex
     private static final String ROOT_PACKAGE_PATTERN_STRING =
             "(org.opendaylight.yang.gen.v1.[a-z0-9_\\.]*\\.(?:rev[0-9][0-9][0-1][0-9][0-3][0-9]|norev))";
     private static final Pattern ROOT_PACKAGE_PATTERN = Pattern.compile(ROOT_PACKAGE_PATTERN_STRING);

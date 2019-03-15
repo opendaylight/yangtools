@@ -14,7 +14,7 @@ import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.concurrent.GuardedBy;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;

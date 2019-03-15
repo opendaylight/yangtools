@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.Iterables;
-import javax.annotation.concurrent.GuardedBy;
+import org.checkerframework.checker.lock.qual.Holding;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -217,7 +217,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         return tmp;
     }
 
-    @GuardedBy("this")
+    @Holding("this")
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private DataContainerCodecContext<?,T> createInstance() {
         // FIXME: make protected abstract

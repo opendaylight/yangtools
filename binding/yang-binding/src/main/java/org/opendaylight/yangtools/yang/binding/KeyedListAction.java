@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.binding;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
-import javax.annotation.CheckReturnValue;
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 import org.opendaylight.yangtools.yang.common.RpcResult;
 
 /**

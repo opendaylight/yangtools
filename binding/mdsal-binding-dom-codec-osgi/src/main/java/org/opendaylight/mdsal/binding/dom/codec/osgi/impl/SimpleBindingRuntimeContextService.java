@@ -12,7 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import javax.annotation.concurrent.GuardedBy;
+import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextListener;
 import org.opendaylight.mdsal.binding.dom.codec.osgi.BindingRuntimeContextService;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
