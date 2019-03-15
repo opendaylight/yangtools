@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.util.codec;
 import com.google.common.annotations.Beta;
 import java.util.IdentityHashMap;
 import java.util.Map;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
@@ -21,7 +20,6 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
  * @author Robert Varga
  */
 @Beta
-@NotThreadSafe
 public final class LazyCodecCache<T> extends CodecCache<T> {
     private final Map<TypedDataSchemaNode, T> complexCodecs = new IdentityHashMap<>();
     private final Map<TypeDefinition<?>, T> simpleCodecs = new IdentityHashMap<>();

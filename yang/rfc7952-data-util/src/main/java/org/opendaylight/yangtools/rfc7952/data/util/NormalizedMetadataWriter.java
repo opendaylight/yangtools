@@ -14,7 +14,6 @@ import com.google.common.annotations.Beta;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
@@ -47,7 +46,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeWrit
  * @author Robert Varga
  */
 @Beta
-@NotThreadSafe
 public final class NormalizedMetadataWriter implements Closeable, Flushable {
     private final NormalizedNodeStreamWriter writer;
     private final boolean orderKeyLeaves;

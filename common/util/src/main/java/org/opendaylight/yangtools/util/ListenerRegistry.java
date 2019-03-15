@@ -16,13 +16,11 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.AbstractListenerRegistration;
 import org.opendaylight.yangtools.concepts.ListenerRegistration;
 import org.opendaylight.yangtools.concepts.Mutable;
 
-@ThreadSafe
 public final class ListenerRegistry<T extends EventListener> implements Mutable {
 
     private final Set<ListenerRegistration<? extends T>> listeners = ConcurrentHashMap.newKeySet();
