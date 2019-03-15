@@ -15,8 +15,8 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
 import javax.xml.transform.dom.DOMSource;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -73,11 +73,11 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
      */
     private static final boolean DEFAULT_EMIT_EMPTY_CONTAINERS = true;
 
-    @RegEx
+    @Regex
     private static final String NUMBER_STRING = "-?\\d+(\\.\\d+)?";
     private static final Pattern NUMBER_PATTERN = Pattern.compile(NUMBER_STRING);
 
-    @RegEx
+    @Regex
     private static final String NOT_DECIMAL_NUMBER_STRING = "-?\\d+";
     private static final Pattern NOT_DECIMAL_NUMBER_PATTERN = Pattern.compile(NOT_DECIMAL_NUMBER_STRING);
 

@@ -11,10 +11,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
-@NotThreadSafe
 public class PrefixToModuleMap implements PrefixToModule {
     private final Map<String, QNameModule> prefixToModuleMap = new HashMap<>();
     private final Map<URI, QNameModule> namespaceToModuleMap = new HashMap<>();

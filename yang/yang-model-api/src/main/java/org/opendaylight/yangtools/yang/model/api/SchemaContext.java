@@ -14,9 +14,9 @@ import java.net.URI;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.concurrent.Immutable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -29,10 +29,9 @@ import org.opendaylight.yangtools.yang.common.Revision;
  * Instances MUST be immutable and thus usage in multi threaded
  * environment is safe.
  */
-@Immutable
 // FIXME: 3.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
 //               and possibly DataSchemaNode would reflect SchemaContext traits better.
-public interface SchemaContext extends ContainerSchemaNode {
+public interface SchemaContext extends ContainerSchemaNode, Immutable {
     /**
      * QName of NETCONF top-level data node.
      */

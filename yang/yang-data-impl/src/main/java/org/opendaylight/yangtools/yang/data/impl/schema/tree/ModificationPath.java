@@ -11,14 +11,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Arrays;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Mutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 @NonNullByDefault
-@NotThreadSafe
 final class ModificationPath implements Mutable {
     private static final int DEFAULT_ALLOC_SIZE = 8;
     private static final int ALLOC_SIZE = Integer.getInteger(

@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import java.util.Collection;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -37,5 +36,5 @@ public interface AugmentationNode extends MixinNode, DataContainerNode<Augmentat
      * @return Identifier which uniquely identifies augmentation in particular subtree.
      */
     @Override
-    @Nonnull AugmentationIdentifier getIdentifier();
+    AugmentationIdentifier getIdentifier();
 }
