@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 /**
@@ -25,5 +25,5 @@ public interface RelocatableXPathExpression extends XPathExpression {
      *
      * @return A new XPathExpression instance.
      */
-    @Nonnull XPathExpression relocateExpression();
+    @NonNull XPathExpression relocateExpression();
 }
