@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.xpath.XPathExpressionException;
 
 /**
@@ -17,7 +16,6 @@ import javax.xml.xpath.XPathExpressionException;
  * @author Robert Varga
  */
 @Beta
-@NotThreadSafe
 public interface YangXPathParser {
     /**
      * Parse a string containing an XPath expression.

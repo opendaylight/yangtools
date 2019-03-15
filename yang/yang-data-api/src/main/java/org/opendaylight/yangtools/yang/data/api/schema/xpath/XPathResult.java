@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Base interface for various things an XPath evaluation can return.
@@ -27,5 +27,5 @@ public interface XPathResult<T> {
      *
      * @return Result value
      */
-    @Nonnull T getValue();
+    @NonNull T getValue();
 }
