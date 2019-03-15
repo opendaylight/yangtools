@@ -13,14 +13,14 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 final class StackedPathArguments extends PathArgumentList {
     private final List<PathArgument> base;
     private final List<PathArgument> stack;
 
-    StackedPathArguments(@Nonnull final YangInstanceIdentifier base, @Nonnull final List<PathArgument> stack) {
+    StackedPathArguments(final @NonNull YangInstanceIdentifier base, final @NonNull List<PathArgument> stack) {
         verify(!stack.isEmpty());
         this.base = base.getPathArguments();
         this.stack = stack;
@@ -74,7 +74,6 @@ final class StackedPathArguments extends PathArgumentList {
         return base.lastIndexOf(srch);
     }
 
-    @Nonnull
     @Override
     public UnmodifiableIterator<PathArgument> iterator() {
         return new IteratorImpl(base, stack);

@@ -10,13 +10,12 @@ package org.opendaylight.yangtools.yang.data.api;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.AbstractList;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 abstract class PathArgumentList extends AbstractList<PathArgument> {
-    @Nonnull
     @Override
-    public abstract UnmodifiableIterator<PathArgument> iterator();
+    public abstract @NonNull UnmodifiableIterator<PathArgument> iterator();
 
     @Override
     public final boolean isEmpty() {
@@ -31,7 +30,7 @@ abstract class PathArgumentList extends AbstractList<PathArgument> {
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean addAll(@Nonnull final Collection<? extends PathArgument> c) {
+    public final boolean addAll(final Collection<? extends PathArgument> c) {
         throw new UnsupportedOperationException();
     }
 
@@ -43,13 +42,13 @@ abstract class PathArgumentList extends AbstractList<PathArgument> {
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean removeAll(@Nonnull final Collection<?> c) {
+    public final boolean removeAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 
     @Override
     @SuppressWarnings("checkstyle:parameterName")
-    public final boolean retainAll(@Nonnull final Collection<?> c) {
+    public final boolean retainAll(final Collection<?> c) {
         throw new UnsupportedOperationException();
     }
 

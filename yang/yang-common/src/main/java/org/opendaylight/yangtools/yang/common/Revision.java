@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Optional;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -43,7 +43,7 @@ public final class Revision implements Comparable<Revision>, Serializable {
 
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    @RegEx
+    @Regex
     // FIXME: we should improve this to filter incorrect dates -- see constructor.
     private static final String STRING_FORMAT_PATTERN_STR = "\\d\\d\\d\\d\\-\\d\\d-\\d\\d";
 

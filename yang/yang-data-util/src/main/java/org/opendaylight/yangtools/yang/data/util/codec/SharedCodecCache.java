@@ -12,7 +12,6 @@ import com.google.common.base.Throwables;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.concurrent.ExecutionException;
-import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
@@ -22,7 +21,6 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 public final class SharedCodecCache<T> extends CodecCache<T> {
     // Weak keys to force identity lookup
     // Soft values to keep unreferenced codecs around for a bit, but eventually we want them to go away
