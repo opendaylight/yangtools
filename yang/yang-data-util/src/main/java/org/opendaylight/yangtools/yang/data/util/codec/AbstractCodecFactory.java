@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -51,7 +50,6 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> Codec type
  */
-@ThreadSafe
 public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> implements SchemaContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 

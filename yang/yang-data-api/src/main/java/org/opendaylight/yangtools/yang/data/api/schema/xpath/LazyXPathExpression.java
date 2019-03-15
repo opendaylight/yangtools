@@ -11,8 +11,8 @@ import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Optional;
 import java.util.concurrent.Future;
-import javax.annotation.Nonnull;
 import javax.xml.xpath.XPathExpressionException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -52,6 +52,6 @@ public interface LazyXPathExpression {
      * @throws NullPointerException if any of the arguments are null
      * @throws IllegalArgumentException if the path does not match the path at which this expression was compiled
      */
-    ListenableFuture<Optional<? extends XPathResult<?>>> evaluateLazily(@Nonnull XPathDocument document,
-            @Nonnull YangInstanceIdentifier path);
+    ListenableFuture<Optional<? extends XPathResult<?>>> evaluateLazily(@NonNull XPathDocument document,
+            @NonNull YangInstanceIdentifier path);
 }

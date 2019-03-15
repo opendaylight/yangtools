@@ -9,8 +9,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
 /**
@@ -30,7 +28,7 @@ public interface CursorAwareDataTreeModification extends DataTreeModification, C
      */
     @Deprecated
     @Override
-    @Nullable DataTreeModificationCursor createCursor(@Nonnull YangInstanceIdentifier path);
+    DataTreeModificationCursor createCursor(YangInstanceIdentifier path);
 
     /**
      * Create a new {@link DataTreeModificationCursor} at specified path. May fail
@@ -42,7 +40,7 @@ public interface CursorAwareDataTreeModification extends DataTreeModification, C
      *                               or the modification is already {@link #ready()}.
      */
     @Override
-    default Optional<? extends DataTreeModificationCursor> openCursor(@Nonnull final YangInstanceIdentifier path) {
+    default Optional<? extends DataTreeModificationCursor> openCursor(final YangInstanceIdentifier path) {
         return Optional.ofNullable(createCursor(path));
     }
 
