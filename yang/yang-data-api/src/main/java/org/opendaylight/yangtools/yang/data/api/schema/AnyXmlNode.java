@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import javax.annotation.Nonnull;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -23,5 +22,5 @@ public interface AnyXmlNode extends AttributesContainer, DataContainerChild<Node
      * @return anyxml node value represented as DOMSource.
      */
     @Override
-    @Nonnull DOMSource getValue();
+    DOMSource getValue();
 }
