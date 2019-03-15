@@ -18,7 +18,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -151,7 +151,7 @@ public final class NormalizedNodes {
      * @param node A normalized node subtree, may not be null
      * @return A Map of NormalizedNode/DuplicateEntry relationships.
      */
-    public static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(@Nonnull final NormalizedNode<?, ?> node) {
+    public static Map<NormalizedNode<?, ?>, DuplicateEntry> findDuplicates(final @NonNull NormalizedNode<?, ?> node) {
         return Maps.filterValues(DuplicateFinder.findDuplicates(node), input -> !input.getDuplicates().isEmpty());
     }
 }
