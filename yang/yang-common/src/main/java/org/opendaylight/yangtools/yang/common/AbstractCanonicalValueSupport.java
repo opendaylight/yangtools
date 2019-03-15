@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import com.google.common.annotations.Beta;
 import java.lang.reflect.Modifier;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.concepts.Variant;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
 public abstract class AbstractCanonicalValueSupport<T extends CanonicalValue<T>> implements CanonicalValueSupport<T> {
     private static final ClassValue<Boolean> SUPPORTS = new ClassValue<Boolean>() {
         @Override

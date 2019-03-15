@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.annotation.RegEx;
+import org.checkerframework.checker.regex.qual.Regex;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -38,7 +38,7 @@ final class LeafrefXPathStringParsingPathArgumentBuilder implements Builder<List
     private static final String UP_ONE_LEVEL = "..";
     private static final String CURRENT_FUNCTION_INVOCATION_STR = "current()";
 
-    @RegEx
+    @Regex
     private static final String NODE_IDENTIFIER_STR = "([A-Za-z_][A-Za-z0-9_\\.-]*:)?([A-Za-z_][A-Za-z0-9_\\.-]*)";
 
     /**
