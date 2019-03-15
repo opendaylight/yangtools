@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Variant;
 
@@ -23,7 +22,6 @@ import org.opendaylight.yangtools.concepts.Variant;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
 public abstract class AbstractCanonicalValueValidator<T extends DerivedString<T>, V extends T>
         implements CanonicalValueValidator<T, V> {
     private static final ClassValue<Boolean> IMPLEMENTATIONS = new AbstractCanonicalValueImplementationValidator() {

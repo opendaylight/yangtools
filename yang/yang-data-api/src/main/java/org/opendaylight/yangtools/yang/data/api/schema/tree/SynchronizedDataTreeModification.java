@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -62,7 +61,7 @@ public final class SynchronizedDataTreeModification implements DataTreeModificat
     }
 
     @Override
-    public synchronized void applyToCursor(@Nonnull final DataTreeModificationCursor cursor) {
+    public synchronized void applyToCursor(final DataTreeModificationCursor cursor) {
         delegate.applyToCursor(cursor);
     }
 
