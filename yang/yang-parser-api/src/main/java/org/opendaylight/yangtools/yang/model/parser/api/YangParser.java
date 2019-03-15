@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation
  * @author Robert Varga
  */
 @Beta
-@NotThreadSafe
 public interface YangParser {
     /**
      * Return enumeration of concrete types of {@link SchemaSourceRepresentation} parsers created from this factory

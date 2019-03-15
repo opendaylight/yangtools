@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.ThreadSafe;
 import javax.xml.stream.Location;
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLEventReader;
@@ -25,7 +24,6 @@ import org.opendaylight.yangtools.yang.model.api.stmt.SubmoduleStatement;
  * a specified {@link ModuleEffectiveStatement}.
  */
 @Beta
-@ThreadSafe
 public final class YinXMLEventReaderFactory {
     private static final Location DUMMY_LOCATION = new Location() {
 
