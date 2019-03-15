@@ -9,8 +9,8 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import java.util.Collection;
 import java.util.Optional;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -26,14 +26,14 @@ public interface DataTreeCandidateNode {
      *
      * @return The node identifier.
      */
-    @Nonnull PathArgument getIdentifier();
+    @NonNull PathArgument getIdentifier();
 
     /**
      * Get an unmodifiable collection of modified child nodes.
      *
      * @return Unmodifiable collection of modified child nodes.
      */
-    @Nonnull Collection<DataTreeCandidateNode> getChildNodes();
+    @NonNull Collection<DataTreeCandidateNode> getChildNodes();
 
     /**
      * Returns modified child or null if child was not modified
@@ -51,7 +51,7 @@ public interface DataTreeCandidateNode {
      *
      * @return Node modification type.
      */
-    @Nonnull ModificationType getModificationType();
+    @NonNull ModificationType getModificationType();
 
     /**
      * Return the after-image of data corresponding to the node.
@@ -59,7 +59,7 @@ public interface DataTreeCandidateNode {
      * @return Node data as they will be present in the tree after
      *         the modification is applied.
      */
-    @Nonnull Optional<NormalizedNode<?, ?>> getDataAfter();
+    @NonNull Optional<NormalizedNode<?, ?>> getDataAfter();
 
     /**
      * Return the before-image of data corresponding to the node.
@@ -67,5 +67,5 @@ public interface DataTreeCandidateNode {
      * @return Node data as they were present in the tree before
      *         the modification was applied.
      */
-    @Nonnull Optional<NormalizedNode<?, ?>> getDataBefore();
+    @NonNull Optional<NormalizedNode<?, ?>> getDataBefore();
 }

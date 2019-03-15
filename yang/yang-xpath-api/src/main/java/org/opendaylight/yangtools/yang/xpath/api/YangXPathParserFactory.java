@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 /**
@@ -17,7 +16,6 @@ import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 public interface YangXPathParserFactory {
     /**
      * Return a {@link YangXPathParser} compliant with {@link YangXPathMathMode#IEEE754}.
