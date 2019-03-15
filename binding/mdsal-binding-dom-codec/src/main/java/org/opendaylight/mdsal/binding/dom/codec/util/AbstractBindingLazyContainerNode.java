@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ForwardingObject;
 import java.util.Collection;
-import java.util.Map;
 import java.util.Optional;
 import org.checkerframework.checker.lock.qual.GuardedBy;
 import org.eclipse.jdt.annotation.NonNull;
@@ -67,16 +66,6 @@ public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> 
     @Override
     public final ContainerNode getDelegate() {
         return delegate();
-    }
-
-    @Override
-    public Map<QName, String> getAttributes() {
-        return delegate().getAttributes();
-    }
-
-    @Override
-    public Object getAttributeValue(final QName name) {
-        return delegate().getAttributeValue(name);
     }
 
     @Override

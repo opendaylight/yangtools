@@ -16,6 +16,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
 import java.util.Map.Entry;
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
@@ -27,6 +28,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
@@ -102,7 +104,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
         // NormalizedNode writer does not have entry into case, but into choice
         // so for leaving case, we do not emit endNode.
         if (!(left instanceof CaseNodeCodecContext)) {
-            getDelegate().endNode();
+            delegate.endNode();
         }
     }
 
@@ -120,27 +122,33 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @Override
     public void leafNode(final String localName, final Object value) throws IOException {
-        Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
-        getDelegate().leafNode(dom.getKey(), dom.getValue());
+        final Entry<NodeIdentifier, Object> dom = serializeLeaf(localName, value);
+        delegate.startLeafNode(dom.getKey());
+        delegate.scalarValue(dom.getValue());
+        delegate.endNode();
     }
 
     @Override
     public void anyxmlNode(final String name, final Object value) throws IOException {
-        Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
-        getDelegate().anyxmlNode(dom.getKey(), dom.getValue());
+        final Entry<NodeIdentifier, Object> dom = serializeLeaf(name, value);
+        delegate.startAnyxmlNode(dom.getKey());
+        delegate.domSourceValue((DOMSource) dom.getValue());
+        delegate.endNode();
     }
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
-        LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
-        getDelegate().leafSetEntryNode(ctx.getSchema().getQName(),
-            ctx.getValueCodec().serialize(value));
+        final LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
+        final Object domValue = ctx.getValueCodec().serialize(value);
+        delegate.startLeafSetEntryNode(new NodeWithValue<>(ctx.getSchema().getQName(), domValue));
+        delegate.scalarValue(domValue);
+        delegate.endNode();
     }
 
     @Override
     public void startAugmentationNode(final Class<? extends Augmentation<?>> augmentationType)
             throws IOException {
-        getDelegate().startAugmentationNode(enter(augmentationType, AugmentationIdentifier.class));
+        delegate.startAugmentationNode(enter(augmentationType, AugmentationIdentifier.class));
     }
 
     @Override
@@ -151,63 +159,63 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
     @Override
     public void startChoiceNode(final Class<? extends DataContainer> type, final int childSizeHint)
             throws IOException {
-        getDelegate().startChoiceNode(enter(type, NodeIdentifier.class), childSizeHint);
+        delegate.startChoiceNode(enter(type, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startContainerNode(final Class<? extends DataObject> object, final int childSizeHint)
             throws IOException {
-        getDelegate().startContainerNode(enter(object, NodeIdentifier.class), childSizeHint);
+        delegate.startContainerNode(enter(object, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startLeafSet(final String localName, final int childSizeHint) throws IOException {
         final NodeIdentifier id = enter(localName, NodeIdentifier.class);
         emitSchema(current().getSchema());
-        getDelegate().startLeafSet(id, childSizeHint);
+        delegate.startLeafSet(id, childSizeHint);
     }
 
     @Override
     public void startOrderedLeafSet(final String localName, final int childSizeHint) throws IOException {
-        getDelegate().startOrderedLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
+        delegate.startOrderedLeafSet(enter(localName, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startMapEntryNode(final Identifier<?> key, final int childSizeHint) throws IOException {
         duplicateSchemaEnter();
         NodeIdentifierWithPredicates identifier = ((KeyedListNodeCodecContext<?>) current()).serialize(key);
-        getDelegate().startMapEntryNode(identifier, childSizeHint);
+        delegate.startMapEntryNode(identifier, childSizeHint);
     }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException {
-        getDelegate().startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
+        delegate.startMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public <T extends DataObject & Identifiable<?>> void startOrderedMapNode(final Class<T> mapEntryType,
             final int childSizeHint) throws IOException {
-        getDelegate().startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
+        delegate.startOrderedMapNode(enter(mapEntryType, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startUnkeyedList(final Class<? extends DataObject> obj, final int childSizeHint) throws IOException {
-        getDelegate().startUnkeyedList(enter(obj, NodeIdentifier.class), childSizeHint);
+        delegate.startUnkeyedList(enter(obj, NodeIdentifier.class), childSizeHint);
     }
 
     @Override
     public void startUnkeyedListItem(final int childSizeHint) throws IOException {
-        getDelegate().startUnkeyedListItem(duplicateSchemaEnter(), childSizeHint);
+        delegate.startUnkeyedListItem(duplicateSchemaEnter(), childSizeHint);
     }
 
     @Override
     public void flush() throws IOException {
-        getDelegate().flush();
+        delegate.flush();
     }
 
     @Override
     public void close() throws IOException {
-        getDelegate().close();
+        delegate.close();
     }
 }

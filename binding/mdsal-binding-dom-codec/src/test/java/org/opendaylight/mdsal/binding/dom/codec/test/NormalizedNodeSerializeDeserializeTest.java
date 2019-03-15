@@ -73,7 +73,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
@@ -215,8 +215,7 @@ public class NormalizedNodeSerializeDeserializeTest extends AbstractBindingCodec
     }
 
     private static ContainerNode getNormalizedTopWithAugments(final AugmentationNode... augChild) {
-        final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> builder =
-                ImmutableContainerNodeBuilder.create();
+        final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> builder = ImmutableContainerNodeBuilder.create();
 
         for (AugmentationNode augmentationNode : augChild) {
             builder.withChild(augmentationNode);

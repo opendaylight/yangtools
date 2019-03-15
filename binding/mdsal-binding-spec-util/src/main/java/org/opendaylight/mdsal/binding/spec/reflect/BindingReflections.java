@@ -82,7 +82,9 @@ public final class BindingReflections {
      */
     public static Class<? extends Augmentable<?>> findAugmentationTarget(
             final Class<? extends Augmentation<?>> augmentation) {
-        return ClassLoaderUtils.findFirstGenericArgument(augmentation, Augmentation.class);
+        final Optional<Class<Augmentable<?>>> opt = ClassLoaderUtils.findFirstGenericArgument(augmentation,
+            Augmentation.class);
+        return opt.orElse(null);
     }
 
     /**
@@ -94,7 +96,7 @@ public final class BindingReflections {
      * @return Parent class, e.g. class of which the childClass is ChildOf.
      */
     public static Class<?> findHierarchicalParent(final Class<? extends ChildOf<?>> childClass) {
-        return ClassLoaderUtils.findFirstGenericArgument(childClass, ChildOf.class);
+        return ClassLoaderUtils.findFirstGenericArgument(childClass, ChildOf.class).orElse(null);
     }
 
     /**
@@ -107,7 +109,7 @@ public final class BindingReflections {
      */
     public static Class<?> findHierarchicalParent(final DataObject child) {
         if (child instanceof ChildOf) {
-            return ClassLoaderUtils.findFirstGenericArgument(child.implementedInterface(), ChildOf.class);
+            return ClassLoaderUtils.findFirstGenericArgument(child.implementedInterface(), ChildOf.class).orElse(null);
         }
         return null;
     }
@@ -152,8 +154,8 @@ public final class BindingReflections {
     public static Optional<Class<?>> resolveRpcOutputClass(final Method targetMethod) {
         checkState(isRpcMethod(targetMethod), "Supplied method is not a RPC invocation method");
         Type futureType = targetMethod.getGenericReturnType();
-        Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType);
-        Type rpcResultArgument = ClassLoaderUtils.getFirstGenericParameter(rpcResultType);
+        Type rpcResultType = ClassLoaderUtils.getFirstGenericParameter(futureType).orElse(null);
+        Type rpcResultArgument = ClassLoaderUtils.getFirstGenericParameter(rpcResultType).orElse(null);
         if (rpcResultArgument instanceof Class && !Void.class.equals(rpcResultArgument)) {
             return Optional.of((Class) rpcResultArgument);
         }
@@ -434,11 +436,9 @@ public final class BindingReflections {
         if (List.class.isAssignableFrom(returnType)) {
             try {
                 return ClassLoaderUtils.callWithClassLoader(method.getDeclaringClass().getClassLoader(), () -> {
-                    Type listResult = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
-                    if (listResult instanceof Class && DataContainer.class.isAssignableFrom((Class) listResult)) {
-                        return Optional.of((Class) listResult);
-                    }
-                    return Optional.empty();
+                    return ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType()).flatMap(
+                        result -> result instanceof Class && DataContainer.class.isAssignableFrom((Class) result)
+                            ? Optional.of((Class) result) : Optional.empty());
                 });
             } catch (Exception e) {
                 /*

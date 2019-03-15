@@ -22,6 +22,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -246,8 +247,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 if (schema instanceof LeafSchemaNode) {
                     valueType = method.getReturnType();
                 } else if (schema instanceof LeafListSchemaNode) {
-                    final Type genericType = ClassLoaderUtils.getFirstGenericParameter(method.getGenericReturnType());
+                    final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
+                        method.getGenericReturnType());
+                    checkState(optType.isPresent(), "Failed to find return type for %s", method);
 
+                    final Type genericType = optType.get();
                     if (genericType instanceof Class<?>) {
                         valueType = (Class<?>) genericType;
                     } else if (genericType instanceof ParameterizedType) {
@@ -313,8 +317,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
     @Override
     public IdentifiableItemCodec getPathArgumentCodec(final Class<?> listClz, final ListSchemaNode schema) {
-        final Class<? extends Identifier<?>> identifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
+        final Optional<Class<Identifier<?>>> optIdentifier = ClassLoaderUtils.findFirstGenericArgument(listClz,
                 Identifiable.class);
+        checkState(optIdentifier.isPresent(), "Failed to find identifier for %s", listClz);
+
+        final Class<Identifier<?>> identifier = optIdentifier.get();
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
         for (final LeafNodeCodecContext<?> leaf : getLeafNodes(identifier, schema).values()) {
             final QName name = leaf.getDomPathArgument().getNodeType();

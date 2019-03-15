@@ -17,7 +17,7 @@ import org.opendaylight.mdsal.binding.yang.types.BaseYangTypes;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -74,7 +74,7 @@ final class UnionTypeCodec extends ReflectionBasedCodec {
             final TypeDefinition<?> subtype) throws NoSuchMethodException {
         final SchemaContext schemaContext = bindingCodecContext.getRuntimeContext().getSchemaContext();
         final Module module = schemaContext.findModule(subtype.getQName().getModule()).get();
-        final RevisionAwareXPath xpath = ((LeafrefTypeDefinition) subtype).getPathStatement();
+        final PathExpression xpath = ((LeafrefTypeDefinition) subtype).getPathStatement();
         // find schema node in schema context by xpath of leafref
         final SchemaNode dataNode;
         if (xpath.isAbsolute()) {
