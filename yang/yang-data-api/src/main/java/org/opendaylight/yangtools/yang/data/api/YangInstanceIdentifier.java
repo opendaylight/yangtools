@@ -36,8 +36,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.Function;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Path;
@@ -105,11 +105,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         this.hash = hash;
     }
 
-    @Nonnull abstract YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
+    abstract @NonNull YangInstanceIdentifier createRelativeIdentifier(int skipFromRoot);
 
-    @Nonnull abstract Collection<PathArgument> tryPathArguments();
+    abstract @Nullable Collection<PathArgument> tryPathArguments();
 
-    @Nonnull abstract Collection<PathArgument> tryReversePathArguments();
+    abstract @Nullable Collection<PathArgument> tryReversePathArguments();
 
     /**
      * Check if this instance identifier has empty path arguments, e.g. it is
@@ -134,7 +134,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Parent {@link YangInstanceIdentifier}, or null if this object is {@link #EMPTY}.
      */
-    @Nullable public abstract YangInstanceIdentifier getParent();
+    public abstract @Nullable YangInstanceIdentifier getParent();
 
     /**
      * Return the ancestor {@link YangInstanceIdentifier} with a particular depth, e.g. number of path arguments.
@@ -143,7 +143,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return Ancestor {@link YangInstanceIdentifier}
      * @throws IllegalArgumentException if the specified depth is negative or is greater than the depth of this object.
      */
-    @Nonnull public abstract YangInstanceIdentifier getAncestor(int depth);
+    public abstract @NonNull YangInstanceIdentifier getAncestor(int depth);
 
     /**
      * Returns an ordered iteration of path arguments.
@@ -300,7 +300,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     }
 
     @Override
-    public final boolean contains(@Nonnull final YangInstanceIdentifier other) {
+    public final boolean contains(final YangInstanceIdentifier other) {
         if (this == other) {
             return true;
         }
@@ -481,7 +481,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         @SuppressWarnings("checkstyle:parameterName")
-        public int compareTo(@Nonnull final PathArgument o) {
+        public int compareTo(final PathArgument o) {
             return nodeType.compareTo(o.getNodeType());
         }
 
@@ -538,7 +538,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private static final LoadingCache<QName, NodeIdentifier> CACHE = CacheBuilder.newBuilder().weakValues()
                 .build(new CacheLoader<QName, NodeIdentifier>() {
                     @Override
-                    public NodeIdentifier load(@Nonnull final QName key) {
+                    public NodeIdentifier load(final QName key) {
                         return new NodeIdentifier(key);
                     }
                 });
@@ -769,7 +769,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         @Override
         @SuppressWarnings("checkstyle:parameterName")
-        public int compareTo(@Nonnull final PathArgument o) {
+        public int compareTo(final PathArgument o) {
             if (!(o instanceof AugmentationIdentifier)) {
                 return -1;
             }

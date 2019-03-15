@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema;
 
-import javax.annotation.Nonnull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 
 /**
@@ -31,5 +30,5 @@ public interface ValueNode<K extends PathArgument, V> extends NormalizedNode<K, 
      *
      */
     @Override
-    @Nonnull V getValue();
+    V getValue();
 }

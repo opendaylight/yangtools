@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.api.schema.xpath;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * Interface implemented by {@link XPathExpression}s which can be further optimized for execution efficiency at the
@@ -32,5 +32,5 @@ public interface OptimizableXPathExpression extends XPathExpression {
      *
      * @return An optimized version of this expression.
      */
-    @Nonnull XPathExpression optimizeExpression();
+    @NonNull XPathExpression optimizeExpression();
 }
