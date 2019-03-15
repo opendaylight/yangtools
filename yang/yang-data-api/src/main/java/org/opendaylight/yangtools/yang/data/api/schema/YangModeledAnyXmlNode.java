@@ -5,12 +5,11 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.api.schema;
 
 import com.google.common.annotations.Beta;
 import java.util.Collection;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.AttributesContainer;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -28,6 +27,5 @@ public interface YangModeledAnyXmlNode extends AttributesContainer, DataContaine
      *
      * @return schema of contained XML data
      */
-    @Nonnull
-    ContainerSchemaNode getSchemaOfAnyXmlData();
+    @NonNull ContainerSchemaNode getSchemaOfAnyXmlData();
 }

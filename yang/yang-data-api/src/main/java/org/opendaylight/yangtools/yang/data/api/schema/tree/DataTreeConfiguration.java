@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 
@@ -46,8 +46,8 @@ public class DataTreeConfiguration implements Immutable {
     public static final DataTreeConfiguration DEFAULT_OPERATIONAL = new Builder(TreeType.OPERATIONAL)
             .setMandatoryNodesValidation(true).build();
 
-    private final TreeType treeType;
-    private final YangInstanceIdentifier rootPath;
+    private final @NonNull TreeType treeType;
+    private final @NonNull YangInstanceIdentifier rootPath;
     private final boolean uniqueIndexes;
     private final boolean mandatoryNodesValidation;
 
@@ -59,11 +59,11 @@ public class DataTreeConfiguration implements Immutable {
         this.mandatoryNodesValidation = mandatoryNodesValidation;
     }
 
-    public @Nonnull YangInstanceIdentifier getRootPath() {
+    public @NonNull YangInstanceIdentifier getRootPath() {
         return rootPath;
     }
 
-    public @Nonnull TreeType getTreeType() {
+    public @NonNull TreeType getTreeType() {
         return treeType;
     }
 
