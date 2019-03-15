@@ -106,7 +106,7 @@ public class TypedefCompilationTest extends BaseCompilationTest {
 
         Constructor<?> expectedConstructor = CompilationTestUtils.assertContainsConstructor(bitsExtClass, Boolean.class,
             Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class, Boolean.class);
-        Object obj = expectedConstructor.newInstance(null, null, null, null, null, new Boolean("true"), null);
+        Object obj = expectedConstructor.newInstance(null, null, null, null, null, Boolean.TRUE, null);
         assertEquals(obj, defInst.invoke(null, "sfmof"));
 
         // typedef int32-ext1
@@ -126,11 +126,11 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(6, int32Ext1Class.getDeclaredMethods().length);
 
         List<Range<Integer>> rangeConstraints = new ArrayList<>();
-        rangeConstraints.add(Range.closed(new Integer("2"), new Integer("2147483647")));
-        Object arg = new Integer("1");
+        rangeConstraints.add(Range.closed(2, 2147483647));
+        Object arg = 1;
         String expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(new Integer("159"));
+        obj = expectedConstructor.newInstance(159);
         assertEquals(obj, defInst.invoke(null, "159"));
 
         // typedef int32-ext2
@@ -149,12 +149,12 @@ public class TypedefCompilationTest extends BaseCompilationTest {
         assertEquals(3, int32Ext2Class.getDeclaredMethods().length);
 
         rangeConstraints.clear();
-        rangeConstraints.add(Range.closed(new Integer("3"), new Integer("9")));
-        rangeConstraints.add(Range.closed(new Integer("11"), new Integer("2147483647")));
+        rangeConstraints.add(Range.closed(3, 9));
+        rangeConstraints.add(Range.closed(11, 2147483647));
         arg = new Integer("10");
         expectedMsg = String.format("Invalid range: %s, expected: %s.", arg, rangeConstraints);
         CompilationTestUtils.assertContainsRestrictionCheck(expectedConstructor, expectedMsg, arg);
-        obj = expectedConstructor.newInstance(new Integer("2147483647"));
+        obj = expectedConstructor.newInstance(2147483647);
         assertEquals(obj, defInst.invoke(null, "2147483647"));
 
         // typedef string-ext1
