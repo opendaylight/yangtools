@@ -11,7 +11,7 @@ import java.net.URI;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import javax.annotation.concurrent.Immutable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
@@ -63,8 +63,8 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 
     </code>
  */
-@Immutable
-public interface Module extends DataNodeContainer, DocumentedNode, NotificationNodeContainer, NamespaceRevisionAware {
+public interface Module extends DataNodeContainer, DocumentedNode, Immutable, NotificationNodeContainer,
+        NamespaceRevisionAware {
     /**
      * Returns the name of the module which is specified as argument of YANG
      * {@link Module <b><font color="#FF0000">module</font></b>} keyword.
