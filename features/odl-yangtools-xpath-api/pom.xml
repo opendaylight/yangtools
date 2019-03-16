@@ -17,10 +17,10 @@
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>odl-yangtools-exp-xpath-impl</artifactId>
-    <version>0.3.0-SNAPSHOT</version>
+    <artifactId>odl-yangtools-exp-xpath-api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
     <packaging>feature</packaging>
-    <name>OpenDaylight :: Yangtools :: Experimental :: XPath API implementation</name>
+    <name>OpenDaylight :: Yangtools :: Experimental :: XPath API</name>
 
     <dependencyManagement>
         <dependencies>
@@ -36,20 +36,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.opendaylight.odlparent</groupId>
-            <artifactId>odl-antlr4</artifactId>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-yangtools-common</artifactId>
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-exp-xpath-api</artifactId>
-            <type>xml</type>
-            <classifier>features</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-xpath-impl</artifactId>
+            <artifactId>yang-xpath-api</artifactId>
         </dependency>
     </dependencies>
 </project>
