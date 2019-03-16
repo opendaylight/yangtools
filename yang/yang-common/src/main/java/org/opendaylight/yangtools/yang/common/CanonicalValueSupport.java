@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.common;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Variant;
 
@@ -30,7 +29,6 @@ import org.opendaylight.yangtools.concepts.Variant;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
 public interface CanonicalValueSupport<T extends CanonicalValue<T>> extends CanonicalValueValidator<T, T> {
     /**
      * Create a instance for a string representation. Implementations of this method are required to perform checks
