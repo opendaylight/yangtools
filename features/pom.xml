@@ -32,14 +32,13 @@
         <module>odl-yangtools-parser-api</module>
         <module>odl-yangtools-parser</module>
         <module>odl-yangtools-util</module>
+        <module>odl-yangtools-xpath-api</module>
         <module>odl-yangtools-xpath</module>
 
         <!-- Stable feature repository -->
         <module>features-yangtools</module>
 
         <!-- Experimental features -->
-        <module>odl-yangtools-exp-xpath-api</module>
-        <module>odl-yangtools-exp-xpath-impl</module>
 
         <!-- Experimental feature repostitory -->
         <module>features-yangtools-experimental</module>
