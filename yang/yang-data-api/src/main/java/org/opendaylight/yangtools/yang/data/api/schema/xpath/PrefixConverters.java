@@ -27,6 +27,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * A set of utility functions for dealing with common types of namespace mappings.
  */
 @Beta
+@Deprecated
 public final class PrefixConverters {
     private PrefixConverters() {
         throw new UnsupportedOperationException();

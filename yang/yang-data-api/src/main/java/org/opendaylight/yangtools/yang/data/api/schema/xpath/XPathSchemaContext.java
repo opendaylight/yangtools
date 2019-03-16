@@ -20,6 +20,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * a particular root node.
  */
 @Beta
+@Deprecated
 public interface XPathSchemaContext {
     /**
      * Compile an XPath expression for execution on {@link XPathDocument}s produced by this context.

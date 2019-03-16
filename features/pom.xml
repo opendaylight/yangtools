@@ -39,6 +39,8 @@
         <module>features-yangtools</module>
 
         <!-- Experimental features -->
+        <module>odl-yangtools-exp-data-xpath-api</module>
+        <module>odl-yangtools-exp-data-xpath</module>
 
         <!-- Experimental feature repostitory -->
         <module>features-yangtools-experimental</module>

@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
  * An {@link XPathResult} containing a String.
  */
 @Beta
+@Deprecated
 public interface XPathStringResult extends XPathResult<String> {
 
 }

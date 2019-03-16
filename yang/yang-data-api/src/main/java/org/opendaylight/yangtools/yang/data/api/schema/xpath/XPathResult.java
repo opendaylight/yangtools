@@ -16,6 +16,7 @@ import javax.annotation.Nonnull;
  * @param <T> type of returned value
  */
 @Beta
+@Deprecated
 // FIXME: do we want to support all the modes of
 //        <a href="http://www.w3.org/TR/DOM-Level-3-XPath/xpath.html#XPathResultType">DOM XPath</a> ?
 //        The default DataTree (yang-data-impl) implementation can support ORDERED_NODE_SNAPSHOT_TYPE. The clustered

@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
  * An {@link XPathResult} containing a Boolean.
  */
 @Beta
+@Deprecated
 public interface XPathBooleanResult extends XPathResult<Boolean> {
 
 }

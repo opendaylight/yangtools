@@ -15,6 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * The notion of a document, modeled as a {@link NormalizedNode}.
  */
 @Beta
+@Deprecated
 public interface XPathDocument {
     /**
      * Return the root node of this document.
