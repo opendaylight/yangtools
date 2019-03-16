@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  * <p>
  * Implementations are required to support {@link java.util.ServiceLoader}.
  */
+@Deprecated
 @NonNullByDefault
 public interface XPathSchemaContextFactory {
     /**

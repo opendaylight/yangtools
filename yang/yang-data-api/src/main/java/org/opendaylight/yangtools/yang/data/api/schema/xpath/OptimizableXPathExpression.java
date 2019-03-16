@@ -22,6 +22,7 @@ import javax.annotation.Nonnull;
  * the expression.
  */
 @Beta
+@Deprecated
 public interface OptimizableXPathExpression extends XPathExpression {
     /**
      * Perform optimization of this expression. If an implementation supports different levels of optimization, it

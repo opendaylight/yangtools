@@ -17,6 +17,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * moved either up or down in a SchemaPath tree, usually closer to their {@link #getApexPath()}.
  */
 @Beta
+@Deprecated
 public interface RelocatableXPathExpression extends XPathExpression {
     /**
      * Return a new XPathExpression relocated to a SchemaPath of the implementation's choosing. Note that
