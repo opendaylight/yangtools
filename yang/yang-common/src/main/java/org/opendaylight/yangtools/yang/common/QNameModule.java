@@ -110,8 +110,7 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
     /**
      * Returns the revision date for the module.
      *
-     * @return date of the module revision which is specified as argument of
-     *         YANG Module <b><font color="#339900">revison</font></b> keyword
+     * @return date of the module revision which is specified as argument of YANG Module {@code revision} keyword
      */
     public @NonNull Optional<Revision> getRevision() {
         return Optional.ofNullable(revision);
