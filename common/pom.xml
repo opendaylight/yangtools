@@ -23,7 +23,6 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>checkstyle-logging</module>
         <module>concepts</module>
         <module>mockito-configuration</module>
         <module>util</module>
