@@ -210,12 +210,12 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-api</artifactId>
-                <version>0.3.0-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-impl</artifactId>
-                <version>0.3.0-SNAPSHOT</version>
+                <version>1.0.0-SNAPSHOT</version>
             </dependency>
 
             <dependency>
@@ -313,6 +313,13 @@
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
+                <artifactId>odl-yangtools-xpath-api</artifactId>
+                <version>1.0.0-SNAPSHOT</version>
+                <type>xml</type>
+                <classifier>features</classifier>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-xpath</artifactId>
                 <version>3.0.0-SNAPSHOT</version>
                 <type>xml</type>
@@ -320,20 +327,6 @@
             </dependency>
 
             <!-- Experimental features -->
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-yangtools-exp-xpath-api</artifactId>
-                <version>0.3.0-SNAPSHOT</version>
-                <type>xml</type>
-                <classifier>features</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-yangtools-exp-xpath-impl</artifactId>
-                <version>0.3.0-SNAPSHOT</version>
-                <type>xml</type>
-                <classifier>features</classifier>
-            </dependency>
 
             <!-- Documentation -->
             <dependency>

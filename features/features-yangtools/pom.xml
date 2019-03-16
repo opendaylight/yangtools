@@ -86,6 +86,12 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-yangtools-xpath-api</artifactId>
+            <classifier>features</classifier>
+            <type>xml</type>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-xpath</artifactId>
             <classifier>features</classifier>
             <type>xml</type>
