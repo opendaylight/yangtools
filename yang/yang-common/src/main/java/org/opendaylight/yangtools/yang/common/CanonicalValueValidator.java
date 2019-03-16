@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.common;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.concepts.Variant;
 
 /**
@@ -25,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Variant;
  */
 @Beta
 @NonNullByDefault
-public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends T> {
+public interface CanonicalValueValidator<T extends CanonicalValue<T>, V extends T> extends Immutable {
     /**
      * Returns the instantiated representation class. The representation class is a {@link CanonicalValue} which
      * understands the semantics of modeled data and has some internal representation of it. All {@link CanonicalValue}s
