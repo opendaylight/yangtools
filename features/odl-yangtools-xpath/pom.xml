@@ -37,10 +37,26 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.opendaylight.odlparent</groupId>
+            <artifactId>odl-antlr4</artifactId>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-data-api</artifactId>
             <type>xml</type>
             <classifier>features</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>odl-yangtools-xpath-api</artifactId>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.opendaylight.yangtools</groupId>
+            <artifactId>yang-xpath-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
