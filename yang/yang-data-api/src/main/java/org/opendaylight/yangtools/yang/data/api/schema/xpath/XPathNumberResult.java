@@ -13,6 +13,7 @@ import com.google.common.annotations.Beta;
  * An {@link XPathResult} containing a Number.
  */
 @Beta
+@Deprecated
 public interface XPathNumberResult extends XPathResult<Number> {
 
 }

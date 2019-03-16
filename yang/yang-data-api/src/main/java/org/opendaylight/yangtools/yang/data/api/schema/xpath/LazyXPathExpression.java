@@ -27,8 +27,8 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
  *             APPLICATIONS WILLING TO USE THIS API PLEASE CONTACT
  *             <a href="mailto:yangtools-dev@lists.opendaylight.org">yangtools-dev</a>.
  */
-@Beta
 @Deprecated
+@Beta
 public interface LazyXPathExpression {
     /**
      * Evaluate this expression at the specified path in a document. If evaluation succeeds, it will return an

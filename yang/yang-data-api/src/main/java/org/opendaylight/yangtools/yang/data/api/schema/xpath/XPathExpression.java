@@ -19,6 +19,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
  * evaluated on {@link XPathDocument}s from other context.
  */
 @Beta
+@Deprecated
 public interface XPathExpression {
     /**
      * Evaluate this expression at the specified path in a document. If evaluation succeeds, it will return an
