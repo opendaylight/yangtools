@@ -329,13 +329,6 @@
             <!-- Experimental features -->
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>odl-exp-objcache</artifactId>
-                <version>2.1.9-SNAPSHOT</version>
-                <type>xml</type>
-                <classifier>features</classifier>
-            </dependency>
-            <dependency>
-                <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>odl-yangtools-exp-xpath-api</artifactId>
                 <version>0.2.9-SNAPSHOT</version>
                 <type>xml</type>
