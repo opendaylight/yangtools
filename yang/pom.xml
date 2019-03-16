@@ -25,6 +25,7 @@
     <modules>
         <module>yang-common</module>
         <module>yang-data-api</module>
+        <module>yang-data-xpath-api</module>
         <module>yang-data-jaxen</module>
         <module>yang-data-util</module>
         <module>yang-data-impl</module>

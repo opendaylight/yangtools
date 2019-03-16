@@ -21,7 +21,7 @@
     <version>3.0.0-SNAPSHOT</version>
     <packaging>feature</packaging>
     <name>OpenDaylight :: Yangtools :: XPath support</name>
-    <description>XPath support for YANG-modeled data</description>
+    <description>YANG XPath support</description>
 
     <dependencyManagement>
         <dependencies>
@@ -44,12 +44,6 @@
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-data-api</artifactId>
-            <type>xml</type>
-            <classifier>features</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-xpath-api</artifactId>
             <type>xml</type>
             <classifier>features</classifier>
@@ -57,10 +51,6 @@
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>yang-xpath-impl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>yang-data-jaxen</artifactId>
         </dependency>
     </dependencies>
 </project>
