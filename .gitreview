@@ -2,4 +2,4 @@
 host=git.opendaylight.org
 port=29418
 project=yangtools.git
-defaultbranch=master
+defaultbranch=v2.1.x
