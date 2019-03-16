@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
@@ -41,7 +40,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.tree.spi.Version;
  * reconstruct the effective data node presentation, it is sufficient to perform a depth-first pre-order traversal of
  * the tree.
  */
-@NotThreadSafe
 final class ModifiedNode extends NodeModification implements StoreTreeNode<ModifiedNode> {
     static final Predicate<ModifiedNode> IS_TERMINAL_PREDICATE = input -> {
         requireNonNull(input);
