@@ -290,12 +290,12 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
-     * Compares the specified object with this list for equality.  Returns <tt>true</tt> if and only if the specified
+     * Compares the specified object with this list for equality.  Returns {@code true} if and only if the specified
      * object is also instance of {@link QName} and its {@link #getLocalName()}, {@link #getNamespace()} and
      * {@link #getRevision()} are equals to same properties of this instance.
      *
      * @param obj the object to be compared for equality with this QName
-     * @return <tt>true</tt> if the specified object is equal to this QName
+     * @return {@code true} if the specified object is equal to this QName
      */
     @Override
     public boolean equals(final Object obj) {
