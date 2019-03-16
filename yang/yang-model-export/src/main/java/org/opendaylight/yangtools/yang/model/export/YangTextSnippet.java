@@ -20,7 +20,6 @@ import java.util.Spliterators;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.concepts.Immutable;
@@ -40,7 +39,6 @@ import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 @NonNullByDefault({ PARAMETER, RETURN_TYPE })
 public final class YangTextSnippet implements Immutable, Iterable<@NonNull String> {
     private final Set<@NonNull StatementDefinition> ignoredStatements;

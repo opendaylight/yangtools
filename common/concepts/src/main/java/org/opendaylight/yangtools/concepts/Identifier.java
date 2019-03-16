@@ -8,7 +8,6 @@
 package org.opendaylight.yangtools.concepts;
 
 import java.io.Serializable;
-import javax.annotation.concurrent.ThreadSafe;
 
 /**
  * General identifier interface. It is primarily a marker for all things that identify concepts -- such as names,
@@ -22,11 +21,7 @@ import javax.annotation.concurrent.ThreadSafe;
  * of their serialization format. For further efficiency, implementations should consider implementing
  * {@link WritableObject}, so they can be efficiently embedded in other {@link Serializable} and {@code WritableObject}s
  * objects.
- *
- * <p>Note that this class is annotated as {@link ThreadSafe}, hence all implementations are expected to be
- * thread-safe. This is an implication of {@link Immutable} interface contract.
  */
-@ThreadSafe
 public interface Identifier extends Serializable, Immutable {
     @Override
     boolean equals(Object obj);
