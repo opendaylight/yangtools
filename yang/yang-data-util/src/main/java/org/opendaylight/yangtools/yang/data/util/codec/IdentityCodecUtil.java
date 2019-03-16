@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkState;
 import com.google.common.annotations.Beta;
 import java.util.Optional;
 import java.util.function.Function;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
 public final class IdentityCodecUtil {
 
     private IdentityCodecUtil() {
