@@ -11,7 +11,7 @@ import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathDocument;
+import org.opendaylight.yangtools.yang.data.api.xpath.XPathDocument;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextNode;
 import org.opendaylight.yangtools.yang.data.util.DataSchemaContextTree;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;

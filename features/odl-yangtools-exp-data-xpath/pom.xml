@@ -11,24 +11,24 @@
 
     <parent>
         <groupId>org.opendaylight.odlparent</groupId>
-        <artifactId>feature-repo-parent</artifactId>
+        <artifactId>single-feature-parent</artifactId>
         <version>4.0.9</version>
         <relativePath/>
     </parent>
 
     <groupId>org.opendaylight.yangtools</groupId>
-    <artifactId>features-yangtools-experimental</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <artifactId>odl-yangtools-exp-data-xpath</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>feature</packaging>
-    <name>OpenDaylight :: Yangtools :: Experimental Features</name>
-    <description>YANG Tools Experimental Features</description>
+    <name>OpenDaylight :: Yangtools :: Experimental :: Data XPath support</name>
+    <description>XPath support for YANG-modeled data</description>
 
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yangtools-artifacts</artifactId>
-                <version>${project.version}</version>
+                <version>3.0.0-SNAPSHOT</version>
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
@@ -38,22 +38,19 @@
     <dependencies>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>features-yangtools</artifactId>
-            <classifier>features</classifier>
+            <artifactId>odl-yangtools-xpath</artifactId>
             <type>xml</type>
+            <classifier>features</classifier>
         </dependency>
-
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
             <artifactId>odl-yangtools-exp-data-xpath-api</artifactId>
-            <classifier>features</classifier>
             <type>xml</type>
+            <classifier>features</classifier>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-exp-data-xpath</artifactId>
-            <classifier>features</classifier>
-            <type>xml</type>
+            <artifactId>yang-data-jaxen</artifactId>
         </dependency>
     </dependencies>
 </project>

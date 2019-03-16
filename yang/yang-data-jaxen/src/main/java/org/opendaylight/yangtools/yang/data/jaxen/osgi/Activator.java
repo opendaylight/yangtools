@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.data.jaxen.osgi;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.data.api.schema.xpath.XPathSchemaContextFactory;
+import org.opendaylight.yangtools.yang.data.api.xpath.XPathSchemaContextFactory;
 import org.opendaylight.yangtools.yang.data.jaxen.JaxenSchemaContextFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;

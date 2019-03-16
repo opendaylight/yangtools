@@ -20,7 +20,7 @@
     <artifactId>odl-yangtools-xpath-api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <packaging>feature</packaging>
-    <name>OpenDaylight :: Yangtools :: Experimental :: XPath API</name>
+    <name>OpenDaylight :: Yangtools :: XPath API</name>
 
     <dependencyManagement>
         <dependencies>
