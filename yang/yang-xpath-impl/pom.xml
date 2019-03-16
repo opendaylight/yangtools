@@ -79,6 +79,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Automatic-Module-Name>org.opendaylight.yangtools.yang.xpath.impl</Automatic-Module-Name>
                         <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
                         <Bundle-Activator>org.opendaylight.yangtools.yang.xpath.impl.Activator</Bundle-Activator>
                     </instructions>
