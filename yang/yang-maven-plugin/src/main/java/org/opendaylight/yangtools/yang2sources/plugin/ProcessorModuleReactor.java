@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
@@ -38,7 +37,6 @@ import org.slf4j.LoggerFactory;
  *
  * @author Robert Varga
  */
-@NotThreadSafe
 final class ProcessorModuleReactor {
     private static final Logger LOG = LoggerFactory.getLogger(ProcessorModuleReactor.class);
 

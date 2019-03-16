@@ -16,7 +16,6 @@ import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Objects;
 import java.util.Optional;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -29,8 +28,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 @NonNullByDefault
-@ThreadSafe
-public class Variant<T, U> {
+public class Variant<T, U> implements Immutable {
     private final @Nullable T first;
     private final @Nullable U second;
 
