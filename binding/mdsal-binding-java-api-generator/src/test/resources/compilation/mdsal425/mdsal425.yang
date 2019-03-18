@@ -1,0 +1,9 @@
+module mdsal425 {
+    namespace "urn:odl:mdsal425";
+    prefix mdsal425;
+
+    container e {
+
+    }
+}
+

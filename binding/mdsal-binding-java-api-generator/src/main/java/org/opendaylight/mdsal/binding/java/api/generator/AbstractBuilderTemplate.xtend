@@ -126,10 +126,10 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
         «ENDIF»
         «IF augmentType !== null»
 
-            @SuppressWarnings("unchecked")
+            @«SuppressWarnings.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
             «IF addOverride»@«Override.importedName»«ENDIF»
-            public <E extends «augmentType.importedName»> E «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E> augmentationType) {
-                return (E) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
+            public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E$$> augmentationType) {
+                return (E$$) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
             }
         «ENDIF»
     '''

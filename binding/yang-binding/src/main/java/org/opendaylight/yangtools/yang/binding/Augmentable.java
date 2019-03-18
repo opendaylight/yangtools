@@ -26,9 +26,11 @@ public interface Augmentable<T> {
     /**
      * Returns instance of augmentation.
      *
-     * @param augmentationType
-     *            Type of augmentation to be returned.
+     * @param augmentationType Type of augmentation to be returned.
+     * @param <E$$> Type capture for augmentation type
      * @return instance of augmentation.
      */
-    <E extends Augmentation<T>> @Nullable E augmentation(Class<E> augmentationType);
+    // E$$ is an identifier which cannot be generated from models.
+    @SuppressWarnings("checkstyle:methodTypeParameterName")
+    <E$$ extends Augmentation<T>> @Nullable E$$ augmentation(Class<E$$> augmentationType);
 }

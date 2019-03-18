@@ -663,6 +663,15 @@ public class CompilationTest extends BaseCompilationTest {
         CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
     }
 
+    @Test
+    public void testMdsal425() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal425");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal425");
+        generateTestSources("/compilation/mdsal425", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
     private static void testReturnTypeIdentityref(final Class<?> clazz, final String methodName,
             final String returnTypeStr) throws NoSuchMethodException {
         Method method = clazz.getMethod(methodName);
