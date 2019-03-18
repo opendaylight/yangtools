@@ -15,6 +15,7 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Iterables;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -61,7 +62,7 @@ import org.slf4j.LoggerFactory;
 public final class SchemaContextUtil {
     private static final Logger LOG = LoggerFactory.getLogger(SchemaContextUtil.class);
     private static final Splitter COLON_SPLITTER = Splitter.on(':');
-    private static final Splitter SLASH_SPLITTER = Splitter.on('/');
+    private static final Splitter SLASH_SPLITTER = Splitter.on('/').omitEmptyStrings();
 
     private SchemaContextUtil() {
     }
@@ -551,9 +552,7 @@ public final class SchemaContextUtil {
 
         final List<QName> path = new LinkedList<>();
         for (final String pathComponent : SLASH_SPLITTER.split(xpath)) {
-            if (!pathComponent.isEmpty()) {
-                path.add(stringPathPartToQName(context, parentModule, pathComponent));
-            }
+            path.add(stringPathPartToQName(context, parentModule, pathComponent));
         }
         return path;
     }
@@ -656,26 +655,92 @@ public final class SchemaContextUtil {
         checkState(actualSchemaNode.getPath() != null,
                 "Schema Path reference for Leafref cannot be NULL");
 
-        final Iterable<String> xpaths = SLASH_SPLITTER.split(relativeXPath.toString());
+        List<String> xpaths = new ArrayList<>();
+        splitXPath(relativeXPath.toString(), xpaths);
 
-        // Find out how many "parent" components there are
-        // FIXME: is .contains() the right check here?
-        // FIXME: case ../../node1/node2/../node3/../node4
-        int colCount = 0;
-        for (final Iterator<String> it = xpaths.iterator(); it.hasNext() && it.next().contains(".."); ) {
-            ++colCount;
+        // Find out how many "parent" components there are and trim them
+        final int colCount = normalizeXPath(xpaths);
+        if (colCount != 0) {
+            xpaths = xpaths.subList(colCount, xpaths.size());
         }
 
         final Iterable<QName> schemaNodePath = actualSchemaNode.getPath().getPathFromRoot();
 
         if (Iterables.size(schemaNodePath) - colCount >= 0) {
             return Iterables.concat(Iterables.limit(schemaNodePath, Iterables.size(schemaNodePath) - colCount),
-                Iterables.transform(Iterables.skip(xpaths, colCount),
-                    input -> stringPathPartToQName(context, module, input)));
+                Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
         }
         return Iterables.concat(schemaNodePath,
-                Iterables.transform(Iterables.skip(xpaths, colCount),
-                    input -> stringPathPartToQName(context, module, input)));
+                Iterables.transform(xpaths, input -> stringPathPartToQName(context, module, input)));
+    }
+
+    @VisibleForTesting
+    static int normalizeXPath(final List<String> xpath) {
+        LOG.trace("Normalize {}", xpath);
+
+        // We need to make multiple passes here, as the leading XPaths as we can have "../abc/../../def", which really
+        // is "../../def"
+        while (true) {
+            // Next up: count leading ".." components
+            int leadingParents = 0;
+            while (true) {
+                if (leadingParents == xpath.size()) {
+                    return leadingParents;
+                }
+                if (!"..".equals(xpath.get(leadingParents))) {
+                    break;
+                }
+
+                ++leadingParents;
+            }
+
+            // Now let's see if there there is a '..' in the rest
+            final int dots = findDots(xpath, leadingParents + 1);
+            if (dots == -1) {
+                return leadingParents;
+            }
+
+            xpath.remove(dots - 1);
+            xpath.remove(dots - 1);
+            LOG.trace("Next iteration {}", xpath);
+        }
+    }
+
+    private static int findDots(final List<String> xpath, final int startIndex) {
+        for (int i = startIndex; i < xpath.size(); ++i) {
+            if ("..".equals(xpath.get(i))) {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private static void splitXPath(final String xpath, final List<String> output) {
+        // This is a major hack, but should do the trick for now.
+        final int deref = xpath.indexOf("deref(");
+        if (deref == -1) {
+            doSplitXPath(xpath, output);
+            return;
+        }
+
+        // Interpret leading part
+        doSplitXPath(xpath.substring(0, deref), output);
+
+        // Find matching parentheses
+        final int start = deref + 6;
+        final int paren = xpath.indexOf(')', start);
+        checkArgument(paren != -1, "Cannot find matching parentheses in %s", xpath);
+
+        // Interpret the argument
+        doSplitXPath(xpath.substring(start, paren), output);
+
+        // And now the last bit
+        splitXPath(xpath.substring(paren + 1), output);
+    }
+
+    private static void doSplitXPath(final String xpath, final List<String> output) {
+        SLASH_SPLITTER.split(xpath).forEach(output::add);
     }
 
     /**
