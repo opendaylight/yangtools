@@ -7,6 +7,10 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator;
 
+import org.opendaylight.mdsal.binding.model.api.Type;
+import org.opendaylight.mdsal.binding.model.util.Types;
+import org.opendaylight.yangtools.yang.common.Empty;
+
 /**
  * Various constants when generating JAVA source code.
  */
@@ -28,6 +32,9 @@ final class Constants {
      * and ordering.
      */
     public static final String MEMBER_REGEX_LIST = "regexes";
+
+    // This should live in a common artifact
+    static final Type EMPTY = Types.typeForClass(Empty.class);
 
     private Constants() {
 

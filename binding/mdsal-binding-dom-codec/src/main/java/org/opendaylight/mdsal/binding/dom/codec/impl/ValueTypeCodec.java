@@ -13,10 +13,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.EnumTypeDefinition;
 
 /**
@@ -37,7 +35,7 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
 
     /**
      * No-op Codec, Java YANG Binding uses same types as NormalizedNode model for base YANG types, representing numbers,
-     * binary and strings.
+     * binary, strings and empty.
      */
     public static final SchemaUnawareCodec NOOP_CODEC = new SchemaUnawareCodec() {
 
@@ -52,31 +50,11 @@ abstract class ValueTypeCodec implements Codec<Object, Object> {
         }
     };
 
-    public static final SchemaUnawareCodec EMPTY_CODEC = new SchemaUnawareCodec() {
-
-        @Override
-        public Object serialize(final Object input) {
-            // Empty type has Empty value in NormalizedNode and Composite Node representation
-            return Empty.getInstance();
-        }
-
-        @Override
-        public Object deserialize(final Object input) {
-            /* Empty type has boolean.TRUE representation in Binding-aware world otherwise it is null / false.
-             * So when codec is triggered, empty leaf is present, that means we are safe to return true.
-             */
-            return Boolean.TRUE;
-        }
-    };
-
-    private static final Callable<? extends SchemaUnawareCodec> EMPTY_LOADER = () -> EMPTY_CODEC;
-
-
     public static SchemaUnawareCodec getCodecFor(final Class<?> typeClz, final TypeDefinition<?> def) {
         if (BindingReflections.isBindingClass(typeClz)) {
             return getCachedSchemaUnawareCodec(typeClz, getCodecLoader(typeClz, def));
         }
-        return def instanceof EmptyTypeDefinition ? EMPTY_CODEC : NOOP_CODEC;
+        return NOOP_CODEC;
     }
 
     private static SchemaUnawareCodec getCachedSchemaUnawareCodec(final Class<?> typeClz,

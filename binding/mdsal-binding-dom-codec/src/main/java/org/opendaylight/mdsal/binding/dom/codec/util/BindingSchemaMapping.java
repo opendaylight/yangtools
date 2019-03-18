@@ -12,7 +12,6 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 
 public final class BindingSchemaMapping {
     private BindingSchemaMapping() {
@@ -25,11 +24,11 @@ public final class BindingSchemaMapping {
     }
 
     public static String getGetterMethodName(final TypedDataSchemaNode node) {
-        // Bug 8903: If it is a derived type of boolean or empty, not an inner type, then the return type
+        // Bug 8903: If it is a derived type of boolean, not an inner type, then the return type
         // of method would be the generated type of typedef not build-in types, so here it should be 'get'.
         final TypeDefinition<?> type = node.getType();
         return BindingMapping.getGetterMethodName(node.getQName(),
-            (type instanceof BooleanTypeDefinition || type instanceof EmptyTypeDefinition)
+            type instanceof BooleanTypeDefinition
             && (type.getPath().equals(node.getPath()) || type.getBaseType() == null));
     }
 }

@@ -25,16 +25,16 @@ public class UnionValueOptionContextTest {
         final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
         final Method methodFoo2 = TestDataObject2.class.getMethod("foo");
         TEST_UVOC_1 = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class, methodFoo1,
-            ValueTypeCodec.EMPTY_CODEC);
+            ValueTypeCodec.NOOP_CODEC);
         TEST_UVOC_2 = new UnionValueOptionContext(TestUnion.class, TestDataObject2.class, methodFoo2,
-            ValueTypeCodec.EMPTY_CODEC);
+            ValueTypeCodec.NOOP_CODEC);
     }
 
     @Test
     public void hashCodeTest() throws Exception {
         final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
         final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class,
-            methodFoo1, ValueTypeCodec.EMPTY_CODEC);
+            methodFoo1, ValueTypeCodec.NOOP_CODEC);
 
         assertEquals("HashCode", test_uvoc.hashCode(), TEST_UVOC_1.hashCode());
         assertNotEquals("HashCode", TEST_UVOC_1.hashCode(), TEST_UVOC_2.hashCode());
@@ -44,7 +44,7 @@ public class UnionValueOptionContextTest {
     public void equalsTest() throws Exception {
         final Method methodFoo1 = TestDataObject1.class.getMethod("foo");
         final UnionValueOptionContext test_uvoc = new UnionValueOptionContext(TestUnion.class, TestDataObject1.class,
-            methodFoo1, ValueTypeCodec.EMPTY_CODEC);
+            methodFoo1, ValueTypeCodec.NOOP_CODEC);
 
         assertTrue("Equals", TEST_UVOC_1.equals(test_uvoc));
         assertFalse("Not equals", TEST_UVOC_1.equals(TEST_UVOC_2));

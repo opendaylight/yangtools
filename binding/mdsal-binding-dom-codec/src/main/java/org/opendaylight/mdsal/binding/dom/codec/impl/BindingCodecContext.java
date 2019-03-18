@@ -56,7 +56,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.type.EmptyTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -283,10 +282,6 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             @SuppressWarnings({ "unchecked", "rawtypes" })
             final Codec<Object, Object> casted = (Codec) instanceIdentifierCodec;
             return casted;
-        } else if (Boolean.class.equals(valueType)) {
-            if (instantiatedType instanceof EmptyTypeDefinition) {
-                return ValueTypeCodec.EMPTY_CODEC;
-            }
         } else if (BindingReflections.isBindingClass(valueType)) {
             return getCodecForBindingClass(valueType, instantiatedType);
         }

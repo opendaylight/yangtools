@@ -19,6 +19,7 @@ import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.te
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.typedef.empty.rev170829.TypedefEmpty;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.common.Empty;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -49,9 +50,9 @@ public class TypedefTest extends AbstractBindingCodecTest {
     @Test
     public void testTypedefEmptyType() {
         TestCont binding = new TestContBuilder()
-                .setEmptyLeaf(true)
-                .setEmptyLeaf2(new TypedefEmpty(true))
-                .setEmptyLeaf3(true)
+                .setEmptyLeaf(Empty.getInstance())
+                .setEmptyLeaf2(new TypedefEmpty(Empty.getInstance()))
+                .setEmptyLeaf3(Empty.getInstance())
                 .build();
         final Entry<YangInstanceIdentifier, NormalizedNode<?, ?>> dom =
                 registry.toNormalizedNode(BA_TEST_CONT, binding);
