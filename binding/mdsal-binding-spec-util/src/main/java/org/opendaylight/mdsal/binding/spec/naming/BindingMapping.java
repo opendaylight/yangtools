@@ -75,12 +75,6 @@ public final class BindingMapping {
     public static final String IDENTIFIABLE_KEY_NAME = "key";
 
     /**
-     * Name of {@link DataContainer#getImplementedInterface()}.
-     */
-    // FIXME: 4.0.0: remove this constant
-    public static final String DATA_CONTAINER_GET_IMPLEMENTED_INTERFACE_NAME = "getImplementedInterface";
-
-    /**
      * Name of {@link DataContainer#implementedInterface()}.
      */
     public static final String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";

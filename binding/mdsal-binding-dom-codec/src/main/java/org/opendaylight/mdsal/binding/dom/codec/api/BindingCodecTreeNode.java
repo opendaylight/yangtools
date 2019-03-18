@@ -28,7 +28,7 @@ public interface BindingCodecTreeNode<T extends DataObject> extends BindingNorma
 
     /**
      * Returns binding class of interface which represents API of current schema node. The result is same as invoking
-     * {@link DataObject#getImplementedInterface()} on instance of data.
+     * {@link DataObject#implementedInterface()} on instance of data.
      *
      * @return interface which defines API of binding representation of data.
      */

@@ -637,6 +637,15 @@ public class CompilationTest extends BaseCompilationTest {
     }
 
     @Test
+    public void testMdsal395() throws Exception {
+        final File sourcesOutputDir = CompilationTestUtils.generatorOutput("mdsal395");
+        final File compiledOutputDir = CompilationTestUtils.compilerOutput("mdsal395");
+        generateTestSources("/compilation/mdsal395", sourcesOutputDir);
+        CompilationTestUtils.testCompilation(sourcesOutputDir, compiledOutputDir);
+        CompilationTestUtils.cleanUp(sourcesOutputDir, compiledOutputDir);
+    }
+
+    @Test
     public void classNamesColisionTest() throws Exception {
         final File sourcesOutputDir = CompilationTestUtils.generatorOutput("class-name-collision");
         final File compiledOutputDir = CompilationTestUtils.compilerOutput("class-name-collision");

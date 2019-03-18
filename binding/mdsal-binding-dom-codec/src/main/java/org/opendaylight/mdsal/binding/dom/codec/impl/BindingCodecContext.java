@@ -257,7 +257,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
                 } else {
-                    // We do not have schema for leaf, so we will ignore it (eg. getClass, getImplementedInterface).
+                    // We do not have schema for leaf, so we will ignore it (e.g. getClass).
                     continue;
                 }
                 final Codec<Object, Object> codec = getCodec(valueType, schema);

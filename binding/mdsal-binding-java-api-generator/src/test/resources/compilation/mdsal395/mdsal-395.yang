@@ -1,0 +1,23 @@
+module mdsal-395 {
+    namespace "mdsal-395";
+    prefix "mdsal395";
+
+    grouping grp {
+        leaf implemented-interface {
+            type string;
+        }
+    }
+
+    container cont {
+        leaf implemented-interface {
+            type string;
+        }
+    }
+
+    notification notif {
+        leaf implemented-interface {
+            type string;
+        }
+    }
+}
+

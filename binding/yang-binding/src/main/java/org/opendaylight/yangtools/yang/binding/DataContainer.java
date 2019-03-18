@@ -27,11 +27,6 @@ public interface DataContainer {
      * returns the interface contract, not a concrete implementation class.
      *
      * @return Implemented contract
-     * @deprecated Use {@link #implementedInterface()} instead.
      */
-    // FIXME: 4.0.0: MDSAL-395: remove this method
-    @Deprecated
-    Class<? extends DataContainer> getImplementedInterface();
-
     @NonNull Class<? extends DataContainer> implementedInterface();
 }
