@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
@@ -23,7 +23,7 @@ final class DerivedLeafrefType extends AbstractDerivedType<LeafrefTypeDefinition
     }
 
     @Override
-    public RevisionAwareXPath getPathStatement() {
+    public PathExpression getPathStatement() {
         return baseType().getPathStatement();
     }
 

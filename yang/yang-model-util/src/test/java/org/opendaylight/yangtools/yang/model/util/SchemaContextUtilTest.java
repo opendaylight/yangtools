@@ -7,17 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
 
 import com.google.common.base.Splitter;
-import com.google.common.collect.ImmutableList;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -106,24 +102,5 @@ public class SchemaContextUtilTest {
         RevisionAwareXPath xpath = new RevisionAwareXPathImpl("deref(../foo)/../bar", false);
         assertNull(SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
             xpath));
-    }
-
-    @Test
-    public void testNormalizeXPath() {
-        assertNormalizedPath(0, ImmutableList.of(""), "");
-        assertNormalizedPath(0, ImmutableList.of("a"), "a");
-        assertNormalizedPath(0, ImmutableList.of("a", "b"), "a b");
-        assertNormalizedPath(1, ImmutableList.of("..", "b"), ".. b");
-        assertNormalizedPath(0, ImmutableList.of(), "a ..");
-        assertNormalizedPath(0, ImmutableList.of("b"), "a .. b");
-        assertNormalizedPath(2, ImmutableList.of("..", "..", "a", "c"), ".. .. a b .. c");
-        assertNormalizedPath(3, ImmutableList.of("..", "..", "..", "b"), ".. .. a .. .. b");
-    }
-
-    private static void assertNormalizedPath(final int expectedLead, final List<String> expectedList,
-            final String input) {
-        final List<String> list = new ArrayList<>(SPACE_SPLITTER.splitToList(input));
-        assertEquals(expectedLead, SchemaContextUtil.normalizeXPath(list));
-        assertEquals(expectedList, list);
     }
 }
