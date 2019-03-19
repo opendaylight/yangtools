@@ -40,7 +40,7 @@ final class ValueContext {
             value = getter.invokeExact(obj);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
 
         Preconditions.checkArgument(value != null,

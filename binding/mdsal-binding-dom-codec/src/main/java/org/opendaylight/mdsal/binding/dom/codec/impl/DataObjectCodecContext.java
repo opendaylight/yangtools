@@ -538,7 +538,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             return (D) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject<>(this, node));
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

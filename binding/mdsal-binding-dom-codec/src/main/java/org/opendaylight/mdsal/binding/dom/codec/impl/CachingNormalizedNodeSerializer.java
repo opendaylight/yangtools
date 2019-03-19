@@ -120,7 +120,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
             subtreeRoot.eventStreamSerializer().serialize(data, writer);
             return writer.build();
         } catch (final IOException e) {
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

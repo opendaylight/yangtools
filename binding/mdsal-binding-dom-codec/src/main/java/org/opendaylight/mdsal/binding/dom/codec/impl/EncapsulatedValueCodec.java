@@ -40,7 +40,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
         this.valueType = requireNonNull(valueType);
     }
 
-    static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz, TypeDefinition<?> typeDef) {
+    static Callable<EncapsulatedValueCodec> loader(final Class<?> typeClz, final TypeDefinition<?> typeDef) {
         return () -> {
             final Method m;
             if (typeDef instanceof BooleanTypeDefinition || typeDef instanceof EmptyTypeDefinition) {
@@ -74,7 +74,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
             return constructor.invokeExact(input);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 
@@ -85,7 +85,7 @@ final class EncapsulatedValueCodec extends ReflectionBasedCodec implements Schem
             return getter.invokeExact(input);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 }

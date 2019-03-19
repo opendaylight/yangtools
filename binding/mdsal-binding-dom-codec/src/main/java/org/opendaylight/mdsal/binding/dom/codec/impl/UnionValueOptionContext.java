@@ -84,7 +84,7 @@ final class UnionValueOptionContext {
             return getter.invokeExact(input);
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException(e);
         }
     }
 

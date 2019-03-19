@@ -149,7 +149,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
             identifier = deserializeIdentifier(input.getKeyValues());
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Failed to deserialize " + input, e);
         }
 
         return IdentifiableItem.of((Class) identifiable, (Identifier) identifier);
@@ -173,7 +173,7 @@ abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicat
                 try {
                     return MethodHandles.publicLookup().unreflectConstructor(constr);
                 } catch (IllegalAccessException e) {
-                    throw new IllegalArgumentException("Cannot access constructor " + constr + " in class " + clazz, e);
+                    throw new IllegalStateException("Cannot access constructor " + constr + " in class " + clazz, e);
                 }
             }
         }

@@ -147,7 +147,7 @@ public final class StringValueObjectFactory<T> {
             return ret;
         } catch (Throwable e) {
             Throwables.throwIfUnchecked(e);
-            throw new RuntimeException(e);
+            throw new IllegalStateException("Failed to instantiate object with value " + string, e);
         }
     }
 
