@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.java.api.generator
 
 import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
 import static org.opendaylight.mdsal.binding.model.util.Types.BYTE_ARRAY;
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static org.opendaylight.mdsal.binding.model.util.Types.getOuterClassName;
 
 import java.util.Arrays
@@ -105,13 +106,13 @@ class UnionTemplate extends ClassTemplate {
                 «val field = property.fieldName»
             if («field» != null) {
                 «val propRet = property.returnType»
-                «IF "java.lang.String".equals(propRet.fullyQualifiedName)»
+                «IF STRING.equals(propRet)»
                     ««« type string
                 return «field»;
                 «ELSEIF "org.opendaylight.yangtools.yang.binding.InstanceIdentifier".equals(propRet.fullyQualifiedName)»
                     ««« type instance-identifier
                 return «field».toString();
-                «ELSEIF "byte[]".equals(propRet.name)»
+                «ELSEIF BYTE_ARRAY.equals(propRet)»
                     ««« type binary
                 return new «String.importedName»(«field»);
                 «ELSEIF propRet.fullyQualifiedName.startsWith("java.lang") || propRet instanceof Enumeration
