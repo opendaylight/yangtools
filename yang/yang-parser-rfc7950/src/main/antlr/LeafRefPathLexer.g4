@@ -1,7 +1,7 @@
 lexer grammar LeafRefPathLexer;
 
 @header {
-package org.opendaylight.yangtools.yang.data.impl.leafref;
+package org.opendaylight.yangtools.antlrv4.code.gen;
 }
 
 COLON : ':' ;
