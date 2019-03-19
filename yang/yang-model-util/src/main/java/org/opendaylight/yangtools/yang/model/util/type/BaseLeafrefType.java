@@ -10,16 +10,16 @@ package org.opendaylight.yangtools.yang.model.util.type;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> implements LeafrefTypeDefinition {
-    private final RevisionAwareXPath pathStatement;
+    private final PathExpression pathStatement;
     private final boolean requireInstance;
 
-    BaseLeafrefType(final SchemaPath path, final RevisionAwareXPath pathStatement, final boolean requireInstance,
+    BaseLeafrefType(final SchemaPath path, final PathExpression pathStatement, final boolean requireInstance,
             final List<UnknownSchemaNode> unknownSchemaNodes) {
         super(path, unknownSchemaNodes);
         this.pathStatement = requireNonNull(pathStatement);
@@ -27,7 +27,7 @@ final class BaseLeafrefType extends AbstractBaseType<LeafrefTypeDefinition> impl
     }
 
     @Override
-    public RevisionAwareXPath getPathStatement() {
+    public PathExpression getPathStatement() {
         return pathStatement;
     }
 

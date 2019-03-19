@@ -109,6 +109,10 @@ public enum YangXPathAxis {
         return set.isEmpty() ? step : new AxisStepWithPredicates(this, set);
     }
 
+    public final QNameStep asStep(final QName qname) {
+        return new QNameStep(this, qname);
+    }
+
     public final QNameStep asStep(final QName qname, final Collection<YangExpr> predicates) {
         final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
         return set.isEmpty() ? new QNameStep(this, qname) : new QNameStepWithPredicates(this, qname, set);

@@ -8,6 +8,8 @@
 package org.opendaylight.yangtools.yang.xpath.impl;
 
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Kind.ABSOLUTE;
+import static org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Kind.RELATIVE;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.getChild;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.illegalShape;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyToken;
@@ -70,7 +72,7 @@ final class InstanceIdentifierParser {
             steps.add(parsePathArgument(getChild(id, PathArgumentContext.class, i)));
         }
 
-        return YangLocationPath.of(true, steps);
+        return ABSOLUTE.createLocation(steps);
     }
 
     private Step parsePathArgument(final PathArgumentContext expr) {
@@ -88,7 +90,7 @@ final class InstanceIdentifierParser {
     private Collection<YangExpr> parsePredicate(final PredicateContext expr) {
         final ParseTree first = expr.getChild(0);
         if (first instanceof LeafListPredicateContext) {
-            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(YangLocationPath.self(),
+            return ImmutableSet.of(YangBinaryOperator.EQUALS.exprWith(RELATIVE.emptyLocation(),
                 parseEqStringValue(getChild(((LeafListPredicateContext) first)
                     .getChild(LeafListPredicateExprContext.class, 0), EqQuotedStringContext.class, 1))));
         } else if (first instanceof PosContext) {

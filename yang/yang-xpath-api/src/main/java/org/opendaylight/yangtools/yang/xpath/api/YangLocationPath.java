@@ -13,11 +13,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
@@ -26,6 +26,74 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 
 @Beta
 public class YangLocationPath implements YangExpr {
+    public enum Kind {
+        /**
+         * An absolute location path. Its {@link #emptyLocation()} corresponds to the document root node.
+         */
+        ABSOLUTE {
+            @Override
+            public YangLocationPath emptyLocation() {
+                return ROOT;
+            }
+
+            @Override
+            YangLocationPath createLocation(final ImmutableList<Step> steps) {
+                return new Absolute(steps);
+            }
+        },
+        /**
+         * A relative location path. Its {@link #emptyLocation()} corresponds to the currently-evaluated document node,
+         * and is equivalent to a step along {@link YangXPathAxis#SELF}.
+         */
+        RELATIVE {
+            @Override
+            public YangLocationPath emptyLocation() {
+                return SELF;
+            }
+
+            @Override
+            YangLocationPath createLocation(final ImmutableList<Step> steps) {
+                return new YangLocationPath(steps);
+            }
+        },
+        /**
+         * An initial-relative location path. Its {@link #emptyLocation()} corresponds to the node returned by
+         * {@link YangFunction#CURRENT}.
+         */
+        INITIAL {
+            @Override
+            public YangLocationPath emptyLocation() {
+                return INITIAL_NODE;
+            }
+
+            @Override
+            YangLocationPath createLocation(final ImmutableList<Step> steps) {
+                return new Initial(steps);
+            }
+        };
+
+        private static final YangLocationPath INITIAL_NODE = new Initial(ImmutableList.of());
+        private static final YangLocationPath ROOT = new Absolute(ImmutableList.of());
+        private static final YangLocationPath SELF = new YangLocationPath(ImmutableList.of());
+
+        /**
+         * Conceptual empty location path.
+         *
+         * @return A location path with no steps.
+         */
+        public abstract YangLocationPath emptyLocation();
+
+        public final YangLocationPath createLocation(final Step... steps) {
+            return createLocation(Arrays.asList(steps));
+        }
+
+        public final YangLocationPath createLocation(final Collection<Step> steps) {
+            return steps.isEmpty() ? emptyLocation() : createLocation(ImmutableList.copyOf(steps));
+        }
+
+        abstract YangLocationPath createLocation(ImmutableList<Step> steps);
+    }
+
     public abstract static class Step implements Serializable, YangPredicateAware {
         private static final long serialVersionUID = 1L;
 
@@ -94,15 +162,15 @@ public class YangLocationPath implements YangExpr {
     static final class AxisStepWithPredicates extends AxisStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
-        AxisStepWithPredicates(final YangXPathAxis axis, final Set<YangExpr> predicates) {
+        AxisStepWithPredicates(final YangXPathAxis axis, final ImmutableSet<YangExpr> predicates) {
             super(axis);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
@@ -187,15 +255,15 @@ public class YangLocationPath implements YangExpr {
     static final class QNameStepWithPredicates extends QNameStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
-        QNameStepWithPredicates(final YangXPathAxis axis, final QName qname, final Set<YangExpr> predicates) {
+        QNameStepWithPredicates(final YangXPathAxis axis, final QName qname, final ImmutableSet<YangExpr> predicates) {
             super(axis, qname);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
@@ -243,10 +311,10 @@ public class YangLocationPath implements YangExpr {
     static final class NodeTypeStepWithPredicates extends NodeTypeStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
         NodeTypeStepWithPredicates(final YangXPathAxis axis, final YangXPathNodeType type,
-                final Set<YangExpr> predicates) {
+                final ImmutableSet<YangExpr> predicates) {
             super(axis, type);
             this.predicates = requireNonNull(predicates);
         }
@@ -290,114 +358,65 @@ public class YangLocationPath implements YangExpr {
     static final class ProcessingInstructionStepWithPredicates extends ProcessingInstructionStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
         ProcessingInstructionStepWithPredicates(final YangXPathAxis axis, final String name,
-                final Set<YangExpr> predicates) {
+                final ImmutableSet<YangExpr> predicates) {
             super(axis, name);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
 
-    public static class Absolute extends YangLocationPath {
+    private static final class Absolute extends YangLocationPath {
         private static final long serialVersionUID = 1L;
 
+        Absolute(final ImmutableList<Step> steps) {
+            super(steps);
+        }
+
         @Override
-        public final boolean isAbsolute() {
-            return true;
+        public Kind getKind() {
+            return Kind.ABSOLUTE;
         }
     }
 
-    private static final class AbsoluteWithSteps extends Absolute {
+    private static final class Initial extends YangLocationPath {
         private static final long serialVersionUID = 1L;
 
-        private final List<Step> steps;
-
-        AbsoluteWithSteps(final List<Step> steps) {
-            this.steps = requireNonNull(steps);
+        Initial(final ImmutableList<Step> steps) {
+            super(steps);
         }
 
         @Override
-        public List<Step> getSteps() {
-            return steps;
-        }
-    }
-
-    private static final class WithSteps extends YangLocationPath {
-        private static final long serialVersionUID = 1L;
-
-        private final List<Step> steps;
-
-        WithSteps(final List<Step> steps) {
-            this.steps = requireNonNull(steps);
-        }
-
-        @Override
-        public List<Step> getSteps() {
-            return steps;
+        public Kind getKind() {
+            return Kind.INITIAL;
         }
     }
 
     private static final long serialVersionUID = 1L;
-    private static final YangLocationPath ROOT = new Absolute();
-    private static final YangLocationPath SELF = new YangLocationPath();
 
-    YangLocationPath() {
-        // Hidden to prevent external instantiation
+    private final ImmutableList<Step> steps;
+
+    YangLocationPath(final ImmutableList<Step> steps) {
+        this.steps = requireNonNull(steps);
     }
 
-    public static final YangLocationPath of(final boolean absolute) {
-        return absolute ? ROOT : SELF;
+    public Kind getKind() {
+        return Kind.RELATIVE;
     }
 
-    public static final YangLocationPath of(final boolean absolute, final Step... steps) {
-        return of(absolute, Arrays.asList(steps));
-    }
-
-    public static final YangLocationPath of(final boolean absolute, final Collection<Step> steps) {
-        if (steps.isEmpty()) {
-            return of(absolute);
-        }
-
-        final List<Step> copy = ImmutableList.copyOf(steps);
-        return absolute ? new AbsoluteWithSteps(copy) : new WithSteps(copy);
-    }
-
-    /**
-     * The conceptual {@code root} {@link YangLocationPath}. This path is an absolute path and has no steps.
-     *
-     * @return Empty absolute {@link YangLocationPath}
-     */
-    public static final YangLocationPath root() {
-        return ROOT;
-    }
-
-    /**
-     * The conceptual {@code same} {@link YangLocationPath}. This path is a relative path and has no steps and is
-     * equivalent to a step along {@link YangXPathAxis#SELF}.
-     *
-     * @return Empty relative {@link YangLocationPath}
-     */
-    public static YangLocationPath self() {
-        return SELF;
-    }
-
-    public boolean isAbsolute() {
-        return false;
-    }
-
-    public List<Step> getSteps() {
-        return ImmutableList.of();
+    public final ImmutableList<Step> getSteps() {
+        return steps;
     }
 
     @Override
     public final int hashCode() {
-        return Boolean.hashCode(isAbsolute()) * 31 + getSteps().hashCode();
+        return getKind().hashCode() * 31 + getSteps().hashCode();
     }
 
     @Override
@@ -409,14 +428,12 @@ public class YangLocationPath implements YangExpr {
             return false;
         }
         final YangLocationPath other = (YangLocationPath) obj;
-        return isAbsolute() == other.isAbsolute() && getSteps().equals(other.getSteps());
+        return getKind() == other.getKind() && steps.equals(other.steps);
     }
 
     @Override
     public final String toString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class);
-        helper.add("absolute", isAbsolute());
-        final List<Step> steps = getSteps();
+        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class).add("kind", getKind());
         if (!steps.isEmpty()) {
             helper.add("steps", steps);
         }

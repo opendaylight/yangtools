@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Kind.ABSOLUTE;
+import static org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Kind.RELATIVE;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.getChild;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.illegalShape;
 import static org.opendaylight.yangtools.yang.xpath.impl.ParseTreeUtils.verifyAtLeastChildren;
@@ -241,7 +243,7 @@ final class AntlrXPathParser implements YangXPathParser {
                 throw illegalShape(abs);
         }
 
-        return YangLocationPath.of(true, steps);
+        return ABSOLUTE.createLocation(steps);
     }
 
     private YangExpr parseMultiplicative(final MultiplicativeExprContext expr) {
@@ -250,7 +252,7 @@ final class AntlrXPathParser implements YangXPathParser {
         if (first instanceof UnaryExprNoRootContext) {
             left = parseUnary((UnaryExprNoRootContext) first);
         } else {
-            left = YangLocationPath.root();
+            left = ABSOLUTE.emptyLocation();
         }
         if (expr.getChildCount() == 1) {
             return left;
@@ -337,7 +339,7 @@ final class AntlrXPathParser implements YangXPathParser {
     }
 
     private YangLocationPath parseRelativeLocationPath(final RelativeLocationPathContext expr) {
-        return YangLocationPath.of(false, parseLocationPathSteps(expr));
+        return RELATIVE.createLocation(parseLocationPathSteps(expr));
     }
 
     private YangExpr parseTerminal(final TerminalNode term) {
@@ -373,7 +375,7 @@ final class AntlrXPathParser implements YangXPathParser {
                 return path;
             }
         } else {
-            path = YangLocationPath.root();
+            path = YangLocationPath.Kind.ABSOLUTE.emptyLocation();
         }
 
         verifyChildCount(expr, 3);
