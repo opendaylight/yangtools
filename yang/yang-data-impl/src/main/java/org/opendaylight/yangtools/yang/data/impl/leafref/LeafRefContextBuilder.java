@@ -16,6 +16,7 @@ import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
@@ -29,9 +30,9 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
     private final SchemaPath currentNodePath;
     private final SchemaContext schemaContext;
 
-    private LeafRefPath leafRefTargetPath = null;
+    private PathExpression leafRefTargetPath = null;
     private LeafRefPath absoluteLeafRefTargetPath = null;
-    private String leafRefTargetPathString = "";
+    private final String leafRefTargetPathString = "";
 
     private boolean isReferencedBy = false;
     private boolean isReferencing = false;
@@ -92,20 +93,16 @@ final class LeafRefContextBuilder implements Builder<LeafRefContext> {
         return currentNodePath;
     }
 
-    LeafRefPath getLeafRefTargetPath() {
+    PathExpression getLeafRefTargetPath() {
         return leafRefTargetPath;
     }
 
-    void setLeafRefTargetPath(final LeafRefPath leafRefPath) {
+    void setLeafRefTargetPath(final PathExpression leafRefPath) {
         this.leafRefTargetPath = leafRefPath;
     }
 
     String getLeafRefTargetPathString() {
         return leafRefTargetPathString;
-    }
-
-    void setLeafRefTargetPathString(final String leafRefPathString) {
-        this.leafRefTargetPathString = leafRefPathString;
     }
 
     QName getCurrentNodeQName() {
