@@ -1,10 +1,10 @@
 parser grammar LeafRefPathParser;
 
 @header {
-package org.opendaylight.yangtools.yang.data.impl.leafref;
+package org.opendaylight.yangtools.antlrv4.code.gen;
 }
 
-options{
+options {
  tokenVocab = LeafRefPathLexer;
 }
 

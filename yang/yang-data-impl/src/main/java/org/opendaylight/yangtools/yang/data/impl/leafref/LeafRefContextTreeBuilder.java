@@ -7,8 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.leafref;
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +18,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -93,13 +92,8 @@ final class LeafRefContextTreeBuilder {
             // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
-                final String leafRefPathString = leafrefType.getPathStatement().toString();
-                final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(schemaContext,
-                        checkNotNull(getBaseTypeModule(leafrefType), "Unable to find base module for leafref %s", node),
-                        node);
-                final LeafRefPath leafRefPath = leafRefPathParser.parseLeafRefPath(leafRefPathString);
+                final PathExpression leafRefPath = leafrefType.getPathStatement();
 
-                currentLeafRefContextBuilder.setLeafRefTargetPathString(leafRefPathString);
                 currentLeafRefContextBuilder.setReferencing(true);
                 currentLeafRefContextBuilder.setLeafRefTargetPath(leafRefPath);
 
@@ -110,18 +104,6 @@ final class LeafRefContextTreeBuilder {
         }
 
         return currentLeafRefContextBuilder.build();
-    }
-
-    private Module getBaseTypeModule(final LeafrefTypeDefinition leafrefType) {
-        /*
-         * Find the first definition of supplied leafref type and return the
-         * module which contains this definition.
-         */
-        LeafrefTypeDefinition baseLeafRefType = leafrefType;
-        while (baseLeafRefType.getBaseType() != null) {
-            baseLeafRefType = baseLeafRefType.getBaseType();
-        }
-        return schemaContext.findModule(baseLeafRefType.getQName().getModule()).orElse(null);
     }
 
     private LeafRefContext buildLeafRefContextReferencedByTree(final DataSchemaNode node, final Module currentModule)
