@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.DeclaredEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class PathEffectiveStatementImpl extends DeclaredEffectiveStatementBase<RevisionAwareXPath, PathStatement>
+final class PathEffectiveStatementImpl extends DeclaredEffectiveStatementBase<PathExpression, PathStatement>
         implements PathEffectiveStatement {
-    PathEffectiveStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> ctx) {
+    PathEffectiveStatementImpl(final StmtContext<PathExpression, PathStatement, ?> ctx) {
         super(ctx);
     }
 }

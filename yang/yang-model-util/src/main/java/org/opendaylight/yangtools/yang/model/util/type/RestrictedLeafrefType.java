@@ -8,7 +8,7 @@
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import java.util.Collection;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.UnknownSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -26,7 +26,7 @@ final class RestrictedLeafrefType extends AbstractRestrictedType<LeafrefTypeDefi
     }
 
     @Override
-    public RevisionAwareXPath getPathStatement() {
+    public PathExpression getPathStatement() {
         return getBaseType().getPathStatement();
     }
 
