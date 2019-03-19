@@ -7,13 +7,13 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 
-final class PathStatementImpl extends AbstractDeclaredStatement<RevisionAwareXPath> implements PathStatement {
-    PathStatementImpl(final StmtContext<RevisionAwareXPath, PathStatement, ?> context) {
+final class PathStatementImpl extends AbstractDeclaredStatement<PathExpression> implements PathStatement {
+    PathStatementImpl(final StmtContext<PathExpression, PathStatement, ?> context) {
         super(context);
     }
 }
