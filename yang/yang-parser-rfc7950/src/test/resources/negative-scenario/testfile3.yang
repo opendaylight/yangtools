@@ -11,7 +11,7 @@ module test3 {
         when "if:ifType='ds0'";
         leaf interface-id {
             type leafref {
-                path "/if:interfaces/if:interface/if:name";
+                path "/data:interfaces/data:interface/data:name";
             }
         }
     }

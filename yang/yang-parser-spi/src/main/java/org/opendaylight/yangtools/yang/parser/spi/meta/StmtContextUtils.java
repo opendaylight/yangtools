@@ -516,31 +516,8 @@ public final class StmtContextUtils {
         return internedQName(ctx, str);
     }
 
-    /**
-     * Parse a YANG node identifier string in context of a statement.
-     *
-     * @param ctx Statement context
-     * @param str String to be parsed
-     * @return An interned QName
-     * @throws NullPointerException if any of the arguments are null
-     * @throws SourceException if the string is not a valid YANG node identifier
-     */
-    public static QName parseNodeIdentifier(StmtContext<?, ?, ?> ctx, final String str) {
-        SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
-                "Node identifier may not be an empty string");
-
-        final int colon = str.indexOf(':');
-        if (colon == -1) {
-            return internedQName(ctx, str);
-        }
-
-        final String prefix = str.substring(0, colon);
-        SourceException.throwIf(prefix.isEmpty(), ctx.getStatementSourceReference(),
-            "String '%s' has an empty prefix", str);
-        final String localName = str.substring(colon + 1);
-        SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
-            "String '%s' has an empty identifier", str);
-
+    public static QName parseNodeIdentifier(StmtContext<?, ?, ?> ctx, final String prefix,
+            final String localName) {
         final QNameModule module = StmtContextUtils.getModuleQNameByPrefix(ctx, prefix);
         if (module != null) {
             return internedQName(ctx, module, localName);
@@ -557,7 +534,35 @@ public final class StmtContextUtils {
             }
         }
 
-        throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", str);
+        throw new InferenceException(ctx.getStatementSourceReference(), "Cannot resolve QNameModule for '%s'", prefix);
+    }
+
+    /**
+     * Parse a YANG node identifier string in context of a statement.
+     *
+     * @param ctx Statement context
+     * @param str String to be parsed
+     * @return An interned QName
+     * @throws NullPointerException if any of the arguments are null
+     * @throws SourceException if the string is not a valid YANG node identifier
+     */
+    public static QName parseNodeIdentifier(final StmtContext<?, ?, ?> ctx, final String str) {
+        SourceException.throwIf(str.isEmpty(), ctx.getStatementSourceReference(),
+                "Node identifier may not be an empty string");
+
+        final int colon = str.indexOf(':');
+        if (colon == -1) {
+            return internedQName(ctx, str);
+        }
+
+        final String prefix = str.substring(0, colon);
+        SourceException.throwIf(prefix.isEmpty(), ctx.getStatementSourceReference(),
+            "String '%s' has an empty prefix", str);
+        final String localName = str.substring(colon + 1);
+        SourceException.throwIf(localName.isEmpty(), ctx.getStatementSourceReference(),
+            "String '%s' has an empty identifier", str);
+
+        return parseNodeIdentifier(ctx, prefix, localName);
     }
 
     private static QName internedQName(final StmtContext<?, ?, ?> ctx, final String localName) {
