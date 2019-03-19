@@ -7,7 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.startsWith;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 
 import com.google.common.base.Throwables;
@@ -47,9 +51,9 @@ public class YangParserNegativeTest {
             fail("SomeModifiersUnresolvedException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertTrue(rootCause instanceof InferenceException);
-            assertTrue(rootCause.getMessage().startsWith("Imported module"));
-            assertTrue(rootCause.getMessage().contains("was not found."));
+            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause.getMessage(), startsWith("Imported module"));
+            assertThat(rootCause.getMessage(), containsString("was not found."));
         }
     }
 
@@ -60,9 +64,9 @@ public class YangParserNegativeTest {
             fail("InferenceException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertTrue(rootCause instanceof InferenceException);
-            assertTrue(rootCause.getMessage()
-                    .startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
+            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause.getMessage(),
+                startsWith("Type [(urn:simple.types.data.demo?revision=2013-02-27)int-ext] was not found."));
         }
     }
 
@@ -75,8 +79,8 @@ public class YangParserNegativeTest {
             fail("SomeModifiersUnresolvedException should be thrown");
         } catch (final SomeModifiersUnresolvedException e) {
             final Throwable rootCause = Throwables.getRootCause(e);
-            assertTrue(rootCause instanceof InferenceException);
-            assertTrue(rootCause.getMessage().startsWith(
+            assertThat(rootCause, is(instanceOf(InferenceException.class)));
+            assertThat(rootCause.getMessage(), startsWith(
                 "Augment target 'Absolute{path=[(urn:simple.container.demo)unknown]}' not found"));
         }
     }
@@ -87,7 +91,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile4.yang");
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().contains("Error in module 'test4' in the refine of uses "
+            assertThat(e.getCause().getMessage(), containsString("Error in module 'test4' in the refine of uses "
                     + "'Relative{path=[(urn:simple.container.demo)node]}': can not perform refine of 'PRESENCE' for"
                     + " the target 'LEAF_LIST'."));
         }
@@ -99,9 +103,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile5.yang");
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
-            final String message = e.getCause().getMessage();
-
-            assertTrue(message.contains("Invalid length constraint [4..10]"));
+            assertThat(e.getCause().getMessage(), containsString("Invalid length constraint [4..10]"));
         }
     }
 
@@ -111,7 +113,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/testfile6.yang");
             fail("ReactorException should be thrown");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith("Invalid range constraint: [[5..20]]"));
+            assertThat(e.getCause().getMessage(), startsWith("Invalid range constraint: [[5..20]]"));
         }
     }
 
@@ -123,7 +125,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container': cannot add '(urn:simple.container.demo)foo'. "
                     + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertTrue(e.getCause().getMessage().contains(expected));
+            assertThat(e.getCause().getMessage(), containsString(expected));
         }
     }
 
@@ -135,7 +137,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-list': cannot add '(urn:simple.container.demo)foo'. "
                     + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertTrue(e.getCause().getMessage().contains(expected));
+            assertThat(e.getCause().getMessage(), containsString(expected));
         }
     }
 
@@ -147,7 +149,7 @@ public class YangParserNegativeTest {
         } catch (final ReactorException e) {
             final String expected = "Error in module 'container-leaf': cannot add '(urn:simple.container.demo)foo'. "
                     + "Node name collision: '(urn:simple.container.demo)foo' already declared";
-            assertTrue(e.getCause().getMessage().contains(expected));
+            assertThat(e.getCause().getMessage(), containsString(expected));
         }
     }
 
@@ -157,7 +159,7 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/duplicity/typedef.yang");
             fail("SourceException should be thrown");
         } catch (final ReactorException e) {
-            assertTrue(e.getCause().getMessage().startsWith(
+            assertThat(e.getCause().getMessage(), startsWith(
                 "Duplicate name for typedef (urn:simple.container.demo)int-ext [at"));
         }
     }
@@ -168,7 +170,7 @@ public class YangParserNegativeTest {
             "/negative-scenario/duplicity/augment0.yang",
                 "/negative-scenario/duplicity/augment1.yang");
         testLog = output.toString();
-        assertTrue(testLog.contains(
+        assertThat(testLog, containsString(
             "An augment cannot add node named 'id' because this name is already used in target"));
     }
 
@@ -178,7 +180,7 @@ public class YangParserNegativeTest {
             "/negative-scenario/duplicity/augment0.yang",
                 "/negative-scenario/duplicity/augment2.yang");
         testLog = output.toString();
-        assertTrue(testLog.contains(
+        assertThat(testLog, containsString(
             "An augment cannot add node named 'delta' because this name is already used in target"));
     }
 
@@ -188,7 +190,7 @@ public class YangParserNegativeTest {
             "/negative-scenario/testfile8.yang",
                 "/negative-scenario/testfile7.yang");
         testLog = output.toString();
-        assertTrue(testLog.contains(
+        assertThat(testLog, containsString(
             "An augment cannot add node 'linkleaf' because it is mandatory and in module different than target"));
     }
 
@@ -198,8 +200,8 @@ public class YangParserNegativeTest {
             TestUtils.loadModuleResources(getClass(), "/negative-scenario/invalid-list-key-def.yang");
             fail("InferenceException should be thrown");
         } catch (final ReactorException e) {
-            final String expected = "Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'";
-            assertTrue(e.getCause().getMessage().startsWith(expected));
+            assertThat(e.getCause().getMessage(),
+                startsWith("Key 'rib-id' misses node 'rib-id' in list '(invalid:list:key:def)application-map'"));
         }
     }
 }

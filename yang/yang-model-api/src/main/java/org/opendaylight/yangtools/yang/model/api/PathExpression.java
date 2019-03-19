@@ -50,11 +50,12 @@ public interface PathExpression extends Immutable {
      * subexpressions it can contain:
      * <ul>
      * <li>the root expression must be a {@link YangLocationPath}</li>
-     * <li>it can contain steps only along {@link YangXPathAxis#DESCENDANT} and {@link YangXPathAxis#PARENT} axis</li>
-     * <li>all steps along {@link YangXPathAxis#DESCENDANT} axis are {@link QNameStep}</li>
+     * <li>it can contain steps only along {@link YangXPathAxis#CHILD} and {@link YangXPathAxis#PARENT} axis</li>
+     * <li>all steps along {@link YangXPathAxis#CHILD} axis are {@link QNameStep}</li>
      * <li>the only function invocation is {@link YangFunction#CURRENT}</li>
      * <li>only {@link YangBinaryOperator#EQUALS} is allowed</li>
      * <li>no literals nor numbers are allowed</li>
+     * <li>all qualified node identifiers must me resolved</li>
      * </ul>
      */
     // FIXME: 4.0.0: this is a transitional interface and needs to be integrated directly in PathExpression

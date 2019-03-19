@@ -28,7 +28,7 @@ module foo {
         }
         leaf interface-id {
             type leafref {
-                path "/if:interfaces/if:interface/if:name";
+                path "/br:interfaces/br:ifEntry/br:ifIndex";
             }
         }
         container schemas {

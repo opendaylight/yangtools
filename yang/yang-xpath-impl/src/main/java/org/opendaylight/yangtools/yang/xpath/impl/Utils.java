@@ -40,7 +40,7 @@ final class Utils {
             throw wrapException(e, "Cannot interpret %s as a QName", expr);
         }
 
-        return YangQNameExpr.of(qname);
+        return YangQNameExpr.of(qname.intern());
     }
 
     static YangQNameExpr interpretAsQName(final YangNamespaceContext namespaceContext, final YangLiteralExpr expr)
@@ -49,7 +49,7 @@ final class Utils {
         final int colon = text.indexOf(':');
         try {
             if (colon == -1) {
-                return YangQNameExpr.of(UnqualifiedQName.of(text));
+                return YangQNameExpr.of(UnqualifiedQName.of(text).intern());
             }
 
             return YangQNameExpr.of(namespaceContext.createQName(text.substring(0, colon), text.substring(colon + 1)));
@@ -65,7 +65,7 @@ final class Utils {
         final QName qname;
 
         try {
-            qname = colon == -1 ? QName.create(defaultNamespace, text)
+            qname = colon == -1 ? QName.create(defaultNamespace, text).intern()
                     : namespaceContext.createQName(text.substring(0, colon), text.substring(colon + 1));
         } catch (IllegalArgumentException e) {
             throw wrapException(e, "Cannot interpret %s as a QName", expr);

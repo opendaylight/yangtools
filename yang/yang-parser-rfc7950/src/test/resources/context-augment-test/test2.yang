@@ -26,12 +26,12 @@ module test2 {
         }
         leaf interface-id {
             type leafref {
-                path "/if:interfaces/if:interface/if:name";
+                path "/t4:interfaces/t4:ifEntry/t4:ifIndex";
             }
         }
         leaf-list higher-layer-if {
             type leafref {
-                path "/if:interfaces/if:interface/if:higher-layer-if";
+                path "/t4:interfaces/t4:ifEntry/t4:ifMtu";
             }
         }
         container schemas {

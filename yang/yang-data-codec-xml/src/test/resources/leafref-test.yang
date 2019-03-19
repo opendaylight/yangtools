@@ -66,11 +66,5 @@ module leafref-test {
                 path "../../lt:interface/lt:simpleValue";
             }
         }
-
-        leaf lf-with-double-point-inside {
-            type leafref {
-                path "../../lt:interface/../lt:cont2/lt:stringleaf";
-            }
-        }
     }
 }
