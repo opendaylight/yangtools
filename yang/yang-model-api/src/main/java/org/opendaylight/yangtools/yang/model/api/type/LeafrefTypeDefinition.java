@@ -10,12 +10,11 @@ package org.opendaylight.yangtools.yang.model.api.type;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 
 public interface LeafrefTypeDefinition extends RequireInstanceRestrictedTypeDefinition<LeafrefTypeDefinition> {
 
-    // FIXME: this is not the same syntax as when statement. See https://tools.ietf.org/html/rfc7950#section-9.9.2
-    RevisionAwareXPath getPathStatement();
+    PathExpression getPathStatement();
 
     /**
      * {@inheritDoc}

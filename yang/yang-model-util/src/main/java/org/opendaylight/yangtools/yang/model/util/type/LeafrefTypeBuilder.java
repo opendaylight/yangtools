@@ -11,18 +11,18 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
 
 public final class LeafrefTypeBuilder extends RequireInstanceRestrictedTypeBuilder<LeafrefTypeDefinition> {
-    private RevisionAwareXPath pathStatement;
+    private PathExpression pathStatement;
 
     LeafrefTypeBuilder(final SchemaPath path) {
         super(null, path);
     }
 
-    public LeafrefTypeBuilder setPathStatement(final @NonNull RevisionAwareXPath pathStatement) {
+    public LeafrefTypeBuilder setPathStatement(final @NonNull PathExpression pathStatement) {
         checkState(this.pathStatement == null, "Path statement already set to %s", this.pathStatement);
         this.pathStatement = requireNonNull(pathStatement);
         return this;
