@@ -37,8 +37,14 @@
 
     <dependencies>
         <dependency>
+            <groupid>org.opendaylight.yangtools</groupid>
+            <artifactid>odl-yangtools-common</artifactid>
+            <type>xml</type>
+            <classifier>features</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
-            <artifactId>odl-yangtools-common</artifactId>
+            <artifactId>odl-yangtools-xpath-api</artifactId>
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>

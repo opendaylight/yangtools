@@ -40,6 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -808,9 +809,9 @@ public final class SchemaContextUtil {
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qname) {
-        final RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
+        final PathExpression pathStatement = typeDefinition.getPathStatement();
         final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(
-            stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
+            stripConditionsFromXPathString(pathStatement), pathStatement.getRootExpr().isAbsolute());
         if (!strippedPathStatement.isAbsolute()) {
             return null;
         }
