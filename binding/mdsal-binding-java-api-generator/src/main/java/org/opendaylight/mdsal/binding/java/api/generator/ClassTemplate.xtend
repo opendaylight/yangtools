@@ -8,6 +8,9 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static java.util.Objects.requireNonNull
+import static org.opendaylight.mdsal.binding.model.util.Types.BOOLEAN;
+import static org.opendaylight.mdsal.binding.model.util.Types.BYTE_ARRAY;
+import static org.opendaylight.mdsal.binding.model.util.Types.STRING;
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
 
 import com.google.common.collect.ImmutableList
@@ -329,13 +332,13 @@ class ClassTemplate extends BaseTemplate {
             «val prop = allProperties.get(0)»
             «IF !("org.opendaylight.yangtools.yang.binding.InstanceIdentifier".equals(prop.returnType.fullyQualifiedName))»
             public static «genTO.name» getDefaultInstance(String defaultValue) {
-                «IF "byte[]".equals(prop.returnType.name)»
+                «IF BYTE_ARRAY.equals(prop.returnType)»
                     return new «genTO.name»(«Base64.importedName».getDecoder().decode(defaultValue));
-                «ELSEIF "java.lang.String".equals(prop.returnType.fullyQualifiedName)»
+                «ELSEIF STRING.equals(prop.returnType)»
                     return new «genTO.name»(defaultValue);
                 «ELSEIF allProperties.size > 1»
                     «bitsArgs»
-                «ELSEIF "java.lang.Boolean".equals(prop.returnType.fullyQualifiedName)»
+                «ELSEIF BOOLEAN.equals(prop.returnType)»
                     return new «genTO.name»(«Boolean.importedName».valueOf(defaultValue));
                 «ELSEIF "java.lang.Byte".equals(prop.returnType.fullyQualifiedName)»
                     return new «genTO.name»(«Byte.importedName».valueOf(defaultValue));
