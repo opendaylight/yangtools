@@ -52,8 +52,7 @@ public class YangFilterExpr implements YangExpr, YangPredicateAware {
     }
 
     public static YangFilterExpr of(final YangExpr expr, final Collection<YangExpr> predicates) {
-        return predicates.isEmpty() ? new YangFilterExpr(expr)
-                : new WithPredicates(expr, ImmutableSet.copyOf(predicates));
+        return predicates.isEmpty() ? of(expr) : new WithPredicates(expr, ImmutableSet.copyOf(predicates));
     }
 
     public final YangExpr getExpr() {
