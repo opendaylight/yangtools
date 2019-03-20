@@ -109,20 +109,31 @@ public enum YangXPathAxis {
         return set.isEmpty() ? step : new AxisStepWithPredicates(this, set);
     }
 
+    public final QNameStep asStep(final QName qname) {
+        return new QNameStep(this, qname);
+    }
+
     public final QNameStep asStep(final QName qname, final Collection<YangExpr> predicates) {
         final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? new QNameStep(this, qname) : new QNameStepWithPredicates(this, qname, set);
+        return set.isEmpty() ? asStep(qname) : new QNameStepWithPredicates(this, qname, set);
+    }
+
+    public final NodeTypeStep asStep(final YangXPathNodeType type) {
+        return new NodeTypeStep(this, type);
     }
 
     public final NodeTypeStep asStep(final YangXPathNodeType type, final Collection<YangExpr> predicates) {
         final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? new NodeTypeStep(this, type) : new NodeTypeStepWithPredicates(this, type, set);
+        return set.isEmpty() ? asStep(type) : new NodeTypeStepWithPredicates(this, type, set);
+    }
+
+    public final ProcessingInstructionStep asStep(final String name) {
+        return new ProcessingInstructionStep(this, name);
     }
 
     public final ProcessingInstructionStep asStep(final String name, final Collection<YangExpr> predicates) {
         final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? new ProcessingInstructionStep(this, name)
-                : new ProcessingInstructionStepWithPredicates(this, name, set);
+        return set.isEmpty() ? asStep(name) : new ProcessingInstructionStepWithPredicates(this, name, set);
     }
 
     @Override
