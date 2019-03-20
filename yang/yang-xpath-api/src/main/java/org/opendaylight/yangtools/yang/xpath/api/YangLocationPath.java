@@ -25,7 +25,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 
 @Beta
-public class YangLocationPath implements YangExpr {
+public abstract class YangLocationPath implements YangExpr {
     public abstract static class Step implements Serializable, YangPredicateAware {
         private static final long serialVersionUID = 1L;
 
@@ -317,9 +317,22 @@ public class YangLocationPath implements YangExpr {
         }
     }
 
+    public static final class Relative extends YangLocationPath {
+        private static final long serialVersionUID = 1L;
+
+        Relative(final ImmutableList<Step> steps) {
+            super(steps);
+        }
+
+        @Override
+        public boolean isAbsolute() {
+            return false;
+        }
+    }
+
     private static final long serialVersionUID = 1L;
-    private static final YangLocationPath ROOT = new Absolute(ImmutableList.of());
-    private static final YangLocationPath SELF = new YangLocationPath(ImmutableList.of());
+    private static final Absolute ROOT = new Absolute(ImmutableList.of());
+    private static final Relative SELF = new Relative(ImmutableList.of());
 
     private final ImmutableList<Step> steps;
 
@@ -327,21 +340,20 @@ public class YangLocationPath implements YangExpr {
         this.steps = requireNonNull(steps);
     }
 
-    public static final YangLocationPath of(final boolean absolute) {
-        return absolute ? ROOT : SELF;
+    public static final Absolute absolute(final Step... steps) {
+        return absolute(Arrays.asList(steps));
     }
 
-    public static final YangLocationPath of(final boolean absolute, final Step... steps) {
-        return of(absolute, Arrays.asList(steps));
+    public static final Absolute absolute(final Collection<Step> steps) {
+        return steps.isEmpty() ? ROOT : new Absolute(ImmutableList.copyOf(steps));
     }
 
-    public static final YangLocationPath of(final boolean absolute, final Collection<Step> steps) {
-        if (steps.isEmpty()) {
-            return of(absolute);
-        }
+    public static final Relative relative(final Step... steps) {
+        return relative(Arrays.asList(steps));
+    }
 
-        final ImmutableList<Step> copy = ImmutableList.copyOf(steps);
-        return absolute ? new Absolute(copy) : new YangLocationPath(copy);
+    public static final Relative relative(final Collection<Step> steps) {
+        return steps.isEmpty() ? SELF : new Relative(ImmutableList.copyOf(steps));
     }
 
     /**
@@ -349,7 +361,7 @@ public class YangLocationPath implements YangExpr {
      *
      * @return Empty absolute {@link YangLocationPath}
      */
-    public static final YangLocationPath root() {
+    public static final Absolute root() {
         return ROOT;
     }
 
@@ -359,17 +371,15 @@ public class YangLocationPath implements YangExpr {
      *
      * @return Empty relative {@link YangLocationPath}
      */
-    public static YangLocationPath self() {
+    public static final Relative self() {
         return SELF;
-    }
-
-    public boolean isAbsolute() {
-        return false;
     }
 
     public final ImmutableList<Step> getSteps() {
         return steps;
     }
+
+    public abstract boolean isAbsolute();
 
     @Override
     public final int hashCode() {
@@ -398,6 +408,6 @@ public class YangLocationPath implements YangExpr {
     }
 
     final Object readSolve() {
-        return steps.isEmpty() ? of(isAbsolute()) : this;
+        return steps.isEmpty() ? isAbsolute() ? ROOT : SELF : this;
     }
 }
