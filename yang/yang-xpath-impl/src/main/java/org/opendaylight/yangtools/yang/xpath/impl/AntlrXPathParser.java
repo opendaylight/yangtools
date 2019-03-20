@@ -56,6 +56,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangNaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangNegateExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNumberExpr;
+import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangVariableReferenceExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathExpression;
@@ -263,14 +264,13 @@ final class AntlrXPathParser implements YangXPathParser {
 
         final YangExpr filter = parseFilter(verifyTree(FilterExprContext.class, first));
         if (expr.getChildCount() == 1) {
-            return filter;
+            return YangPathExpr.of(filter);
         }
 
         verifyChildCount(expr, 3);
-
-        // FIXME: this actually is a concatenation
-        return parseOperator(expr.getChild(1)).exprWith(filter,
-            parseRelativeLocationPath(getChild(expr, RelativeLocationPathContext.class, 2)));
+        final Deque<Step> steps = parseLocationPathSteps(getChild(expr, RelativeLocationPathContext.class, 2));
+        parseStepShorthand(expr.getChild(1)).ifPresent(steps::addFirst);
+        return YangPathExpr.of(filter, YangLocationPath.of(false, steps));
     }
 
     private YangExpr parsePredicate(final PredicateContext expr) {

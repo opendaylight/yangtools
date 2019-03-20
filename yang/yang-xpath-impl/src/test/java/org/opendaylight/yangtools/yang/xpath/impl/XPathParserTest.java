@@ -39,6 +39,8 @@ public class XPathParserTest {
 
     @Test
     public void testSmoke() throws XPathExpressionException {
+        parseExpr("../a[foo = current()/foo]");
+
         parseExpr("3 + 5");
         parseExpr("/a/b");
         parseExpr("a/b");
