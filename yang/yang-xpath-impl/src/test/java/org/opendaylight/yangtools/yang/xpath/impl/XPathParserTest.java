@@ -34,7 +34,7 @@ public class XPathParserTest {
 
     @Before
     public void before() {
-        parser = new AntlrXPathParser(YangXPathMathMode.IEEE754, CONTEXT);
+        parser = new AntlrXPathParser.Unqualified(YangXPathMathMode.IEEE754, CONTEXT, DEFNS);
     }
 
     @Test
