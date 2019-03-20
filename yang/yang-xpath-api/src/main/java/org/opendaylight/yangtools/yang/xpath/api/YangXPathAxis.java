@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableSet;
 import java.util.Collection;
+import org.opendaylight.yangtools.yang.common.AbstractQName;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStepWithPredicates;
@@ -19,8 +20,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.NodeTypeStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.NodeTypeStepWithPredicates;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ProcessingInstructionStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ProcessingInstructionStepWithPredicates;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
-import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStepWithPredicates;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.UnresolvedQNameStep;
 
 /**
  * XPath evaluation axis, as defined in <a href="https://www.w3.org/TR/1999/REC-xpath-19991116/#axes">XPath 1.0</a>.
@@ -105,17 +106,23 @@ public enum YangXPathAxis {
     }
 
     public final AxisStep asStep(final Collection<YangExpr> predicates) {
-        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? step : new AxisStepWithPredicates(this, set);
+        return predicates.isEmpty() ? step : new AxisStepWithPredicates(this, ImmutableSet.copyOf(predicates));
     }
 
-    public final QNameStep asStep(final QName qname) {
-        return new QNameStep(this, qname);
+    public final ResolvedQNameStep asStep(final QName qname) {
+        return new ResolvedQNameStep(this, qname);
     }
 
-    public final QNameStep asStep(final QName qname, final Collection<YangExpr> predicates) {
-        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? asStep(qname) : new QNameStepWithPredicates(this, qname, set);
+    public final ResolvedQNameStep asStep(final QName qname, final Collection<YangExpr> predicates) {
+        return ResolvedQNameStep.of(this, qname, predicates);
+    }
+
+    public final UnresolvedQNameStep asStep(final AbstractQName qname) {
+        return new UnresolvedQNameStep(this, qname);
+    }
+
+    public final UnresolvedQNameStep asStep(final AbstractQName qname, final Collection<YangExpr> predicates) {
+        return UnresolvedQNameStep.of(this, qname, predicates);
     }
 
     public final NodeTypeStep asStep(final YangXPathNodeType type) {
@@ -123,8 +130,8 @@ public enum YangXPathAxis {
     }
 
     public final NodeTypeStep asStep(final YangXPathNodeType type, final Collection<YangExpr> predicates) {
-        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? asStep(type) : new NodeTypeStepWithPredicates(this, type, set);
+        return predicates.isEmpty() ? asStep(type) : new NodeTypeStepWithPredicates(this, type,
+            ImmutableSet.copyOf(predicates));
     }
 
     public final ProcessingInstructionStep asStep(final String name) {
@@ -132,8 +139,8 @@ public enum YangXPathAxis {
     }
 
     public final ProcessingInstructionStep asStep(final String name, final Collection<YangExpr> predicates) {
-        final ImmutableSet<YangExpr> set = ImmutableSet.copyOf(predicates);
-        return set.isEmpty() ? asStep(name) : new ProcessingInstructionStepWithPredicates(this, name, set);
+        return predicates.isEmpty() ? asStep(name) : new ProcessingInstructionStepWithPredicates(this, name,
+            ImmutableSet.copyOf(predicates));
     }
 
     @Override
