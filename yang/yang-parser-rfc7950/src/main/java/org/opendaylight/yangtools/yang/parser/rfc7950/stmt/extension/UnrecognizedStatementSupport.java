@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import java.util.Optional;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnrecognizedStatement;
@@ -49,10 +50,16 @@ final class UnrecognizedStatementSupport extends AbstractStatementSupport<String
     public Optional<StatementSupport<?, ?, ?>> getUnknownStatementDefinitionOf(
             final StatementDefinition yangStmtDef) {
         final QName baseQName = getStatementName();
-        final QName argumentName = yangStmtDef.getArgumentName();
-        return Optional.of(new ModelDefinedStatementSupport(new ModelDefinedStatementDefinition(
-                QName.create(baseQName, yangStmtDef.getStatementName().getLocalName()),
-                argumentName != null ? QName.create(baseQName, argumentName.getLocalName()) : null,
-                yangStmtDef.isArgumentYinElement())));
+        final QName statementName = QName.create(baseQName, yangStmtDef.getStatementName().getLocalName());
+
+        final ModelDefinedStatementDefinition def;
+        final Optional<ArgumentDefinition> optArgDef = yangStmtDef.getArgumentDefinition();
+        if (optArgDef.isPresent()) {
+            final ArgumentDefinition argDef = optArgDef.get();
+            def = new ModelDefinedStatementDefinition(statementName, argDef.getArgumentName(), argDef.isYinElement());
+        } else {
+            def = new ModelDefinedStatementDefinition(statementName);
+        }
+        return Optional.of(new ModelDefinedStatementSupport(def));
     }
 }

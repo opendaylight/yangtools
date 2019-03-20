@@ -10,10 +10,12 @@ package org.opendaylight.yangtools.yang.thirdparty.plugin;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
 @Beta
@@ -63,8 +65,8 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
     }
 
     @Override
-    public QName getArgumentName() {
-        return argument;
+    public @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
+        return ArgumentDefinition.ofNullable(argument, yinElement);
     }
 
     @Override
@@ -75,10 +77,5 @@ public enum ThirdPartyExtensionsMapping implements StatementDefinition {
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return yinElement;
     }
 }
