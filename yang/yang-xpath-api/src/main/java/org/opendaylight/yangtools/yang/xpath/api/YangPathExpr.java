@@ -44,7 +44,7 @@ public class YangPathExpr implements YangExpr {
         return new YangPathExpr(filterExpr);
     }
 
-    public static YangExpr of(final YangExpr expr, final YangLocationPath locationPath) {
+    public static YangPathExpr of(final YangExpr expr, final YangLocationPath locationPath) {
         return new WithLocation(expr, locationPath);
     }
 
