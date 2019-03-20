@@ -10,7 +10,7 @@ options{
 
 path_arg : absolute_path | relative_path;
 
-absolute_path : (SLASH node_identifier (path_predicate)*)+; 
+absolute_path : (SLASH node_identifier (path_predicate)*)+;
 
 relative_path : (DOTS SLASH)* descendant_path;
 
