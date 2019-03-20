@@ -9,9 +9,10 @@ package org.opendaylight.yangtools.rfc8528.model.api;
 
 import static java.util.Objects.requireNonNull;
 
-import org.eclipse.jdt.annotation.NonNull;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -29,25 +30,20 @@ public enum SchemaMountStatements implements StatementDefinition {
     private final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation;
     private final Class<? extends DeclaredStatement<?>> declaredRepresentation;
     private final QName statementName;
-    private final QName argumentName;
+    private final ArgumentDefinition argumentDef;
 
     SchemaMountStatements(final QName statementName, final String argumentName,
             final Class<? extends DeclaredStatement<?>> declaredRepresentation,
                     final Class<? extends EffectiveStatement<?, ?>> effectiveRepresentation) {
         this.statementName = statementName.intern();
-        this.argumentName = QName.create(statementName, argumentName);
+        this.argumentDef = ArgumentDefinition.of(QName.create(statementName, argumentName), false);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
     }
 
     @Override
-    public @NonNull QName getArgumentName() {
-        return argumentName;
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return false;
+    public Optional<ArgumentDefinition> getArgumentDefinition() {
+        return Optional.of(argumentDef);
     }
 
     @Override

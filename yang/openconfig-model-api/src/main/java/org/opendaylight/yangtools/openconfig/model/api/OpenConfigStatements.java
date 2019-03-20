@@ -11,9 +11,11 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -49,8 +51,8 @@ public enum OpenConfigStatements implements StatementDefinition {
     }
 
     @Override
-    public @Nullable QName getArgumentName() {
-        return argumentName;
+    public Optional<ArgumentDefinition> getArgumentDefinition() {
+        return ArgumentDefinition.ofNullable(argumentName, false);
     }
 
     @Override
@@ -61,10 +63,5 @@ public enum OpenConfigStatements implements StatementDefinition {
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveRepresentation;
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return false;
     }
 }

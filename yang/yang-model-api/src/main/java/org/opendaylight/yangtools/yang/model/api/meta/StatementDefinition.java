@@ -7,8 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.model.api.meta;
 
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.common.QName;
 
@@ -36,9 +36,7 @@ public interface StatementDefinition extends Immutable {
      *
      * @return argument name or null, if statement does not take argument.
      */
-    // FIXME: 3.0.0: make this return an Optional<StatementArgumentDefinition>, which will include the boolean value
-    //               of isArgumentYinElement()
-    @Nullable QName getArgumentName();
+    @NonNull Optional<ArgumentDefinition> getArgumentDefinition();
 
     /**
      * Returns class which represents declared version of statement associated with this definition. This class should
@@ -55,14 +53,4 @@ public interface StatementDefinition extends Immutable {
      * @return class which represents effective version of statement associated with this definition
      */
     @NonNull Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass();
-
-    /**
-     * Returns true, if argument of statement is represented as value of yin element. If argument of statement is
-     * represented as argument of yin element, returns false. If this statement does not have an argument, this method
-     * returns false.
-     *
-     * @return returns true, if statement argument is represented as value of yin element, otherwise returns false.
-     */
-    // FIXME: 3.0.0: integrate this with getArgumentName()
-    boolean isArgumentYinElement();
 }
