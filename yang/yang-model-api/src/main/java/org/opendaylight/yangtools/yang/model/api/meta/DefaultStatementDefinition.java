@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
-import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
@@ -30,21 +29,16 @@ import org.opendaylight.yangtools.yang.common.QName;
 @Beta
 @NonNullByDefault
 public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>>
-        implements StatementDefinition {
+        extends AbstractStatementDefinition {
     private final Class<E> effectiveRepresentation;
     private final Class<D> declaredRepresentation;
-    private final QName statementName;
-    private final @Nullable QName argumentName;
-    private final boolean argumentYinElement;
 
     DefaultStatementDefinition(final QName statementName, final Class<D> declaredRepresentation,
             final Class<E> effectiveRepresentation, final boolean argumentYinElement,
             final @Nullable QName argumentName) {
-        this.statementName = requireNonNull(statementName);
+        super(statementName, argumentYinElement, argumentName);
         this.declaredRepresentation = requireNonNull(declaredRepresentation);
         this.effectiveRepresentation = requireNonNull(effectiveRepresentation);
-        this.argumentYinElement = argumentYinElement;
-        this.argumentName = argumentName;
 
         checkArgument(declaredRepresentation.isInterface(), "Declared representation %s is not an interface",
             declaredRepresentation);
@@ -74,16 +68,6 @@ public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>,
     }
 
     @Override
-    public QName getStatementName() {
-        return statementName;
-    }
-
-    @Override
-    public @Nullable QName getArgumentName() {
-        return argumentName;
-    }
-
-    @Override
     public Class<? extends DeclaredStatement<?>> getDeclaredRepresentationClass() {
         return declaredRepresentation;
     }
@@ -94,19 +78,9 @@ public final class DefaultStatementDefinition<A, D extends DeclaredStatement<A>,
     }
 
     @Override
-    public boolean isArgumentYinElement() {
-        return argumentYinElement;
-    }
-
-    @Override
-    public String toString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(this)
-                .add("name", statementName)
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper)
                 .add("declared", declaredRepresentation)
                 .add("effective", effectiveRepresentation);
-        if (argumentName != null) {
-            helper.add("argument", argumentName).add("yin-element", argumentYinElement);
-        }
-        return helper.toString();
     }
 }

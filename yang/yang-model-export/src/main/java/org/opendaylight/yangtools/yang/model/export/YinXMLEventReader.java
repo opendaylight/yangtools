@@ -19,6 +19,7 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Queue;
 import javax.xml.XMLConstants;
 import javax.xml.stream.XMLEventFactory;
@@ -30,6 +31,7 @@ import javax.xml.stream.events.EndElement;
 import javax.xml.stream.events.StartElement;
 import javax.xml.stream.events.XMLEvent;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 
@@ -63,9 +65,10 @@ final class YinXMLEventReader implements XMLEventReader {
 
         final StatementDefinition def = root.statementDefinition();
         final QName name = def.getStatementName();
+        final ArgumentDefinition arg = def.getArgumentDefinition().get();
 
         events.add(eventFactory.createStartElement(XMLConstants.DEFAULT_NS_PREFIX, name.getNamespace().toString(),
-            name.getLocalName(), singletonIterator(attribute(def.getArgumentName(), root.rawArgument())),
+            name.getLocalName(), singletonIterator(attribute(arg.getArgumentName(), root.rawArgument())),
             transform(namespaceContext.prefixesAndNamespaces().entrySet().iterator(),
                 e -> eventFactory.createNamespace(e.getKey(), e.getValue())),
             namespaceContext));
@@ -208,9 +211,11 @@ final class YinXMLEventReader implements XMLEventReader {
     private void addStatement(final DeclaredStatement<?> statement) {
         final StatementDefinition def = statement.statementDefinition();
         final QName name = def.getStatementName();
-        final QName argName = def.getArgumentName();
-        if (argName != null) {
-            if (def.isArgumentYinElement()) {
+        final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+        if (optArgDef.isPresent()) {
+            final ArgumentDefinition argDef = optArgDef.get();
+            final QName argName = argDef.getArgumentName();
+            if (argDef.isYinElement()) {
                 events.addAll(Arrays.asList(startElement(name), startElement(argName),
                     eventFactory.createCharacters(statement.rawArgument()), endElement(argName)));
             } else {
