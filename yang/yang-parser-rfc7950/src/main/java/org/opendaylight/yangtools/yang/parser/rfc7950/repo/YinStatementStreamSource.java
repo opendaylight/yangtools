@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YinDomSchemaSource;
@@ -145,11 +146,14 @@ public final class YinStatementStreamSource implements StatementStreamSource {
 
             final StatementDefinition def = resumed.getDefinition();
             ref = resumed.getSourceReference();
-            argName = def.getArgumentName();
-            if (argName != null) {
-                allAttrs = def.isArgumentYinElement();
+            final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+            if (optArgDef.isPresent()) {
+                final ArgumentDefinition argDef = optArgDef.get();
+                argName = argDef.getArgumentName();
+                allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
             } else {
+                argName = null;
                 allAttrs = false;
                 allElements = false;
             }
@@ -162,15 +166,18 @@ public final class YinStatementStreamSource implements StatementStreamSource {
             }
 
             final String argValue;
-            argName = def.getArgumentName();
-            if (argName != null) {
-                allAttrs = def.isArgumentYinElement();
+            final Optional<ArgumentDefinition> optArgDef = def.getArgumentDefinition();
+            if (optArgDef.isPresent()) {
+                final ArgumentDefinition argDef = optArgDef.get();
+                argName = argDef.getArgumentName();
+                allAttrs = argDef.isYinElement();
                 allElements = !allAttrs;
 
                 argValue = getArgValue(element, argName, allAttrs);
                 SourceException.throwIfNull(argValue, ref, "Statement {} is missing mandatory argument %s",
                     def.getStatementName(), argName);
             } else {
+                argName = null;
                 argValue = null;
                 allAttrs = false;
                 allElements = false;

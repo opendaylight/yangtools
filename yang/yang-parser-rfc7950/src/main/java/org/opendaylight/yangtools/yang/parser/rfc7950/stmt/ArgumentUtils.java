@@ -26,6 +26,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.api.stmt.SchemaNodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.stmt.UnresolvedNumber;
 import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
@@ -96,9 +97,10 @@ public final class ArgumentUtils {
         } else if ("false".equals(input)) {
             return Boolean.FALSE;
         } else {
+            final StatementDefinition def = ctx.getPublicDefinition();
             throw new SourceException(ctx.getStatementSourceReference(),
                 "Invalid '%s' statement %s '%s', it can be either 'true' or 'false'",
-                ctx.getPublicDefinition().getStatementName(), ctx.getPublicDefinition().getArgumentName(), input);
+                def.getStatementName(), def.getArgumentDefinition().get().getArgumentName(), input);
         }
     }
 
