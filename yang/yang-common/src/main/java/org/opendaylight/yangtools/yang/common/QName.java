@@ -7,10 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.common;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
+import static org.opendaylight.yangtools.yang.common.AbstractQName.checkLocalName;
 
-import com.google.common.base.CharMatcher;
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
@@ -51,6 +50,10 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * node in the YANG module</li>
  * </ul>
  */
+/*
+ * FIXME: 4.0.0: make this class subclass AbstractQName, which will break serialization compatibility with versions
+ *               <3.0.0, which did not use an Externalizable proxy.
+ */
 public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 5398411242927766414L;
@@ -67,16 +70,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static final String QNAME_STRING_NO_REVISION = "^\\((.+)\\)(.+)$";
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
-    private static final CharMatcher IDENTIFIER_START =
-            CharMatcher.inRange('A', 'Z').or(CharMatcher.inRange('a', 'z').or(CharMatcher.is('_'))).precomputed();
-    private static final CharMatcher NOT_IDENTIFIER_PART =
-            IDENTIFIER_START.or(CharMatcher.inRange('0', '9')).or(CharMatcher.anyOf("-.")).negate().precomputed();
-
     private final @NonNull QNameModule module;
     private final @NonNull String localName;
     private transient int hash = 0;
 
-    private QName(final QNameModule module, final @NonNull String localName) {
+    QName(final QNameModule module, final @NonNull String localName) {
         this.module = requireNonNull(module);
         this.localName = requireNonNull(localName);
     }
@@ -91,14 +89,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      */
     private QName(final URI namespace, final String localName) {
         this(QNameModule.create(namespace), checkLocalName(localName));
-    }
-
-    private static @NonNull String checkLocalName(final String localName) {
-        checkArgument(localName != null, "Parameter 'localName' may not be null.");
-        checkArgument(!localName.isEmpty(), "Parameter 'localName' must be a non-empty string.");
-        checkArgument(IDENTIFIER_START.matches(localName.charAt(0)) && NOT_IDENTIFIER_PART.indexIn(localName, 1) == -1,
-                "String '%s' is not a valid identifier", localName);
-        return localName;
     }
 
     public static @NonNull QName create(final String input) {
