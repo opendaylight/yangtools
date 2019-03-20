@@ -40,6 +40,9 @@ import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.common.QualifiedQName;
+import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
@@ -51,6 +54,8 @@ import org.opendaylight.yangtools.yang.xpath.api.YangFunctionCallExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.AxisStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.ResolvedQNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangNaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangNaryOperator;
@@ -90,16 +95,99 @@ import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.StepContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.UnaryExprNoRootContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.UnionExprNoRootContext;
 import org.opendaylight.yangtools.yang.xpath.impl.xpathParser.VariableReferenceContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * ANTLR-based XPath parser. Uses {@code xpath.g4} ANTLR grammar.
  *
  * @author Robert Varga
  */
-final class AntlrXPathParser implements YangXPathParser {
-    private static final Logger LOG = LoggerFactory.getLogger(AntlrXPathParser.class);
+abstract class AntlrXPathParser implements YangXPathParser {
+    static class Base extends AntlrXPathParser {
+        Base(final YangXPathMathMode mathMode) {
+            super(mathMode);
+        }
+
+        @Override
+        public YangXPathExpression parseExpression(final String xpath) throws XPathExpressionException {
+            return new AntlrYangXPathExpression.Base(mathMode, parseExpr(xpath), xpath);
+        }
+
+        @Override
+        QNameStep createStep(final YangXPathAxis axis, final String localName,
+                final List<YangExpr> predicates) {
+            return axis.asStep(UnqualifiedQName.of(localName), predicates);
+        }
+
+        @Override
+        QNameStep createStep(final YangXPathAxis axis, final String prefix, final String localName,
+                final List<YangExpr> predicates) {
+            return axis.asStep(QualifiedQName.of(prefix, localName), predicates);
+        }
+
+        @Override
+        QName createQName(final String localName) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        QName createQName(final String prefix, final String localName) {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    static class Qualified extends Base implements QualifiedBound {
+        final YangNamespaceContext namespaceContext;
+
+        Qualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+            super(mathMode);
+            this.namespaceContext = requireNonNull(namespaceContext);
+        }
+
+        @Override
+        public YangXPathExpression.QualifiedBound parseExpression(final String xpath) throws XPathExpressionException {
+            return new AntlrYangXPathExpression.Qualified(mathMode, parseExpr(xpath), xpath, namespaceContext);
+        }
+
+        @Override
+        final QName createQName(final String prefix, final String localName) {
+            return namespaceContext.createQName(prefix, localName);
+        }
+
+        @Override
+        ResolvedQNameStep createStep(final YangXPathAxis axis, final String prefix, final String localName,
+                final List<YangExpr> predicates) {
+            return axis.asStep(createQName(prefix, localName), predicates);
+        }
+    }
+
+    final static class Unqualified extends Qualified implements UnqualifiedBound {
+        private final QNameModule defaultNamespace;
+
+        Unqualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+                final QNameModule defaultNamespace) {
+            super(mathMode, namespaceContext);
+            this.defaultNamespace = requireNonNull(defaultNamespace);
+        }
+
+        @Override
+        public YangXPathExpression.UnqualifiedBound parseExpression(final String xpath)
+                throws XPathExpressionException {
+            return new AntlrYangXPathExpression.Unqualified(mathMode, parseExpr(xpath), xpath, namespaceContext,
+                defaultNamespace);
+        }
+
+        @Override
+        QName createQName(final String localName) {
+            return QName.create(defaultNamespace, localName);
+        }
+
+        @Override
+        ResolvedQNameStep createStep(final YangXPathAxis axis, final String localName,
+                final List<YangExpr> predicates) {
+            return axis.asStep(QName.create(defaultNamespace, localName), predicates);
+        }
+    }
+
     private static final Map<String, YangBinaryOperator> BINARY_OPERATORS = Maps.uniqueIndex(
         Arrays.asList(YangBinaryOperator.values()), YangBinaryOperator::toString);
     private static final Map<String, YangXPathNodeType> NODE_TYPES = Maps.uniqueIndex(Arrays.asList(
@@ -112,20 +200,17 @@ final class AntlrXPathParser implements YangXPathParser {
     // Cached for checks in hot path
     private static final AxisStep SELF_STEP = YangXPathAxis.SELF.asStep();
 
-    private final YangXPathMathMode mathMode;
+    final YangXPathMathMode mathMode;
     private final YangXPathMathSupport mathSupport;
-    private final YangNamespaceContext namespaceContext;
     private final FunctionSupport functionSupport;
 
-    AntlrXPathParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+    AntlrXPathParser(final YangXPathMathMode mathMode) {
         this.mathMode = requireNonNull(mathMode);
         this.mathSupport = mathMode.getSupport();
-        this.namespaceContext = requireNonNull(namespaceContext);
-        this.functionSupport = new FunctionSupport(namespaceContext, mathSupport);
+        this.functionSupport = new FunctionSupport(mathSupport);
     }
 
-    @Override
-    public YangXPathExpression parseExpression(final String xpath) throws XPathExpressionException {
+    final YangExpr parseExpr(final String xpath) throws XPathExpressionException {
         // Create a parser and disconnect it from console error output
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(xpath));
         final xpathParser parser = new xpathParser(new CommonTokenStream(lexer));
@@ -138,8 +223,16 @@ final class AntlrXPathParser implements YangXPathParser {
 
         final YangExpr expr = parseExpr(parser.main().expr());
         listener.reportError();
-        return new AntlrYangXPathExpression(namespaceContext, mathMode, expr, xpath);
+        return expr;
     }
+
+    abstract QNameStep createStep(YangXPathAxis axis, String localName, List<YangExpr> predicates);
+
+    abstract QNameStep createStep(YangXPathAxis axis, String prefix, String localName, List<YangExpr> predicates);
+
+    abstract QName createQName(String localName);
+
+    abstract QName createQName(String prefix, String localName);
 
     /**
      * Parse and simplify an XPath expression in {@link ExprContext} representation.
@@ -204,7 +297,7 @@ final class AntlrXPathParser implements YangXPathParser {
                 parsed = QName.create(YangConstants.RFC6020_YIN_MODULE, name.getChild(0).getText());
                 break;
             case 3:
-                parsed = namespaceContext.createQName(name.getChild(0).getText(), name.getChild(2).getText());
+                parsed = createQName(name.getChild(0).getText(), name.getChild(2).getText());
                 break;
             default:
                 throw illegalShape(name);
@@ -436,18 +529,6 @@ final class AntlrXPathParser implements YangXPathParser {
         return ret;
     }
 
-    private QName parseQName(final QNameContext expr) {
-        switch (expr.getChildCount()) {
-            case 1:
-                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText());
-            case 3:
-                return namespaceContext.createQName(getChild(expr, NCNameContext.class, 0).getText(),
-                    getChild(expr, NCNameContext.class, 2).getText());
-            default:
-                throw illegalShape(expr);
-        }
-    }
-
     private Step parseStep(final StepContext expr) {
         if (expr.getChildCount() == 1) {
             final AbbreviatedStepContext abbrev = getChild(expr, AbbreviatedStepContext.class, 0);
@@ -478,7 +559,7 @@ final class AntlrXPathParser implements YangXPathParser {
                     verify(((TerminalNode) first).getSymbol().getType() == xpathParser.MUL);
                     return axis.asStep(predicates);
                 }
-                return axis.asStep(parseQName(verifyTree(QNameContext.class, first)), predicates);
+                return createStep(axis, verifyTree(QNameContext.class, first), predicates);
             case 3:
                 return axis.asStep(parseNodeType(nodeTest.getChild(0)), predicates);
             case 4:
@@ -486,6 +567,18 @@ final class AntlrXPathParser implements YangXPathParser {
                 return axis.asStep(text.substring(1, text.length() - 1), predicates);
             default:
                 throw illegalShape(nodeTest);
+        }
+    }
+
+    private QNameStep createStep(final YangXPathAxis axis, final QNameContext expr, final List<YangExpr> predicates) {
+        switch (expr.getChildCount()) {
+            case 1:
+                return createStep(axis, getChild(expr, NCNameContext.class, 0).getText(), predicates);
+            case 3:
+                return createStep(axis, getChild(expr, NCNameContext.class, 0).getText(),
+                    getChild(expr, NCNameContext.class, 2).getText(), predicates);
+            default:
+                throw illegalShape(expr);
         }
     }
 
@@ -499,6 +592,18 @@ final class AntlrXPathParser implements YangXPathParser {
             case 2:
                 final String str = verifyTerminal(expr.getChild(0)).getText();
                 return verifyNotNull(XPATH_AXES.get(str), "Unhandled axis %s", str);
+            default:
+                throw illegalShape(expr);
+        }
+    }
+
+    private QName parseQName(final QNameContext expr) {
+        switch (expr.getChildCount()) {
+            case 1:
+                return createQName(getChild(expr, NCNameContext.class, 0).getText());
+            case 3:
+                return createQName(getChild(expr, NCNameContext.class, 0).getText(),
+                    getChild(expr, NCNameContext.class, 2).getText());
             default:
                 throw illegalShape(expr);
         }
