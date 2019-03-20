@@ -11,10 +11,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.YangConstants;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -273,8 +275,8 @@ public enum YangStmtMapping implements StatementDefinition {
     }
 
     @Override
-    public @Nullable QName getArgumentName() {
-        return argument;
+    public Optional<ArgumentDefinition> getArgumentDefinition() {
+        return ArgumentDefinition.ofNullable(argument, yinElement);
     }
 
     @Override
@@ -285,10 +287,5 @@ public enum YangStmtMapping implements StatementDefinition {
     @Override
     public Class<? extends EffectiveStatement<?, ?>> getEffectiveRepresentationClass() {
         return effectiveType;
-    }
-
-    @Override
-    public boolean isArgumentYinElement() {
-        return yinElement;
     }
 }
