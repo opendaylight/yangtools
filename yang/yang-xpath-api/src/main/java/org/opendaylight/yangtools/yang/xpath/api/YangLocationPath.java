@@ -13,11 +13,11 @@ import com.google.common.annotations.Beta;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.jdt.annotation.Nullable;
@@ -94,15 +94,15 @@ public class YangLocationPath implements YangExpr {
     static final class AxisStepWithPredicates extends AxisStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
-        AxisStepWithPredicates(final YangXPathAxis axis, final Set<YangExpr> predicates) {
+        AxisStepWithPredicates(final YangXPathAxis axis, final ImmutableSet<YangExpr> predicates) {
             super(axis);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
@@ -187,15 +187,15 @@ public class YangLocationPath implements YangExpr {
     static final class QNameStepWithPredicates extends QNameStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
-        QNameStepWithPredicates(final YangXPathAxis axis, final QName qname, final Set<YangExpr> predicates) {
+        QNameStepWithPredicates(final YangXPathAxis axis, final QName qname, final ImmutableSet<YangExpr> predicates) {
             super(axis, qname);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
@@ -243,16 +243,16 @@ public class YangLocationPath implements YangExpr {
     static final class NodeTypeStepWithPredicates extends NodeTypeStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
         NodeTypeStepWithPredicates(final YangXPathAxis axis, final YangXPathNodeType type,
-                final Set<YangExpr> predicates) {
+                final ImmutableSet<YangExpr> predicates) {
             super(axis, type);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
@@ -290,65 +290,41 @@ public class YangLocationPath implements YangExpr {
     static final class ProcessingInstructionStepWithPredicates extends ProcessingInstructionStep {
         private static final long serialVersionUID = 1L;
 
-        private final Set<YangExpr> predicates;
+        private final ImmutableSet<YangExpr> predicates;
 
         ProcessingInstructionStepWithPredicates(final YangXPathAxis axis, final String name,
-                final Set<YangExpr> predicates) {
+                final ImmutableSet<YangExpr> predicates) {
             super(axis, name);
             this.predicates = requireNonNull(predicates);
         }
 
         @Override
-        public Set<YangExpr> getPredicates() {
+        public ImmutableSet<YangExpr> getPredicates() {
             return predicates;
         }
     }
 
-    public static class Absolute extends YangLocationPath {
+    public static final class Absolute extends YangLocationPath {
         private static final long serialVersionUID = 1L;
 
+        Absolute(final ImmutableList<Step> steps) {
+            super(steps);
+        }
+
         @Override
-        public final boolean isAbsolute() {
+        public boolean isAbsolute() {
             return true;
         }
     }
 
-    private static final class AbsoluteWithSteps extends Absolute {
-        private static final long serialVersionUID = 1L;
-
-        private final List<Step> steps;
-
-        AbsoluteWithSteps(final List<Step> steps) {
-            this.steps = requireNonNull(steps);
-        }
-
-        @Override
-        public List<Step> getSteps() {
-            return steps;
-        }
-    }
-
-    private static final class WithSteps extends YangLocationPath {
-        private static final long serialVersionUID = 1L;
-
-        private final List<Step> steps;
-
-        WithSteps(final List<Step> steps) {
-            this.steps = requireNonNull(steps);
-        }
-
-        @Override
-        public List<Step> getSteps() {
-            return steps;
-        }
-    }
-
     private static final long serialVersionUID = 1L;
-    private static final YangLocationPath ROOT = new Absolute();
-    private static final YangLocationPath SELF = new YangLocationPath();
+    private static final YangLocationPath ROOT = new Absolute(ImmutableList.of());
+    private static final YangLocationPath SELF = new YangLocationPath(ImmutableList.of());
 
-    YangLocationPath() {
-        // Hidden to prevent external instantiation
+    private final ImmutableList<Step> steps;
+
+    YangLocationPath(final ImmutableList<Step> steps) {
+        this.steps = requireNonNull(steps);
     }
 
     public static final YangLocationPath of(final boolean absolute) {
@@ -364,8 +340,8 @@ public class YangLocationPath implements YangExpr {
             return of(absolute);
         }
 
-        final List<Step> copy = ImmutableList.copyOf(steps);
-        return absolute ? new AbsoluteWithSteps(copy) : new WithSteps(copy);
+        final ImmutableList<Step> copy = ImmutableList.copyOf(steps);
+        return absolute ? new Absolute(copy) : new YangLocationPath(copy);
     }
 
     /**
@@ -391,13 +367,13 @@ public class YangLocationPath implements YangExpr {
         return false;
     }
 
-    public List<Step> getSteps() {
-        return ImmutableList.of();
+    public final ImmutableList<Step> getSteps() {
+        return steps;
     }
 
     @Override
     public final int hashCode() {
-        return Boolean.hashCode(isAbsolute()) * 31 + getSteps().hashCode();
+        return Boolean.hashCode(isAbsolute()) * 31 + steps.hashCode();
     }
 
     @Override
@@ -409,17 +385,19 @@ public class YangLocationPath implements YangExpr {
             return false;
         }
         final YangLocationPath other = (YangLocationPath) obj;
-        return isAbsolute() == other.isAbsolute() && getSteps().equals(other.getSteps());
+        return isAbsolute() == other.isAbsolute() && steps.equals(other.steps);
     }
 
     @Override
     public final String toString() {
-        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class);
-        helper.add("absolute", isAbsolute());
-        final List<Step> steps = getSteps();
+        final ToStringHelper helper = MoreObjects.toStringHelper(YangLocationPath.class).add("absolute", isAbsolute());
         if (!steps.isEmpty()) {
             helper.add("steps", steps);
         }
         return helper.toString();
+    }
+
+    final Object readSolve() {
+        return steps.isEmpty() ? of(isAbsolute()) : this;
     }
 }
