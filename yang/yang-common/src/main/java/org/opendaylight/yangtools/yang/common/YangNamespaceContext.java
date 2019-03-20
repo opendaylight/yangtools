@@ -30,6 +30,9 @@ import org.opendaylight.yangtools.concepts.Immutable;
  */
 @Beta
 public interface YangNamespaceContext extends Immutable, Serializable {
+
+
+
     /**
      * Return the default namespace in this context.
      *
