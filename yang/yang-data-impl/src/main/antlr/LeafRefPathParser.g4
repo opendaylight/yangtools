@@ -28,11 +28,6 @@ node_identifier : (prefix COLON)? identifier;
 
 current_function_invocation : CURRENT_KEYWORD SEP? LEFT_PARENTHESIS SEP? RIGHT_PARENTHESIS;
 
-descendant_schema_nodeid :  node_identifier
-                            absolute_schema_nodeid;
-
-absolute_schema_nodeid : (SLASH node_identifier)+;
-
 prefix : identifier;
 
 identifier: IDENTIFIER | CURRENT_KEYWORD;
