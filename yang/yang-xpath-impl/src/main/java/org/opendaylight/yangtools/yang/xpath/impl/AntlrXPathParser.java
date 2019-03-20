@@ -251,15 +251,7 @@ final class AntlrXPathParser implements YangXPathParser {
         verifyChildCount(abs, 2);
 
         final Deque<Step> steps = parseLocationPathSteps(getChild(abs, RelativeLocationPathContext.class, 1));
-        switch (getTerminalType(abs, 0)) {
-            case xpathParser.PATHSEP:
-                break;
-            case xpathParser.ABRPATH:
-                steps.addFirst(YangXPathAxis.DESCENDANT_OR_SELF.asStep());
-                break;
-            default:
-                throw illegalShape(abs);
-        }
+        parseStepShorthand(abs.getChild(0)).ifPresent(steps::addFirst);
 
         return YangLocationPath.of(true, steps);
     }
@@ -295,6 +287,8 @@ final class AntlrXPathParser implements YangXPathParser {
         }
 
         verifyChildCount(expr, 3);
+
+        // FIXME: this actually is a concatenation
         return parseOperator(expr.getChild(1)).exprWith(filter,
             parseRelativeLocationPath(getChild(expr, RelativeLocationPathContext.class, 2)));
     }
@@ -335,16 +329,7 @@ final class AntlrXPathParser implements YangXPathParser {
         steps.add(parseStep(nextContext(it, StepContext.class)));
 
         while (it.hasNext()) {
-            final ParseTree tree = it.next();
-            switch (verifyTerminal(tree).getSymbol().getType()) {
-                case xpathParser.PATHSEP:
-                    break;
-                case xpathParser.ABRPATH:
-                    steps.add(YangXPathAxis.DESCENDANT_OR_SELF.asStep());
-                    break;
-                default:
-                    throw illegalShape(tree);
-            }
+            parseStepShorthand(it.next()).ifPresent(steps::add);
 
             // Parse step and add it if it's not SELF_STEP
             final Step step = parseStep(nextContext(it, StepContext.class));
@@ -565,5 +550,16 @@ final class AntlrXPathParser implements YangXPathParser {
     private static YangBinaryOperator parseOperator(final ParseTree tree) {
         final String str = verifyTerminal(tree).getText();
         return verifyNotNull(BINARY_OPERATORS.get(str), "Unhandled operator %s", str);
+    }
+
+    private static Optional<Step> parseStepShorthand(final ParseTree tree) {
+        switch (verifyTerminal(tree).getSymbol().getType()) {
+            case xpathParser.PATHSEP:
+                return Optional.empty();
+            case xpathParser.ABRPATH:
+                return Optional.of(YangXPathAxis.DESCENDANT_OR_SELF.asStep());
+            default:
+                throw illegalShape(tree);
+        }
     }
 }
