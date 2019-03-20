@@ -13,21 +13,22 @@ import com.google.common.annotations.Beta;
 import java.util.Objects;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Relative;
 
 @Beta
 public class YangPathExpr implements YangExpr {
     private static final class WithLocation extends YangPathExpr {
         private static final long serialVersionUID = 1L;
 
-        private final YangLocationPath locationPath;
+        private final Relative locationPath;
 
-        WithLocation(final YangExpr filterExpr, final YangLocationPath locationPath) {
+        WithLocation(final YangExpr filterExpr, final Relative locationPath) {
             super(filterExpr);
             this.locationPath = requireNonNull(locationPath);
         }
 
         @Override
-        public Optional<YangLocationPath> getLocationPath() {
+        public Optional<Relative> getLocationPath() {
             return Optional.of(locationPath);
         }
     }
@@ -44,7 +45,7 @@ public class YangPathExpr implements YangExpr {
         return new YangPathExpr(filterExpr);
     }
 
-    public static YangPathExpr of(final YangExpr expr, final YangLocationPath locationPath) {
+    public static YangPathExpr of(final YangExpr expr, final Relative locationPath) {
         return new WithLocation(expr, locationPath);
     }
 
@@ -52,7 +53,7 @@ public class YangPathExpr implements YangExpr {
         return filterExpr;
     }
 
-    public Optional<YangLocationPath> getLocationPath() {
+    public Optional<Relative> getLocationPath() {
         return Optional.empty();
     }
 

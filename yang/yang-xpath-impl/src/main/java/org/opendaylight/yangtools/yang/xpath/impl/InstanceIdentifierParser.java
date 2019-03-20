@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Absolute;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
@@ -52,7 +53,7 @@ final class InstanceIdentifierParser {
         this.mathSupport = mathMode.getSupport();
     }
 
-    YangLocationPath interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
+    Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(expr.getLiteral()));
         final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
         final CapturingErrorListener listener = new CapturingErrorListener();
@@ -70,7 +71,7 @@ final class InstanceIdentifierParser {
             steps.add(parsePathArgument(getChild(id, PathArgumentContext.class, i)));
         }
 
-        return YangLocationPath.of(true, steps);
+        return YangLocationPath.absolute(steps);
     }
 
     private Step parsePathArgument(final PathArgumentContext expr) {
