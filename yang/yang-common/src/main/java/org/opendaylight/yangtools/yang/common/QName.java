@@ -280,7 +280,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname' into the
         // interner. It is important that it does not hold user-supplied reference (such a String instance from
         // parsing of an XML document).
-        final QName template = cacheMod == module ? this : QName.create(cacheMod, localName.intern());
+        final QName template = cacheMod == module ? this : new QName(cacheMod, localName.intern());
 
         return INTERNER.intern(template);
     }
