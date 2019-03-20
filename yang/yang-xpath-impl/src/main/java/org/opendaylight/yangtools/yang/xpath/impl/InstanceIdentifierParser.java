@@ -20,13 +20,14 @@ import javax.xml.xpath.XPathExpressionException;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QualifiedQName;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLiteralExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Absolute;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.QNameStep;
 import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
@@ -44,16 +45,51 @@ import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PosCo
 import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.PredicateContext;
 import org.opendaylight.yangtools.yang.xpath.impl.instanceIdentifierParser.QuotedStringContext;
 
-final class InstanceIdentifierParser {
-    private final YangNamespaceContext namespaceContext;
+abstract class InstanceIdentifierParser {
+    static final class Base extends InstanceIdentifierParser {
+        Base(final YangXPathMathMode mathMode) {
+            super(mathMode);
+        }
+
+        @Override
+        YangQNameExpr createExpr(final String prefix, final String localName) {
+            return YangQNameExpr.of(QualifiedQName.of(prefix, localName));
+        }
+
+        @Override
+        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(QualifiedQName.of(prefix, localName), predicates);
+        }
+    }
+
+    static final class Qualified extends InstanceIdentifierParser {
+        final YangNamespaceContext namespaceContext;
+
+        Qualified(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+            super(mathMode);
+            this.namespaceContext = requireNonNull(namespaceContext);
+        }
+
+        @Override
+        QNameStep createChildStep(final String prefix, final String localName, final Collection<YangExpr> predicates) {
+            return YangXPathAxis.CHILD.asStep(namespaceContext.createQName(prefix, localName), predicates);
+        }
+
+
+        @Override
+        YangQNameExpr createExpr(final String prefix, final String localName) {
+            return YangQNameExpr.of(namespaceContext.createQName(prefix, localName));
+        }
+
+    }
+
     private final YangXPathMathSupport mathSupport;
 
-    InstanceIdentifierParser(final YangNamespaceContext namespaceContext, final YangXPathMathMode mathMode) {
-        this.namespaceContext = requireNonNull(namespaceContext);
+    InstanceIdentifierParser(final YangXPathMathMode mathMode) {
         this.mathSupport = mathMode.getSupport();
     }
 
-    Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
+    final Absolute interpretAsInstanceIdentifier(final YangLiteralExpr expr) throws XPathExpressionException {
         final xpathLexer lexer = new xpathLexer(CharStreams.fromString(expr.getLiteral()));
         final instanceIdentifierParser parser = new instanceIdentifierParser(new CommonTokenStream(lexer));
         final CapturingErrorListener listener = new CapturingErrorListener();
@@ -74,13 +110,20 @@ final class InstanceIdentifierParser {
         return YangLocationPath.absolute(steps);
     }
 
-    private Step parsePathArgument(final PathArgumentContext expr) {
-        final QName qname = parseQName(getChild(expr, NodeIdentifierContext.class, 0));
+    abstract YangQNameExpr createExpr(String prefix, String localName);
+
+    abstract QNameStep createChildStep(String prefix, String localName, Collection<YangExpr> predicates);
+
+    private QNameStep parsePathArgument(final PathArgumentContext expr) {
+        final NodeIdentifierContext childExpr = getChild(expr, NodeIdentifierContext.class, 0);
+        final String prefix = verifyIdentifier(childExpr, 0);
+        final String localName = verifyIdentifier(childExpr, 2);
+
         switch (expr.getChildCount()) {
             case 1:
-                return YangXPathAxis.CHILD.asStep(qname, ImmutableSet.of());
+                return createChildStep(prefix, localName, ImmutableSet.of());
             case 2:
-                return YangXPathAxis.CHILD.asStep(qname, parsePredicate(getChild(expr, PredicateContext.class, 1)));
+                return createChildStep(prefix, localName, parsePredicate(getChild(expr, PredicateContext.class, 1)));
             default:
                 throw illegalShape(expr);
         }
@@ -104,7 +147,7 @@ final class InstanceIdentifierParser {
             final KeyPredicateExprContext pred = getChild(expr, KeyPredicateContext.class, i)
                     .getChild(KeyPredicateExprContext.class, 0);
             ret.add(YangBinaryOperator.EQUALS.exprWith(
-                YangQNameExpr.of(parseQName(getChild(pred, NodeIdentifierContext.class, 0))),
+                createChildExpr(getChild(pred, NodeIdentifierContext.class, 0)),
                 parseEqStringValue(getChild(pred, EqQuotedStringContext.class, 1))));
 
         }
@@ -112,10 +155,12 @@ final class InstanceIdentifierParser {
         return ret;
     }
 
-    private QName parseQName(final NodeIdentifierContext expr) {
-        return namespaceContext.createQName(
-            verifyToken(expr, 0, instanceIdentifierParser.Identifier).getText(),
-            verifyToken(expr, 2, instanceIdentifierParser.Identifier).getText());
+    private YangQNameExpr createChildExpr(final NodeIdentifierContext expr) {
+        return createExpr(verifyIdentifier(expr, 0), verifyIdentifier(expr, 2));
+    }
+
+    private static String verifyIdentifier(final NodeIdentifierContext expr, final int child) {
+        return verifyToken(expr, child, instanceIdentifierParser.Identifier).getText();
     }
 
     private static YangLiteralExpr parseEqStringValue(final EqQuotedStringContext expr) {
