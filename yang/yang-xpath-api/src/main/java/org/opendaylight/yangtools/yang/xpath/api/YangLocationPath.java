@@ -146,16 +146,31 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    public static class QNameStep extends Step {
+    public abstract static class QNameStep extends Step implements QNameReference {
+        private static final long serialVersionUID = 1L;
+
+        QNameStep(final YangXPathAxis axis) {
+            super(axis);
+        }
+    }
+
+    public static class ResolvedQNameStep extends QNameStep implements ResolvedQNameReference {
         private static final long serialVersionUID = 1L;
 
         private final QName qname;
 
-        QNameStep(final YangXPathAxis axis, final QName qname) {
+        ResolvedQNameStep(final YangXPathAxis axis, final QName qname) {
             super(axis);
             this.qname = requireNonNull(qname);
         }
 
+        static ResolvedQNameStep of(final YangXPathAxis axis, final QName qname,
+                final Collection<YangExpr> predicates) {
+            return predicates.isEmpty() ? new ResolvedQNameStep(axis, qname)
+                    : new ResolvedQNameStepWithPredicates(axis, qname, ImmutableSet.copyOf(predicates));
+        }
+
+        @Override
         public final QName getQName() {
             return qname;
         }
@@ -170,10 +185,10 @@ public abstract class YangLocationPath implements YangExpr {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof QNameStep)) {
+            if (!(obj instanceof ResolvedQNameStep)) {
                 return false;
             }
-            final QNameStep other = (QNameStep) obj;
+            final ResolvedQNameStep other = (ResolvedQNameStep) obj;
             return getAxis().equals(other.getAxis()) && qname.equals(other.qname)
                     && getPredicates().equals(other.getPredicates());
         }
@@ -184,13 +199,76 @@ public abstract class YangLocationPath implements YangExpr {
         }
     }
 
-    static final class QNameStepWithPredicates extends QNameStep {
+    private static final class ResolvedQNameStepWithPredicates extends ResolvedQNameStep {
         private static final long serialVersionUID = 1L;
 
         private final ImmutableSet<YangExpr> predicates;
 
-        QNameStepWithPredicates(final YangXPathAxis axis, final QName qname, final ImmutableSet<YangExpr> predicates) {
+        ResolvedQNameStepWithPredicates(final YangXPathAxis axis, final QName qname,
+                final ImmutableSet<YangExpr> predicates) {
             super(axis, qname);
+            this.predicates = requireNonNull(predicates);
+        }
+
+        @Override
+        public ImmutableSet<YangExpr> getPredicates() {
+            return predicates;
+        }
+    }
+
+    public static class UnresolvedQNameStep extends QNameStep implements UnresolvedQNameReference {
+        private static final long serialVersionUID = 1L;
+
+        private final String localName;
+
+        UnresolvedQNameStep(final YangXPathAxis axis, final String localName) {
+            super(axis);
+            this.localName = requireNonNull(localName);
+        }
+
+        static UnresolvedQNameStep of(final YangXPathAxis axis, final String localName,
+                final Collection<YangExpr> predicates) {
+            return predicates.isEmpty() ? new UnresolvedQNameStep(axis, localName)
+                    : new UnresolvedQNameStepWithPredicates(axis, localName, ImmutableSet.copyOf(predicates));
+        }
+
+        @Override
+        public final String getLocalName() {
+            return localName;
+        }
+
+        @Override
+        public final ResolvedQNameStep resolve(final QNameModule namespace) {
+            return ResolvedQNameStep.of(getAxis(), QName.create(namespace, localName), getPredicates());
+        }
+
+        @Override
+        public final int hashCode() {
+            return Objects.hash(getAxis(), localName, getPredicates());
+        }
+
+        @Override
+        public final boolean equals(final @Nullable Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof UnresolvedQNameStep)) {
+                return false;
+            }
+            final UnresolvedQNameStep other = (UnresolvedQNameStep) obj;
+            return getAxis().equals(other.getAxis()) && localName.equals(other.localName)
+                    && getPredicates().equals(other.getPredicates());
+        }
+    }
+
+    private static final class UnresolvedQNameStepWithPredicates extends UnresolvedQNameStep {
+        private static final long serialVersionUID = 1L;
+
+        private final ImmutableSet<YangExpr> predicates;
+
+        UnresolvedQNameStepWithPredicates(final YangXPathAxis axis, final String localName,
+                final ImmutableSet<YangExpr> predicates) {
+            super(axis, localName);
             this.predicates = requireNonNull(predicates);
         }
 
