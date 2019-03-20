@@ -40,6 +40,8 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
     private static final Logger LOG = LoggerFactory.getLogger(YinDomSchemaSource.class);
     private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
     private static final QName REVISION_STMT = REVISION.getStatementName();
+    private static final String MODULE_ARG = MODULE.getArgumentDefinition().get().getArgumentName().getLocalName();
+    private static final String REVISION_ARG = REVISION.getArgumentDefinition().get().getArgumentName().getLocalName();
 
     YinDomSchemaSource() {
         // Prevent outside instantiation
@@ -71,7 +73,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         checkArgument(root instanceof Element, "Root node %s is not an element", root);
         final Element element = (Element)root;
 
-        final Attr nameAttr = element.getAttributeNode(MODULE.getArgumentName().getLocalName());
+        final Attr nameAttr = element.getAttributeNode(MODULE_ARG);
         checkArgument(nameAttr != null, "No %s name argument found in %s", element.getLocalName());
 
         final NodeList revisions = element.getElementsByTagNameNS(REVISION_STMT.getNamespace().toString(),
@@ -82,7 +84,7 @@ public abstract class YinDomSchemaSource implements YinXmlSchemaSource {
         }
 
         final Element revisionStmt = (Element) revisions.item(0);
-        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION.getArgumentName().getLocalName());
+        final Attr dateAttr = revisionStmt.getAttributeNode(REVISION_ARG);
         checkArgument(dateAttr != null, "No revision statement argument found in %s", revisionStmt);
 
         final SourceIdentifier parsedId = RevisionSourceIdentifier.create(nameAttr.getValue(),
