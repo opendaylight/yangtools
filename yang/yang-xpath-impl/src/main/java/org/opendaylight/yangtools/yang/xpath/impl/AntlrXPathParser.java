@@ -225,7 +225,7 @@ final class AntlrXPathParser implements YangXPathParser {
         verifyChildCount(expr, 1);
         final ParseTree first = expr.getChild(0);
         if (first instanceof RelativeLocationPathContext) {
-            return parseRelativeLocationPath((RelativeLocationPathContext) first);
+            return YangLocationPath.relative(parseLocationPathSteps((RelativeLocationPathContext) first));
         }
 
         final AbsoluteLocationPathNorootContext abs = verifyTree(AbsoluteLocationPathNorootContext.class, first);
@@ -234,7 +234,7 @@ final class AntlrXPathParser implements YangXPathParser {
         final Deque<Step> steps = parseLocationPathSteps(getChild(abs, RelativeLocationPathContext.class, 1));
         parseStepShorthand(abs.getChild(0)).ifPresent(steps::addFirst);
 
-        return YangLocationPath.of(true, steps);
+        return YangLocationPath.absolute(steps);
     }
 
     private YangExpr parseMultiplicative(final MultiplicativeExprContext expr) {
@@ -270,7 +270,7 @@ final class AntlrXPathParser implements YangXPathParser {
         verifyChildCount(expr, 3);
         final Deque<Step> steps = parseLocationPathSteps(getChild(expr, RelativeLocationPathContext.class, 2));
         parseStepShorthand(expr.getChild(1)).ifPresent(steps::addFirst);
-        return YangPathExpr.of(filter, YangLocationPath.of(false, steps));
+        return YangPathExpr.of(filter, YangLocationPath.relative(steps));
     }
 
     private YangExpr parsePredicate(final PredicateContext expr) {
@@ -319,10 +319,6 @@ final class AntlrXPathParser implements YangXPathParser {
         }
 
         return steps;
-    }
-
-    private YangLocationPath parseRelativeLocationPath(final RelativeLocationPathContext expr) {
-        return YangLocationPath.of(false, parseLocationPathSteps(expr));
     }
 
     private YangExpr parseTerminal(final TerminalNode term) {
