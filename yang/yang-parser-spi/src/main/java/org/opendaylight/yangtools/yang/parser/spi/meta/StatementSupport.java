@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
@@ -213,8 +214,8 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     }
 
     @Override
-    default QName getArgumentName() {
-        return getPublicView().getArgumentName();
+    default @NonNull Optional<ArgumentDefinition> getArgumentDefinition() {
+        return getPublicView().getArgumentDefinition();
     }
 
     @Override
@@ -225,10 +226,5 @@ public interface StatementSupport<A, D extends DeclaredStatement<A>, E extends E
     @Override
     default Class<? extends EffectiveStatement<?,?>> getEffectiveRepresentationClass() {
         return getPublicView().getEffectiveRepresentationClass();
-    }
-
-    @Override
-    default boolean isArgumentYinElement() {
-        return getPublicView().isArgumentYinElement();
     }
 }
