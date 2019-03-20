@@ -53,6 +53,10 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * affect equality and identity of two QNames and carry only information
  * which may be useful for serializers / deserializers.
  */
+/*
+ * FIXME: 4.0.0: make this class subclass AbstractQName, which will break serialization compatibility with versions
+ *               <3.0.0, which did not use an Externalizable proxy.
+ */
 public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
     private static final long serialVersionUID = 5398411242927766414L;
@@ -75,7 +79,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private final @NonNull String localName;
     private transient int hash = 0;
 
-    private QName(final QNameModule module, final @NonNull String localName) {
+    QName(final QNameModule module, final @NonNull String localName) {
         this.module = requireNonNull(module);
         this.localName = requireNonNull(localName);
     }
