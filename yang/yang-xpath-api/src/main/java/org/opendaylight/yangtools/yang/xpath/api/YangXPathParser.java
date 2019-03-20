@@ -9,6 +9,7 @@ package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
 import javax.xml.xpath.XPathExpressionException;
+import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 
 /**
  * Interface for converting a String into a {@link YangXPathExpression}. Implementations of this interface are expected
@@ -18,6 +19,23 @@ import javax.xml.xpath.XPathExpressionException;
  */
 @Beta
 public interface YangXPathParser {
+    /**
+     * A {@link YangXPathParser} bound to a {@link YangNamespaceContext}, producing Qualified-bound Expressions.
+     */
+    interface QualifiedBound extends YangXPathParser {
+        @Override
+        YangXPathExpression.QualifiedBound parseExpression(String xpath) throws XPathExpressionException;
+    }
+
+    /**
+     * A {@link YangXPathParser} bound to a {@link YangNamespaceContext} and a default namespace, producing
+     * Unqualified-bound Expressions.
+     */
+    interface UnqualifiedBound extends QualifiedBound {
+        @Override
+        YangXPathExpression.UnqualifiedBound parseExpression(String xpath) throws XPathExpressionException;
+    }
+
     /**
      * Parse a string containing an XPath expression.
      *

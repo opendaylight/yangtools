@@ -8,16 +8,29 @@
 package org.opendaylight.yangtools.yang.xpath.impl;
 
 import org.kohsuke.MetaInfServices;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathMathMode;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.QualifiedBound;
+import org.opendaylight.yangtools.yang.xpath.api.YangXPathParser.UnqualifiedBound;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathParserFactory;
 
 @MetaInfServices
 public final class AntlrXPathParserFactory implements YangXPathParserFactory {
     @Override
-    public YangXPathParser newParser(final YangNamespaceContext namespaceContext,
-            final YangXPathMathMode mathMode) {
-        return new AntlrXPathParser(mathMode, namespaceContext);
+    public YangXPathParser newParser(final YangXPathMathMode mathMode) {
+        return new AntlrXPathParser.Base(mathMode);
+    }
+
+    @Override
+    public QualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext) {
+        return new AntlrXPathParser.Qualified(mathMode, namespaceContext);
+    }
+
+    @Override
+    public UnqualifiedBound newParser(final YangXPathMathMode mathMode, final YangNamespaceContext namespaceContext,
+            final QNameModule defaultNamespace) {
+        return new AntlrXPathParser.Unqualified(mathMode, namespaceContext, defaultNamespace);
     }
 }
