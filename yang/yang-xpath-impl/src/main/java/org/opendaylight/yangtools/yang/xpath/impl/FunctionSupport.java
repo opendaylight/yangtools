@@ -11,7 +11,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
-import org.opendaylight.yangtools.yang.common.YangNamespaceContext;
 import org.opendaylight.yangtools.yang.xpath.api.YangBooleanConstantExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangFunction;
@@ -41,10 +40,8 @@ final class FunctionSupport {
         YangFunction.STRING_LENGTH.getIdentifier());
 
     private final YangXPathMathSupport mathSupport;
-    private final YangNamespaceContext namespaceContext;
 
-    FunctionSupport(final YangNamespaceContext namespaceContext, final YangXPathMathSupport mathSupport) {
-        this.namespaceContext = requireNonNull(namespaceContext);
+    FunctionSupport(final YangXPathMathSupport mathSupport) {
         this.mathSupport = requireNonNull(mathSupport);
     }
 
