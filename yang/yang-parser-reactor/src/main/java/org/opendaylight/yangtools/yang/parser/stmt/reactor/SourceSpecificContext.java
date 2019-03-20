@@ -139,7 +139,7 @@ public class SourceSpecificContext implements NamespaceStorageNode, NamespaceBeh
         }
 
         if (InferenceException.throwIfNull(def, ref, "Statement %s does not have type mapping defined.", name)
-                .hasArgument()) {
+                .getArgumentDefinition().isPresent()) {
             SourceException.throwIfNull(argument, ref, "Statement %s requires an argument", name);
         } else {
             SourceException.throwIf(argument != null, ref, "Statement %s does not take argument", name);
