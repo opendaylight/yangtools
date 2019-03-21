@@ -333,8 +333,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
-        sb.append(localName);
-        return sb.toString();
+        return sb.append(localName).toString();
     }
 
     /**
