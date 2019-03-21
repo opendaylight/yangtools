@@ -14,7 +14,6 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map.Entry;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * WARNING: BE CAREFUL WHEN USING THIS CLASS. IT LEAKS OBJECTS WHICH ARE NOT COMPLETELY INITIALIZED.
  *
  * <p>
- * WARNING: THIS CLASS EAVES THREAD-LOCAL RESIDUE. MAKE SURE IT IS OKAY OR CALL {@link #cleanup()} IN APPROPRIATE
+ * WARNING: THIS CLASS LEAVES THREAD-LOCAL RESIDUE. MAKE SURE IT IS OKAY OR CALL {@link #cleanup()} IN APPROPRIATE
  *          PLACES.
  *
  * <p>
@@ -45,7 +44,6 @@ import org.slf4j.LoggerFactory;
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 public final class RecursiveObjectLeaker {
     // Logging note. Only keys passed can be logged, as objects beng resolved may not be properly constructed.
     private static final Logger LOG = LoggerFactory.getLogger(RecursiveObjectLeaker.class);
