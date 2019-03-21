@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -45,13 +44,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A type-to-codec factory base class with logic to efficiently lookup and cache codec instances,
- * also dealing with union type composition.
- *
- * @author Robert Varga
+ * also dealing with union type composition. This class is thread-safe as long as its underlying {@link CodecCache}
+ * is thread-safe
  *
  * @param <T> Codec type
+ * @author Robert Varga
  */
-@ThreadSafe
 public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> implements SchemaContextProvider {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCodecFactory.class);
 

@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import com.google.common.annotations.Beta;
 import java.util.List;
-import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.codec.AbstractIntegerStringCodec;
 import org.opendaylight.yangtools.yang.data.impl.codec.BinaryStringCodec;
@@ -42,8 +41,10 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.UnknownTypeDefinition;
 
+/**
+ * A thread-safe factory for instantiating {@link XmlCodec}s.
+ */
 @Beta
-@ThreadSafe
 public final class XmlCodecFactory extends AbstractCodecFactory<XmlCodec<?>> {
 
     private XmlCodecFactory(final SchemaContext context) {
