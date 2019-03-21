@@ -8,14 +8,12 @@
 package org.opendaylight.yangtools.yang.common;
 
 import static java.util.Objects.requireNonNull;
-import static org.opendaylight.yangtools.yang.common.AbstractQName.checkLocalName;
 
 import com.google.common.collect.Interner;
 import com.google.common.collect.Interners;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
-import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
@@ -25,9 +23,6 @@ import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.yangtools.concepts.Identifier;
-import org.opendaylight.yangtools.concepts.Immutable;
-import org.opendaylight.yangtools.concepts.WritableObject;
 
 /**
  * The QName from XML consists of local name of element and XML namespace, but for our use, we added module revision to
@@ -50,13 +45,10 @@ import org.opendaylight.yangtools.concepts.WritableObject;
  * node in the YANG module</li>
  * </ul>
  */
-/*
- * FIXME: 4.0.0: make this class subclass AbstractQName, which will break serialization compatibility with versions
- *               <3.0.0, which did not use an Externalizable proxy.
- */
-public final class QName implements Immutable, Serializable, Comparable<QName>, Identifier, WritableObject {
+public final class QName extends AbstractQName implements Comparable<QName> {
     private static final Interner<QName> INTERNER = Interners.newWeakInterner();
-    private static final long serialVersionUID = 5398411242927766414L;
+    // Note: 5398411242927766414L is used for versions < 3.0.0 without writeReplace
+    private static final long serialVersionUID = 1L;
 
     static final String QNAME_REVISION_DELIMITER = "?revision=";
     static final String QNAME_LEFT_PARENTHESIS = "(";
@@ -71,12 +63,11 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     private static final Pattern QNAME_PATTERN_NO_REVISION = Pattern.compile(QNAME_STRING_NO_REVISION);
 
     private final @NonNull QNameModule module;
-    private final @NonNull String localName;
     private transient int hash = 0;
 
     QName(final QNameModule module, final @NonNull String localName) {
+        super(localName);
         this.module = requireNonNull(module);
-        this.localName = requireNonNull(localName);
     }
 
     /**
@@ -235,17 +226,6 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     }
 
     /**
-     * Returns YANG schema identifier which were defined for this node in the
-     * YANG module.
-     *
-     * @return YANG schema identifier which were defined for this node in the
-     *         YANG module
-     */
-    public @NonNull String getLocalName() {
-        return localName;
-    }
-
-    /**
      * Returns revision of the YANG module if the module has defined revision.
      *
      * @return revision of the YANG module if the module has defined revision.
@@ -254,11 +234,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         return module.getRevision();
     }
 
-    /**
-     * Return an interned reference to a equivalent QName.
-     *
-     * @return Interned reference, or this object if it was interned.
-     */
+    @Override
     public @NonNull QName intern() {
         // We also want to make sure we keep the QNameModule cached
         final QNameModule cacheMod = module.intern();
@@ -266,7 +242,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         // Identity comparison is here on purpose, as we are deciding whether to potentially store 'qname' into the
         // interner. It is important that it does not hold user-supplied reference (such a String instance from
         // parsing of an XML document).
-        final QName template = cacheMod == module ? this : new QName(cacheMod, localName.intern());
+        final QName template = cacheMod == module ? this : new QName(cacheMod, getLocalName().intern());
 
         return INTERNER.intern(template);
     }
@@ -274,7 +250,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     @Override
     public int hashCode() {
         if (hash == 0) {
-            hash = Objects.hash(module, localName);
+            hash = Objects.hash(module, getLocalName());
         }
         return hash;
     }
@@ -296,7 +272,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
             return false;
         }
         final QName other = (QName) obj;
-        return Objects.equals(localName, other.localName) && module.equals(other.module);
+        return Objects.equals(getLocalName(), other.getLocalName()) && module.equals(other.module);
     }
 
     private static @NonNull URI parseNamespace(final String namespace) {
@@ -319,7 +295,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
             }
             sb.append(QNAME_RIGHT_PARENTHESIS);
         }
-        return sb.append(localName).toString();
+        return sb.append(getLocalName()).toString();
     }
 
     /**
@@ -329,7 +305,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @return a QName with specified QNameModule and same local name as this one
      */
     public @NonNull QName withModule(final QNameModule newModule) {
-        return new QName(newModule, localName);
+        return new QName(newModule, getLocalName());
     }
 
     /**
@@ -340,7 +316,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      */
     public @NonNull QName withoutRevision() {
         final QNameModule newModule;
-        return (newModule = module.withoutRevision()) == module ? this : new QName(newModule, localName);
+        return (newModule = module.withoutRevision()) == module ? this : new QName(newModule, getLocalName());
     }
 
     /**
@@ -369,7 +345,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
      * @throws NullPointerException if {@code other} is null.
      */
     public boolean isEqualWithoutRevision(final QName other) {
-        return localName.equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
+        return getLocalName().equals(other.getLocalName()) && Objects.equals(getNamespace(), other.getNamespace());
     }
 
     // FIXME: this comparison function looks odd. We are sorting first by local name and then by module? What is
@@ -378,7 +354,7 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     @SuppressWarnings("checkstyle:parameterName")
     public int compareTo(final QName o) {
         // compare mandatory localName parameter
-        int result = localName.compareTo(o.localName);
+        int result = getLocalName().compareTo(o.getLocalName());
         if (result != 0) {
             return result;
         }
@@ -388,9 +364,10 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
     @Override
     public void writeTo(final DataOutput out) throws IOException {
         module.writeTo(out);
-        out.writeUTF(localName);
+        out.writeUTF(getLocalName());
     }
 
+    @Override
     Object writeReplace() {
         return new QNv1(this);
     }
