@@ -182,4 +182,8 @@ public final class QNameModule implements Comparable<QNameModule>, Immutable, Se
         return MoreObjects.toStringHelper(QNameModule.class).omitNullValues().add("ns", namespace)
             .add("rev", revision).toString();
     }
+
+    Object writeReplace() {
+        return new NSv1(this);
+    }
 }
