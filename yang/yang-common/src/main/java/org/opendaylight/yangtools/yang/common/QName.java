@@ -401,4 +401,8 @@ public final class QName implements Immutable, Serializable, Comparable<QName>, 
         module.writeTo(out);
         out.writeUTF(localName);
     }
+
+    Object writeReplace() {
+        return new QNv1(this);
+    }
 }
