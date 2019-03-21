@@ -8,19 +8,17 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
- * A no-operation codec cache.
+ * A no-operation codec cache. This class is thread-safe.
  *
  * @author Robert Varga
  *
  * @param <T> Codec type
  */
 @Beta
-@ThreadSafe
 public final class NoopCodecCache<T> extends CodecCache<T> {
     private static final NoopCodecCache<?> INSTANCE = new NoopCodecCache<>();
 

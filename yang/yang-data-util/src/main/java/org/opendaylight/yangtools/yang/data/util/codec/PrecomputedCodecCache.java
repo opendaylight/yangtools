@@ -12,13 +12,12 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
-import javax.annotation.concurrent.ThreadSafe;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
- * Pre-computed CodecCache. All possible codecs are created upfront at instantiation time, after which they are
- * available for the cost of a constant lookup.
+ * Pre-computed thread-safe CodecCache. All possible codecs are created upfront at instantiation time, after which they
+ * are available for the cost of a constant lookup.
  *
  * <p>
  * Instantiation needs to occur through {@link LazyCodecCache#toPrecomputed()} after the lazy cache has been fully
@@ -27,7 +26,6 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 public final class PrecomputedCodecCache<T> extends CodecCache<T> {
     private final Map<TypeDefinition<?>, T> simpleCodecs;
     private final Map<TypedDataSchemaNode, T> complexCodecs;
