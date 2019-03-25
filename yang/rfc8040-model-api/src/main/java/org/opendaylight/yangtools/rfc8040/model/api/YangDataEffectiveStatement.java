@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2017 Pantheon Technologies s.r.o. and others. All rights reserved.
+ * Copyright (c) 2017 Pantheon Technologies, s.r.o. and others. All rights reserved.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
@@ -16,7 +16,7 @@ import org.opendaylight.yangtools.yang.model.api.stmt.ContainerEffectiveStatemen
  * <a href="https://tools.ietf.org/html/rfc8040#section-8">RFC 8040</a>.
  */
 @Beta
-public interface YangDataEffectiveStatement extends EffectiveStatement<String, YangDataStatement>, YangDataSchemaNode {
+public interface YangDataEffectiveStatement extends EffectiveStatement<String, YangDataStatement> {
 
     /**
      * Return the container statement defined in this yang-data statement instance.

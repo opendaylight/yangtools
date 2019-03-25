@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6536.parser;
 
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllEffectiveStatement;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyAllStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,7 +35,7 @@ public final class DefaultDenyAllStatementSupport
     }
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyAllStatement>
-            implements DefaultDenyAllEffectiveStatement {
+            implements DefaultDenyAllEffectiveStatement, DefaultDenyAllSchemaNode {
 
         private final SchemaPath path;
 

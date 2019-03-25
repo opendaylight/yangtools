@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.rfc6536.parser;
 
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteEffectiveStatement;
+import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteSchemaNode;
 import org.opendaylight.yangtools.rfc6536.model.api.DefaultDenyWriteStatement;
 import org.opendaylight.yangtools.rfc6536.model.api.NACMStatements;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -34,7 +35,7 @@ public final class DefaultDenyWriteStatementSupport
     }
 
     private static final class Effective extends UnknownEffectiveStatementBase<Void, DefaultDenyWriteStatement>
-            implements DefaultDenyWriteEffectiveStatement {
+            implements DefaultDenyWriteEffectiveStatement, DefaultDenyWriteSchemaNode {
 
         private final SchemaPath path;
 
