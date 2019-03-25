@@ -22,6 +22,8 @@ import java.util.Optional;
  */
 @Beta
 public abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr> implements YangXPathMathSupport {
+    private static final long serialVersionUID = 1L;
+
     private final Class<N> numberClass;
 
     protected AbstractYangXPathMathSupport(final Class<N> numberClass) {
@@ -64,4 +66,6 @@ public abstract class AbstractYangXPathMathSupport<N extends YangNumberExpr> imp
      * @return Evaluation result
      */
     protected abstract YangExpr doEvaluate(YangBinaryOperator operator, N left, N right);
+
+    protected abstract Object readResolve();
 }

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigDecimalNumberExpr> {
     static final BigDecimalXPathMathSupport INSTANCE = new BigDecimalXPathMathSupport();
 
+    private static final long serialVersionUID = 1L;
     private static final BigDecimalNumberExpr ZERO = BigDecimalNumberExpr.of(BigDecimal.ZERO);
     private static final BigDecimalNumberExpr ONE = BigDecimalNumberExpr.of(BigDecimal.ONE);
     private static final BigDecimalNumberExpr TEN = BigDecimalNumberExpr.of(BigDecimal.TEN);
@@ -93,5 +94,10 @@ final class BigDecimalXPathMathSupport extends AbstractYangXPathMathSupport<BigD
         }
 
         return BigDecimalNumberExpr.of(result);
+    }
+
+    @Override
+    protected Object readResolve() {
+        return INSTANCE;
     }
 }

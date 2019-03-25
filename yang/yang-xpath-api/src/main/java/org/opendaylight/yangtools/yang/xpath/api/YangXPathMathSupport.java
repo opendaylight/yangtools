@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
+import java.io.Serializable;
 import java.util.Optional;
 
 /**
@@ -17,7 +18,7 @@ import java.util.Optional;
  * @author Robert Varga
  */
 @Beta
-public interface YangXPathMathSupport {
+public interface YangXPathMathSupport extends Serializable {
     /**
      * Create a {@link YangNumberExpr} backed by specified string.
      *
