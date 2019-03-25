@@ -22,6 +22,30 @@
       "revId": "9d8e7f8e2665c9ed2c2d21382b1c1698ad205aea",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "e2c05757_e92ccaf1",
+        "filename": "yang/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/BugXXXXTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 8417
+      },
+      "writtenOn": "2019-03-25T22:22:42Z",
+      "side": 1,
+      "message": "Done.\n\nI also renamed the file to something more sensible.",
+      "parentUuid": "4d262e12_cc405a5a",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 2
+      },
+      "revId": "9d8e7f8e2665c9ed2c2d21382b1c1698ad205aea",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
     }
   ]
 }
