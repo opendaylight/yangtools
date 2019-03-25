@@ -1,0 +1,18 @@
+module test {
+    namespace test;
+    prefix test;
+    yang-version 1.1;
+
+    revision 2019-03-25;
+
+    container some-container {
+        leaf some-leaf {
+            description "Some string that ends with a backslash (with escape backslash too) \\";
+            type int16;
+        }
+        leaf some-other-leaf {
+            description "Some string after the double backslash";
+            type int32;
+        }
+    }
+}
