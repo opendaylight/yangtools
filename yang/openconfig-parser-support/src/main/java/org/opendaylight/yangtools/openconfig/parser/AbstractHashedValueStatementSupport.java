@@ -14,12 +14,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 abstract class AbstractHashedValueStatementSupport
-        extends AbstractStatementSupport<Void, OpenConfigHashedValueStatement,
+        extends AbstractVoidStatementSupport<OpenConfigHashedValueStatement,
             OpenConfigHashedValueEffectiveStatement> {
 
     private static final class Declared extends AbstractDeclaredStatement<Void>
@@ -74,11 +74,6 @@ abstract class AbstractHashedValueStatementSupport
     public final OpenConfigHashedValueEffectiveStatement createEffective(
             final StmtContext<Void, OpenConfigHashedValueStatement, OpenConfigHashedValueEffectiveStatement> ctx) {
         return new Effective(ctx);
-    }
-
-    @Override
-    public final Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return null;
     }
 
     @Override

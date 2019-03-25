@@ -16,12 +16,12 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.UnknownEffectiveStatementBase;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractDeclaredStatement;
-import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
+import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractVoidStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
 public final class DefaultDenyWriteStatementSupport
-    extends AbstractStatementSupport<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
+    extends AbstractVoidStatementSupport<DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> {
 
     private static final class Declared extends AbstractDeclaredStatement<Void> implements DefaultDenyWriteStatement {
         Declared(final StmtContext<Void, ?, ?> context) {
@@ -79,11 +79,6 @@ public final class DefaultDenyWriteStatementSupport
     public DefaultDenyWriteEffectiveStatement createEffective(
             final StmtContext<Void, DefaultDenyWriteStatement, DefaultDenyWriteEffectiveStatement> ctx) {
         return new Effective(ctx);
-    }
-
-    @Override
-    public Void parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return null;
     }
 
     @Override
