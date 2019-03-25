@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ImmutableList;
 import java.util.Collection;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
@@ -26,7 +25,6 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 @MetaInfServices
 public final class YangParserFactoryImpl implements YangParserFactory {
     private static final Collection<StatementParserMode> SUPPORTED_MODES = ImmutableList.of(

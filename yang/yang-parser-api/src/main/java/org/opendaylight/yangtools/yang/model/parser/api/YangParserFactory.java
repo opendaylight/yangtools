@@ -12,7 +12,8 @@ import java.util.Collection;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
 
 /**
- * Basic entry point into a YANG parser implementation.
+ * Basic entry point into a YANG parser implementation. Implementations of this interface are expected to be
+ * thread-safe.
  *
  * @author Robert Varga
  */

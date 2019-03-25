@@ -11,7 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.function.Supplier;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.RecognitionException;
@@ -22,13 +21,12 @@ import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 
 /**
- * Utility class for converting ANTLRErrorListener errors to SourceExceptions.
+ * Utility class for converting ANTLRErrorListener errors to SourceExceptions. This class is NOT thread-safe.
  *
  * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
-@NotThreadSafe
 public final class SourceExceptionParser {
     private static final class Listener extends AbstractParserErrorListener<SourceException> {
         private final StatementSourceReference ref;

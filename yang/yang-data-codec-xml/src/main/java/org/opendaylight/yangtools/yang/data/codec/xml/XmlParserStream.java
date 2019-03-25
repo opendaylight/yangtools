@@ -26,7 +26,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.Location;
@@ -74,10 +73,9 @@ import org.xml.sax.SAXException;
 /**
  * This class provides functionality for parsing an XML source containing YANG-modeled data. It disallows multiple
  * instances of the same element except for leaf-list and list entries. It also expects that the YANG-modeled data in
- * the XML source are wrapped in a root element.
+ * the XML source are wrapped in a root element. This class is NOT thread-safe.
  */
 @Beta
-@NotThreadSafe
 public final class XmlParserStream implements Closeable, Flushable {
     private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
