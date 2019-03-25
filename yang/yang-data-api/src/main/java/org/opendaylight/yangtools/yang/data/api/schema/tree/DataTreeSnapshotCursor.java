@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import com.google.common.annotations.Beta;
 import java.util.Optional;
-import javax.annotation.Nonnull;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -30,7 +30,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                  a valid child, or if that child is not an
      *                                  instance of {@link NormalizedNodeContainer}.
      */
-    void enter(@Nonnull PathArgument child);
+    void enter(@NonNull PathArgument child);
 
     /**
      * Move the cursor to the specified child of the current position. This is
@@ -44,7 +44,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                  a valid child, or if that child is not an
      *                                  instance of {@link NormalizedNodeContainer}.
      */
-    void enter(@Nonnull PathArgument... path);
+    void enter(@NonNull PathArgument... path);
 
     /**
      * Move the cursor to the specified child of the current position. This is
@@ -58,7 +58,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                  a valid child, or if that child is not an
      *                                  instance of {@link NormalizedNodeContainer}.
      */
-    void enter(@Nonnull Iterable<PathArgument> path);
+    void enter(@NonNull Iterable<PathArgument> path);
 
     /**
      * Move the cursor up to the parent of current position. This is equivalent of
@@ -92,7 +92,7 @@ public interface DataTreeSnapshotCursor extends AutoCloseable {
      *                                servicing the request.
      * @throws IllegalArgumentException when specified path does not identify a valid child.
      */
-    Optional<NormalizedNode<?, ?>> readNode(@Nonnull PathArgument child);
+    Optional<NormalizedNode<?, ?>> readNode(@NonNull PathArgument child);
 
     /**
      * Close this cursor. Attempting any further operations on the cursor will lead
