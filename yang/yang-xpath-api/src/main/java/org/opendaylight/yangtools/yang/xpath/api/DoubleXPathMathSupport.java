@@ -10,6 +10,8 @@ package org.opendaylight.yangtools.yang.xpath.api;
 final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNumberExpr> {
     static final DoubleXPathMathSupport INSTANCE = new DoubleXPathMathSupport();
 
+    private static final long serialVersionUID = 1L;
+
     private DoubleXPathMathSupport() {
         super(DoubleNumberExpr.class);
     }
@@ -69,5 +71,10 @@ final class DoubleXPathMathSupport extends AbstractYangXPathMathSupport<DoubleNu
         }
 
         return DoubleNumberExpr.of(result);
+    }
+
+    @Override
+    protected Object readResolve() {
+        return INSTANCE;
     }
 }
