@@ -39,6 +39,10 @@
             <artifactId>value</artifactId>
             <classifier>annotations</classifier>
         </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>stax2-api</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.opendaylight.yangtools</groupId>
