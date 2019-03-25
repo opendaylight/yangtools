@@ -40,7 +40,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.concepts</Automatic-Module-Name>
-                        <Import-Package>!javax.annotation,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

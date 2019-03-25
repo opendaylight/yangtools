@@ -68,7 +68,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.data.codec.gson</Automatic-Module-Name>
-                        <Import-Package>!javax.annotation,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

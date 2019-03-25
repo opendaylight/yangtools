@@ -48,7 +48,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.model.api</Automatic-Module-Name>
-                        <Import-Package>!javax.annotation,*</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
