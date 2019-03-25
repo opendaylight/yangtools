@@ -8,16 +8,15 @@
 package org.opendaylight.yangtools.yang.xpath.api;
 
 import com.google.common.annotations.Beta;
-import javax.annotation.concurrent.NotThreadSafe;
 import javax.xml.xpath.XPathExpressionException;
 
 /**
- * Interface for converting a String into a {@link YangXPathExpression}.
+ * Interface for converting a String into a {@link YangXPathExpression}. Implementations of this interface are expected
+ * to be NOT thread-safe.
  *
  * @author Robert Varga
  */
 @Beta
-@NotThreadSafe
 public interface YangXPathParser {
     /**
      * Parse a string containing an XPath expression.

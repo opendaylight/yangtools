@@ -13,7 +13,6 @@ import com.google.common.annotations.Beta;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.antlr.v4.runtime.BaseErrorListener;
 import org.antlr.v4.runtime.RecognitionException;
 import org.antlr.v4.runtime.Recognizer;
@@ -24,14 +23,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Abstract base type for converting ANTLRErrorListener errors to Exceptions.
+ * Abstract base type for converting ANTLRErrorListener errors to Exceptions. This class is NOT thread-safe, nor are
+ * its subclasses expected to be thread-safe.
  *
  * @param <E> Reported exception type
  * @author Robert Varga
  */
 @Beta
 @NonNullByDefault
-@NotThreadSafe
 public abstract class AbstractParserErrorListener<E extends Exception> extends BaseErrorListener implements Mutable {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractParserErrorListener.class);
 
