@@ -70,6 +70,10 @@
         <module>odlext-model-api</module>
         <module>odlext-parser-support</module>
 
+        <!-- NETCONF messy extensions -->
+        <module>rfc6241-model-api</module>
+        <module>rfc6241-parser-support</module>
+
         <!-- NACM metamodel support -->
         <module>rfc6536-model-api</module>
         <module>rfc6536-parser-support</module>
