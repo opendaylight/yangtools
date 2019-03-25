@@ -27,7 +27,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -85,12 +85,12 @@ public class SchemaContextUtilTest {
         assertNull("Should be null. Module TestQName not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("/test:bookstore/test:book/test:title", true);
+        PathExpression xpath = new PathExpressionImpl("/test:bookstore/test:book/test:title", true);
         assertNull("Should be null. Module bookstore not found",
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xpath));
 
         SchemaNode int32node = BaseTypes.int32Type();
-        RevisionAwareXPath xpathRelative = new RevisionAwareXPathImpl("../prefix", false);
+        PathExpression xpathRelative = new PathExpressionImpl("../prefix", false);
         assertNull("Should be null, Module prefix not found",
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(
                         mockSchemaContext, mockModule, int32node, xpathRelative));
@@ -103,7 +103,7 @@ public class SchemaContextUtilTest {
 
     @Test
     public void testDeref() {
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl("deref(../foo)/../bar", false);
+        PathExpression xpath = new PathExpressionImpl("deref(../foo)/../bar", false);
         assertNull(SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
             xpath));
     }

@@ -35,13 +35,13 @@ import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
@@ -66,12 +66,12 @@ public class SchemaContextUtilTest {
         assertEquals("Should be null. Module TestQName not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, schemaPath));
 
-        final RevisionAwareXPath xPath = new RevisionAwareXPathImpl("/bookstore/book/title", true);
+        final PathExpression xPath = new PathExpressionImpl("/bookstore/book/title", true);
         assertEquals("Should be null. Module bookstore not found", null,
                 SchemaContextUtil.findDataSchemaNode(mockSchemaContext, mockModule, xPath));
 
         final SchemaNode schemaNode = BaseTypes.int32Type();
-        final RevisionAwareXPath xPathRelative = new RevisionAwareXPathImpl("../prefix", false);
+        final PathExpression xPathRelative = new PathExpressionImpl("../prefix", false);
         assertEquals("Should be null, Module prefix not found", null,
                 SchemaContextUtil.findDataSchemaNodeForRelativeXPath(mockSchemaContext, mockModule, schemaNode,
                         xPathRelative));
@@ -430,8 +430,7 @@ public class SchemaContextUtilTest {
                 importedModule.getQNameModule(), "my-imported-container"))).getDataChildByName(QName.create(
                 importedModule.getQNameModule(), "my-imported-leaf"));
 
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("imp:my-imported-container/imp:my-imported-leaf",
-                true);
+        final PathExpression xpath = new PathExpressionImpl("imp:my-imported-container/imp:my-imported-leaf", true);
 
         final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
 
@@ -453,7 +452,7 @@ public class SchemaContextUtilTest {
         final SchemaNode testNode = grouping.getDataChildByName(QName.create(module.getQNameModule(),
                 "my-leaf-in-gouping2"));
 
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         final SchemaNode foundNode = SchemaContextUtil.findDataSchemaNode(context, module, xpath);
 
@@ -474,7 +473,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
         final SchemaContext mockContext = mock(SchemaContext.class);
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
     }
@@ -482,7 +481,7 @@ public class SchemaContextUtilTest {
     @Test(expected = IllegalArgumentException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
         final Module module = mock(Module.class);
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(null, module, xpath);
     }
@@ -491,8 +490,7 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeFromXPathIllegalArgumentTest4() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final Module module = mock(Module.class);
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl(
-                "my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping[@con='NULL']/my:my-leaf-in-gouping2", true);
 
         SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath);
     }
@@ -501,9 +499,9 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeFromXPathNullTest() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final Module module = mock(Module.class);
-        final RevisionAwareXPath xpath = mock(RevisionAwareXPath.class);
+        final PathExpression xpath = mock(PathExpression.class);
 
-        when(xpath.toString()).thenReturn(null);
+        when(xpath.getOriginalString()).thenReturn(null);
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }
 
@@ -511,7 +509,7 @@ public class SchemaContextUtilTest {
     public void findDataSchemaNodeFromXPathNullTest2() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final Module module = mock(Module.class);
-        final RevisionAwareXPath xpath = new RevisionAwareXPathImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
+        final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", false);
 
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }

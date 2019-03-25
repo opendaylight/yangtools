@@ -10,12 +10,12 @@ package org.opendaylight.yangtools.yang.model.util;
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 
 public class Bug4969Test {
     @Test
     public void testRegex() {
-        RevisionAwareXPath xpath = new RevisionAwareXPathImpl(
+        PathExpression xpath = new PathExpressionImpl(
                 "nd:network[nd:network-id=current()/../network-ref]/nd:node[nd:node-id=current()/../node-ref]"
                 + "/termination-point/tp-id", true);
         assertEquals("nd:network/nd:node/termination-point/tp-id",

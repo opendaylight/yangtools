@@ -93,7 +93,7 @@ final class LeafRefContextTreeBuilder {
             // FIXME: fix case when type is e.g. typedef -> typedef -> leafref
             if (type instanceof LeafrefTypeDefinition) {
                 final LeafrefTypeDefinition leafrefType = (LeafrefTypeDefinition) type;
-                final String leafRefPathString = leafrefType.getPathStatement().toString();
+                final String leafRefPathString = leafrefType.getPathStatement().getOriginalString();
                 final LeafRefPathParserImpl leafRefPathParser = new LeafRefPathParserImpl(schemaContext,
                         checkNotNull(getBaseTypeModule(leafrefType), "Unable to find base module for leafref %s", node),
                         node);
