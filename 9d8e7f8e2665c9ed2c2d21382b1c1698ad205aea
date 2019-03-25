@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "key": {
+        "uuid": "4d262e12_cc405a5a",
+        "filename": "yang/yang-parser-rfc7950/src/test/java/org/opendaylight/yangtools/yang/parser/stmt/rfc7950/BugXXXXTest.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 2,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-03-25T21:16:44Z",
+      "side": 1,
+      "message": "This comment is not a completely copyright header, it needs to start with:\n\nCopyright (c) 2019 \u003cCOMPANY or INDIVIDUAL\u003e and others. All rights reserved.",
+      "range": {
+        "startLine": 2,
+        "startChar": 0,
+        "endLine": 2,
+        "endChar": 2
+      },
+      "revId": "9d8e7f8e2665c9ed2c2d21382b1c1698ad205aea",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    }
+  ]
+}
