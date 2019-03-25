@@ -34,7 +34,7 @@ START_BLOCK_COMMENT : '/*' ->pushMode(BLOCK_COMMENT_MODE), skip;
 SEP: [ \n\r\t]+ -> type(SEP);
 IDENTIFIER : [a-zA-Z_/][a-zA-Z0-9_\-.:/]* -> type(IDENTIFIER);
 
-fragment SUB_STRING : ('"' (ESC | ~["])*'"') | ('\'' (ESC | ~['])*'\'');
+fragment SUB_STRING : ('"' (ESC | ~["])*? '"') | ('\'' (ESC | ~['])* '\'');
 fragment ESC : '\\' (["\\/bfnrt] | UNICODE);
 fragment UNICODE : 'u' HEX HEX HEX HEX;
 fragment HEX : [0-9a-fA-F] ;
