@@ -58,7 +58,6 @@
                             org.opendaylight.yangtools.yang.data.impl.*,
                             ;-split-package:=error
                         </Export-Package>
-                        <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
                         <Bundle-Activator>org.opendaylight.yangtools.yang.data.impl.osgi.Activator</Bundle-Activator>
                     </instructions>
                 </configuration>

@@ -45,7 +45,6 @@
                 <configuration>
                     <instructions>
                         <Automatic-Module-Name>org.opendaylight.yangtools.yang.common</Automatic-Module-Name>
-                        <Include-Resource>{META-INF/services=${project.build.directory}/classes/META-INF/services}</Include-Resource>
                     </instructions>
                 </configuration>
             </plugin>
