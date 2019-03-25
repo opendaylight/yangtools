@@ -304,7 +304,7 @@ public class EffectiveStatementTypeTest {
                 ((LeafEffectiveStatement) currentLeaf).effectiveSubstatements().iterator().next())
                 .getTypeDefinition();
 
-        assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().toString());
+        assertEquals("/container-test/leaf-test", leafrefEff.getPathStatement().getOriginalString());
         assertNull(leafrefEff.getBaseType());
         assertEquals(Optional.empty(), leafrefEff.getUnits());
         assertEquals(Optional.empty(), leafrefEff.getDefaultValue());

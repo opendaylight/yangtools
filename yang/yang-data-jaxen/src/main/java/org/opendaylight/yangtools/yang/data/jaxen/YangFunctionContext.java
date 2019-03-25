@@ -35,7 +35,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
@@ -157,7 +157,7 @@ final class YangFunctionContext implements FunctionContext {
                             : null;
         }
         if (type instanceof LeafrefTypeDefinition) {
-            final RevisionAwareXPath xpath = ((LeafrefTypeDefinition) type).getPathStatement();
+            final PathExpression xpath = ((LeafrefTypeDefinition) type).getPathStatement();
             return getNodeReferencedByLeafref(xpath, currentNodeContext, getSchemaContext(currentNodeContext),
                 correspondingSchemaNode, nodeValue);
         }
@@ -321,7 +321,7 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final RevisionAwareXPath xpath,
+    private static NormalizedNode<?, ?> getNodeReferencedByLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode, final Object nodeValue) {
         final NormalizedNode<?, ?> referencedNode = xpath.isAbsolute() ? getNodeReferencedByAbsoluteLeafref(xpath,
@@ -339,11 +339,11 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByAbsoluteLeafref(final RevisionAwareXPath xpath,
+    private static NormalizedNode<?, ?> getNodeReferencedByAbsoluteLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode) {
         final LeafrefXPathStringParsingPathArgumentBuilder builder = new LeafrefXPathStringParsingPathArgumentBuilder(
-                xpath.toString(), schemaContext, correspondingSchemaNode, currentNodeContext);
+                xpath.getOriginalString(), schemaContext, correspondingSchemaNode, currentNodeContext);
         final List<PathArgument> pathArguments = builder.build();
         final NormalizedNodeNavigator navigator = (NormalizedNodeNavigator) currentNodeContext.getNavigator();
         final NormalizedNode<?, ?> rootNode = navigator.getDocument().getRootNode();
@@ -358,11 +358,11 @@ final class YangFunctionContext implements FunctionContext {
         return null;
     }
 
-    private static NormalizedNode<?, ?> getNodeReferencedByRelativeLeafref(final RevisionAwareXPath xpath,
+    private static NormalizedNode<?, ?> getNodeReferencedByRelativeLeafref(final PathExpression xpath,
             final NormalizedNodeContext currentNodeContext, final SchemaContext schemaContext,
             final TypedDataSchemaNode correspondingSchemaNode) {
         NormalizedNodeContext relativeNodeContext = currentNodeContext;
-        final StringBuilder xPathStringBuilder = new StringBuilder(xpath.toString());
+        final StringBuilder xPathStringBuilder = new StringBuilder(xpath.getOriginalString());
         // strip the relative path of all ../ at the beginning
         while (xPathStringBuilder.indexOf("../") == 0) {
             xPathStringBuilder.delete(0, 3);
