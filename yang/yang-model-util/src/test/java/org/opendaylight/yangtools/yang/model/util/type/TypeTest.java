@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.util.type;
 
 import static org.junit.Assert.assertEquals;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.concepts.Builder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ConstraintMetaDefinition;
 import org.opendaylight.yangtools.yang.model.api.IdentitySchemaNode;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
@@ -51,12 +50,12 @@ import org.opendaylight.yangtools.yang.model.api.type.Uint32TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint64TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.Uint8TypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.BaseConstraints;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 
 public class TypeTest {
     private static final QName Q_NAME = QName.create("test.namespace", "2016-01-01", "test-name");
     private static final SchemaPath SCHEMA_PATH = SchemaPath.create(true, Q_NAME);
-    private static final RevisionAwareXPath REVISION_AWARE_XPATH = new RevisionAwareXPathImpl("/test", true);
+    private static final PathExpression REVISION_AWARE_XPATH = new PathExpressionImpl("/test", true);
     private static final Bit BIT_A = BitBuilder.create(SCHEMA_PATH, 55L).setDescription("description")
             .setReference("reference").build();
     private static final Optional<String> ABSENT = Optional.empty();

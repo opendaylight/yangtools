@@ -17,6 +17,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.Optional;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 import org.opendaylight.yangtools.yang.model.api.Status;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -31,8 +32,8 @@ public class LeafrefTest {
     public void testMethodsOfLeafrefTest() {
         final SchemaPath schemaPath = SchemaPath.create(false, QName.create("test", "Cont1"),
             QName.create("test", "List1"));
-        final RevisionAwareXPathImpl revision = new RevisionAwareXPathImpl("/test:Cont1/test:List1", false);
-        final RevisionAwareXPathImpl revision2 = new RevisionAwareXPathImpl("/test:Cont1/test:List2", false);
+        final PathExpression revision = new PathExpressionImpl("/test:Cont1/test:List1", false);
+        final PathExpression revision2 = new PathExpressionImpl("/test:Cont1/test:List2", false);
 
         final LeafrefTypeDefinition leafref = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(revision)
             .build();
@@ -69,7 +70,7 @@ public class LeafrefTest {
     public void testRequireInstanceSubstatement() {
         final SchemaPath schemaPath = SchemaPath.create(true, QName.create("test", "my-cont"),
             QName.create("test", "my-leafref"));
-        final RevisionAwareXPathImpl path = new RevisionAwareXPathImpl("../my-leaf", false);
+        final PathExpression path = new PathExpressionImpl("../my-leaf", false);
         final LeafrefTypeBuilder leafrefTypeBuilder = BaseTypes.leafrefTypeBuilder(schemaPath).setPathStatement(path);
 
         assertTrue(leafrefTypeBuilder.build().requireInstance());
