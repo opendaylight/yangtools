@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.concepts.SemVer;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.StatementParserMode;
-import org.opendaylight.yangtools.yang.model.util.RevisionAwareXPathImpl;
+import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.model.util.SchemaContextUtil;
 import org.opendaylight.yangtools.yang.stmt.StmtTestUtils;
 
@@ -56,17 +56,17 @@ public class OpenconfigVersionComplexTest {
 
         // check imported components
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new RevisionAwareXPathImpl("/bar:root/bar:test-container/bar:number", true)));
+                new PathExpressionImpl("/bar:root/bar:test-container/bar:number", true)));
 
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new RevisionAwareXPathImpl("/bar:should-present", true)));
+                new PathExpressionImpl("/bar:should-present", true)));
 
         // check not imported components
         assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new RevisionAwareXPathImpl("/bar:root/bar:test-container/bar:oldnumber", true)));
+                new PathExpressionImpl("/bar:root/bar:test-container/bar:oldnumber", true)));
 
         assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, foo,
-                new RevisionAwareXPathImpl("/bar:should-not-be-present", true)));
+                new PathExpressionImpl("/bar:should-not-be-present", true)));
     }
 
     @Test
@@ -102,25 +102,25 @@ public class OpenconfigVersionComplexTest {
 
         // check used augmentations
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new RevisionAwareXPathImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-1", true)));
+                new PathExpressionImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-1", true)));
 
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new RevisionAwareXPathImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-2", true)));
+                new PathExpressionImpl("/foobar:root/foobar:test-container/bar:should-present-leaf-2", true)));
 
         // check not used augmentations
         assertNull("This component should not be present",
-                SchemaContextUtil.findDataSchemaNode(context, bar, new RevisionAwareXPathImpl(
+                SchemaContextUtil.findDataSchemaNode(context, bar, new PathExpressionImpl(
                         "/foobar:root/foobar:test-container/bar:should-not-be-present-leaf-1", true)));
 
         assertNull("This component should not be present",
-                SchemaContextUtil.findDataSchemaNode(context, bar, new RevisionAwareXPathImpl(
+                SchemaContextUtil.findDataSchemaNode(context, bar, new PathExpressionImpl(
                         "/foobar:root/foobar:test-container/bar:should-not-be-present-leaf-2", true)));
 
         // check if correct foobar module was included
         assertNotNull("This component should be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new RevisionAwareXPathImpl("/foobar:root/foobar:included-correct-mark", true)));
+                new PathExpressionImpl("/foobar:root/foobar:included-correct-mark", true)));
 
         assertNull("This component should not be present", SchemaContextUtil.findDataSchemaNode(context, bar,
-                new RevisionAwareXPathImpl("/foobar:root/foobar:included-not-correct-mark", true)));
+                new PathExpressionImpl("/foobar:root/foobar:included-not-correct-mark", true)));
     }
 }
