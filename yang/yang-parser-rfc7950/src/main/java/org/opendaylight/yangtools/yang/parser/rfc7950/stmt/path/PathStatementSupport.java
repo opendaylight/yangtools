@@ -7,17 +7,19 @@
  */
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 import org.opendaylight.yangtools.yang.model.api.YangStmtMapping;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.PathStatement;
+import org.opendaylight.yangtools.yang.model.util.PathExpressionImpl;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.ArgumentUtils;
 import org.opendaylight.yangtools.yang.parser.spi.meta.AbstractStatementSupport;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SubstatementValidator;
 
-public final class PathStatementSupport extends AbstractStatementSupport<RevisionAwareXPath, PathStatement,
-        EffectiveStatement<RevisionAwareXPath, PathStatement>> {
+public final class PathStatementSupport extends AbstractStatementSupport<PathExpression, PathStatement,
+        EffectiveStatement<PathExpression, PathStatement>> {
     private static final SubstatementValidator SUBSTATEMENT_VALIDATOR = SubstatementValidator.builder(YangStmtMapping
         .PATH)
         .build();
@@ -32,19 +34,20 @@ public final class PathStatementSupport extends AbstractStatementSupport<Revisio
     }
 
     @Override
-    public RevisionAwareXPath parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
-        return ArgumentUtils.parseXPath(ctx, value);
+    public PathExpression parseArgumentValue(final StmtContext<?, ?, ?> ctx, final String value) {
+        // FIXME: YANGTOOLS-969: provide proper parser
+        final RevisionAwareXPath xpath = ArgumentUtils.parseXPath(ctx, value);
+        return new PathExpressionImpl(xpath.toString(), xpath.isAbsolute());
     }
 
     @Override
-    public PathStatement createDeclared(final StmtContext<RevisionAwareXPath, PathStatement, ?> ctx) {
+    public PathStatement createDeclared(final StmtContext<PathExpression, PathStatement, ?> ctx) {
         return new PathStatementImpl(ctx);
     }
 
     @Override
-    public EffectiveStatement<RevisionAwareXPath, PathStatement> createEffective(
-            final StmtContext<RevisionAwareXPath, PathStatement,
-            EffectiveStatement<RevisionAwareXPath, PathStatement>> ctx) {
+    public EffectiveStatement<PathExpression, PathStatement> createEffective(
+            final StmtContext<PathExpression, PathStatement, EffectiveStatement<PathExpression, PathStatement>> ctx) {
         return new PathEffectiveStatementImpl(ctx);
     }
 

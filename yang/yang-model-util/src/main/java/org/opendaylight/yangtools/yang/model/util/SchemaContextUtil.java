@@ -40,7 +40,7 @@ import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.opendaylight.yangtools.yang.model.api.NotificationNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
-import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.model.api.RpcDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -138,12 +138,12 @@ public final class SchemaContextUtil {
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
     public static SchemaNode findDataSchemaNode(final SchemaContext context, final Module module,
-            final RevisionAwareXPath nonCondXPath) {
+            final PathExpression nonCondXPath) {
         checkArgument(context != null, "Schema Context reference cannot be NULL");
         checkArgument(module != null, "Module reference cannot be NULL");
         checkArgument(nonCondXPath != null, "Non Conditional Revision Aware XPath cannot be NULL");
 
-        final String strXPath = nonCondXPath.toString();
+        final String strXPath = nonCondXPath.getOriginalString();
         if (strXPath != null) {
             checkArgument(strXPath.indexOf('[') == -1, "Revision Aware XPath may not contain a condition");
             if (nonCondXPath.isAbsolute()) {
@@ -208,7 +208,7 @@ public final class SchemaContextUtil {
     //        which would then be passed in to a method similar to this one. In static contexts, like MD-SAL codegen,
     //        that feels like an overkill.
     public static SchemaNode findDataSchemaNodeForRelativeXPath(final SchemaContext context, final Module module,
-            final SchemaNode actualSchemaNode, final RevisionAwareXPath relativeXPath) {
+            final SchemaNode actualSchemaNode, final PathExpression relativeXPath) {
         checkArgument(context != null, "Schema Context reference cannot be NULL");
         checkArgument(module != null, "Module reference cannot be NULL");
         checkArgument(actualSchemaNode != null, "Actual Schema Node reference cannot be NULL");
@@ -644,7 +644,7 @@ public final class SchemaContextUtil {
      * @throws IllegalArgumentException if any arguments are null
      */
     private static Iterable<QName> resolveRelativeXPath(final SchemaContext context, final Module module,
-            final RevisionAwareXPath relativeXPath, final SchemaNode actualSchemaNode) {
+            final PathExpression relativeXPath, final SchemaNode actualSchemaNode) {
         // FIXME: 3.0.0: this should throw NPE, not IAE
         checkArgument(context != null, "Schema Context reference cannot be NULL");
         checkArgument(module != null, "Module reference cannot be NULL");
@@ -655,7 +655,7 @@ public final class SchemaContextUtil {
                 "Schema Path reference for Leafref cannot be NULL");
 
         List<String> xpaths = new ArrayList<>();
-        splitXPath(relativeXPath.toString(), xpaths);
+        splitXPath(relativeXPath.getOriginalString(), xpaths);
 
         // Find out how many "parent" components there are and trim them
         final int colCount = normalizeXPath(xpaths);
@@ -757,8 +757,8 @@ public final class SchemaContextUtil {
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final SchemaNode schema) {
-        RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
-        pathStatement = new RevisionAwareXPathImpl(stripConditionsFromXPathString(pathStatement),
+        PathExpression pathStatement = typeDefinition.getPathStatement();
+        pathStatement = new PathExpressionImpl(stripConditionsFromXPathString(pathStatement),
             pathStatement.isAbsolute());
 
         final DataSchemaNode dataSchemaNode;
@@ -808,8 +808,8 @@ public final class SchemaContextUtil {
      */
     public static TypeDefinition<?> getBaseTypeForLeafRef(final LeafrefTypeDefinition typeDefinition,
             final SchemaContext schemaContext, final QName qname) {
-        final RevisionAwareXPath pathStatement = typeDefinition.getPathStatement();
-        final RevisionAwareXPath strippedPathStatement = new RevisionAwareXPathImpl(
+        final PathExpression pathStatement = typeDefinition.getPathStatement();
+        final PathExpression strippedPathStatement = new PathExpressionImpl(
             stripConditionsFromXPathString(pathStatement), pathStatement.isAbsolute());
         if (!strippedPathStatement.isAbsolute()) {
             return null;
@@ -855,8 +855,8 @@ public final class SchemaContextUtil {
      * @return string representation of xPath without conditions
      */
     @VisibleForTesting
-    static String stripConditionsFromXPathString(final RevisionAwareXPath pathStatement) {
-        return STRIP_PATTERN.matcher(pathStatement.toString()).replaceAll("");
+    static String stripConditionsFromXPathString(final PathExpression pathStatement) {
+        return STRIP_PATTERN.matcher(pathStatement.getOriginalString()).replaceAll("");
     }
 
     /**
