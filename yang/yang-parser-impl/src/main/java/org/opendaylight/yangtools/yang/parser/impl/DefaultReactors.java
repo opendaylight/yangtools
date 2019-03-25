@@ -14,6 +14,7 @@ import org.opendaylight.yangtools.odlext.parser.AnyxmlSchemaLocationStatementSup
 import org.opendaylight.yangtools.odlext.parser.AnyxmlStatementSupportOverride;
 import org.opendaylight.yangtools.openconfig.parser.EncryptedValueStatementSupport;
 import org.opendaylight.yangtools.openconfig.parser.HashedValueStatementSupport;
+import org.opendaylight.yangtools.rfc6241.parser.GetFilterElementAttributesStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyAllStatementSupport;
 import org.opendaylight.yangtools.rfc6536.parser.DefaultDenyWriteStatementSupport;
 import org.opendaylight.yangtools.rfc7952.parser.AnnotationStatementSupport;
@@ -69,6 +70,10 @@ public final class DefaultReactors {
                 .addNamespaceSupport(ModelProcessingPhase.FULL_DECLARATION, AnyxmlSchemaLocationNamespace.BEHAVIOUR)
                 .overrideStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
                     AnyxmlStatementSupportOverride.getInstance())
+
+                // RFC6241 get-filter-element-attributes support
+                .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
+                    GetFilterElementAttributesStatementSupport.getInstance())
 
                 // RFC6536 default-deny-{all,write} support
                 .addStatementSupport(ModelProcessingPhase.FULL_DECLARATION,
