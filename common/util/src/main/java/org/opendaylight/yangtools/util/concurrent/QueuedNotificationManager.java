@@ -48,29 +48,6 @@ import org.slf4j.LoggerFactory;
  * @param <N> the notification type
  */
 public class QueuedNotificationManager<L, N> implements NotificationManager<L, N> {
-
-    /**
-     * Interface implemented by clients that does the work of invoking listeners with notifications.
-     *
-     * @author Thomas Pantelis
-     *
-     * @param <L> the listener type
-     * @param <N> the notification type
-     *
-     * @deprecated Use {@link QueuedNotificationManager.BatchedInvoker} instead.
-     */
-    @Deprecated
-    @FunctionalInterface
-    public interface Invoker<L, N> {
-        /**
-         * Called to invoke a listener with a notification.
-         *
-         * @param listener the listener to invoke
-         * @param notification the notification to send
-         */
-        void invokeListener(L listener, N notification);
-    }
-
     @FunctionalInterface
     public interface BatchedInvoker<L, N> {
         /**
@@ -106,31 +83,6 @@ public class QueuedNotificationManager<L, N> implements NotificationManager<L, N
         this.listenerInvoker = requireNonNull(listenerInvoker);
         this.maxQueueCapacity = maxQueueCapacity;
         this.name = requireNonNull(name);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @param executor the {@link Executor} to use for notification tasks
-     * @param listenerInvoker the {@link Invoker} to use for invoking listeners
-     * @param maxQueueCapacity the capacity of each listener queue
-     * @param name the name of this instance for logging info
-     *
-     * @deprecated Use {@link #create(Executor, BatchedInvoker, int, String)} instead.
-     */
-    @Deprecated
-    @SuppressWarnings("checkstyle:illegalCatch")
-    public QueuedNotificationManager(final @NonNull Executor executor, final @NonNull Invoker<L, N> listenerInvoker,
-            final int maxQueueCapacity, final @NonNull String name) {
-        this(executor, (BatchedInvoker<L, N>)(listener, notifications) -> notifications.forEach(n -> {
-            try {
-                listenerInvoker.invokeListener(listener, n);
-            } catch (Exception e) {
-                LOG.error("{}: Error notifying listener {} with {}", name, listener, n, e);
-            }
-
-        }), maxQueueCapacity, name);
-        requireNonNull(listenerInvoker);
     }
 
     /**
