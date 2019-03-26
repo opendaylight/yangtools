@@ -72,7 +72,7 @@ public class YangParserSimpleTest {
         assertFalse(data.isConfiguration());
 
         assertTrue(data.isMandatory());
-        assertEquals("class != 'wheel'", data.getWhenCondition().get().toString());
+        assertEquals("class != 'wheel'", data.getWhenCondition().get().getOriginalString());
         final Collection<MustDefinition> mustConstraints = data.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
@@ -113,7 +113,7 @@ public class YangParserSimpleTest {
         assertFalse(nodes.isConfiguration());
 
         // constraints
-        assertEquals("class != 'wheel'", nodes.getWhenCondition().get().toString());
+        assertEquals("class != 'wheel'", nodes.getWhenCondition().get().getOriginalString());
         final Collection<MustDefinition> mustConstraints = nodes.getMustConstraints();
         assertEquals(2, mustConstraints.size());
 
