@@ -17,8 +17,6 @@ import java.util.Base64;
 import org.opendaylight.mdsal.binding.model.api.GeneratedTransferObject
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.Type
-import org.opendaylight.mdsal.binding.model.util.Types
-import org.opendaylight.yangtools.yang.common.Empty
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition
 
 /**
