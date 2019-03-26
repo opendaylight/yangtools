@@ -88,7 +88,7 @@ public class SchemaContextUtilTest {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"),Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
@@ -207,7 +207,7 @@ public class SchemaContextUtilTest {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         SchemaNode testNode = ((ContainerSchemaNode) myModule.getDataChildByName(QName.create(
                 myModule.getQNameModule(), "my-container"))).getDataChildByName(QName.create(myModule.getQNameModule(),
@@ -306,7 +306,7 @@ public class SchemaContextUtilTest {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         SchemaNode testNode = myModule.getDataChildByName(QName.create(myModule.getQNameModule(), "my-container"));
 
@@ -372,7 +372,7 @@ public class SchemaContextUtilTest {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         final DataSchemaNode node = myModule.getDataChildByName(QName.create(myModule.getQNameModule(),
             "my-container"));
@@ -382,48 +382,33 @@ public class SchemaContextUtilTest {
         assertEquals(myModule, foundModule);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findParentModuleIllegalArgumentTest() {
-
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        SchemaContextUtil.findParentModule(mockContext, null);
-
+        SchemaContextUtil.findParentModule(mock(SchemaContext.class), null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findParentModuleIllegalArgumentTest2() {
-
-        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
-        SchemaContextUtil.findParentModule(null, mockSchemaNode);
-
+        SchemaContextUtil.findParentModule(null, mock(SchemaNode.class));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void findParentModuleIllegalStateTest() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
-        when(mockSchemaNode.getPath()).thenReturn(null);
-        SchemaContextUtil.findParentModule(mockContext, mockSchemaNode);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeIllegalArgumentTest() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        SchemaContextUtil.findDataSchemaNode(mockContext, null);
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeIllegalArgumentTest2() {
-        final SchemaPath mockSchemaPath = mock(SchemaPath.class);
-        SchemaContextUtil.findDataSchemaNode(null, mockSchemaPath);
+        SchemaContextUtil.findDataSchemaNode(null, SchemaPath.create(true,
+            QName.create(URI.create("uri:my-module"), Revision.of("2014-10-07"), "foo")));
     }
 
     @Test
     public void findDataSchemaNodeTest() throws URISyntaxException, IOException, YangSyntaxErrorException,
             ReactorException {
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module module = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
-        final Module importedModule = context.findModule(new URI("uri:imported-module"),
+        final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module importedModule = context.findModule(URI.create("uri:imported-module"),
             Revision.of("2014-10-07")).get();
 
         final SchemaNode testNode = ((ContainerSchemaNode) importedModule.getDataChildByName(QName.create(
@@ -446,7 +431,7 @@ public class SchemaContextUtilTest {
         // final RevisionAwareXPath nonCondXPath) {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module module = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module module = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         final GroupingDefinition grouping = getGroupingByName(module, "my-grouping");
         final SchemaNode testNode = grouping.getDataChildByName(QName.create(module.getQNameModule(),
@@ -462,15 +447,12 @@ public class SchemaContextUtilTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final Module module = mock(Module.class);
-
-        SchemaContextUtil.findDataSchemaNode(mockContext, module, null);
+        SchemaContextUtil.findDataSchemaNode(mock(SchemaContext.class), mock(Module.class), null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest2() {
         final SchemaContext mockContext = mock(SchemaContext.class);
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
@@ -478,7 +460,7 @@ public class SchemaContextUtilTest {
         SchemaContextUtil.findDataSchemaNode(mockContext, null, xpath);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findDataSchemaNodeFromXPathIllegalArgumentTest3() {
         final Module module = mock(Module.class);
         final PathExpression xpath = new PathExpressionImpl("my:my-grouping/my:my-leaf-in-gouping2", true);
@@ -501,7 +483,7 @@ public class SchemaContextUtilTest {
         final Module module = mock(Module.class);
         final PathExpression xpath = mock(PathExpression.class);
 
-        when(xpath.getOriginalString()).thenReturn(null);
+        when(xpath.getOriginalString()).thenReturn("");
         assertNull(SchemaContextUtil.findDataSchemaNode(mockContext, module, xpath));
     }
 
@@ -717,7 +699,7 @@ public class SchemaContextUtilTest {
             YangSyntaxErrorException, ReactorException {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
-        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
 
         // find grouping in container
         DataNodeContainer dataContainer = (DataNodeContainer) myModule.getDataChildByName(QName.create(
@@ -856,7 +838,7 @@ public class SchemaContextUtilTest {
 
         final SchemaContext context = TestUtils.parseYangSources("/schema-context-util-test");
 
-        final Module myModule = context.findModule(new URI("uri:my-module"), Revision.of("2014-10-07")).get();
+        final Module myModule = context.findModule(URI.create("uri:my-module"), Revision.of("2014-10-07")).get();
         final ChoiceSchemaNode choice = (ChoiceSchemaNode) getRpcByName(myModule, "my-name").getInput()
                 .getDataChildByName(QName.create(myModule.getQNameModule(), "my-choice"));
         final SchemaNode testNode = choice.findCaseNodes("case-two").iterator().next()
