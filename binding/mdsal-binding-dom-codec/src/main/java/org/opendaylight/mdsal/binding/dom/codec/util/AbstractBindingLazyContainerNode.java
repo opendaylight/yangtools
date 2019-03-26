@@ -15,7 +15,6 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import javax.annotation.concurrent.GuardedBy;
-import javax.annotation.concurrent.ThreadSafe;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
@@ -28,12 +27,12 @@ import org.opendaylight.yangtools.yang.data.api.schema.DataContainerChild;
 
 /**
  * A {@link ContainerNode} backed by a binding {@link DataObject}, with lazy instantiation of the ContainerNode view.
+ * This class is thread-safe.
  *
  * @param <T> Binding DataObject type
  * @author Robert Varga
  */
 @Beta
-@ThreadSafe
 public abstract class AbstractBindingLazyContainerNode<T extends DataObject, C> extends ForwardingObject
         implements BindingLazyContainerNode<T> {
     private final @NonNull NodeIdentifier identifier;

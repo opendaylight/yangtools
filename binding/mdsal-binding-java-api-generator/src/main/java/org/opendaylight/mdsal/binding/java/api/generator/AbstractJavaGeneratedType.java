@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import javax.annotation.concurrent.NotThreadSafe;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.model.api.Enumeration;
@@ -30,12 +29,11 @@ import org.opendaylight.mdsal.binding.model.api.WildcardType;
 
 /**
  * Abstract class representing a generated type, either top-level or nested. It takes care of tracking references
- * to other Java types and resolving them as best as possible.
+ * to other Java types and resolving them as best as possible. This class is NOT thread-safe.
  *
  * @author Robert Varga
  */
 @NonNullByDefault
-@NotThreadSafe
 abstract class AbstractJavaGeneratedType {
     private final Map<JavaTypeName, @Nullable String> nameCache = new HashMap<>();
     private final ImmutableMap<String, NestedJavaGeneratedType> enclosedTypes;
