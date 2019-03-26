@@ -5,12 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -41,7 +38,7 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         assertTrue(childNodes instanceof List);
         assertTrue(childNodes.isEmpty());
 
-        assertNull(normalizedNodeDataTreeCandidateNode.getModifiedChild(mockedPathArgument));
+        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode.getModifiedChild(mockedPathArgument));
 
         assertEquals(ModificationType.WRITE, normalizedNodeDataTreeCandidateNode.getModificationType());
         assertEquals(Optional.of(mockedNormalizedNode), normalizedNodeDataTreeCandidateNode.getDataAfter());
@@ -59,10 +56,10 @@ public class NormalizedNodeDataTreeCandidateNodeTest {
         assertEquals(3, childNodes2.size());
 
         doReturn(Optional.empty()).when(mockedNormalizedNodeContainer).getChild(any(PathArgument.class));
-        assertNull(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
+        assertEquals(Optional.empty(), normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
 
         doReturn(Optional.of(mockedChildNormNode1)).when(mockedNormalizedNodeContainer).getChild(
                 any(PathArgument.class));
-        assertNotNull(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument));
+        assertTrue(normalizedNodeDataTreeCandidateNode2.getModifiedChild(mockedPathArgument).isPresent());
     }
 }
