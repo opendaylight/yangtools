@@ -49,32 +49,6 @@ public class FastThreadPoolExecutor extends ThreadPoolExecutor {
     }
 
     /**
-     * Constructor.
-     *
-     * @deprecated Please use
-     *             {@link #FastThreadPoolExecutor(int, int, String, Class)}
-     *             instead.
-     */
-    @Deprecated
-    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
-        this(maximumPoolSize, maximumQueueSize, DEFAULT_IDLE_TIMEOUT_IN_SEC, TimeUnit.SECONDS,
-              threadPrefix);
-    }
-
-    /**
-     * Constructor.
-     *
-     * @deprecated Please use
-     *             {@link #FastThreadPoolExecutor(int, int, long, TimeUnit, String, Class)}
-     *             instead.
-     */
-    @Deprecated
-    public FastThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final long keepAliveTime,
-            final TimeUnit unit, final String threadPrefix) {
-        this(maximumPoolSize, maximumQueueSize, keepAliveTime, unit, threadPrefix, FastThreadPoolExecutor.class);
-    }
-
-    /**
      * Constructs a FastThreadPoolExecutor instance.
      *
      * @param maximumPoolSize
