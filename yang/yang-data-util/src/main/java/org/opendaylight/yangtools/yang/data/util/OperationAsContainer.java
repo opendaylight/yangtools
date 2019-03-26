@@ -96,7 +96,10 @@ public class OperationAsContainer extends ForwardingObject implements ContainerS
 
     @Override
     public final Optional<DataSchemaNode> findDataChildByName(final QName name) {
-        // FIXME: 3.0.0: check QNameModule
+        if (!name.getModule().equals(getQName().getModule())) {
+            return Optional.empty();
+        }
+
         switch (name.getLocalName()) {
             case "input":
                 return Optional.of(delegate.getInput());
