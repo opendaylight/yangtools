@@ -7,21 +7,12 @@
  */
 package org.opendaylight.yangtools.yang.data.api.schema.tree;
 
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
  * Interface representing a data tree which can be modified in an MVCC fashion.
  */
-// FIXME: 3.0.0: Consider splitting out a read-only interface, which has no means of affecting internal state
-public interface DataTree extends DataTreeTip {
-    /**
-     * Take a read-only point-in-time snapshot of the tree.
-     *
-     * @return Data tree snapshot.
-     */
-    DataTreeSnapshot takeSnapshot();
-
+public interface DataTree extends DataTreeTip, ReadOnlyDataTree {
     /**
      * Make the data tree use a new schema context. The context will be used
      * only by subsequent operations.
@@ -37,11 +28,4 @@ public interface DataTree extends DataTreeTip {
      * @param candidate data tree candidate
      */
     void commit(DataTreeCandidate candidate);
-
-    /**
-     * Get the root path of this data tree.
-     *
-     * @return The tree's root path.
-     */
-    YangInstanceIdentifier getRootPath();
 }
