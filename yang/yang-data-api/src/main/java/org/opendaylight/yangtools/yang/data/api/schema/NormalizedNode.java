@@ -23,7 +23,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  * @param <V> Value of node
  */
 /*
- * FIXME: 3.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,
+ * FIXME: 4.0.0: NormalizedNode represents the perfectly-compliant view of the data, as evaluated by an implementation,
  *               which is currently singular, with respect of its interpretation of a SchemaContext. This includes
  *               leaf values, which are required to hold normalized representation for a particular implementation,
  *               which may be affected by its understanding of any YANG extensions present -- such as optional type
@@ -39,7 +39,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
  *               "UnverifiedData".
  */
 /*
- * FIXME: 4.0.0: Once we have UnverifiedData, we should really rename this to "NormalizedData" or similar to unload
+ * FIXME: 5.0.0: Once we have UnverifiedData, we should really rename this to "NormalizedData" or similar to unload
  *               some "Node" ambiguity. "Node" should be a generic term reserved for a particular domain -- hence 'node'
  *               can be used to refer to either a 'schema node' in context of yang.model.api, or to
  *               a 'normalized data node' in context of yang.data.api.

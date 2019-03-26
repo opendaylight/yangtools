@@ -81,7 +81,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
  *
  * @see <a href="http://tools.ietf.org/html/rfc6020#section-9.13">RFC6020</a>
  */
-// FIXME: 3.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
+// FIXME: 4.0.0: this concept needs to be moved to yang-common, as parser components need the ability to refer
 //               to data nodes -- most notably XPath expressions and {@code default} statement arguments need to be able
 //               to represent these.
 // FIXME: FixedYangInstanceIdentifier needs YangInstanceIdentifier initialized, but that includes initializing

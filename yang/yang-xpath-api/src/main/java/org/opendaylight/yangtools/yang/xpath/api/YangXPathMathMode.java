@@ -33,7 +33,7 @@ public enum YangXPathMathMode {
     EXACT(BigDecimalXPathMathSupport.INSTANCE);
 
     /*
-     * FIXME: 3.0.0: specify and implement this:
+     * FIXME: 4.0.0: specify and implement this:
      *
      * All number expressions are treated either as {@code org.opendaylight.yangtools.yang.common} types with
      * precision required to hold them. Decimal types are mapped to {@link Decimal64} with all range restrictions

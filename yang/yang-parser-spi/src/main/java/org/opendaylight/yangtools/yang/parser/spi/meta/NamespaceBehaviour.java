@@ -43,7 +43,7 @@ public abstract class NamespaceBehaviour<K, V, N extends IdentifierNamespace<K, 
         /**
          * Storage of the root statement of a particular source and any sources it is importing.
          */
-        // FIXME: 3.0.0: this is a misnomer and should be renamed
+        // FIXME: 4.0.0: this is a misnomer and should be renamed
         SOURCE_LOCAL_SPECIAL,
         /**
          * Storage of a single statement.
