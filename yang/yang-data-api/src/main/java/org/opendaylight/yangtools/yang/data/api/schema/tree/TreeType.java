@@ -15,8 +15,8 @@ import com.google.common.annotations.Beta;
  * <a href="https://tools.ietf.org/html/rfc6020#section-7.19.1">RFC7950</a> data combinations based on {@code config}
  * statement.
  */
-// FIXME: 2.1.0: 3.0.0: Consider defining a 'config false'-only type
-// FIXME: 3.0.0: Consider renaming this enum
+// FIXME: 4.0.0: Consider defining a 'config false'-only type
+// FIXME: 4.0.0: Consider renaming this enum
 @Beta
 public enum TreeType {
     /**

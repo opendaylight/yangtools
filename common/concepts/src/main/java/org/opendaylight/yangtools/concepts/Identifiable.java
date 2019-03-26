@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
  * @param <T> Identifier class, must conform to API contract outlined by {@link Identifier}, even if it does not
  *            implement it.
  */
-// FIXME: 3.0.0: consider requiring "T extends Serializable"
+// FIXME: 4.0.0: consider requiring "T extends Serializable"
 public interface Identifiable<T> {
     /**
      * Return this objects Identifier.

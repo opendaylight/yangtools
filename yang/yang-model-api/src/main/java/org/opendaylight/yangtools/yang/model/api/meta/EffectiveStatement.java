@@ -45,7 +45,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @return Value if present, null otherwise.
      */
     //<K, V, N extends IdentifierNamespace<? super K, ? extends V>> V
-    // FIXME: 3.0.0: make this return an Optional, not a nullable
+    // FIXME: 4.0.0: make this return an Optional, not a nullable
     <K, V, N extends IdentifierNamespace<K, V>> @Nullable V get(@NonNull Class<N> namespace, @NonNull K identifier);
 
     /**
@@ -57,7 +57,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @param namespace Namespace type
      * @return Value if present, null otherwise.
      */
-    // FIXME: 3.0.0: make this contract return empty maps on non-presence
+    // FIXME: 4.0.0: make this contract return empty maps on non-presence
     <K, V, N extends IdentifierNamespace<K, V>> @Nullable Map<K, V> getAll(@NonNull Class<N> namespace);
 
     /**
@@ -69,7 +69,7 @@ public interface EffectiveStatement<A, D extends DeclaredStatement<A>> extends M
      * @param namespace Namespace type
      * @return Key-value mappings, empty if the namespace does not exist.
      */
-    // FIXME: 3.0.0: remove this in favor of fixed getAll()
+    // FIXME: 4.0.0: remove this in favor of fixed getAll()
     default <K, V, N extends IdentifierNamespace<K, V>> @NonNull Map<K, V> findAll(final @NonNull Class<N> namespace) {
         final Map<K, V> map = getAll(requireNonNull(namespace));
         return map == null ? ImmutableMap.of() : map;
