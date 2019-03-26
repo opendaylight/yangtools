@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
-
     private final PathArgument identifier;
 
     EmptyDataTreeCandidateNode(final PathArgument identifier) {
@@ -34,8 +33,8 @@ final class EmptyDataTreeCandidateNode implements DataTreeCandidateNode {
     }
 
     @Override
-    public DataTreeCandidateNode getModifiedChild(final PathArgument childIdentifier) {
-        return null;
+    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument childIdentifier) {
+        return Optional.empty();
     }
 
     @Override

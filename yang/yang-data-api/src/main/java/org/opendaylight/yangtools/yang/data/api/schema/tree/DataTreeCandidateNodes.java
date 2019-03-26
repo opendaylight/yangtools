@@ -128,9 +128,9 @@ public final class DataTreeCandidateNodes {
      *
      * @param oldData Old data container, may be null
      * @param newData New data container, may be null
-     * @return A {@link DataTreeCandidateNode} describing the change, or null if the node is not present
+     * @return A {@link DataTreeCandidateNode} describing the change, or empty if the node is not present
      */
-    public static @Nullable DataTreeCandidateNode containerDelta(
+    public static @NonNull Optional<DataTreeCandidateNode> containerDelta(
             final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> oldData,
             final @Nullable NormalizedNodeContainer<?, PathArgument, NormalizedNode<?, ?>> newData,
             final @NonNull PathArgument child) {
@@ -138,13 +138,11 @@ public final class DataTreeCandidateNodes {
         final Optional<NormalizedNode<?, ?>> maybeOldChild = getChild(oldData, child);
         if (maybeOldChild.isPresent()) {
             final NormalizedNode<?, ?> oldChild = maybeOldChild.get();
-            if (maybeNewChild.isPresent()) {
-                return replaceNode(oldChild, maybeNewChild.get());
-            }
-            return deleteNode(oldChild);
+            return Optional.of(maybeNewChild.isPresent() ? replaceNode(oldChild, maybeNewChild.get())
+                    : deleteNode(oldChild));
         }
 
-        return maybeNewChild.isPresent() ? writeNode(maybeNewChild.get()) : null;
+        return maybeNewChild.map(DataTreeCandidateNodes::writeNode);
     }
 
     /**
