@@ -9,24 +9,37 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import static java.util.Objects.requireNonNull;
 
-import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import com.google.common.annotations.Beta;
 import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
-public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec {
-    // FIXME: 3.0.0: hide these fields
-    protected final SchemaContext context;
-    @SuppressFBWarnings("URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD")
-    protected final QNameModule parentModuleQname;
+/**
+ * Base class for implementing identityref codecs on based on module names.
+ */
+@Beta
+public abstract class ModuleStringIdentityrefCodec extends AbstractModuleStringIdentityrefCodec
+        implements SchemaContextProvider {
+    private final SchemaContext context;
+    private final QNameModule parentModule;
 
     protected ModuleStringIdentityrefCodec(final @NonNull SchemaContext context,
             final @NonNull QNameModule parentModule) {
         this.context = requireNonNull(context);
-        this.parentModuleQname = requireNonNull(parentModule);
+        this.parentModule = requireNonNull(parentModule);
+    }
+
+    @Override
+    public final SchemaContext getSchemaContext() {
+        return context;
+    }
+
+    protected final QNameModule getParentModule() {
+        return parentModule;
     }
 
     @Override
