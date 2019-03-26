@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
@@ -21,6 +20,7 @@ import java.util.Optional;
  * model for anydata content to become known through protocol signaling or other means that are outside the scope
  * of this document.
  */
+// FIXME: 4.0.0: rename this to 'AnydataSchemaNode'
 @Beta
 public interface AnyDataSchemaNode extends DataSchemaNode, MandatoryAware, MustConstraintAware {
     /**
