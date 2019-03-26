@@ -7,15 +7,15 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 /**
  * The concept of a serializer, which produces an object from some input.
  *
  * @param <P> Product type
  * @param <I> Input type
  */
-//FIXME: 3.0.0: redesign/deprecate this class?
-//              - null should not be allowed as an input or return
-//              - we need error reporting
+// FIXME: 4.0.0: we need error reporting, is this concept even useful?
 public interface Deserializer<P, I> {
     /**
      * Produce an object base on input.
@@ -23,5 +23,5 @@ public interface Deserializer<P, I> {
      * @param input Input object
      * @return Product derived from input
      */
-    P deserialize(I input);
+    @NonNull P deserialize(@NonNull I input);
 }

@@ -7,10 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+// FIXME: 4.0.0: is this concept useful?
 public interface Codec<P, I> extends Serializer<P, I>, Deserializer<I, P> {
-    @Override
-    I deserialize(P input);
 
-    @Override
-    P serialize(I input);
 }
