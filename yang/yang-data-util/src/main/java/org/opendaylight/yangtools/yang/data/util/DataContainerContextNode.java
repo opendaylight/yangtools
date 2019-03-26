@@ -15,15 +15,12 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
-class DataContainerContextNode<T extends PathArgument> extends
-        AbstractInteriorContextNode<T> {
-
+class DataContainerContextNode<T extends PathArgument> extends AbstractInteriorContextNode<T> {
     private final DataNodeContainer schema;
     private final Map<QName, DataSchemaContextNode<?>> byQName;
     private final Map<PathArgument, DataSchemaContextNode<?>> byArg;
 
-    protected DataContainerContextNode(final T identifier, final DataNodeContainer schema,
-            final DataSchemaNode node) {
+    DataContainerContextNode(final T identifier, final DataNodeContainer schema, final DataSchemaNode node) {
         super(identifier, node);
         this.schema = schema;
         this.byArg = new ConcurrentHashMap<>();

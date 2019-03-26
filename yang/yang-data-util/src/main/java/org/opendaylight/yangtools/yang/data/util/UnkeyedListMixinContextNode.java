@@ -12,8 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-class UnkeyedListMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
-
+final class UnkeyedListMixinContextNode extends AbstractMixinContextNode<NodeIdentifier> {
     private final UnkeyedListItemContextNode innerNode;
 
     UnkeyedListMixinContextNode(final ListSchemaNode list) {
@@ -23,18 +22,11 @@ class UnkeyedListMixinContextNode extends AbstractMixinContextNode<NodeIdentifie
 
     @Override
     public DataSchemaContextNode<?> getChild(final PathArgument child) {
-        if (child.getNodeType().equals(getIdentifier().getNodeType())) {
-            return innerNode;
-        }
-        return null;
+        return getChild(child.getNodeType());
     }
 
     @Override
     public DataSchemaContextNode<?> getChild(final QName child) {
-        if (getIdentifier().getNodeType().equals(child)) {
-            return innerNode;
-        }
-        return null;
+        return getIdentifier().getNodeType().equals(child) ? innerNode : null;
     }
-
 }
