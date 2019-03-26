@@ -123,12 +123,6 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule preLinkagePrefixes) {
-        writeLinkage(writer, stmtDef, preLinkagePrefixes, YangVersion.VERSION_1);
-    }
-
-    @Override
-    public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
             final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, preLinkagePrefixes, yangVersion) {
             @Override
@@ -140,20 +134,8 @@ public final class YangStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
-        writeLinkageAndStatementDefinitions(writer, stmtDef, prefixes, YangVersion.VERSION_1);
-    }
-
-    @Override
-    public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
             final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes, final YangVersion yangVersion) {
         new StatementContextVisitor(sourceName, writer, stmtDef, prefixes, yangVersion).visit(context);
-    }
-
-    @Override
-    public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes) {
-        writeFull(writer, stmtDef, prefixes, YangVersion.VERSION_1);
     }
 
     @Override

@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Optional;
 import javax.xml.transform.TransformerException;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.ArgumentDefinition;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -240,19 +241,19 @@ public final class YinStatementStreamSource implements StatementStreamSource {
 
     @Override
     public void writeLinkage(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule preLinkagePrefixes) {
+            final PrefixToModule preLinkagePrefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 
     @Override
     public void writeLinkageAndStatementDefinitions(final StatementWriter writer,
-            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes) {
+            final QNameToStatementDefinition stmtDef, final PrefixToModule prefixes,  final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 
     @Override
     public void writeFull(final StatementWriter writer, final QNameToStatementDefinition stmtDef,
-            final PrefixToModule prefixes) {
+            final PrefixToModule prefixes, final YangVersion yangVersion) {
         walkTree(writer, stmtDef);
     }
 
