@@ -148,7 +148,7 @@ public class InMemoryDataTreeBenchmark {
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write100KSingleNodeWithOneInnerItemInOneCommitCursorBenchmark() throws DataValidationFailedException {
         final CursorAwareDataTreeModification modification = begin();
-        try (DataTreeModificationCursor cursor = modification.createCursor(BenchmarkModel.OUTER_LIST_PATH)) {
+        try (DataTreeModificationCursor cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).get()) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_100K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_ONE_ITEM_INNER_LIST[outerListKey]);
             }
@@ -183,7 +183,7 @@ public class InMemoryDataTreeBenchmark {
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write50KSingleNodeWithTwoInnerItemsInOneCommitCursorBenchmark() throws DataValidationFailedException {
         final CursorAwareDataTreeModification modification = begin();
-        try (DataTreeModificationCursor cursor = modification.createCursor(BenchmarkModel.OUTER_LIST_PATH)) {
+        try (DataTreeModificationCursor cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).get()) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_50K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_TWO_ITEM_INNER_LIST[outerListKey]);
             }
@@ -218,7 +218,7 @@ public class InMemoryDataTreeBenchmark {
     @Measurement(iterations = MEASUREMENT_ITERATIONS, timeUnit = TimeUnit.MILLISECONDS)
     public void write10KSingleNodeWithTenInnerItemsInOneCommitCursorBenchmark() throws DataValidationFailedException {
         final CursorAwareDataTreeModification modification = begin();
-        try (DataTreeModificationCursor cursor = modification.createCursor(BenchmarkModel.OUTER_LIST_PATH)) {
+        try (DataTreeModificationCursor cursor = modification.openCursor(BenchmarkModel.OUTER_LIST_PATH).get()) {
             for (int outerListKey = 0; outerListKey < OUTER_LIST_10K; ++outerListKey) {
                 cursor.write(OUTER_LIST_IDS[outerListKey], OUTER_LIST_TEN_ITEM_INNER_LIST[outerListKey]);
             }
