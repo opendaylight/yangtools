@@ -17,7 +17,7 @@
     </parent>
 
     <artifactId>yang-xpath-impl</artifactId>
-    <version>0.2.9-SNAPSHOT</version>
+    <version>0.3.9-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <name>${project.artifactId}</name>
     <description>YANG XPath parser</description>
