@@ -283,9 +283,9 @@ final class InMemoryDataTreeModification extends AbstractCursorAware implements 
     }
 
     @Override
-    public DataTreeModificationCursor createCursor(final YangInstanceIdentifier path) {
+    public Optional<DataTreeModificationCursor> openCursor(final YangInstanceIdentifier path) {
         final OperationWithModification op = resolveModificationFor(path);
-        return openCursor(new InMemoryDataTreeModificationCursor(this, path, op));
+        return Optional.of(openCursor(new InMemoryDataTreeModificationCursor(this, path, op)));
     }
 
     @Override
