@@ -54,8 +54,8 @@ final class NoopDataTreeCandidate extends AbstractDataTreeCandidate {
         }
 
         @Override
-        public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
-            return null;
+        public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
+            return Optional.empty();
         }
     };
 
