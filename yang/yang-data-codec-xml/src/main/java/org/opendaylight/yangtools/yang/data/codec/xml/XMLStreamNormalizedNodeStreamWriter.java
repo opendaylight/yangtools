@@ -11,16 +11,10 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -32,19 +26,16 @@ import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
  * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter},
  * resulting in a RFC 6020 XML encoding. There are 2 versions of this class, one that takes a
- * SchemaContext and encodes values appropriately according to the yang schema. The other is
+ * SchemaContext and encodes values appropriately according to the YANG schema. The other is
  * schema-less and merely outputs values using toString. The latter is intended for debugging
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
-    private static final TransformerFactory TRANSFORMER_FACTORY = TransformerFactory.newInstance();
-
     private final @NonNull StreamWriterFacade facade;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
@@ -99,26 +90,6 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter createSchemaless(final XMLStreamWriter writer) {
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
-    }
-
-    /**
-     * Utility method for formatting an {@link Element} to a string.
-     *
-     * @deprecated This method not used anywhere, users are advised to use their own formatting.
-     */
-    @Deprecated
-    public static String toString(final Element xml) {
-        try {
-            final Transformer transformer = TRANSFORMER_FACTORY.newTransformer();
-            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-
-            final StreamResult result = new StreamResult(new StringWriter());
-            transformer.transform(new DOMSource(xml), result);
-
-            return result.getWriter().toString();
-        } catch (IllegalArgumentException | TransformerException e) {
-            throw new IllegalStateException("Unable to serialize xml element " + xml, e);
-        }
     }
 
     abstract void startList(NodeIdentifier name);
