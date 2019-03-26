@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.util;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import java.io.IOException;
@@ -17,7 +18,6 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -38,7 +38,6 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * Represents a node which is composed of multiple simpler nodes.
  */
 public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends AbstractNodeDataWithSchema<T> {
-
     /**
      * nodes which were added to schema via augmentation and are present in data input.
      */
@@ -64,7 +63,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     public AbstractNodeDataWithSchema<?> addChild(final Deque<DataSchemaNode> schemas) {
-        Preconditions.checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
+        checkArgument(!schemas.isEmpty(), "Expecting at least one schema");
 
         // Pop the first node...
         final DataSchemaNode schema = schemas.pop();
@@ -75,13 +74,13 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
 
         // The choice/case mess, reuse what we already popped
         final DataSchemaNode choiceCandidate = schema;
-        Preconditions.checkArgument(choiceCandidate instanceof ChoiceSchemaNode,
-            "Expected node of type ChoiceNode but was %s", choiceCandidate.getClass().getSimpleName());
+        checkArgument(choiceCandidate instanceof ChoiceSchemaNode, "Expected node of type ChoiceNode but was %s",
+            choiceCandidate.getClass());
         final ChoiceSchemaNode choiceNode = (ChoiceSchemaNode) choiceCandidate;
 
         final DataSchemaNode caseCandidate = schemas.pop();
-        Preconditions.checkArgument(caseCandidate instanceof CaseSchemaNode,
-            "Expected node of type ChoiceCaseNode but was %s", caseCandidate.getClass().getSimpleName());
+        checkArgument(caseCandidate instanceof CaseSchemaNode, "Expected node of type ChoiceCaseNode but was %s",
+            caseCandidate.getClass());
         final CaseSchemaNode caseNode = (CaseSchemaNode) caseCandidate;
 
         AugmentationSchemaNode augSchema = null;
@@ -141,7 +140,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
                         && nodeDataWithSchema.getSchema().getQName().equals(choiceCandidate.getQName())) {
                     CaseNodeDataWithSchema casePrevious = ((ChoiceNodeDataWithSchema) nodeDataWithSchema).getCase();
 
-                    Preconditions.checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
+                    checkArgument(casePrevious.getSchema().getQName().equals(caseCandidate.getQName()),
                         "Data from case %s are specified but other data from case %s were specified earlier."
                         + " Data aren't from the same case.", caseCandidate.getQName(),
                         casePrevious.getSchema().getQName());
@@ -230,19 +229,5 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
             }
         }
         return null;
-    }
-
-    /**
-     * Create AugmentationIdentifier from an AugmentationSchemaNode.
-     *
-     * @param schema Augmentation schema
-     * @return AugmentationIdentifier for the schema
-     * @throws NullPointerException if {@code schema} is null
-     * @deprecated Use {@link DataSchemaContextNode#augmentationIdentifierFrom(AugmentationSchemaNode)} instead.
-     */
-    @Deprecated
-    public static YangInstanceIdentifier.AugmentationIdentifier getNodeIdentifierForAugmentation(
-            final AugmentationSchemaNode schema) {
-        return DataSchemaContextNode.augmentationIdentifierFrom(schema);
     }
 }
