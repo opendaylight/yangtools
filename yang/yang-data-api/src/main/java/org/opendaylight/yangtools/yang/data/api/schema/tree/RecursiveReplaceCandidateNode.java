@@ -40,7 +40,7 @@ final class RecursiveReplaceCandidateNode extends AbstractDataTreeCandidateNode 
     }
 
     @Override
-    public DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+    public Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
         return DataTreeCandidateNodes.containerDelta(oldData, data(), identifier);
     }
 

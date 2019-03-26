@@ -10,7 +10,6 @@ package org.opendaylight.yangtools.yang.data.api.schema.tree;
 import java.util.Collection;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
@@ -19,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * the modification from which this candidate was created. The node itself exposes the before- and after-image
  * of the tree restricted to the modified nodes.
  */
-// FIXME: 3.0.0: Use @NonNullByDefault
+// FIXME: 4.0.0: Use @NonNullByDefault
 public interface DataTreeCandidateNode {
     /**
      * Get the node identifier.
@@ -29,22 +28,23 @@ public interface DataTreeCandidateNode {
     @NonNull PathArgument getIdentifier();
 
     /**
-     * Get an unmodifiable collection of modified child nodes.
+     * Get an unmodifiable collection of modified child nodes. Note that the collection may include
+     * {@link ModificationType#UNMODIFIED} nodes, which the caller is expected to handle as if they were not present.
      *
      * @return Unmodifiable collection of modified child nodes.
      */
     @NonNull Collection<DataTreeCandidateNode> getChildNodes();
 
     /**
-     * Returns modified child or null if child was not modified
-     * / does not exists.
+     * Returns modified child or empty. Note that this method may return an {@link ModificationType#UNMODIFIED} node
+     * when there is evidence of the node or its parent being involved in modification which has turned out not to
+     * modify the node's contents.
      *
      * @param childIdentifier Identifier of child node
-     * @return Modified child or null if child was not modified.
+     * @return Modified child or empty.
+     * @throws NullPointerException if {@code childIdentifier} is null
      */
-    // FIXME: 3.0.0: document NullPointerException being thrown
-    // FIXME: 3.0.0: return an Optional
-    @Nullable DataTreeCandidateNode getModifiedChild(PathArgument childIdentifier);
+    @NonNull Optional<DataTreeCandidateNode> getModifiedChild(PathArgument childIdentifier);
 
     /**
      * Return the type of modification this node is undergoing.

@@ -122,27 +122,22 @@ abstract class AbstractModifiedNodeBasedCandidateNode implements DataTreeCandida
     }
 
     @Override
-    public final DataTreeCandidateNode getModifiedChild(final PathArgument identifier) {
+    public final Optional<DataTreeCandidateNode> getModifiedChild(final PathArgument identifier) {
         switch (mod.getModificationType()) {
             case APPEARED:
             case DISAPPEARED:
             case SUBTREE_MODIFIED:
-                final Optional<ModifiedNode> childMod = mod.getChild(identifier);
-                if (childMod.isPresent()) {
-                    return childNode(childMod.get());
-                }
-                return null;
+                return mod.getChild(identifier).map(this::childNode);
             case UNMODIFIED:
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return null;
+                    return Optional.empty();
                 }
-                final Optional<NormalizedNode<?, ?>> maybeChild = getContainer(newMeta != null ? newMeta : oldMeta)
-                        .getChild(identifier);
-                return maybeChild.isPresent() ? DataTreeCandidateNodes.unmodified(maybeChild.get()) : null;
+                return getContainer(newMeta != null ? newMeta : oldMeta).getChild(identifier)
+                        .map(DataTreeCandidateNodes::unmodified);
             case DELETE:
             case WRITE:
                 if (!canHaveChildren(oldMeta, newMeta)) {
-                    return null;
+                    return Optional.empty();
                 }
                 return DataTreeCandidateNodes.containerDelta(getContainer(oldMeta), getContainer(newMeta), identifier);
             default:
