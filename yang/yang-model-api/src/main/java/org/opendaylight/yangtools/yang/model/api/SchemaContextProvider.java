@@ -7,8 +7,9 @@
  */
 package org.opendaylight.yangtools.yang.model.api;
 
+// FIXME: document this API contract
 public interface SchemaContextProvider {
 
+    // FIXME: 4.0.0: This needs to return @NonNull
     SchemaContext getSchemaContext();
-
 }
