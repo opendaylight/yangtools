@@ -146,10 +146,7 @@ public interface YangParser {
      * @return Effective module statements indexed by their QNameModule.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
-    // FIXME: 3.0.0: Make this method non-default
-    default Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException {
-        throw new UnsupportedOperationException(getClass() + " does not implement buildEffectiveModel()");
-    }
+    Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException;
 
     /**
      * Build effective {@link SchemaContext}.
