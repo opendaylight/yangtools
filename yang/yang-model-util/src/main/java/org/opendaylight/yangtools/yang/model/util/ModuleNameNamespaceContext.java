@@ -63,11 +63,6 @@ public final class ModuleNameNamespaceContext implements YangNamespaceContext, S
     }
 
     @Override
-    public Optional<QNameModule> getDefaultNamespace() {
-        throw new IllegalStateException("No default namespace is available");
-    }
-
-    @Override
     public Optional<QNameModule> findNamespaceForPrefix(final String prefix) {
         return schemaContext.findModules(prefix).stream().findFirst().map(Module::getQNameModule);
     }
