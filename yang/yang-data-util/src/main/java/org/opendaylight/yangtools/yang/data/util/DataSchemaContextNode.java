@@ -33,7 +33,6 @@ import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
-import org.opendaylight.yangtools.yang.model.util.EffectiveAugmentationSchema;
 
 /**
  * Schema derived data providing necessary information for mapping between
@@ -145,21 +144,6 @@ public abstract class DataSchemaContextNode<T extends PathArgument> implements I
     public static AugmentationIdentifier augmentationIdentifierFrom(final AugmentationSchemaNode schema) {
         return new AugmentationIdentifier(schema.getChildNodes().stream().map(DataSchemaNode::getQName)
             .collect(Collectors.toSet()));
-    }
-
-    /**
-     * Returns an AugmentationSchemaNode as effective in a parent node.
-     *
-     * @param schema Augmentation schema
-     * @param parent Parent schema
-     * @return Adjusted Augmentation schema
-     * @throws NullPointerException if any of the arguments is null
-     * @deprecated Use {@link EffectiveAugmentationSchema#create(AugmentationSchemaNode, DataNodeContainer)} instead.
-     */
-    @Deprecated
-    public static AugmentationSchemaNode augmentationProxy(final AugmentationSchemaNode schema,
-            final DataNodeContainer parent) {
-        return EffectiveAugmentationSchema.create(schema, parent);
     }
 
     /**
