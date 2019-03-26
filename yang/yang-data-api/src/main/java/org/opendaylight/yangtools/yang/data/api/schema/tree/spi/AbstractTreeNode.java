@@ -11,12 +11,14 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
  * A very basic data tree node. Contains some versioned data.
  */
+@NonNullByDefault
 abstract class AbstractTreeNode implements TreeNode {
     private final NormalizedNode<?, ?> data;
     private final Version version;
