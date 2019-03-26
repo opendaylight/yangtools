@@ -7,22 +7,23 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.model.api.RevisionAwareXPath;
 
 /**
- * The <code>helper</code> implementation of Instance Rewision Aware XPath
- * interface.
+ * The <code>helper</code> implementation of Instance Revision Aware XPath interface.
  *
  * @see RevisionAwareXPath
  */
 public class RevisionAwareXPathImpl implements RevisionAwareXPath {
-
-    private final String xpath;
+    private final @NonNull String xpath;
     private final boolean absolute;
 
     public RevisionAwareXPathImpl(final String xpath, final boolean absolute) {
-        this.xpath = xpath;
+        this.xpath = requireNonNull(xpath);
         this.absolute = absolute;
     }
 
@@ -56,7 +57,7 @@ public class RevisionAwareXPathImpl implements RevisionAwareXPath {
     }
 
     @Override
-    public String toString() {
+    public String getOriginalString() {
         return xpath;
     }
 }
