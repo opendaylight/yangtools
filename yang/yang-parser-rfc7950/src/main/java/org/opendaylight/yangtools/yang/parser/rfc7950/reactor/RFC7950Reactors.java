@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.YangVersion;
 import org.opendaylight.yangtools.yang.model.api.meta.StatementDefinition;
 import org.opendaylight.yangtools.yang.parser.openconfig.stmt.OpenConfigVersionSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.ChildSchemaNodeNamespace;
-import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.SchemaNodeIdentifierBuildNamespace;
 import org.opendaylight.yangtools.yang.parser.rfc7950.namespace.URIStringToImportPrefix;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.action.ActionStatementSupport;
 import org.opendaylight.yangtools.yang.parser.rfc7950.stmt.anydata.AnydataStatementSupport;
@@ -221,7 +220,6 @@ public final class RFC7950Reactors {
             .addSupport(ArgumentStatementSupport.getInstance())
             .addSupport(ExtensionStatementSupport.getInstance())
             .addSupport(new ChildSchemaNodeNamespace<>())
-            .addSupport(new SchemaNodeIdentifierBuildNamespace())
             .addSupport(ExtensionNamespace.BEHAVIOUR)
             .addSupport(TypedefStatementSupport.getInstance())
             .addSupport(TypeNamespace.BEHAVIOUR)
