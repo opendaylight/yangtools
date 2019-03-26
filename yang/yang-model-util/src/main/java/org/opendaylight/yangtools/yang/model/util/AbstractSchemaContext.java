@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ExtensionDefinition;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
@@ -233,16 +232,6 @@ public abstract class AbstractSchemaContext implements SchemaContext {
 
     @Override
     public Set<UsesNode> getUses() {
-        return Collections.emptySet();
-    }
-
-    @Override
-    public boolean isPresenceContainer() {
-        return false;
-    }
-
-    @Override
-    public Set<AugmentationSchemaNode> getAvailableAugmentations() {
         return Collections.emptySet();
     }
 }

@@ -8,10 +8,8 @@
 package org.opendaylight.yangtools.yang.model.api;
 
 import com.google.common.annotations.Beta;
-import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -22,16 +20,12 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.common.Revision;
 
 /**
- * The interface represents static view of compiled yang files,
- * contains the methods for obtaining all the top level context
- * data (data from all modules) like YANG notifications, extensions,
- * operations...
- * Instances MUST be immutable and thus usage in multi threaded
- * environment is safe.
+ * The interface represents static view of compiled yang files, contains the methods for obtaining all the top level
+ * context data (data from all modules) like YANG notifications, extensions, operations...
+ * Instances MUST be immutable and thus usage in multi threaded environment is safe.
  */
-// FIXME: 3.0.0: ContainerSchemaNode is far too broad. A combination of DataNodeContainer, NotificationNodeContainer
-//               and possibly DataSchemaNode would reflect SchemaContext traits better.
-public interface SchemaContext extends ContainerSchemaNode, Immutable {
+// FIXME: 4.0.0: DataSchemaNode is probably too broad. Reconsider it and impacts on downstreams
+public interface SchemaContext extends DataSchemaNode, DataNodeContainer, NotificationNodeContainer, Immutable {
     /**
      * QName of NETCONF top-level data node.
      */
@@ -183,11 +177,6 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     }
 
     @Override
-    default Set<ActionDefinition> getActions() {
-        return ImmutableSet.of();
-    }
-
-    @Override
     default Optional<String> getDescription() {
         return Optional.empty();
     }
@@ -196,12 +185,6 @@ public interface SchemaContext extends ContainerSchemaNode, Immutable {
     default Optional<String> getReference() {
         return Optional.empty();
     }
-
-    @Override
-    default Collection<MustDefinition> getMustConstraints() {
-        return ImmutableSet.of();
-    }
-
     @Override
     default Optional<RevisionAwareXPath> getWhenCondition() {
         return Optional.empty();

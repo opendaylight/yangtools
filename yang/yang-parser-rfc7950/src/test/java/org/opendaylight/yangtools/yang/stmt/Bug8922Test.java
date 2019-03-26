@@ -40,7 +40,6 @@ public class Bug8922Test {
         assertNotNull(context);
         final SchemaNode findNode = findNode(context, qN("target"), qN("my-con"));
         assertNull(findNode);
-        assertTrue(context.getAvailableAugmentations().isEmpty());
     }
 
     private static SchemaNode findNode(final SchemaContext context, final QName... qnames) {
