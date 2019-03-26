@@ -8,5 +8,4 @@
 /**
  * Support package for semantics defined in RFC8040, most notably yang-data statement.
  */
-// FIXME: 2.0.0: this package should be an independent plugin
 package org.opendaylight.yangtools.rfc8040.parser;
