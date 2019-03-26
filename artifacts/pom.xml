@@ -205,12 +205,12 @@
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-api</artifactId>
-                <version>0.2.9-SNAPSHOT</version>
+                <version>0.3.9-SNAPSHOT</version>
             </dependency>
             <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
                 <artifactId>yang-xpath-impl</artifactId>
-                <version>0.2.9-SNAPSHOT</version>
+                <version>0.3.9-SNAPSHOT</version>
             </dependency>
 
             <dependency>
