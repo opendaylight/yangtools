@@ -134,9 +134,9 @@ public class AugmentTest {
         for (final AugmentationSchemaNode as : augmentations) {
             if (!as.getWhenCondition().isPresent()) {
                 augment3 = as;
-            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().get().toString())) {
+            } else if ("if:ifType='ds0'".equals(as.getWhenCondition().get().getOriginalString())) {
                 augment1 = as;
-            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().get().toString())) {
+            } else if ("if:ifType='ds2'".equals(as.getWhenCondition().get().getOriginalString())) {
                 augment2 = as;
             }
         }

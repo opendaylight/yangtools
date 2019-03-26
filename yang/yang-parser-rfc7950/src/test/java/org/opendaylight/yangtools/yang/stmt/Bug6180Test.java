@@ -72,7 +72,7 @@ public class Bug6180Test {
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
         final RevisionAwareXPath whenCondition = bar.getWhenCondition().get();
-        assertEquals("/foo != \"bar\"", whenCondition.toString());
+        assertEquals("/foo != \"bar\"", whenCondition.getOriginalString());
 
         final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());
@@ -90,7 +90,7 @@ public class Bug6180Test {
         assertTrue(dataNodeBar instanceof ContainerSchemaNode);
         final ContainerSchemaNode bar = (ContainerSchemaNode) dataNodeBar;
         final RevisionAwareXPath whenCondition = bar.getWhenCondition().get();
-        assertEquals("/foo != 'bar'", whenCondition.toString());
+        assertEquals("/foo != 'bar'", whenCondition.getOriginalString());
 
         final Set<TypeDefinition<?>> typeDefinitions = schemaContext.getTypeDefinitions();
         assertEquals(1, typeDefinitions.size());

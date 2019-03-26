@@ -83,6 +83,6 @@ final class MustEffectiveStatementImpl extends DeclaredEffectiveStatementBase<Re
 
     @Override
     public String toString() {
-        return xpath.toString();
+        return xpath.getOriginalString();
     }
 }
