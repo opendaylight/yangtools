@@ -83,15 +83,6 @@ public class CachedThreadPoolExecutor extends ThreadPoolExecutor {
         super.setRejectedExecutionHandler(rejectedTaskHandler);
     }
 
-    /**
-     * Constructor.
-     * @deprecated Please use {@link #CachedThreadPoolExecutor(int, int, String, Class)} instead.
-     */
-    @Deprecated
-    public CachedThreadPoolExecutor(final int maximumPoolSize, final int maximumQueueSize, final String threadPrefix) {
-        this(maximumPoolSize, maximumQueueSize, threadPrefix, CachedThreadPoolExecutor.class);
-    }
-
     @Override
     public void setRejectedExecutionHandler(final RejectedExecutionHandler handler) {
         rejectedTaskHandler.setDelegateRejectedExecutionHandler(requireNonNull(handler));
