@@ -236,7 +236,7 @@ public final class RFC7950Reactors {
             .addSupport(RequireInstanceStatementSupport.getInstance())
             .addVersionSpecificSupport(VERSION_1, BitStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, BitStatementRFC7950Support.getInstance())
-            .addSupport(PathStatementSupport.getInstance())
+            .addSupport(PathStatementSupport.strictInstance())
             .addVersionSpecificSupport(VERSION_1, EnumStatementRFC6020Support.getInstance())
             .addVersionSpecificSupport(VERSION_1_1, EnumStatementRFC7950Support.getInstance())
             .addSupport(LengthStatementSupport.getInstance())

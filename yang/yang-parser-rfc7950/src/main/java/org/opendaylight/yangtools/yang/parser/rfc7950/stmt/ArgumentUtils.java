@@ -122,7 +122,11 @@ public final class ArgumentUtils {
             LOG.warn("Argument \"{}\" is not valid XPath string at \"{}\"", path, ctx.getStatementSourceReference(), e);
         }
 
-        return new RevisionAwareXPathImpl(path, PATH_ABS.matcher(path).matches());
+        return new RevisionAwareXPathImpl(path, isAbsoluteXPath(path));
+    }
+
+    public static boolean isAbsoluteXPath(final String path) {
+        return PATH_ABS.matcher(path).matches();
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")

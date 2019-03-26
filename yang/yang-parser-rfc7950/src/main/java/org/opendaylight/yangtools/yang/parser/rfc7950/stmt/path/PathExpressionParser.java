@@ -9,7 +9,6 @@ package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.path;
 
 import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
-import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathLexer;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser;
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Absolute_pathContext;
@@ -32,10 +30,11 @@ import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Rel_path_ke
 import org.opendaylight.yangtools.antlrv4.code.gen.LeafRefPathParser.Relative_pathContext;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.UnqualifiedQName;
-import org.opendaylight.yangtools.yang.model.api.PathExpression.WithLocation;
+import org.opendaylight.yangtools.yang.model.api.PathExpression;
 import org.opendaylight.yangtools.yang.parser.rfc7950.antlr.SourceExceptionParser;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangBinaryOperator;
 import org.opendaylight.yangtools.yang.xpath.api.YangExpr;
@@ -49,30 +48,28 @@ import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath.Step;
 import org.opendaylight.yangtools.yang.xpath.api.YangPathExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangQNameExpr;
 import org.opendaylight.yangtools.yang.xpath.api.YangXPathAxis;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-final class AntlrPathExpression implements WithLocation {
+class PathExpressionParser {
+    static final class Lenient extends PathExpressionParser {
+        private static final Logger LOG = LoggerFactory.getLogger(Lenient.class);
+
+        @Override
+        PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
+            try {
+                return super.parseExpression(ctx, pathArg);
+            } catch (IllegalStateException | SourceException e) {
+                LOG.warn("Failed to parse expression '{}'", pathArg, e);
+                return new UnparsedPathExpression(pathArg, e);
+            }
+        }
+    }
+
     private static final YangFunctionCallExpr CURRENT_CALL = YangFunctionCallExpr.of(
         YangFunction.CURRENT.getIdentifier());
 
-    private final @NonNull YangLocationPath location;
-    private final @NonNull String originalString;
-
-    private AntlrPathExpression(final YangLocationPath location, final String originalString) {
-        this.location = requireNonNull(location);
-        this.originalString = requireNonNull(originalString);
-    }
-
-    @Override
-    public YangLocationPath getLocation() {
-        return location;
-    }
-
-    @Override
-    public String getOriginalString() {
-        return originalString;
-    }
-
-    static AntlrPathExpression parse(final StmtContext<?, ?, ?> ctx, final String pathArg) {
+    PathExpression parseExpression(final StmtContext<?, ?, ?> ctx, final String pathArg) {
         final LeafRefPathLexer lexer = new LeafRefPathLexer(CharStreams.fromString(pathArg));
         final LeafRefPathParser parser = new LeafRefPathParser(new CommonTokenStream(lexer));
         final Path_argContext path = SourceExceptionParser.parse(lexer, parser, parser::path_arg,
@@ -88,7 +85,7 @@ final class AntlrPathExpression implements WithLocation {
             throw new IllegalStateException("Unsupported child " + childPath);
         }
 
-        return new AntlrPathExpression(location, pathArg);
+        return new ParsedPathExpression(location, pathArg);
     }
 
     private static Absolute parseAbsolute(final StmtContext<?, ?, ?> ctx, final String pathArg,
