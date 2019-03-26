@@ -28,7 +28,7 @@ public class XPathParserTest {
     private static final YangNamespaceContext CONTEXT = new BiMapYangNamespaceContext(ImmutableBiMap.of(
         "def", DEFNS,
         "foo", QNameModule.create(URI.create("foo")),
-        "bar", QNameModule.create(URI.create("bar"))), DEFNS);
+        "bar", QNameModule.create(URI.create("bar"))));
 
     private @Nullable AntlrXPathParser parser;
 
