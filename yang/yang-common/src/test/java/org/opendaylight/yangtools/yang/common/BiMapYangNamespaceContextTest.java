@@ -27,25 +27,15 @@ public class BiMapYangNamespaceContextTest {
     private static final QNameModule BAZ = QNameModule.create(URI.create("baz"));
 
     private final BiMapYangNamespaceContext context = new BiMapYangNamespaceContext(
-        ImmutableBiMap.of("foo", FOO, "bar", BAR), FOO);
-
-    @Test(expected = IllegalArgumentException.class)
-    public void testUnmappedDefault() {
-        new BiMapYangNamespaceContext(ImmutableBiMap.of(), FOO);
-    }
-
-    @Test
-    public void testDefaultNamespace() {
-        assertEquals(Optional.of(FOO), context.getDefaultNamespace());
-    }
+        ImmutableBiMap.of("foo", FOO, "bar", BAR));
 
     @Test
     public void testEquals() {
         assertTrue(context.equals(context));
-        assertTrue(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO, "bar", BAR), FOO)));
+        assertTrue(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO, "bar", BAR))));
         assertFalse(context.equals(null));
-        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO), FOO)));
-        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("bar", BAR), BAR)));
+        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("foo", FOO))));
+        assertFalse(context.equals(new BiMapYangNamespaceContext(ImmutableBiMap.of("bar", BAR))));
     }
 
     @Test
@@ -82,7 +72,6 @@ public class BiMapYangNamespaceContextTest {
 
     @Test
     public void testCreateQName() {
-        assertEquals(QName.create(FOO, "foo"), context.createQName("foo"));
         assertEquals(QName.create(FOO, "some"), context.createQName("foo", "some"));
     }
 }
