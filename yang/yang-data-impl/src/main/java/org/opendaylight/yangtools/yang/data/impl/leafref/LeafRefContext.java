@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
-// FIXME: 3.0.0 hide this class
+// FIXME: 4.0.0 hide this class
 public final class LeafRefContext implements SchemaContextProvider {
 
     private final QName currentNodeQName;
