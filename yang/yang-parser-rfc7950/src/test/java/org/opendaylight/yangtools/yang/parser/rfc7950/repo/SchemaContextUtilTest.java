@@ -382,28 +382,14 @@ public class SchemaContextUtilTest {
         assertEquals(myModule, foundModule);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findParentModuleIllegalArgumentTest() {
-
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        SchemaContextUtil.findParentModule(mockContext, null);
-
+        SchemaContextUtil.findParentModule(mock(SchemaContext.class), null);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test(expected = NullPointerException.class)
     public void findParentModuleIllegalArgumentTest2() {
-
-        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
-        SchemaContextUtil.findParentModule(null, mockSchemaNode);
-
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void findParentModuleIllegalStateTest() {
-        final SchemaContext mockContext = mock(SchemaContext.class);
-        final SchemaNode mockSchemaNode = mock(SchemaNode.class);
-        when(mockSchemaNode.getPath()).thenReturn(null);
-        SchemaContextUtil.findParentModule(mockContext, mockSchemaNode);
+        SchemaContextUtil.findParentModule(null, mock(SchemaNode.class));
     }
 
     @Test(expected = IllegalArgumentException.class)
