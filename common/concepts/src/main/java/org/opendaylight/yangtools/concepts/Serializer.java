@@ -7,9 +7,9 @@
  */
 package org.opendaylight.yangtools.concepts;
 
-// FIXME: 3.0.0: redesign/deprecate this class?
-//               - null should not be allowed as an input or return
-//               - we need error reporting
+import org.eclipse.jdt.annotation.NonNull;
+
+// FIXME: 4.0.0: we need error reporting, is this class even useful?
 public interface Serializer<P, I> {
-    P serialize(I input);
+    @NonNull P serialize(@NonNull I input);
 }

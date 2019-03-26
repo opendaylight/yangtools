@@ -7,13 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.api.codec;
 
-import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Codec;
 
-public interface StringCodec<T> extends Codec<T,String> {
-    @Override
-    T serialize(@NonNull String data);
+public interface StringCodec<T> extends Codec<T, String> {
 
-    @Override
-    String deserialize(@NonNull T data);
 }
