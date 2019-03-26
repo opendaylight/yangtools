@@ -337,9 +337,6 @@ public final class SchemaContextUtil {
     }
 
     private static SchemaNode findNodeInModule(final Module module, final Iterable<QName> path) {
-        checkArgument(module != null, "Parent reference cannot be NULL");
-        checkArgument(path != null, "Path reference cannot be NULL");
-
         if (!path.iterator().hasNext()) {
             LOG.debug("No node matching {} found in node {}", path, module);
             return null;
@@ -382,13 +379,9 @@ public final class SchemaContextUtil {
         }
 
         return foundNode;
-
     }
 
     private static SchemaNode findNodeIn(final SchemaNode parent, final Iterable<QName> path) {
-        checkArgument(parent != null, "Parent reference cannot be NULL");
-        checkArgument(path != null, "Path reference cannot be NULL");
-
         if (!path.iterator().hasNext()) {
             LOG.debug("No node matching {} found in node {}", path, parent);
             return null;
