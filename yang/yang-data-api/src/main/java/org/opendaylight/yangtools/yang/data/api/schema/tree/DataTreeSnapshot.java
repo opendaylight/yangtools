@@ -12,12 +12,13 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
 
 /**
  * Read-only snapshot of a {@link DataTree}. The snapshot is stable and isolated, e.g. data tree changes occurring after
  * the snapshot has been taken are not visible through the snapshot.
  */
-public interface DataTreeSnapshot {
+public interface DataTreeSnapshot extends SchemaContextProvider {
     /**
      * Read a particular node from the snapshot.
      *
@@ -34,14 +35,6 @@ public interface DataTreeSnapshot {
      */
     DataTreeModification newModification();
 
-    /**
-     * Return the current {@link SchemaContext}, which is being used for operations.
-     *
-     * @return Current schema context.
-     */
-    // FIXME: 3.0.0: This method provides a strong tie to yang.model.api. It either needs to be removed or inherited
-    //               by extending SchemaContextProvider. This strictly is an implementation detail.
-    default @NonNull SchemaContext getSchemaContext() {
-        throw new UnsupportedOperationException("Not implemented by  " + getClass());
-    }
+    @Override
+    @NonNull SchemaContext getSchemaContext();
 }
