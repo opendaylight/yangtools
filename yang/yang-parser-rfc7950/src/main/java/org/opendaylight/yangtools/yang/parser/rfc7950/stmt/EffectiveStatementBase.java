@@ -96,19 +96,6 @@ public abstract class EffectiveStatementBase<A, D extends DeclaredStatement<A>> 
         return substatements;
     }
 
-    /**
-     * Find first substatement of specified type.
-     *
-     * @param type Requested type
-     * @return First matching substatement, or null if no match is found.
-     *
-     * @deprecated Use {@link #findFirstEffectiveSubstatement(Class)} instead.
-     */
-    @Deprecated
-    public final <S extends EffectiveStatement<?, ?>> S firstEffective(final Class<S> type) {
-        return findFirstEffectiveSubstatement(type).orElse(null);
-    }
-
     protected final <S extends SchemaNode> S firstSchemaNode(final Class<S> type) {
         return substatements.stream().filter(type::isInstance).findFirst().map(type::cast).orElse(null);
     }

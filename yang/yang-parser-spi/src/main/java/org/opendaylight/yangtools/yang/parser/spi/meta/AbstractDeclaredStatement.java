@@ -41,18 +41,6 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
             StmtContext::buildDeclared));
     }
 
-    /**
-     * Find first declared substatement of a particular type.
-     *
-     * @param type {@link DeclaredStatement} type
-     * @return First effective substatement, or null if no match is found.
-     * @deprecated Use {@link #findFirstDeclaredSubstatement(Class)} instead.
-     */
-    @Deprecated
-    protected final <S extends DeclaredStatement<?>> S firstDeclared(final Class<S> type) {
-        return findFirstDeclaredSubstatement(type).orElse(null);
-    }
-
     @Override
     public String rawArgument() {
         return rawArgument;
@@ -76,19 +64,5 @@ public abstract class AbstractDeclaredStatement<A> implements DeclaredStatement<
     @Override
     public StatementSource getStatementSource() {
         return source;
-    }
-
-    /**
-     * Returns collection of explicitly declared child statements, while preserving its original ordering from original
-     * source.
-     *
-     * @param type {@link DeclaredStatement} type
-     * @return Collection of statements, which were explicitly declared in source of model.
-     * @throws NullPointerException if {@code type} is null
-     * @deprecated Use {@link #declaredSubstatements(Class)} instead.
-     */
-    @Deprecated
-    protected final <S extends DeclaredStatement<?>> Collection<? extends S> allDeclared(final Class<S> type) {
-        return declaredSubstatements(type);
     }
 }
