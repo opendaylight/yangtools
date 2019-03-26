@@ -82,9 +82,7 @@ public class EffectiveSchemaContextTest {
         assertFalse(schemaContext.isAugmenting());
         assertFalse(schemaContext.isAddedByUses());
         assertFalse(schemaContext.isConfiguration());
-        assertFalse(schemaContext.isPresenceContainer());
         assertFalse(schemaContext.getWhenCondition().isPresent());
-        assertEquals(0, schemaContext.getMustConstraints().size());
         assertFalse(schemaContext.getDescription().isPresent());
         assertFalse(schemaContext.getReference().isPresent());
         assertEquals(SchemaContext.NAME, schemaContext.getQName());
@@ -92,8 +90,6 @@ public class EffectiveSchemaContextTest {
         assertEquals(Status.CURRENT, schemaContext.getStatus());
         assertNotNull(schemaContext.getUses());
         assertTrue(schemaContext.getUses().isEmpty());
-        assertNotNull(schemaContext.getAvailableAugmentations());
-        assertTrue(schemaContext.getAvailableAugmentations().isEmpty());
 
         Module fooModule = schemaContext.findModule("foo", Revision.of("2016-09-21")).get();
         assertEquals(3, schemaContext.getModules().size());

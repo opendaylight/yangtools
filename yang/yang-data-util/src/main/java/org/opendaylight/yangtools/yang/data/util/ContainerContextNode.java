@@ -9,11 +9,20 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 final class ContainerContextNode extends DataContainerContextNode<NodeIdentifier> {
-
-    protected ContainerContextNode(final ContainerSchemaNode schema) {
-        super(NodeIdentifier.create(schema.getQName()), schema, schema);
+    private ContainerContextNode(final DataNodeContainer schema, final DataSchemaNode node) {
+        super(NodeIdentifier.create(node.getQName()), schema, node);
     }
 
+    ContainerContextNode(final ContainerSchemaNode schema) {
+        this(schema, schema);
+    }
+
+    ContainerContextNode(final SchemaContext schema) {
+        this(schema, schema);
+    }
 }

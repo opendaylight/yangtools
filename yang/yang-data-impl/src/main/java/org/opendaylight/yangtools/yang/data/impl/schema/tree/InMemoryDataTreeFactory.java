@@ -7,7 +7,8 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema.tree;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -79,33 +80,32 @@ public final class InMemoryDataTreeFactory implements DataTreeFactory {
             final YangInstanceIdentifier rootPath) {
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(schemaContext);
         final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(rootPath);
-        Preconditions.checkArgument(rootContextNode != null, "Failed to find root %s in schema context", rootPath);
+        checkArgument(rootContextNode != null, "Failed to find root %s in schema context", rootPath);
 
         final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
-        Preconditions.checkArgument(rootSchemaNode instanceof DataNodeContainer,
-            "Root %s resolves to non-container type %s", rootPath, rootSchemaNode);
+        checkArgument(rootSchemaNode instanceof DataNodeContainer, "Root %s resolves to non-container type %s",
+            rootPath, rootSchemaNode);
         return rootSchemaNode;
     }
 
     private static NormalizedNode<?, ?> createRoot(final DataNodeContainer schemaNode,
             final YangInstanceIdentifier path) {
         if (path.isEmpty()) {
-            Preconditions.checkArgument(schemaNode instanceof ContainerSchemaNode,
+            checkArgument(schemaNode instanceof ContainerSchemaNode || schemaNode instanceof SchemaContext,
                 "Conceptual tree root has to be a container, not %s", schemaNode);
             return ROOT_CONTAINER;
         }
 
         final PathArgument arg = path.getLastPathArgument();
         if (schemaNode instanceof ContainerSchemaNode) {
-            Preconditions.checkArgument(arg instanceof NodeIdentifier, "Mismatched container %s path %s", schemaNode,
-                path);
+            checkArgument(arg instanceof NodeIdentifier, "Mismatched container %s path %s", schemaNode, path);
             return ImmutableContainerNodeBuilder.create().withNodeIdentifier((NodeIdentifier) arg).build();
         } else if (schemaNode instanceof ListSchemaNode) {
             // This can either be a top-level list or its individual entry
             if (arg instanceof NodeIdentifierWithPredicates) {
                 return ImmutableNodes.mapEntryBuilder().withNodeIdentifier((NodeIdentifierWithPredicates) arg).build();
             }
-            Preconditions.checkArgument(arg instanceof NodeIdentifier, "Mismatched list %s path %s", schemaNode, path);
+            checkArgument(arg instanceof NodeIdentifier, "Mismatched list %s path %s", schemaNode, path);
             return ImmutableNodes.mapNodeBuilder().withNodeIdentifier((NodeIdentifier) arg).build();
         } else {
             throw new IllegalArgumentException("Unsupported root schema " + schemaNode);
