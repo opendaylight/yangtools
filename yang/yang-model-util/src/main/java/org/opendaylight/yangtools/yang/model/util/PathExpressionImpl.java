@@ -7,11 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.model.util;
 
-import static java.util.Objects.requireNonNull;
-
-import com.google.common.base.MoreObjects;
+import com.google.common.base.MoreObjects.ToStringHelper;
 import org.eclipse.jdt.annotation.NonNullByDefault;
-import org.opendaylight.yangtools.yang.model.api.PathExpression;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.xpath.api.YangLocationPath;
 
 /**
  * A simple XPathExpression implementation.
@@ -21,18 +20,20 @@ import org.opendaylight.yangtools.yang.model.api.PathExpression;
  */
 @Deprecated
 @NonNullByDefault
-public final class PathExpressionImpl implements PathExpression {
-    private final String originalString;
+public final class PathExpressionImpl extends AbstractPathExpression {
+    private final @Nullable YangLocationPath location;
     private final boolean absolute;
 
     public PathExpressionImpl(final String xpath, final boolean absolute) {
-        this.originalString = requireNonNull(xpath);
+        super(xpath);
         this.absolute = absolute;
+        this.location = null;
     }
 
-    @Override
-    public String getOriginalString() {
-        return originalString;
+    public PathExpressionImpl(final String xpath, final YangLocationPath location) {
+        super(xpath);
+        this.absolute = location.isAbsolute();
+        this.location = location;
     }
 
     @Override
@@ -41,8 +42,16 @@ public final class PathExpressionImpl implements PathExpression {
     }
 
     @Override
-    public String toString() {
-        return MoreObjects.toStringHelper(this).add("absolute", absolute).add("originalString", originalString)
-                .toString();
+    public YangLocationPath getLocation() {
+        final YangLocationPath loc = location;
+        if (loc == null) {
+            throw new UnsupportedOperationException("Location has not been provided");
+        }
+        return loc;
+    }
+
+    @Override
+    protected ToStringHelper addToStringAttributes(final ToStringHelper helper) {
+        return super.addToStringAttributes(helper.add("absolute", absolute).add("location", location));
     }
 }
