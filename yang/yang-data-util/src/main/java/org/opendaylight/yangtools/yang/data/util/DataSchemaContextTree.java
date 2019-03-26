@@ -24,7 +24,7 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
  *
  * @author Robert Varga
  */
-// FIXME: 3.0.0: @NonNullByDefault
+// FIXME: 4.0.0: @NonNullByDefault
 public final class DataSchemaContextTree {
     private static final LoadingCache<SchemaContext, DataSchemaContextTree> TREES = CacheBuilder.newBuilder()
             .weakKeys().weakValues().build(new CacheLoader<SchemaContext, DataSchemaContextTree>() {
