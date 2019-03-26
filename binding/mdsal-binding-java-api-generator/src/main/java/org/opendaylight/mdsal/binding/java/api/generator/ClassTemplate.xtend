@@ -22,7 +22,6 @@ import java.util.Base64;
 import java.util.Collections
 import java.util.List
 import java.util.Map
-import java.util.Objects
 import java.util.regex.Pattern
 import org.opendaylight.mdsal.binding.model.api.ConcreteType
 import org.opendaylight.mdsal.binding.model.api.Constant
@@ -224,7 +223,7 @@ class ClassTemplate extends BaseTemplate {
          * consequence of how this code is structured.
          */
         IF genTO.typedef && !allProperties.empty && allProperties.size == 1 && allProperties.get(0).name.equals("value")»
-            «Objects.importedName».requireNonNull(_value, "Supplied value may not be null");
+            «CodeHelpers.importedName».requireValue(_value);
             «genPatternEnforcer("_value")»
         «ENDIF»
 
