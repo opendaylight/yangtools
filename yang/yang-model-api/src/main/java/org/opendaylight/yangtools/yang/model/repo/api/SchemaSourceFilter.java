@@ -25,11 +25,11 @@ public interface SchemaSourceFilter {
      * A {@link SchemaSourceFilter} which accepts any schema source it is presented with.
      */
     @NonNull SchemaSourceFilter ALWAYS_ACCEPT = new SchemaSourceFilter() {
-        private final Iterable<Class<? extends SchemaSourceRepresentation>> representations =
+        private final ImmutableList<Class<? extends SchemaSourceRepresentation>> representations =
                 ImmutableList.of(SchemaSourceRepresentation.class);
 
         @Override
-        public Iterable<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
+        public ImmutableList<Class<? extends SchemaSourceRepresentation>> supportedRepresentations() {
             return representations;
         }
 
@@ -57,6 +57,5 @@ public interface SchemaSourceFilter {
      * @return Promise of a filtering decision. The result should be {@link Boolean#TRUE}
      *         if the source is acceptable.
      */
-    // FIXME: 3.0.0: require FluentFuture
     ListenableFuture<Boolean> apply(SchemaSourceRepresentation schemaSource);
 }

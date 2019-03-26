@@ -45,6 +45,5 @@ public interface SchemaSourceProvider<T extends SchemaSourceRepresentation> {
      * @param sourceIdentifier source identifier
      * @return future source representation, if supplied YANG module is available
      */
-    // FIXME: 3.0.0: return FluentFuture
     ListenableFuture<? extends T> getSource(SourceIdentifier sourceIdentifier);
 }
