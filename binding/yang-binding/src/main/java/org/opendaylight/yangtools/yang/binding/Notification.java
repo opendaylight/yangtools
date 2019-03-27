@@ -8,7 +8,9 @@
 package org.opendaylight.yangtools.yang.binding;
 
 /**
- * Marker interface for YANG-defined notifications.
+ * Marker interface for YANG-defined notifications. This interface should never be implemented directly. A concrete
+ * Notification and its implementations may choose to also extend/implement the {@link EventInstantAware} interface.
+ * In case they do, {@link EventInstantAware#eventInstant()} returns the time when this notification was generated.
  */
 public interface Notification extends DataContainer {
 
