@@ -12,7 +12,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
 import java.util.ArrayDeque;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -56,7 +55,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
          * @param listener the listener to invoke
          * @param notifications notifications to send
          */
-        void invokeListener(@NonNull L listener, @NonNull Collection<? extends N> notifications);
+        void invokeListener(@NonNull L listener, @NonNull ImmutableList<N> notifications);
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(QueuedNotificationManager.class);
@@ -349,7 +348,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
             try {
                 // Loop until we've dispatched all the notifications in the queue.
                 while (true) {
-                    final @NonNull Collection<N> notifications;
+                    final @NonNull ImmutableList<N> notifications;
 
                     lock.lock();
                     try {
@@ -377,7 +376,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
         }
 
         @SuppressWarnings("checkstyle:illegalCatch")
-        private void invokeListener(final @NonNull Collection<N> notifications) {
+        private void invokeListener(final @NonNull ImmutableList<N> notifications) {
             LOG.debug("{}: Invoking listener {} with notification: {}", name, listenerKey, notifications);
             try {
                 listenerInvoker.invokeListener(listenerKey.getListener(), notifications);

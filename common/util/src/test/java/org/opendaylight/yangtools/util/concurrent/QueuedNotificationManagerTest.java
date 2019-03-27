@@ -14,6 +14,7 @@ import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 
 import com.google.common.base.Stopwatch;
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.Uninterruptibles;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -131,7 +132,7 @@ public class QueuedNotificationManagerTest {
 
     static class TestNotifier<N> implements BatchedInvoker<TestListener<N>, N> {
         @Override
-        public void invokeListener(final TestListener<N> listener, final Collection<? extends N> notifications) {
+        public void invokeListener(final TestListener<N> listener, final ImmutableList<N> notifications) {
             listener.onNotification(notifications);
         }
     }
