@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.Closeable;
 import java.io.Flushable;
 import java.io.IOException;
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.ExtensibleObject;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -51,7 +52,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * </li>
  *
  * <li>{@code leaf} - Leaf node start event is emitted using {@link #startLeafNode(NodeIdentifier)}. Leaf node values
- * need to be emitted through {@link #nodeValue(Object)}.
+ * need to be emitted through {@link #scalarValue(Object)}.
  * </li>
  *
  * <li>{@code leaf-list} - Leaf list start is emitted using {@link #startLeafSet(NodeIdentifier, int)}. Individual
@@ -311,7 +312,21 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      *                               node.
      * @throws IOException if an underlying IO error occurs
      */
+    // FIXME: 4.0.0: this method should live in a separate NormalizedNodeStreamWriterExtension
     void startAnyxmlNode(NodeIdentifier name) throws IOException;
+
+    /**
+     * Set the value of current anyxml node. This call is only valid within the context in which an anyxml node is open.
+     *
+     * @param value node value
+     * @throws NullPointerException if the argument is null
+     * @throws IllegalArgumentException if the argument does not represents a valid value
+     * @throws IllegalStateException if an anyxml node is not open or if it's value has already been set and this
+     *                               implementation does not allow resetting the value.
+     * @throws IOException if an underlying IO error occurs
+     */
+    // FIXME: 4.0.0: this method should live in a separate NormalizedNodeStreamWriterExtension
+    void domSourceValue(DOMSource value) throws IOException;
 
     /**
      * Emits start of new YANG-modeled anyxml node. Valid sub-events are:
@@ -356,7 +371,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
 
     /**
      * Set the value of current node. This call is only valid within the context in which a value-bearing node is open,
-     * such as a LeafNode, LeafSetEntryNode or AnyxmlNode.
+     * such as a LeafNode, LeafSetEntryNode.
      *
      * @param value node value, must be effectively immutable
      * @throws NullPointerException if the argument is null
@@ -364,7 +379,7 @@ public interface NormalizedNodeStreamWriter extends Closeable, Flushable,
      * @throws IllegalStateException if a value-bearing node is not open or if it's value has already been set and this
      *                               implementation does not allow resetting the value.
      */
-    void nodeValue(@NonNull Object value) throws IOException;
+    void scalarValue(@NonNull Object value) throws IOException;
 
     @Override
     void close() throws IOException;

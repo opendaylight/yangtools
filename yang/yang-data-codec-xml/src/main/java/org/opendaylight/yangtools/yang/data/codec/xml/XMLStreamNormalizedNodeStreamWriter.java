@@ -7,7 +7,6 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
@@ -123,12 +122,9 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         }
     }
 
-    final void anyxmlValue(final Object value) throws IOException {
-        if (value != null) {
-            checkArgument(value instanceof DOMSource, "AnyXML value must be DOMSource, not %s", value);
-            final DOMSource domSource = (DOMSource) value;
+    final void anyxmlValue(final DOMSource domSource) throws IOException {
+        if (domSource != null) {
             final Node domNode = requireNonNull(domSource.getNode());
-
             try {
                 facade.writeStreamReader(new DOMSourceXMLStreamReader(domSource));
             } catch (XMLStreamException e) {

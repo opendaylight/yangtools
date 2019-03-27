@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.gson;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 import static org.w3c.dom.Node.ELEMENT_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
@@ -312,17 +313,18 @@ public abstract class JSONNormalizedNodeStreamWriter implements NormalizedNodeSt
     }
 
     @Override
-    public void nodeValue(final Object value) throws IOException {
+    public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        if (current instanceof TypedDataSchemaNode) {
-            final JSONCodec<?> codec = codecs.codecFor((TypedDataSchemaNode) current);
-            writeValue(value, codec);
-        } else if (current instanceof AnyXmlSchemaNode) {
-            // FIXME: should have a codec based on this :)
-            writeAnyXmlValue((DOMSource) value);
-        } else {
-            throw new IllegalStateException("Cannot emit scalar for " + current);
-        }
+        checkState(current instanceof TypedDataSchemaNode, "Cannot emit scalar %s for %s", value, current);
+        writeValue(value, codecs.codecFor((TypedDataSchemaNode) current));
+    }
+
+    @Override
+    public void domSourceValue(final DOMSource value) throws IOException {
+        final Object current = tracker.getParent();
+        checkState(current instanceof AnyXmlSchemaNode, "Cannot emit DOMSource %s for %s", value, current);
+        // FIXME: should have a codec based on this :)
+        writeAnyXmlValue(value);
     }
 
     @SuppressWarnings("unchecked")

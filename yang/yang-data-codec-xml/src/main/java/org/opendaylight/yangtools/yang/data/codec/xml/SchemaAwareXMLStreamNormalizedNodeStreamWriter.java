@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -127,15 +128,17 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     }
 
     @Override
-    public void nodeValue(final Object value) throws IOException {
+    public void scalarValue(final Object value) throws IOException {
         final Object current = tracker.getParent();
-        checkState(current instanceof LeafSchemaNode || current instanceof AnyXmlSchemaNode
-            || current instanceof LeafListSchemaNode, "Unexpected scala value %s with %s", value, current);
-        final SchemaNode schema = (SchemaNode) current;
-        if (current instanceof AnyXmlSchemaNode) {
-            anyxmlValue(value);
-        } else {
-            writeValue(value, schema);
-        }
+        checkState(current instanceof LeafSchemaNode || current instanceof LeafListSchemaNode,
+            "Unexpected scalar value %s with %s", value, current);
+        writeValue(value, (SchemaNode) current);
+    }
+
+    @Override
+    public void domSourceValue(final DOMSource value) throws IOException {
+        final Object current = tracker.getParent();
+        checkState(current instanceof AnyXmlSchemaNode, "Unexpected scala value %s with %s", value, current);
+        anyxmlValue(value);
     }
 }

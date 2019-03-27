@@ -14,6 +14,7 @@ import com.google.common.base.Strings;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.ArrayDeque;
 import java.util.Deque;
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -153,7 +154,11 @@ public final class LoggingNormalizedNodeStreamWriter implements NormalizedNodeSt
 
     @Override
     @SuppressFBWarnings("SLF4J_SIGN_ONLY_FORMAT")
-    public void nodeValue(final Object value) {
+    public void scalarValue(final Object value) {
         LOG.debug("{}({})={}", ind(), requireNonNull(value).getClass().getSimpleName(), value);
+    }
+
+    public void domSourceValue(final DOMSource value) {
+        scalarValue(value);
     }
 }

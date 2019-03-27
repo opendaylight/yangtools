@@ -135,7 +135,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeafList.getAttributes());
             }
-            writer.nodeValue(nodeAsLeafList.getValue());
+            writer.scalarValue(nodeAsLeafList.getValue());
             writer.endNode();
             return true;
         } else if (node instanceof LeafNode) {
@@ -144,7 +144,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeaf.getAttributes());
             }
-            writer.nodeValue(nodeAsLeaf.getValue());
+            writer.scalarValue(nodeAsLeaf.getValue());
             writer.endNode();
             return true;
         } else if (node instanceof AnyXmlNode) {
@@ -153,7 +153,7 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             if (writer instanceof NormalizedNodeStreamAttributeWriter) {
                 ((NormalizedNodeStreamAttributeWriter) writer).attributes(anyXmlNode.getAttributes());
             }
-            writer.nodeValue(anyXmlNode.getValue());
+            writer.domSourceValue(anyXmlNode.getValue());
             writer.endNode();
             return true;
         }

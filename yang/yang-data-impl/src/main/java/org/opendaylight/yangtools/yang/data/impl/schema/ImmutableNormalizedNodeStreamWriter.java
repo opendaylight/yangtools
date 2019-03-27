@@ -14,6 +14,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Deque;
+import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -360,7 +361,12 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    public void nodeValue(final Object value) {
+    public void scalarValue(final Object value) {
+        getCurrentScalar().withValue(value);
+    }
+
+    @Override
+    public void domSourceValue(final DOMSource value) {
         getCurrentScalar().withValue(value);
     }
 }

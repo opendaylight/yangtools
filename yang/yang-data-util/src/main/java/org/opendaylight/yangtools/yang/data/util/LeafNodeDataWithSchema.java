@@ -37,7 +37,7 @@ public class LeafNodeDataWithSchema extends SimpleNodeDataWithSchema<LeafSchemaN
                 ((NormalizedNodeStreamAttributeWriter) writer).attributes(attrs);
             }
         }
-        writer.nodeValue(getValue());
+        writer.scalarValue(getValue());
         writer.endNode();
     }
 }

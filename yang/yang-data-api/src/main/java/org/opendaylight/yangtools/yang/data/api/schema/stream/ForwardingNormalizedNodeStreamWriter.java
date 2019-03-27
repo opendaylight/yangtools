@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.api.schema.stream;
 import com.google.common.collect.ClassToInstanceMap;
 import com.google.common.collect.ForwardingObject;
 import java.io.IOException;
+import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -102,8 +103,13 @@ public abstract class ForwardingNormalizedNodeStreamWriter extends ForwardingObj
     }
 
     @Override
-    public void nodeValue(Object value) throws IOException {
-        delegate().nodeValue(value);
+    public void scalarValue(final Object value) throws IOException {
+        delegate().scalarValue(value);
+    }
+
+    @Override
+    public void domSourceValue(final DOMSource value) throws IOException {
+        delegate().domSourceValue(value);
     }
 
     @Override
