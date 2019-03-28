@@ -385,6 +385,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return Objects.hashCode(value);
     }
 
+    final Object writeReplace() {
+        return new YIDv1(this);
+    }
+
     // Static factories & helpers
 
     /**
@@ -527,6 +531,8 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
             return getNodeType().toString();
         }
+
+        abstract Object writeReplace();
     }
 
     /**
@@ -557,6 +563,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         public static NodeIdentifier create(final QName node) {
             return CACHE.getUnchecked(node);
         }
+
+        @Override
+        Object writeReplace() {
+            return new NIv1(this);
+        }
     }
 
     /**
@@ -567,6 +578,12 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         private static final long serialVersionUID = -4787195606494761540L;
 
         private final Map<QName, Object> keyValues;
+
+        // Exposed for NIPv1
+        NodeIdentifierWithPredicates(final Map<QName, Object> keyValues, final QName node) {
+            super(node);
+            this.keyValues = requireNonNull(keyValues);
+        }
 
         public NodeIdentifierWithPredicates(final QName node) {
             super(node);
@@ -580,13 +597,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         public NodeIdentifierWithPredicates(final QName node, final ImmutableOffsetMap<QName, Object> keyValues) {
-            super(node);
-            this.keyValues = requireNonNull(keyValues);
+            this(keyValues, node);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final SharedSingletonMap<QName, Object> keyValues) {
-            super(node);
-            this.keyValues = requireNonNull(keyValues);
+            this(keyValues, node);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
@@ -646,6 +661,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         public String toRelativeString(final PathArgument previous) {
             return super.toRelativeString(previous) + '[' + keyValues + ']';
         }
+
+        @Override
+        Object writeReplace() {
+            return new NIPv1(this);
+        }
     }
 
     /**
@@ -692,6 +712,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         @Override
         public String toRelativeString(final PathArgument previous) {
             return super.toRelativeString(previous) + '[' + value + ']';
+        }
+
+        @Override
+        Object writeReplace() {
+            return new NIVv1(this);
         }
     }
 
@@ -796,6 +821,10 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             } else {
                 return -1;
             }
+        }
+
+        private Object writeReplace() {
+            return new AIv1(this);
         }
     }
 
