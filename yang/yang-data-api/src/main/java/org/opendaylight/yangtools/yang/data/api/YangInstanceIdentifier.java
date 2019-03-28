@@ -568,6 +568,12 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
 
         private final Map<QName, Object> keyValues;
 
+        // Exposed for NIPv1
+        NodeIdentifierWithPredicates(final Map<QName, Object> keyValues, final QName node) {
+            super(node);
+            this.keyValues = requireNonNull(keyValues);
+        }
+
         public NodeIdentifierWithPredicates(final QName node) {
             super(node);
             this.keyValues = ImmutableMap.of();
@@ -580,13 +586,11 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         public NodeIdentifierWithPredicates(final QName node, final ImmutableOffsetMap<QName, Object> keyValues) {
-            super(node);
-            this.keyValues = requireNonNull(keyValues);
+            this(keyValues, node);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final SharedSingletonMap<QName, Object> keyValues) {
-            super(node);
-            this.keyValues = requireNonNull(keyValues);
+            this(keyValues, node);
         }
 
         public NodeIdentifierWithPredicates(final QName node, final QName key, final Object value) {
