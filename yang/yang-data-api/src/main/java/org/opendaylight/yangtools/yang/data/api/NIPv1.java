@@ -1,0 +1,52 @@
+/*
+ * Copyright (c) 2019 PANTHEON.tech, s.r.o. and others.  All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+package org.opendaylight.yangtools.yang.data.api;
+
+import static java.util.Objects.requireNonNull;
+
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.util.Map;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+
+/**
+ * Externalizable proxy for {@link NodeIdentifierWithPredicates}.
+ */
+final class NIPv1 implements Externalizable {
+    private static final long serialVersionUID = 1L;
+
+    private NodeIdentifierWithPredicates nip;
+
+    @SuppressWarnings("checkstyle:redundantModifier")
+    public NIPv1() {
+        // For Externalizable
+    }
+
+    NIPv1(final NodeIdentifierWithPredicates nid) {
+        this.nip = requireNonNull(nid);
+    }
+
+    @Override
+    public void writeExternal(final ObjectOutput out) throws IOException {
+        nip.getNodeType().writeTo(out);
+        out.writeObject(nip.getKeyValues());
+    }
+
+    @Override
+    public void readExternal(final ObjectInput in) throws IOException, ClassNotFoundException {
+        final QName qname = QName.readFrom(in);
+        nip = new NodeIdentifierWithPredicates((Map<QName, Object>) in.readObject(), qname);
+    }
+
+    private Object readResolve() {
+        return nip;
+    }
+}
