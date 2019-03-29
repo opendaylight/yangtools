@@ -69,6 +69,7 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
     private static final long TASK_WAIT_NANOS = TimeUnit.MILLISECONDS.toNanos(10);
 
     private final ConcurrentMap<ListenerKey<L>, NotificationTask> listenerCache = new ConcurrentHashMap<>();
+    private final @NonNull QueuedNotificationManagerMXBean mxBean = new QueuedNotificationManagerMXBeanImpl(this);
     private final @NonNull BatchedInvoker<L, N> listenerInvoker;
     private final @NonNull Executor executor;
     private final @NonNull String name;
@@ -103,6 +104,15 @@ public final class QueuedNotificationManager<L, N> implements NotificationManage
      */
     public int getMaxQueueCapacity() {
         return maxQueueCapacity;
+    }
+
+    /**
+     * Return an {@link QueuedNotificationManagerMXBean} tied to this instance.
+     *
+     * @return An QueuedNotificationManagerMXBean object.
+     */
+    public @NonNull QueuedNotificationManagerMXBean getMXBean() {
+        return mxBean;
     }
 
     /**
