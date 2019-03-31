@@ -15,7 +15,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -27,7 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgum
 @Beta
 public class ImmutableNormalizedMetadata implements NormalizedMetadata {
     private static final class Container extends ImmutableNormalizedMetadata {
-        private final ImmutableMap<PathArgument, ImmutableNormalizedMetadata> children;
+        private final ImmutableMap<PathArgument, NormalizedMetadata> children;
 
         Container(final PathArgument identifier, final Map<QName, Object> annotations,
                 final Map<PathArgument, ImmutableNormalizedMetadata> children) {
@@ -36,8 +35,8 @@ public class ImmutableNormalizedMetadata implements NormalizedMetadata {
         }
 
         @Override
-        public Optional<NormalizedMetadata> getChild(final PathArgument child) {
-            return Optional.ofNullable(children.get(requireNonNull(child)));
+        public ImmutableMap<PathArgument, NormalizedMetadata> getChildren() {
+            return children;
         }
     }
 

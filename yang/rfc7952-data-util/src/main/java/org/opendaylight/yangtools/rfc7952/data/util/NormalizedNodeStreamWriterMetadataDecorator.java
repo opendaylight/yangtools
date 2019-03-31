@@ -153,7 +153,7 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
             // This may either be the first entry or unattached metadata nesting
             return stack.isEmpty() ? metadata : null;
         }
-        return current.getChild(name).orElse(null);
+        return current.getChildren().get(name);
     }
 
     private void emitAnnotations(final Map<QName, Object> annotations) throws IOException {
