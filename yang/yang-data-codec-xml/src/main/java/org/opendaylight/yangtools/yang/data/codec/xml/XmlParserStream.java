@@ -13,6 +13,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import java.io.Closeable;
 import java.io.Flushable;
@@ -40,7 +41,9 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -242,18 +245,22 @@ public final class XmlParserStream implements Closeable, Flushable {
         final Map<QName, String> attributes = new LinkedHashMap<>();
 
         for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
-            String attributeNS = in.getAttributeNamespace(attrIndex);
-
-            if (attributeNS == null) {
-                attributeNS = "";
-            }
+            final String attributeNS = in.getAttributeNamespace(attrIndex);
 
             // Skip namespace definitions
             if (XMLConstants.XMLNS_ATTRIBUTE_NS_URI.equals(attributeNS)) {
                 continue;
             }
 
-            final QName qName = QName.create(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
+            final QNameModule namespace;
+            if (!Strings.isNullOrEmpty(attributeNS)) {
+                // FIXME: bind the namespace to a module, if available
+                namespace = QNameModule.create(URI.create(attributeNS));
+            } else {
+                namespace = NormalizedMetadata.LEGACY_ATTRIBUTE_NAMESPACE;
+            }
+
+            final QName qName = QName.create(namespace, in.getAttributeLocalName(attrIndex));
             attributes.put(qName, in.getAttributeValue(attrIndex));
         }
 
