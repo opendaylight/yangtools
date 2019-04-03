@@ -8,8 +8,9 @@
 package org.opendaylight.yangtools.yang.data.util.codec;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
  * A no-operation codec cache. This class is thread-safe.
@@ -32,7 +33,7 @@ public final class NoopCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T lookupComplex(final TypedDataSchemaNode schema) {
+    <S extends SchemaNode & TypeAware> T lookupComplex(final S schema) {
         return null;
     }
 
@@ -47,7 +48,7 @@ public final class NoopCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T getComplex(final TypedDataSchemaNode schema, final T codec) {
+    <S extends SchemaNode & TypeAware> T getComplex(final S schema, final T codec) {
         return codec;
     }
 }
