@@ -18,6 +18,7 @@ import java.util.Deque;
 import java.util.List;
 import java.util.Map.Entry;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
@@ -189,9 +190,10 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+            throws IOException {
         for (AbstractNodeDataWithSchema<?> child : children) {
-            child.write(writer);
+            child.write(writer, metaWriter);
         }
         for (Entry<AugmentationSchemaNode, Collection<AbstractNodeDataWithSchema<?>>> augmentationToChild
                 : augmentationsToChild.asMap().entrySet()) {
@@ -202,7 +204,7 @@ public class CompositeNodeDataWithSchema<T extends DataSchemaNode> extends Abstr
                     augmentationToChild.getKey()));
 
                 for (AbstractNodeDataWithSchema<?> nodeDataWithSchema : childsFromAgumentation) {
-                    nodeDataWithSchema.write(writer);
+                    nodeDataWithSchema.write(writer, metaWriter);
                 }
 
                 writer.endNode();

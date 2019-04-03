@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
 import javax.xml.transform.dom.DOMSource;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 
@@ -27,12 +27,11 @@ public class AnyXmlNodeDataWithSchema extends SimpleNodeDataWithSchema<AnyXmlSch
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+            throws IOException {
         writer.nextDataSchemaNode(getSchema());
         writer.startAnyxmlNode(provideNodeIdentifier());
-        if (writer instanceof NormalizedNodeStreamAttributeWriter && getAttributes() != null) {
-            ((NormalizedNodeStreamAttributeWriter) writer).attributes(getAttributes());
-        }
+        writeMetadata(metaWriter);
         writer.domSourceValue((DOMSource) getValue());
         writer.endNode();
     }

@@ -11,10 +11,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.util.Map;
 import java.util.Objects;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
@@ -27,7 +29,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 @Beta
 public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
     private final T schema;
-    private Map<QName, String> attributes;
+    private ImmutableMap<QName, Object> attributes;
 
     public AbstractNodeDataWithSchema(final T schema) {
         this.schema = requireNonNull(schema);
@@ -47,7 +49,7 @@ public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
      *
      * @param attributes parsed attributes
      */
-    public final void setAttributes(final Map<QName, String> attributes) {
+    public final void setAttributes(final ImmutableMap<QName, Object> attributes) {
         checkState(this.attributes == null, "Node '%s' has already set its attributes to %s.", getSchema().getQName(),
                 this.attributes);
         this.attributes = attributes;
@@ -58,7 +60,7 @@ public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
      *
      * @return associated attributes
      */
-    public final Map<QName, String> getAttributes() {
+    public final ImmutableMap<QName, Object> getAttributes() {
         return attributes;
     }
 
@@ -68,10 +70,21 @@ public abstract class AbstractNodeDataWithSchema<T extends DataSchemaNode> {
      * @param writer Target writer
      * @throws IOException reported when thrown by the writer.
      */
-    public abstract void write(NormalizedNodeStreamWriter writer) throws IOException;
+    public final void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        write(writer, writer.getExtensions().getInstance(NormalizedMetadataStreamWriter.class));
+    }
+
+    protected abstract void write(NormalizedNodeStreamWriter writer,
+            @Nullable NormalizedMetadataStreamWriter metaWriter) throws IOException;
 
     protected final NodeIdentifier provideNodeIdentifier() {
         return NodeIdentifier.create(schema.getQName());
+    }
+
+    protected final void writeMetadata(final NormalizedMetadataStreamWriter metaWriter) throws IOException {
+        if (metaWriter != null && attributes != null && !attributes.isEmpty()) {
+            metaWriter.metadata(attributes);
+        }
     }
 
     @Override
