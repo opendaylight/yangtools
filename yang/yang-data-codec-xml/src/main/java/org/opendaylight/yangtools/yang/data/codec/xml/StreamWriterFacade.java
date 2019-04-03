@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 final class StreamWriterFacade extends ValueWriter {
     private static final Logger LOG = LoggerFactory.getLogger(StreamWriterFacade.class);
     private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> LEGACY_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
     private final XMLStreamWriter writer;
     private final RandomPrefix prefixes;
@@ -120,13 +122,33 @@ final class StreamWriterFacade extends ValueWriter {
         for (final Entry<QName, String> entry : attributes.entrySet()) {
             final QName qname = entry.getKey();
             final String namespace = qname.getNamespace().toString();
+            final String localName = qname.getLocalName();
+            final Object value = entry.getValue();
 
-            if (!Strings.isNullOrEmpty(namespace)) {
-                final String prefix = getPrefix(qname.getNamespace(), namespace);
-                writer.writeAttribute(prefix, namespace, qname.getLocalName(), entry.getValue());
-            } else {
-                writer.writeAttribute(qname.getLocalName(), entry.getValue());
+            // FIXME: remove this handling once we have complete mapping to metadata
+            if (namespace.isEmpty()) {
+                // Legacy attribute, which is expected to be a String
+                if (LEGACY_ATTRIBUTES.add(localName)) {
+                    LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix "
+                        + "this warning by defining a proper YANG annotation to cover it", localName,
+                        new Throwable("Call stack"));
+                }
+
+                if (!(value instanceof String)) {
+                    if (BROKEN_ATTRIBUTES.add(localName)) {
+                        LOG.warn("Unbound annotation {} does not have a String value, ignoring it. Please fix the "
+                                + "source of this annotation either by formatting it to a String or removing its use",
+                                localName, new Throwable("Call stack"));
+                    }
+                    LOG.debug("Ignoring annotation {} value {}", localName, value);
+                } else {
+                    writer.writeAttribute(localName, (String) value);
+                }
+                continue;
             }
+
+            final String prefix = getPrefix(qname.getNamespace(), namespace);
+            writer.writeAttribute(prefix, namespace, qname.getLocalName(), entry.getValue());
         }
     }
 
