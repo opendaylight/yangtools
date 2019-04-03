@@ -14,6 +14,7 @@ import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -90,6 +91,11 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
 
     @Override
     String encodeValue(final ValueWriter xmlWriter, final Object value, final Object context) {
+        return value.toString();
+    }
+
+    @Override
+    String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value) {
         return value.toString();
     }
 

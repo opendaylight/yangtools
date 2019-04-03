@@ -8,13 +8,17 @@
  */
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.io.IOException;
+import java.util.Optional;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
+import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
@@ -45,6 +49,20 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
     String encodeValue(final ValueWriter xmlWriter, final Object value, final SchemaNode schemaNode)
             throws XMLStreamException {
         return streamUtils.encodeValue(xmlWriter, schemaNode, value, schemaNode.getQName().getModule());
+    }
+
+    @Override
+    String encodeAnnotationValue(final ValueWriter xmlWriter, final QName qname, final Object value)
+            throws XMLStreamException {
+        final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(streamUtils.getSchemaContext(),
+            qname);
+        if (optAnnotation.isPresent()) {
+            return streamUtils.encodeValue(xmlWriter, optAnnotation.get(), value, qname.getModule());
+        }
+
+        checkArgument(!qname.getRevision().isPresent(), "Failed to find bound annotation %s", qname);
+        checkArgument(value instanceof String, "Invalid non-string value %s for unbound annotation %s", value, qname);
+        return (String) value;
     }
 
     @Override
