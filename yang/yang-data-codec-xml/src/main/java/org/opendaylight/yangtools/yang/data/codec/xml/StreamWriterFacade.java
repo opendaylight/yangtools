@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import java.net.URI;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -117,9 +117,9 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    void writeAttributes(final Map<QName, String> attributes) throws XMLStreamException {
+    void writeAttributes(final ImmutableMap<QName, Object> attributes) throws XMLStreamException {
         flushElement();
-        for (final Entry<QName, String> entry : attributes.entrySet()) {
+        for (final Entry<QName, Object> entry : attributes.entrySet()) {
             final QName qname = entry.getKey();
             final String namespace = qname.getNamespace().toString();
             final String localName = qname.getLocalName();
@@ -128,12 +128,7 @@ final class StreamWriterFacade extends ValueWriter {
             // FIXME: remove this handling once we have complete mapping to metadata
             if (namespace.isEmpty()) {
                 // Legacy attribute, which is expected to be a String
-                if (LEGACY_ATTRIBUTES.add(localName)) {
-                    LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix "
-                        + "this warning by defining a proper YANG annotation to cover it", localName,
-                        new Throwable("Call stack"));
-                }
-
+                warnLegacyAttribute(localName);
                 if (!(value instanceof String)) {
                     if (BROKEN_ATTRIBUTES.add(localName)) {
                         LOG.warn("Unbound annotation {} does not have a String value, ignoring it. Please fix the "
@@ -250,6 +245,14 @@ final class StreamWriterFacade extends ValueWriter {
                 default:
                     throw new IllegalStateException("Unhandled event " + event);
             }
+        }
+    }
+
+    static void warnLegacyAttribute(final String localName) {
+        if (LEGACY_ATTRIBUTES.add(localName)) {
+            LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix this "
+                    + "warning by defining a proper YANG annotation to cover it", localName,
+                    new Throwable("Call stack"));
         }
     }
 
