@@ -13,6 +13,7 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
@@ -65,6 +66,11 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> im
     @Override
     public final SchemaContext getSchemaContext() {
         return schemaContext;
+    }
+
+    public final @NonNull T codecFor(final AnnotationSchemaNode schema) {
+        // FIXME: implement this
+        return null;
     }
 
     public final @NonNull T codecFor(final TypedDataSchemaNode schema) {
