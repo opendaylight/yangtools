@@ -38,6 +38,13 @@ public interface NormalizedMetadata extends Identifiable<PathArgument>, Immutabl
      * Return the set of annotations defined in this metadata node. Values are expected to be effectively-immutable
      * scalar types, like {@link String}s, {@link Number}s and similar. The map must also be effectively-immutable.
      *
+     * <p>
+     * Due to backwards compatibility reasons, keys may include QNames with empty URL ({@code URL.create("")})in their
+     * QNameModule. These indicate an unqualified XML attribute and their value can be assumed to be a String. Handling
+     * of such annotations is at the discretion of the user encountering it: preferred way of handling is to either
+     * filter or normalize them to proper QNames/values when encountered. This caveat will be removed in a future
+     * version.
+     *
      * @return The set of annotations attached to the corresponding data node.
      */
     @NonNull Map<QName, Object> getAnnotations();
