@@ -17,8 +17,8 @@ import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.InstanceIdentifierTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.LeafrefTypeDefinition;
@@ -44,11 +44,11 @@ abstract class XMLStreamWriterUtils {
      */
     void writeValue(final @NonNull ValueWriter writer, final @NonNull SchemaNode schemaNode,
             final @NonNull Object value, final QNameModule parent) throws XMLStreamException {
-        checkArgument(schemaNode instanceof TypedDataSchemaNode,
-            "Unable to write value for node %s, only nodes of type: leaf and leaf-list can be written at this point",
-            schemaNode.getQName());
+        checkArgument(schemaNode instanceof TypeAware,
+            "Unable to write value for node %s, only nodes of type: leaf, leaf-list and annotations can be written "
+                    + "at this point", schemaNode.getQName());
 
-        TypeDefinition<?> type = ((TypedDataSchemaNode) schemaNode).getType();
+        TypeDefinition<?> type = ((TypeAware) schemaNode).getType();
         if (type instanceof LeafrefTypeDefinition) {
             type = getBaseTypeForLeafRef(schemaNode, (LeafrefTypeDefinition) type);
         }
