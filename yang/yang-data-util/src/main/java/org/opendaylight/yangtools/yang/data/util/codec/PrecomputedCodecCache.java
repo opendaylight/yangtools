@@ -12,8 +12,9 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import java.util.Map;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 
 /**
  * Pre-computed thread-safe CodecCache. All possible codecs are created upfront at instantiation time, after which they
@@ -28,16 +29,15 @@ import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 @Beta
 public final class PrecomputedCodecCache<T> extends CodecCache<T> {
     private final Map<TypeDefinition<?>, T> simpleCodecs;
-    private final Map<TypedDataSchemaNode, T> complexCodecs;
+    private final Map<SchemaNode, T> complexCodecs;
 
-    PrecomputedCodecCache(final Map<TypeDefinition<?>, T> simpleCodecs,
-            final Map<TypedDataSchemaNode, T> complexCodecs) {
+    PrecomputedCodecCache(final Map<TypeDefinition<?>, T> simpleCodecs, final Map<SchemaNode, T> complexCodecs) {
         this.simpleCodecs = requireNonNull(simpleCodecs);
         this.complexCodecs = requireNonNull(complexCodecs);
     }
 
     @Override
-    T lookupComplex(final TypedDataSchemaNode schema) {
+    <S extends SchemaNode & TypeAware> T lookupComplex(final S schema) {
         final T ret = complexCodecs.get(schema);
         checkArgument(ret != null, "No codec available for schema %s", schema);
         return ret;
@@ -49,7 +49,7 @@ public final class PrecomputedCodecCache<T> extends CodecCache<T> {
     }
 
     @Override
-    T getComplex(final TypedDataSchemaNode schema, final T codec) {
+    <S extends SchemaNode & TypeAware> T getComplex(final S schema, final T codec) {
         throw new IllegalStateException("Uncached codec for " + schema);
     }
 

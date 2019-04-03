@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -42,8 +43,8 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -64,6 +65,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -240,9 +242,9 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private static ImmutableMap<QName, String> getElementAttributes(final XMLStreamReader in) {
+    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
-        final Map<QName, String> attributes = new LinkedHashMap<>();
+        final Map<QName, Object> attributes = new LinkedHashMap<>();
 
         for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
             final String attributeNS = in.getAttributeNamespace(attrIndex);
@@ -252,16 +254,34 @@ public final class XmlParserStream implements Closeable, Flushable {
                 continue;
             }
 
-            final QNameModule namespace;
-            if (Strings.isNullOrEmpty(attributeNS)) {
-                // FIXME: bind the namespace to a module, if available
-                namespace = QNameModule.create(URI.create(attributeNS));
-            } else {
-                namespace = NormalizedMetadata.LEGACY_ATTRIBUTE_NAMESPACE;
-            }
+            final String localName = in.getAttributeLocalName(attrIndex);
+            final String attrValue = in.getAttributeValue(attrIndex);
 
-            final QName qName = QName.create(namespace, in.getAttributeLocalName(attrIndex));
-            attributes.put(qName, in.getAttributeValue(attrIndex));
+            if (!Strings.isNullOrEmpty(attributeNS)) {
+                final URI uri = URI.create(attributeNS);
+
+                // Cross-relate attribute namespace to the module
+                final SchemaContext schemaContext = codecs.getSchemaContext();
+                final Set<Module> modules = schemaContext.findModules(uri);
+                if (modules.isEmpty()) {
+                    LOG.debug("Ignoring attribute {} in namespace {}", localName, attributeNS);
+                    continue;
+                }
+
+                final QName qname = QName.create(modules.iterator().next().getQNameModule(), localName);
+                final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(schemaContext, qname);
+                if (optAnnotation.isPresent()) {
+                    final AnnotationSchemaNode schema = optAnnotation.get();
+                    final Object value = codecs.codecFor(schema).parseValue(in.getNamespaceContext(), attrValue);
+                    attributes.put(schema.getQName(), value);
+                } else {
+                    LOG.debug("Annotation for {} not found, using legacy QName", qname);
+                    attributes.put(QName.create(uri, localName), attrValue);
+                }
+            } else {
+                StreamWriterFacade.warnLegacyAttribute(localName);
+                attributes.put(QName.create(NormalizedMetadata.LEGACY_ATTRIBUTE_NAMESPACE, localName), attrValue);
+            }
         }
 
         return ImmutableMap.copyOf(attributes);
