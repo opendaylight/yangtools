@@ -16,8 +16,9 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContextProvider;
+import org.opendaylight.yangtools.yang.model.api.SchemaNode;
+import org.opendaylight.yangtools.yang.model.api.TypeAware;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
-import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.BinaryTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BitsTypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.BooleanTypeDefinition;
@@ -67,7 +68,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> im
         return schemaContext;
     }
 
-    public final @NonNull T codecFor(final TypedDataSchemaNode schema) {
+    public final <S extends TypeAware & SchemaNode> @NonNull T codecFor(final S schema) {
         /*
          * There are many trade-offs to be made here. We need the common case being as fast as possible while reusing
          * codecs as much as possible.
@@ -212,7 +213,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> im
         return true;
     }
 
-    private T createComplexCodecFor(final TypedDataSchemaNode schema, final TypeDefinition<?> type) {
+    private T createComplexCodecFor(final SchemaNode schema, final TypeDefinition<?> type) {
         if (type instanceof UnionTypeDefinition) {
             return createComplexUnion(schema, (UnionTypeDefinition) type);
         } else if (type instanceof LeafrefTypeDefinition) {
@@ -246,7 +247,7 @@ public abstract class AbstractCodecFactory<T extends TypeAwareCodec<?, ?, ?>> im
         return unionCodec(union, codecs);
     }
 
-    private T createComplexUnion(final TypedDataSchemaNode schema, final UnionTypeDefinition union) {
+    private T createComplexUnion(final SchemaNode schema, final UnionTypeDefinition union) {
         final List<TypeDefinition<?>> types = union.getTypes();
         final List<T> codecs = new ArrayList<>(types.size());
 
