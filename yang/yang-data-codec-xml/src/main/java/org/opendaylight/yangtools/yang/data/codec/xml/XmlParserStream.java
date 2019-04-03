@@ -25,6 +25,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
@@ -40,6 +41,7 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
+import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
@@ -61,6 +63,7 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.OperationDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
@@ -237,9 +240,9 @@ public final class XmlParserStream implements Closeable, Flushable {
         return parse(new DOMSourceXMLStreamReader(src));
     }
 
-    private static ImmutableMap<QName, String> getElementAttributes(final XMLStreamReader in) {
+    private ImmutableMap<QName, Object> getElementAttributes(final XMLStreamReader in) {
         checkState(in.isStartElement(), "Attributes can be extracted only from START_ELEMENT.");
-        final Map<QName, String> attributes = new LinkedHashMap<>();
+        final Map<QName, Object> attributes = new LinkedHashMap<>();
 
         for (int attrIndex = 0; attrIndex < in.getAttributeCount(); attrIndex++) {
             String attributeNS = in.getAttributeNamespace(attrIndex);
@@ -253,8 +256,26 @@ public final class XmlParserStream implements Closeable, Flushable {
                 continue;
             }
 
-            final QName qName = QName.create(URI.create(attributeNS), in.getAttributeLocalName(attrIndex));
-            attributes.put(qName, in.getAttributeValue(attrIndex));
+            final URI namespace = URI.create(attributeNS);
+            final String localName = in.getAttributeLocalName(attrIndex);
+
+            // Cross-relate attribute namespace to the module
+            final SchemaContext schemaContext = codecs.getSchemaContext();
+            final Set<Module> modules = schemaContext.findModules(namespace);
+            if (modules.isEmpty()) {
+                LOG.debug("Ignoring attribute {} in namespace {}", localName, namespace);
+                continue;
+            }
+            final QName qname = QName.create(modules.iterator().next().getQNameModule(), localName);
+            final Optional<AnnotationSchemaNode> optAnnotation = AnnotationSchemaNode.find(schemaContext, qname);
+            if (!optAnnotation.isPresent()) {
+                LOG.debug("Annotation for {} not found, ignoring the attribute", qname);
+                continue;
+            }
+
+            final String strValue = in.getAttributeValue(attrIndex);
+            final Object value = codecs.codecFor(optAnnotation.get()).parseValue(in.getNamespaceContext(), strValue);
+            attributes.put(qname, value);
         }
 
         return ImmutableMap.copyOf(attributes);

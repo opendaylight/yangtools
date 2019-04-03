@@ -10,8 +10,8 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.ImmutableMap;
 import java.net.URI;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -115,9 +115,9 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    void writeAttributes(final Map<QName, String> attributes) throws XMLStreamException {
+    void writeAttributes(final ImmutableMap<QName, Object> attributes) throws XMLStreamException {
         flushElement();
-        for (final Entry<QName, String> entry : attributes.entrySet()) {
+        for (final Entry<QName, Object> entry : attributes.entrySet()) {
             final QName qname = entry.getKey();
             final String namespace = qname.getNamespace().toString();
 
