@@ -13,10 +13,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.util.ImmutableMapTemplate;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -54,20 +54,15 @@ public abstract class ListEntryNodeDataWithSchema extends CompositeNodeDataWithS
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+                throws IOException {
             writer.nextDataSchemaNode(getSchema());
             final NodeIdentifierWithPredicates identifier = new NodeIdentifierWithPredicates(getSchema().getQName(),
                 predicateTemplate.instantiateTransformed(keyValues, (key, node) -> node.getValue()));
 
             writer.startMapEntryNode(identifier, childSizeHint());
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                final Map<QName, String> attrs = getAttributes();
-                if (attrs != null) {
-                    ((NormalizedNodeStreamAttributeWriter) writer).attributes(attrs);
-                }
-            }
-
-            super.write(writer);
+            writeMetadata(metaWriter);
+            super.write(writer, metaWriter);
             writer.endNode();
         }
     }
@@ -78,10 +73,11 @@ public abstract class ListEntryNodeDataWithSchema extends CompositeNodeDataWithS
         }
 
         @Override
-        public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+        public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+                throws IOException {
             writer.nextDataSchemaNode(getSchema());
             writer.startUnkeyedListItem(provideNodeIdentifier(), childSizeHint());
-            super.write(writer);
+            super.write(writer, metaWriter);
             writer.endNode();
         }
     }
