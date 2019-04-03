@@ -8,9 +8,7 @@
 package org.opendaylight.yangtools.yang.data.util;
 
 import java.io.IOException;
-import java.util.Map;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 
@@ -28,18 +26,14 @@ public class ContainerNodeDataWithSchema extends CompositeNodeDataWithSchema<Con
     }
 
     @Override
-    public void write(final NormalizedNodeStreamWriter writer) throws IOException {
+    public void write(final NormalizedNodeStreamWriter writer, final NormalizedMetadataStreamWriter metaWriter)
+            throws IOException {
         writer.nextDataSchemaNode(getSchema());
 
         writer.startContainerNode(provideNodeIdentifier(), childSizeHint());
-        if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-            final Map<QName, String> attrs = getAttributes();
-            if (attrs != null) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(attrs);
-            }
-        }
+        writeMetadata(metaWriter);
 
-        super.write(writer);
+        super.write(writer, metaWriter);
         writer.endNode();
     }
 }

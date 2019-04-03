@@ -9,18 +9,21 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.util.Map;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -34,7 +37,8 @@ import org.w3c.dom.Node;
  * schema-less and merely outputs values using toString. The latter is intended for debugging
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
-public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
+public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
+        NormalizedMetadataStreamWriter {
     private final @NonNull StreamWriterFacade facade;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
@@ -89,6 +93,11 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
      */
     public static @NonNull NormalizedNodeStreamWriter createSchemaless(final XMLStreamWriter writer) {
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
+    }
+
+    @Override
+    public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
     }
 
     abstract void startList(NodeIdentifier name);
@@ -178,7 +187,7 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     @Override
-    public final void attributes(final Map<QName, String> attributes) throws IOException {
+    public final void metadata(final ImmutableMap<QName, Object> attributes) throws IOException {
         if (!attributes.isEmpty()) {
             try {
                 facade.writeAttributes(attributes);
