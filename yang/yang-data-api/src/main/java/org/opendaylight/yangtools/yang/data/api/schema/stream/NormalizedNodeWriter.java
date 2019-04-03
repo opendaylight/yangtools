@@ -132,27 +132,18 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof LeafSetEntryNode) {
             final LeafSetEntryNode<?> nodeAsLeafList = (LeafSetEntryNode<?>)node;
             writer.startLeafSetEntryNode(nodeAsLeafList.getIdentifier());
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeafList.getAttributes());
-            }
             writer.scalarValue(nodeAsLeafList.getValue());
             writer.endNode();
             return true;
         } else if (node instanceof LeafNode) {
             final LeafNode<?> nodeAsLeaf = (LeafNode<?>)node;
             writer.startLeafNode(nodeAsLeaf.getIdentifier());
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(nodeAsLeaf.getAttributes());
-            }
             writer.scalarValue(nodeAsLeaf.getValue());
             writer.endNode();
             return true;
         } else if (node instanceof AnyXmlNode) {
             final AnyXmlNode anyXmlNode = (AnyXmlNode)node;
             writer.startAnyxmlNode(anyXmlNode.getIdentifier());
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(anyXmlNode.getAttributes());
-            }
             writer.domSourceValue(anyXmlNode.getValue());
             writer.endNode();
             return true;
@@ -179,9 +170,6 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
 
     protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
         writer.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
-        if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-            ((NormalizedNodeStreamAttributeWriter) writer).attributes(node.getAttributes());
-        }
         return writeChildren(node.getValue());
     }
 
@@ -189,17 +177,11 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         if (node instanceof ContainerNode) {
             final ContainerNode n = (ContainerNode) node;
             writer.startContainerNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(n.getAttributes());
-            }
             return writeChildren(n.getValue());
         }
         if (node instanceof YangModeledAnyXmlNode) {
             final YangModeledAnyXmlNode n = (YangModeledAnyXmlNode) node;
             writer.startYangModeledAnyXmlNode(n.getIdentifier(), childSizeHint(n.getValue()));
-            if (writer instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) writer).attributes(n.getAttributes());
-            }
             return writeChildren(n.getValue());
         }
         if (node instanceof MapEntryNode) {
@@ -260,9 +242,6 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
         protected boolean writeMapEntryNode(final MapEntryNode node) throws IOException {
             final NormalizedNodeStreamWriter nnWriter = getWriter();
             nnWriter.startMapEntryNode(node.getIdentifier(), childSizeHint(node.getValue()));
-            if (nnWriter instanceof NormalizedNodeStreamAttributeWriter) {
-                ((NormalizedNodeStreamAttributeWriter) nnWriter).attributes(node.getAttributes());
-            }
 
             final Set<QName> qnames = node.getIdentifier().getKeyValues().keySet();
             // Write out all the key children
