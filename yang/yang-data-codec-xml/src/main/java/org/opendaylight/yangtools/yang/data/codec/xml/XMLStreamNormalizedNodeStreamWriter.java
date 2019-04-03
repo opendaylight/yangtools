@@ -9,22 +9,30 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
+import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
-import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamAttributeWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 /**
@@ -34,7 +42,11 @@ import org.w3c.dom.Node;
  * schema-less and merely outputs values using toString. The latter is intended for debugging
  * where doesn't have a SchemaContext available and isn't meant for production use.
  */
-public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamAttributeWriter {
+public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
+        NormalizedMetadataStreamWriter {
+    private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
+    private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
+
     private final @NonNull StreamWriterFacade facade;
 
     XMLStreamNormalizedNodeStreamWriter(final XMLStreamWriter writer) {
@@ -91,16 +103,23 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
         return new SchemalessXMLStreamNormalizedNodeStreamWriter(writer);
     }
 
+    @Override
+    public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
+    }
+
     abstract void startList(NodeIdentifier name);
 
     abstract void startListItem(PathArgument name) throws IOException;
 
-    abstract void writeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
+    abstract String encodeAnnotationValue(@NonNull ValueWriter xmlWriter, @NonNull QName qname, @NonNull Object value);
+
+    abstract String encodeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
             throws XMLStreamException;
 
     final void writeValue(final @NonNull Object value, final T context) throws IOException {
         try {
-            writeValue(facade, value, context);
+            facade.writeCharacters(encodeValue(facade, value, context));
         } catch (XMLStreamException e) {
             throw new IOException("Failed to write value", e);
         }
@@ -178,12 +197,36 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
     }
 
     @Override
-    public final void attributes(final Map<QName, String> attributes) throws IOException {
-        if (!attributes.isEmpty()) {
+    public final void metadata(final ImmutableMap<QName, Object> attributes) throws IOException {
+        for (final Entry<QName, Object> entry : attributes.entrySet()) {
+            final QName qname = entry.getKey();
+            final String namespace = qname.getNamespace().toString();
+            final String localName = qname.getLocalName();
+            final Object value = entry.getValue();
+
+            // FIXME: remove this handling once we have complete mapping to metadata
             try {
-                facade.writeAttributes(attributes);
+                if (namespace.isEmpty()) {
+                    // Legacy attribute, which is expected to be a String
+                    StreamWriterFacade.warnLegacyAttribute(localName);
+                    if (!(value instanceof String)) {
+                        if (BROKEN_ATTRIBUTES.add(localName)) {
+                            LOG.warn("Unbound annotation {} does not have a String value, ignoring it. Please fix the "
+                                    + "source of this annotation either by formatting it to a String or removing its "
+                                    + "use", localName, new Throwable("Call stack"));
+                        }
+                        LOG.debug("Ignoring annotation {} value {}", localName, value);
+                    } else {
+                        facade.writeAttribute(localName, (String) value);
+                        continue;
+                    }
+                } else {
+                    final String prefix = facade.getPrefix(qname.getNamespace(), namespace);
+                    final String attrValue = encodeAnnotationValue(facade, qname, value);
+                    facade.writeAttribute(prefix, namespace, localName, attrValue);
+                }
             } catch (final XMLStreamException e) {
-                throw new IOException("Unable to emit attributes " + attributes, e);
+                throw new IOException("Unable to emit attribute " + qname, e);
             }
         }
     }

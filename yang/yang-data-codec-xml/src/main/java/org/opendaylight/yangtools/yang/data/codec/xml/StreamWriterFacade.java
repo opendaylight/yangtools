@@ -11,8 +11,6 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Strings;
 import java.net.URI;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.xml.XMLConstants;
@@ -31,6 +29,7 @@ import org.slf4j.LoggerFactory;
 final class StreamWriterFacade extends ValueWriter {
     private static final Logger LOG = LoggerFactory.getLogger(StreamWriterFacade.class);
     private static final Set<String> BROKEN_NAMESPACES = ConcurrentHashMap.newKeySet();
+    private static final Set<String> LEGACY_ATTRIBUTES = ConcurrentHashMap.newKeySet();
 
     private final XMLStreamWriter writer;
     private final RandomPrefix prefixes;
@@ -115,22 +114,7 @@ final class StreamWriterFacade extends ValueWriter {
         }
     }
 
-    void writeAttributes(final Map<QName, String> attributes) throws XMLStreamException {
-        flushElement();
-        for (final Entry<QName, String> entry : attributes.entrySet()) {
-            final QName qname = entry.getKey();
-            final String namespace = qname.getNamespace().toString();
-
-            if (!Strings.isNullOrEmpty(namespace)) {
-                final String prefix = getPrefix(qname.getNamespace(), namespace);
-                writer.writeAttribute(prefix, namespace, qname.getLocalName(), entry.getValue());
-            } else {
-                writer.writeAttribute(qname.getLocalName(), entry.getValue());
-            }
-        }
-    }
-
-    private String getPrefix(final URI uri, final String str) throws XMLStreamException {
+    String getPrefix(final URI uri, final String str) throws XMLStreamException {
         final String prefix = writer.getPrefix(str);
         if (prefix != null) {
             return prefix;
@@ -228,6 +212,14 @@ final class StreamWriterFacade extends ValueWriter {
                 default:
                     throw new IllegalStateException("Unhandled event " + event);
             }
+        }
+    }
+
+    static void warnLegacyAttribute(final String localName) {
+        if (LEGACY_ATTRIBUTES.add(localName)) {
+            LOG.info("Encountered annotation {} not bound to module. Please examine the call stack and fix this "
+                    + "warning by defining a proper YANG annotation to cover it", localName,
+                    new Throwable("Call stack"));
         }
     }
 
