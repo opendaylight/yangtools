@@ -12,14 +12,13 @@ import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 
 /**
@@ -37,14 +36,14 @@ public interface YangParser {
      *
      * @return Enumeration of supported schema source representations.
      */
-    Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations();
+    @NonNull Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations();
 
     /**
      * Return the set of all YANG statements semantically supported by this parser instance.
      *
      * @return Set of all YANG statements semantically supported by this parser instance.
      */
-    Set<QName> supportedStatements();
+    @NonNull Set<QName> supportedStatements();
 
     /**
      * Add main source. All main sources are present in resulting SchemaContext.
@@ -54,7 +53,7 @@ public interface YangParser {
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    YangParser addSource(SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException;
+    @NonNull YangParser addSource(SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException;
 
     /**
      * Add main sources. All main sources are present in resulting SchemaContext.
@@ -64,7 +63,7 @@ public interface YangParser {
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    default YangParser addSources(final SchemaSourceRepresentation... sources) throws IOException,
+    default @NonNull YangParser addSources(final SchemaSourceRepresentation... sources) throws IOException,
         YangSyntaxErrorException {
         for (SchemaSourceRepresentation source : sources) {
             addSource(source);
@@ -72,8 +71,8 @@ public interface YangParser {
         return this;
     }
 
-    default YangParser addSources(final Collection<? extends SchemaSourceRepresentation> sources) throws IOException,
-        YangSyntaxErrorException {
+    default @NonNull YangParser addSources(final Collection<? extends SchemaSourceRepresentation> sources)
+            throws IOException, YangSyntaxErrorException {
         for (SchemaSourceRepresentation source : sources) {
             addSource(source);
         }
@@ -94,7 +93,7 @@ public interface YangParser {
      * @throws IOException when an IO error occurs
      * @throws IllegalArgumentException if the representation is not supported
      */
-    default YangParser addLibSources(final SchemaSourceRepresentation... sources) throws IOException,
+    default @NonNull YangParser addLibSources(final SchemaSourceRepresentation... sources) throws IOException,
             YangSyntaxErrorException {
         for (SchemaSourceRepresentation source : sources) {
             addLibSource(source);
@@ -102,7 +101,7 @@ public interface YangParser {
         return this;
     }
 
-    default YangParser addLibSources(final Collection<SchemaSourceRepresentation> sources) throws IOException,
+    default @NonNull YangParser addLibSources(final Collection<SchemaSourceRepresentation> sources) throws IOException,
             YangSyntaxErrorException {
         for (SchemaSourceRepresentation source : sources) {
             addLibSource(source);
@@ -117,7 +116,7 @@ public interface YangParser {
      * @param supportedFeatures Set of supported features in the final SchemaContext. If the set is empty, no features
      *                          encountered will be supported.
      */
-    YangParser setSupportedFeatures(@NonNull Set<QName> supportedFeatures);
+    @NonNull YangParser setSupportedFeatures(@NonNull Set<QName> supportedFeatures);
 
     /**
      * Set YANG modules which can be deviated by specified modules during the parsing process. Map key (QNameModule)
@@ -127,7 +126,7 @@ public interface YangParser {
      *                                 value) in the final SchemaContext. If the map is empty, no deviations encountered
      *                                 will be supported.
      */
-    YangParser setModulesWithSupportedDeviations(
+    @NonNull YangParser setModulesWithSupportedDeviations(
             @NonNull SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules);
 
     /**
@@ -136,7 +135,7 @@ public interface YangParser {
      * @return Ordered collection of declared statements from requested sources.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
-    List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
+    @NonNull List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException;
 
     /**
      * Build the effective view of a combined view of effective statements. Note that this representation, unlike
@@ -146,7 +145,7 @@ public interface YangParser {
      * @return Effective module statements indexed by their QNameModule.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
-    Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException;
+    @NonNull EffectiveModelContext buildEffectiveModel() throws YangParserException;
 
     /**
      * Build effective {@link SchemaContext}.
@@ -154,5 +153,7 @@ public interface YangParser {
      * @return An effective schema context comprised of configured models.
      * @throws YangSyntaxErrorException When a syntactic error is encountered.
      */
-    SchemaContext buildSchemaContext() throws YangParserException;
+    default @NonNull SchemaContext buildSchemaContext() throws YangParserException {
+        return buildEffectiveModel();
+    }
 }

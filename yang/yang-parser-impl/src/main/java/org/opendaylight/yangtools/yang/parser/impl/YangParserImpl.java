@@ -7,24 +7,20 @@
  */
 package org.opendaylight.yangtools.yang.parser.impl;
 
-import static com.google.common.collect.ImmutableMap.toImmutableMap;
 import static java.util.Objects.requireNonNull;
-import static java.util.function.Function.identity;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.SetMultimap;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import javax.xml.transform.TransformerException;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
-import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
-import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParser;
 import org.opendaylight.yangtools.yang.model.parser.api.YangParserException;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
@@ -43,9 +39,9 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.xml.sax.SAXException;
 
 final class YangParserImpl implements YangParser {
-    private static final Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS = ImmutableList.of(
-        ASTSchemaSource.class, YangTextSchemaSource.class, YinDomSchemaSource.class, YinXmlSchemaSource.class,
-        YinTextSchemaSource.class);
+    private static final @NonNull Collection<Class<? extends SchemaSourceRepresentation>> REPRESENTATIONS =
+            ImmutableList.of(ASTSchemaSource.class, YangTextSchemaSource.class,
+                YinDomSchemaSource.class, YinXmlSchemaSource.class, YinTextSchemaSource.class);
 
     private final BuildAction buildAction;
 
@@ -54,44 +50,45 @@ final class YangParserImpl implements YangParser {
     }
 
     @Override
-    public Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations() {
+    public @NonNull Collection<Class<? extends SchemaSourceRepresentation>> supportedSourceRepresentations() {
         return REPRESENTATIONS;
     }
 
     @Override
-    public Set<QName> supportedStatements() {
+    public @NonNull Set<QName> supportedStatements() {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public YangParser addSource(final SchemaSourceRepresentation source) throws IOException, YangSyntaxErrorException {
+    public @NonNull YangParser addSource(final SchemaSourceRepresentation source) throws IOException,
+            YangSyntaxErrorException {
         buildAction.addSources(sourceToStatementStream(source));
         return this;
     }
 
     @Override
-    public YangParser addLibSource(final SchemaSourceRepresentation source) throws IOException,
+    public @NonNull YangParser addLibSource(final SchemaSourceRepresentation source) throws IOException,
             YangSyntaxErrorException {
         buildAction.addLibSources(sourceToStatementStream(source));
         return this;
     }
 
     @Override
-    public YangParser setSupportedFeatures(final Set<QName> supportedFeatures) {
+    public @NonNull YangParser setSupportedFeatures(final Set<QName> supportedFeatures) {
         buildAction.setSupportedFeatures(supportedFeatures);
         return this;
     }
 
     @Override
-    public YangParser setModulesWithSupportedDeviations(
+    public @NonNull YangParser setModulesWithSupportedDeviations(
             final SetMultimap<QNameModule, QNameModule> modulesDeviatedByModules) {
         buildAction.setModulesWithSupportedDeviations(modulesDeviatedByModules);
         return this;
     }
 
     @Override
-    public List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
+    public @NonNull List<DeclaredStatement<?>> buildDeclaredModel() throws YangParserException {
         try {
             return buildAction.build().getRootStatements();
         } catch (ReactorException e) {
@@ -100,21 +97,7 @@ final class YangParserImpl implements YangParser {
     }
 
     @Override
-    public Map<QNameModule, ModuleEffectiveStatement> buildEffectiveModel() throws YangParserException {
-        final List<EffectiveStatement<?, ?>> effectiveStatements;
-        try {
-            effectiveStatements = buildAction.buildEffective().getRootEffectiveStatements();
-        } catch (ReactorException e) {
-            throw decodeReactorException(e);
-        }
-
-        return effectiveStatements.stream()
-                .filter(ModuleEffectiveStatement.class::isInstance).map(ModuleEffectiveStatement.class::cast)
-                .collect(toImmutableMap(ModuleEffectiveStatement::localQNameModule, identity()));
-    }
-
-    @Override
-    public SchemaContext buildSchemaContext() throws YangParserException {
+    public @NonNull EffectiveModelContext buildEffectiveModel() throws YangParserException {
         try {
             return buildAction.buildEffective();
         } catch (ReactorException e) {
