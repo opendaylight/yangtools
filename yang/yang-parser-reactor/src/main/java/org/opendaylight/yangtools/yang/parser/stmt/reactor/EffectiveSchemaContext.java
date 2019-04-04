@@ -11,25 +11,32 @@ import com.google.common.annotations.Beta;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.base.Verify;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
+import org.opendaylight.yangtools.yang.common.QNameModule;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 import org.opendaylight.yangtools.yang.model.api.meta.EffectiveStatement;
+import org.opendaylight.yangtools.yang.model.api.stmt.ModuleEffectiveStatement;
 import org.opendaylight.yangtools.yang.model.api.stmt.ModuleStatement;
 import org.opendaylight.yangtools.yang.model.util.SimpleSchemaContext;
 
 @VisibleForTesting
-public final class EffectiveSchemaContext extends SimpleSchemaContext {
+public final class EffectiveSchemaContext extends SimpleSchemaContext implements EffectiveModelContext {
     private final ImmutableList<DeclaredStatement<?>> rootDeclaredStatements;
-    private final ImmutableList<EffectiveStatement<?, ?>> rootEffectiveStatements;
+    private final ImmutableMap<QNameModule, ModuleEffectiveStatement> rootEffectiveStatements;
 
     private EffectiveSchemaContext(final Set<Module> modules, final List<DeclaredStatement<?>> rootDeclaredStatements,
             final List<EffectiveStatement<?, ?>> rootEffectiveStatements) {
         super(modules);
         this.rootDeclaredStatements = ImmutableList.copyOf(rootDeclaredStatements);
-        this.rootEffectiveStatements = ImmutableList.copyOf(rootEffectiveStatements);
+        this.rootEffectiveStatements = rootEffectiveStatements.stream()
+                .filter(ModuleEffectiveStatement.class::isInstance).map(ModuleEffectiveStatement.class::cast)
+                .collect(ImmutableMap.toImmutableMap(ModuleEffectiveStatement::localQNameModule, Function.identity()));
     }
 
     static EffectiveSchemaContext create(final List<DeclaredStatement<?>> rootDeclaredStatements,
@@ -51,7 +58,7 @@ public final class EffectiveSchemaContext extends SimpleSchemaContext {
     }
 
     @Beta
-    public List<EffectiveStatement<?, ?>> getRootEffectiveStatements() {
+    public ImmutableMap<QNameModule, ModuleEffectiveStatement> getModuleStatements() {
         return rootEffectiveStatements;
     }
 }

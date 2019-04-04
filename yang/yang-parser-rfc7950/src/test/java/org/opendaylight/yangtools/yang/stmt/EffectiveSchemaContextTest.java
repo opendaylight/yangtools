@@ -98,7 +98,7 @@ public class EffectiveSchemaContextTest {
         Module fooModule = schemaContext.findModule("foo", Revision.of("2016-09-21")).get();
         assertEquals(3, schemaContext.getModules().size());
         assertEquals(3, schemaContext.getRootDeclaredStatements().size());
-        assertEquals(3, schemaContext.getRootEffectiveStatements().size());
+        assertEquals(3, schemaContext.getModuleStatements().size());
 
         final Set<Module> modules = schemaContext.getModules();
         final SchemaContext copiedSchemaContext =  SimpleSchemaContext.forModules(modules);
