@@ -10,24 +10,20 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterables;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map.Entry;
 import java.util.Optional;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
@@ -75,17 +71,9 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
      * @return NormalizedNode structure corresponding to submitted instance ID
      */
     abstract @NonNull NormalizedNode<?, ?> create(PathArgument first, Iterator<PathArgument> others,
-            Optional<NormalizedNode<?, ?>> deepestChild, Optional<Entry<QName, ModifyAction>> operation);
+            Optional<NormalizedNode<?, ?>> deepestChild);
 
     abstract boolean isMixin();
-
-    static void addModifyOpIfPresent(final Optional<Entry<QName, ModifyAction>> operation,
-            final AttributesBuilder<?> builder) {
-        if (operation.isPresent()) {
-            final Entry<QName, ModifyAction> entry = operation.get();
-            builder.withAttributes(ImmutableMap.of(entry.getKey(), entry.getValue().name().toLowerCase()));
-        }
-    }
 
     private static final class UnkeyedListMixinNormalization extends InstanceIdToCompositeNodes<NodeIdentifier> {
         private final UnkeyedListItemNormalization innerNode;
@@ -123,8 +111,7 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
 
         @Override
         NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-                final Optional<NormalizedNode<?, ?>> deepestChild,
-                final Optional<Entry<QName,ModifyAction>> operation) {
+                final Optional<NormalizedNode<?, ?>> deepestChild) {
             final NormalizedNodeAttrBuilder<NodeIdentifier, DOMSource, AnyXmlNode> builder = Builders.anyXmlBuilder()
                     .withNodeIdentifier(getIdentifier());
             if (deepestChild.isPresent()) {
@@ -133,7 +120,6 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
                 builder.withValue(((AnyXmlNode) child).getValue());
             }
 
-            addModifyOpIfPresent(operation, builder);
             return builder.build();
         }
 
