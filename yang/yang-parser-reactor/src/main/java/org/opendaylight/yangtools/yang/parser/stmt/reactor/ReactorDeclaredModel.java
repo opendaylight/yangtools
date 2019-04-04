@@ -12,11 +12,10 @@ import java.util.List;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.model.api.meta.DeclaredStatement;
 
-public class EffectiveModelContext implements Immutable {
-
+public class ReactorDeclaredModel implements Immutable {
     private final ImmutableList<DeclaredStatement<?>> rootStatements;
 
-    public EffectiveModelContext(List<DeclaredStatement<?>> rootStatements) {
+    public ReactorDeclaredModel(final List<DeclaredStatement<?>> rootStatements) {
         this.rootStatements = ImmutableList.copyOf(rootStatements);
     }
 

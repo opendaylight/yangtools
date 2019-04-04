@@ -189,7 +189,7 @@ public final class CrossSourceStatementReactor {
         /**
          * Build the effective model context.
          */
-        public EffectiveModelContext build() throws ReactorException {
+        public ReactorDeclaredModel build() throws ReactorException {
             return context.build();
         }
 
