@@ -18,7 +18,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -32,7 +31,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
-import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.AttributesBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
@@ -60,7 +58,7 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
     @Override
     @SuppressWarnings("unchecked")
     final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> lastChild, final Optional<Entry<QName, ModifyAction>> operation) {
+            final Optional<NormalizedNode<?, ?>> lastChild) {
         if (!isMixin()) {
             final QName type = getIdentifier().getNodeType();
             if (type != null) {
@@ -75,15 +73,9 @@ abstract class InstanceIdToCompositeNodes<T extends PathArgument> extends Instan
         if (others.hasNext()) {
             final PathArgument childPath = others.next();
             final InstanceIdToNodes<?> childOp = getChildOperation(childPath);
-            builder.addChild(childOp.create(childPath, others, lastChild, operation));
-        } else {
-            if (lastChild.isPresent()) {
-                builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().getValue()));
-            }
-            if (operation.isPresent()) {
-                checkArgument(builder instanceof AttributesBuilder<?>);
-                addModifyOpIfPresent(operation, (AttributesBuilder<?>) builder);
-            }
+            builder.addChild(childOp.create(childPath, others, lastChild));
+        } else if (lastChild.isPresent()) {
+            builder.withValue(ImmutableList.copyOf((Collection<?>) lastChild.get().getValue()));
         }
 
         return builder.build();

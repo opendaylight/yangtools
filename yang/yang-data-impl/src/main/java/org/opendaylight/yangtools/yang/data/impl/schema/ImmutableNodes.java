@@ -10,11 +10,9 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -209,7 +207,7 @@ public final class ImmutableNodes {
      */
     public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx,
             final YangInstanceIdentifier id) {
-        return fromInstanceId(ctx, id, Optional.empty(), Optional.empty());
+        return fromInstanceId(ctx, id, Optional.empty());
     }
 
     /**
@@ -223,7 +221,7 @@ public final class ImmutableNodes {
      */
     public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
             final NormalizedNode<?, ?> deepestElement) {
-        return fromInstanceId(ctx, id, Optional.of(deepestElement), Optional.empty());
+        return fromInstanceId(ctx, id, Optional.of(deepestElement));
     }
 
     /**
@@ -233,13 +231,11 @@ public final class ImmutableNodes {
      * @param id instance identifier to convert to node structure starting from root
      * @param deepestElement pre-built deepest child that will be inserted at the last path argument of provided
      *                       instance identifier
-     * @param operation modify operation attribute to be added to the deepest child. QName is the operation attribute
-     *                  key and ModifyAction is the value.
      * @return serialized normalized node for provided instance Id with (optionally) overridden last child
      *         and (optionally) marked with specific operation attribute.
      */
     public static @NonNull NormalizedNode<?, ?> fromInstanceId(final SchemaContext ctx, final YangInstanceIdentifier id,
-            final Optional<NormalizedNode<?, ?>> deepestElement, final Optional<Entry<QName, ModifyAction>> operation) {
+            final Optional<NormalizedNode<?, ?>> deepestElement) {
         final PathArgument topLevelElement;
         final InstanceIdToNodes<?> instanceIdToNodes;
         final Iterator<PathArgument> it = id.getPathArguments().iterator();
@@ -254,6 +250,6 @@ public final class ImmutableNodes {
             instanceIdToNodes = InstanceIdToNodes.fromDataSchemaNode(ctx);
         }
 
-        return instanceIdToNodes.create(topLevelElement, it, deepestElement, operation);
+        return instanceIdToNodes.create(topLevelElement, it, deepestElement);
     }
 }

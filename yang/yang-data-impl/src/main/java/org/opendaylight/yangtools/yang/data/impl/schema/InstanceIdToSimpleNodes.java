@@ -10,10 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import java.util.Iterator;
-import java.util.Map.Entry;
 import java.util.Optional;
-import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.ModifyAction;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
@@ -35,7 +32,7 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
 
     @Override
     final NormalizedNode<?, ?> create(final PathArgument first, final Iterator<PathArgument> others,
-            final Optional<NormalizedNode<?, ?>> deepestChild, final Optional<Entry<QName, ModifyAction>> operation) {
+            final Optional<NormalizedNode<?, ?>> deepestChild) {
         final NormalizedNodeAttrBuilder<? extends PathArgument, Object,
                 ? extends NormalizedNode<? extends PathArgument, Object>> builder = getBuilder(first);
 
@@ -43,7 +40,6 @@ abstract class InstanceIdToSimpleNodes<T extends PathArgument> extends InstanceI
             builder.withValue(deepestChild.get().getValue());
         }
 
-        addModifyOpIfPresent(operation, builder);
         return builder.build();
     }
 
