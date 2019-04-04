@@ -222,7 +222,7 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         }
     }
 
-    EffectiveModelContext build() throws ReactorException {
+    ReactorDeclaredModel build() throws ReactorException {
         executePhases();
         return transform();
     }
@@ -232,13 +232,13 @@ class BuildGlobalContext extends NamespaceStorageSupport implements Registry {
         return transformEffective();
     }
 
-    private EffectiveModelContext transform() {
+    private ReactorDeclaredModel transform() {
         checkState(finishedPhase == ModelProcessingPhase.EFFECTIVE_MODEL);
         final List<DeclaredStatement<?>> rootStatements = new ArrayList<>(sources.size());
         for (final SourceSpecificContext source : sources) {
             rootStatements.add(source.getRoot().buildDeclared());
         }
-        return new EffectiveModelContext(rootStatements);
+        return new ReactorDeclaredModel(rootStatements);
     }
 
     private SomeModifiersUnresolvedException propagateException(final SourceSpecificContext source,

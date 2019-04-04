@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertNotNull;
@@ -16,7 +15,7 @@ import org.opendaylight.yangtools.yang.parser.rfc7950.reactor.RFC7950Reactors;
 import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 public class ImportRevisionsTest {
 
@@ -43,7 +42,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void equalRevisionDatesTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITH_EQUAL_DATE, IMPORTED_WITH_EQUAL_DATE)
                 .build();
         assertNotNull(result);
@@ -58,7 +57,7 @@ public class ImportRevisionsTest {
 
     @Test(expected = SomeModifiersUnresolvedException.class)
     public void revisionDatesInRootOnlyTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITH_DATE, IMPORTED_WITHOUT_DATE)
                 .build();
         assertNotNull(result);
@@ -66,7 +65,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void revisionDatesInImportedOnlyTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITHOUT_DATE, IMPORTED_WITH_DATE)
                 .build();
         assertNotNull(result);
@@ -74,7 +73,7 @@ public class ImportRevisionsTest {
 
     @Test
     public void noRevisionInRootAndImportedTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITH_NO_DATE, IMPORTED_WITH_NO_DATE)
                 .build();
         assertNotNull(result);

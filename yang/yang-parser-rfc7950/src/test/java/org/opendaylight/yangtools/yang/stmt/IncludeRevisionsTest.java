@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -21,7 +20,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 public class IncludeRevisionsTest {
 
@@ -38,7 +37,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revsEqualTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(EQUAL_REV, EQUAL_ROOT)
                 .build();
         assertNotNull(result);
@@ -58,7 +57,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revIncludeOnly() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(SUBMOD_ONLY_REV, SUBMOD_ONLY_ROOT)
                 .build();
         assertNotNull(result);
@@ -78,7 +77,7 @@ public class IncludeRevisionsTest {
 
     @Test
     public void revNowhereTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(NOWHERE_REV, NOWHERE_ROOT)
                 .build();
         assertNotNull(result);

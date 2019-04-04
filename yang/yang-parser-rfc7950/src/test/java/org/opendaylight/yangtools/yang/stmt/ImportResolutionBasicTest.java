@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.stmt;
 
 import static org.junit.Assert.assertEquals;
@@ -22,7 +21,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 
 public class ImportResolutionBasicTest {
 
@@ -46,7 +45,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inImportOrderTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT_WITHOUT_IMPORT, IMPORT_ROOT, IMPORT_DERIVED)
                 .build();
         assertNotNull(result);
@@ -54,7 +53,7 @@ public class ImportResolutionBasicTest {
 
     @Test
     public void inInverseOfImportOrderTest() throws ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(IMPORT_DERIVED, IMPORT_ROOT, ROOT_WITHOUT_IMPORT)
                 .build();
         assertNotNull(result);

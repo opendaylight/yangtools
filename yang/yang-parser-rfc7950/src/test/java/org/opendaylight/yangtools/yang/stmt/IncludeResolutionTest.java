@@ -22,7 +22,7 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.parser.stmt.reactor.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.parser.stmt.reactor.ReactorDeclaredModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +46,7 @@ public class IncludeResolutionTest {
 
     @Test
     public void includeTest() throws SourceException, ReactorException {
-        EffectiveModelContext result = RFC7950Reactors.defaultReactor().newBuild()
+        ReactorDeclaredModel result = RFC7950Reactors.defaultReactor().newBuild()
                 .addSources(ROOT, SUBMODULE1, SUBMODULE2)
                 .build();
         assertNotNull(result);
