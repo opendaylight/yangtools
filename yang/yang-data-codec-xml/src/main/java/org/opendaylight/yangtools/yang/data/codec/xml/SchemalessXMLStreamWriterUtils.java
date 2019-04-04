@@ -25,7 +25,7 @@ final class SchemalessXMLStreamWriterUtils extends XMLStreamWriterUtils {
     }
 
     @Override
-    void writeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value) {
+    String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value) {
         throw new UnsupportedOperationException("Schema context not present in " + this + ", cannot serialize "
             + value);
     }

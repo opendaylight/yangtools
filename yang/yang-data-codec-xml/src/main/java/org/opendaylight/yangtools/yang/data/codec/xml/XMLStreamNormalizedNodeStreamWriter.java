@@ -95,12 +95,12 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     abstract void startListItem(PathArgument name) throws IOException;
 
-    abstract void writeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
+    abstract String encodeValue(@NonNull ValueWriter xmlWriter, @NonNull Object value, T context)
             throws XMLStreamException;
 
     final void writeValue(final @NonNull Object value, final T context) throws IOException {
         try {
-            writeValue(facade, value, context);
+            facade.writeCharacters(encodeValue(facade, value, context));
         } catch (XMLStreamException e) {
             throw new IOException("Failed to write value", e);
         }

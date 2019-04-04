@@ -36,7 +36,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
     }
 
     @Override
-    void writeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
+    String encodeInstanceIdentifier(final ValueWriter writer, final YangInstanceIdentifier value)
             throws XMLStreamException {
         RandomPrefixInstanceIdentifierSerializer iiCodec = new RandomPrefixInstanceIdentifierSerializer(schemaContext,
             writer.getNamespaceContext());
@@ -46,7 +46,7 @@ final class SchemaAwareXMLStreamWriterUtils extends XMLStreamWriterUtils impleme
             writer.writeNamespace(e.getValue(), e.getKey().toString());
         }
 
-        writer.writeCharacters(serializedValue);
+        return serializedValue;
     }
 
     @Override
