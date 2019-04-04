@@ -12,7 +12,6 @@ import static com.google.common.base.Preconditions.checkState;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
-import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -90,8 +89,8 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
     }
 
     @Override
-    void writeValue(final ValueWriter xmlWriter, final Object value, final Object context) throws XMLStreamException {
-        xmlWriter.writeToStringCharacters(value);
+    String encodeValue(final ValueWriter xmlWriter, final Object value, final Object context) {
+        return value.toString();
     }
 
     @Override

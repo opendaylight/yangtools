@@ -44,7 +44,6 @@ final class StreamWriterFacade extends ValueWriter {
         prefixes = new RandomPrefix(writer.getNamespaceContext());
     }
 
-    @Override
     void writeCharacters(final String text) throws XMLStreamException {
         if (!Strings.isNullOrEmpty(text)) {
             flushElement();
