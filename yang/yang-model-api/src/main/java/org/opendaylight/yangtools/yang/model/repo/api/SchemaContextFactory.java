@@ -9,8 +9,10 @@ package org.opendaylight.yangtools.yang.model.repo.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.util.concurrent.ListenableFuture;
+import java.util.Arrays;
 import java.util.Collection;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 
 /**
@@ -26,5 +28,11 @@ public interface SchemaContextFactory {
      * @return A checked future, which will produce a schema context, or fail with an explanation why the creation
      *         of the schema context failed.
      */
-    @NonNull ListenableFuture<SchemaContext> createSchemaContext(@NonNull Collection<SourceIdentifier> requiredSources);
+    @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
+            @NonNull Collection<SourceIdentifier> requiredSources);
+
+    default @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
+            final SourceIdentifier... requiredSources) {
+        return createSchemaContext(Arrays.asList(requiredSources));
+    }
 }

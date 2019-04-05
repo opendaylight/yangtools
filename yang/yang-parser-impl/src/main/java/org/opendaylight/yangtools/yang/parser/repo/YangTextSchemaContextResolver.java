@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
@@ -234,7 +235,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources);
+                final ListenableFuture<EffectiveModelContext> f = factory.createSchemaContext(sources);
                 try {
                     sc = Optional.of(f.get());
                     break;
@@ -290,15 +291,15 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Beta
-    public SchemaContext trySchemaContext() throws SchemaResolutionException {
+    public EffectiveModelContext trySchemaContext() throws SchemaResolutionException {
         return trySchemaContext(StatementParserMode.DEFAULT_MODE);
     }
 
     @Beta
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
-    public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
+    public EffectiveModelContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
-        final ListenableFuture<SchemaContext> future = repository
+        final ListenableFuture<EffectiveModelContext> future = repository
                 .createSchemaContextFactory(config(statementParserMode))
                 .createSchemaContext(ImmutableSet.copyOf(requiredSources));
 
