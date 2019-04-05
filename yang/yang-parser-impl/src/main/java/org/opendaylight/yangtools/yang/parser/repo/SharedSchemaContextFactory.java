@@ -34,8 +34,8 @@ import java.util.Set;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.antlrv4.code.gen.YangStatementParser.StatementContext;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
@@ -50,12 +50,12 @@ import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementR
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class SharedSchemaContextFactory implements SchemaContextFactory {
+final class SharedSchemaContextFactory implements EffectiveModelContextFactory {
     private static final Logger LOG = LoggerFactory.getLogger(SharedSchemaContextFactory.class);
 
-    private final Cache<Collection<SourceIdentifier>, SchemaContext> revisionCache = CacheBuilder.newBuilder()
+    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> revisionCache = CacheBuilder.newBuilder()
             .weakValues().build();
-    private final Cache<Collection<SourceIdentifier>, SchemaContext> semVerCache = CacheBuilder.newBuilder()
+    private final Cache<Collection<SourceIdentifier>, EffectiveModelContext> semVerCache = CacheBuilder.newBuilder()
             .weakValues().build();
     private final @NonNull SchemaRepository repository;
     private final @NonNull SchemaContextFactoryConfiguration config;
@@ -67,21 +67,21 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
     }
 
     @Override
-    public @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+    public @NonNull ListenableFuture<EffectiveModelContext> createEffectiveModelContext(
             final @NonNull Collection<SourceIdentifier> requiredSources) {
         return createSchemaContext(requiredSources,
                 config.getStatementParserMode() == StatementParserMode.SEMVER_MODE ? semVerCache : revisionCache,
                 new AssembleSources(config));
     }
 
-    private @NonNull ListenableFuture<SchemaContext> createSchemaContext(
+    private @NonNull ListenableFuture<EffectiveModelContext> createSchemaContext(
             final Collection<SourceIdentifier> requiredSources,
-            final Cache<Collection<SourceIdentifier>, SchemaContext> cache,
-            final AsyncFunction<List<ASTSchemaSource>, SchemaContext> assembleSources) {
+            final Cache<Collection<SourceIdentifier>, EffectiveModelContext> cache,
+            final AsyncFunction<List<ASTSchemaSource>, EffectiveModelContext> assembleSources) {
         // Make sources unique
         final List<SourceIdentifier> uniqueSourceIdentifiers = deDuplicateSources(requiredSources);
 
-        final SchemaContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
+        final EffectiveModelContext existing = cache.getIfPresent(uniqueSourceIdentifiers);
         if (existing != null) {
             LOG.debug("Returning cached context {}", existing);
             return immediateFluentFuture(existing);
@@ -98,13 +98,13 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
             MoreExecutors.directExecutor());
 
         // Assemble sources into a schema context
-        final ListenableFuture<SchemaContext> cf = Futures.transformAsync(sf, assembleSources,
+        final ListenableFuture<EffectiveModelContext> cf = Futures.transformAsync(sf, assembleSources,
             MoreExecutors.directExecutor());
 
         // Populate cache when successful
-        Futures.addCallback(cf, new FutureCallback<SchemaContext>() {
+        Futures.addCallback(cf, new FutureCallback<EffectiveModelContext>() {
             @Override
-            public void onSuccess(final SchemaContext result) {
+            public void onSuccess(final EffectiveModelContext result) {
                 cache.put(uniqueSourceIdentifiers, result);
             }
 
@@ -172,7 +172,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
     }
 
-    private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, SchemaContext> {
+    private static final class AssembleSources implements AsyncFunction<List<ASTSchemaSource>, EffectiveModelContext> {
         private final @NonNull SchemaContextFactoryConfiguration config;
         private final @NonNull Function<ASTSchemaSource, SourceIdentifier> getIdentifier;
 
@@ -188,7 +188,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
         }
 
         @Override
-        public FluentFuture<SchemaContext> apply(final List<ASTSchemaSource> sources)
+        public FluentFuture<EffectiveModelContext> apply(final List<ASTSchemaSource> sources)
                 throws SchemaResolutionException, ReactorException {
             final Map<SourceIdentifier, ASTSchemaSource> srcs = Maps.uniqueIndex(sources, getIdentifier);
             final Map<SourceIdentifier, YangModelDependencyInfo> deps =
@@ -220,7 +220,7 @@ final class SharedSchemaContextFactory implements SchemaContextFactory {
                     ast.getSymbolicName().orElse(null)));
             }
 
-            final SchemaContext schemaContext;
+            final EffectiveModelContext schemaContext;
             try {
                 schemaContext = reactor.buildEffective();
             } catch (final ReactorException ex) {

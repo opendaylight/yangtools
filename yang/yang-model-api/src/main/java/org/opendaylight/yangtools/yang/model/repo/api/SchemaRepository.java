@@ -24,15 +24,16 @@ public interface SchemaRepository {
      * @param config configuration of schema context factory.
      * @return schema context factory.
      */
-    @NonNull SchemaContextFactory createSchemaContextFactory(@NonNull SchemaContextFactoryConfiguration config);
+    @NonNull EffectiveModelContextFactory createEffectiveModelContextFactory(
+            @NonNull SchemaContextFactoryConfiguration config);
 
     /**
      * Returns {@link SchemaContextFactory} with {@link SchemaContextFactoryConfiguration#getDefault()}.
      *
      * @return schema context factory.
      */
-    default @NonNull SchemaContextFactory createSchemaContextFactory() {
-        return createSchemaContextFactory(SchemaContextFactoryConfiguration.getDefault());
+    default @NonNull EffectiveModelContextFactory createEffectiveModelContextFactory() {
+        return createEffectiveModelContextFactory(SchemaContextFactoryConfiguration.getDefault());
     }
 
     <T extends SchemaSourceRepresentation> @NonNull ListenableFuture<T> getSchemaSource(@NonNull SourceIdentifier id,
