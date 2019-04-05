@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -52,8 +53,9 @@ public class MultipleRevImportBug6875Test {
         setAndRegister(sharedSchemaRepository, bar2);
         setAndRegister(sharedSchemaRepository, bar3);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture = sharedSchemaRepository.createSchemaContextFactory()
-                .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId(), bar3.getId()));
+        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
+                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
+                    foo.getId(), bar1.getId(), bar2.getId(), bar3.getId());
         assertTrue(schemaContextFuture.isDone());
 
         final SchemaContext context = schemaContextFuture.get();
@@ -92,8 +94,9 @@ public class MultipleRevImportBug6875Test {
         setAndRegister(sharedSchemaRepository, bar1);
         setAndRegister(sharedSchemaRepository, bar2);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture = sharedSchemaRepository.createSchemaContextFactory()
-                .createSchemaContext(ImmutableList.of(foo.getId(), bar1.getId(), bar2.getId()));
+        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
+                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
+                    foo.getId(), bar1.getId(), bar2.getId());
         assertTrue(schemaContextFuture.isDone());
 
         try {

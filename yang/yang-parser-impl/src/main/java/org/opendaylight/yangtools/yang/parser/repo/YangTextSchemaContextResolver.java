@@ -32,11 +32,12 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.parser.api.YangSyntaxErrorException;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaResolutionException;
@@ -212,7 +213,8 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
      *         new schema context was successfully built.
      */
     public Optional<SchemaContext> getSchemaContext(final StatementParserMode statementParserMode) {
-        final SchemaContextFactory factory = repository.createSchemaContextFactory(config(statementParserMode));
+        final EffectiveModelContextFactory factory = repository.createEffectiveModelContextFactory(
+            config(statementParserMode));
         Optional<SchemaContext> sc;
         Object ver;
         do {
@@ -234,7 +236,7 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
             } while (ver != version);
 
             while (true) {
-                final ListenableFuture<SchemaContext> f = factory.createSchemaContext(sources);
+                final ListenableFuture<EffectiveModelContext> f = factory.createEffectiveModelContext(sources);
                 try {
                     sc = Optional.of(f.get());
                     break;
@@ -290,17 +292,17 @@ public final class YangTextSchemaContextResolver implements AutoCloseable, Schem
     }
 
     @Beta
-    public SchemaContext trySchemaContext() throws SchemaResolutionException {
+    public EffectiveModelContext trySchemaContext() throws SchemaResolutionException {
         return trySchemaContext(StatementParserMode.DEFAULT_MODE);
     }
 
     @Beta
     @SuppressWarnings("checkstyle:avoidHidingCauseException")
-    public SchemaContext trySchemaContext(final StatementParserMode statementParserMode)
+    public EffectiveModelContext trySchemaContext(final StatementParserMode statementParserMode)
             throws SchemaResolutionException {
-        final ListenableFuture<SchemaContext> future = repository
-                .createSchemaContextFactory(config(statementParserMode))
-                .createSchemaContext(ImmutableSet.copyOf(requiredSources));
+        final ListenableFuture<EffectiveModelContext> future = repository
+                .createEffectiveModelContextFactory(config(statementParserMode))
+                .createEffectiveModelContext(ImmutableSet.copyOf(requiredSources));
 
         try {
             return future.get();

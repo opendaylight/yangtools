@@ -22,7 +22,6 @@ import static org.mockito.Mockito.verify;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.FutureCallback;
@@ -41,10 +40,11 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.Revision;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.MissingSchemaSourceException;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
@@ -93,9 +93,9 @@ public class SharedSchemaRepositoryTest {
             remoteInetTypesYang.getId(), ASTSchemaSource.class);
         assertFalse(registeredSourceFuture.isDone());
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
-        final ListenableFuture<SchemaContext> schemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
+        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
+                fact.createEffectiveModelContext(remoteInetTypesYang.getId());
 
         assertFalse(schemaContextFuture.isDone());
 
@@ -109,8 +109,9 @@ public class SharedSchemaRepositoryTest {
         assertSchemaContext(firstSchemaContext, 1);
 
         // Try same schema second time
-        final ListenableFuture<SchemaContext> secondSchemaFuture = sharedSchemaRepository.createSchemaContextFactory()
-                .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
+        final ListenableFuture<EffectiveModelContext> secondSchemaFuture =
+                sharedSchemaRepository.createEffectiveModelContextFactory().createEffectiveModelContext(
+                    remoteInetTypesYang.getId());
 
         // Verify second schema created successfully immediately
         assertTrue(secondSchemaFuture.isDone());
@@ -134,14 +135,14 @@ public class SharedSchemaRepositoryTest {
                 getImmediateYangSourceProviderFromResource("/no-revision/module-without-revision.yang");
         remoteModuleNoRevYang.register(sharedSchemaRepository);
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
-        final ListenableFuture<SchemaContext> inetAndTopologySchemaContextFuture = fact
-                .createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId(), remoteTopologyYang.getId()));
+        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final ListenableFuture<EffectiveModelContext> inetAndTopologySchemaContextFuture = fact
+                .createEffectiveModelContext(remoteInetTypesYang.getId(), remoteTopologyYang.getId());
         assertTrue(inetAndTopologySchemaContextFuture.isDone());
         assertSchemaContext(inetAndTopologySchemaContextFuture.get(), 2);
 
-        final ListenableFuture<SchemaContext> inetAndNoRevSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId(), remoteModuleNoRevYang.getId()));
+        final ListenableFuture<EffectiveModelContext> inetAndNoRevSchemaContextFuture =
+                fact.createEffectiveModelContext(remoteInetTypesYang.getId(), remoteModuleNoRevYang.getId());
         assertFalse(inetAndNoRevSchemaContextFuture.isDone());
 
         remoteModuleNoRevYang.setResult();
@@ -157,14 +158,14 @@ public class SharedSchemaRepositoryTest {
             "/ietf/ietf-inet-types@2010-09-24.yang");
         remoteInetTypesYang.register(sharedSchemaRepository);
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
+        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
 
         // Make source appear
         final Throwable ex = new IllegalStateException("failed schema");
         remoteInetTypesYang.setException(ex);
 
-        final ListenableFuture<SchemaContext> schemaContextFuture = fact.createSchemaContext(
-            ImmutableList.of(remoteInetTypesYang.getId()));
+        final ListenableFuture<EffectiveModelContext> schemaContextFuture = fact.createEffectiveModelContext(
+            remoteInetTypesYang.getId());
 
         try {
             schemaContextFuture.get();
@@ -192,9 +193,9 @@ public class SharedSchemaRepositoryTest {
         remoteInetTypesYang.register(sharedSchemaRepository);
         remoteInetTypesYang.setResult();
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
-        final ListenableFuture<SchemaContext> schemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(remoteInetTypesYang.getId()));
+        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final ListenableFuture<EffectiveModelContext> schemaContextFuture =
+                fact.createEffectiveModelContext(remoteInetTypesYang.getId());
 
         assertSchemaContext(schemaContextFuture.get(), 1);
 
@@ -288,9 +289,9 @@ public class SharedSchemaRepositoryTest {
         sharedSchemaRepository.registerSchemaSourceListener(transformer);
 
         // Request schema to make repository notify the cache
-        final ListenableFuture<SchemaContext> schemaFuture = sharedSchemaRepository
-                .createSchemaContextFactory()
-                .createSchemaContext(ImmutableList.of(runningId));
+        final ListenableFuture<EffectiveModelContext> schemaFuture = sharedSchemaRepository
+                .createEffectiveModelContextFactory()
+                .createEffectiveModelContext(runningId);
         Futures.addCallback(schemaFuture, new FutureCallback<SchemaContext>() {
             @Override
             public void onSuccess(final SchemaContext result) {

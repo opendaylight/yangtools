@@ -11,7 +11,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.opendaylight.yangtools.util.concurrent.FluentFutures.immediateFluentFuture;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +18,7 @@ import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.opendaylight.yangtools.yang.common.Revision;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -60,8 +59,8 @@ public class SharedSchemaContextFactoryTest {
     public void testCreateSchemaContextWithDuplicateRequiredSources() throws InterruptedException, ExecutionException {
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             config);
-        final ListenableFuture<SchemaContext> schemaContext =
-                sharedSchemaContextFactory.createSchemaContext(Arrays.asList(s1, s1, s2));
+        final ListenableFuture<EffectiveModelContext> schemaContext =
+                sharedSchemaContextFactory.createEffectiveModelContext(s1, s1, s2);
         assertNotNull(schemaContext.get());
     }
 
@@ -85,8 +84,8 @@ public class SharedSchemaContextFactoryTest {
 
         final SharedSchemaContextFactory sharedSchemaContextFactory = new SharedSchemaContextFactory(repository,
             config);
-        final ListenableFuture<SchemaContext> schemaContext =
-                sharedSchemaContextFactory.createSchemaContext(Arrays.asList(sIdWithoutRevision, provider.getId()));
+        final ListenableFuture<EffectiveModelContext> schemaContext =
+                sharedSchemaContextFactory.createEffectiveModelContext(sIdWithoutRevision, provider.getId());
         assertNotNull(schemaContext.get());
     }
 }

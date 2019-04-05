@@ -20,8 +20,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.RevisionSourceIdentifier;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaSourceRepresentation;
@@ -142,15 +142,17 @@ public class SchemaSourceTransformerTest {
 
     private class Provider extends AbstractSchemaRepository {
         @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
-            return mock(SchemaContextFactory.class);
+        public EffectiveModelContextFactory createEffectiveModelContextFactory(
+                final SchemaContextFactoryConfiguration config) {
+            return mock(EffectiveModelContextFactory.class);
         }
     }
 
     private class Consumer extends AbstractSchemaRepository {
         @Override
-        public SchemaContextFactory createSchemaContextFactory(final SchemaContextFactoryConfiguration config) {
-            return mock(SchemaContextFactory.class);
+        public EffectiveModelContextFactory createEffectiveModelContextFactory(
+                final SchemaContextFactoryConfiguration config) {
+            return mock(EffectiveModelContextFactory.class);
         }
     }
 }
