@@ -21,11 +21,16 @@ public interface EffectiveModelContextProvider extends SchemaContextProvider {
      * Return the {@link EffectiveModelContext} attached to this object.
      *
      * @return An EffectiveModelContext instance.
+     * @throws IllegalStateException if the context is not available.
      */
     @NonNull EffectiveModelContext getEffectiveModelContext();
 
     @Override
-    default @NonNull SchemaContext getSchemaContext() {
-        return getEffectiveModelContext();
+    default SchemaContext getSchemaContext() {
+        try {
+            return getEffectiveModelContext();
+        } catch (IllegalStateException e) {
+            return null;
+        }
     }
 }
