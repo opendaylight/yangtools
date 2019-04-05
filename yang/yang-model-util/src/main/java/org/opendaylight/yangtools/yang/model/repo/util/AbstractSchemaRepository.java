@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Abstract base class for {@link SchemaRepository} implementations. It handles registration and lookup of schema
- * sources, subclasses need only to provide their own {@link #createSchemaContextFactory()} implementation.
+ * sources, subclasses need only to provide their own {@link #createEffectiveModelContextFactory()} implementation.
  */
 @Beta
 public abstract class AbstractSchemaRepository implements SchemaRepository, SchemaSourceRegistry {

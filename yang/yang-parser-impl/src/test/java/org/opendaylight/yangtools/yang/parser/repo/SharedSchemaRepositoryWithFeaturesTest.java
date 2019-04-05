@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.parser.repo;
 
 import static org.junit.Assert.assertEquals;
@@ -13,17 +12,17 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.util.concurrent.ListenableFuture;
 import java.util.Set;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.EffectiveModelContext;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.YangTextSchemaSource;
 import org.opendaylight.yangtools.yang.parser.rfc7950.repo.ASTSchemaSource;
@@ -43,10 +42,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                sharedSchemaRepository.createSchemaContextFactory(
+        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
+                sharedSchemaRepository.createEffectiveModelContextFactory(
                 SchemaContextFactoryConfiguration.builder().setSupportedFeatures(supportedFeatures).build())
-                .createSchemaContext(ImmutableList.of(foobar.getId()));
+                .createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
@@ -83,9 +82,9 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final SchemaContextFactory fact = sharedSchemaRepository.createSchemaContextFactory();
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                fact.createSchemaContext(ImmutableList.of(foobar.getId()));
+        final EffectiveModelContextFactory fact = sharedSchemaRepository.createEffectiveModelContextFactory();
+        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
+                fact.createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 
@@ -125,10 +124,10 @@ public class SharedSchemaRepositoryWithFeaturesTest {
         foobar.register(sharedSchemaRepository);
         foobar.setResult();
 
-        final ListenableFuture<SchemaContext> testSchemaContextFuture =
-                sharedSchemaRepository.createSchemaContextFactory(
+        final ListenableFuture<EffectiveModelContext> testSchemaContextFuture =
+                sharedSchemaRepository.createEffectiveModelContextFactory(
                     SchemaContextFactoryConfiguration.builder().setSupportedFeatures(ImmutableSet.of()).build())
-                .createSchemaContext(ImmutableList.of(foobar.getId()));
+                .createEffectiveModelContext(foobar.getId());
         assertTrue(testSchemaContextFuture.isDone());
         assertSchemaContext(testSchemaContextFuture.get(), 1);
 

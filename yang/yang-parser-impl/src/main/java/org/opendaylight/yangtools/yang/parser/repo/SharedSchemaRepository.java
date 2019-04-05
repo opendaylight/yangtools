@@ -17,7 +17,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.kohsuke.MetaInfServices;
 import org.opendaylight.yangtools.concepts.Identifiable;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactory;
+import org.opendaylight.yangtools.yang.model.repo.api.EffectiveModelContextFactory;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaContextFactoryConfiguration;
 import org.opendaylight.yangtools.yang.model.repo.api.SchemaRepository;
 import org.opendaylight.yangtools.yang.model.repo.api.SourceIdentifier;
@@ -32,11 +32,11 @@ import org.opendaylight.yangtools.yang.model.repo.util.AbstractSchemaRepository;
 @Beta
 @MetaInfServices(value = SchemaRepository.class)
 public final class SharedSchemaRepository extends AbstractSchemaRepository implements Identifiable<String> {
-    private final LoadingCache<SchemaContextFactoryConfiguration, SchemaContextFactory> cacheByConfig = CacheBuilder
-            .newBuilder().softValues()
-            .build(new CacheLoader<SchemaContextFactoryConfiguration, SchemaContextFactory>() {
+    private final LoadingCache<SchemaContextFactoryConfiguration, EffectiveModelContextFactory> cacheByConfig =
+            CacheBuilder.newBuilder().softValues()
+            .build(new CacheLoader<SchemaContextFactoryConfiguration, EffectiveModelContextFactory>() {
                 @Override
-                public SchemaContextFactory load(final SchemaContextFactoryConfiguration key) {
+                public EffectiveModelContextFactory load(final SchemaContextFactoryConfiguration key) {
                     return new SharedSchemaContextFactory(SharedSchemaRepository.this, key);
                 }
             });
@@ -53,7 +53,7 @@ public final class SharedSchemaRepository extends AbstractSchemaRepository imple
     }
 
     @Override
-    public @NonNull SchemaContextFactory createSchemaContextFactory(
+    public @NonNull EffectiveModelContextFactory createEffectiveModelContextFactory(
             final @NonNull SchemaContextFactoryConfiguration config) {
         return cacheByConfig.getUnchecked(config);
     }
