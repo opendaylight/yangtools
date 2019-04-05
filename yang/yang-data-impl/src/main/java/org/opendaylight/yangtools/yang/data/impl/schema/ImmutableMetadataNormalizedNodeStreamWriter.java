@@ -59,7 +59,8 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
     private final NormalizedNodeMetadataResult result;
 
     protected ImmutableMetadataNormalizedNodeStreamWriter(final State state) {
-        super(state.dataBuilder);
+        super(state.getDataBuilder());
+        builders.push(state.getMetaBuilder());
         result = null;
     }
 
