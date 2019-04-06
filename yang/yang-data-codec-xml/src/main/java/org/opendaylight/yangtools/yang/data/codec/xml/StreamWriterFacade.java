@@ -167,6 +167,7 @@ final class StreamWriterFacade extends ValueWriter {
                     if (depth != 0) {
                         forwardStartElement(reader);
                     }
+                    forwardAttributes(reader);
                     ++depth;
                     break;
                 case XMLStreamConstants.END_ELEMENT:
@@ -223,7 +224,7 @@ final class StreamWriterFacade extends ValueWriter {
     }
 
     private void forwardAttributes(final DOMSourceXMLStreamReader reader) throws XMLStreamException {
-        for (int i = 0; i < reader.getAttributeCount(); ++i) {
+        for (int i = 0, count = reader.getAttributeCount(); i < count; ++i) {
             final String localName = reader.getAttributeLocalName(i);
             final String value = reader.getAttributeValue(i);
             final String prefix = reader.getAttributePrefix(i);
