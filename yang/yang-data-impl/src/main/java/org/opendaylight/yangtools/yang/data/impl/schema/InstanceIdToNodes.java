@@ -144,11 +144,9 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     }
 
     private static Optional<DataSchemaNode> findChildSchemaNode(final DataNodeContainer parent, final QName child) {
-        DataSchemaNode potential = parent.getDataChildByName(child);
-        if (potential == null) {
-            potential = findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child);
-        }
-        return Optional.ofNullable(potential);
+        final Optional<DataSchemaNode> potential = parent.findDataChildByName(child);
+        return potential.isPresent() ? potential : Optional.ofNullable(
+            findChoice(Iterables.filter(parent.getChildNodes(), ChoiceSchemaNode.class), child));
     }
 
     static InstanceIdToNodes<?> fromSchemaAndQNameChecked(final DataNodeContainer schema, final QName child) {
@@ -187,8 +185,8 @@ abstract class InstanceIdToNodes<T extends PathArgument> implements Identifiable
     private static InstanceIdToNodes<?> fromAugmentation(final DataNodeContainer parent,
             final AugmentationTarget parentAug, final DataSchemaNode child) {
         for (final AugmentationSchemaNode aug : parentAug.getAvailableAugmentations()) {
-            final DataSchemaNode potential = aug.getDataChildByName(child.getQName());
-            if (potential != null) {
+            final Optional<DataSchemaNode> potential = aug.findDataChildByName(child.getQName());
+            if (potential.isPresent()) {
                 return new InstanceIdToCompositeNodes.AugmentationNormalization(aug, parent);
             }
         }

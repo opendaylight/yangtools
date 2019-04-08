@@ -153,8 +153,8 @@ public class DataTreeCandidateValidatorTest {
         final DataTreeModification initialDataTreeModification = inMemoryDataTree
                 .takeSnapshot().newModification();
 
-        final ContainerSchemaNode odlProjContSchemaNode = (ContainerSchemaNode) valModule
-                .getDataChildByName(odl);
+        final ContainerSchemaNode odlProjContSchemaNode = (ContainerSchemaNode) valModule.findDataChildByName(odl)
+                .get();
 
         final ContainerNode odlProjectContainer = createOdlContainer(odlProjContSchemaNode);
 
@@ -193,7 +193,7 @@ public class DataTreeCandidateValidatorTest {
     private static void writeContributors() {
 
         final ContainerSchemaNode contributorContSchemaNode = (ContainerSchemaNode) valModule
-                .getDataChildByName(odlContributor);
+                .findDataChildByName(odlContributor).get();
 
         final ContainerNode contributorContainer = createBasicContributorContainer(contributorContSchemaNode);
 
@@ -290,10 +290,10 @@ public class DataTreeCandidateValidatorTest {
         final YangInstanceIdentifier newOdlProjectMapEntryPath = YangInstanceIdentifier
                 .of(odl).node(project).node(mapEntryPath);
 
-        final ContainerSchemaNode odlProjContSchemaNode = (ContainerSchemaNode) valModule
-                .getDataChildByName(odl);
-        final ListSchemaNode projListSchemaNode = (ListSchemaNode) odlProjContSchemaNode
-                .getDataChildByName(project);
+        final ContainerSchemaNode odlProjContSchemaNode = (ContainerSchemaNode) valModule.findDataChildByName(odl)
+                .get();
+        final ListSchemaNode projListSchemaNode = (ListSchemaNode) odlProjContSchemaNode.findDataChildByName(project)
+                .get();
         final MapEntryNode newProjectMapEntry = createProjectListEntry(
                 "New Project", "New Project description ...",
                 "Leader of New Project", "Owner of New Project",
@@ -336,7 +336,7 @@ public class DataTreeCandidateValidatorTest {
     private static void write() {
 
         final ContainerSchemaNode contributorContSchemaNode = (ContainerSchemaNode) valModule
-                .getDataChildByName(odlContributor);
+                .findDataChildByName(odlContributor).get();
 
         final ContainerNode contributorContainer = createContributorContainer(contributorContSchemaNode);
 
@@ -383,10 +383,8 @@ public class DataTreeCandidateValidatorTest {
 
     private static void write2() {
 
-        final ContainerSchemaNode odlCon = (ContainerSchemaNode) valModule
-                .getDataChildByName(odl);
-        final ContainerSchemaNode con1Con = (ContainerSchemaNode) odlCon
-                .getDataChildByName(con1);
+        final ContainerSchemaNode odlCon = (ContainerSchemaNode) valModule.findDataChildByName(odl).get();
+        final ContainerSchemaNode con1Con = (ContainerSchemaNode) odlCon.findDataChildByName(con1).get();
         final LeafNode<String> l1Leaf = ImmutableNodes.leafNode(l1, "l1 value");
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> containerBuilder = Builders
                 .containerBuilder(con1Con);
@@ -601,7 +599,7 @@ public class DataTreeCandidateValidatorTest {
             final ContainerSchemaNode contributorContSchemaNode) {
 
         final ListSchemaNode contributorListSchemaNode = (ListSchemaNode) contributorContSchemaNode
-                .getDataChildByName(contributor);
+                .findDataChildByName(contributor).get();
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
                 .containerBuilder(contributorContSchemaNode);
@@ -672,14 +670,10 @@ public class DataTreeCandidateValidatorTest {
             final String odlProjectNameVal, final String odlProjectDescVal,
             final ListSchemaNode contributorListSchemaNode) {
 
-        final LeafNode<String> loginLeaf = ImmutableNodes.leafNode(login,
-                loginVal);
-        final LeafNode<String> contributorNameLeaf = ImmutableNodes.leafNode(
-                contributorName, contributorNameVal);
-        final LeafNode<String> odlProjectNameLeafRef = ImmutableNodes.leafNode(
-                odlProjectName, odlProjectNameVal);
-        final LeafNode<String> odlProjectDescLeafRef = ImmutableNodes.leafNode(
-                odlProjectDesc, odlProjectDescVal);
+        final LeafNode<String> loginLeaf = ImmutableNodes.leafNode(login, loginVal);
+        final LeafNode<String> contributorNameLeaf = ImmutableNodes.leafNode(contributorName, contributorNameVal);
+        final LeafNode<String> odlProjectNameLeafRef = ImmutableNodes.leafNode(odlProjectName, odlProjectNameVal);
+        final LeafNode<String> odlProjectDescLeafRef = ImmutableNodes.leafNode(odlProjectDesc, odlProjectDescVal);
 
         return Builders.mapEntryBuilder(contributorListSchemaNode)
                 .addChild(loginLeaf)
@@ -692,8 +686,7 @@ public class DataTreeCandidateValidatorTest {
     private static ContainerNode createOdlContainer(
             final ContainerSchemaNode container) {
 
-        final ListSchemaNode projListSchemaNode = (ListSchemaNode) container
-                .getDataChildByName(project);
+        final ListSchemaNode projListSchemaNode = (ListSchemaNode) container.findDataChildByName(project).get();
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> odlProjectContainerBldr = Builders
                 .containerBuilder(container);
@@ -761,7 +754,7 @@ public class DataTreeCandidateValidatorTest {
             final ContainerSchemaNode contributorContSchemaNode) {
 
         final ListSchemaNode contributorListSchemaNode = (ListSchemaNode) contributorContSchemaNode
-                .getDataChildByName(contributor);
+                .findDataChildByName(contributor).get();
 
         final DataContainerNodeAttrBuilder<NodeIdentifier, ContainerNode> contributorContainerBldr = Builders
                 .containerBuilder(contributorContSchemaNode);

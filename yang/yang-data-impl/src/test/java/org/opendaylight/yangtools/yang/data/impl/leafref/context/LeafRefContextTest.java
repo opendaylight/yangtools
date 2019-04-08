@@ -65,10 +65,10 @@ public class LeafRefContextTest {
         final QName q5 = QName.create(root, "list1");
         final QName q6 = QName.create(root, "name");
 
-        final DataSchemaNode leafRefNode = rootMod.getDataChildByName(q1);
-        final DataSchemaNode targetNode = rootMod.getDataChildByName(q2);
-        final DataSchemaNode cont1Node = rootMod.getDataChildByName(q3);
-        final DataSchemaNode cont2Node = rootMod.getDataChildByName(q4);
+        final DataSchemaNode leafRefNode = rootMod.findDataChildByName(q1).get();
+        final DataSchemaNode targetNode = rootMod.findDataChildByName(q2).get();
+        final DataSchemaNode cont1Node = rootMod.findDataChildByName(q3).get();
+        final DataSchemaNode cont2Node = rootMod.findDataChildByName(q4).get();
         final DataSchemaNode name1Node = ((DataNodeContainer) ((DataNodeContainer) rootMod.getDataChildByName(q3))
                 .getDataChildByName(q5)).getDataChildByName(q6);
 
