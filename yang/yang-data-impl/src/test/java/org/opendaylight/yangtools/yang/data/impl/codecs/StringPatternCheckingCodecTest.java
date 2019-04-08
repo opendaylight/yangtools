@@ -38,13 +38,11 @@ public class StringPatternCheckingCodecTest {
         final QNameModule testModuleQName = QNameModule.create(URI.create("string-pattern-checking-codec-test"));
 
         final Module testModule = schemaContext.findModules("string-pattern-checking-codec-test").iterator().next();
-        final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.getDataChildByName(
-                QName.create(testModuleQName, "test-container"));
-        assertNotNull(testContainer);
+        final ContainerSchemaNode testContainer = (ContainerSchemaNode) testModule.findDataChildByName(
+                QName.create(testModuleQName, "test-container")).get();
 
-        final LeafSchemaNode testLeaf = (LeafSchemaNode) testContainer.getDataChildByName(
-                QName.create(testModuleQName, "string-leaf-with-valid-pattern"));
-        assertNotNull(testLeaf);
+        final LeafSchemaNode testLeaf = (LeafSchemaNode) testContainer.findDataChildByName(
+                QName.create(testModuleQName, "string-leaf-with-valid-pattern")).get();
 
         final StringCodec<String> codec = getCodec(testLeaf.getType(), StringCodec.class);
         assertNotNull(codec);

@@ -166,7 +166,7 @@ public class NormalizedDataBuilderTest {
     private static AugmentationSchemaNode getAugmentationSchemaForChild(final ContainerSchemaNode containerNode,
             final QName qname) {
         for (AugmentationSchemaNode augmentationSchema : containerNode.getAvailableAugmentations()) {
-            if (augmentationSchema.getDataChildByName(qname) != null) {
+            if (augmentationSchema.findDataChildByName(qname).isPresent()) {
                 return augmentationSchema;
             }
         }

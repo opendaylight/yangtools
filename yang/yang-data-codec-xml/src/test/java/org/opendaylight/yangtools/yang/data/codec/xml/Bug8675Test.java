@@ -49,9 +49,8 @@ public class Bug8675Test {
 
     @Test
     public void testParsingEmptyElements() throws Exception {
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container"));
-        assertNotNull(topLevelContainer);
+        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo.xml");
@@ -70,9 +69,8 @@ public class Bug8675Test {
 
     @Test
     public void testParsingEmptyRootElement() throws Exception {
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container"));
-        assertNotNull(topLevelContainer);
+        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/bug8675/foo-2.xml");
@@ -91,9 +89,8 @@ public class Bug8675Test {
 
     @Test
     public void testListAsRootElement() throws Exception {
-        final ListSchemaNode topLevelList = (ListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-list"));
-        assertNotNull(topLevelList);
+        final ListSchemaNode topLevelList = (ListSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-list")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-3.xml");
 
@@ -111,9 +108,8 @@ public class Bug8675Test {
 
     @Test
     public void testAnyXmlAsRootElement() throws Exception {
-        final AnyXmlSchemaNode topLevelAnyXml = (AnyXmlSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-anyxml"));
-        assertNotNull(topLevelAnyXml);
+        final AnyXmlSchemaNode topLevelAnyXml = (AnyXmlSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-anyxml")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-4.xml");
 
@@ -131,8 +127,8 @@ public class Bug8675Test {
 
     @Test
     public void testLeafAsRootElement() throws Exception {
-        final LeafSchemaNode topLevelLeaf = (LeafSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-leaf"));
+        final LeafSchemaNode topLevelLeaf = (LeafSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-leaf")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-5.xml");
 
@@ -150,8 +146,8 @@ public class Bug8675Test {
 
     @Test
     public void testLeafListAsRootElement() throws Exception {
-        final LeafListSchemaNode topLevelLeafList = (LeafListSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-leaf-list"));
+        final LeafListSchemaNode topLevelLeafList = (LeafListSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-leaf-list")).get();
 
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream("/bug8675/foo-6.xml");
 
