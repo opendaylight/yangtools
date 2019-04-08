@@ -11,50 +11,30 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 import org.opendaylight.yangtools.yang.model.util.type.BaseTypes;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
-public class YinFileListStmtTest {
-
-    private SchemaContext context;
-
-    @Before
-    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
-        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, context.getModules().size());
-    }
+public class YinFileListStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testListAndLeaves() {
         final Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "modules"));
-        assertNotNull(container);
-
-        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(
-            QName.create(testModule.getQNameModule(), "module"));
-        assertNotNull(list);
+        final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(QName.create(
+                testModule.getQNameModule(), "modules"), QName.create(testModule.getQNameModule(), "module")).get();
         final List<QName> keys = list.getKeyDefinition();
         assertEquals(1, keys.size());
         assertEquals("name", keys.get(0).getLocalName());

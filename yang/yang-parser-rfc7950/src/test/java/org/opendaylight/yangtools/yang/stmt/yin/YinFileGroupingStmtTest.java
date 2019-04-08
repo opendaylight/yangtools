@@ -11,33 +11,20 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
-public class YinFileGroupingStmtTest {
-
-    private SchemaContext context;
-
-    @Before
-    public void init() throws ReactorException, SAXException, IOException, URISyntaxException {
-        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, context.getModules().size());
-    }
+public class YinFileGroupingStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testGrouping() throws URISyntaxException {
@@ -60,14 +47,12 @@ public class YinFileGroupingStmtTest {
         final Collection<DataSchemaNode> children = grouping.getChildNodes();
         assertEquals(2, children.size());
 
-        final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "type"));
-        assertNotNull(leaf1);
+        final LeafSchemaNode leaf1 = (LeafSchemaNode) grouping.findDataChildByName(QName.create(
+                testModule.getQNameModule(), "type")).get();
         assertTrue(leaf1.isMandatory());
 
-        final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "name"));
-        assertNotNull(leaf2);
+        final LeafSchemaNode leaf2 = (LeafSchemaNode) grouping.findDataChildByName(QName.create(
+                testModule.getQNameModule(), "name")).get();
         assertTrue(leaf2.isMandatory());
     }
 }
