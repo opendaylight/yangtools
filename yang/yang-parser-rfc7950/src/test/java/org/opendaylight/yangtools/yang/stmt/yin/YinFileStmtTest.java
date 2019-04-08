@@ -7,14 +7,11 @@
  */
 package org.opendaylight.yangtools.yang.stmt.yin;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.repo.api.YinTextSchemaSource;
@@ -26,7 +23,6 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.SomeModifiersUnresolvedEx
 import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementStreamSource;
 import org.opendaylight.yangtools.yang.parser.stmt.reactor.CrossSourceStatementReactor.BuildAction;
-import org.opendaylight.yangtools.yang.stmt.TestUtils;
 import org.xml.sax.SAXException;
 
 public class YinFileStmtTest {
@@ -37,8 +33,6 @@ public class YinFileStmtTest {
     private static final StatementStreamSource INVALID_YIN_FILE = createSource("incorrect-foo.yin");
     private static final StatementStreamSource INVALID_YIN_FILE_2 = createSource("incorrect-bar.yin");
 
-    private SchemaContext context;
-
     private static StatementStreamSource createSource(final String name) {
         try {
             return YinStatementStreamSource.create(YinTextToDomTransformer.transformSource(
@@ -46,11 +40,6 @@ public class YinFileStmtTest {
         } catch (SAXException | IOException e) {
             throw new IllegalArgumentException(e);
         }
-    }
-
-    @Before
-    public void init() throws URISyntaxException, ReactorException, SAXException, IOException {
-        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
     }
 
     @Test
@@ -71,6 +60,7 @@ public class YinFileStmtTest {
     }
 
     // parsing yin file with duplicate key name in a list statement
+    @Test
     public void readAndParseInvalidYinFileTest2() {
         BuildAction reactor = RFC7950Reactors.defaultReactor().newBuild().addSource(INVALID_YIN_FILE_2);
 
@@ -83,10 +73,5 @@ public class YinFileStmtTest {
             assertTrue(cause.getMessage().startsWith(
                 "Key argument 'testing-string testing-string' contains duplicates"));
         }
-    }
-
-    @Test
-    public void testModulesSize() {
-        assertEquals(context.getModules().size(), 9);
     }
 }

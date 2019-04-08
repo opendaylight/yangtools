@@ -11,30 +11,17 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.Set;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
-public class YinFileAugmentStmtTest {
-
-    private SchemaContext context;
-
-    @Before
-    public void init() throws ReactorException, SAXException, IOException, URISyntaxException {
-        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, context.getModules().size());
-    }
+public class YinFileAugmentStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testAugment() {
@@ -53,9 +40,8 @@ public class YinFileAugmentStmtTest {
                         + "(urn:opendaylight:params:xml:ns:yang:controller:config?revision=2013-04-05)configuration"));
 
         assertEquals(1, augment.getChildNodes().size());
-        final CaseSchemaNode caseNode = (CaseSchemaNode) augment.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "main-impl"));
-        assertNotNull(caseNode);
+        final DataSchemaNode caseNode = augment.findDataChildByName(
+            QName.create(testModule.getQNameModule(), "main-impl")).get();
+        assertTrue(caseNode instanceof CaseSchemaNode);
     }
-
 }

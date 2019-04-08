@@ -12,48 +12,28 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Iterator;
-import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.CaseSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ChoiceSchemaNode;
-import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
-import org.opendaylight.yangtools.yang.model.api.SchemaContext;
-import org.opendaylight.yangtools.yang.parser.spi.meta.ReactorException;
 import org.opendaylight.yangtools.yang.stmt.TestUtils;
-import org.xml.sax.SAXException;
 
-public class YinFileChoiceStmtTest {
-
-    private SchemaContext context;
-
-    @Before
-    public void init() throws ReactorException, SAXException, IOException, URISyntaxException {
-        context = TestUtils.loadYinModules(getClass().getResource("/semantic-statement-parser/yin/modules").toURI());
-        assertEquals(9, context.getModules().size());
-    }
+public class YinFileChoiceStmtTest extends AbstractYinModulesTest {
 
     @Test
     public void testChoiceAndCases() {
         final Module testModule = TestUtils.findModule(context, "config").get();
         assertNotNull(testModule);
 
-        final ContainerSchemaNode container = (ContainerSchemaNode) testModule.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "modules"));
-        assertNotNull(container);
+        final ListSchemaNode list = (ListSchemaNode) testModule.findDataChildByName(
+            QName.create(testModule.getQNameModule(), "modules"),
+            QName.create(testModule.getQNameModule(), "module")).get();
 
-        final ListSchemaNode list = (ListSchemaNode) container.getDataChildByName(QName.create(
-                testModule.getQNameModule(), "module"));
-        assertNotNull(list);
-
-        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(),
-                "configuration"));
-        assertNotNull(choice);
+        ChoiceSchemaNode choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(),
+                "configuration")).get();
 
         assertEquals("configuration", choice.getQName().getLocalName());
         assertTrue(choice.isMandatory());
@@ -68,8 +48,7 @@ public class YinFileChoiceStmtTest {
 
         assertTrue(caseNode.getWhenCondition().isPresent());
 
-        choice = (ChoiceSchemaNode) list.getDataChildByName(QName.create(testModule.getQNameModule(), "state"));
-        assertNotNull(choice);
+        choice = (ChoiceSchemaNode) list.findDataChildByName(QName.create(testModule.getQNameModule(), "state")).get();
 
         assertEquals("state", choice.getQName().getLocalName());
         assertFalse(choice.isMandatory());
