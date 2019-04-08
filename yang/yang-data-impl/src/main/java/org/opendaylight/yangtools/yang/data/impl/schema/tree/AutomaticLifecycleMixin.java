@@ -49,24 +49,24 @@ final class AutomaticLifecycleMixin {
         // The only way a tree node can disappear is through delete (which we handle here explicitly) or through
         // actions of disappearResult(). It is therefore safe to perform Optional.get() on the results of
         // delegate.apply()
-        final TreeNode ret;
+        final Optional<TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.getChildren().isEmpty()) {
                 return delegate.apply(modification, storeMeta, version);
             }
             // Delete with children, implies it really is an empty write
-            ret = writeDelegate.applyWrite(modification, emptyNode, storeMeta, version);
+            ret = Optional.of(writeDelegate.applyWrite(modification, emptyNode, storeMeta, version));
         } else if (modification.getOperation() == LogicalOperation.TOUCH && !storeMeta.isPresent()) {
             ret = applyTouch(delegate, emptyNode, modification, storeMeta, version);
         } else {
             // No special handling required here, run normal apply operation
-            ret = delegate.apply(modification, storeMeta, version).get();
+            ret = delegate.apply(modification, storeMeta, version);
         }
 
-        return disappearResult(modification, ret, storeMeta);
+        return ret.isPresent() ? disappearResult(modification, ret.get(), storeMeta) : ret;
     }
 
-    private static TreeNode applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
+    private static Optional<TreeNode> applyTouch(final Apply delegate, final NormalizedNode<?, ?> emptyNode,
             final ModifiedNode modification, final Optional<TreeNode> storeMeta, final Version version) {
         // Container is not present, let's take care of the 'magically appear' part of our job
         final Optional<TreeNode> ret = delegate.apply(modification, fakeMeta(emptyNode, version), version);
@@ -75,7 +75,7 @@ final class AutomaticLifecycleMixin {
         if (modification.getModificationType() == ModificationType.SUBTREE_MODIFIED) {
             modification.resolveModificationType(ModificationType.APPEARED);
         }
-        return ret.get();
+        return ret;
     }
 
     private static Optional<TreeNode> disappearResult(final ModifiedNode modification, final TreeNode result,
