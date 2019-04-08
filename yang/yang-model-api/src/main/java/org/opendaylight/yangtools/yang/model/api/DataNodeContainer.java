@@ -83,6 +83,34 @@ public interface DataNodeContainer {
     Optional<DataSchemaNode> findDataChildByName(QName name);
 
     /**
+     * Returns the child node corresponding to the specified name.
+     *
+     * <p>
+     * Note that the nodes searched are <strong>NOT</strong> {@code data nodes}, but rather {@link DataSchemaNode}s,
+     * hence {@link ChoiceSchemaNode} and {@link CaseSchemaNode} are returned instead of their matching children.
+     *
+     * @param first QName of first child
+     * @param others QNames of subsequent children
+     * @return child node of this DataNodeContainer if child with given name is present, empty otherwise
+     * @throws NullPointerException if any argument is null
+     */
+    default Optional<DataSchemaNode> findDataChildByName(QName first, QName... others) {
+        Optional<DataSchemaNode> optCurrent = findDataChildByName(first);
+        for (QName qname : others) {
+            if (optCurrent.isPresent()) {
+                final DataSchemaNode current = optCurrent.get();
+                if (current instanceof DataNodeContainer) {
+                    optCurrent = ((DataNodeContainer) current).findDataChildByName(qname);
+                    continue;
+                }
+            }
+
+            return Optional.empty();
+        }
+        return optCurrent;
+    }
+
+    /**
      * Returns grouping nodes used ny this container.
      *
      * @return Set of all uses nodes defined within this DataNodeContainer

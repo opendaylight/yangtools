@@ -20,7 +20,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -69,8 +68,7 @@ public class LeafRefContextTest {
         final DataSchemaNode targetNode = rootMod.findDataChildByName(q2).get();
         final DataSchemaNode cont1Node = rootMod.findDataChildByName(q3).get();
         final DataSchemaNode cont2Node = rootMod.findDataChildByName(q4).get();
-        final DataSchemaNode name1Node = ((DataNodeContainer) ((DataNodeContainer) rootMod.getDataChildByName(q3))
-                .getDataChildByName(q5)).getDataChildByName(q6);
+        final DataSchemaNode name1Node = rootMod.findDataChildByName(q3, q5, q6).get();
 
         assertTrue(LeafRefContextUtils.isLeafRef(leafRefNode, rootLeafRefContext));
         assertFalse(LeafRefContextUtils.isLeafRef(targetNode, rootLeafRefContext));

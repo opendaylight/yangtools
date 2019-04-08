@@ -23,7 +23,6 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContext;
 import org.opendaylight.yangtools.yang.data.impl.leafref.LeafRefContextUtils;
-import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -155,8 +154,7 @@ public class LeafRefContextTreeBuilderTest {
         final LeafRefContext odlContrProjNameCtx = rootLeafRefContext.getReferencingChildByName(q1)
                 .getReferencingChildByName(q2).getReferencingChildByName(q3);
 
-        final DataSchemaNode odlContrProjNameNode = ((DataNodeContainer) ((DataNodeContainer) tstMod
-                .getDataChildByName(q1)).getDataChildByName(q2)).getDataChildByName(q3);
+        final DataSchemaNode odlContrProjNameNode = tstMod.findDataChildByName(q1, q2, q3).get();
 
         final LeafRefContext foundOdlContrProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(
                 odlContrProjNameNode, rootLeafRefContext);
@@ -176,8 +174,7 @@ public class LeafRefContextTreeBuilderTest {
         final LeafRefContext leafRefCtx = rootLeafRefContext.getReferencedChildByName(q1).getReferencedChildByName(q2)
                 .getReferencedChildByName(q3);
 
-        final DataSchemaNode odlProjNameNode = ((DataNodeContainer) ((DataNodeContainer) tstMod.getDataChildByName(q1))
-                .getDataChildByName(q2)).getDataChildByName(q3);
+        final DataSchemaNode odlProjNameNode = tstMod.findDataChildByName(q1, q2, q3).get();
 
         LeafRefContext foundOdlProjNameCtx = LeafRefContextUtils.getLeafRefReferencingContext(odlProjNameNode,
                 rootLeafRefContext);
