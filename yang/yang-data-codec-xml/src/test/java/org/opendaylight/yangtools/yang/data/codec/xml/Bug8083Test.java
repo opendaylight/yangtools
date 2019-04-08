@@ -30,9 +30,8 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithEmptyListKey() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/baz.yang");
         final Module bazModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) bazModule.getDataChildByName(
-                QName.create(bazModule.getQNameModule(), "top-cont"));
-        assertNotNull(topCont);
+        final ContainerSchemaNode topCont = (ContainerSchemaNode) bazModule.findDataChildByName(
+                QName.create(bazModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/baz.xml");
 
@@ -51,9 +50,8 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithIdentityrefListKey() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/zab.yang");
         final Module zabModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) zabModule.getDataChildByName(
-                QName.create(zabModule.getQNameModule(), "top-cont"));
-        assertNotNull(topCont);
+        final ContainerSchemaNode topCont = (ContainerSchemaNode) zabModule.findDataChildByName(
+                QName.create(zabModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/zab.xml");
 
@@ -72,9 +70,8 @@ public class Bug8083Test {
     public void testInstanceIdentifierPathWithInstanceIdentifierListKey() throws Exception {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource("/bug8083/yang/foobar.yang");
         final Module foobarModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topCont = (ContainerSchemaNode) foobarModule.getDataChildByName(
-                QName.create(foobarModule.getQNameModule(), "top-cont"));
-        assertNotNull(topCont);
+        final ContainerSchemaNode topCont = (ContainerSchemaNode) foobarModule.findDataChildByName(
+                QName.create(foobarModule.getQNameModule(), "top-cont")).get();
 
         final InputStream resourceAsStream = Bug8083Test.class.getResourceAsStream("/bug8083/xml/foobar.xml");
 

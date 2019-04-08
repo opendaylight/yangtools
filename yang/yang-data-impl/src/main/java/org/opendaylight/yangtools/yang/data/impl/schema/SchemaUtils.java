@@ -66,10 +66,9 @@ public final class SchemaUtils {
                     }
                 } else if (dsn instanceof ChoiceSchemaNode) {
                     for (final CaseSchemaNode choiceCase : ((ChoiceSchemaNode) dsn).getCases().values()) {
-
-                        final DataSchemaNode dataChildByName = choiceCase.getDataChildByName(qname);
-                        if (dataChildByName != null) {
-                            return Optional.of(dataChildByName);
+                        final Optional<DataSchemaNode> dataChildByName = choiceCase.findDataChildByName(qname);
+                        if (dataChildByName.isPresent()) {
+                            return dataChildByName;
                         }
                         final Optional<DataSchemaNode> foundDsn = findFirstSchema(qname, choiceCase.getChildNodes());
                         if (foundDsn.isPresent()) {
@@ -93,8 +92,9 @@ public final class SchemaUtils {
     public static DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname) {
         // Try to find child schema node directly, but use a fallback that compares QNames without revisions
         // and auto-expands choices
-        final DataSchemaNode dataChildByName = schema.getDataChildByName(qname);
-        return dataChildByName == null ? findSchemaForChild(schema, qname, schema.getChildNodes()) : dataChildByName;
+        final Optional<DataSchemaNode> dataChildByName = schema.findDataChildByName(qname);
+        return dataChildByName.isPresent() ? dataChildByName.get()
+                : findSchemaForChild(schema, qname, schema.getChildNodes());
     }
 
     public static @Nullable DataSchemaNode findSchemaForChild(final DataNodeContainer schema, final QName qname,
@@ -203,7 +203,7 @@ public final class SchemaUtils {
         }
 
         for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) schema).getAvailableAugmentations()) {
-            if (augmentation.getDataChildByName(childSchema.getQName()) != null) {
+            if (augmentation.findDataChildByName(childSchema.getQName()).isPresent()) {
                 return true;
             }
         }
@@ -347,7 +347,7 @@ public final class SchemaUtils {
             if (child instanceof AugmentationNode
                     && belongsToCaseAugment(choiceCaseNode, (AugmentationIdentifier) child.getIdentifier())) {
                 return Optional.of(choiceCaseNode);
-            } else if (choiceCaseNode.getDataChildByName(child.getNodeType()) != null) {
+            } else if (choiceCaseNode.findDataChildByName(child.getNodeType()).isPresent()) {
                 return Optional.of(choiceCaseNode);
             }
         }
@@ -387,8 +387,8 @@ public final class SchemaUtils {
         }
 
         for (final AugmentationSchemaNode augmentation : ((AugmentationTarget) parent).getAvailableAugmentations()) {
-            final DataSchemaNode childInAugmentation = augmentation.getDataChildByName(child.getQName());
-            if (childInAugmentation != null) {
+            final Optional<DataSchemaNode> childInAugmentation = augmentation.findDataChildByName(child.getQName());
+            if (childInAugmentation.isPresent()) {
                 return augmentation;
             }
         }

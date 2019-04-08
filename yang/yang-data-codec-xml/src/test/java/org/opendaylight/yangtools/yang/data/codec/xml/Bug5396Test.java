@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.junit.Assert.assertEquals;
@@ -66,9 +65,8 @@ public class Bug5396Test {
     private void testInputXML(final String xmlPath, final String expectedValue) throws Exception {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(xmlPath);
         final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode rootCont = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "root"));
-        assertNotNull(rootCont);
+        final ContainerSchemaNode rootCont = (ContainerSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "root")).get();
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 
