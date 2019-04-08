@@ -46,9 +46,6 @@ final class AutomaticLifecycleMixin {
     static Optional<TreeNode> apply(final Apply delegate, final ApplyWrite writeDelegate,
             final NormalizedNode<?, ?> emptyNode, final ModifiedNode modification, final Optional<TreeNode> storeMeta,
             final Version version) {
-        // The only way a tree node can disappear is through delete (which we handle here explicitly) or through
-        // actions of disappearResult(). It is therefore safe to perform Optional.get() on the results of
-        // delegate.apply()
         final Optional<TreeNode> ret;
         if (modification.getOperation() == LogicalOperation.DELETE) {
             if (modification.getChildren().isEmpty()) {
