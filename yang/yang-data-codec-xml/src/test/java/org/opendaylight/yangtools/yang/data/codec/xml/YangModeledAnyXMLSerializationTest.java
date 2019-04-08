@@ -94,9 +94,8 @@ public class YangModeledAnyXMLSerializationTest extends XMLTestCase {
         final InputStream resourceAsStream = XmlToNormalizedNodesTest.class.getResourceAsStream(
                 "/anyxml-support/serialization/baz.xml");
         final Module bazModule = SCHEMA_CONTEXT.findModules("baz").iterator().next();
-        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
-                QName.create(bazModule.getQNameModule(), "baz"));
-        assertNotNull(bazCont);
+        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.findDataChildByName(
+                QName.create(bazModule.getQNameModule(), "baz")).get();
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
 

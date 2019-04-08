@@ -57,9 +57,8 @@ public class YangModeledAnyXmlSupportTest {
             SAXException {
         schemaContext = YangParserTestUtils.parseYangResourceDirectory("/yang-modeled-anyxml/yang");
         final Module bazModule = schemaContext.findModules("baz").iterator().next();
-        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.getDataChildByName(
-                QName.create(bazModule.getQNameModule(), "baz"));
-        assertNotNull(bazCont);
+        final ContainerSchemaNode bazCont = (ContainerSchemaNode) bazModule.findDataChildByName(
+                QName.create(bazModule.getQNameModule(), "baz")).get();
 
         final InputStream resourceAsStream = YangModeledAnyXmlSupportTest.class.getResourceAsStream(
                 "/yang-modeled-anyxml/xml/baz.xml");

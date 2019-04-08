@@ -95,9 +95,9 @@ public class BuilderTest {
                 .toURI());
         final SchemaContext schema = YangParserTestUtils.parseYangFiles(leafRefTestYang);
         final Module module = schema.getModules().iterator().next();
-        final DataSchemaNode root = module.getDataChildByName(ROOT_CONTAINER);
-        list = (ListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LIST_MAIN);
-        leafList = (LeafListSchemaNode)((ContainerSchemaNode) root).getDataChildByName(LEAF_LIST_MAIN);
+        final DataSchemaNode root = module.findDataChildByName(ROOT_CONTAINER).get();
+        list = (ListSchemaNode)((ContainerSchemaNode) root).findDataChildByName(LIST_MAIN).get();
+        leafList = (LeafListSchemaNode)((ContainerSchemaNode) root).findDataChildByName(LEAF_LIST_MAIN).get();
     }
 
     @Test

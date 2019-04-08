@@ -124,27 +124,23 @@ public final class SchemaTracker {
     }
 
     private static SchemaNode findChildInCases(final ChoiceSchemaNode parent, final QName qname) {
-        DataSchemaNode schema = null;
         for (final CaseSchemaNode caze : parent.getCases().values()) {
-            final DataSchemaNode potential = caze.getDataChildByName(qname);
-            if (potential != null) {
-                schema = potential;
-                break;
+            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
+            if (potential.isPresent()) {
+                return potential.get();
             }
         }
-        return schema;
+        return null;
     }
 
     private static SchemaNode findCaseByChild(final ChoiceSchemaNode parent, final QName qname) {
-        DataSchemaNode schema = null;
         for (final CaseSchemaNode caze : parent.getCases().values()) {
-            final DataSchemaNode potential = caze.getDataChildByName(qname);
-            if (potential != null) {
-                schema = caze;
-                break;
+            final Optional<DataSchemaNode> potential = caze.findDataChildByName(qname);
+            if (potential.isPresent()) {
+                return caze;
             }
         }
-        return schema;
+        return null;
     }
 
     public void startList(final PathArgument name) {

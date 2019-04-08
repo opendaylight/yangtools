@@ -34,9 +34,8 @@ public class StrictParsingModeTest {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(),
-                "top-level-container"));
+        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
 
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
@@ -60,8 +59,8 @@ public class StrictParsingModeTest {
         final SchemaContext schemaContext = YangParserTestUtils.parseYangResource(
                 "/strict-parsing-mode-test/foo.yang");
         final Module fooModule = schemaContext.getModules().iterator().next();
-        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.getDataChildByName(
-                QName.create(fooModule.getQNameModule(), "top-level-container"));
+        final ContainerSchemaNode topLevelContainer = (ContainerSchemaNode) fooModule.findDataChildByName(
+                QName.create(fooModule.getQNameModule(), "top-level-container")).get();
 
         final InputStream resourceAsStream = StrictParsingModeTest.class.getResourceAsStream(
                 "/strict-parsing-mode-test/foo.xml");
