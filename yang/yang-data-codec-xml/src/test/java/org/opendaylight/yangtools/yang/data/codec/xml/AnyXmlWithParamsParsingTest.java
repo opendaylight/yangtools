@@ -5,7 +5,6 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
@@ -23,7 +22,8 @@ import javax.xml.transform.stream.StreamResult;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
@@ -63,7 +63,7 @@ public class AnyXmlWithParamsParsingTest {
         xmlParser.traverse(new DOMSource(doc.getDocumentElement()));
         final NormalizedNode<?, ?> parsed = resultHolder.getResult();
 
-        final DataContainerChild<? extends YangInstanceIdentifier.PathArgument, ?> editCfg = ((ContainerNode) parsed)
+        final DataContainerChild<? extends PathArgument, ?> editCfg = ((ContainerNode) parsed)
                 .getChild(getNodeId(parsed, "edit-content")).get();
 
         final DOMSource anyXmlParsedDom = ((AnyXmlNode) ((ChoiceNode) editCfg)
@@ -83,8 +83,8 @@ public class AnyXmlWithParamsParsingTest {
                 "interface-configurations xmlns=\"http://cisco.com/ns/yang/Cisco-IOS-XR-ifmgr-cfg\""));
     }
 
-    private YangInstanceIdentifier.NodeIdentifier getNodeId(final NormalizedNode<?, ?> parsed, final String localName) {
-        return new YangInstanceIdentifier.NodeIdentifier(QName.create(parsed.getNodeType(), localName));
+    private static NodeIdentifier getNodeId(final NormalizedNode<?, ?> parsed, final String localName) {
+        return new NodeIdentifier(QName.create(parsed.getNodeType(), localName));
     }
 
     private static String toStringDom(final DOMSource source) {
