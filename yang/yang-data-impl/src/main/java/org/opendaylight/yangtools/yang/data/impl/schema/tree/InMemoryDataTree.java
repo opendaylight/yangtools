@@ -11,6 +11,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
@@ -90,13 +91,13 @@ final class InMemoryDataTree extends AbstractDataTreeTip implements DataTree {
         LOG.debug("Following schema contexts will be attempted {}", newSchemaContext);
 
         final DataSchemaContextTree contextTree = DataSchemaContextTree.from(newSchemaContext);
-        final DataSchemaContextNode<?> rootContextNode = contextTree.getChild(getRootPath());
-        if (rootContextNode == null) {
+        final Optional<DataSchemaContextNode<?>> rootContextNode = contextTree.findChild(getRootPath());
+        if (!rootContextNode.isPresent()) {
             LOG.warn("Could not find root {} in new schema context, not upgrading", getRootPath());
             return;
         }
 
-        final DataSchemaNode rootSchemaNode = rootContextNode.getDataSchemaNode();
+        final DataSchemaNode rootSchemaNode = rootContextNode.get().getDataSchemaNode();
         if (!(rootSchemaNode instanceof DataNodeContainer)) {
             LOG.warn("Root {} resolves to non-container type {}, not upgrading", getRootPath(), rootSchemaNode);
             return;
