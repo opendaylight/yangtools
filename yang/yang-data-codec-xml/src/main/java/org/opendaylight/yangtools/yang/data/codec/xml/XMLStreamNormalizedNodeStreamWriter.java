@@ -36,11 +36,17 @@ import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 /**
- * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter},
- * resulting in a RFC 6020 XML encoding. There are 2 versions of this class, one that takes a
- * SchemaContext and encodes values appropriately according to the YANG schema. The other is
- * schema-less and merely outputs values using toString. The latter is intended for debugging
- * where doesn't have a SchemaContext available and isn't meant for production use.
+ * A {@link NormalizedNodeStreamWriter} which translates the events into an {@link XMLStreamWriter}, resulting in an
+ * RFC6020 XML encoding. There are 2 versions of this class, one that takes a SchemaContext and encodes values
+ * appropriately according to the YANG schema. The other is schema-less and merely outputs values using toString. The
+ * latter is intended for debugging where doesn't have a SchemaContext available and isn't meant for production use.
+ *
+ * <p>
+ * Due to backwards compatibility reasons this writer recognizes RFC7952 metadata include keys QNames with empty URI
+ * (as exposed via {@link XmlParserStream#LEGACY_ATTRIBUTE_NAMESPACE}) as their QNameModule. These indicate an
+ * unqualified XML attribute and their value can be assumed to be a String. Furthermore, this extends to qualified
+ * attributes, which uses the proper namespace, but will not bind to a proper module revision. This caveat will be
+ * removed in a future version.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
         NormalizedMetadataStreamWriter {

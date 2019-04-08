@@ -42,9 +42,9 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stax.StAXSource;
 import org.opendaylight.yangtools.odlext.model.api.YangModeledAnyXmlSchemaNode;
-import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.model.api.AnnotationSchemaNode;
 import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.common.QNameModule;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.util.AbstractNodeDataWithSchema;
 import org.opendaylight.yangtools.yang.data.util.AnyXmlNodeDataWithSchema;
@@ -79,9 +79,26 @@ import org.xml.sax.SAXException;
  * This class provides functionality for parsing an XML source containing YANG-modeled data. It disallows multiple
  * instances of the same element except for leaf-list and list entries. It also expects that the YANG-modeled data in
  * the XML source are wrapped in a root element. This class is NOT thread-safe.
+ *
+ * <p>
+ * Due to backwards compatibility reasons, RFC7952 metadata emitted by this parser may include key QNames with empty URI
+ * (as exposed via {@link #LEGACY_ATTRIBUTE_NAMESPACE}) as their QNameModule. These indicate an unqualified XML
+ * attribute and their value can be assumed to be a String. Furthermore, this extends to qualified attributes, which
+ * uses the proper namespace, but will not bind to a proper module revision -- these need to be reconciled with a
+ * particular SchemaContext and are expected to either be fully decoded, or contain a String value. Handling of such
+ * annotations is at the discretion of the user encountering it: preferred way of handling is to either filter or
+ * normalize them to proper QNames/values when encountered. This caveat will be removed in a future version.
  */
 @Beta
 public final class XmlParserStream implements Closeable, Flushable {
+    /**
+     * {@link QNameModule} for use with legacy XML attributes.
+     * @deprecated The use on this namespace is discouraged and users are strongly encouraged to proper RFC7952 metadata
+     *             annotations.
+     */
+    @Deprecated
+    public static final QNameModule LEGACY_ATTRIBUTE_NAMESPACE = QNameModule.create(URI.create("")).intern();
+
     private static final Logger LOG = LoggerFactory.getLogger(XmlParserStream.class);
     private static final String XML_STANDARD_VERSION = "1.0";
     private static final String COM_SUN_TRANSFORMER =
@@ -258,7 +275,7 @@ public final class XmlParserStream implements Closeable, Flushable {
             final String attrValue = in.getAttributeValue(attrIndex);
             if (Strings.isNullOrEmpty(attributeNS)) {
                 StreamWriterFacade.warnLegacyAttribute(localName);
-                attributes.put(QName.create(NormalizedMetadata.LEGACY_ATTRIBUTE_NAMESPACE, localName), attrValue);
+                attributes.put(QName.create(LEGACY_ATTRIBUTE_NAMESPACE, localName), attrValue);
                 continue;
             }
 
