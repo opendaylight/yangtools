@@ -17,6 +17,7 @@
         <relativePath/>
     </parent>
 
+    <artifactId>org.opendaylight.yangtools</artifactId>
     <artifactId>yangtools-docs</artifactId>
     <packaging>jar</packaging>
     <version>2.0.18-SNAPSHOT</version>
