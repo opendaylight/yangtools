@@ -110,13 +110,14 @@ public class DataTreeCandidateValidatorTest2 {
 
         inMemoryDataTree = new InMemoryDataTreeFactory().create(DataTreeConfiguration.DEFAULT_OPERATIONAL, context);
         final DataTreeModification initialDataTreeModification = inMemoryDataTree.takeSnapshot().newModification();
-        final ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule.getDataChildByName(chips);
+        final ContainerSchemaNode chipsListContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(chips)
+                .get();
         final ContainerNode chipsContainer = createChipsContainer(chipsListContSchemaNode);
         final YangInstanceIdentifier path1 = YangInstanceIdentifier.of(chips);
         initialDataTreeModification.write(path1, chipsContainer);
 
         final ContainerSchemaNode devTypesListContSchemaNode = (ContainerSchemaNode) mainModule
-                .getDataChildByName(deviceTypeStr);
+                .findDataChildByName(deviceTypeStr).get();
         final ContainerNode deviceTypesContainer = createDevTypeStrContainer(devTypesListContSchemaNode);
         final YangInstanceIdentifier path2 = YangInstanceIdentifier.of(deviceTypeStr);
         initialDataTreeModification.write(path2, deviceTypesContainer);
@@ -144,7 +145,8 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static void writeDevices() {
 
-        final ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule.getDataChildByName(devices);
+        final ContainerSchemaNode devicesContSchemaNode = (ContainerSchemaNode) mainModule.findDataChildByName(devices)
+                .get();
 
         final ContainerNode devicesContainer = createDevicesContainer(devicesContSchemaNode);
 
@@ -182,7 +184,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static ContainerNode createDevTypeStrContainer(final ContainerSchemaNode container) {
 
-        final ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container.getDataChildByName(deviceType);
+        final ListSchemaNode devTypeListSchemaNode = (ListSchemaNode) container.findDataChildByName(deviceType).get();
 
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devTypeContainerBldr = Builders
                 .containerBuilder(container);
@@ -221,7 +223,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static ContainerNode createChipsContainer(final ContainerSchemaNode container) {
 
-        final ListSchemaNode chipsListSchemaNode = (ListSchemaNode) container.getDataChildByName(chip);
+        final ListSchemaNode chipsListSchemaNode = (ListSchemaNode) container.findDataChildByName(chip).get();
 
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> chipsContainerBldr = Builders
                 .containerBuilder(container);
@@ -259,7 +261,7 @@ public class DataTreeCandidateValidatorTest2 {
 
     private static ContainerNode createDevicesContainer(final ContainerSchemaNode container) {
 
-        final ListSchemaNode devicesListSchemaNode = (ListSchemaNode) container.getDataChildByName(device);
+        final ListSchemaNode devicesListSchemaNode = (ListSchemaNode) container.findDataChildByName(device).get();
 
         final DataContainerNodeBuilder<NodeIdentifier, ContainerNode> devicesContainerBldr = Builders
                 .containerBuilder(container);

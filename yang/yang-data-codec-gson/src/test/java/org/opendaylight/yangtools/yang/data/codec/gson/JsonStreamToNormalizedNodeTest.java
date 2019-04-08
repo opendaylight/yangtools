@@ -200,7 +200,7 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
+        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
@@ -214,7 +214,7 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
+        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
         final JsonParserStream jsonParser = JsonParserStream.create(streamWriter,
             JSONCodecFactorySupplier.DRAFT_LHOTKA_NETMOD_YANG_JSON_02.getShared(schemaContext), parentNode);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
@@ -228,7 +228,7 @@ public class JsonStreamToNormalizedNodeTest {
 
         final NormalizedNodeResult result = new NormalizedNodeResult();
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
-        final SchemaNode parentNode = schemaContext.getDataChildByName(CONT_1);
+        final SchemaNode parentNode = schemaContext.findDataChildByName(CONT_1).get();
 
         final QName augmentChoice1QName = QName.create(parentNode.getQName(), "augment-choice1");
         final QName augmentChoice2QName = QName.create(augmentChoice1QName, "augment-choice2");

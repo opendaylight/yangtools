@@ -196,16 +196,16 @@ public class LeafRefContextTreeBuilderTest {
     @Test
     public void leafRefContextUtilsTest3() {
         final QName q16 = QName.create(tst, "con1");
-        final DataSchemaNode con1 = tstMod.getDataChildByName(q16);
-        final List<LeafRefContext> allLeafRefChilds = LeafRefContextUtils
-                .findAllLeafRefChilds(con1, rootLeafRefContext);
+        final DataSchemaNode con1 = tstMod.findDataChildByName(q16).get();
+        final List<LeafRefContext> allLeafRefChilds = LeafRefContextUtils.findAllLeafRefChilds(con1,
+            rootLeafRefContext);
 
         assertNotNull(allLeafRefChilds);
         assertFalse(allLeafRefChilds.isEmpty());
         assertEquals(4, allLeafRefChilds.size());
 
         final QName q17 = QName.create(tst, "odl-contributor");
-        final DataSchemaNode odlContributorNode = tstMod.getDataChildByName(q17);
+        final DataSchemaNode odlContributorNode = tstMod.findDataChildByName(q17).get();
         List<LeafRefContext> allChildsReferencedByLeafRef = LeafRefContextUtils.findAllChildsReferencedByLeafRef(
                 odlContributorNode, rootLeafRefContext);
 

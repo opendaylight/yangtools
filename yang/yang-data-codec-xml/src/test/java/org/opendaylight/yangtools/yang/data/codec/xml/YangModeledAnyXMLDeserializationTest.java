@@ -75,7 +75,7 @@ public class YangModeledAnyXMLDeserializationTest {
 
     @Test
     public void testRawAnyXMLFromBar() throws Exception {
-        DataSchemaNode barContainer = schemaContext.getDataChildByName(QName.create(barModuleQName, "bar"));
+        DataSchemaNode barContainer = schemaContext.findDataChildByName(QName.create(barModuleQName, "bar")).get();
         assertTrue(barContainer instanceof ContainerSchemaNode);
         final YangModeledAnyXmlSchemaNode yangModeledAnyXML = new YangModeledAnyXMLSchemaNodeImplTest(myAnyXMLDataBar,
                 (ContainerSchemaNode) barContainer);
@@ -117,8 +117,8 @@ public class YangModeledAnyXMLDeserializationTest {
         final InputStream resourceAsStream = YangModeledAnyXMLDeserializationTest.class.getResourceAsStream(
                 "/anyxml-support/xml/foo.xml");
         final Module foo = schemaContext.findModules("foo").iterator().next();
-        final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.getDataChildByName(
-                QName.create(foo.getQNameModule(), "my-anyxml-data"));
+        final YangModeledAnyXmlSchemaNode myAnyXmlData = (YangModeledAnyXmlSchemaNode) foo.findDataChildByName(
+                QName.create(foo.getQNameModule(), "my-anyxml-data")).get();
 
         final XMLStreamReader reader = UntrustedXML.createXMLStreamReader(resourceAsStream);
         final NormalizedNodeResult result = new NormalizedNodeResult();
@@ -133,7 +133,7 @@ public class YangModeledAnyXMLDeserializationTest {
         final YangModeledAnyXmlNode yangModeledAnyXmlNode = (YangModeledAnyXmlNode) output;
 
         DataSchemaNode schemaOfAnyXmlData = yangModeledAnyXmlNode.getSchemaOfAnyXmlData();
-        DataSchemaNode expectedSchemaOfAnyXmlData = schemaContext.getDataChildByName(myContainer2);
+        DataSchemaNode expectedSchemaOfAnyXmlData = schemaContext.findDataChildByName(myContainer2).get();
         assertEquals(expectedSchemaOfAnyXmlData, schemaOfAnyXmlData);
 
         Collection<DataContainerChild<? extends PathArgument, ?>> value = yangModeledAnyXmlNode.getValue();
