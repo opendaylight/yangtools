@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
 import java.io.InputStream;
+import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import org.junit.Test;
 import org.opendaylight.yangtools.util.xml.UntrustedXML;
@@ -73,8 +74,8 @@ public class StrictParsingModeTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, topLevelContainer, true);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of an unknown child node.");
-        } catch (IllegalStateException ex) {
+            fail("XMLStreamException should have been thrown because of an unknown child node.");
+        } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name unknown-container-a and namespace foo does not exist at "
                     + "AbsoluteSchemaPath{path=[(foo)top-level-container]}", ex.getMessage());
         }

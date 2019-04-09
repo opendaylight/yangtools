@@ -30,7 +30,6 @@ import java.util.Optional;
 import java.util.Set;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.stream.Location;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -413,10 +412,9 @@ public final class XmlParserStream implements Closeable, Flushable {
 
                     final String xmlElementNamespace = in.getNamespaceURI();
                     if (!namesakes.add(new SimpleImmutableEntry<>(xmlElementNamespace, xmlElementName))) {
-                        final Location loc = in.getLocation();
-                        throw new IllegalStateException(String.format(
-                                "Duplicate namespace \"%s\" element \"%s\" in XML input at: line %s column %s",
-                                xmlElementNamespace, xmlElementName, loc.getLineNumber(), loc.getColumnNumber()));
+                        throw new XMLStreamException(String.format(
+                            "Duplicate namespace \"%s\" element \"%s\" in XML input", xmlElementNamespace,
+                            xmlElementName), in.getLocation());
                     }
 
                     final Deque<DataSchemaNode> childDataSchemaNodes =
@@ -424,10 +422,16 @@ public final class XmlParserStream implements Closeable, Flushable {
                                     new URI(xmlElementNamespace));
 
                     if (childDataSchemaNodes.isEmpty()) {
-                        checkState(!strictParsing, "Schema for node with name %s and namespace %s does not exist at %s",
-                            xmlElementName, xmlElementNamespace, parentSchema.getPath());
-                        skipUnknownNode(in);
-                        continue;
+                        if (!strictParsing) {
+                            LOG.debug("Skipping unknown node ns=\"{}\" localName=\"{}\" at path {}",
+                                xmlElementNamespace, xmlElementName, parentSchema.getPath());
+                            skipUnknownNode(in);
+                            continue;
+                        }
+
+                        throw new XMLStreamException(String.format(
+                            "Schema for node with name %s and namespace %s does not exist at %s",
+                            xmlElementName, xmlElementNamespace, parentSchema.getPath(), in.getLocation()));
                     }
 
                     read(in, ((CompositeNodeDataWithSchema<?>) parent).addChild(childDataSchemaNodes), rootElement);
