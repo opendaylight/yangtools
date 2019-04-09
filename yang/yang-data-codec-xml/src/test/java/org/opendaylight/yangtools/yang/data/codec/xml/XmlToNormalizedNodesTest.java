@@ -9,7 +9,6 @@
 package org.opendaylight.yangtools.yang.data.codec.xml;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -157,10 +156,10 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of duplicate leaf.");
-        } catch (IllegalStateException ex) {
-            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"decimal64-leaf\" "
-                    + "in XML input at: line 7 column "));
+            fail("XMLStreamException should have been thrown because of duplicate leaf.");
+        } catch (XMLStreamException ex) {
+            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element "
+                    + "\"decimal64-leaf\" in XML input"));
         }
     }
 
@@ -177,10 +176,9 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of duplicate anyxml");
-        } catch (IllegalStateException ex) {
-            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"my-anyxml\" in XML "
-                    + "input at: line 19 column "));
+            fail("XMLStreamException should have been thrown because of duplicate anyxml");
+        } catch (XMLStreamException ex) {
+            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element \"my-anyxml\""));
         }
     }
 
@@ -197,10 +195,10 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, parentContainerSchema);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of duplicate container");
-        } catch (IllegalStateException ex) {
-            assertThat(ex.getMessage(), startsWith("Duplicate namespace \"foo-namespace\" element \"leaf-container\" "
-                + "in XML input at: line 13 column "));
+            fail("XMLStreamException should have been thrown because of duplicate container");
+        } catch (XMLStreamException ex) {
+            assertThat(ex.getMessage(), containsString("Duplicate namespace \"foo-namespace\" element "
+                    + "\"leaf-container\" in XML input"));
         }
     }
 
@@ -274,8 +272,8 @@ public class XmlToNormalizedNodesTest {
         final XmlParserStream xmlParser = XmlParserStream.create(streamWriter, schemaContext, outerContainerSchema);
         try {
             xmlParser.parse(reader);
-            fail("IllegalStateException should have been thrown because of an unknown child node.");
-        } catch (IllegalStateException ex) {
+            fail("XMLStreamException should have been thrown because of an unknown child node.");
+        } catch (XMLStreamException ex) {
             assertEquals("Schema for node with name my-container-1 and namespace baz-namespace does not exist at "
                     + "AbsoluteSchemaPath{path=[(baz-namespace)outer-container, (baz-namespace)my-container-1]}",
                     ex.getMessage());
