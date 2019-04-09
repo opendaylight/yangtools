@@ -1,0 +1,20 @@
+module mdsal437 {
+    prefix mdsal437;
+    namespace mdsal437;
+
+    grouping grp {
+        anyxml grp-any;
+    }
+
+    container cont {
+        anyxml cont-any;
+        uses grp;
+    }
+
+    list lst {
+        uses grp;
+    }
+
+    anyxml any;
+}
+
