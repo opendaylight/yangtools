@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.spec.naming;
 import static com.google.common.collect.ImmutableList.of;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -31,7 +30,6 @@ public class BindingMappingTest {
     public void basicTest() {
         assertTrue(BindingMapping.getRootPackageName(QName.create(QNameModule.create(URI.create("test:URI"),
                 Revision.of("2017-10-26")), "test")).contains("test.uri"));
-        assertNull(BindingMapping.normalizePackageName(null));
         assertTrue(BindingMapping.normalizePackageName("1testpublic").contains("_1testpublic"));
         assertTrue(BindingMapping.getMethodName(QName.create("testNS", "testLocalName")).equals("testLocalName"));
         assertTrue(BindingMapping.getMethodName("TestYangIdentifier").equals("testYangIdentifier"));

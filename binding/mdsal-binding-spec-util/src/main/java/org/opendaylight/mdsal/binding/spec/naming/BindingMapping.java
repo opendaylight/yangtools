@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -33,7 +34,7 @@ import org.opendaylight.yangtools.yang.common.Revision;
 @Beta
 public final class BindingMapping {
 
-    public static final String VERSION = "0.6";
+    public static final @NonNull String VERSION = "0.6";
 
     public static final Set<String> JAVA_RESERVED_WORDS = ImmutableSet.of(
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.9
@@ -47,12 +48,12 @@ public final class BindingMapping {
         // https://docs.oracle.com/javase/specs/jls/se9/html/jls-3.html#jls-3.10.7
         "null");
 
-    public static final String DATA_ROOT_SUFFIX = "Data";
-    public static final String RPC_SERVICE_SUFFIX = "Service";
-    public static final String NOTIFICATION_LISTENER_SUFFIX = "Listener";
-    public static final String QNAME_STATIC_FIELD_NAME = "QNAME";
-    public static final String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
-    public static final String AUGMENTATION_FIELD = "augmentation";
+    public static final @NonNull String DATA_ROOT_SUFFIX = "Data";
+    public static final @NonNull String RPC_SERVICE_SUFFIX = "Service";
+    public static final @NonNull String NOTIFICATION_LISTENER_SUFFIX = "Listener";
+    public static final @NonNull String QNAME_STATIC_FIELD_NAME = "QNAME";
+    public static final @NonNull String PACKAGE_PREFIX = "org.opendaylight.yang.gen.v1";
+    public static final @NonNull String AUGMENTATION_FIELD = "augmentation";
 
     private static final Splitter CAMEL_SPLITTER = Splitter.on(CharMatcher.anyOf(" _.-/").precomputed())
             .omitEmptyStrings().trimResults();
@@ -60,42 +61,42 @@ public final class BindingMapping {
     private static final String QUOTED_DOT = Matcher.quoteReplacement(".");
     private static final Splitter DOT_SPLITTER = Splitter.on('.');
 
-    public static final String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
-    public static final String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
-    public static final String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
+    public static final @NonNull String MODULE_INFO_CLASS_NAME = "$YangModuleInfoImpl";
+    public static final @NonNull String MODULE_INFO_QNAMEOF_METHOD_NAME = "qnameOf";
+    public static final @NonNull String MODEL_BINDING_PROVIDER_CLASS_NAME = "$YangModelBindingProvider";
 
     /**
      * Name of {@link Augmentable#augmentation(Class)}.
      */
-    public static final String AUGMENTABLE_AUGMENTATION_NAME = "augmentation";
+    public static final @NonNull String AUGMENTABLE_AUGMENTATION_NAME = "augmentation";
 
     /**
      * Name of {@link Identifiable#key()}.
      */
-    public static final String IDENTIFIABLE_KEY_NAME = "key";
+    public static final @NonNull String IDENTIFIABLE_KEY_NAME = "key";
 
     /**
      * Name of {@link DataContainer#implementedInterface()}.
      */
-    public static final String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
+    public static final @NonNull String DATA_CONTAINER_IMPLEMENTED_INTERFACE_NAME = "implementedInterface";
 
     /**
      * Prefix for getter methods working on top of boolean.
      */
-    public static final String BOOLEAN_GETTER_PREFIX = "is";
+    public static final @NonNull String BOOLEAN_GETTER_PREFIX = "is";
 
     /**
      * Prefix for normal getter methods.
      */
-    public static final String GETTER_PREFIX = "get";
+    public static final @NonNull String GETTER_PREFIX = "get";
 
     /**
      * Prefix for non-null default wrapper methods. These methods always wrap a corresponding normal getter.
      */
-    public static final String NONNULL_PREFIX = "nonnull";
+    public static final @NonNull String NONNULL_PREFIX = "nonnull";
 
-    public static final String RPC_INPUT_SUFFIX = "Input";
-    public static final String RPC_OUTPUT_SUFFIX = "Output";
+    public static final @NonNull String RPC_INPUT_SUFFIX = "Input";
+    public static final @NonNull String RPC_OUTPUT_SUFFIX = "Output";
 
     private static final Interner<String> PACKAGE_INTERNER = Interners.newWeakInterner();
 
@@ -103,18 +104,12 @@ public final class BindingMapping {
         throw new UnsupportedOperationException("Utility class should not be instantiated");
     }
 
-    public static String getRootPackageName(final QName module) {
+    public static @NonNull String getRootPackageName(final QName module) {
         return getRootPackageName(module.getModule());
     }
 
-    public static String getRootPackageName(final QNameModule module) {
-        checkArgument(module != null, "Module must not be null");
-        checkArgument(module.getRevision() != null, "Revision must not be null");
-        checkArgument(module.getNamespace() != null, "Namespace must not be null");
-        final StringBuilder packageNameBuilder = new StringBuilder();
-
-        packageNameBuilder.append(BindingMapping.PACKAGE_PREFIX);
-        packageNameBuilder.append('.');
+    public static @NonNull String getRootPackageName(final QNameModule module) {
+        final StringBuilder packageNameBuilder = new StringBuilder().append(BindingMapping.PACKAGE_PREFIX).append('.');
 
         String namespace = module.getNamespace().toString();
         namespace = COLON_SLASH_SLASH.matcher(namespace).replaceAll(QUOTED_DOT);
@@ -161,11 +156,7 @@ public final class BindingMapping {
         return normalizePackageName(packageNameBuilder.toString());
     }
 
-    public static String normalizePackageName(final String packageName) {
-        if (packageName == null) {
-            return null;
-        }
-
+    public static @NonNull String normalizePackageName(final String packageName) {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
 
@@ -186,35 +177,31 @@ public final class BindingMapping {
         return PACKAGE_INTERNER.intern(builder.toString());
     }
 
-    public static String getClassName(final String localName) {
-        checkArgument(localName != null, "Name should not be null.");
+    public static @NonNull String getClassName(final String localName) {
         return toFirstUpper(toCamelCase(localName));
     }
 
-    public static String getClassName(final QName name) {
-        checkArgument(name != null, "Name should not be null.");
+    public static @NonNull String getClassName(final QName name) {
         return toFirstUpper(toCamelCase(name.getLocalName()));
     }
 
-    public static String getMethodName(final String yangIdentifier) {
-        checkArgument(yangIdentifier != null,"Identifier should not be null");
+    public static @NonNull String getMethodName(final String yangIdentifier) {
         return toFirstLower(toCamelCase(yangIdentifier));
     }
 
-    public static String getMethodName(final QName name) {
-        checkArgument(name != null, "Name should not be null.");
+    public static @NonNull String getMethodName(final QName name) {
         return getMethodName(name.getLocalName());
     }
 
-    public static String getGetterPrefix(final boolean isBoolean) {
+    public static @NonNull String getGetterPrefix(final boolean isBoolean) {
         return isBoolean ? BOOLEAN_GETTER_PREFIX : GETTER_PREFIX;
     }
 
-    public static String getGetterMethodName(final String localName, final boolean isBoolean) {
+    public static @NonNull String getGetterMethodName(final String localName, final boolean isBoolean) {
         return getGetterPrefix(isBoolean) + toFirstUpper(getPropertyName(localName));
     }
 
-    public static String getGetterMethodName(final QName name, final boolean isBoolean) {
+    public static @NonNull String getGetterMethodName(final QName name, final boolean isBoolean) {
         return getGetterPrefix(isBoolean) + getGetterSuffix(name);
     }
 
@@ -222,12 +209,12 @@ public final class BindingMapping {
         return methodName.startsWith(GETTER_PREFIX) || methodName.startsWith(BOOLEAN_GETTER_PREFIX);
     }
 
-    public static String getGetterMethodForNonnull(final String methodName) {
+    public static @NonNull String getGetterMethodForNonnull(final String methodName) {
         checkArgument(isNonnullMethodName(methodName));
         return GETTER_PREFIX + methodName.substring(NONNULL_PREFIX.length());
     }
 
-    public static String getNonnullMethodName(final String localName) {
+    public static @NonNull String getNonnullMethodName(final String localName) {
         return NONNULL_PREFIX + toFirstUpper(getPropertyName(localName));
     }
 
@@ -235,13 +222,12 @@ public final class BindingMapping {
         return methodName.startsWith(NONNULL_PREFIX);
     }
 
-    public static String getGetterSuffix(final QName name) {
-        checkArgument(name != null, "Name should not be null.");
+    public static @NonNull String getGetterSuffix(final QName name) {
         final String candidate = toFirstUpper(toCamelCase(name.getLocalName()));
         return "Class".equals(candidate) ? "XmlClass" : candidate;
     }
 
-    public static String getPropertyName(final String yangIdentifier) {
+    public static @NonNull String getPropertyName(final String yangIdentifier) {
         final String potential = toFirstLower(toCamelCase(yangIdentifier));
         if ("class".equals(potential)) {
             return "xmlClass";
@@ -249,18 +235,16 @@ public final class BindingMapping {
         return potential;
     }
 
-    private static String toCamelCase(final String rawString) {
-        checkArgument(rawString != null, "String should not be null");
-        Iterable<String> components = CAMEL_SPLITTER.split(rawString);
+    private static @NonNull String toCamelCase(final String rawString) {
         StringBuilder builder = new StringBuilder();
-        for (String comp : components) {
+        for (String comp : CAMEL_SPLITTER.split(rawString)) {
             builder.append(toFirstUpper(comp));
         }
         return checkNumericPrefix(builder.toString());
     }
 
-    private static String checkNumericPrefix(final String rawString) {
-        if (rawString == null || rawString.isEmpty()) {
+    private static @NonNull String checkNumericPrefix(final String rawString) {
+        if (rawString.isEmpty()) {
             return rawString;
         }
         final char firstChar = rawString.charAt(0);
@@ -268,15 +252,13 @@ public final class BindingMapping {
     }
 
     /**
-     * Returns the {@link String} {@code s} with an {@link Character#isUpperCase(char) upper case} first character. This
-     * function is null-safe.
+     * Returns the {@link String} {@code s} with an {@link Character#isUpperCase(char) upper case} first character.
      *
-     * @param str the string that should get an upper case first character. May be <code>null</code>.
-     * @return the {@link String} {@code str} with an upper case first character or <code>null</code> if the input
-     *         {@link String} {@code str} was <code>null</code>.
+     * @param str the string that should get an upper case first character.
+     * @return the {@link String} {@code str} with an upper case first character.
      */
-    public static String toFirstUpper(final String str) {
-        if (str == null || str.length() == 0) {
+    private static @NonNull String toFirstUpper(final @NonNull String str) {
+        if (str.isEmpty()) {
             return str;
         }
         if (Character.isUpperCase(str.charAt(0))) {
@@ -294,10 +276,10 @@ public final class BindingMapping {
      *
      * @param str the string that should get an lower case first character. May be <code>null</code>.
      * @return the {@link String} {@code str} with an lower case first character or <code>null</code> if the input
-     *         {@link String} {@code str} was <code>null</code>.
+     *         {@link String} {@code str} was empty.
      */
-    private static String toFirstLower(final String str) {
-        if (str == null || str.length() == 0) {
+    private static @NonNull String toFirstLower(final @NonNull String str) {
+        if (str.isEmpty()) {
             return str;
         }
         if (Character.isLowerCase(str.charAt(0))) {
