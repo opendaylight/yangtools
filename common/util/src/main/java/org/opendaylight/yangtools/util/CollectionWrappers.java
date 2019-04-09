@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.Spliterator;
 import java.util.stream.Stream;
 import org.eclipse.jdt.annotation.NonNullByDefault;
+import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
@@ -35,11 +36,16 @@ import org.opendaylight.yangtools.concepts.Immutable;
 @Beta
 @NonNullByDefault
 public final class CollectionWrappers {
-    private static final class ListWrapper<E> extends AbstractList<E> {
+    private static final class ListWrapper<E> extends AbstractList<E> implements Delegator<Collection<E>> {
         private final Collection<E> delegate;
 
-        private ListWrapper(final Collection<E> delegate) {
+        ListWrapper(final Collection<E> delegate) {
             this.delegate = requireNonNull(delegate);
+        }
+
+        @Override
+        public Collection<E> getDelegate() {
+            return delegate;
         }
 
         @Override
@@ -73,11 +79,16 @@ public final class CollectionWrappers {
         }
     }
 
-    private static final class SetWrapper<E> extends AbstractSet<E> {
+    private static final class SetWrapper<E> extends AbstractSet<E> implements Delegator<Collection<E>> {
         private final Collection<E> delegate;
 
-        private SetWrapper(final Collection<E> delegate) {
+        SetWrapper(final Collection<E> delegate) {
             this.delegate = requireNonNull(delegate);
+        }
+
+        @Override
+        public Collection<E> getDelegate() {
+            return delegate;
         }
 
         @Override
@@ -125,6 +136,9 @@ public final class CollectionWrappers {
         if (collection.isEmpty()) {
             return ImmutableList.of();
         }
+        if (collection instanceof SetWrapper) {
+            return wrapAsList(((SetWrapper<E>) collection).getDelegate());
+        }
         if (collection instanceof List) {
             final List<E> cast = (List<E>) collection;
             return cast instanceof ListWrapper || cast instanceof Immutable || cast instanceof ImmutableList
@@ -150,6 +164,9 @@ public final class CollectionWrappers {
     public static <E> Set<E> wrapAsSet(final Collection<E> collection) {
         if (collection.isEmpty()) {
             return ImmutableSet.of();
+        }
+        if (collection instanceof ListWrapper) {
+            return wrapAsSet(((ListWrapper<E>) collection).getDelegate());
         }
         if (collection instanceof Set) {
             final Set<E> cast = (Set<E>) collection;
