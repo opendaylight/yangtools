@@ -161,26 +161,23 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             final ListSchemaNode casted = (ListSchemaNode) child;
             emitList(sb, getterName, valueType, casted);
         } else if (child instanceof ContainerSchemaNode) {
-            sb.append(tryToUseCacheElse(getterName,statement(staticInvokeEmitter(childType, getterName))));
+            sb.append(tryToUseCacheElse(getterName, statement(staticInvokeEmitter(childType, getterName))));
         } else if (child instanceof ChoiceSchemaNode) {
             final String propertyName = CHOICE_PREFIX + childType.getName();
             staticConstant(propertyName, DataObjectSerializerImplementation.class,
                 ChoiceDispatchSerializer.from(loadClass(childType)));
-            sb.append(tryToUseCacheElse(getterName,statement(invoke(propertyName,
+            sb.append(tryToUseCacheElse(getterName, statement(invoke(propertyName,
                 StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(), getterName),
                 STREAM))));
         }
     }
 
     private static StringBuilder tryToUseCacheElse(final String getterName, final CharSequence statement) {
-        final StringBuilder b = new StringBuilder();
-        b.append("if ( ");
-        b.append(SERIALIZER).append("== null || ");
-        b.append(invoke(SERIALIZER, "serialize", getterName)).append("== null");
-        b.append(") {");
-        b.append(statement);
-        b.append('}');
-        return b;
+        return new StringBuilder()
+                .append("if (").append(SERIALIZER).append(" == null || ")
+                .append(invoke(SERIALIZER, "serialize", getterName)).append(" == null) {\n")
+                .append(statement)
+                .append('}');
     }
 
     private void emitList(final StringBuilder sb, final String getterName, final Type valueType,
