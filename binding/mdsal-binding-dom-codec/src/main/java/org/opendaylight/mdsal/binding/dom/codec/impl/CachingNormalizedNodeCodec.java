@@ -16,7 +16,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNormalizedNodeCacheHolder implements
         BindingNormalizedNodeCachingCodec<D> {
-
     private final DataContainerCodecContext<D, ?> context;
 
     CachingNormalizedNodeCodec(final DataContainerCodecContext<D, ?> subtreeRoot,
@@ -32,12 +31,14 @@ class CachingNormalizedNodeCodec<D extends DataObject> extends AbstractBindingNo
 
     @Override
     public NormalizedNode<?, ?> serialize(final D data) {
-        return CachingNormalizedNodeSerializer.serialize(this, context, data);
+        // Serialize data using stream writer with child cache enable or using the cache if it is available
+        final DataObjectNormalizedNodeCache cache = getCachingSerializer(context);
+        return cache == null ? CachingNormalizedNodeSerializer.serializeUsingStreamWriter(this, context, data)
+                : cache.get(data);
     }
 
     @Override
     public void close() {
         // NOOP as of now.
     }
-
 }

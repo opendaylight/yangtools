@@ -13,6 +13,7 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
@@ -20,28 +21,27 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  * associated.
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
-
-    private final ImmutableSet<Class<? extends DataObject>> cachedValues;
-    private final LoadingCache<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache> caches = CacheBuilder
-            .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, BindingNormalizedNodeCache>() {
+    private final LoadingCache<DataContainerCodecContext<?, ?>, DataObjectNormalizedNodeCache> caches = CacheBuilder
+            .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, DataObjectNormalizedNodeCache>() {
                 @Override
-                public BindingNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) {
-                    return new BindingNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this, key);
+                public DataObjectNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) {
+                    return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this, key);
                 }
             });
+    private final ImmutableSet<Class<? extends DataObject>> cacheSpec;
 
     AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends DataObject>> cacheSpec) {
-        cachedValues = requireNonNull(cacheSpec);
+        this.cacheSpec = requireNonNull(cacheSpec);
     }
 
-    BindingNormalizedNodeCache getCachingSerializer(final DataContainerCodecContext<?, ?> childCtx) {
+    DataObjectNormalizedNodeCache getCachingSerializer(final DataContainerCodecContext<?, ?> childCtx) {
         if (isCached(childCtx.getBindingClass())) {
             return caches.getUnchecked(childCtx);
         }
         return null;
     }
 
-    boolean isCached(final Class<?> type) {
-        return cachedValues.contains(type);
+    final boolean isCached(final Class<? extends BindingObject> type) {
+        return cacheSpec.contains(type);
     }
 }

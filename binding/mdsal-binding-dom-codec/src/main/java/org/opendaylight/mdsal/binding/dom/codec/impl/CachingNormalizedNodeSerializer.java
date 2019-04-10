@@ -15,7 +15,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 
 /**
- * Serializer of Binding objects to Normalized Node which uses {@link BindingNormalizedNodeCache} to
+ * Serializer of Binding objects to Normalized Node which uses {@link DataObjectNormalizedNodeCache} to
  * cache already serialized values.
  *
  * <p>
@@ -66,7 +66,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
      */
     @Override
     public NormalizedNode<?, ?> serialize(final DataObject input) {
-        final BindingNormalizedNodeCache cachingSerializer = getCacheSerializer(input.implementedInterface());
+        final DataObjectNormalizedNodeCache cachingSerializer = getCacheSerializer(input.implementedInterface());
         if (cachingSerializer != null) {
             final NormalizedNode<?, ?> domData = cachingSerializer.get(input);
             domWriter.addChild(domData);
@@ -75,25 +75,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         return null;
     }
 
-    /**
-     * Serializes supplied data using stream writer with child cache enabled or using cache directly
-     * if cache is avalaible also for supplied Codec node.
-     *
-     * @param cacheHolder Binding to Normalized Node Cache holder
-     * @param subtreeRoot Codec Node for provided data object
-     * @param data Data to be serialized
-     * @return Normalized Node representation of data.
-     */
-    static NormalizedNode<?, ?> serialize(final AbstractBindingNormalizedNodeCacheHolder cacheHolder,
-            final DataContainerCodecContext<?, ?> subtreeRoot, final DataObject data) {
-        final BindingNormalizedNodeCache cache = cacheHolder.getCachingSerializer(subtreeRoot);
-        if (cache != null) {
-            return cache.get(data);
-        }
-        return serializeUsingStreamWriter(cacheHolder, subtreeRoot, data);
-    }
-
-    private BindingNormalizedNodeCache getCacheSerializer(final Class<? extends DataObject> type) {
+    private DataObjectNormalizedNodeCache getCacheSerializer(final Class<? extends DataObject> type) {
         if (cacheHolder.isCached(type)) {
             final DataContainerCodecContext<?, ?> currentCtx = (DataContainerCodecContext<?, ?>) delegate.current();
             if (type.equals(currentCtx.getBindingClass())) {
