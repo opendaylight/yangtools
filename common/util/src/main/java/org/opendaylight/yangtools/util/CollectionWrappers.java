@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.stream.Stream;
@@ -77,49 +76,6 @@ public final class CollectionWrappers {
         @Override
         public E get(final int index) {
             return Iterables.get(delegate, index);
-        }
-    }
-
-    private static final class MapWrapper<K, V> extends AbstractList<V> implements Delegator<Map<K, V>> {
-        private final Map<K, V> delegate;
-
-        MapWrapper(final Map<K, V> delegate) {
-            this.delegate = requireNonNull(delegate);
-        }
-
-        @Override
-        public Map<K, V> getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public Iterator<V> iterator() {
-            return Iterators.unmodifiableIterator(delegate.values().iterator());
-        }
-
-        @Override
-        public int size() {
-            return delegate.size();
-        }
-
-        @Override
-        public Spliterator<V> spliterator() {
-            return delegate.values().spliterator();
-        }
-
-        @Override
-        public Stream<V> parallelStream() {
-            return delegate.values().parallelStream();
-        }
-
-        @Override
-        public Stream<V> stream() {
-            return delegate.values().stream();
-        }
-
-        @Override
-        public V get(final int index) {
-            return Iterables.get(delegate.values(), index);
         }
     }
 
@@ -185,24 +141,11 @@ public final class CollectionWrappers {
         }
         if (collection instanceof List) {
             final List<E> cast = (List<E>) collection;
-            return cast instanceof ListWrapper || cast instanceof MapWrapper || cast instanceof Immutable
-                    || cast instanceof ImmutableList ? cast : Collections.unmodifiableList(cast);
+            return cast instanceof ListWrapper || cast instanceof Immutable || cast instanceof ImmutableList
+                    ? cast : Collections.unmodifiableList(cast);
         }
 
         return new ListWrapper<>(collection);
-    }
-
-    /**
-     * Wrap the specified {@link Map}'s values as a {@link List}. If the map is determined to be empty, an empty list is
-     * returned instead. Backing map is required to be effectively immutable, with fixed iteration order. If this
-     * requirement is violated, the returned object may behave in unpredictable ways.
-     *
-     * @param map Map to be wrapped
-     * @return An effectively-immutable wrapper of the map.
-     * @throws NullPointerException if map is null
-     */
-    public static <K, V> List<V> wrapAsList(final Map<K, V> map) {
-        return map.isEmpty() ? ImmutableList.of() : new MapWrapper<>(map);
     }
 
     /**
