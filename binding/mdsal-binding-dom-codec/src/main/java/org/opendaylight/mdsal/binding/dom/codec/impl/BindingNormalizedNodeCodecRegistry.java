@@ -24,6 +24,7 @@ import java.util.function.Function;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingLazyContainerNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeSerializer;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeWriterFactory;
@@ -209,7 +210,7 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         }
 
         final List<PathArgument> builder = new ArrayList<>();
-        final NodeCodecContext<?> codec = codecContext.getCodecContextNode(path, builder);
+        final BindingDataObjectCodecTreeNode<?> codec = codecContext.getCodecContextNode(path, builder);
         if (codec == null) {
             if (data != null) {
                 LOG.warn("Path {} does not have a binding equivalent, should have been caught earlier ({})", path,

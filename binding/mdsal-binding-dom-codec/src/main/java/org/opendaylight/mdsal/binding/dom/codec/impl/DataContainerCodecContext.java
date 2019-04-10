@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -28,7 +29,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeS
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
-abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext<D>  {
+abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext
+        implements BindingDataObjectCodecTreeNode<D>  {
 
     private final DataContainerCodecPrototype<T> prototype;
     private volatile DataObjectSerializer eventStreamSerializer;
@@ -68,7 +70,7 @@ abstract class DataContainerCodecContext<D extends DataObject, T extends WithSta
      * @throws IllegalArgumentException If supplied argument does not represent valid child.
      */
     @Override
-    public abstract NodeCodecContext<?> yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
+    public abstract NodeCodecContext yangPathArgumentChild(YangInstanceIdentifier.PathArgument arg);
 
     /**
      * Returns nested node context using supplied Binding Instance Identifier

@@ -222,7 +222,7 @@ final class ChoiceNodeCodecContext<D extends DataObject> extends DataContainerCo
     }
 
     @Override
-    public NodeCodecContext<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
+    public NodeCodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
         final DataContainerCodecPrototype<?> cazeProto;
         if (arg instanceof YangInstanceIdentifier.NodeIdentifierWithPredicates) {
             cazeProto = byYangCaseChild.get(new NodeIdentifier(arg.getNodeType()));

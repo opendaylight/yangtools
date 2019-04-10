@@ -33,17 +33,16 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 
 final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter, Delegator<NormalizedNodeStreamWriter> {
-    private final Deque<NodeCodecContext<?>> schema = new ArrayDeque<>();
+    private final Deque<NodeCodecContext> schema = new ArrayDeque<>();
     private final NormalizedNodeStreamWriter delegate;
-    private final NodeCodecContext<?> rootNodeSchema;
+    private final NodeCodecContext rootNodeSchema;
 
-    BindingToNormalizedStreamWriter(final NodeCodecContext<?> rootNodeSchema,
-            final NormalizedNodeStreamWriter delegate) {
+    BindingToNormalizedStreamWriter(final NodeCodecContext rootNodeSchema, final NormalizedNodeStreamWriter delegate) {
         this.rootNodeSchema = requireNonNull(rootNodeSchema);
         this.delegate = requireNonNull(delegate);
     }
 
-    static BindingToNormalizedStreamWriter create(final NodeCodecContext<?> schema,
+    static BindingToNormalizedStreamWriter create(final NodeCodecContext schema,
             final NormalizedNodeStreamWriter delegate) {
         return new BindingToNormalizedStreamWriter(schema, delegate);
     }
@@ -52,12 +51,12 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
         delegate.nextDataSchemaNode((DataSchemaNode) schemaNode);
     }
 
-    NodeCodecContext<?> current() {
+    NodeCodecContext current() {
         return schema.peek();
     }
 
     private NodeIdentifier duplicateSchemaEnter() {
-        final NodeCodecContext<?> next;
+        final NodeCodecContext next;
         if (current() == null) {
             // Entry of first node
             next = rootNodeSchema;
@@ -70,7 +69,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final Class<?> name, final Class<T> identifier) {
-        final NodeCodecContext<?> next;
+        final NodeCodecContext next;
         if (current() == null) {
             // Entry of first node
             next = rootNodeSchema;
@@ -85,8 +84,8 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
     }
 
     private <T extends YangInstanceIdentifier.PathArgument> T enter(final String localName, final Class<T> identifier) {
-        NodeCodecContext<?> current = current();
-        NodeCodecContext<?> next = ((DataObjectCodecContext<?,?>) current).getLeafChild(localName);
+        NodeCodecContext current = current();
+        NodeCodecContext next = ((DataObjectCodecContext<?, ?>) current).getLeafChild(localName);
         this.schema.push(next);
         @SuppressWarnings("unchecked")
         T arg = (T) next.getDomPathArgument();
@@ -100,7 +99,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @Override
     public void endNode() throws IOException {
-        NodeCodecContext<?> left = schema.pop();
+        NodeCodecContext left = schema.pop();
         // NormalizedNode writer does not have entry into case, but into choice
         // so for leaving case, we do not emit endNode.
         if (!(left instanceof CaseNodeCodecContext)) {
@@ -112,7 +111,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
         Preconditions.checkArgument(current() instanceof DataObjectCodecContext);
 
         DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
-        LeafNodeCodecContext<?> leafContext = currentCasted.getLeafChild(localName);
+        LeafNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
 
         NodeIdentifier domArg = (NodeIdentifier) leafContext.getDomPathArgument();
         Object domValue = leafContext.getValueCodec().serialize(value);
@@ -138,7 +137,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
-        final LeafNodeCodecContext<?> ctx = (LeafNodeCodecContext<?>) current();
+        final LeafNodeCodecContext ctx = (LeafNodeCodecContext) current();
         final Object domValue = ctx.getValueCodec().serialize(value);
         delegate.startLeafSetEntryNode(new NodeWithValue<>(ctx.getSchema().getQName(), domValue));
         delegate.scalarValue(domValue);

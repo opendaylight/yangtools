@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.Iterables;
 import org.checkerframework.checker.lock.qual.Holding;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode.ChildAddressabilitySummary;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataRoot;
@@ -202,8 +202,8 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     }
 
     @Override
-    public DataContainerCodecContext<?,T> get() {
-        DataContainerCodecContext<?,T> tmp = instance;
+    public DataContainerCodecContext<?, T> get() {
+        DataContainerCodecContext<?, T> tmp = instance;
         if (tmp == null) {
             synchronized (this) {
                 tmp = instance;

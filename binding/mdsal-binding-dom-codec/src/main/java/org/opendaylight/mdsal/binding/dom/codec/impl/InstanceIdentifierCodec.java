@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.collect.Iterables;
 import java.util.ArrayList;
 import java.util.List;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -34,7 +35,7 @@ final class InstanceIdentifierCodec implements Codec<YangInstanceIdentifier, Ins
     @Override
     public InstanceIdentifier<?> deserialize(final YangInstanceIdentifier input) {
         final List<InstanceIdentifier.PathArgument> builder = new ArrayList<>();
-        final NodeCodecContext<?> codec = context.getCodecContextNode(input, builder);
+        final BindingDataObjectCodecTreeNode<?> codec = context.getCodecContextNode(input, builder);
         if (codec == null) {
             return null;
         }

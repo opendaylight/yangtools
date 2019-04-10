@@ -13,7 +13,7 @@ import org.eclipse.jdt.annotation.NonNull;
 /**
  * Type capture of an entity producing NodeCodecContexts.
  */
-interface NodeContextSupplier extends Supplier<NodeCodecContext<?>> {
+interface NodeContextSupplier extends Supplier<NodeCodecContext> {
     @Override
-    @NonNull NodeCodecContext<?> get();
+    @NonNull NodeCodecContext get();
 }

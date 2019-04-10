@@ -12,7 +12,6 @@ import java.util.List;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
@@ -33,7 +32,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * context nodes contains context for children nodes.</li>
  * </ul>
  */
-abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTreeNode<D> {
+abstract class NodeCodecContext implements BindingCodecTreeNode {
 
     /**
      * Returns Yang Instance Identifier Path Argument of current node.
@@ -64,7 +63,7 @@ abstract class NodeCodecContext<D extends DataObject> implements BindingCodecTre
          * @param schema  Instantiated schema of binding type.
          * @return Map of local name to leaf node context.
          */
-        ImmutableMap<String, LeafNodeCodecContext<?>> getLeafNodes(Class<?> type, DataNodeContainer schema);
+        ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
 
         /**
          * Returns Path argument codec for list item.

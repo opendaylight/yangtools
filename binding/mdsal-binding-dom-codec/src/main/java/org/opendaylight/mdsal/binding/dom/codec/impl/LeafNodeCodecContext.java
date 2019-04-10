@@ -7,29 +7,21 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.collect.ImmutableCollection;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
-import org.opendaylight.mdsal.binding.dom.codec.api.BindingNormalizedNodeCachingCodec;
 import org.opendaylight.yangtools.concepts.Codec;
-import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
-import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
-import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
@@ -37,19 +29,20 @@ import org.opendaylight.yangtools.yang.model.api.Module;
 import org.opendaylight.yangtools.yang.model.api.ModuleImport;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
+import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<D> implements NodeContextSupplier {
-
-    private final YangInstanceIdentifier.PathArgument yangIdentifier;
+// FIXME: MDSAL-436: this class should be specialized for Leaf and LeafSet
+final class LeafNodeCodecContext extends NodeCodecContext implements NodeContextSupplier {
+    private final NodeIdentifier yangIdentifier;
     private final Codec<Object, Object> valueCodec;
     private final Method getter;
-    private final DataSchemaNode schema;
+    private final TypedDataSchemaNode schema;
     private final Object defaultObject;
 
-    LeafNodeCodecContext(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+    LeafNodeCodecContext(final TypedDataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
                 final SchemaContext schemaContext) {
-        this.yangIdentifier = new YangInstanceIdentifier.NodeIdentifier(schema.getQName());
+        this.yangIdentifier = NodeIdentifier.create(schema.getQName());
         this.valueCodec = requireNonNull(codec);
         this.getter = getter;
         this.schema = requireNonNull(schema);
@@ -120,13 +113,13 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
             Object castedDefaultValue = typeDefAwareCodec.deserialize((String) defaultValue);
             return codec.deserialize(castedDefaultValue);
         }
-        // FIXME: BUG-4647 Refactor / redesign this to throw hard error,
-        // once BUG-4638 is fixed and will provide proper getDefaultValue implementation.
+        // FIXME: BUG-4647 Refactor / redesign this to throw hard error, once BUG-4638 is fixed and will provide proper
+        //                 getDefaultValue() implementation.
         return null;
     }
 
     @Override
-    protected YangInstanceIdentifier.PathArgument getDomPathArgument() {
+    protected NodeIdentifier getDomPathArgument() {
         return yangIdentifier;
     }
 
@@ -135,60 +128,12 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     }
 
     @Override
-    public D deserialize(final NormalizedNode<?, ?> normalizedNode) {
-        throw new UnsupportedOperationException("Leaf can not be deserialized to DataObject");
-    }
-
-    @Override
-    public NodeCodecContext<?> get() {
+    public NodeCodecContext get() {
         return this;
     }
 
     Method getGetter() {
         return getter;
-    }
-
-    @Override
-    public BindingCodecTreeNode<?> bindingPathArgumentChild(final PathArgument arg,
-            final List<YangInstanceIdentifier.PathArgument> builder) {
-        throw new IllegalArgumentException("Leaf does not have children");
-    }
-
-    @Override
-    public BindingNormalizedNodeCachingCodec<D> createCachingCodec(
-            final ImmutableCollection<Class<? extends DataObject>> cacheSpecifier) {
-        throw new UnsupportedOperationException("Leaves does not support caching codec.");
-    }
-
-    @Override
-    public Class<D> getBindingClass() {
-        throw new UnsupportedOperationException("Leaf does not have DataObject representation");
-    }
-
-    @Override
-    public NormalizedNode<?, ?> serialize(final D data) {
-        throw new UnsupportedOperationException("Separete serialization of leaf node is not supported.");
-    }
-
-    @Override
-    public void writeAsNormalizedNode(final D data, final NormalizedNodeStreamWriter writer) {
-        throw new UnsupportedOperationException("Separete serialization of leaf node is not supported.");
-    }
-
-    @Override
-    public <E extends DataObject> BindingCodecTreeNode<E> streamChild(final Class<E> childClass) {
-        throw new IllegalArgumentException("Leaf does not have children");
-    }
-
-    @Override
-    public <E extends DataObject> Optional<? extends BindingCodecTreeNode<E>> possibleStreamChild(
-            final Class<E> childClass) {
-        throw new IllegalArgumentException("Leaf does not have children");
-    }
-
-    @Override
-    public BindingCodecTreeNode<?> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument child) {
-        throw new IllegalArgumentException("Leaf does not have children");
     }
 
     @Override
@@ -209,24 +154,8 @@ final class LeafNodeCodecContext<D extends DataObject> extends NodeCodecContext<
     }
 
     @Override
-    public InstanceIdentifier.PathArgument deserializePathArgument(final YangInstanceIdentifier.PathArgument arg) {
-        checkArgument(getDomPathArgument().equals(arg));
-        return null;
-    }
-
-    @Override
-    public YangInstanceIdentifier.PathArgument serializePathArgument(final InstanceIdentifier.PathArgument arg) {
-        return getDomPathArgument();
-    }
-
-    @Override
-    public DataSchemaNode getSchema() {
+    public TypedDataSchemaNode getSchema() {
         return schema;
-    }
-
-    @Override
-    public ChildAddressabilitySummary getChildAddressabilitySummary() {
-        return ChildAddressabilitySummary.UNADDRESSABLE;
     }
 
     @Override

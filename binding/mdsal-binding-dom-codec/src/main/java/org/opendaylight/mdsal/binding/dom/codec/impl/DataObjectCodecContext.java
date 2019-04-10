@@ -82,7 +82,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
     private static final Method[] EMPTY_METHODS = new Method[0];
 
-    private final ImmutableMap<String, LeafNodeCodecContext<?>> leafChild;
+    private final ImmutableMap<String, LeafNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
     private final ImmutableMap<String, NodeContextSupplier> byMethod;
     private final ImmutableMap<String, String> nonnullToGetter;
@@ -114,7 +114,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         final Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
         // Adds leaves to mapping
-        for (final LeafNodeCodecContext<?> leaf : leafChild.values()) {
+        for (final LeafNodeCodecContext leaf : leafChild.values()) {
             tmpMethodToSupplier.put(leaf.getGetter(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
@@ -329,9 +329,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return context;
     }
 
-    @SuppressWarnings("unchecked")
     @Override
-    public NodeCodecContext<D> yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
+    public NodeCodecContext yangPathArgumentChild(final YangInstanceIdentifier.PathArgument arg) {
         final NodeContextSupplier childSupplier;
         if (arg instanceof NodeIdentifierWithPredicates) {
             childSupplier = byYang.get(new NodeIdentifier(arg.getNodeType()));
@@ -341,12 +340,11 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             childSupplier = byYang.get(arg);
         }
 
-        return (NodeCodecContext<D>) childNonNull(childSupplier, arg,
-            "Argument %s is not valid child of %s", arg, getSchema()).get();
+        return childNonNull(childSupplier, arg, "Argument %s is not valid child of %s", arg, getSchema()).get();
     }
 
-    protected final LeafNodeCodecContext<?> getLeafChild(final String name) {
-        final LeafNodeCodecContext<?> value = leafChild.get(name);
+    protected final LeafNodeCodecContext getLeafChild(final String name) {
+        final LeafNodeCodecContext value = leafChild.get(name);
         return IncorrectNestingException.checkNonNull(value, "Leaf %s is not valid for %s", name, getBindingClass());
     }
 
@@ -521,7 +519,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
     @SuppressWarnings("rawtypes")
     @Nullable Object getBindingChildValue(final String method, final NormalizedNodeContainer domData) {
-        final NodeCodecContext<?> childContext = verifyNotNull(byMethod.get(method),
+        final NodeCodecContext childContext = verifyNotNull(byMethod.get(method),
             "Cannot find data handler for method %s", method).get();
 
         @SuppressWarnings("unchecked")
