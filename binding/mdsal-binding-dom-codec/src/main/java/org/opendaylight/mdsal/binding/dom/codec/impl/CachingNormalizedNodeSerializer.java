@@ -93,8 +93,7 @@ final class CachingNormalizedNodeSerializer extends ForwardingBindingStreamEvent
         return serializeUsingStreamWriter(cacheHolder, subtreeRoot, data);
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
-    private BindingNormalizedNodeCache getCacheSerializer(final Class type) {
+    private BindingNormalizedNodeCache getCacheSerializer(final Class<? extends DataObject> type) {
         if (cacheHolder.isCached(type)) {
             final DataContainerCodecContext<?, ?> currentCtx = (DataContainerCodecContext<?, ?>) delegate.current();
             if (type.equals(currentCtx.getBindingClass())) {
