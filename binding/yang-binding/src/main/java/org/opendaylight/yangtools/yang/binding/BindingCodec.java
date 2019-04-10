@@ -9,6 +9,11 @@ package org.opendaylight.yangtools.yang.binding;
 
 import org.opendaylight.yangtools.concepts.Codec;
 
+/**
+ * Combination of {@link BindingSerializer} and {@link BindingDeserializer}. This interface is present in this package
+ * only due to constraints imposed by current implementation.
+ */
+// FIXME: MDSAL-401: deprecate this interface once we no longer to have in a public place
 public interface BindingCodec<P, I> extends BindingSerializer<P, I>, BindingDeserializer<I, P>, Codec<P, I> {
 
     @Override
