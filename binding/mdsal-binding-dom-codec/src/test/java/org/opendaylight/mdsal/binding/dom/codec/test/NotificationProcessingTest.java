@@ -8,39 +8,78 @@
 package org.opendaylight.mdsal.binding.dom.codec.test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import com.google.common.collect.ImmutableList;
+import java.time.Instant;
 import org.junit.Test;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TwoLevelListChanged;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.TwoLevelListChangedBuilder;
+import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelList;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListBuilder;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.binding.rev140701.two.level.list.TopLevelListKey;
+import org.opendaylight.yangtools.yang.binding.EventInstantAware;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.common.QName;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.schema.ContainerNode;
+import org.opendaylight.yangtools.yang.data.impl.schema.Builders;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class NotificationProcessingTest extends AbstractBindingCodecTest {
+    private static final QName NAME = QName.create(TopLevelList.QNAME, "name");
 
-    private static TwoLevelListChanged createTestData() {
-        final TwoLevelListChangedBuilder tb = new TwoLevelListChangedBuilder();
-        tb.setTopLevelList(ImmutableList.of(new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()));
-        return tb.build();
+    private static TwoLevelListChanged createTestBindingData() {
+        return new TwoLevelListChangedBuilder()
+                .setTopLevelList(ImmutableList.of(
+                    new TopLevelListBuilder().withKey(new TopLevelListKey("test")).build()))
+                .build();
     }
+
+    private static ContainerNode createTestDomData() {
+        return Builders.containerBuilder()
+                .withNodeIdentifier(NodeIdentifier.create(TwoLevelListChanged.QNAME))
+                .withChild(Builders.mapBuilder()
+                    .withNodeIdentifier(NodeIdentifier.create(TopLevelList.QNAME))
+                    .withChild(Builders.mapEntryBuilder()
+                        .withNodeIdentifier(new NodeIdentifierWithPredicates(TopLevelList.QNAME, NAME, "test"))
+                        .build())
+                    .build())
+                .build();
+    }
+
 
     @Test
     public void testNotificationToNormalized() {
-        final TwoLevelListChanged bindingOriginal = createTestData();
-        final ContainerNode dom = registry.toNormalizedNodeNotification(bindingOriginal);
-        assertNotNull("Serialization must not return null obejct.",dom);
-        assertEquals(TwoLevelListChanged.QNAME,dom.getIdentifier().getNodeType());
-
-        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.create(true,
-            TwoLevelListChanged.QNAME),dom);
-        assertNotNull(bindingDeserialized);
-        assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
-        assertEquals(bindingOriginal,bindingDeserialized);
+        final ContainerNode dom = registry.toNormalizedNodeNotification(createTestBindingData());
+        assertEquals(createTestDomData(), dom);
     }
 
+    @Test
+    public void testNormalizedToNotification() {
+        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+            TwoLevelListChanged.QNAME), createTestDomData());
+        assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
+        assertEquals(createTestBindingData(), bindingDeserialized);
+    }
+
+    @Test
+    public void testNormalizedToNotificationWithInstant() {
+        final Instant instant = Instant.now();
+        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+            TwoLevelListChanged.QNAME), createTestDomData(), instant);
+        assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
+        assertEquals(createTestBindingData(), bindingDeserialized);
+        assertTrue(bindingDeserialized instanceof EventInstantAware);
+        assertEquals(instant, ((EventInstantAware) bindingDeserialized).eventInstant());
+    }
+
+    @Test
+    public void testNormalizedToNotificationWithNull() {
+        final Notification bindingDeserialized = registry.fromNormalizedNodeNotification(SchemaPath.ROOT.createChild(
+            TwoLevelListChanged.QNAME), createTestDomData(), null);
+        assertTrue(bindingDeserialized instanceof TwoLevelListChanged);
+        assertEquals(createTestBindingData(), bindingDeserialized);
+    }
 }

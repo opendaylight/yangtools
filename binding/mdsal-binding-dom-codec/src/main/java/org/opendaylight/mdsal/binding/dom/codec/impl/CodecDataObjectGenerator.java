@@ -182,8 +182,8 @@ final class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements Cl
 
     static {
         final ByteBuddy bb = new ByteBuddy();
-        CDO = bb.subclass(CodecDataObject.class).visit(ByteBuddyUtils.computeFrames()).modifiers(PUB_FINAL);
-        ACDO = bb.subclass(AugmentableCodecDataObject.class).visit(ByteBuddyUtils.computeFrames()).modifiers(PUB_FINAL);
+        CDO = bb.subclass(CodecDataObject.class).visit(ByteBuddyUtils.computeFrames());
+        ACDO = bb.subclass(AugmentableCodecDataObject.class).visit(ByteBuddyUtils.computeFrames());
     }
 
     private final ImmutableMap<Method, NodeContextSupplier> properties;

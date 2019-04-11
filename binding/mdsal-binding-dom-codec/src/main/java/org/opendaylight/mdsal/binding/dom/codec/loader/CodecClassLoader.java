@@ -7,6 +7,7 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.loader;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
@@ -145,6 +146,19 @@ public abstract class CodecClassLoader extends ClassLoader {
         return findClassLoader(requireNonNull(bindingInterface)).doGenerateClass(bindingInterface, suffix, generator);
     }
 
+    public final @NonNull Class<?> getGeneratedClass(final Class<?> bindingInterface, final String suffix) {
+        final CodecClassLoader loader = findClassLoader(requireNonNull(bindingInterface));
+        final String fqcn = generatedClassName(bindingInterface, suffix);
+
+        final Class<?> ret;
+        synchronized (loader.getClassLoadingLock(fqcn)) {
+            ret = loader.findLoadedClass(fqcn);
+        }
+
+        checkArgument(ret != null, "Failed to find generated class %s for %s of %s", fqcn, suffix, bindingInterface);
+        return ret;
+    }
+
     /**
      * Append specified loaders to this class loader for the purposes of looking up generated classes. Note that the
      * loaders are expected to have required classes already loaded. This is required to support generation of
@@ -166,7 +180,7 @@ public abstract class CodecClassLoader extends ClassLoader {
 
     private <T> Class<T> doGenerateClass(final Class<?> bindingInterface, final String suffix,
             final ClassGenerator<T> generator)  {
-        final String fqcn = bindingInterface.getName() + "$$$" + suffix;
+        final String fqcn = generatedClassName(bindingInterface, suffix);
 
         synchronized (getClassLoadingLock(fqcn)) {
             // Attempt to find a loaded class
@@ -227,5 +241,9 @@ public abstract class CodecClassLoader extends ClassLoader {
                 LOG.info("Failed to save {}", unloaded.getTypeDescription().getName(), e);
             }
         }
+    }
+
+    private static String generatedClassName(final Class<?> bindingInterface, final String suffix) {
+        return bindingInterface.getName() + "$$$" + suffix;
     }
 }

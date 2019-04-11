@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
+import java.time.Instant;
 import java.util.Map.Entry;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -78,6 +79,13 @@ public interface BindingNormalizedNodeSerializer {
      * @return Binding representation of Notification
      */
     @Nullable Notification fromNormalizedNodeNotification(@NonNull SchemaPath path, @NonNull ContainerNode data);
+
+    // FIXME: 5.0.0: make this method non-default
+    @Beta
+    default Notification fromNormalizedNodeNotification(final @NonNull SchemaPath path,
+            final @NonNull ContainerNode data, final @Nullable Instant eventInstant) {
+        return fromNormalizedNodeNotification(path, data);
+    }
 
     /**
      * Translates supplied NormalizedNode RPC input or output into Binding data.
