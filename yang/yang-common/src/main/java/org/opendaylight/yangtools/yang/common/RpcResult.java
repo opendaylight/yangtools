@@ -29,10 +29,12 @@ public interface RpcResult<T> {
     T getResult();
 
     /**
-     * Returns a set of errors and warnings which occurred during processing
-     * the call.
+     * Returns a set of errors and warnings which occurred during processing the call.
      *
      * @return a Collection of {@link RpcError}
      */
+    // FIXME: 4.0.0: annotate with @NonNull
+    // FIXME: 4.0.0: the description says 'set' and the default implementations uses a list. RpcError does not define
+    //               equality and hence this should return a List
     Collection<RpcError> getErrors();
 }
