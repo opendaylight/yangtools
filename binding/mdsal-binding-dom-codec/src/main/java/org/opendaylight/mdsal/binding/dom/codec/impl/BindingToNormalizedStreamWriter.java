@@ -111,7 +111,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
         Preconditions.checkArgument(current() instanceof DataObjectCodecContext);
 
         DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
-        LeafNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
+        ValueNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
 
         NodeIdentifier domArg = (NodeIdentifier) leafContext.getDomPathArgument();
         Object domValue = leafContext.getValueCodec().serialize(value);
@@ -137,7 +137,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
-        final LeafNodeCodecContext ctx = (LeafNodeCodecContext) current();
+        final ValueNodeCodecContext ctx = (ValueNodeCodecContext) current();
         final Object domValue = ctx.getValueCodec().serialize(value);
         delegate.startLeafSetEntryNode(new NodeWithValue<>(ctx.getSchema().getQName(), domValue));
         delegate.scalarValue(domValue);

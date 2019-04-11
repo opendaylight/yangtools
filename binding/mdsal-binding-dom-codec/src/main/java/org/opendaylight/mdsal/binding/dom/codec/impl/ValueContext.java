@@ -21,7 +21,7 @@ final class ValueContext {
     private final Class<?> identifier;
     private final String getterName;
 
-    ValueContext(final Class<?> identifier, final LeafNodeCodecContext leaf) {
+    ValueContext(final Class<?> identifier, final ValueNodeCodecContext leaf) {
         getterName = leaf.getGetter().getName();
         try {
             getter = MethodHandles.publicLookup().unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);

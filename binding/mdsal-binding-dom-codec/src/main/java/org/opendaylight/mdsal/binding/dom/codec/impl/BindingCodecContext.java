@@ -189,7 +189,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     bindingArguments.add(((DataContainerCodecContext<?, ?>) nextNode).getBindingPathArgument(domArg));
                 }
                 currentNode = nextNode;
-            } else if (nextNode instanceof LeafNodeCodecContext) {
+            } else if (nextNode instanceof ValueNodeCodecContext) {
                 LOG.debug("Instance identifier referencing a leaf is not representable ({})", dom);
                 return null;
             }
@@ -233,7 +233,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     @Override
-    public ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(final Class<?> parentClass,
+    public ImmutableMap<String, ValueNodeCodecContext> getLeafNodes(final Class<?> parentClass,
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
@@ -244,9 +244,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
-    private ImmutableMap<String, LeafNodeCodecContext> getLeafNodesUsingReflection(final Class<?> parentClass,
+    private ImmutableMap<String, ValueNodeCodecContext> getLeafNodesUsingReflection(final Class<?> parentClass,
             final Map<String, DataSchemaNode> getterToLeafSchema) {
-        final Map<String, LeafNodeCodecContext> leaves = new HashMap<>();
+        final Map<String, ValueNodeCodecContext> leaves = new HashMap<>();
         for (final Method method : parentClass.getMethods()) {
             if (method.getParameterCount() == 0) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
@@ -276,7 +276,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                 }
 
                 final Codec<Object, Object> codec = getCodec(valueType, typedSchema.getType());
-                final LeafNodeCodecContext leafNode = new LeafNodeCodecContext(typedSchema, codec, method,
+                final ValueNodeCodecContext leafNode = new ValueNodeCodecContext(typedSchema, codec, method,
                         context.getSchemaContext());
                 leaves.put(schema.getQName().getLocalName(), leafNode);
             }
@@ -330,7 +330,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
         final Class<Identifier<?>> identifier = optIdentifier.get();
         final Map<QName, ValueContext> valueCtx = new HashMap<>();
-        for (final LeafNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
+        for (final ValueNodeCodecContext leaf : getLeafNodes(identifier, schema).values()) {
             final QName name = leaf.getDomPathArgument().getNodeType();
             valueCtx.put(name, new ValueContext(identifier, leaf));
         }

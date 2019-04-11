@@ -32,16 +32,20 @@ import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.TypedDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
+/**
+ * Abstract base class for atomic nodes. These are nodes which are not decomposed in the Binding Specification, such
+ * as LeafNodes and LeafSetNodes.
+ */
 // FIXME: MDSAL-436: this class should be specialized for Leaf and LeafSet
-final class LeafNodeCodecContext extends NodeCodecContext implements NodeContextSupplier {
+final class ValueNodeCodecContext extends NodeCodecContext implements NodeContextSupplier {
     private final NodeIdentifier yangIdentifier;
     private final Codec<Object, Object> valueCodec;
     private final Method getter;
     private final TypedDataSchemaNode schema;
     private final Object defaultObject;
 
-    LeafNodeCodecContext(final TypedDataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
-                final SchemaContext schemaContext) {
+    ValueNodeCodecContext(final TypedDataSchemaNode schema, final Codec<Object, Object> codec,
+            final Method getter, final SchemaContext schemaContext) {
         this.yangIdentifier = NodeIdentifier.create(schema.getQName());
         this.valueCodec = requireNonNull(codec);
         this.getter = getter;

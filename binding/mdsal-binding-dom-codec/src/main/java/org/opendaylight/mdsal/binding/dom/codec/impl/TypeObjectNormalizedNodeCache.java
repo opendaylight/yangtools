@@ -15,8 +15,8 @@ import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
  * A cache of NormalizedNodes corresponding to a particular TypeObject instantiation.
  */
 final class TypeObjectNormalizedNodeCache
-        extends AbstractBindingNormalizedNodeCache<TypeObject, LeafNodeCodecContext> {
-    TypeObjectNormalizedNodeCache(final LeafNodeCodecContext rootContext) {
+        extends AbstractBindingNormalizedNodeCache<TypeObject, ValueNodeCodecContext> {
+    TypeObjectNormalizedNodeCache(final ValueNodeCodecContext rootContext) {
         super(rootContext);
     }
 

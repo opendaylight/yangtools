@@ -26,7 +26,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
  * <p>
  * Two core subtypes of codec context are available:
  * <ul>
- * <li>{@link LeafNodeCodecContext} - Context for nodes, which does not contain any nested YANG modeled substructures.
+ * <li>{@link ValueNodeCodecContext} - Context for nodes, which does not contain any nested YANG modeled substructures.
  * </li>
  * <li>{@link DataObjectCodecContext} - Context for nodes, which does contain nested YANG modeled substructures. This
  * context nodes contains context for children nodes.</li>
@@ -63,7 +63,7 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          * @param schema  Instantiated schema of binding type.
          * @return Map of local name to leaf node context.
          */
-        ImmutableMap<String, LeafNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
+        ImmutableMap<String, ValueNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
 
         /**
          * Returns Path argument codec for list item.
