@@ -14,7 +14,6 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
-import org.opendaylight.yangtools.yang.binding.DataObject;
 
 /**
  * Abstract Holder of Binding to Normalized Node caches indexed by {@link DataContainerCodecContext} to which cache is
@@ -28,9 +27,9 @@ abstract class AbstractBindingNormalizedNodeCacheHolder {
                     return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this, key);
                 }
             });
-    private final ImmutableSet<Class<? extends DataObject>> cacheSpec;
+    private final ImmutableSet<Class<? extends BindingObject>> cacheSpec;
 
-    AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends DataObject>> cacheSpec) {
+    AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
         this.cacheSpec = requireNonNull(cacheSpec);
     }
 

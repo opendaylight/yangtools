@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -134,7 +135,7 @@ public interface BindingDataObjectCodecTreeNode<T extends DataObject> extends Bi
      * @return Codec which uses cache for serialization / deserialization.
      */
     @NonNull BindingNormalizedNodeCachingCodec<T> createCachingCodec(
-            @NonNull ImmutableCollection<Class<? extends DataObject>> cacheSpecifier);
+            @NonNull ImmutableCollection<Class<? extends BindingObject>> cacheSpecifier);
 
     @Beta
     void writeAsNormalizedNode(T data, NormalizedNodeStreamWriter writer);

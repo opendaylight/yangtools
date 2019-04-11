@@ -8,7 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 
 /**
  * Caching variant of Binding to Normalized Node codec. Caching may introduce performance penalty to serialization and
@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.binding.DataObject;
  * @param <T> Binding representtion of data
  */
 @Beta
-public interface BindingNormalizedNodeCachingCodec<T extends DataObject> extends BindingNormalizedNodeCodec<T>,
+public interface BindingNormalizedNodeCachingCodec<T extends BindingObject> extends BindingNormalizedNodeCodec<T>,
         AutoCloseable {
     /**
      * Invoking close will invalidate this codec and any of its child codecs and will invalidate cache. Any subsequent
