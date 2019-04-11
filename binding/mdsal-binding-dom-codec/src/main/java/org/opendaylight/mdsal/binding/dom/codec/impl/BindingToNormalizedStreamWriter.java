@@ -7,9 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.base.Preconditions;
 import java.io.IOException;
 import java.util.AbstractMap;
 import java.util.ArrayDeque;
@@ -74,8 +74,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
             // Entry of first node
             next = rootNodeSchema;
         } else {
-            Preconditions.checkArgument(current() instanceof DataContainerCodecContext, "Could not start node %s",
-                    name);
+            checkArgument(current() instanceof DataContainerCodecContext, "Could not start node %s", name);
             next = ((DataContainerCodecContext<?,?>) current()).streamChild((Class) name);
         }
         this.schema.push(next);
@@ -108,12 +107,12 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
     }
 
     private Map.Entry<NodeIdentifier, Object> serializeLeaf(final String localName, final Object value) {
-        Preconditions.checkArgument(current() instanceof DataObjectCodecContext);
+        checkArgument(current() instanceof DataObjectCodecContext);
 
         DataObjectCodecContext<?,?> currentCasted = (DataObjectCodecContext<?,?>) current();
         ValueNodeCodecContext leafContext = currentCasted.getLeafChild(localName);
 
-        NodeIdentifier domArg = (NodeIdentifier) leafContext.getDomPathArgument();
+        NodeIdentifier domArg = leafContext.getDomPathArgument();
         Object domValue = leafContext.getValueCodec().serialize(value);
         emitSchema(leafContext.getSchema());
         return new AbstractMap.SimpleEntry<>(domArg, domValue);
@@ -137,7 +136,7 @@ final class BindingToNormalizedStreamWriter implements BindingStreamEventWriter,
 
     @Override
     public void leafSetEntryNode(final Object value) throws IOException {
-        final ValueNodeCodecContext ctx = (ValueNodeCodecContext) current();
+        final LeafSetNodeCodecContext ctx = (LeafSetNodeCodecContext) current();
         final Object domValue = ctx.getValueCodec().serialize(value);
         delegate.startLeafSetEntryNode(new NodeWithValue<>(ctx.getSchema().getQName(), domValue));
         delegate.scalarValue(domValue);

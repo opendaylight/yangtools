@@ -254,15 +254,21 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     // We do not have schema for leaf, so we will ignore it (e.g. getClass).
                     continue;
                 }
+
                 final TypedDataSchemaNode typedSchema = (TypedDataSchemaNode) schema;
-                final Class<?> valueType;
+                final ValueNodeCodecContext valueNode;
                 if (schema instanceof LeafSchemaNode) {
-                    valueType = method.getReturnType();
+                    final LeafSchemaNode leafSchema = (LeafSchemaNode) schema;
+
+                    final Class<?> valueType = method.getReturnType();
+                    final Codec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
+                    valueNode = new LeafNodeCodecContext(leafSchema, codec, method, context.getSchemaContext());
                 } else if (schema instanceof LeafListSchemaNode) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
                         method.getGenericReturnType());
                     checkState(optType.isPresent(), "Failed to find return type for %s", method);
 
+                    final Class<?> valueType;
                     final Type genericType = optType.get();
                     if (genericType instanceof Class<?>) {
                         valueType = (Class<?>) genericType;
@@ -271,14 +277,15 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     } else {
                         throw new IllegalStateException("Unexpected return type " + genericType);
                     }
+
+                    final LeafListSchemaNode leafListSchema = (LeafListSchemaNode) schema;
+                    final Codec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
+                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method);
                 } else {
                     throw new IllegalStateException("Unhandled typed schema " + typedSchema);
                 }
 
-                final Codec<Object, Object> codec = getCodec(valueType, typedSchema.getType());
-                final ValueNodeCodecContext leafNode = new ValueNodeCodecContext(typedSchema, codec, method,
-                        context.getSchemaContext());
-                leaves.put(schema.getQName().getLocalName(), leafNode);
+                leaves.put(schema.getQName().getLocalName(), valueNode);
             }
         }
         return ImmutableMap.copyOf(leaves);
