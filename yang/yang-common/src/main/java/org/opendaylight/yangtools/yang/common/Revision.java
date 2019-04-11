@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 import javax.annotation.RegEx;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.yangtools.concepts.Immutable;
 
 /**
  * Dedicated object identifying a YANG module revision.
@@ -37,7 +38,7 @@ import org.eclipse.jdt.annotation.Nullable;
  *
  * @author Robert Varga
  */
-public final class Revision implements Comparable<Revision>, Serializable {
+public final class Revision implements Comparable<Revision>, Immutable, Serializable {
     // Note: since we are using writeReplace() this version is not significant.
     private static final long serialVersionUID = 1L;
 
