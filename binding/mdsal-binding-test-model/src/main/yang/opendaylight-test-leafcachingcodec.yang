@@ -1,0 +1,22 @@
+module test-leaf-caching-codec {
+    namespace "urn:test:leaf:caching:codec";
+    prefix test;
+
+    revision 2019-02-01;
+
+    typedef my-type {
+        type uint16 {
+          range "1..4094";
+        }
+    }
+
+    container cont{
+       leaf caching {
+         type my-type;
+       }
+
+       leaf non-caching {
+         type string;
+       }
+    }
+}

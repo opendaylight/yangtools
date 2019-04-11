@@ -13,6 +13,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableSet;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.impl.LeafNodeCodecContext.OfTypeObject;
 import org.opendaylight.yangtools.yang.binding.BindingObject;
 
 /**
@@ -20,24 +22,32 @@ import org.opendaylight.yangtools.yang.binding.BindingObject;
  * associated.
  */
 abstract class AbstractBindingNormalizedNodeCacheHolder {
-    private final LoadingCache<DataContainerCodecContext<?, ?>, DataObjectNormalizedNodeCache> caches = CacheBuilder
-            .newBuilder().build(new CacheLoader<DataContainerCodecContext<?, ?>, DataObjectNormalizedNodeCache>() {
+    @SuppressWarnings("rawtypes")
+    private final LoadingCache<NodeCodecContext, AbstractBindingNormalizedNodeCache> caches = CacheBuilder
+            .newBuilder().build(new CacheLoader<NodeCodecContext, AbstractBindingNormalizedNodeCache>() {
                 @Override
-                public DataObjectNormalizedNodeCache load(final DataContainerCodecContext<?, ?> key) {
-                    return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this, key);
+                public AbstractBindingNormalizedNodeCache load(final NodeCodecContext key) {
+                    if (key instanceof DataContainerCodecContext) {
+                        return new DataObjectNormalizedNodeCache(AbstractBindingNormalizedNodeCacheHolder.this,
+                            (DataContainerCodecContext<?, ?>) key);
+                    } else if (key instanceof OfTypeObject) {
+                        return new TypeObjectNormalizedNodeCache<>((OfTypeObject)key);
+                    } else {
+                        throw new IllegalStateException("Unhandled context " + key);
+                    }
                 }
             });
+
     private final ImmutableSet<Class<? extends BindingObject>> cacheSpec;
 
     AbstractBindingNormalizedNodeCacheHolder(final ImmutableSet<Class<? extends BindingObject>> cacheSpec) {
         this.cacheSpec = requireNonNull(cacheSpec);
     }
 
-    DataObjectNormalizedNodeCache getCachingSerializer(final DataContainerCodecContext<?, ?> childCtx) {
-        if (isCached(childCtx.getBindingClass())) {
-            return caches.getUnchecked(childCtx);
-        }
-        return null;
+    @SuppressWarnings("unchecked")
+    <T extends BindingObject, C extends NodeCodecContext & BindingObjectCodecTreeNode<?>>
+            AbstractBindingNormalizedNodeCache<T, C> getCachingSerializer(final C childCtx) {
+        return isCached(childCtx.getBindingClass()) ? caches.getUnchecked(childCtx) : null;
     }
 
     final boolean isCached(final Class<? extends BindingObject> type) {
