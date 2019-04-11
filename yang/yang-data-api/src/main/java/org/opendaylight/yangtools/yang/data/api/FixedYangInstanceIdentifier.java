@@ -17,8 +17,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 
 final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implements Cloneable {
-    static final FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(ImmutableList.of(),
-            new HashCodeBuilder<>().build());
+    static final @NonNull FixedYangInstanceIdentifier EMPTY_INSTANCE = new FixedYangInstanceIdentifier(
+        ImmutableList.of(), new HashCodeBuilder<>().build());
     private static final long serialVersionUID = 1L;
 
     private final ImmutableList<PathArgument> path;
@@ -29,7 +29,7 @@ final class FixedYangInstanceIdentifier extends YangInstanceIdentifier implement
         this.path = requireNonNull(path, "path must not be null.");
     }
 
-    static FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
+    static @NonNull FixedYangInstanceIdentifier create(final Iterable<? extends PathArgument> path, final int hash) {
         return new FixedYangInstanceIdentifier(ImmutableList.copyOf(path), hash);
     }
 
