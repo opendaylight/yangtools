@@ -91,7 +91,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     /**
      * An empty {@link YangInstanceIdentifier}. It corresponds to the path of the conceptual root of the YANG namespace.
      */
-    public static final YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
+    public static final @NonNull YangInstanceIdentifier EMPTY = FixedYangInstanceIdentifier.EMPTY_INSTANCE;
 
     private static final AtomicReferenceFieldUpdater<YangInstanceIdentifier, String> TOSTRINGCACHE_UPDATER =
             AtomicReferenceFieldUpdater.newUpdater(YangInstanceIdentifier.class, String.class, "toStringCache");
@@ -126,7 +126,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return A optimized equivalent instance.
      */
     @Beta
-    public abstract YangInstanceIdentifier toOptimized();
+    public abstract @NonNull YangInstanceIdentifier toOptimized();
 
     /**
      * Return the conceptual parent {@link YangInstanceIdentifier}, which has
@@ -150,7 +150,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iteration of path arguments.
      */
-    public abstract List<PathArgument> getPathArguments();
+    public abstract @NonNull List<PathArgument> getPathArguments();
 
     /**
      * Returns an iterable of path arguments in reverse order. This is useful
@@ -158,7 +158,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return Immutable iterable of path arguments in reverse order.
      */
-    public abstract List<PathArgument> getReversePathArguments();
+    public abstract @NonNull List<PathArgument> getReversePathArguments();
 
     /**
      * Returns the last PathArgument. This is equivalent of iterating
@@ -168,7 +168,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public abstract PathArgument getLastPathArgument();
 
-    public static YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
+    public static @NonNull YangInstanceIdentifier create(final Iterable<? extends PathArgument> path) {
         if (Iterables.isEmpty(path)) {
             return EMPTY;
         }
@@ -181,7 +181,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         return FixedYangInstanceIdentifier.create(path, hash.build());
     }
 
-    public static YangInstanceIdentifier create(final PathArgument... path) {
+    public static @NonNull YangInstanceIdentifier create(final PathArgument... path) {
         // We are forcing a copy, since we cannot trust the user
         return create(Arrays.asList(path));
     }
@@ -193,7 +193,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return A {@link YangInstanceIdentifier} instance
      * @throws NullPointerException if {@code pathTowardsRoot} or any of its members is null
      */
-    public static YangInstanceIdentifier createReverse(final Deque<PathArgument> pathTowardsRoot) {
+    public static @NonNull YangInstanceIdentifier createReverse(final Deque<PathArgument> pathTowardsRoot) {
         final ImmutableList.Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(
             pathTowardsRoot.size());
         pathTowardsRoot.descendingIterator().forEachRemaining(builder::add);
@@ -208,7 +208,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @return A {@link YangInstanceIdentifier} instance
      * @throws NullPointerException if {@code pathTowardsRoot} is null
      */
-    public static <T> YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
+    public static <T> @NonNull YangInstanceIdentifier createReverse(final Deque<? extends T> stackTowardsRoot,
             final Function<T, PathArgument> function) {
         final ImmutableList.Builder<PathArgument> builder = ImmutableList.builderWithExpectedSize(
             stackTowardsRoot.size());
@@ -245,7 +245,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param name QName of {@link NodeIdentifier}
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public final YangInstanceIdentifier node(final QName name) {
+    public final @NonNull YangInstanceIdentifier node(final QName name) {
         return node(new NodeIdentifier(name));
     }
 
@@ -255,7 +255,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param arg Path argument which should be added to the end
      * @return Instance Identifier with additional path argument added to the end.
      */
-    public final YangInstanceIdentifier node(final PathArgument arg) {
+    public final @NonNull YangInstanceIdentifier node(final PathArgument arg) {
         return new StackedYangInstanceIdentifier(this, arg, HashCodeBuilder.nextHashCode(hash, arg));
     }
 
@@ -394,7 +394,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param name QName of first node identifier
      * @return Instance Identifier with only one path argument of type {@link NodeIdentifier}
      */
-    public static YangInstanceIdentifier of(final QName name) {
+    public static @NonNull YangInstanceIdentifier of(final QName name) {
         return create(new NodeIdentifier(name));
     }
 
@@ -403,7 +403,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      *
      * @return new builder for InstanceIdentifier with empty path arguments.
      */
-    public static InstanceIdentifierBuilder builder() {
+    public static @NonNull InstanceIdentifierBuilder builder() {
         return new YangInstanceIdentifierBuilder();
     }
 
@@ -413,7 +413,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      * @param origin InstanceIdentifier from which path arguments are copied.
      * @return new builder for InstanceIdentifier with path arguments copied from original instance identifier.
      */
-    public static InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
+    public static @NonNull InstanceIdentifierBuilder builder(final YangInstanceIdentifier origin) {
         return new YangInstanceIdentifierBuilder(origin.getPathArguments(), origin.hashCode());
     }
 
@@ -461,12 +461,12 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param previous Previous path argument
          * @return String representation
          */
-        String toRelativeString(PathArgument previous);
+        @NonNull String toRelativeString(PathArgument previous);
     }
 
     private abstract static class AbstractPathArgument implements PathArgument {
         private static final long serialVersionUID = -4546547994250849340L;
-        private final QName nodeType;
+        private final @NonNull QName nodeType;
         private transient int hashValue;
         private transient volatile boolean hashGuard = false;
 
@@ -475,7 +475,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
         }
 
         @Override
-        public final QName getNodeType() {
+        public final @NonNull QName getNodeType() {
             return nodeType;
         }
 
@@ -554,7 +554,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param node Node's QName
          * @return A {@link NodeIdentifier}
          */
-        public static NodeIdentifier create(final QName node) {
+        public static @NonNull NodeIdentifier create(final QName node) {
             return CACHE.getUnchecked(node);
         }
     }
@@ -566,7 +566,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
     public static final class NodeIdentifierWithPredicates extends AbstractPathArgument {
         private static final long serialVersionUID = -4787195606494761540L;
 
-        private final Map<QName, Object> keyValues;
+        private final @NonNull Map<QName, Object> keyValues;
 
         // Exposed for NIPv1
         NodeIdentifierWithPredicates(final Map<QName, Object> keyValues, final QName node) {
@@ -597,7 +597,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
             this(node, SharedSingletonMap.unorderedOf(key, value));
         }
 
-        public Map<QName, Object> getKeyValues() {
+        public @NonNull Map<QName, Object> getKeyValues() {
             return keyValues;
         }
 
@@ -715,7 +715,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
      */
     public static final class AugmentationIdentifier implements PathArgument {
         private static final long serialVersionUID = -8122335594681936939L;
-        private final ImmutableSet<QName> childNames;
+        private final @NonNull ImmutableSet<QName> childNames;
 
         @Override
         public QName getNodeType() {
@@ -739,7 +739,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          *
          * @return set of all possible child nodes.
          */
-        public Set<QName> getPossibleChildNames() {
+        public @NonNull Set<QName> getPossibleChildNames() {
             return childNames;
         }
 
@@ -813,7 +813,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param arg A {@link PathArgument} to be added
          * @return this builder
          */
-        InstanceIdentifierBuilder node(PathArgument arg);
+        @NonNull InstanceIdentifierBuilder node(PathArgument arg);
 
         /**
          * Adds {@link NodeIdentifier} with supplied QName to path arguments of resulting instance identifier.
@@ -821,7 +821,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param nodeType QName of {@link NodeIdentifier} which will be added
          * @return this builder
          */
-        InstanceIdentifierBuilder node(QName nodeType);
+        @NonNull InstanceIdentifierBuilder node(QName nodeType);
 
         /**
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key values to path arguments of resulting
@@ -831,7 +831,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param keyValues Map of key components and their respective values for {@link NodeIdentifierWithPredicates}
          * @return this builder
          */
-        InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
+        @NonNull InstanceIdentifierBuilder nodeWithKey(QName nodeType, Map<QName, Object> keyValues);
 
         /**
          * Adds {@link NodeIdentifierWithPredicates} with supplied QName and key, value.
@@ -841,7 +841,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @param value value of key which will be added
          * @return this builder
          */
-        InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
+        @NonNull InstanceIdentifierBuilder nodeWithKey(QName nodeType, QName key, Object value);
 
         /**
          * Adds a collection of {@link PathArgument}s to path arguments of resulting instance identifier.
@@ -851,7 +851,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @throws NullPointerException if any of the arguments is null
          */
         @Beta
-        InstanceIdentifierBuilder append(Collection<? extends PathArgument> args);
+        @NonNull InstanceIdentifierBuilder append(Collection<? extends PathArgument> args);
 
         /**
          * Adds a collection of {@link PathArgument}s to path arguments of resulting instance identifier.
