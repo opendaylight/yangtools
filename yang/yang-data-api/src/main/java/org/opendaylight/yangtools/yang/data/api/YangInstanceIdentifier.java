@@ -886,7 +886,7 @@ public abstract class YangInstanceIdentifier implements Path<YangInstanceIdentif
          * @throws NullPointerException if any of the arguments is null
          */
         @Beta
-        default InstanceIdentifierBuilder append(final PathArgument... args) {
+        default @NonNull InstanceIdentifierBuilder append(final PathArgument... args) {
             return append(Arrays.asList(args));
         }
 

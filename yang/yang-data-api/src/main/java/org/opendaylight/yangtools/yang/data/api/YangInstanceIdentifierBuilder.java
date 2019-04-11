@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.InstanceIdentifierBuilder;
@@ -34,7 +35,7 @@ final class YangInstanceIdentifierBuilder implements InstanceIdentifierBuilder {
         this.hash = new HashCodeBuilder<>(hash);
     }
 
-    private InstanceIdentifierBuilder addArgument(final PathArgument arg) {
+    private @NonNull InstanceIdentifierBuilder addArgument(final PathArgument arg) {
         path.add(arg);
         hash.addArgument(arg);
         return this;
