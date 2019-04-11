@@ -7,13 +7,19 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Set;
+import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.mdsal.binding.dom.codec.api.BindingTypeObjectCodecTreeNode;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.yang.binding.TypeObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.TypeDefinitionAwareCodec;
+import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNodes;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.Module;
@@ -22,10 +28,43 @@ import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.opendaylight.yangtools.yang.model.api.TypeDefinition;
 import org.opendaylight.yangtools.yang.model.api.type.IdentityrefTypeDefinition;
 
-final class LeafNodeCodecContext extends ValueNodeCodecContext {
+class LeafNodeCodecContext extends ValueNodeCodecContext {
+    static final class OfTypeObject<T extends TypeObject> extends LeafNodeCodecContext
+            implements BindingTypeObjectCodecTreeNode<T> {
+        private final @NonNull Class<T> bindingClass;
+
+        OfTypeObject(final LeafSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+                final SchemaContext schemaContext, final Class<T> bindingClass) {
+            super(schema, codec, getter, schemaContext);
+            this.bindingClass = requireNonNull(bindingClass);
+        }
+
+        @Override
+        public Class<T> getBindingClass() {
+            return bindingClass;
+        }
+
+        @Override
+        public T deserialize(final NormalizedNode<?, ?> data) {
+            return bindingClass.cast(deserializeObject(data));
+        }
+
+        @Override
+        public NormalizedNode<?, ?> serialize(final T data) {
+            return ImmutableNodes.leafNode(getDomPathArgument(), getValueCodec().serialize(data));
+        }
+    }
+
     LeafNodeCodecContext(final LeafSchemaNode schema, final Codec<Object, Object> codec,
-        final Method getter, final SchemaContext schemaContext) {
+            final Method getter, final SchemaContext schemaContext) {
         super(schema, codec, getter, createDefaultObject(schema, codec, schemaContext));
+    }
+
+    static LeafNodeCodecContext of(final LeafSchemaNode schema, final Codec<Object, Object> codec,
+            final Method getter, final Class<?> valueType, final SchemaContext schemaContext) {
+        return TypeObject.class.isAssignableFrom(valueType)
+                ? new OfTypeObject<>(schema, codec, getter, schemaContext, valueType.asSubclass(TypeObject.class))
+                        : new LeafNodeCodecContext(schema, codec, getter, schemaContext);
     }
 
     @Override

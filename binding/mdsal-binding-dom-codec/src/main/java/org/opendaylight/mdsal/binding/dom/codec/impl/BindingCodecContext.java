@@ -255,14 +255,14 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     continue;
                 }
 
-                final TypedDataSchemaNode typedSchema = (TypedDataSchemaNode) schema;
                 final ValueNodeCodecContext valueNode;
                 if (schema instanceof LeafSchemaNode) {
                     final LeafSchemaNode leafSchema = (LeafSchemaNode) schema;
 
                     final Class<?> valueType = method.getReturnType();
                     final Codec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
-                    valueNode = new LeafNodeCodecContext(leafSchema, codec, method, context.getSchemaContext());
+                    valueNode = LeafNodeCodecContext.of(leafSchema, codec, method, valueType,
+                        context.getSchemaContext());
                 } else if (schema instanceof LeafListSchemaNode) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
                         method.getGenericReturnType());
@@ -282,7 +282,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     final Codec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method);
                 } else {
-                    throw new IllegalStateException("Unhandled typed schema " + typedSchema);
+                    throw new IllegalStateException("Unhandled typed schema " + schema);
                 }
 
                 leaves.put(schema.getQName().getLocalName(), valueNode);
