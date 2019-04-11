@@ -9,7 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.api;
 
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
-import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.BindingObject;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 
 /**
@@ -18,7 +18,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
  * @param <T> Binding representation of data
  */
 @Beta
-public interface BindingNormalizedNodeCodec<T extends DataObject> {
+public interface BindingNormalizedNodeCodec<T extends BindingObject> {
     /**
      * Converts from Normalized Node to Binding representation of data.
      *
