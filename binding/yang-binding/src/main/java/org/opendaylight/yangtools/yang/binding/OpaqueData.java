@@ -32,4 +32,26 @@ public interface OpaqueData<T> extends Immutable {
      * @return Data held in this object.
      */
     @NonNull T getData();
+
+    /**
+     * The hash code of any {@link OpaqueData} instance is defined by the combination of its object model and the data
+     * it holds. This is inherently object-model-specific hence different OpaqueData defined by distinct object models
+     * will result in differing hash codes. This implies that node with differing object models cannot compare as equal.
+     * See {@link AbstractOpaqueData#hashCode()} for canonical implementation.
+     *
+     * @return a hash code value for this object.
+     */
+    @Override
+    int hashCode();
+
+    /**
+     * Compare this object to another object. The comparison needs to take into account {@link #getObjectModel()}
+     * first and then follow comparison on {@link #getData()}. For canonical algorithm please refer to
+     * {@link AbstractOpaqueData#equals(Object)}.
+     *
+     * @param obj the reference object with which to compare.
+     * @return {@code true} if this object is the same as the obj argument; {@code false} otherwise.
+     */
+    @Override
+    boolean equals(Object obj);
 }
