@@ -11,6 +11,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import java.util.Objects;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.util.HashCodeBuilder;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.InstanceIdentifierBuilder;
@@ -109,7 +110,7 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
         return InstanceIdentifier.trustedCreate(arg, pathArguments, hashBuilder.build(), wildcard);
     }
 
-    <N extends DataObject> InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
+    <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addWildNode(final PathArgument newArg) {
         if (Identifiable.class.isAssignableFrom(newArg.getType())) {
             wildcard = true;
         }
@@ -117,14 +118,14 @@ final class InstanceIdentifierBuilderImpl<T extends DataObject> implements Insta
     }
 
     @SuppressWarnings("unchecked")
-    <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final PathArgument newArg) {
+    <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addNode(final PathArgument newArg) {
         arg = newArg;
         hashBuilder.addArgument(newArg);
         pathBuilder.add(newArg);
         return (InstanceIdentifierBuilderImpl<N>) this;
     }
 
-    private <N extends DataObject> InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
+    private <N extends DataObject> @NonNull InstanceIdentifierBuilderImpl<N> addNode(final Class<N> container) {
         return addWildNode(Item.of(container));
     }
 }
