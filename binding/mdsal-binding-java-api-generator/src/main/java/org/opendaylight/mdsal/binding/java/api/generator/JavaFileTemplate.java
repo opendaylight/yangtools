@@ -27,6 +27,9 @@ import org.opendaylight.mdsal.binding.model.util.Types;
  * Base Java file template. Contains a non-null type and imports which the generated code refers to.
  */
 class JavaFileTemplate {
+    static final JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull");
+    static final JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable");
+
     private final AbstractJavaGeneratedType javaType;
     private final GeneratedType type;
 
@@ -74,6 +77,14 @@ class JavaFileTemplate {
 
     final String importedName(final JavaTypeName intype) {
         return javaType.getReferenceString(intype);
+    }
+
+    final String importedNonNull(final Type intype) {
+        return importedName(intype, importedName(NONNULL));
+    }
+
+    final String importedNullable(final Type intype) {
+        return importedName(intype, importedName(NULLABLE));
     }
 
     final void addImport(final Class<?> cls) {

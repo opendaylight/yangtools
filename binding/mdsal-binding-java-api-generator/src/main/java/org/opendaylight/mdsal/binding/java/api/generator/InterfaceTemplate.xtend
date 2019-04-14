@@ -17,7 +17,6 @@ import org.opendaylight.mdsal.binding.model.api.AnnotationType
 import org.opendaylight.mdsal.binding.model.api.Constant
 import org.opendaylight.mdsal.binding.model.api.Enumeration
 import org.opendaylight.mdsal.binding.model.api.GeneratedType
-import org.opendaylight.mdsal.binding.model.api.JavaTypeName
 import org.opendaylight.mdsal.binding.model.api.MethodSignature
 import org.opendaylight.mdsal.binding.model.api.Type
 import org.opendaylight.mdsal.binding.model.util.TypeConstants
@@ -27,9 +26,6 @@ import org.opendaylight.yangtools.yang.binding.CodeHelpers
  * Template for generating JAVA interfaces.
  */
 class InterfaceTemplate extends BaseTemplate {
-    static val JavaTypeName NONNULL = JavaTypeName.create("org.eclipse.jdt.annotation", "NonNull")
-    static val JavaTypeName NULLABLE = JavaTypeName.create("org.eclipse.jdt.annotation", "Nullable")
-
     /**
      * List of constant instances which are generated as JAVA public static final attributes.
      */
@@ -219,14 +215,14 @@ class InterfaceTemplate extends BaseTemplate {
         «val name = method.name»
         «formatDataForJavaDoc(method, "@return " + asCode(ret.fullyQualifiedName) + " " + asCode(propertyNameFromGetter(method)) + ", or an empty list if it is not present")»
         «method.annotations.generateAnnotations»
-        default «ret.importedName(NONNULL.importedName)» «name»() {
+        default «ret.importedNonNull» «name»() {
             return «CodeHelpers.importedName».nonnull(«getGetterMethodForNonnull(name)»());
         }
     '''
 
     def private String nullableType(Type type) {
         if (type.isObject) {
-            return type.importedName(NULLABLE.importedName)
+            return type.importedNullable
         }
         return type.importedName
     }
