@@ -11,9 +11,11 @@ import com.google.common.collect.Iterators;
 import com.google.common.collect.UnmodifiableIterator;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
+// FIXME: 5.0.0: consider optimizing streaming use through returning StringBuilder from common methods
 public abstract class AbstractSource {
     private final Set<StaticConstantDefinition> staticConstants = new HashSet<>();
 
@@ -28,8 +30,7 @@ public abstract class AbstractSource {
     private static StringBuilder commonInvoke(final CharSequence object, final String methodName) {
         final StringBuilder sb = new StringBuilder();
         if (object != null) {
-            sb.append(object);
-            sb.append('.');
+            sb.append(object).append('.');
         }
         return sb.append(methodName).append('(');
     }
@@ -59,14 +60,21 @@ public abstract class AbstractSource {
     protected static final CharSequence assign(final String type, final String var, final CharSequence value) {
         final StringBuilder sb = new StringBuilder();
         if (type != null) {
-            sb.append(type);
-            sb.append(' ');
+            sb.append(type).append(' ');
         }
         return sb.append(var).append(" = ").append(value);
     }
 
+    protected static final CharSequence assign(final Class<?> type, final String var, final CharSequence value) {
+        return assign(type.getName(), var, value);
+    }
+
     protected static final CharSequence assign(final Type type, final String var, final CharSequence value) {
         return assign(type.getFullyQualifiedName(), var, value);
+    }
+
+    protected static final CharSequence cast(final Class<?> type, final CharSequence value) {
+        return cast(type.getName(), value);
     }
 
     protected static final CharSequence cast(final Type type, final CharSequence value) {
@@ -79,12 +87,12 @@ public abstract class AbstractSource {
 
     protected static final CharSequence forEach(final String iterable, final String iteratorName,
             final String valueType, final String valueName, final CharSequence body) {
-        final StringBuilder sb = new StringBuilder();
-        sb.append(statement(assign(java.util.Iterator.class.getName(), iteratorName, invoke(iterable, "iterator"))));
-        sb.append("while (").append(invoke(iteratorName, "hasNext")).append(") {\n");
-        sb.append(statement(assign(valueType, valueName,cast(valueType, invoke(iteratorName, "next")))));
-        sb.append(body);
-        return sb.append("\n}\n");
+        return new StringBuilder()
+                .append(statement(assign(Iterator.class, iteratorName, invoke(iterable, "iterator"))))
+                .append("while (").append(invoke(iteratorName, "hasNext")).append(") {\n")
+                .append(statement(assign(valueType, valueName, cast(valueType, invoke(iteratorName, "next")))))
+                .append(body)
+                .append("\n}\n");
     }
 
     protected static final CharSequence statement(final CharSequence statement) {

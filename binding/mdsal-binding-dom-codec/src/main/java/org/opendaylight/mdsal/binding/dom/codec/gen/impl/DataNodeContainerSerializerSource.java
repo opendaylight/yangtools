@@ -60,29 +60,28 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
 
     @Override
     protected CharSequence getSerializerBody() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("{\n");
-        sb.append(statement(assign(DataObjectSerializerRegistry.class.getName(), REGISTRY, "$1")));
-        sb.append(statement(assign(dtoType.getFullyQualifiedName(), INPUT,
-                cast(dtoType.getFullyQualifiedName(), "$2"))));
-        sb.append(statement(assign(BindingStreamEventWriter.class.getName(), STREAM,
-            cast(BindingStreamEventWriter.class.getName(), "$3"))));
-        sb.append(statement(assign(BindingSerializer.class.getName(), SERIALIZER, null)));
-        sb.append("if (");
-        sb.append(STREAM);
-        sb.append(" instanceof ");
-        sb.append(BindingSerializer.class.getName());
-        sb.append(") {");
-        sb.append(statement(assign(SERIALIZER, cast(BindingSerializer.class.getName(), STREAM))));
-        sb.append('}');
-        sb.append(statement(emitStartEvent()));
+        final StringBuilder sb = new StringBuilder()
+                .append("{\n")
+                .append(statement(assign(DataObjectSerializerRegistry.class, REGISTRY, "$1")))
+                .append(statement(assign(dtoType, INPUT, cast(dtoType, "$2"))))
+                .append(statement(assign(BindingStreamEventWriter.class, STREAM,
+                    cast(BindingStreamEventWriter.class, "$3"))))
+                .append(statement(assign(BindingSerializer.class, SERIALIZER, null)))
+                .append("if (")
+                .append(STREAM)
+                .append(" instanceof ")
+                .append(BindingSerializer.class.getName())
+                .append(") {")
+                .append(statement(assign(SERIALIZER, cast(BindingSerializer.class, STREAM))))
+                .append('}')
+                .append(statement(emitStartEvent()));
 
         emitBody(sb);
         emitAfterBody(sb);
-        sb.append(statement(endNode()));
-        sb.append(statement("return null"));
-        sb.append('}');
-        return sb;
+
+        return sb.append(statement(endNode()))
+                .append(statement("return null"))
+                .append('}');
     }
 
     /**
@@ -167,8 +166,7 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             staticConstant(propertyName, DataObjectSerializerImplementation.class,
                 ChoiceDispatchSerializer.from(loadClass(childType)));
             sb.append(tryToUseCacheElse(getterName, statement(invoke(propertyName,
-                StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class.getName(), getterName),
-                STREAM))));
+                StreamWriterGenerator.SERIALIZE_METHOD_NAME, REGISTRY, cast(DataObject.class, getterName), STREAM))));
         }
     }
 

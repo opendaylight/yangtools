@@ -61,6 +61,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
      */
     protected abstract CharSequence getSerializerBody();
 
+    // FIXME: 5.0.0: consider optimizing streaming use through returning StringBuilder from common methods
     protected static final CharSequence leafNode(final String localName, final CharSequence value) {
         return invoke(STREAM, "leafNode", escape(localName), value);
     }
