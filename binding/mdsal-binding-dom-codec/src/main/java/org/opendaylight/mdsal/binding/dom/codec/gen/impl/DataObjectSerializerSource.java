@@ -66,7 +66,7 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         return invoke(STREAM, "leafNode", escape(localName), value);
     }
 
-    protected static final CharSequence startLeafSet(final String localName,final CharSequence expected) {
+    protected static final CharSequence startLeafSet(final String localName, final CharSequence expected) {
         return invoke(STREAM, "startLeafSet", escape(localName), expected);
     }
 
@@ -110,17 +110,17 @@ abstract class DataObjectSerializerSource extends AbstractSource {
         return invoke(STREAM, "startAugmentationNode", key);
     }
 
-    protected static final CharSequence startChoiceNode(final CharSequence localName,final CharSequence expected) {
+    protected static final CharSequence startChoiceNode(final CharSequence localName, final CharSequence expected) {
         return invoke(STREAM, "startChoiceNode", localName, expected);
     }
 
-    protected static final CharSequence startCaseNode(final CharSequence localName,final CharSequence expected) {
+    protected static final CharSequence startCaseNode(final CharSequence localName, final CharSequence expected) {
         return invoke(STREAM, "startCase", localName, expected);
     }
 
-    protected static final CharSequence anyxmlNode(final String name, final String value)
+    protected static final CharSequence anyxmlNode(final String localName, final CharSequence value)
             throws IllegalArgumentException {
-        return invoke(STREAM, "anyxmlNode", escape(name), name);
+        return invoke(STREAM, "anyxmlNode", escape(localName), value);
     }
 
     protected static final CharSequence endNode() {

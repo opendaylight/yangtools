@@ -47,9 +47,11 @@ import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.Notification;
+import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
@@ -237,8 +239,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
-            if (leaf instanceof TypedDataSchemaNode) {
-                getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName((TypedDataSchemaNode) leaf), leaf);
+            // FIXME: support AnyDataSchemaNode, too
+            if (leaf instanceof TypedDataSchemaNode || leaf instanceof AnyXmlSchemaNode) {
+                getterToLeafSchema.put(BindingSchemaMapping.getGetterMethodName(leaf), leaf);
             }
         }
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
@@ -250,10 +253,6 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         for (final Method method : parentClass.getMethods()) {
             if (method.getParameterCount() == 0) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
-                if (!(schema instanceof TypedDataSchemaNode)) {
-                    // We do not have schema for leaf, so we will ignore it (e.g. getClass).
-                    continue;
-                }
 
                 final ValueNodeCodecContext valueNode;
                 if (schema instanceof LeafSchemaNode) {
@@ -281,8 +280,15 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     final LeafListSchemaNode leafListSchema = (LeafListSchemaNode) schema;
                     final Codec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
                     valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method);
+                } else if (schema instanceof AnyXmlSchemaNode) {
+                    final Class<?> valueType = method.getReturnType();
+                    verify(OpaqueObject.class.isAssignableFrom(valueType), "Illegal value type %s", valueType);
+                    valueNode = new OpaqueNodeCodecContext.AnyXml<>((AnyXmlSchemaNode) schema, method,
+                            valueType.asSubclass(OpaqueObject.class));
                 } else {
-                    throw new IllegalStateException("Unhandled typed schema " + schema);
+                    verify(schema == null, "Unhandled schema %s for method %s", schema, method);
+                    // We do not have schema for leaf, so we will ignore it (e.g. getClass).
+                    continue;
                 }
 
                 leaves.put(schema.getQName().getLocalName(), valueNode);

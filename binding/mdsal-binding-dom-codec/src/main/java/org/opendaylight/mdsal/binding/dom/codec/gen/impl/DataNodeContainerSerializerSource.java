@@ -5,9 +5,9 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-
 package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.HashMap;
@@ -110,20 +110,8 @@ abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSou
             if (!schemaChild.isAugmenting()) {
                 final String getter = BindingSchemaMapping.getGetterMethodName(schemaChild);
                 final Type childType = getterToType.get(getter);
-                if (childType == null) {
-                    // FIXME AnyXml nodes are ignored, since their type cannot be found in generated bindnig
-                    // Bug-706 https://bugs.opendaylight.org/show_bug.cgi?id=706
-                    if (schemaChild instanceof AnyXmlSchemaNode) {
-                        LOG.warn("Node {} will be ignored. AnyXml is not yet supported from binding aware code."
-                                + "Binding Independent code can be used to serialize anyXml nodes.",
-                                schemaChild.getPath());
-                        continue;
-                    }
-
-                    throw new IllegalStateException(
-                        String.format("Unable to find type for child node %s. Expected child nodes: %s",
-                            schemaChild.getPath(), getterToType));
-                }
+                checkState(childType != null, "Unable to find type for child node %s. Expected child nodes: %s",
+                        schemaChild.getPath(), getterToType);
                 emitChild(sb, getter, childType, schemaChild);
             }
         }

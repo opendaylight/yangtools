@@ -45,6 +45,7 @@ import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
+import org.opendaylight.yangtools.yang.binding.OpaqueObject;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
@@ -122,7 +123,14 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         for (final Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
             final Method method = childDataObj.getValue();
             verify(!method.isDefault(), "Unexpected default method %s in %s", method, bindingClass);
-            final DataContainerCodecPrototype<?> childProto = loadChildPrototype(childDataObj.getKey());
+
+            final Class<?> retClass = childDataObj.getKey();
+            if (OpaqueObject.class.isAssignableFrom(retClass)) {
+                // Filter OpaqueObjects, they are not containers
+                continue;
+            }
+
+            final DataContainerCodecPrototype<?> childProto = loadChildPrototype(retClass);
             tmpMethodToSupplier.put(method, childProto);
             byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);

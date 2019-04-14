@@ -17,7 +17,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
-final class LeafSetNodeCodecContext extends ValueNodeCodecContext {
+final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     LeafSetNodeCodecContext(final LeafListSchemaNode schema, final Codec<Object, Object> codec,
         final Method getter) {
         // FIXME: add support for defaults
