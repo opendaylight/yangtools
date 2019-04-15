@@ -12,15 +12,21 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.Modifier;
+import javassist.NotFoundException;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingOpaqueObjectCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
+import org.opendaylight.mdsal.binding.dom.codec.loader.StaticClassPool;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.binding.OpaqueData;
 import org.opendaylight.yangtools.yang.binding.OpaqueObject;
@@ -34,8 +40,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
         implements BindingOpaqueObjectCodecTreeNode<T> {
     static final class AnyXml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        AnyXml(final AnyXmlSchemaNode schema, final Method getter, final Class<T> bindingClass) {
-            super(schema, getter, bindingClass);
+        AnyXml(final AnyXmlSchemaNode schema, final Method getter, final Class<T> bindingClass,
+                final CodecClassLoader loader) {
+            super(schema, getter, bindingClass, loader);
         }
 
         @Override
@@ -47,9 +54,9 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         }
     }
 
-    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
-    private static final MethodType OPAQUEOBJECT_TYPE = MethodType.methodType(OpaqueObject.class,
-        ForeignOpaqueObject.class);
+    private static final CtClass SUPERCLASS = StaticClassPool.findClass(CodecOpaqueObject.class);
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(OpaqueObject.class,
+        OpaqueData.class);
 
     private final Codec<Object, Object> valueCodec = new Codec<Object, Object>() {
         @Override
@@ -72,17 +79,11 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     private final MethodHandle proxyConstructor;
     private final @NonNull Class<T> bindingClass;
 
-    OpaqueNodeCodecContext(final DataSchemaNode schema, final Method getter, final Class<T> bindingClass) {
+    OpaqueNodeCodecContext(final DataSchemaNode schema, final Method getter, final Class<T> bindingClass,
+            final CodecClassLoader loader) {
         super(schema, getter, null);
         this.bindingClass = requireNonNull(bindingClass);
-
-        final Class<?> proxyClass = Proxy.getProxyClass(bindingClass.getClassLoader(), bindingClass);
-        try {
-            proxyConstructor = MethodHandles.publicLookup().findConstructor(proxyClass, CONSTRUCTOR_TYPE)
-                    .asType(OPAQUEOBJECT_TYPE);
-        } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to find contructor for class " + proxyClass, e);
-        }
+        proxyConstructor = createImpl(loader, bindingClass);
     }
 
     @Override
@@ -97,8 +98,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
         // Streaming cannot support anything but DOMSource-based AnyxmlNodes.
         verify(foreignData instanceof AnyXmlNode, "Variable node %s not supported yet", foreignData);
 
-        final ForeignOpaqueData<?> opaqueData = new ForeignOpaqueData<>(foreignData);
-        return bindingClass.cast(createBindingProxy(new ForeignOpaqueObject<>(bindingClass, opaqueData)));
+        return bindingClass.cast(createBindingProxy(new ForeignOpaqueData<>(foreignData)));
     }
 
     @Override
@@ -121,12 +121,37 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     abstract @NonNull ForeignDataNode<?, ?> serializedData(OpaqueData<?> opaqueData);
 
     @SuppressWarnings("checkstyle:illegalCatch")
-    private OpaqueObject<?> createBindingProxy(final ForeignOpaqueObject<?> handler) {
+    private OpaqueObject<?> createBindingProxy(final OpaqueData<?> data) {
         try {
-            return (OpaqueObject<?>) proxyConstructor.invokeExact(handler);
+            return (OpaqueObject<?>) proxyConstructor.invokeExact(data);
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException(e);
+        }
+    }
+
+    private static MethodHandle createImpl(final CodecClassLoader rootLoader, final Class<?> bindingClass) {
+        final Class<?> proxyClass;
+        try {
+            proxyClass = rootLoader.generateSubclass(SUPERCLASS, bindingClass, "codecImpl",
+                (pool, binding, generated) -> {
+                    generated.addInterface(binding);
+                    generated.setModifiers(Modifier.PUBLIC | Modifier.FINAL);
+                });
+        } catch (CannotCompileException | IOException | NotFoundException e) {
+            throw new LinkageError("Failed to instantiate prototype for " + bindingClass, e);
+        }
+
+        Constructor<?> ctor;
+        try {
+            ctor = proxyClass.getDeclaredConstructor(OpaqueData.class);
+        } catch (NoSuchMethodException e) {
+            throw new LinkageError("Failed to acquire constructor for prototype " + proxyClass, e);
+        }
+        try {
+            return MethodHandles.publicLookup().unreflectConstructor(ctor).asType(CONSTRUCTOR_TYPE);
+        } catch (IllegalAccessException e) {
+            throw new LinkageError("Failed to access constructor for prototype " + proxyClass, e);
         }
     }
 }
