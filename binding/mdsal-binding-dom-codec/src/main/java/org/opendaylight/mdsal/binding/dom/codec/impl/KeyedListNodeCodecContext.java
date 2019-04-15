@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME;
 
+import java.lang.reflect.Method;
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
@@ -25,13 +26,14 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     private final IdentifiableItemCodec codec;
 
     KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype) {
-        super(prototype);
+        super(prototype, keyMethod(prototype.getBindingClass()));
+        this.codec = factory().getPathArgumentCodec(getBindingClass(), getSchema());
+    }
 
-        final Class<D> bindingClass = getBindingClass();
-        this.codec = factory().getPathArgumentCodec(bindingClass, getSchema());
+    private static Method keyMethod(final Class<?> bindingClass) {
         try {
             // This just verifies the method is present
-            bindingClass.getMethod(IDENTIFIABLE_KEY_NAME);
+            return bindingClass.getMethod(IDENTIFIABLE_KEY_NAME);
         } catch (NoSuchMethodException e) {
             throw new IllegalStateException("Required method not available", e);
         }

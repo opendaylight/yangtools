@@ -9,8 +9,10 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
+import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -73,6 +75,13 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          * @return Path argument codec for supplied list item.
          */
         IdentifiableItemCodec getPathArgumentCodec(Class<?> type, ListSchemaNode schema);
+
+        /**
+         * Return the codec loader associated with this factory.
+         *
+         * @return A codec loader instance
+         */
+        @NonNull CodecClassLoader getLoader();
 
         DataObjectSerializer getEventStreamSerializer(Class<?> type);
     }

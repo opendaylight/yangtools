@@ -73,7 +73,7 @@ import org.slf4j.LoggerFactory;
 final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, Immutable {
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
 
-    private final CodecClassLoader loader = StaticClassPool.createLoader();
+    private final @NonNull CodecClassLoader loader = StaticClassPool.createLoader();
     private final InstanceIdentifierCodec instanceIdentifierCodec;
     private final IdentityCodec identityCodec;
     private final BindingNormalizedNodeCodecRegistry registry;
@@ -91,6 +91,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     @Override
     public BindingRuntimeContext getRuntimeContext() {
         return context;
+    }
+
+    @Override
+    public CodecClassLoader getLoader() {
+        return loader;
     }
 
     InstanceIdentifierCodec getInstanceIdentifierCodec() {

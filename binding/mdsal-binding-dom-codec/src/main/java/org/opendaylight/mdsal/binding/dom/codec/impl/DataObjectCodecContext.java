@@ -15,12 +15,12 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
+import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -30,18 +30,20 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import javassist.CannotCompileException;
+import javassist.CtClass;
+import javassist.NotFoundException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.loader.StaticClassPool;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
-import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.Item;
@@ -77,21 +79,23 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, InvocationHandler.class);
-    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class, InvocationHandler.class);
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, DataObjectCodecContext.class,
+        NormalizedNodeContainer.class);
+    private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
+        DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
-    private static final Method[] EMPTY_METHODS = new Method[0];
+    private static final CtClass SUPERCLASS = StaticClassPool.findClass(CodecDataObject.class);
+    private static final CtClass AUGMENTABLE_SUPERCLASS = StaticClassPool.findClass(
+        AugmentableCodecDataObject.class);
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
     private final ImmutableMap<String, NodeContextSupplier> byMethod;
-    private final ImmutableMap<String, String> nonnullToGetter;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
     private final MethodHandle proxyConstructor;
-    private final Method[] propertyMethods;
 
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<DataObjectCodecContext, Augmentations>
@@ -101,7 +105,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
     private volatile ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> mismatchedAugmented = ImmutableMap.of();
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype) {
+    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype, final Method... additionalMethods) {
         super(prototype);
 
         final Class<D> bindingClass = getBindingClass();
@@ -144,17 +148,17 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
 
         final int methodCount = tmpMethodToSupplier.size();
         final Builder<String, NodeContextSupplier> byMethodBuilder = ImmutableMap.builderWithExpectedSize(methodCount);
-        this.propertyMethods = methodCount == 0 ? EMPTY_METHODS : new Method[methodCount];
 
-        int offset = 0;
+
+        final List<Method> properties = new ArrayList<>(methodCount);
         for (Entry<Method, NodeContextSupplier> entry : tmpMethodToSupplier.entrySet()) {
             final Method method = entry.getKey();
-            propertyMethods[offset++] = method;
+            properties.add(method);
             byMethodBuilder.put(method.getName(), entry.getValue());
         }
 
         // Make sure properties are alpha-sorted
-        Arrays.sort(propertyMethods, METHOD_BY_ALPHABET);
+        properties.sort(METHOD_BY_ALPHABET);
 
         this.byMethod = byMethodBuilder.build();
         this.byYang = ImmutableMap.copyOf(byYangBuilder);
@@ -162,38 +166,38 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final Map<Class<?>, Method> clsToNonnull = BindingReflections.getChildrenClassToNonnullMethod(bindingClass);
-        final Map<String, String> nonnullToGetterBuilder = new HashMap<>();
-        for (final Entry<Class<?>, Method> entry : clsToNonnull.entrySet()) {
-            final Method method = entry.getValue();
-            if (!method.isDefault()) {
-                LOG.warn("Ignoring non-default method {} in {}", method, bindingClass);
-                continue;
-            }
-
-            // Derive getter name from the nonnull method and verify we have the corresponding getter. Note that
-            // the intern() call is important, as it makes sure we use the same instance to bridge to byMethod map.
-            final String methodName = method.getName();
-            final String getterName = BindingMapping.getGetterMethodForNonnull(methodName).intern();
-            verify(byMethod.containsKey(getterName), "Cannot find getter %s for %s", getterName, methodName);
-            nonnullToGetterBuilder.put(methodName, getterName);
-        }
-        nonnullToGetter = ImmutableMap.copyOf(nonnullToGetterBuilder);
-
+        final CtClass superClass;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
+            superClass = AUGMENTABLE_SUPERCLASS;
         } else {
             this.possibleAugmentations = ImmutableMap.of();
+            superClass = SUPERCLASS;
         }
         reloadAllAugmentations();
 
-        final Class<?> proxyClass = Proxy.getProxyClass(bindingClass.getClassLoader(), bindingClass,
-            AugmentationHolder.class);
+        final List<Method> methods;
+        if (additionalMethods.length != 0) {
+            methods = new ArrayList<>(properties.size() + 1);
+            methods.addAll(properties);
+            methods.addAll(Arrays.asList(additionalMethods));
+        } else {
+            methods = properties;
+        }
+
+        final Class<?> generatedClass;
         try {
-            proxyConstructor = MethodHandles.publicLookup().findConstructor(proxyClass, CONSTRUCTOR_TYPE)
-                    .asType(DATAOBJECT_TYPE);
+            generatedClass = prototype.getFactory().getLoader().generateSubclass(superClass, bindingClass, "codecImpl",
+                new CodecDataObjectCustomizer(properties, methods));
+        } catch (CannotCompileException | IOException | NotFoundException e) {
+            throw new LinkageError("Failed to generated class for " + bindingClass, e);
+        }
+
+        try {
+            proxyConstructor = MethodHandles.publicLookup().findConstructor(generatedClass, CONSTRUCTOR_TYPE)
+                    .asType(DATAOBJECT_TYPE).bindTo(this);
         } catch (NoSuchMethodException | IllegalAccessException e) {
-            throw new IllegalStateException("Failed to find contructor for class " + proxyClass, e);
+            throw new LinkageError("Failed to find contructor for class " + generatedClass, e);
         }
     }
 
@@ -314,8 +318,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         if (ctxProto == null && Augmentation.class.isAssignableFrom(argType)) {
             ctxProto = augmentationByClass(argType);
         }
-        final DataContainerCodecContext<?, ?> context =
-                childNonNull(ctxProto, argType, "Class %s is not valid child of %s", argType, getBindingClass()).get();
+        final DataContainerCodecContext<?, ?> context = childNonNull(ctxProto, argType,
+            "Class %s is not valid child of %s", argType, getBindingClass()).get();
         if (context instanceof ChoiceNodeCodecContext) {
             final ChoiceNodeCodecContext<?> choice = (ChoiceNodeCodecContext<?>) context;
             choice.addYangPathArgument(arg, builder);
@@ -519,12 +523,6 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
     }
 
-    // Unlike BindingMapping.getGetterMethodForNonnull() this returns an interned String
-    @NonNull String getterNameForNonnullName(final String nonnullMethod) {
-        return verifyNotNull(nonnullToGetter.get(nonnullMethod), "Failed to look up getter method for %s",
-            nonnullMethod);
-    }
-
     @SuppressWarnings("rawtypes")
     @Nullable Object getBindingChildValue(final String method, final NormalizedNodeContainer domData) {
         final NodeCodecContext childContext = verifyNotNull(byMethod.get(method),
@@ -541,7 +539,7 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     @SuppressWarnings("checkstyle:illegalCatch")
     protected final D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
         try {
-            return (D) proxyConstructor.invokeExact((InvocationHandler)new LazyDataObject<>(this, node));
+            return (D) proxyConstructor.invokeExact(node);
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException(e);
@@ -572,10 +570,6 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
             }
         }
         return map;
-    }
-
-    final Method[] propertyMethods() {
-        return propertyMethods;
     }
 
     @Override
