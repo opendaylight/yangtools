@@ -19,7 +19,10 @@ import static java.util.Objects.requireNonNull;
  * <li>type - Java type for property</li>
  * <li>value - value to which property should be initialized</li>
  * </ul>
+ *
+ * @deprecated This class is superseded by an internal implementation.
  */
+@Deprecated
 public class StaticConstantDefinition {
 
     private final String name;

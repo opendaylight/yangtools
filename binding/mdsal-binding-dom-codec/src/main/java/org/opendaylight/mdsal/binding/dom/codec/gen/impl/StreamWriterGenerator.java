@@ -30,7 +30,10 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
  * and Augmentable codecs are static properties of parent codec and stateless implementations are used
  * ({@link ChoiceDispatchSerializer}, {@link AugmentableDispatchSerializer}), which uses registry to dispatch to
  * concrete item codec.
+ *
+ * @deprecated This class is superseded by an internal implementation.
  */
+@Deprecated
 public final class StreamWriterGenerator extends AbstractStreamWriterGenerator {
     private static final String UNKNOWN_SIZE = BindingStreamEventWriter.class.getName() + ".UNKNOWN_SIZE";
 

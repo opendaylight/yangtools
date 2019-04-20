@@ -12,7 +12,12 @@ import static com.google.common.base.Preconditions.checkState;
 import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableMap;
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -25,6 +30,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import javassist.CannotCompileException;
+import javassist.NotFoundException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
@@ -38,6 +46,7 @@ import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yangtools.concepts.Codec;
+import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
@@ -45,6 +54,7 @@ import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
+import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -70,8 +80,47 @@ import org.opendaylight.yangtools.yang.model.api.type.UnionTypeDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, Immutable {
+final class BindingCodecContext implements CodecContextFactory, BindingCodecTree, DataObjectSerializerRegistry,
+        Immutable {
+    private final class DataObjectSerializerProxy implements DataObjectSerializer, Delegator<DataObjectStreamer<?>> {
+        private final @NonNull DataObjectStreamer<?> delegate;
+
+        DataObjectSerializerProxy(final DataObjectStreamer<?> delegate) {
+            this.delegate = requireNonNull(delegate);
+        }
+
+        @Override
+        public DataObjectStreamer<?> getDelegate() {
+            return delegate;
+        }
+
+        @Override
+        public void serialize(final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
+            delegate.serialize(BindingCodecContext.this, obj, stream);
+        }
+    }
+
     private static final Logger LOG = LoggerFactory.getLogger(BindingCodecContext.class);
+
+    private final LoadingCache<Class<?>, DataObjectStreamer<?>> streamers = CacheBuilder.newBuilder().build(
+        new CacheLoader<Class<?>, DataObjectStreamer<?>>() {
+            @Override
+            public DataObjectStreamer<?> load(final Class<?> key) throws CannotCompileException, IOException,
+                    NotFoundException, ReflectiveOperationException {
+                final Class<?> streamer = loader.generateSubclass(DataObjectStreamerCustomizer.CT_DOS, key, "streamer",
+                    DataObjectStreamerCustomizer.create(BindingCodecContext.this, key));
+
+                final Field instance = streamer.getDeclaredField(DataObjectStreamerCustomizer.INSTANCE_FIELD);
+                return (DataObjectStreamer<?>) instance.get(null);
+            }
+        });
+    private final LoadingCache<Class<?>, DataObjectSerializer> serializers = CacheBuilder.newBuilder().build(
+        new CacheLoader<Class<?>, DataObjectSerializer>() {
+            @Override
+            public DataObjectSerializer load(final Class<?> key) throws ExecutionException {
+                return new DataObjectSerializerProxy(streamers.get(key));
+            }
+        });
 
     private final @NonNull CodecClassLoader loader = StaticClassPool.createLoader();
     private final InstanceIdentifierCodec instanceIdentifierCodec;
@@ -110,6 +159,16 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     @Override
     public DataObjectSerializer getEventStreamSerializer(final Class<?> type) {
         return registry.getSerializer((Class) type);
+    }
+
+    @Override
+    public DataObjectStreamer<?> getDataObjectSerializer(final Class<?> type) {
+        return streamers.getUnchecked(type);
+    }
+
+    @Override
+    public DataObjectSerializer getSerializer(final Class<? extends DataObject> type) {
+        return serializers.getUnchecked(type);
     }
 
     public Entry<YangInstanceIdentifier, BindingStreamEventWriter> newWriter(final InstanceIdentifier<?> path,

@@ -7,11 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.io.IOException;
 import java.util.AbstractMap.SimpleEntry;
@@ -19,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.NonNullByDefault;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeFactory;
@@ -33,13 +33,11 @@ import org.opendaylight.mdsal.binding.dom.codec.util.AbstractBindingLazyContaine
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
-import org.opendaylight.yangtools.concepts.Delegator;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializer;
-import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
@@ -65,22 +63,33 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerRegistry,
-        BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory,
-        BindingNormalizedNodeSerializer {
+        BindingCodecTreeFactory, BindingNormalizedNodeWriterFactory, BindingNormalizedNodeSerializer {
     private static final Logger LOG = LoggerFactory.getLogger(BindingNormalizedNodeCodecRegistry.class);
 
     private final DataObjectSerializerGenerator generator;
-    private final LoadingCache<Class<? extends DataObject>, DataObjectSerializer> serializers;
+
+    private static final AtomicReferenceFieldUpdater<BindingNormalizedNodeCodecRegistry, BindingCodecContext> UPDATER =
+            AtomicReferenceFieldUpdater.newUpdater(BindingNormalizedNodeCodecRegistry.class, BindingCodecContext.class,
+                "codecContext");
     private volatile BindingCodecContext codecContext;
 
+    public BindingNormalizedNodeCodecRegistry() {
+        this.generator = null;
+    }
+
+    public BindingNormalizedNodeCodecRegistry(final BindingRuntimeContext codecContext) {
+        this();
+        onBindingRuntimeContextUpdated(codecContext);
+    }
+
+    @Deprecated
     public BindingNormalizedNodeCodecRegistry(final DataObjectSerializerGenerator generator) {
         this.generator = requireNonNull(generator);
-        this.serializers = CacheBuilder.newBuilder().weakKeys().build(new GeneratorLoader());
     }
 
     @Override
     public DataObjectSerializer getSerializer(final Class<? extends DataObject> type) {
-        return serializers.getUnchecked(type);
+        return codecContext().getSerializer(type);
     }
 
     public BindingCodecTree getCodecContext() {
@@ -88,8 +97,28 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
     }
 
     public void onBindingRuntimeContextUpdated(final BindingRuntimeContext context) {
-        codecContext = new BindingCodecContext(context, this);
-        generator.onBindingRuntimeContextUpdated(context);
+        // BindingCodecContext is a costly resource. Let us not ditch it unless we have to
+        final BindingCodecContext current = codecContext;
+        if (current != null && context.equals(current.getRuntimeContext())) {
+            LOG.debug("Skipping update of runtime context {}", context);
+            return;
+        }
+
+        final BindingCodecContext updated = new BindingCodecContext(context, this);
+        if (UPDATER.compareAndSet(this, current, updated)) {
+            if (generator != null) {
+                generator.onBindingRuntimeContextUpdated(context);
+            }
+        } else {
+            LOG.warn("Concurrent update of runtime context (expected={} current={}) detected at ", current,
+                codecContext, new Throwable());
+        }
+    }
+
+    final @NonNull BindingCodecContext codecContext() {
+        final BindingCodecContext local = codecContext;
+        checkState(local != null, "No context available yet");
+        return local;
     }
 
     @Override
@@ -325,33 +354,6 @@ public class BindingNormalizedNodeCodecRegistry implements DataObjectSerializerR
         @Override
         public Optional<T> apply(final Optional<NormalizedNode<?, ?>> input) {
             return input.map(data -> (T) ctx.deserialize(data));
-        }
-    }
-
-    private final class GeneratorLoader extends CacheLoader<Class<? extends DataContainer>, DataObjectSerializer> {
-        @Override
-        public DataObjectSerializer load(final Class<? extends DataContainer> key) {
-            final DataObjectSerializerImplementation prototype = generator.getSerializer(key);
-            return new DataObjectSerializerProxy(prototype);
-        }
-    }
-
-    private final class DataObjectSerializerProxy
-            implements DataObjectSerializer, Delegator<DataObjectSerializerImplementation> {
-        private final DataObjectSerializerImplementation delegate;
-
-        DataObjectSerializerProxy(final DataObjectSerializerImplementation delegate) {
-            this.delegate = delegate;
-        }
-
-        @Override
-        public DataObjectSerializerImplementation getDelegate() {
-            return delegate;
-        }
-
-        @Override
-        public void serialize(final DataObject obj, final BindingStreamEventWriter stream) throws IOException {
-            delegate.serialize(BindingNormalizedNodeCodecRegistry.this, obj, stream);
         }
     }
 

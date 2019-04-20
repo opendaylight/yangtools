@@ -18,6 +18,7 @@ import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerRegistry;
 
+@Deprecated
 abstract class DataObjectSerializerSource extends AbstractSource {
 
     private static final ClassLoadingStrategy STRATEGY = GeneratedClassLoadingStrategy.getTCCLClassLoadingStrategy();

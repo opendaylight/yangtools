@@ -9,7 +9,10 @@ package org.opendaylight.mdsal.binding.dom.codec.gen.impl;
 
 /**
  * Package-private base class for sharing the loading capability.
+ *
+ * @deprecated This class is superseded by an internal implementation.
  */
+@Deprecated
 abstract class AbstractGenerator {
     /**
      * Ensure that the serializer class for specified class is loaded and return its name.

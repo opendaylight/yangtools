@@ -34,6 +34,7 @@ import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 abstract class DataNodeContainerSerializerSource extends DataObjectSerializerSource {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataNodeContainerSerializerSource.class);

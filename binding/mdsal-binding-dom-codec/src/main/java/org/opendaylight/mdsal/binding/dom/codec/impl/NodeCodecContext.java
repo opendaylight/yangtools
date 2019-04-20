@@ -83,6 +83,8 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          */
         @NonNull CodecClassLoader getLoader();
 
+        @NonNull DataObjectStreamer<?> getDataObjectSerializer(Class<?> type);
+
         DataObjectSerializer getEventStreamSerializer(Class<?> type);
     }
 

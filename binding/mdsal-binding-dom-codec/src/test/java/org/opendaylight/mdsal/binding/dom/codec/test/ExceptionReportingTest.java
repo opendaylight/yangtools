@@ -7,16 +7,13 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.test;
 
-import javassist.ClassPool;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.mdsal.binding.dom.codec.impl.IncorrectNestingException;
 import org.opendaylight.mdsal.binding.dom.codec.impl.MissingSchemaException;
 import org.opendaylight.mdsal.binding.dom.codec.impl.MissingSchemaForClassException;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
@@ -94,10 +91,7 @@ public class ExceptionReportingTest {
         }
         final SchemaContext schema = ctx.tryToCreateSchemaContext().get();
         final BindingRuntimeContext runtimeCtx = BindingRuntimeContext.create(ctx, schema);
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        final BindingNormalizedNodeCodecRegistry registry = new BindingNormalizedNodeCodecRegistry(
-            StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(runtimeCtx);
+        final BindingNormalizedNodeCodecRegistry registry = new BindingNormalizedNodeCodecRegistry(runtimeCtx);
         return registry;
     }
 }

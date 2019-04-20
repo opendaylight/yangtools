@@ -46,6 +46,7 @@ import org.opendaylight.yangtools.yang.model.api.NotificationDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 abstract class AbstractStreamWriterGenerator extends AbstractGenerator implements DataObjectSerializerGenerator {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractStreamWriterGenerator.class);
 

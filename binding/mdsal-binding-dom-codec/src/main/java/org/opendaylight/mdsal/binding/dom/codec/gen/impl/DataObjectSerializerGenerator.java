@@ -12,7 +12,10 @@ import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementatio
 
 /**
  * Public interface exposed from generator implementation.
+ *
+ * @deprecated This interface is superseded by an internal implementation.
  */
+@Deprecated
 public interface DataObjectSerializerGenerator {
     /**
      * Get a serializer for a particular type.

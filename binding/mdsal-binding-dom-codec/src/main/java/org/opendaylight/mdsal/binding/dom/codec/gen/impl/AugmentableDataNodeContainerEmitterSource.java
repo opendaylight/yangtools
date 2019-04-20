@@ -11,6 +11,7 @@ import org.opendaylight.mdsal.binding.model.api.GeneratedType;
 import org.opendaylight.yangtools.yang.binding.DataObjectSerializerImplementation;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 
+@Deprecated
 abstract class AugmentableDataNodeContainerEmitterSource extends DataNodeContainerSerializerSource {
     private static final String AUGMENTABLE_SERIALIZER = "AUGMENTABLE_SERIALIZER";
 

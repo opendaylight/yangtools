@@ -15,7 +15,12 @@ import java.util.Iterator;
 import java.util.Set;
 import org.opendaylight.mdsal.binding.model.api.Type;
 
-// FIXME: 5.0.0: consider optimizing streaming use through returning StringBuilder from common methods
+/**
+ * An abstract source.
+ *
+ * @deprecated This class is superseded by an internal implementation.
+ */
+@Deprecated
 public abstract class AbstractSource {
     private final Set<StaticConstantDefinition> staticConstants = new HashSet<>();
 

@@ -13,16 +13,13 @@ import static org.junit.Assert.assertNotNull;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import javassist.ClassPool;
 import org.junit.Before;
 import org.junit.Test;
-import org.opendaylight.mdsal.binding.dom.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.mdsal.binding.dom.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.mdsal.binding.dom.codec.impl.MissingClassInLoadingStrategyException;
 import org.opendaylight.mdsal.binding.generator.impl.GeneratedClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeComplexUsesAugment;
 import org.opendaylight.yang.gen.v1.urn.opendaylight.params.xml.ns.yang.mdsal.test.augment.rev140709.TreeLeafOnlyAugment;
@@ -57,9 +54,7 @@ public class AugmentationClassDiscoveredAfterCodecTest {
         mockedContext = new ClassExcludingClassLoadingStrategy(ctx);
         schemaContext = ctx.tryToCreateSchemaContext().get();
         runtimeContext = BindingRuntimeContext.create(mockedContext, schemaContext);
-        final JavassistUtils utils = JavassistUtils.forClassPool(ClassPool.getDefault());
-        registry = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(utils));
-        registry.onBindingRuntimeContextUpdated(runtimeContext);
+        registry = new BindingNormalizedNodeCodecRegistry(runtimeContext);
     }
 
     private static final TopLevelListKey TOP_FOO_KEY = new TopLevelListKey("foo");
