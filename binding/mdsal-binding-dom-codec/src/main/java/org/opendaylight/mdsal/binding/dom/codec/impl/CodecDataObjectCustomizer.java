@@ -20,6 +20,7 @@ import javassist.CtClass;
 import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader.Customizer;
 import org.opendaylight.mdsal.binding.dom.codec.loader.StaticClassPool;
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
  * Private support for generating AbstractDataObject specializations.
  */
 final class CodecDataObjectCustomizer implements Customizer {
+    static final int KEY_OFFSET = -1;
+
     private static final Logger LOG = LoggerFactory.getLogger(CodecDataObjectCustomizer.class);
     private static final CtClass CT_ARFU = StaticClassPool.findClass(AtomicReferenceFieldUpdater.class);
     private static final CtClass CT_BOOLEAN = StaticClassPool.findClass(boolean.class);
@@ -43,50 +46,26 @@ final class CodecDataObjectCustomizer implements Customizer {
     private static final CtClass[] TOSTRING_ARGS = new CtClass[] { CT_HELPER };
 
     private final List<Method> properties;
-    private final List<Method> methods;
+    private final Method keyMethod;
 
-    CodecDataObjectCustomizer(final List<Method> properties, final List<Method> methods) {
+    CodecDataObjectCustomizer(final List<Method> properties, final @Nullable Method keyMethod) {
         this.properties = requireNonNull(properties);
-        this.methods = requireNonNull(methods);
+        this.keyMethod = keyMethod;
     }
 
     @Override
     public List<Class<?>> customize(final CodecClassLoader loader, final CtClass bindingClass, final CtClass generated)
             throws NotFoundException, CannotCompileException {
-        final String classFqn = generated.getName();
+        // Generate members for all methods ...
+        LOG.trace("Generating class {}", generated.getName());
         generated.addInterface(bindingClass);
 
-        // Generate members for all methods ...
-        LOG.trace("Generating class {}", classFqn);
-        for (Method method : methods) {
-            LOG.trace("Generating for method {}", method);
-            final String methodName = method.getName();
-            final String methodArfu = methodName + "$$$ARFU";
-
-            // AtomicReferenceFieldUpdater ...
-            final CtField arfuField = new CtField(CT_ARFU, methodArfu, generated);
-            arfuField.setModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL);
-            generated.addField(arfuField, new StringBuilder().append(CT_ARFU.getName()).append(".newUpdater(")
-                .append(generated.getName()).append(".class, java.lang.Object.class, \"").append(methodName)
-                .append("\")").toString());
-
-            // ... corresponding volatile field ...
-            final CtField field = new CtField(CT_OBJECT, methodName, generated);
-            field.setModifiers(Modifier.PRIVATE | Modifier.VOLATILE);
-            generated.addField(field);
-
-            // ... and the getter
-            final Class<?> retType = method.getReturnType();
-            final CtMethod getter = new CtMethod(loader.findClass(retType), methodName, EMPTY_ARGS, generated);
-            final String retName = retType.isArray() ? retType.getSimpleName() : retType.getName();
-
-            getter.setBody(new StringBuilder()
-                .append("{\n")
-                .append("return (").append(retName).append(") codecMember(").append(methodArfu).append(", \"")
-                    .append(methodName).append("\");\n")
-                .append('}').toString());
-            getter.setModifiers(Modifier.PUBLIC | Modifier.FINAL);
-            generated.addMethod(getter);
+        int offset = 0;
+        for (Method method : properties) {
+            generateMethod(loader, generated, method, offset++);
+        }
+        if (keyMethod != null) {
+            generateMethod(loader, generated, keyMethod, KEY_OFFSET);
         }
 
         // Final bits: codecHashCode() ...
@@ -153,6 +132,38 @@ final class CodecDataObjectCustomizer implements Customizer {
 
         return sb.append(";\n")
                 .append('}').toString();
+    }
+
+    private static void generateMethod(final CodecClassLoader loader, final CtClass generated, final Method method,
+            final int offset) throws CannotCompileException, NotFoundException {
+        LOG.trace("Generating for method {}", method);
+        final String methodName = method.getName();
+        final String methodArfu = methodName + "$$$ARFU";
+
+        // AtomicReferenceFieldUpdater ...
+        final CtField arfuField = new CtField(CT_ARFU, methodArfu, generated);
+        arfuField.setModifiers(Modifier.PRIVATE | Modifier.STATIC | Modifier.FINAL);
+        generated.addField(arfuField, new StringBuilder().append(CT_ARFU.getName()).append(".newUpdater(")
+            .append(generated.getName()).append(".class, java.lang.Object.class, \"").append(methodName)
+            .append("\")").toString());
+
+        // ... corresponding volatile field ...
+        final CtField field = new CtField(CT_OBJECT, methodName, generated);
+        field.setModifiers(Modifier.PRIVATE | Modifier.VOLATILE);
+        generated.addField(field);
+
+        // ... and the getter
+        final Class<?> retType = method.getReturnType();
+        final CtMethod getter = new CtMethod(loader.findClass(retType), methodName, EMPTY_ARGS, generated);
+        final String retName = retType.isArray() ? retType.getSimpleName() : retType.getName();
+
+        getter.setBody(new StringBuilder()
+            .append("{\n")
+            .append("return (").append(retName).append(") codecMember(").append(methodArfu).append(", ").append(offset)
+                .append(");\n")
+            .append('}').toString());
+        getter.setModifiers(Modifier.PUBLIC | Modifier.FINAL);
+        generated.addMethod(getter);
     }
 
     private static String utilClass(final Method method) {

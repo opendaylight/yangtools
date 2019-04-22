@@ -75,9 +75,9 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // TODO: consider switching to VarHandles for Java 9+
     protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final String methodName) {
+            final int offset) {
         final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, methodName);
+        return cached != null ? unmaskNull(cached) : loadMember(updater, offset);
     }
 
     protected abstract int codecHashCode();
@@ -108,8 +108,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helpers split out of codecMember to aid its inlining
     private Object loadMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final String methodName) {
-        final Object decoded = context.getBindingChildValue(methodName, data);
+            final int offset) {
+        final Object decoded = context.getBindingChildValue(data, offset);
         return updater.compareAndSet(this, null, maskNull(decoded)) ? decoded : unmaskNull(updater.get(this));
     }
 

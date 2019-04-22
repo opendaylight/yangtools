@@ -61,12 +61,12 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     @Override
     @SuppressWarnings("rawtypes")
-    Object getBindingChildValue(final String methodName, final NormalizedNodeContainer dom) {
-        if (dom instanceof MapEntryNode && IDENTIFIABLE_KEY_NAME.equals(methodName)) {
+    Object getBindingChildValue(final NormalizedNodeContainer dom, final int offset) {
+        if (offset == CodecDataObjectCustomizer.KEY_OFFSET && dom instanceof MapEntryNode) {
             NodeIdentifierWithPredicates identifier = ((MapEntryNode) dom).getIdentifier();
             return codec.deserialize(identifier).getKey();
         }
-        return super.getBindingChildValue(methodName, dom);
+        return super.getBindingChildValue(dom, offset);
     }
 
     @Override
