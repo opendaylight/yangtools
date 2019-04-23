@@ -10,6 +10,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 import com.google.common.collect.Maps;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.util.ModifiableMapPhase;
 import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
@@ -20,10 +21,27 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContaine
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.AbstractImmutableDataContainerNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.nodes.CloneableMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument, R extends DataContainerNode<I>>
         implements DataContainerNodeBuilder<I, R> {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractImmutableDataContainerNodeBuilder.class);
     private static final int DEFAULT_CAPACITY = 4;
+
+    // This is a run-time constant, i.e. it is set at class initialization time. We expect JIT to notice this and
+    // perform DCE based on the value, so that the static newHashMap() methods end up not containing the branch at all.
+    private static final boolean USE_LINKEDHASHMAP;
+
+    static {
+        USE_LINKEDHASHMAP = Boolean.getBoolean(
+            "org.opendaylight.yangtools.yang.data.impl.schema.builder.retain-child-order");
+        if (USE_LINKEDHASHMAP) {
+            LOG.info("Initial immutable DataContainerNodes are retaining child insertion order");
+        }
+    }
+
     private Map<PathArgument, DataContainerChild<? extends PathArgument, ?>> value;
     private I nodeIdentifier;
 
@@ -36,15 +54,15 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        this.value = newHashMap();
         this.dirty = false;
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
-            this.value = Maps.newHashMapWithExpectedSize(sizeHint);
+            this.value = newHashMap(sizeHint);
         } else {
-            this.value = new HashMap<>(DEFAULT_CAPACITY);
+            this.value = newHashMap();
         }
         this.dirty = false;
     }
@@ -90,7 +108,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
                 value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value)
                         .createMutableClone();
             } else {
-                value = new HashMap<>(value);
+                value = newHashMap(value);
             }
             dirty = false;
         }
@@ -136,5 +154,18 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     public NormalizedNodeContainerBuilder<I, PathArgument, DataContainerChild<? extends PathArgument, ?>, R>
             removeChild(final PathArgument key) {
         return withoutChild(key);
+    }
+
+    // Static utility methods providing dispatch to proper HashMap implementation.
+    private static <K, V> HashMap<K, V> newHashMap() {
+        return USE_LINKEDHASHMAP ? new LinkedHashMap<>(DEFAULT_CAPACITY) : new HashMap<>(DEFAULT_CAPACITY);
+    }
+
+    private static <K, V> HashMap<K, V> newHashMap(final int size) {
+        return USE_LINKEDHASHMAP ? Maps.newLinkedHashMapWithExpectedSize(size) : Maps.newHashMapWithExpectedSize(size);
+    }
+
+    private static <K, V> HashMap<K, V> newHashMap(final Map<K, V> map) {
+        return USE_LINKEDHASHMAP ? new LinkedHashMap<>(map) : new HashMap<>(map);
     }
 }
