@@ -19,7 +19,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public final class CodecDataObjectBridge {
-    private static final ThreadLocal<CodecDataObjectCustomizer> CURRENT_CUSTOMIZER = new ThreadLocal<>();
+    private static final ThreadLocal<CodecDataObjectGenerator> CURRENT_CUSTOMIZER = new ThreadLocal<>();
 
     private CodecDataObjectBridge() {
 
@@ -33,13 +33,13 @@ public final class CodecDataObjectBridge {
         return current().resolveKey(methodName);
     }
 
-    static @Nullable CodecDataObjectCustomizer setup(final @NonNull CodecDataObjectCustomizer next) {
-        final CodecDataObjectCustomizer prev = CURRENT_CUSTOMIZER.get();
+    static @Nullable CodecDataObjectGenerator setup(final @NonNull CodecDataObjectGenerator next) {
+        final CodecDataObjectGenerator prev = CURRENT_CUSTOMIZER.get();
         CURRENT_CUSTOMIZER.set(verifyNotNull(next));
         return prev;
     }
 
-    static void tearDown(final @Nullable CodecDataObjectCustomizer prev) {
+    static void tearDown(final @Nullable CodecDataObjectGenerator prev) {
         if (prev == null) {
             CURRENT_CUSTOMIZER.remove();
         } else {
@@ -47,7 +47,7 @@ public final class CodecDataObjectBridge {
         }
     }
 
-    private static @NonNull CodecDataObjectCustomizer current() {
+    private static @NonNull CodecDataObjectGenerator current() {
         return verifyNotNull(CURRENT_CUSTOMIZER.get(), "No customizer attached");
     }
 }

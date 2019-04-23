@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.loader;
 
 import static com.google.common.base.Verify.verify;
+import static com.google.common.base.Verify.verifyNotNull;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
@@ -15,12 +16,14 @@ import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.opendaylight.yangtools.yang.binding.DataContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 // A root codec classloader, binding only whatever is available StaticClassPool
 final class RootCodecClassLoader extends CodecClassLoader {
     private static final Logger LOG = LoggerFactory.getLogger(RootCodecClassLoader.class);
+    private static final ClassLoader LOADER = verifyNotNull(RootCodecClassLoader.class.getClassLoader());
 
     static {
         verify(registerAsParallelCapable());
@@ -33,7 +36,7 @@ final class RootCodecClassLoader extends CodecClassLoader {
     private volatile ImmutableMap<ClassLoader, CodecClassLoader> loaders = ImmutableMap.of();
 
     RootCodecClassLoader() {
-        super();
+        super(LOADER);
     }
 
     @Override
@@ -55,7 +58,7 @@ final class RootCodecClassLoader extends CodecClassLoader {
         // ourselves) or we need to create a new Leaf.
         final CodecClassLoader found;
         if (!isOurClass(bindingClass)) {
-            StaticClassPool.verifyStaticLinkage(target);
+            verifyStaticLinkage(target);
             found = AccessController.doPrivileged(
                 (PrivilegedAction<CodecClassLoader>)() -> new LeafCodecClassLoader(this, target));
         } else {
@@ -98,5 +101,18 @@ final class RootCodecClassLoader extends CodecClassLoader {
             return false;
         }
         return bindingClass.equals(ourClass);
+    }
+
+    // Sanity check: target has to resolve yang-binding contents to the same class, otherwise we are in a pickle
+    private static void verifyStaticLinkage(final ClassLoader candidate) {
+        final Class<?> targetClazz;
+        try {
+            targetClazz = candidate.loadClass(DataContainer.class.getName());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("ClassLoader " + candidate + " cannot load " + DataContainer.class, e);
+        }
+        verify(DataContainer.class.equals(targetClazz),
+            "Class mismatch on DataContainer. Ours is from %s, target %s has %s from %s",
+            DataContainer.class.getClassLoader(), candidate, targetClazz, targetClazz.getClassLoader());
     }
 }

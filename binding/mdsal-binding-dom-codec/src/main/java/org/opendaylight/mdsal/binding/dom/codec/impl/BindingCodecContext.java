@@ -31,8 +31,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
-import javassist.CannotCompileException;
-import javassist.NotFoundException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTree;
@@ -40,7 +38,6 @@ import org.opendaylight.mdsal.binding.dom.codec.api.BindingCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
-import org.opendaylight.mdsal.binding.dom.codec.loader.StaticClassPool;
 import org.opendaylight.mdsal.binding.dom.codec.util.BindingSchemaMapping;
 import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
 import org.opendaylight.mdsal.binding.model.api.GeneratedType;
@@ -105,12 +102,10 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     private final LoadingCache<Class<?>, DataObjectStreamer<?>> streamers = CacheBuilder.newBuilder().build(
         new CacheLoader<Class<?>, DataObjectStreamer<?>>() {
             @Override
-            public DataObjectStreamer<?> load(final Class<?> key) throws CannotCompileException, IOException,
-                    NotFoundException, ReflectiveOperationException {
-                final Class<?> streamer = loader.generateSubclass(DataObjectStreamerCustomizer.CT_DOS, key, "streamer",
-                    DataObjectStreamerCustomizer.create(BindingCodecContext.this, key));
-
-                final Field instance = streamer.getDeclaredField(DataObjectStreamerCustomizer.INSTANCE_FIELD);
+            public DataObjectStreamer<?> load(final Class<?> key) throws ReflectiveOperationException {
+                final Class<?> streamer = DataObjectStreamerGenerator.generateStreamer(loader, BindingCodecContext.this,
+                    key);
+                final Field instance = streamer.getDeclaredField(DataObjectStreamerGenerator.INSTANCE_FIELD);
                 return (DataObjectStreamer<?>) instance.get(null);
             }
         });
@@ -122,7 +117,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
             }
         });
 
-    private final @NonNull CodecClassLoader loader = StaticClassPool.createLoader();
+    private final @NonNull CodecClassLoader loader = CodecClassLoader.create();
     private final InstanceIdentifierCodec instanceIdentifierCodec;
     private final IdentityCodec identityCodec;
     private final BindingNormalizedNodeCodecRegistry registry;

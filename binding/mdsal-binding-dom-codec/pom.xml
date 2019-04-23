@@ -19,10 +19,21 @@
     <artifactId>mdsal-binding-dom-codec</artifactId>
     <packaging>bundle</packaging>
 
+    <properties>
+        <shade.source>net.bytebuddy</shade.source>
+        <shade.target>org.opendaylight.mdsal.binding.dom.codec.jar.bytebuddy</shade.target>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
+        </dependency>
+        <dependency>
+            <!-- We are going to shade this -->
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <version>1.9.12</version>
         </dependency>
         <dependency>
             <groupId>org.opendaylight.mdsal</groupId>
@@ -62,13 +73,51 @@
                         <Bundle-Name>${project.groupId}.${project.artifactId}</Bundle-Name>
                         <Export-Package>
                             org.opendaylight.mdsal.binding.dom.codec.*,
-                            org.opendaylight.mdsal.binding.dom.codec.gen.impl.*,
-                            org.opendaylight.mdsal.binding.dom.codec.impl.*,
                             ;-split-package:=error
                         </Export-Package>
+                        <Private-Package>
+                            org.opendaylight.mdsal.binding.dom.codec.loader,
+                        </Private-Package>
+                        <Import-Package>
+                            !net.bytebuddy.*,
+                            *
+                        </Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
+
+            <!-- Shade Byte-Buddy -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <shadedArtifactAttached>false</shadedArtifactAttached>
+                            <createDependencyReducedPom>true</createDependencyReducedPom>
+                            <createSourcesJar>true</createSourcesJar>
+                            <shadeSourcesContent>true</shadeSourcesContent>
+                            <minimizeJar>true</minimizeJar>
+                            <relocations>
+                                <relocation>
+                                    <pattern>${shade.source}</pattern>
+                                    <shadedPattern>${shade.target}</shadedPattern>
+                                </relocation>
+                            </relocations>
+                            <artifactSet>
+                                <includes>
+                                    <include>net.bytebuddy:byte-buddy</include>
+                                </includes>
+                            </artifactSet>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>

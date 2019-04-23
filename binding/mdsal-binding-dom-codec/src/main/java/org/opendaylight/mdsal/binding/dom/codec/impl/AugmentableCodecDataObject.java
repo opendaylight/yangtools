@@ -42,7 +42,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
                 ImmutableClassToInstanceMap.class, "cachedAugmentations");
     private volatile ImmutableClassToInstanceMap<Augmentation<T>> cachedAugmentations;
 
-    public AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
+    protected AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
             final NormalizedNodeContainer<?, ?, ?> data) {
         super(data);
         this.context = requireNonNull(context, "Context must not be null");

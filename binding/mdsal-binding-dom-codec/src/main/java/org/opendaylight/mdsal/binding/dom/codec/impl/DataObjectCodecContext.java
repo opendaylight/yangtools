@@ -12,10 +12,10 @@ import static com.google.common.base.Verify.verify;
 import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
-import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
@@ -29,12 +29,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import javassist.CannotCompileException;
-import javassist.CtClass;
-import javassist.NotFoundException;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.dom.codec.loader.StaticClassPool;
 import org.opendaylight.mdsal.binding.generator.api.ClassLoadingStrategy;
 import org.opendaylight.mdsal.binding.model.api.JavaTypeName;
 import org.opendaylight.mdsal.binding.model.api.Type;
@@ -64,7 +60,11 @@ import org.opendaylight.yangtools.yang.model.util.SchemaNodeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeContainer & WithStatus>
+/**
+ * This class is an implementation detail. It is public only due to technical reasons and may change at any time.
+ */
+@Beta
+public abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeContainer & WithStatus>
         extends DataContainerCodecContext<D, T> {
     private static final class Augmentations implements Immutable {
         final ImmutableMap<YangInstanceIdentifier.PathArgument, DataContainerCodecPrototype<?>> byYang;
@@ -87,9 +87,6 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
-    private static final CtClass SUPERCLASS = StaticClassPool.findClass(CodecDataObject.class);
-    private static final CtClass AUGMENTABLE_SUPERCLASS = StaticClassPool.findClass(
-        AugmentableCodecDataObject.class);
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
@@ -168,26 +165,20 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         byBindingArgClassBuilder.putAll(byStreamClass);
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
-        final CtClass superClass;
+        final Class<? extends CodecDataObject<?>> generatedClass;
         final MethodType ctorType;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
-            superClass = AUGMENTABLE_SUPERCLASS;
+            generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
+                bindingClass, propBuilder.build(), keyMethod);
             ctorType = AUGMENTABLE_CONSTRUCTOR_TYPE;
         } else {
             this.possibleAugmentations = ImmutableMap.of();
-            superClass = SUPERCLASS;
+            generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
+                propBuilder.build(), keyMethod);
             ctorType = CONSTRUCTOR_TYPE;
         }
         reloadAllAugmentations();
-
-        final Class<?> generatedClass;
-        try {
-            generatedClass = prototype.getFactory().getLoader().generateSubclass(superClass, bindingClass, "codecImpl",
-                new CodecDataObjectCustomizer(propBuilder.build(), keyMethod));
-        } catch (CannotCompileException | IOException | NotFoundException e) {
-            throw new LinkageError("Failed to generated class for " + bindingClass, e);
-        }
 
         final MethodHandle ctor;
         try {

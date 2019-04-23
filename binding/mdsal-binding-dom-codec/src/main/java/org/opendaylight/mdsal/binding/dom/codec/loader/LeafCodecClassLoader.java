@@ -48,10 +48,13 @@ final class LeafCodecClassLoader extends CodecClassLoader {
         } catch (ClassNotFoundException e) {
             LOG.trace("Class {} not found in target, looking through dependencies", name);
             for (LeafCodecClassLoader loader : dependencies) {
-                final Class<?> loaded = loader.findLoadedClass(name);
-                if (loaded != null) {
-                    LOG.trace("Class {} found in dependency {}", name, loader);
-                    return loaded;
+                // Careful: a loading operation may be underway, make sure that process has completed
+                synchronized (loader.getClassLoadingLock(name)) {
+                    final Class<?> loaded = loader.findLoadedClass(name);
+                    if (loaded != null) {
+                        LOG.trace("Class {} found in dependency {}", name, loader);
+                        return loaded;
+                    }
                 }
             }
 

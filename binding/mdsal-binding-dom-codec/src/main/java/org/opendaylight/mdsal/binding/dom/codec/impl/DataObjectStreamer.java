@@ -164,7 +164,6 @@ public abstract class DataObjectStreamer<T extends DataObject> implements DataOb
         writer.endNode();
     }
 
-
     private static void commonStreamLeafset(final BindingStreamEventWriter writer, final List<?> value)
             throws IOException {
         for (Object entry : value) {
