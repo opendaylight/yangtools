@@ -224,8 +224,9 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
         if (schema instanceof ContainerSchemaNode) {
             return new ContainerNodeCodecContext(this);
         } else if (schema instanceof ListSchemaNode) {
-            return Identifiable.class.isAssignableFrom(getBindingClass()) ? new KeyedListNodeCodecContext(this)
-                    : new ListNodeCodecContext(this);
+            return Identifiable.class.isAssignableFrom(getBindingClass())
+                    ? KeyedListNodeCodecContext.create((DataContainerCodecPrototype<ListSchemaNode>) this)
+                            : new ListNodeCodecContext(this);
         } else if (schema instanceof ChoiceSchemaNode) {
             return new ChoiceNodeCodecContext(this);
         } else if (schema instanceof AugmentationSchemaNode) {

@@ -20,7 +20,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -78,23 +78,24 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, DataObjectCodecContext.class,
-        NormalizedNodeContainer.class);
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, NormalizedNodeContainer.class);
+    private static final MethodType AUGMENTABLE_CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
+        DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
+        NormalizedNodeContainer.class);
+    private static final MethodType AUGMENTABLE_DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
     private static final CtClass SUPERCLASS = StaticClassPool.findClass(CodecDataObject.class);
     private static final CtClass AUGMENTABLE_SUPERCLASS = StaticClassPool.findClass(
         AugmentableCodecDataObject.class);
-    private static final NodeContextSupplier[] EMPTY_METHODS = new NodeContextSupplier[0];
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
     private final ImmutableMap<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYang;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byStreamClass;
     private final ImmutableMap<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClass;
     private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
-    private final NodeContextSupplier[] byMethod;
     private final MethodHandle proxyConstructor;
 
     @SuppressWarnings("rawtypes")
@@ -109,7 +110,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         this(prototype, null);
     }
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype, final @Nullable Method keyMethod) {
+    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype,
+            final Entry<Method, IdentifiableItemCodec> keyMethod) {
         super(prototype);
 
         final Class<D> bindingClass = getBindingClass();
@@ -151,16 +153,12 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         }
 
         // Make sure properties are alpha-sorted
-        final List<Method> properties = new ArrayList<>(tmpMethodToSupplier.keySet());
-        properties.sort(METHOD_BY_ALPHABET);
-        if (!properties.isEmpty()) {
-            byMethod = new NodeContextSupplier[properties.size()];
-            int offset = 0;
-            for (Method prop : properties) {
-                byMethod[offset++] = verifyNotNull(tmpMethodToSupplier.get(prop));
-            }
-        } else {
-            byMethod = EMPTY_METHODS;
+        final Method[] properties = tmpMethodToSupplier.keySet().toArray(new Method[0]);
+        Arrays.sort(properties, METHOD_BY_ALPHABET);
+        final Builder<Method, NodeContextSupplier> propBuilder = ImmutableMap.builderWithExpectedSize(
+            properties.length);
+        for (Method prop : properties) {
+            propBuilder.put(prop, verifyNotNull(tmpMethodToSupplier.get(prop)));
         }
 
         this.byYang = ImmutableMap.copyOf(byYangBuilder);
@@ -169,28 +167,37 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
         final CtClass superClass;
+        final MethodType ctorType;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
             superClass = AUGMENTABLE_SUPERCLASS;
+            ctorType = AUGMENTABLE_CONSTRUCTOR_TYPE;
         } else {
             this.possibleAugmentations = ImmutableMap.of();
             superClass = SUPERCLASS;
+            ctorType = CONSTRUCTOR_TYPE;
         }
         reloadAllAugmentations();
 
         final Class<?> generatedClass;
         try {
             generatedClass = prototype.getFactory().getLoader().generateSubclass(superClass, bindingClass, "codecImpl",
-                new CodecDataObjectCustomizer(properties, keyMethod));
+                new CodecDataObjectCustomizer(propBuilder.build(), keyMethod));
         } catch (CannotCompileException | IOException | NotFoundException e) {
             throw new LinkageError("Failed to generated class for " + bindingClass, e);
         }
 
+        final MethodHandle ctor;
         try {
-            proxyConstructor = MethodHandles.publicLookup().findConstructor(generatedClass, CONSTRUCTOR_TYPE)
-                    .asType(DATAOBJECT_TYPE).bindTo(this);
+            ctor = MethodHandles.publicLookup().findConstructor(generatedClass, ctorType);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new LinkageError("Failed to find contructor for class " + generatedClass, e);
+        }
+
+        if (Augmentable.class.isAssignableFrom(bindingClass)) {
+            proxyConstructor = ctor.asType(AUGMENTABLE_DATAOBJECT_TYPE).bindTo(this);
+        } else {
+            proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
         }
     }
 
@@ -514,18 +521,6 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
         final Entry<AugmentationIdentifier, AugmentationSchemaNode> augSchema = factory().getRuntimeContext()
                 .getResolvedAugmentationSchema(getSchema(), augClass);
         return DataContainerCodecPrototype.from(augClass, augSchema.getKey(), augSchema.getValue(), factory());
-    }
-
-    @SuppressWarnings("rawtypes")
-    @Nullable Object getBindingChildValue(final NormalizedNodeContainer domData, final int offset) {
-        final NodeCodecContext childContext = byMethod[offset].get();
-
-        @SuppressWarnings("unchecked")
-        final Optional<NormalizedNode<?, ?>> domChild = domData.getChild(childContext.getDomPathArgument());
-
-        // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
-        // normal value because defaultObject() may end up throwing an exception intentionally.
-        return domChild.isPresent() ? childContext.deserializeObject(domChild.get()) : childContext.defaultObject();
     }
 
     @SuppressWarnings("checkstyle:illegalCatch")

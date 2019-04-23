@@ -14,6 +14,7 @@ import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -33,15 +34,18 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  */
 public abstract class AugmentableCodecDataObject<T extends DataObject & Augmentable<T>>
         extends CodecDataObject<T> implements Augmentable<T>, AugmentationHolder<T> {
+    private final @NonNull DataObjectCodecContext<T, ?> context;
+
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<AugmentableCodecDataObject, ImmutableClassToInstanceMap>
             CACHED_AUGMENTATIONS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(AugmentableCodecDataObject.class,
                 ImmutableClassToInstanceMap.class, "cachedAugmentations");
     private volatile ImmutableClassToInstanceMap<Augmentation<T>> cachedAugmentations;
 
-    public AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> ctx,
+    public AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
             final NormalizedNodeContainer<?, ?, ?> data) {
-        super(ctx, data);
+        super(data);
+        this.context = requireNonNull(context, "Context must not be null");
     }
 
     @Override

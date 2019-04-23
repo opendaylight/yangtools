@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import com.google.common.collect.ImmutableCollection;
 import com.google.common.collect.ImmutableSet;
 import java.io.IOException;
@@ -32,12 +34,12 @@ import org.opendaylight.yangtools.yang.model.api.DocumentedNode.WithStatus;
 
 abstract class DataContainerCodecContext<D extends DataObject, T extends WithStatus> extends NodeCodecContext
         implements BindingDataObjectCodecTreeNode<D>  {
+    private final @NonNull DataContainerCodecPrototype<T> prototype;
 
-    private final DataContainerCodecPrototype<T> prototype;
     private volatile DataObjectSerializer eventStreamSerializer;
 
     protected DataContainerCodecContext(final DataContainerCodecPrototype<T> prototype) {
-        this.prototype = prototype;
+        this.prototype = requireNonNull(prototype);
     }
 
     @Override

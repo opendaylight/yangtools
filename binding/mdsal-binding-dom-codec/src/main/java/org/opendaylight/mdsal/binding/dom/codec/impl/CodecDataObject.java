@@ -7,14 +7,18 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 
 /**
@@ -29,12 +33,10 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     @SuppressWarnings("rawtypes")
     private final @NonNull NormalizedNodeContainer data;
-    final @NonNull DataObjectCodecContext<T, ?> context;
 
     private volatile Integer cachedHashcode = null;
 
-    public CodecDataObject(final DataObjectCodecContext<T, ?> ctx, final NormalizedNodeContainer<?, ?, ?> data) {
-        this.context = requireNonNull(ctx, "Context must not be null");
+    public CodecDataObject(final NormalizedNodeContainer<?, ?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
     }
 
@@ -75,9 +77,15 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // TODO: consider switching to VarHandles for Java 9+
     protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final int offset) {
+            final NodeContextSupplier supplier) {
         final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, offset);
+        return cached != null ? unmaskNull(cached) : loadMember(updater, supplier);
+    }
+
+    protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
+            final IdentifiableItemCodec codec) {
+        final Object cached = updater.get(this);
+        return cached != null ? unmaskNull(cached) : loadKey(updater, codec);
     }
 
     protected abstract int codecHashCode();
@@ -108,9 +116,28 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helpers split out of codecMember to aid its inlining
     private Object loadMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final int offset) {
-        final Object decoded = context.getBindingChildValue(data, offset);
-        return updater.compareAndSet(this, null, maskNull(decoded)) ? decoded : unmaskNull(updater.get(this));
+            final NodeContextSupplier supplier) {
+        final NodeCodecContext context = supplier.get();
+
+        @SuppressWarnings("unchecked")
+        final Optional<NormalizedNode<?, ?>> child = data.getChild(context.getDomPathArgument());
+
+        // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
+        // normal value because defaultObject() may end up throwing an exception intentionally.
+        return updateCache(updater, child.isPresent() ? context.deserializeObject(child.get())
+                : context.defaultObject());
+    }
+
+    // Helpers split out of codecMember to aid its inlining
+    private Object loadKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
+            final IdentifiableItemCodec codec) {
+        verify(data instanceof MapEntryNode, "Unsupported value %s", data);
+        return updateCache(updater, codec.deserialize(((MapEntryNode) data).getIdentifier()).getKey());
+    }
+
+    private Object updateCache(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
+            final Object obj) {
+        return updater.compareAndSet(this, null, maskNull(obj)) ? obj : unmaskNull(updater.get(this));
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {

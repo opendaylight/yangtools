@@ -7,13 +7,16 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import java.util.function.Supplier;
-import org.eclipse.jdt.annotation.NonNull;
+import com.google.common.annotations.Beta;
+import org.eclipse.jdt.annotation.NonNullByDefault;
 
 /**
- * Type capture of an entity producing NodeCodecContexts.
+ * Type capture of an entity producing NodeCodecContexts. Implementations are required to perform memoization. This
+ * interface does not form API surface and is exposed only for generated code. It can change at any time.
  */
-interface NodeContextSupplier extends Supplier<NodeCodecContext> {
-    @Override
-    @NonNull NodeCodecContext get();
+@Beta
+@FunctionalInterface
+@NonNullByDefault
+public interface NodeContextSupplier {
+    NodeCodecContext get();
 }

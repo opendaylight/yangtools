@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandle;
@@ -25,13 +26,19 @@ import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
 import org.opendaylight.yangtools.util.ImmutableOffsetMapTemplate;
 import org.opendaylight.yangtools.util.SharedSingletonMapTemplate;
+import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.IdentifiableItem;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
-abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+/**
+ * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode. This class is public
+ * only because implementation restrictions and can change at any time.
+ */
+@Beta
+public abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
     private static final class SingleKey extends IdentifiableItemCodec {
         private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
 
