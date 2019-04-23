@@ -9,6 +9,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.Iterables;
 import org.checkerframework.checker.lock.qual.Holding;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.dom.codec.api.BindingDataObjectCodecTreeNode.ChildAddressabilitySummary;
 import org.opendaylight.mdsal.binding.dom.codec.impl.NodeCodecContext.CodecContextFactory;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -45,7 +46,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final PathArgument yangArg;
     private final ChildAddressabilitySummary childAddressabilitySummary;
 
-    private volatile DataContainerCodecContext<?, T> instance = null;
+    private volatile DataContainerCodecContext<?, T> instance;
 
     @SuppressWarnings("unchecked")
     private DataContainerCodecPrototype(final Class<?> cls, final PathArgument arg, final T nodeSchema,
@@ -208,8 +209,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
             synchronized (this) {
                 tmp = instance;
                 if (tmp == null) {
-                    tmp = createInstance();
-                    instance = tmp;
+                    instance = tmp = createInstance();
                 }
             }
         }
@@ -219,7 +219,7 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
 
     @Holding("this")
     @SuppressWarnings({ "rawtypes", "unchecked" })
-    private DataContainerCodecContext<?,T> createInstance() {
+    private @NonNull DataContainerCodecContext<?, T> createInstance() {
         // FIXME: make protected abstract
         if (schema instanceof ContainerSchemaNode) {
             return new ContainerNodeCodecContext(this);
