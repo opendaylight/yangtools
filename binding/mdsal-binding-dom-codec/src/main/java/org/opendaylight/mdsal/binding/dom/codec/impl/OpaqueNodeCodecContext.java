@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verify;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ImmutableList;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -137,6 +138,7 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
                 (pool, binding, generated) -> {
                     generated.addInterface(binding);
                     generated.setModifiers(Modifier.PUBLIC | Modifier.FINAL);
+                    return ImmutableList.of();
                 });
         } catch (CannotCompileException | IOException | NotFoundException e) {
             throw new LinkageError("Failed to instantiate prototype for " + bindingClass, e);

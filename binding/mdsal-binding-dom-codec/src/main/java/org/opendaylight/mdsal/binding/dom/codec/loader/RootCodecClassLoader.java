@@ -13,6 +13,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableMap.Builder;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,6 +79,14 @@ final class RootCodecClassLoader extends CodecClassLoader {
                 return recheck;
             }
         }
+    }
+
+    @Override
+    void appendLoaders(final Set<LeafCodecClassLoader> newLoaders) {
+        // Root loader should never see the requirement for other loaders, as that would violate loop-free nature
+        // of generated code: if a binding class is hosted in root loader, all its references must be visible from
+        // the root loader and hence all the generated code ends up residing in the root loader, too.
+        throw new IllegalStateException("Attempted to extend root loader with " + newLoaders);
     }
 
     private boolean isOurClass(final Class<?> bindingClass) {

@@ -16,5 +16,9 @@
  *     serves as the ClassLoader holding runtime-generated codecs.
  * </li>
  * </ul>
+ *
+ * <p>
+ * While the interfaces and classes in this package may be publicly accessible, they are an implementation detail and
+ * may change incompatibly at any time.
  */
 package org.opendaylight.mdsal.binding.dom.codec.loader;
