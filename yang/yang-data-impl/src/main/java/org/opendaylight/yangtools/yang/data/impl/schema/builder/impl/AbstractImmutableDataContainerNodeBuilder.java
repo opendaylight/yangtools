@@ -9,7 +9,7 @@ package org.opendaylight.yangtools.yang.data.impl.schema.builder.impl;
 
 import com.google.common.collect.Maps;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import org.opendaylight.yangtools.util.ModifiableMapPhase;
 import org.opendaylight.yangtools.util.UnmodifiableMapPhase;
@@ -36,15 +36,15 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
     private boolean dirty;
 
     protected AbstractImmutableDataContainerNodeBuilder() {
-        this.value = new HashMap<>(DEFAULT_CAPACITY);
+        this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
         this.dirty = false;
     }
 
     protected AbstractImmutableDataContainerNodeBuilder(final int sizeHint) {
         if (sizeHint >= 0) {
-            this.value = Maps.newHashMapWithExpectedSize(sizeHint);
+            this.value = Maps.newLinkedHashMapWithExpectedSize(sizeHint);
         } else {
-            this.value = new HashMap<>(DEFAULT_CAPACITY);
+            this.value = new LinkedHashMap<>(DEFAULT_CAPACITY);
         }
         this.dirty = false;
     }
@@ -90,7 +90,7 @@ abstract class AbstractImmutableDataContainerNodeBuilder<I extends PathArgument,
                 value = ((CloneableMap<PathArgument, DataContainerChild<? extends PathArgument, ?>>) value)
                         .createMutableClone();
             } else {
-                value = new HashMap<>(value);
+                value = new LinkedHashMap<>(value);
             }
             dirty = false;
         }
