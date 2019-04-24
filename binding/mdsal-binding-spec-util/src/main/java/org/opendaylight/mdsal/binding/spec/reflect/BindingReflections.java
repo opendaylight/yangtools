@@ -38,6 +38,7 @@ import org.opendaylight.yangtools.util.ClassLoaderUtils;
 import org.opendaylight.yangtools.yang.binding.Action;
 import org.opendaylight.yangtools.yang.binding.Augmentable;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
+import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.opendaylight.yangtools.yang.binding.BaseIdentity;
 import org.opendaylight.yangtools.yang.binding.ChildOf;
 import org.opendaylight.yangtools.yang.binding.DataContainer;
@@ -548,6 +549,9 @@ public final class BindingReflections {
      * @return Map of augmentations if read was successful, otherwise empty map.
      */
     public static Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Augmentable<?> input) {
+        if (input instanceof AugmentationHolder) {
+            return ((AugmentationHolder) input).augmentations();
+        }
         return AugmentationFieldGetter.getGetter(input.getClass()).getAugmentations(input);
     }
 

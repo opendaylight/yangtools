@@ -24,7 +24,6 @@ import java.util.Collections;
 import java.util.Map;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,16 +33,8 @@ abstract class AugmentationFieldGetter {
 
     private static final AugmentationFieldGetter DUMMY = new AugmentationFieldGetter() {
         @Override
-        protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+        Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
             return Collections.emptyMap();
-        }
-    };
-
-    private static final AugmentationFieldGetter AUGMENTATION_HOLDER_GETTER = new AugmentationFieldGetter() {
-        @Override
-        @SuppressWarnings({"unchecked", "rawtypes"})
-        protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
-            return (Map) ((AugmentationHolder<?>) input).augmentations();
         }
     };
 
@@ -56,12 +47,9 @@ abstract class AugmentationFieldGetter {
      * @param input Input Data object, from which augmentations should be extracted
      * @return Map of Augmentation class to augmentation
      */
-    protected abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(Object input);
+    abstract Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(Object input);
 
-    public static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
-        if (AugmentationHolder.class.isAssignableFrom(clz)) {
-            return AUGMENTATION_HOLDER_GETTER;
-        }
+    static AugmentationFieldGetter getGetter(final Class<? extends Object> clz) {
         return AUGMENTATION_GETTERS.getUnchecked(clz);
     }
 
@@ -102,7 +90,7 @@ abstract class AugmentationFieldGetter {
 
         @Override
         @SuppressWarnings("checkstyle:illegalCatch")
-        protected Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
+        Map<Class<? extends Augmentation<?>>, Augmentation<?>> getAugmentations(final Object input) {
             try {
                 return (Map<Class<? extends Augmentation<?>>, Augmentation<?>>) fieldGetter.invokeExact(input);
             } catch (Throwable e) {

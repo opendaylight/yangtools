@@ -18,15 +18,11 @@ import java.util.HashMap;
 import java.util.Map;
 import org.junit.Test;
 import org.opendaylight.yangtools.yang.binding.Augmentation;
-import org.opendaylight.yangtools.yang.binding.AugmentationHolder;
 
 public class AugmentationFieldGetterTest {
 
     @Test
     public void getGetterTest() throws Exception {
-        assertNotNull(getGetter(AugmentationHolder.class));
-        assertTrue(getGetter(AugmentationHolder.class)
-                .getAugmentations(mock(AugmentationHolder.class)).isEmpty());
         assertTrue(getGetter(Object.class).getAugmentations(null).isEmpty());
         assertTrue(getGetter(TestAugmentationWrongTypeClass.class).getAugmentations(null).isEmpty());
 
