@@ -46,6 +46,37 @@ final class DataContainerCodecPrototype<T extends WithStatus> implements NodeCon
     private final PathArgument yangArg;
     private final ChildAddressabilitySummary childAddressabilitySummary;
 
+    /*
+     * FIXME: This field is now utterly in the hot path of CodecDataObject's instantiation of data. It is volatile
+     *        support double-checked locking, as detailed in
+     *        https://en.wikipedia.org/wiki/Double-checked_locking#Usage_in_Java.
+     *
+     *        Removing volatile here would seem to be worthwhile, as it would mean that in the initialized case we end
+     *        up with no happens-before synchronization between threads, allowing JIT to perform better.
+     *
+     *        Since we are on Java 5+, DataContainerCodecContext and its subclasses play a role here. All of their
+     *        fields are either final or volatile, so intuition would indicate they themselves could (already?) be
+     *        acting in the same capacity as "FinalWrapper" in the above example does -- in which case we can safely
+     *        remove the volatile access altogether, after documenting this fact there (and potentially placing some
+     *        guards).
+     *
+     *        The presence of volatile fields seems to violate this, as
+     *        http://www.cs.umd.edu/~pugh/java/memoryModel/DoubleCheckedLocking.html mentions "such that all of the
+     *        fields of Helper are final".
+     *
+     *        There are only two violations, both relating to dynamic discovery of augmentations, which should be
+     *        eliminated once we have constant class loader visibility (and thus can discover all valid augmentations
+     *        and aliases). Alternatively, adding an indirection could be considered after the effects are fully
+     *        understood.
+     *
+     *        Alternatively we can consider the use of VarHandle acquire/release mechanics to remove this instance
+     *        from global synchronization order -- that would be a Java 9+ concern, though.
+     *
+     *        Finally, the benefits of addressing this are masked by CodecDataObject operating on volatiles, hence
+     *        already doing a barrier very close to us -- thus reducing the scope in which code can be reordered.
+     *        If CodecDataObject moves to VarHandles and uses acquire/release there, we will be put on the spot here,
+     *        though.
+     */
     private volatile DataContainerCodecContext<?, T> instance;
 
     @SuppressWarnings("unchecked")

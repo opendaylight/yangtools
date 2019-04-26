@@ -98,6 +98,8 @@ abstract class DataObjectCodecContext<D extends DataObject, T extends DataNodeCo
     private final ImmutableMap<AugmentationIdentifier, Type> possibleAugmentations;
     private final MethodHandle proxyConstructor;
 
+    // FIXME: the presence of these two volatile fields may be preventing us from being able to improve
+    //        DataContainerCodecPrototype.get() publication.
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<DataObjectCodecContext, Augmentations>
         AUGMENTATIONS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(DataObjectCodecContext.class,

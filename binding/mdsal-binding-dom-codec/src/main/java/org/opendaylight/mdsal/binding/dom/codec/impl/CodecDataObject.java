@@ -75,7 +75,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
                 .toString();
     }
 
-    // TODO: consider switching to VarHandles for Java 9+
+    // TODO: consider switching to VarHandles for Java 9+, as that would disconnect us from the need to use a volatile
+    //       field and use acquire/release mechanics -- see http://gee.cs.oswego.edu/dl/html/j9mm.html for details.
     protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
             final NodeContextSupplier supplier) {
         final Object cached = updater.get(this);
