@@ -19,6 +19,24 @@
     },
     {
       "key": {
+        "uuid": "4b465b3c_593821fb",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/AbstractImmutableDataContainerNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 39,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-04-26T09:55:06Z",
+      "side": 1,
+      "message": "... wherever the JVM gets its system properies -- which is deployment specific. Could be command-line, could be anything.",
+      "parentUuid": "cfaed00d_765faa36",
+      "revId": "02e901513c7f41c1db27f2bb53bd87bd29c5349a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
         "uuid": "eddbeaf9_4ff19654",
         "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/AbstractImmutableDataContainerNodeBuilder.java",
         "patchSetId": 2
@@ -30,6 +48,24 @@
       "writtenOn": "2019-04-25T21:57:18Z",
       "side": 1,
       "message": "ALso for custom RPCs the order should match the yang elements order as defined in the YANG file. DOes this file take care of  those conditions as well?",
+      "revId": "02e901513c7f41c1db27f2bb53bd87bd29c5349a",
+      "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
+      "unresolved": false
+    },
+    {
+      "key": {
+        "uuid": "7d924235_e7e1618e",
+        "filename": "yang/yang-data-impl/src/main/java/org/opendaylight/yangtools/yang/data/impl/schema/builder/impl/AbstractImmutableDataContainerNodeBuilder.java",
+        "patchSetId": 2
+      },
+      "lineNbr": 40,
+      "author": {
+        "id": 649
+      },
+      "writtenOn": "2019-04-26T09:55:06Z",
+      "side": 1,
+      "message": "I am not sure what this relates to -- please file a separate issue.",
+      "parentUuid": "eddbeaf9_4ff19654",
       "revId": "02e901513c7f41c1db27f2bb53bd87bd29c5349a",
       "serverId": "7fc14799-209e-464c-9743-7a06c2c21a81",
       "unresolved": false
