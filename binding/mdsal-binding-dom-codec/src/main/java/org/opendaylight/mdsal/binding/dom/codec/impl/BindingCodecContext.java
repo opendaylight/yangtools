@@ -297,7 +297,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
     }
 
     @Override
-    public ImmutableMap<String, ValueNodeCodecContext> getLeafNodes(final Class<?> parentClass,
+    public ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(final Class<?> parentClass,
             final DataNodeContainer childSchema) {
         final Map<String, DataSchemaNode> getterToLeafSchema = new HashMap<>();
         for (final DataSchemaNode leaf : childSchema.getChildNodes()) {
@@ -309,9 +309,9 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
         return getLeafNodesUsingReflection(parentClass, getterToLeafSchema);
     }
 
-    private ImmutableMap<String, ValueNodeCodecContext> getLeafNodesUsingReflection(final Class<?> parentClass,
-            final Map<String, DataSchemaNode> getterToLeafSchema) {
-        final Map<String, ValueNodeCodecContext> leaves = new HashMap<>();
+    private ImmutableMap<Method, ValueNodeCodecContext> getLeafNodesUsingReflection(
+            final Class<?> parentClass, final Map<String, DataSchemaNode> getterToLeafSchema) {
+        final Map<Method, ValueNodeCodecContext> leaves = new HashMap<>();
         for (final Method method : parentClass.getMethods()) {
             if (method.getParameterCount() == 0) {
                 final DataSchemaNode schema = getterToLeafSchema.get(method.getName());
@@ -322,7 +322,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
                     final Class<?> valueType = method.getReturnType();
                     final Codec<Object, Object> codec = getCodec(valueType, leafSchema.getType());
-                    valueNode = LeafNodeCodecContext.of(leafSchema, codec, method, valueType,
+                    valueNode = LeafNodeCodecContext.of(leafSchema, codec, method.getName(), valueType,
                         context.getSchemaContext());
                 } else if (schema instanceof LeafListSchemaNode) {
                     final Optional<Type> optType = ClassLoaderUtils.getFirstGenericParameter(
@@ -341,11 +341,11 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
 
                     final LeafListSchemaNode leafListSchema = (LeafListSchemaNode) schema;
                     final Codec<Object, Object> codec = getCodec(valueType, leafListSchema.getType());
-                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method);
+                    valueNode = new LeafSetNodeCodecContext(leafListSchema, codec, method.getName());
                 } else if (schema instanceof AnyXmlSchemaNode) {
                     final Class<?> valueType = method.getReturnType();
                     verify(OpaqueObject.class.isAssignableFrom(valueType), "Illegal value type %s", valueType);
-                    valueNode = new OpaqueNodeCodecContext.AnyXml<>((AnyXmlSchemaNode) schema, method,
+                    valueNode = new OpaqueNodeCodecContext.AnyXml<>((AnyXmlSchemaNode) schema, method.getName(),
                             valueType.asSubclass(OpaqueObject.class), loader);
                 } else {
                     verify(schema == null, "Unhandled schema %s for method %s", schema, method);
@@ -353,7 +353,7 @@ final class BindingCodecContext implements CodecContextFactory, BindingCodecTree
                     continue;
                 }
 
-                leaves.put(schema.getQName().getLocalName(), valueNode);
+                leaves.put(method, valueNode);
             }
         }
         return ImmutableMap.copyOf(leaves);

@@ -111,8 +111,8 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         super(prototype);
 
         final Class<D> bindingClass = getBindingClass();
-        this.leafChild = factory().getLeafNodes(bindingClass, getSchema());
 
+        final Map<Method, ValueNodeCodecContext> tmpLeaves = factory().getLeafNodes(bindingClass, getSchema());
         final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
@@ -121,10 +121,15 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         final Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
         // Adds leaves to mapping
-        for (final ValueNodeCodecContext leaf : leafChild.values()) {
-            tmpMethodToSupplier.put(leaf.getGetter(), leaf);
+        final Builder<String, ValueNodeCodecContext> leafChildBuilder =
+                ImmutableMap.builderWithExpectedSize(tmpLeaves.size());
+        for (final Entry<Method, ValueNodeCodecContext> entry : tmpLeaves.entrySet()) {
+            final ValueNodeCodecContext leaf = entry.getValue();
+            tmpMethodToSupplier.put(entry.getKey(), leaf);
+            leafChildBuilder.put(leaf.getSchema().getQName().getLocalName(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
+        this.leafChild = leafChildBuilder.build();
 
         for (final Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
             final Method method = childDataObj.getValue();

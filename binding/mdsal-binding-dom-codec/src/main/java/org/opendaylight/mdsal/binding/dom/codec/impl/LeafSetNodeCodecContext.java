@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,9 +18,9 @@ import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
 
 final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     LeafSetNodeCodecContext(final LeafListSchemaNode schema, final Codec<Object, Object> codec,
-        final Method getter) {
+        final String getterName) {
         // FIXME: add support for defaults
-        super(schema, codec, getter, null);
+        super(schema, codec, getterName, null);
     }
 
     @Override

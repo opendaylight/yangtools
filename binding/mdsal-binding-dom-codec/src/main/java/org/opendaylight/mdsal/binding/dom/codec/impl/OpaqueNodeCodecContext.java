@@ -16,7 +16,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
 import javax.xml.transform.dom.DOMSource;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.dynamic.DynamicType.Builder;
@@ -38,9 +37,9 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNodeCodecContext
         implements BindingOpaqueObjectCodecTreeNode<T> {
     static final class AnyXml<T extends OpaqueObject<T>> extends OpaqueNodeCodecContext<T> {
-        AnyXml(final AnyXmlSchemaNode schema, final Method getter, final Class<T> bindingClass,
+        AnyXml(final AnyXmlSchemaNode schema, final String getterName, final Class<T> bindingClass,
                 final CodecClassLoader loader) {
-            super(schema, getter, bindingClass, loader);
+            super(schema, getterName, bindingClass, loader);
         }
 
         @Override
@@ -79,9 +78,9 @@ abstract class OpaqueNodeCodecContext<T extends OpaqueObject<T>> extends ValueNo
     private final MethodHandle proxyConstructor;
     private final @NonNull Class<T> bindingClass;
 
-    OpaqueNodeCodecContext(final DataSchemaNode schema, final Method getter, final Class<T> bindingClass,
+    OpaqueNodeCodecContext(final DataSchemaNode schema, final String getterName, final Class<T> bindingClass,
             final CodecClassLoader loader) {
-        super(schema, getter, null);
+        super(schema, getterName, null);
         this.bindingClass = requireNonNull(bindingClass);
         proxyConstructor = createImpl(loader, bindingClass);
     }

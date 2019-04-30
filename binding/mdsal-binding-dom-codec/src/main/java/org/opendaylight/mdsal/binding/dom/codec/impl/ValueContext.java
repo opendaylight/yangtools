@@ -22,7 +22,7 @@ final class ValueContext {
     private final String getterName;
 
     ValueContext(final Class<?> identifier, final ValueNodeCodecContext leaf) {
-        getterName = leaf.getGetter().getName();
+        getterName = leaf.getGetterName();
         try {
             getter = MethodHandles.publicLookup().unreflect(identifier.getMethod(getterName)).asType(OBJECT_METHOD);
         } catch (IllegalAccessException | NoSuchMethodException | SecurityException e) {

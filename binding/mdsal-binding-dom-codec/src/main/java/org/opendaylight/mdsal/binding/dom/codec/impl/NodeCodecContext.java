@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import com.google.common.collect.ImmutableMap;
+import java.lang.reflect.Method;
 import java.util.List;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -65,7 +66,7 @@ abstract class NodeCodecContext implements BindingCodecTreeNode {
          * @param schema  Instantiated schema of binding type.
          * @return Map of local name to leaf node context.
          */
-        ImmutableMap<String, ValueNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
+        ImmutableMap<Method, ValueNodeCodecContext> getLeafNodes(Class<?> type, DataNodeContainer schema);
 
         /**
          * Returns Path argument codec for list item.

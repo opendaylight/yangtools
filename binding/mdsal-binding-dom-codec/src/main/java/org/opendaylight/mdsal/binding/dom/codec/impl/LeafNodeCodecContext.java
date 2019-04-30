@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Set;
 import org.eclipse.jdt.annotation.NonNull;
@@ -33,9 +32,9 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
             implements BindingTypeObjectCodecTreeNode<T> {
         private final @NonNull Class<T> bindingClass;
 
-        OfTypeObject(final LeafSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+        OfTypeObject(final LeafSchemaNode schema, final Codec<Object, Object> codec, final String getterName,
                 final SchemaContext schemaContext, final Class<T> bindingClass) {
-            super(schema, codec, getter, schemaContext);
+            super(schema, codec, getterName, schemaContext);
             this.bindingClass = requireNonNull(bindingClass);
         }
 
@@ -56,15 +55,15 @@ class LeafNodeCodecContext extends ValueNodeCodecContext.WithCodec {
     }
 
     LeafNodeCodecContext(final LeafSchemaNode schema, final Codec<Object, Object> codec,
-            final Method getter, final SchemaContext schemaContext) {
-        super(schema, codec, getter, createDefaultObject(schema, codec, schemaContext));
+            final String getterName, final SchemaContext schemaContext) {
+        super(schema, codec, getterName, createDefaultObject(schema, codec, schemaContext));
     }
 
     static LeafNodeCodecContext of(final LeafSchemaNode schema, final Codec<Object, Object> codec,
-            final Method getter, final Class<?> valueType, final SchemaContext schemaContext) {
+            final String getterName, final Class<?> valueType, final SchemaContext schemaContext) {
         return TypeObject.class.isAssignableFrom(valueType)
-                ? new OfTypeObject<>(schema, codec, getter, schemaContext, valueType.asSubclass(TypeObject.class))
-                        : new LeafNodeCodecContext(schema, codec, getter, schemaContext);
+                ? new OfTypeObject<>(schema, codec, getterName, schemaContext, valueType.asSubclass(TypeObject.class))
+                        : new LeafNodeCodecContext(schema, codec, getterName, schemaContext);
     }
 
     @Override

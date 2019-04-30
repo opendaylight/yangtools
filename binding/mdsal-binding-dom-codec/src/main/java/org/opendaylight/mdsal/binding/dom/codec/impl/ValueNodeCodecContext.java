@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.lang.reflect.Method;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
@@ -23,9 +22,9 @@ abstract class ValueNodeCodecContext extends NodeCodecContext implements NodeCon
     abstract static class WithCodec extends ValueNodeCodecContext {
         private final @NonNull Codec<Object, Object> valueCodec;
 
-        WithCodec(final DataSchemaNode schema, final Codec<Object, Object> codec, final Method getter,
+        WithCodec(final DataSchemaNode schema, final Codec<Object, Object> codec, final String getterName,
                 final Object defaultObject) {
-            super(schema, getter, defaultObject);
+            super(schema, getterName, defaultObject);
             this.valueCodec = requireNonNull(codec);
         }
 
@@ -36,13 +35,13 @@ abstract class ValueNodeCodecContext extends NodeCodecContext implements NodeCon
     }
 
     private final @NonNull NodeIdentifier yangIdentifier;
-    private final @NonNull Method getter;
+    private final @NonNull String getterName;
     private final @NonNull DataSchemaNode schema;
     private final Object defaultObject;
 
-    ValueNodeCodecContext(final DataSchemaNode schema, final Method getter, final Object defaultObject) {
+    ValueNodeCodecContext(final DataSchemaNode schema, final String getterName, final Object defaultObject) {
         this.yangIdentifier = NodeIdentifier.create(schema.getQName());
-        this.getter = requireNonNull(getter);
+        this.getterName = requireNonNull(getterName);
         this.schema = requireNonNull(schema);
         this.defaultObject = defaultObject;
     }
@@ -57,8 +56,8 @@ abstract class ValueNodeCodecContext extends NodeCodecContext implements NodeCon
         return this;
     }
 
-    final Method getGetter() {
-        return getter;
+    final String getGetterName() {
+        return getterName;
     }
 
     abstract Codec<Object, Object> getValueCodec();
