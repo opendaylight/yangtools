@@ -44,7 +44,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
 
     protected AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
             final NormalizedNodeContainer<?, ?, ?> data) {
-        super(data);
+        super(context, data);
         this.context = requireNonNull(context, "Context must not be null");
     }
 

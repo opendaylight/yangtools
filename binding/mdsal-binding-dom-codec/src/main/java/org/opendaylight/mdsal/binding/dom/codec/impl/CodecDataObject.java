@@ -36,7 +36,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     private volatile Integer cachedHashcode = null;
 
-    protected CodecDataObject(final NormalizedNodeContainer<?, ?, ?> data) {
+    protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final NormalizedNodeContainer<?, ?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
     }
 

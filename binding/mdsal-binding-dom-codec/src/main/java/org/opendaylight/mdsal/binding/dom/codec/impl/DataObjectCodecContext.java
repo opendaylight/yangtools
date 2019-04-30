@@ -78,12 +78,9 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     }
 
     private static final Logger LOG = LoggerFactory.getLogger(DataObjectCodecContext.class);
-    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class, NormalizedNodeContainer.class);
-    private static final MethodType AUGMENTABLE_CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
+    private static final MethodType CONSTRUCTOR_TYPE = MethodType.methodType(void.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
-        NormalizedNodeContainer.class);
-    private static final MethodType AUGMENTABLE_DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
@@ -166,32 +163,25 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         this.byBindingArgClass = ImmutableMap.copyOf(byBindingArgClassBuilder);
 
         final Class<? extends CodecDataObject<?>> generatedClass;
-        final MethodType ctorType;
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
                 bindingClass, propBuilder.build(), keyMethod);
-            ctorType = AUGMENTABLE_CONSTRUCTOR_TYPE;
         } else {
             this.possibleAugmentations = ImmutableMap.of();
             generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
                 propBuilder.build(), keyMethod);
-            ctorType = CONSTRUCTOR_TYPE;
         }
         reloadAllAugmentations();
 
         final MethodHandle ctor;
         try {
-            ctor = MethodHandles.publicLookup().findConstructor(generatedClass, ctorType);
+            ctor = MethodHandles.publicLookup().findConstructor(generatedClass, CONSTRUCTOR_TYPE);
         } catch (NoSuchMethodException | IllegalAccessException e) {
             throw new LinkageError("Failed to find contructor for class " + generatedClass, e);
         }
 
-        if (Augmentable.class.isAssignableFrom(bindingClass)) {
-            proxyConstructor = ctor.asType(AUGMENTABLE_DATAOBJECT_TYPE).bindTo(this);
-        } else {
-            proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
-        }
+        proxyConstructor = ctor.asType(DATAOBJECT_TYPE);
     }
 
     // This method could be synchronized, but that would mean that concurrent attempts to load an invalid augmentation
@@ -519,7 +509,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
     @SuppressWarnings("checkstyle:illegalCatch")
     protected final D createBindingProxy(final NormalizedNodeContainer<?, ?, ?> node) {
         try {
-            return (D) proxyConstructor.invokeExact(node);
+            return (D) proxyConstructor.invokeExact(this, node);
         } catch (final Throwable e) {
             Throwables.throwIfUnchecked(e);
             throw new IllegalStateException(e);
