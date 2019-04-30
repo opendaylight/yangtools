@@ -1,0 +1,16 @@
+module foo {
+    namespace foo;
+    prefix foo;
+
+    revision "2019-04-30";
+
+    extension ext;
+
+    leaf foo {
+        type enumeration {
+            enum "10" {
+                foo:ext;
+            }
+        }
+    }
+}

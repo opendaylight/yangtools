@@ -46,7 +46,16 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
             }
             this.maybeQNameArgument = maybeQNameArgumentInit;
         }
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
+
+        SchemaPath maybePath;
+        try {
+            maybePath = ctx.coerceParentContext().getSchemaPath()
+                    .map(parentPath -> parentPath.createChild(maybeQNameArgument)).orElse(null);
+        } catch (IllegalArgumentException | SourceException e) {
+            LOG.debug("Cannot construct path for {}, attempting to recover", ctx, e);
+            maybePath = null;
+        }
+        path = maybePath;
     }
 
     @Override
