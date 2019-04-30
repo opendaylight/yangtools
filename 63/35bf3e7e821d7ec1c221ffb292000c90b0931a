@@ -1,0 +1,8 @@
+Verified+1: jenkins-releng <jenkins-releng@opendaylight.org>
+Code-Review+1: Balaji Varadaraju <bvaradar@luminanetworks.com>
+Code-Review+2: Robert Varga <nite@hq.sk>
+Submitted-by: Robert Varga <nite@hq.sk>
+Submitted-at: Tue, 30 Apr 2019 11:16:13 +0000
+Reviewed-on: https://git.opendaylight.org/gerrit/81718
+Project: yangtools
+Branch: refs/heads/master
