@@ -8,6 +8,7 @@
 package org.opendaylight.yangtools.yang.parser.rfc7950.stmt.extension;
 
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.model.api.SchemaPath;
@@ -46,7 +47,9 @@ final class UnrecognizedEffectiveStatementImpl extends UnknownEffectiveStatement
             }
             this.maybeQNameArgument = maybeQNameArgumentInit;
         }
-        path = ctx.coerceParentContext().getSchemaPath().get().createChild(maybeQNameArgument);
+
+        final Optional<SchemaPath> optPath = ctx.coerceParentContext().getSchemaPath();
+        path = optPath.map(parentPath -> parentPath.createChild(maybeQNameArgument)).orElse(null);
     }
 
     @Override

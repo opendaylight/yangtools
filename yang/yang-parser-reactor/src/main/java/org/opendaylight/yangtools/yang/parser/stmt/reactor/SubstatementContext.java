@@ -36,12 +36,17 @@ import org.opendaylight.yangtools.yang.parser.spi.meta.NamespaceBehaviour.Storag
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContext;
 import org.opendaylight.yangtools.yang.parser.spi.meta.StmtContextUtils;
 import org.opendaylight.yangtools.yang.parser.spi.source.AugmentToChoiceNamespace;
+import org.opendaylight.yangtools.yang.parser.spi.source.SourceException;
 import org.opendaylight.yangtools.yang.parser.spi.source.StatementSourceReference;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace;
 import org.opendaylight.yangtools.yang.parser.spi.validation.ValidationBundlesNamespace.ValidationBundleType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends EffectiveStatement<A, D>> extends
         StatementContextBase<A, D, E> {
+    private static final Logger LOG = LoggerFactory.getLogger(SubstatementContext.class);
+
     private final StatementContextBase<?, ?, ?> parent;
     private final A argument;
 
@@ -149,9 +154,16 @@ final class SubstatementContext<A, D extends DeclaredStatement<A>, E extends Eff
             return path.createChild(qname);
         }
         if (argument instanceof String) {
-            // FIXME: This may yield illegal argument exceptions
             final Optional<StmtContext<?, ?, ?>> originalCtx = getOriginalCtx();
-            final QName qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
+
+            final QName qname;
+            try {
+                qname = StmtContextUtils.qnameFromArgument(originalCtx.orElse(this), (String) argument);
+            } catch (IllegalArgumentException | SourceException e) {
+                // FIXME: This is not entirely correct
+                LOG.debug("Cannot construct path for {}, attempting to recover", this, e);
+                return null;
+            }
             return parentPath.createChild(qname);
         }
         if (argument instanceof SchemaNodeIdentifier
