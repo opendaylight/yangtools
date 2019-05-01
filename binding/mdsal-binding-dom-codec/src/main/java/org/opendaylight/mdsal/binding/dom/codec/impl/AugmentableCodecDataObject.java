@@ -10,7 +10,7 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.collect.ImmutableClassToInstanceMap;
+import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
@@ -37,10 +37,10 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     private final @NonNull DataObjectCodecContext<T, ?> context;
 
     @SuppressWarnings("rawtypes")
-    private static final AtomicReferenceFieldUpdater<AugmentableCodecDataObject, ImmutableClassToInstanceMap>
+    private static final AtomicReferenceFieldUpdater<AugmentableCodecDataObject, ImmutableMap>
             CACHED_AUGMENTATIONS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(AugmentableCodecDataObject.class,
-                ImmutableClassToInstanceMap.class, "cachedAugmentations");
-    private volatile ImmutableClassToInstanceMap<Augmentation<T>> cachedAugmentations;
+                ImmutableMap.class, "cachedAugmentations");
+    private volatile ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> cachedAugmentations;
 
     protected AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
             final NormalizedNodeContainer<?, ?, ?> data) {
@@ -48,13 +48,14 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
         this.context = requireNonNull(context, "Context must not be null");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public final <A extends Augmentation<T>> @Nullable A augmentation(final Class<A> augmentationType) {
         requireNonNull(augmentationType, "Supplied augmentation must not be null.");
 
-        final ImmutableClassToInstanceMap<Augmentation<T>> aug = cachedAugmentations;
+        final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> aug = cachedAugmentations;
         if (aug != null) {
-            return aug.getInstance(augmentationType);
+            return (A) aug.get(augmentationType);
         }
 
         @SuppressWarnings({"unchecked","rawtypes"})
@@ -78,13 +79,13 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     }
 
     @Override
-    public final Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
-        ImmutableClassToInstanceMap<Augmentation<T>> local = cachedAugmentations;
+    public final ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations() {
+        ImmutableMap<Class<? extends Augmentation<T>>, Augmentation<T>> local = cachedAugmentations;
         if (local != null) {
             return local;
         }
 
-        local = ImmutableClassToInstanceMap.copyOf(context.getAllAugmentationsFrom(codecData()));
+        local = ImmutableMap.copyOf(context.getAllAugmentationsFrom(codecData()));
         return CACHED_AUGMENTATIONS_UPDATER.compareAndSet(this, null, local) ? local : cachedAugmentations;
     }
 
