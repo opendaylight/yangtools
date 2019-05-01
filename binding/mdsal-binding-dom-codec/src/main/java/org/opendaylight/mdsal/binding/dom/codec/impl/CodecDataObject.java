@@ -13,12 +13,11 @@ import static java.util.Objects.requireNonNull;
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
 import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
+import java.lang.invoke.VarHandle;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
-import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -80,29 +79,24 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
                 .toString();
     }
 
-    // TODO: consider switching to VarHandles for Java 9+, as that would disconnect us from the need to use a volatile
-    //       field and use acquire/release mechanics -- see http://gee.cs.oswego.edu/dl/html/j9mm.html for details.
-    protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final String localName) {
-        final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, context.getLeafChild(localName));
+    protected final Object codecMember(final VarHandle handle, final String localName) {
+        final Object cached = handle.getAcquire(this);
+        return cached != null ? unmaskNull(cached) : loadMember(handle, context.getLeafChild(localName));
     }
 
-    protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final Class<? extends DataObject> bindingClass) {
-        final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, context.streamChild(bindingClass));
+    protected final Object codecMember(final VarHandle handle, final Class<? extends DataObject> bindingClass) {
+        final Object cached = handle.getAcquire(this);
+        return cached != null ? unmaskNull(cached) : loadMember(handle, context.streamChild(bindingClass));
     }
 
-    protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final NodeContextSupplier supplier) {
-        final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, supplier.get());
+    protected final Object codecMember(final VarHandle handle, final NodeContextSupplier supplier) {
+        final Object cached = handle.getAcquire(this);
+        return cached != null ? unmaskNull(cached) : loadMember(handle, supplier.get());
     }
 
-    protected final Object codecKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater) {
-        final Object cached = updater.get(this);
-        return cached != null ? cached : loadKey(updater);
+    protected final Object codecKey(final VarHandle handle) {
+        final Object cached = handle.getAcquire(this);
+        return cached != null ? cached : loadKey(handle);
     }
 
     protected abstract int codecHashCode();
@@ -136,25 +130,25 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     // Helpers split out of codecMember to aid its inlining
-    private Object loadMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final NodeCodecContext childCtx) {
+    private Object loadMember(final VarHandle handle, final NodeCodecContext childCtx) {
         @SuppressWarnings("unchecked")
         final Optional<NormalizedNode<?, ?>> child = data.getChild(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.
         final Object obj = child.isPresent() ? childCtx.deserializeObject(child.get()) : childCtx.defaultObject();
-        return updater.compareAndSet(this, null, maskNull(obj)) ? obj : unmaskNull(updater.get(this));
+        final Object witness = handle.compareAndExchangeRelease(this, null, maskNull(obj));
+        return witness == null ? obj : unmaskNull(witness);
     }
 
     // Helpers split out of codecMember to aid its inlining
-    private Object loadKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater) {
+    private Object loadKey(final VarHandle handle) {
         verify(data instanceof MapEntryNode, "Unsupported value %s", data);
         verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
-        final Identifier<?> key = ((KeyedListNodeCodecContext<?>) context).deserialize(
-            ((MapEntryNode) data).getIdentifier());
+        final Object obj = ((KeyedListNodeCodecContext<?>) context).deserialize(((MapEntryNode) data).getIdentifier());
         // key is known to be non-null, no need to mask it
-        return updater.compareAndSet(this, null, key) ? key : updater.get(this);
+        final Object witness = handle.compareAndExchangeRelease(this, null, obj);
+        return witness == null ? obj : witness;
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {
