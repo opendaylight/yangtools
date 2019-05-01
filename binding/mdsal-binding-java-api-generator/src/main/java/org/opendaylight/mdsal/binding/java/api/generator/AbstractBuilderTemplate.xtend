@@ -7,7 +7,6 @@
  */
 package org.opendaylight.mdsal.binding.java.api.generator
 
-import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.base.MoreObjects
@@ -98,7 +97,7 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                     «CodeHelpers.importedName».appendValue(helper, "«property.fieldName»", «property.fieldName»);
                 «ENDFOR»
                 «IF augmentType !== null»
-                    «CodeHelpers.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", «AUGMENTATION_FIELD».values());
+                    «CodeHelpers.importedName».appendValue(helper, "«AUGMENTATION_FIELD»", augmentations().values());
                 «ENDIF»
                 return helper.toString();
             }
@@ -124,18 +123,13 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
                 «field.getterMethod»
             «ENDFOR»
         «ENDIF»
-        «IF augmentType !== null»
-
-            @«SuppressWarnings.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
-            «IF addOverride»@«Override.importedName»«ENDIF»
-            public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E$$> augmentationType) {
-                return (E$$) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
-            }
-        «ENDIF»
     '''
 
     def protected final CharSequence generateCopyConstructor(Type fromType, Type implType) '''
         «type.name»(«fromType.importedName» base) {
+            «IF augmentType !== null»
+                «generateCopyAugmentation(implType)»
+            «ENDIF»
             «val allProps = new ArrayList(properties)»
             «val isList = implementsIfc(targetType, Types.parameterizedTypeFor(Types.typeForClass(Identifiable), targetType))»
             «IF isList && keyType !== null»
@@ -149,9 +143,6 @@ abstract class AbstractBuilderTemplate extends BaseTemplate {
             «FOR field : allProps»
                 this.«field.fieldName» = base.«field.getterMethodName»();
             «ENDFOR»
-            «IF augmentType !== null»
-                «generateCopyAugmentation(implType)»
-            «ENDIF»
         }
     '''
 

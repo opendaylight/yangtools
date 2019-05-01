@@ -42,10 +42,10 @@ public abstract class AbstractAugmentable<T extends Augmentable<T>> implements A
         this(other.augmentations);
     }
 
-    @SuppressWarnings({ "unchecked", "checkstyle:methodTypeParameterName"})
+    @SuppressWarnings("unchecked")
     @Override
-    public final <E$$ extends Augmentation<T>> E$$ augmentation(final Class<E$$> augmentationType) {
-        return (E$$) augmentations.get(CodeHelpers.nonNullValue(augmentationType, "augmentationType"));
+    public final <A extends Augmentation<T>> A augmentation(final Class<A> augmentationType) {
+        return (A) augmentations.get(CodeHelpers.nonNullValue(augmentationType, "augmentationType"));
     }
 
     @Override

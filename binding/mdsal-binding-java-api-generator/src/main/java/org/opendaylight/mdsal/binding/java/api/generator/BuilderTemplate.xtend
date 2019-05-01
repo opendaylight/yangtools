@@ -8,6 +8,7 @@
 package org.opendaylight.mdsal.binding.java.api.generator
 
 import static extension org.apache.commons.text.StringEscapeUtils.escapeJava
+import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTABLE_AUGMENTATION_NAME
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.AUGMENTATION_FIELD
 
 import com.google.common.collect.ImmutableList
@@ -80,6 +81,10 @@ class BuilderTemplate extends AbstractBuilderTemplate {
             «generateMethodFieldsFrom()»
 
             «generateGetters(false)»
+            «IF augmentType !== null»
+
+                «generateAugmentation()»
+            «ENDIF»
 
             «generateSetters»
 
@@ -355,6 +360,13 @@ class BuilderTemplate extends AbstractBuilderTemplate {
         '''.toString
     }
 
+    private def generateAugmentation() '''
+        @«SuppressWarnings.importedName»({ "unchecked", "checkstyle:methodTypeParameterName"})
+        public <E$$ extends «augmentType.importedName»> E$$ «AUGMENTABLE_AUGMENTATION_NAME»(«Class.importedName»<E$$> augmentationType) {
+            return (E$$) «AUGMENTATION_FIELD».get(«CodeHelpers.importedName».nonNullValue(augmentationType, "augmentationType"));
+        }
+    '''
+
     override protected generateCopyKeys(List<GeneratedProperty> keyProps) '''
         this.key = base.«BindingMapping.IDENTIFIABLE_KEY_NAME»();
         «FOR field : keyProps»
@@ -363,18 +375,12 @@ class BuilderTemplate extends AbstractBuilderTemplate {
     '''
 
     override protected generateCopyAugmentation(Type implType) {
-        val implTypeRef = implType.importedName
         val augmentationHolderRef = AugmentationHolder.importedName
         val typeRef = targetType.importedName
         val hashMapRef = HashMap.importedName
         val augmentTypeRef = augmentType.importedName
         return '''
-            if (base instanceof «implTypeRef») {
-                «implTypeRef» impl = («implTypeRef») base;
-                if (!impl.«AUGMENTATION_FIELD».isEmpty()) {
-                    this.«AUGMENTATION_FIELD» = new «hashMapRef»<>(impl.«AUGMENTATION_FIELD»);
-                }
-            } else if (base instanceof «augmentationHolderRef») {
+            if (base instanceof «augmentationHolderRef») {
                 @SuppressWarnings("unchecked")
                 «Map.importedName»<«Class.importedName»<? extends «augmentTypeRef»>, «augmentTypeRef»> aug =((«augmentationHolderRef»<«typeRef»>) base).augmentations();
                 if (!aug.isEmpty()) {
