@@ -7,7 +7,9 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
-import com.google.common.base.Preconditions;
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Verify.verifyNotNull;
+
 import com.google.common.base.Throwables;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -43,14 +45,14 @@ final class ValueContext {
             throw new IllegalStateException(e);
         }
 
-        Preconditions.checkArgument(value != null,
-                "All keys must be specified for %s. Missing key is %s. Supplied key is %s",
+        checkArgument(value != null, "All keys must be specified for %s. Missing key is %s. Supplied key is %s",
                 identifier, getterName, obj);
         return codec.serialize(value);
     }
 
     Object deserialize(final Object obj) {
-        return codec.deserialize(obj);
+        checkArgument(obj != null, "Attempted to serialize null for %s component of %s", getterName, identifier);
+        return verifyNotNull(codec.deserialize(obj), "Codec for %s of %s returned null for %s", getterName, identifier,
+            obj);
     }
-
 }
