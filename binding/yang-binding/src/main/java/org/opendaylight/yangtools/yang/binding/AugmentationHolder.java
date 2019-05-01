@@ -24,5 +24,5 @@ public interface AugmentationHolder<T> {
      *
      * @return map of all augmentations.
      */
-    Map<Class<? extends Augmentation<T>>,Augmentation<T>> augmentations();
+    Map<Class<? extends Augmentation<T>>, Augmentation<T>> augmentations();
 }
