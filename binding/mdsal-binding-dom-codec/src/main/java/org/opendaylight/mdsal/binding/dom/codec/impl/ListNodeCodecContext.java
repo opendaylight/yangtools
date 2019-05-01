@@ -10,7 +10,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map.Entry;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
@@ -25,7 +24,7 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     ListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype,
-            final Entry<Method, IdentifiableItemCodec> keyMethod) {
+            final Method keyMethod) {
         super(prototype, keyMethod);
     }
 

@@ -1,0 +1,13 @@
+module mdsal442-keyuse {
+    namespace mdsal442-keyuse;
+    prefix keyuse;
+
+    import mdsal442-keydef {
+        prefix keydef;
+    }
+
+    container use {
+        uses keydef:grp;
+    }
+}
+

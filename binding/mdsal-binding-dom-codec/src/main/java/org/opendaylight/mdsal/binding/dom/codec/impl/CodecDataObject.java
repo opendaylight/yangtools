@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.Identifier;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
@@ -29,8 +30,10 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  * @param <T> DataObject type
  */
 public abstract class CodecDataObject<T extends DataObject> implements DataObject {
+    // An object representing a null value in a member field.
     private static final @NonNull Object NULL_VALUE = new Object();
 
+    private final @NonNull DataObjectCodecContext<T, ?> context;
     @SuppressWarnings("rawtypes")
     private final @NonNull NormalizedNodeContainer data;
 
@@ -38,6 +41,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     protected CodecDataObject(final DataObjectCodecContext<T, ?> context, final NormalizedNodeContainer<?, ?, ?> data) {
         this.data = requireNonNull(data, "Data must not be null");
+        this.context = requireNonNull(context, "Context must not be null");
     }
 
     @Override
@@ -78,15 +82,26 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     // TODO: consider switching to VarHandles for Java 9+, as that would disconnect us from the need to use a volatile
     //       field and use acquire/release mechanics -- see http://gee.cs.oswego.edu/dl/html/j9mm.html for details.
     protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final NodeContextSupplier supplier) {
+            final String localName) {
         final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadMember(updater, supplier);
+        return cached != null ? unmaskNull(cached) : loadMember(updater, context.getLeafChild(localName));
     }
 
     protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final IdentifiableItemCodec codec) {
+            final Class<? extends DataObject> bindingClass) {
         final Object cached = updater.get(this);
-        return cached != null ? unmaskNull(cached) : loadKey(updater, codec);
+        return cached != null ? unmaskNull(cached) : loadMember(updater, context.streamChild(bindingClass));
+    }
+
+    protected final Object codecMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
+            final NodeContextSupplier supplier) {
+        final Object cached = updater.get(this);
+        return cached != null ? unmaskNull(cached) : loadMember(updater, supplier.get());
+    }
+
+    protected final Object codecKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater) {
+        final Object cached = updater.get(this);
+        return cached != null ? cached : loadKey(updater);
     }
 
     protected abstract int codecHashCode();
@@ -94,6 +109,10 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     protected abstract boolean codecEquals(T other);
 
     protected abstract ToStringHelper codecFillToString(ToStringHelper helper);
+
+    final @NonNull DataObjectCodecContext<T, ?> codecContext() {
+        return context;
+    }
 
     @SuppressWarnings("rawtypes")
     final @NonNull NormalizedNodeContainer codecData() {
@@ -117,28 +136,24 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
 
     // Helpers split out of codecMember to aid its inlining
     private Object loadMember(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final NodeContextSupplier supplier) {
-        final NodeCodecContext context = supplier.get();
-
+            final NodeCodecContext childCtx) {
         @SuppressWarnings("unchecked")
-        final Optional<NormalizedNode<?, ?>> child = data.getChild(context.getDomPathArgument());
+        final Optional<NormalizedNode<?, ?>> child = data.getChild(childCtx.getDomPathArgument());
 
         // We do not want to use Optional.map() here because we do not want to invoke defaultObject() when we have
         // normal value because defaultObject() may end up throwing an exception intentionally.
-        return updateCache(updater, child.isPresent() ? context.deserializeObject(child.get())
-                : context.defaultObject());
+        final Object obj = child.isPresent() ? childCtx.deserializeObject(child.get()) : childCtx.defaultObject();
+        return updater.compareAndSet(this, null, maskNull(obj)) ? obj : unmaskNull(updater.get(this));
     }
 
     // Helpers split out of codecMember to aid its inlining
-    private Object loadKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final IdentifiableItemCodec codec) {
+    private Object loadKey(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater) {
         verify(data instanceof MapEntryNode, "Unsupported value %s", data);
-        return updateCache(updater, codec.deserialize(((MapEntryNode) data).getIdentifier()).getKey());
-    }
-
-    private Object updateCache(final AtomicReferenceFieldUpdater<CodecDataObject<?>, Object> updater,
-            final Object obj) {
-        return updater.compareAndSet(this, null, maskNull(obj)) ? obj : unmaskNull(updater.get(this));
+        verify(context instanceof KeyedListNodeCodecContext, "Unexpected context %s", context);
+        final Identifier<?> key = ((KeyedListNodeCodecContext<?>) context).deserialize(
+            ((MapEntryNode) data).getIdentifier());
+        // key is known to be non-null, no need to mask it
+        return updater.compareAndSet(this, null, key) ? key : updater.get(this);
     }
 
     private static @NonNull Object maskNull(final @Nullable Object unmasked) {

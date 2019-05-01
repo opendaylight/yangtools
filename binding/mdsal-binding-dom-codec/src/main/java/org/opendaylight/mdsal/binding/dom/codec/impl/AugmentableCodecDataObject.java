@@ -14,7 +14,6 @@ import com.google.common.collect.ImmutableMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.mdsal.binding.dom.codec.util.AugmentationReader;
 import org.opendaylight.mdsal.binding.spec.reflect.BindingReflections;
@@ -34,8 +33,6 @@ import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
  */
 public abstract class AugmentableCodecDataObject<T extends DataObject & Augmentable<T>>
         extends CodecDataObject<T> implements Augmentable<T>, AugmentationHolder<T> {
-    private final @NonNull DataObjectCodecContext<T, ?> context;
-
     @SuppressWarnings("rawtypes")
     private static final AtomicReferenceFieldUpdater<AugmentableCodecDataObject, ImmutableMap>
             CACHED_AUGMENTATIONS_UPDATER = AtomicReferenceFieldUpdater.newUpdater(AugmentableCodecDataObject.class,
@@ -45,7 +42,6 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
     protected AugmentableCodecDataObject(final DataObjectCodecContext<T, ?> context,
             final NormalizedNodeContainer<?, ?, ?> data) {
         super(context, data);
-        this.context = requireNonNull(context, "Context must not be null");
     }
 
     @SuppressWarnings("unchecked")
@@ -59,7 +55,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
         }
 
         @SuppressWarnings({"unchecked","rawtypes"})
-        final Optional<DataContainerCodecContext<?, ?>> optAugCtx = context.possibleStreamChild(
+        final Optional<DataContainerCodecContext<?, ?>> optAugCtx = codecContext().possibleStreamChild(
             (Class) augmentationType);
         if (optAugCtx.isPresent()) {
             final DataContainerCodecContext<?, ?> augCtx = optAugCtx.get();
@@ -85,7 +81,7 @@ public abstract class AugmentableCodecDataObject<T extends DataObject & Augmenta
             return local;
         }
 
-        local = ImmutableMap.copyOf(context.getAllAugmentationsFrom(codecData()));
+        local = ImmutableMap.copyOf(codecContext().getAllAugmentationsFrom(codecData()));
         return CACHED_AUGMENTATIONS_UPDATER.compareAndSet(this, null, local) ? local : cachedAugmentations;
     }
 

@@ -11,8 +11,8 @@ import static java.util.Objects.requireNonNull;
 import static org.opendaylight.mdsal.binding.spec.naming.BindingMapping.IDENTIFIABLE_KEY_NAME;
 
 import java.lang.reflect.Method;
-import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.List;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.Identifiable;
 import org.opendaylight.yangtools.yang.binding.Identifier;
@@ -27,7 +27,7 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
 
     private KeyedListNodeCodecContext(final DataContainerCodecPrototype<ListSchemaNode> prototype,
             final Method keyMethod, final IdentifiableItemCodec codec) {
-        super(prototype, new SimpleImmutableEntry<>(keyMethod, codec));
+        super(prototype, keyMethod);
         this.codec = requireNonNull(codec);
     }
 
@@ -77,6 +77,10 @@ final class KeyedListNodeCodecContext<D extends DataObject & Identifiable<?>> ex
     @SuppressWarnings({ "rawtypes", "unchecked" })
     NodeIdentifierWithPredicates serialize(final Identifier<?> key) {
         return codec.serialize(IdentifiableItem.of((Class)getBindingClass(), (Identifier)key));
+    }
+
+    @NonNull Identifier<?> deserialize(final NodeIdentifierWithPredicates arg) {
+        return codec.deserializeIdentifier(arg);
     }
 
     @Override

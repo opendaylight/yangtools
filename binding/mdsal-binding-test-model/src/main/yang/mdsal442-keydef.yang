@@ -1,0 +1,18 @@
+module mdsal442-keydef {
+    namespace mdsal442-keydef;
+    prefix keydef;
+
+    grouping grp {
+        list lst {
+            key foo;
+            leaf foo {
+                type string;
+            }
+        }
+    }
+
+    container def {
+        uses grp;
+    }
+}
+

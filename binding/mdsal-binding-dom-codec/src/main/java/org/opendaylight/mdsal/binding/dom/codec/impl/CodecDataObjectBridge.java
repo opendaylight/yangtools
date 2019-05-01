@@ -12,6 +12,7 @@ import static com.google.common.base.Verify.verifyNotNull;
 import com.google.common.annotations.Beta;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import org.opendaylight.mdsal.binding.dom.codec.impl.CodecDataObjectGenerator.Fixed;
 
 /**
  * Bridge for initializing {@link CodecDataObject} instance constants during class loading time. This class is public
@@ -19,7 +20,7 @@ import org.eclipse.jdt.annotation.Nullable;
  */
 @Beta
 public final class CodecDataObjectBridge {
-    private static final ThreadLocal<CodecDataObjectGenerator<?>> CURRENT_CUSTOMIZER = new ThreadLocal<>();
+    private static final ThreadLocal<Fixed<?>> CURRENT_CUSTOMIZER = new ThreadLocal<>();
 
     private CodecDataObjectBridge() {
 
@@ -29,17 +30,13 @@ public final class CodecDataObjectBridge {
         return current().resolve(methodName);
     }
 
-    public static @NonNull IdentifiableItemCodec resolveKey(final @NonNull String methodName) {
-        return current().resolveKey(methodName);
-    }
-
-    static @Nullable CodecDataObjectGenerator<?> setup(final @NonNull CodecDataObjectGenerator<?> next) {
-        final CodecDataObjectGenerator<?> prev = CURRENT_CUSTOMIZER.get();
+    static @Nullable Fixed<?> setup(final @NonNull Fixed<?> next) {
+        final Fixed<?> prev = CURRENT_CUSTOMIZER.get();
         CURRENT_CUSTOMIZER.set(verifyNotNull(next));
         return prev;
     }
 
-    static void tearDown(final @Nullable CodecDataObjectGenerator<?> prev) {
+    static void tearDown(final @Nullable Fixed<?> prev) {
         if (prev == null) {
             CURRENT_CUSTOMIZER.remove();
         } else {
@@ -47,7 +44,7 @@ public final class CodecDataObjectBridge {
         }
     }
 
-    private static @NonNull CodecDataObjectGenerator<?> current() {
+    private static @NonNull Fixed<?> current() {
         return verifyNotNull(CURRENT_CUSTOMIZER.get(), "No customizer attached");
     }
 }

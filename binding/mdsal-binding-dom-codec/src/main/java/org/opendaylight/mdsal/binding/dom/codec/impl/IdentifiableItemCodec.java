@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import com.google.common.annotations.Beta;
 import com.google.common.base.Throwables;
 import com.google.common.collect.ImmutableList;
 import java.lang.invoke.MethodHandle;
@@ -21,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.mdsal.binding.spec.naming.BindingMapping;
 import org.opendaylight.yangtools.concepts.Codec;
 import org.opendaylight.yangtools.util.ImmutableOffsetMap;
@@ -34,11 +34,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.model.api.ListSchemaNode;
 
 /**
- * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode. This class is public
- * only because implementation restrictions and can change at any time.
+ * Codec support for extracting the {@link Identifiable#key()} method return from a MapEntryNode.
  */
-@Beta
-public abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
+abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithPredicates, IdentifiableItem<?, ?>> {
     private static final class SingleKey extends IdentifiableItemCodec {
         private static final MethodType CTOR_TYPE = MethodType.methodType(Identifier.class, Object.class);
 
@@ -151,14 +149,7 @@ public abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithP
     @Override
     @SuppressWarnings({ "rawtypes", "unchecked", "checkstyle:illegalCatch" })
     public final IdentifiableItem<?, ?> deserialize(final NodeIdentifierWithPredicates input) {
-        final Identifier<?> identifier;
-        try {
-            identifier = deserializeIdentifier(input.getKeyValues());
-        } catch (Throwable e) {
-            Throwables.throwIfUnchecked(e);
-            throw new IllegalStateException("Failed to deserialize " + input, e);
-        }
-
+        final Identifier<?> identifier = deserializeIdentifier(input);
         return IdentifiableItem.of((Class) identifiable, (Identifier) identifier);
     }
 
@@ -167,10 +158,20 @@ public abstract class IdentifiableItemCodec implements Codec<NodeIdentifierWithP
         return serializeIdentifier(qname, input.getKey());
     }
 
-    @SuppressWarnings("checkstyle:illegalThrows")
-    abstract Identifier<?> deserializeIdentifier(Map<QName, Object> keyValues) throws Throwable;
+    @SuppressWarnings("checkstyle:illegalCatch")
+    final @NonNull Identifier<?> deserializeIdentifier(final NodeIdentifierWithPredicates input) {
+        try {
+            return deserializeIdentifier(input.getKeyValues());
+        } catch (Throwable e) {
+            Throwables.throwIfUnchecked(e);
+            throw new IllegalStateException("Failed to deserialize " + input, e);
+        }
+    }
 
-    abstract NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
+    @SuppressWarnings("checkstyle:illegalThrows")
+    abstract @NonNull Identifier<?> deserializeIdentifier(Map<QName, Object> keyValues) throws Throwable;
+
+    abstract @NonNull NodeIdentifierWithPredicates serializeIdentifier(QName qname, Identifier<?> key);
 
     static MethodHandle getConstructor(final Class<? extends Identifier<?>> clazz) {
         for (@SuppressWarnings("rawtypes") final Constructor constr : clazz.getConstructors()) {

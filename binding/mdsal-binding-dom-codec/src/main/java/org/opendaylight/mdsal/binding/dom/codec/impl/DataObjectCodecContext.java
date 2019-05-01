@@ -9,7 +9,6 @@ package org.opendaylight.mdsal.binding.dom.codec.impl;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Verify.verify;
-import static com.google.common.base.Verify.verifyNotNull;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -20,8 +19,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -82,7 +79,6 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
     private static final MethodType DATAOBJECT_TYPE = MethodType.methodType(DataObject.class,
         DataObjectCodecContext.class, NormalizedNodeContainer.class);
-    private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
     private static final Augmentations EMPTY_AUGMENTATIONS = new Augmentations(ImmutableMap.of(), ImmutableMap.of());
 
     private final ImmutableMap<String, ValueNodeCodecContext> leafChild;
@@ -106,17 +102,15 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         this(prototype, null);
     }
 
-    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype,
-            final Entry<Method, IdentifiableItemCodec> keyMethod) {
+    DataObjectCodecContext(final DataContainerCodecPrototype<T> prototype, final Method keyMethod) {
         super(prototype);
 
         final Class<D> bindingClass = getBindingClass();
 
-        final Map<Method, ValueNodeCodecContext> tmpLeaves = factory().getLeafNodes(bindingClass, getSchema());
+        final ImmutableMap<Method, ValueNodeCodecContext> tmpLeaves = factory().getLeafNodes(bindingClass, getSchema());
         final Map<Class<?>, Method> clsToMethod = BindingReflections.getChildrenClassToMethod(bindingClass);
 
         final Map<YangInstanceIdentifier.PathArgument, NodeContextSupplier> byYangBuilder = new HashMap<>();
-        final Map<Method, NodeContextSupplier> tmpMethodToSupplier = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byStreamClassBuilder = new HashMap<>();
         final Map<Class<?>, DataContainerCodecPrototype<?>> byBindingArgClassBuilder = new HashMap<>();
 
@@ -125,12 +119,12 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
                 ImmutableMap.builderWithExpectedSize(tmpLeaves.size());
         for (final Entry<Method, ValueNodeCodecContext> entry : tmpLeaves.entrySet()) {
             final ValueNodeCodecContext leaf = entry.getValue();
-            tmpMethodToSupplier.put(entry.getKey(), leaf);
             leafChildBuilder.put(leaf.getSchema().getQName().getLocalName(), leaf);
             byYangBuilder.put(leaf.getDomPathArgument(), leaf);
         }
         this.leafChild = leafChildBuilder.build();
 
+        final Map<Method, Class<?>> tmpDataObjects = new HashMap<>();
         for (final Entry<Class<?>, Method> childDataObj : clsToMethod.entrySet()) {
             final Method method = childDataObj.getValue();
             verify(!method.isDefault(), "Unexpected default method %s in %s", method, bindingClass);
@@ -142,7 +136,7 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
             }
 
             final DataContainerCodecPrototype<?> childProto = loadChildPrototype(retClass);
-            tmpMethodToSupplier.put(method, childProto);
+            tmpDataObjects.put(method, childProto.getBindingClass());
             byStreamClassBuilder.put(childProto.getBindingClass(), childProto);
             byYangBuilder.put(childProto.getYangArg(), childProto);
             if (childProto.isChoice()) {
@@ -151,15 +145,6 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
                     byBindingArgClassBuilder.put(cazeChild, childProto);
                 }
             }
-        }
-
-        // Make sure properties are alpha-sorted
-        final Method[] properties = tmpMethodToSupplier.keySet().toArray(new Method[0]);
-        Arrays.sort(properties, METHOD_BY_ALPHABET);
-        final Builder<Method, NodeContextSupplier> propBuilder = ImmutableMap.builderWithExpectedSize(
-            properties.length);
-        for (Method prop : properties) {
-            propBuilder.put(prop, verifyNotNull(tmpMethodToSupplier.get(prop)));
         }
 
         this.byYang = ImmutableMap.copyOf(byYangBuilder);
@@ -176,11 +161,11 @@ public abstract class DataObjectCodecContext<D extends DataObject, T extends Dat
         if (Augmentable.class.isAssignableFrom(bindingClass)) {
             this.possibleAugmentations = factory().getRuntimeContext().getAvailableAugmentationTypes(getSchema());
             generatedClass = CodecDataObjectGenerator.generateAugmentable(prototype.getFactory().getLoader(),
-                bindingClass, propBuilder.build(), keyMethod);
+                bindingClass, tmpLeaves, tmpDataObjects, keyMethod);
         } else {
             this.possibleAugmentations = ImmutableMap.of();
             generatedClass = CodecDataObjectGenerator.generate(prototype.getFactory().getLoader(), bindingClass,
-                propBuilder.build(), keyMethod);
+                tmpLeaves, tmpDataObjects, keyMethod);
         }
         reloadAllAugmentations();
 
