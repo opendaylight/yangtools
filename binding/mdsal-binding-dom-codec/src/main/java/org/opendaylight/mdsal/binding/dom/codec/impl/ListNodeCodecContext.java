@@ -7,8 +7,11 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
@@ -55,11 +58,26 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     private List<D> fromMap(final MapNode nodes) {
-        List<D> ret = new ArrayList<>(nodes.getValue().size());
-        for (MapEntryNode node : nodes.getValue()) {
+        final Collection<MapEntryNode> value = nodes.getValue();
+        return COMPAT_MUTABLE_LISTS ? mutableFromMap(value) : immutableFromMap(value);
+    }
+
+    @Deprecated
+    private List<D> mutableFromMap(final Collection<MapEntryNode> value) {
+        final List<D> ret = new ArrayList<>(value.size());
+        for (MapEntryNode node : value) {
             ret.add(fromMapEntry(node));
         }
         return ret;
+    }
+
+    private ImmutableList<D> immutableFromMap(final Collection<MapEntryNode> value) {
+        final Builder<D> builder = ImmutableList.builderWithExpectedSize(value.size());
+        // FIXME: Could be this lazy transformed list?
+        for (MapEntryNode node : value) {
+            builder.add(fromMapEntry(node));
+        }
+        return builder.build();
     }
 
     private D fromMapEntry(final MapEntryNode node) {
@@ -71,9 +89,23 @@ class ListNodeCodecContext<D extends DataObject> extends DataObjectCodecContext<
     }
 
     private List<D> fromUnkeyedList(final UnkeyedListNode nodes) {
+        final Collection<UnkeyedListEntryNode> value = nodes.getValue();
+        return COMPAT_MUTABLE_LISTS ? mutableUnkeyedList(value) : immutableUnkeyedList(value);
+    }
+
+    private ImmutableList<D> immutableUnkeyedList(final Collection<UnkeyedListEntryNode> value) {
         // FIXME: Could be this lazy transformed list?
-        List<D> ret = new ArrayList<>(nodes.getValue().size());
-        for (UnkeyedListEntryNode node : nodes.getValue()) {
+        final Builder<D> builder = ImmutableList.builderWithExpectedSize(value.size());
+        for (UnkeyedListEntryNode node : value) {
+            builder.add(fromUnkeyedListEntry(node));
+        }
+        return builder.build();
+    }
+
+    @Deprecated
+    private List<D> mutableUnkeyedList(final Collection<UnkeyedListEntryNode> value) {
+        final List<D> ret = new ArrayList<>(value.size());
+        for (UnkeyedListEntryNode node : value) {
             ret.add(fromUnkeyedListEntry(node));
         }
         return ret;

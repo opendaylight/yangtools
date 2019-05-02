@@ -7,6 +7,8 @@
  */
 package org.opendaylight.mdsal.binding.dom.codec.impl;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableList.Builder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,12 +30,27 @@ final class LeafSetNodeCodecContext extends ValueNodeCodecContext.WithCodec {
         if (normalizedNode instanceof LeafSetNode<?>) {
             @SuppressWarnings("unchecked")
             final Collection<LeafSetEntryNode<Object>> domValues = ((LeafSetNode<Object>) normalizedNode).getValue();
-            final List<Object> result = new ArrayList<>(domValues.size());
-            for (final LeafSetEntryNode<Object> valueNode : domValues) {
-                result.add(getValueCodec().deserialize(valueNode.getValue()));
-            }
-            return result;
+            final Codec<Object, Object> codec = getValueCodec();
+            return COMPAT_MUTABLE_LISTS ? createMutableList(codec, domValues) : createImmutableList(codec, domValues);
         }
         return null;
+    }
+
+    private static List<Object> createMutableList(final Codec<Object, Object> codec,
+            final Collection<LeafSetEntryNode<Object>> domValues) {
+        final List<Object> result = new ArrayList<>(domValues.size());
+        for (final LeafSetEntryNode<Object> valueNode : domValues) {
+            result.add(codec.deserialize(valueNode.getValue()));
+        }
+        return result;
+    }
+
+    private static ImmutableList<Object> createImmutableList(final Codec<Object, Object> codec,
+            final Collection<LeafSetEntryNode<Object>> domValues) {
+        final Builder<Object> builder = ImmutableList.builderWithExpectedSize(domValues.size());
+        for (final LeafSetEntryNode<Object> valueNode : domValues) {
+            builder.add(codec.deserialize(valueNode.getValue()));
+        }
+        return builder.build();
     }
 }
