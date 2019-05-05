@@ -16,7 +16,6 @@ import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.invok
 import static org.opendaylight.mdsal.binding.dom.codec.impl.ByteBuddyUtils.putField;
 
 import com.google.common.base.MoreObjects.ToStringHelper;
-import com.google.common.base.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
 import java.lang.reflect.Method;
@@ -52,9 +51,7 @@ import net.bytebuddy.implementation.bytecode.member.MethodVariableAccess;
 import net.bytebuddy.jar.asm.Label;
 import net.bytebuddy.jar.asm.MethodVisitor;
 import net.bytebuddy.jar.asm.Opcodes;
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.BridgeProvider;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.LocalNameProvider;
 import org.opendaylight.mdsal.binding.dom.codec.impl.ClassGeneratorBridge.NodeContextSupplierProvider;
 import org.opendaylight.mdsal.binding.dom.codec.loader.CodecClassLoader;
@@ -157,10 +154,10 @@ import org.slf4j.LoggerFactory;
  * This strategy works due to close cooperation with the target ClassLoader, as the entire code generation and loading
  * block runs with the class loading lock for this FQCN and the reference is not leaked until the process completes.
  */
-abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>, BridgeProvider {
+abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
     // Not reusable defintion: we can inline NodeContextSuppliers without a problem
     private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
-            implements NodeContextSupplierProvider {
+            implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
 
         Fixed(final Builder<?> template, final ImmutableMap<Method, NodeContextSupplier> properties,
@@ -198,7 +195,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
 
     // Reusable definition: we have to rely on context lookups
     private static final class Reusable<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
-            implements LocalNameProvider {
+            implements LocalNameProvider<T> {
         private final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties;
         private final Map<Method, Class<?>> daoProperties;
 
@@ -339,32 +336,6 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
                 .intercept(codecFillToString(methods))
                 // ... and build it
                 .make());
-    }
-
-    @Override
-    public Class<T> customizeLoading(final @NonNull Supplier<Class<T>> loader) {
-        final BridgeProvider prev = ClassGeneratorBridge.setup(this);
-        try {
-            final Class<T> result = loader.get();
-
-            /*
-             * This a bit of magic to support NodeContextSupplier constants. These constants need to be resolved
-             * while we have the information needed to find them -- that information is being held in this instance
-             * and we leak it to a thread-local variable held by CodecDataObjectBridge.
-             *
-             * By default the JVM will defer class initialization to first use, which unfortunately is too late for
-             * us, and hence we need to force class to initialize.
-             */
-            try {
-                Class.forName(result.getName(), true, result.getClassLoader());
-            } catch (ClassNotFoundException e) {
-                throw new LinkageError("Failed to find newly-defined " + result, e);
-            }
-
-            return result;
-        } finally {
-            ClassGeneratorBridge.tearDown(prev);
-        }
     }
 
     abstract Builder<T> generateGetters(Builder<T> builder);
