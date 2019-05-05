@@ -159,11 +159,11 @@ import org.slf4j.LoggerFactory;
  */
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T>, BridgeProvider {
     // Not reusable defintion: we can inline NodeContextSuppliers without a problem
-    static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
+    private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements NodeContextSupplierProvider {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
 
-        private Fixed(final Builder<?> template, final ImmutableMap<Method, NodeContextSupplier> properties,
+        Fixed(final Builder<?> template, final ImmutableMap<Method, NodeContextSupplier> properties,
                 final @Nullable Method keyMethod) {
             super(template, keyMethod);
             this.properties = requireNonNull(properties);
@@ -197,13 +197,12 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     }
 
     // Reusable definition: we have to rely on context lookups
-    static final class Reusable<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
+    private static final class Reusable<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements LocalNameProvider {
         private final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties;
         private final Map<Method, Class<?>> daoProperties;
 
-        private Reusable(final Builder<?> template,
-                final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
+        Reusable(final Builder<?> template, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
                 final Map<Method, Class<?>> daoProperties, final @Nullable Method keyMethod) {
             super(template, keyMethod);
             this.simpleProperties = requireNonNull(simpleProperties);
