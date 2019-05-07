@@ -12,6 +12,7 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.base.MoreObjects.ToStringHelper;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReferenceFieldUpdater;
 import org.eclipse.jdt.annotation.NonNull;
@@ -57,6 +58,7 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
     }
 
     @Override
+    @SuppressFBWarnings(value = "EQ_UNUSUAL", justification = "State is examined indirectly enough to confuse SpotBugs")
     public final boolean equals(final Object obj) {
         if (obj == this) {
             return true;
@@ -67,9 +69,8 @@ public abstract class CodecDataObject<T extends DataObject> implements DataObjec
         }
         @SuppressWarnings("unchecked")
         final T other = (T) iface.cast(obj);
-        if (other instanceof CodecDataObject) {
-            return data.equals(((CodecDataObject<?>) obj).data);
-        }
+        // Note: we do not want to compare NormalizedNode data here, as we may be looking at different instantiations
+        //       of the same grouping -- in which case normalized node will not compare as equal.
         return codecAugmentedEquals(other);
     }
 
