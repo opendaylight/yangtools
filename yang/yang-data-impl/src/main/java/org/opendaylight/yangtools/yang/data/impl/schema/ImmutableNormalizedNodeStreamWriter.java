@@ -11,6 +11,8 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
+import com.google.common.collect.ClassToInstanceMap;
+import com.google.common.collect.ImmutableClassToInstanceMap;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
@@ -22,7 +24,9 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.AnydataNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
@@ -56,7 +60,8 @@ import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
  * <p>
  * This class is not final for purposes of customization, normal users should not need to subclass it.
  */
-public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStreamWriter {
+public class ImmutableNormalizedNodeStreamWriter
+        implements NormalizedNodeStreamWriter, AnydataNormalizedNodeStreamWriter {
     @SuppressWarnings("rawtypes")
     private final Deque<NormalizedNodeBuilder> builders = new ArrayDeque<>();
 
@@ -129,6 +134,11 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
      */
     public static NormalizedNodeStreamWriter from(final NormalizedNodeMetadataResult result) {
         return new ImmutableMetadataNormalizedNodeStreamWriter(result);
+    }
+
+    @Override
+    public ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
+        return ImmutableClassToInstanceMap.of(AnydataNormalizedNodeStreamWriter.class, this);
     }
 
     @Override
