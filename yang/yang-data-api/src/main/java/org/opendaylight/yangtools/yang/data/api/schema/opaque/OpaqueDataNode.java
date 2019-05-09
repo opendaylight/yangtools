@@ -5,18 +5,18 @@
  * terms of the Eclipse Public License v1.0 which accompanies this distribution,
  * and is available at http://www.eclipse.org/legal/epl-v10.html
  */
-package org.opendaylight.yangtools.yang.data.api.schema;
+package org.opendaylight.yangtools.yang.data.api.schema.opaque;
 
 import com.google.common.annotations.Beta;
+import org.opendaylight.yangtools.concepts.Identifiable;
+import org.opendaylight.yangtools.concepts.Immutable;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 
 /**
- * A NormalizedNode holding the contents of an {@code anydata} node in some object model. This interface is a common
- * capture for all object model specializations -- such as {@link NormalizedAnydataNode} and {@link OpaqueAnydataNode}.
- *
- * @param <V> Value type, uniquely identifying the object model used for values
+ * Common interface for opaque containers and lists. All implementations of this interface are required to be
+ * deeply-immutable.
  */
 @Beta
-public interface AnydataNode<V> extends ForeignDataNode<NodeIdentifier, V> {
+public interface OpaqueDataNode extends Identifiable<NodeIdentifier>, Immutable {
 
 }
