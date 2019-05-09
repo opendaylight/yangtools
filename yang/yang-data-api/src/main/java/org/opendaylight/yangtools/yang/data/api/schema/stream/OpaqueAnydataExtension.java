@@ -113,6 +113,8 @@ public interface OpaqueAnydataExtension extends NormalizedNodeStreamWriterExtens
         * @throws IOException if an underlying IO error occurs
         */
        void endNode() throws IOException;
+
+       void scalarValue(@NonNull Object value);
     }
 
     interface StreamWriterException extends ObjectExtension<StreamWriter, StreamWriterException> {
