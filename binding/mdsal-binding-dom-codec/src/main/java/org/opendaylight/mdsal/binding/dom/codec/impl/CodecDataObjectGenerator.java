@@ -35,6 +35,7 @@ import net.bytebuddy.description.field.FieldDescription;
 import net.bytebuddy.description.method.MethodDescription;
 import net.bytebuddy.description.type.TypeDefinition;
 import net.bytebuddy.description.type.TypeDescription;
+import net.bytebuddy.description.type.TypeDescription.ForLoadedType;
 import net.bytebuddy.description.type.TypeDescription.Generic;
 import net.bytebuddy.dynamic.DynamicType.Builder;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
@@ -168,9 +169,9 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
 
-        Fixed(final Builder<?> template, final ImmutableMap<Method, NodeContextSupplier> properties,
+        Fixed(final TypeDescription superClass, final ImmutableMap<Method, NodeContextSupplier> properties,
                 final @Nullable Method keyMethod) {
-            super(template, keyMethod);
+            super(superClass, keyMethod);
             this.properties = requireNonNull(properties);
         }
 
@@ -207,9 +208,9 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
         private final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties;
         private final Map<Method, Class<?>> daoProperties;
 
-        Reusable(final Builder<?> template, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
+        Reusable(final TypeDescription superClass, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
                 final Map<Method, Class<?>> daoProperties, final @Nullable Method keyMethod) {
-            super(template, keyMethod);
+            super(superClass, keyMethod);
             this.simpleProperties = requireNonNull(simpleProperties);
             this.daoProperties = requireNonNull(daoProperties);
         }
@@ -258,6 +259,8 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static final Generic BB_DATAOBJECT = TypeDefinition.Sort.describe(DataObject.class);
     private static final Generic BB_HELPER = TypeDefinition.Sort.describe(ToStringHelper.class);
     private static final Generic BB_INT = TypeDefinition.Sort.describe(int.class);
+    private static final TypeDescription BB_CDO = ForLoadedType.of(CodecDataObject.class);
+    private static final TypeDescription BB_ACDO = ForLoadedType.of(AugmentableCodecDataObject.class);
     private static final Comparator<Method> METHOD_BY_ALPHABET = Comparator.comparing(Method::getName);
 
     private static final StackManipulation ARRAYS_EQUALS = invokeMethod(Arrays.class, "equals",
@@ -272,20 +275,13 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private static final int PROT_FINAL = Opcodes.ACC_PROTECTED | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
     private static final int PUB_FINAL = Opcodes.ACC_PUBLIC | Opcodes.ACC_FINAL | Opcodes.ACC_SYNTHETIC;
 
-    private static final Builder<?> CDO;
-    private static final Builder<?> ACDO;
+    private static final ByteBuddy BB = new ByteBuddy();
 
-    static {
-        final ByteBuddy bb = new ByteBuddy();
-        CDO = bb.subclass(CodecDataObject.class).visit(ByteBuddyUtils.computeFrames());
-        ACDO = bb.subclass(AugmentableCodecDataObject.class).visit(ByteBuddyUtils.computeFrames());
-    }
-
-    private final Builder<?> template;
+    private final TypeDescription superClass;
     private final Method keyMethod;
 
-    CodecDataObjectGenerator(final Builder<?> template, final @Nullable Method keyMethod) {
-        this.template = requireNonNull(template);
+    CodecDataObjectGenerator(final TypeDescription superClass, final @Nullable Method keyMethod) {
+        this.superClass = requireNonNull(superClass);
         this.keyMethod = keyMethod;
     }
 
@@ -293,7 +289,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final Class<D> bindingInterface, final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Method, Class<?>> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
-            new Reusable<>(CDO, simpleProperties, daoProperties, keyMethod));
+            new Reusable<>(BB_CDO, simpleProperties, daoProperties, keyMethod));
     }
 
     static <D extends DataObject, T extends CodecDataObject<T>> Class<T> generateAugmentable(
@@ -301,7 +297,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final ImmutableMap<Method, ValueNodeCodecContext> simpleProperties,
             final Map<Method, Class<?>> daoProperties, final Method keyMethod) {
         return loader.generateClass(bindingInterface, "codecImpl",
-            new Reusable<>(ACDO, simpleProperties, daoProperties, keyMethod));
+            new Reusable<>(BB_ACDO, simpleProperties, daoProperties, keyMethod));
     }
 
     @Override
@@ -309,8 +305,10 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
             final Class<?> bindingInterface) {
         LOG.trace("Generating class {}", fqcn);
 
+        final Generic bindingDef = TypeDefinition.Sort.describe(bindingInterface);
         @SuppressWarnings("unchecked")
-        Builder<T> builder = (Builder<T>) template.name(fqcn).implement(bindingInterface);
+        Builder<T> builder = (Builder<T>) BB.subclass(Generic.Builder.parameterizedType(superClass, bindingDef).build())
+            .visit(ByteBuddyUtils.computeFrames()).name(fqcn).implement(bindingDef);
 
         builder = generateGetters(builder);
 
