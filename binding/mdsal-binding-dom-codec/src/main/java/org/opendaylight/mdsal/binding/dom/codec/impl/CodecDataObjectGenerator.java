@@ -155,7 +155,7 @@ import org.slf4j.LoggerFactory;
  * block runs with the class loading lock for this FQCN and the reference is not leaked until the process completes.
  */
 abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements ClassGenerator<T> {
-    // Not reusable defintion: we can inline NodeContextSuppliers without a problem
+    // Not reusable definition: we can inline NodeContextSuppliers without a problem
     private static final class Fixed<T extends CodecDataObject<?>> extends CodecDataObjectGenerator<T>
             implements NodeContextSupplierProvider<T> {
         private final ImmutableMap<Method, NodeContextSupplier> properties;
@@ -276,7 +276,7 @@ abstract class CodecDataObjectGenerator<T extends CodecDataObject<?>> implements
     private final Builder<?> template;
     private final Method keyMethod;
 
-    private CodecDataObjectGenerator(final Builder<?> template, final @Nullable Method keyMethod) {
+    CodecDataObjectGenerator(final Builder<?> template, final @Nullable Method keyMethod) {
         this.template = requireNonNull(template);
         this.keyMethod = keyMethod;
     }
