@@ -7,6 +7,7 @@
  */
 package org.opendaylight.yangtools.concepts;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
@@ -69,13 +70,34 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
         }
     }
 
-    private final @NonNull ImmutableSet<Class<? extends E>> extensions;
-    private final @NonNull O object;
+    public static final class Factory<T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> {
+        private final @NonNull ImmutableSet<Class<? extends E>> extensions;
 
-    public ObjectExtensions(final ImmutableSet<Class<? extends E>> extensions, final O object) {
+        Factory(final ImmutableSet<Class<? extends E>> extensions) {
+            this.extensions = requireNonNull(extensions);
+        }
+
+        public ClassToInstanceMap<E> newInstance(final T object) {
+            return new ObjectExtensions<>(extensions, object);
+        }
+    }
+
+    private final @NonNull ImmutableSet<Class<? extends E>> extensions;
+    private final @NonNull Object object;
+
+    ObjectExtensions(final ImmutableSet<Class<? extends E>> extensions, final Object object) {
         this.extensions = requireNonNull(extensions);
         this.object = requireNonNull(object);
+    }
 
+    @SafeVarargs
+    public static <T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> Factory<T, O, E> factory(
+        final Class<T> objClass, final Class<? extends E>... extensions) {
+        final ImmutableSet<Class<? extends E>> set = ImmutableSet.copyOf(extensions);
+        for (Class<? extends E> extension : set) {
+            checkArgument(extension.isAssignableFrom(objClass), "%s is not a valid extension %s", objClass, extension);
+        }
+        return new Factory<>(set);
     }
 
     @Override
