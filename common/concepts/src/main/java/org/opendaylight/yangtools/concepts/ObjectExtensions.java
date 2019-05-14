@@ -77,7 +77,7 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
             this.extensions = requireNonNull(extensions);
         }
 
-        public ClassToInstanceMap<E> newInstance(final T object) {
+        public @NonNull ClassToInstanceMap<E> newInstance(final T object) {
             return new ObjectExtensions<>(extensions, object);
         }
     }
@@ -91,8 +91,8 @@ public final class ObjectExtensions<O extends ExtensibleObject<O, E>, E extends 
     }
 
     @SafeVarargs
-    public static <T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> Factory<T, O, E> factory(
-        final Class<T> objClass, final Class<? extends E>... extensions) {
+    public static <T, O extends ExtensibleObject<O, E>, E extends ObjectExtension<O, E>> @NonNull Factory<T, O, E>
+            factory(final Class<T> objClass, final Class<? extends E>... extensions) {
         final ImmutableSet<Class<? extends E>> set = ImmutableSet.copyOf(extensions);
         for (Class<? extends E> extension : set) {
             checkArgument(extension.isAssignableFrom(objClass), "%s is not a valid extension %s", objClass, extension);
