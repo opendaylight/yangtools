@@ -147,10 +147,10 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startLeafSetEntryNode(final NodeWithValue<?> name) {
-        @SuppressWarnings("rawtypes")
-        final NormalizedNodeBuilder current = current();
-        checkArgument(current instanceof ImmutableOrderedLeafSetNodeBuilder
-            || current instanceof ImmutableLeafSetNodeBuilder, "LeafSetEntryNode is not valid for parent %s", current);
+        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        checkArgument(current instanceof ImmutableLeafSetNodeBuilder
+            || current instanceof ImmutableOrderedLeafSetNodeBuilder || current instanceof NormalizedNodeResultBuilder,
+            "LeafSetEntryNode is not valid for parent %s", current);
         enter(name, ImmutableLeafSetEntryNodeBuilder.create());
         nextSchema = null;
     }
@@ -195,8 +195,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        checkArgument(current() instanceof NormalizedNodeResultBuilder
-                || current() instanceof ImmutableUnkeyedListNodeBuilder);
+        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        checkArgument(current instanceof ImmutableUnkeyedListNodeBuilder ||
+            current instanceof NormalizedNodeResultBuilder);
         enter(name, UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
                 : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint));
     }
@@ -210,10 +211,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
-        if (!(current() instanceof NormalizedNodeResultBuilder)) {
-            checkArgument(current() instanceof ImmutableMapNodeBuilder
-                || current() instanceof ImmutableOrderedMapNodeBuilder);
-        }
+        final NormalizedNodeBuilder<?, ?, ?> current = current();
+        checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableOrderedMapNodeBuilder
+            || current instanceof NormalizedNodeResultBuilder);
 
         enter(identifier, UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
                 : ImmutableMapEntryNodeBuilder.create(childSizeHint));
