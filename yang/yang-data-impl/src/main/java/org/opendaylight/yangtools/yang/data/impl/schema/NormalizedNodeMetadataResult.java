@@ -28,4 +28,10 @@ public class NormalizedNodeMetadataResult extends NormalizedNodeResult {
     void setResult(final NormalizedMetadata metadata) {
         this.metadata = metadata;
     }
+
+    @Override
+    void reset() {
+        metadata = null;
+        super.reset();
+    }
 }

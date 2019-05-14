@@ -30,6 +30,10 @@ public class NormalizedNodeResult {
         return result;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
     void setResult(final NormalizedNode<?, ?> result) {
         if (finished) {
             throw new ResultAlreadySetException("Normalized Node result was already set.", this.result);
@@ -38,7 +42,8 @@ public class NormalizedNodeResult {
         this.result = result;
     }
 
-    public boolean isFinished() {
-        return finished;
+    void reset() {
+        result = null;
+        finished = false;
     }
 }

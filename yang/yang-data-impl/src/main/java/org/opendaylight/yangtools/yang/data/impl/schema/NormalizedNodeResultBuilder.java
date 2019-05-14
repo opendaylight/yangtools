@@ -7,7 +7,10 @@
  */
 package org.opendaylight.yangtools.yang.data.impl.schema;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
+import org.eclipse.jdt.annotation.NonNull;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
@@ -15,10 +18,18 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNo
 
 @SuppressWarnings("rawtypes")
 final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
-    private final NormalizedNodeResult result;
+    private final @NonNull NormalizedNodeResult result;
+
+    NormalizedNodeResultBuilder() {
+        this.result = new NormalizedNodeResult();
+    }
 
     NormalizedNodeResultBuilder(final NormalizedNodeResult result) {
-        this.result = result;
+        this.result = requireNonNull(result);
+    }
+
+    @NonNull NormalizedNodeResult result() {
+        return result;
     }
 
     @Override
