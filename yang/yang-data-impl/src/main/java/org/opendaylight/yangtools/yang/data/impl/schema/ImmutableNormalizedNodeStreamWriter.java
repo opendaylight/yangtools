@@ -302,6 +302,12 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         return builders.pop();
     }
 
+    final void reset(final NormalizedNodeResult result) {
+        builders.clear();
+        builders.push(new NormalizedNodeResultBuilder(result));
+        nextSchema = null;
+    }
+
     private void checkDataNodeContainer() {
         @SuppressWarnings("rawtypes")
         final NormalizedNodeContainerBuilder current = currentContainer();
