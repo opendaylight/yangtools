@@ -21,6 +21,7 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.AugmentationIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
+import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
 import org.opendaylight.yangtools.yang.data.api.schema.ChoiceNode;
@@ -45,6 +46,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAn
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableChoiceNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableContainerNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
@@ -142,7 +144,7 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     }
 
     @Override
-    @SuppressWarnings({"rawtypes","unchecked"})
+    @SuppressWarnings({ "rawtypes", "unchecked" })
     public void endNode() {
         final NormalizedNodeContainerBuilder finishedBuilder = builders.poll();
         checkState(finishedBuilder != null, "Node which should be closed does not exists.");
@@ -181,18 +183,22 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void leafSetEntryNode(final QName name, final Object value) {
-        if (getCurrent() instanceof ImmutableOrderedLeafSetNodeBuilder) {
+        final NormalizedNodeContainerBuilder<?, ?, ?, ?> current = getCurrent();
+        if (current instanceof ImmutableLeafSetNodeBuilder) {
             @SuppressWarnings("unchecked")
             ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
-                (ImmutableOrderedLeafSetNodeBuilder<Object>) getCurrent();
+                (ImmutableLeafSetNodeBuilder<Object>) current;
             builder.withChildValue(value);
-        } else if (getCurrent() instanceof ImmutableLeafSetNodeBuilder) {
+        } else if (current instanceof ImmutableOrderedLeafSetNodeBuilder) {
             @SuppressWarnings("unchecked")
             ListNodeBuilder<Object, LeafSetEntryNode<Object>> builder =
-                (ImmutableLeafSetNodeBuilder<Object>) getCurrent();
+                (ImmutableOrderedLeafSetNodeBuilder<Object>) current;
             builder.withChildValue(value);
+        } else if (current instanceof NormalizedNodeResultBuilder) {
+            ((NormalizedNodeResultBuilder) current).addChild(ImmutableLeafSetEntryNodeBuilder.create()
+                .withNodeIdentifier(new NodeWithValue<>(name, value)).withValue(value).build());
         } else {
-            throw new IllegalArgumentException("LeafSetEntryNode is not valid for parent " + getCurrent());
+            throw new IllegalArgumentException("LeafSetEntryNode is not valid for parent " + current);
         }
 
         nextSchema = null;
@@ -253,8 +259,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startUnkeyedListItem(final NodeIdentifier name, final int childSizeHint) {
-        checkArgument(getCurrent() instanceof NormalizedNodeResultBuilder
-                || getCurrent() instanceof ImmutableUnkeyedListNodeBuilder);
+        final NormalizedNodeContainerBuilder<?, ?, ?, ?> current = getCurrent();
+        checkArgument(current instanceof ImmutableUnkeyedListNodeBuilder
+            || current instanceof NormalizedNodeResultBuilder);
         final DataContainerNodeAttrBuilder<NodeIdentifier, UnkeyedListEntryNode> builder =
                 UNKNOWN_SIZE == childSizeHint ? ImmutableUnkeyedListEntryNodeBuilder.create()
                         : ImmutableUnkeyedListEntryNodeBuilder.create(childSizeHint);
@@ -272,10 +279,9 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
 
     @Override
     public void startMapEntryNode(final NodeIdentifierWithPredicates identifier, final int childSizeHint) {
-        if (!(getCurrent() instanceof NormalizedNodeResultBuilder)) {
-            checkArgument(getCurrent() instanceof ImmutableMapNodeBuilder
-                || getCurrent() instanceof ImmutableOrderedMapNodeBuilder);
-        }
+        final NormalizedNodeContainerBuilder<?, ?, ?, ?> current = getCurrent();
+        checkArgument(current instanceof ImmutableMapNodeBuilder || current instanceof ImmutableOrderedMapNodeBuilder
+            || current instanceof NormalizedNodeResultBuilder);
 
         final DataContainerNodeAttrBuilder<NodeIdentifierWithPredicates, MapEntryNode> builder =
                 UNKNOWN_SIZE == childSizeHint ? ImmutableMapEntryNodeBuilder.create()
@@ -311,9 +317,8 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
     private void checkDataNodeContainer() {
         @SuppressWarnings("rawtypes")
         final NormalizedNodeContainerBuilder current = getCurrent();
-        if (!(current instanceof NormalizedNodeResultBuilder)) {
-            checkArgument(current instanceof DataContainerNodeBuilder<?, ?>, "Invalid nesting of data.");
-        }
+        checkArgument(current instanceof DataContainerNodeBuilder || current instanceof NormalizedNodeResultBuilder,
+            "Invalid nesting of data.");
     }
 
     @SuppressWarnings("rawtypes")
