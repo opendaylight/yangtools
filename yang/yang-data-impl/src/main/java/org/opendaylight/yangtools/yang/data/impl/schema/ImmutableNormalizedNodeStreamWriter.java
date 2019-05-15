@@ -12,6 +12,7 @@ import static com.google.common.base.Preconditions.checkState;
 import static java.util.Objects.requireNonNull;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.Deque;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
@@ -39,6 +40,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.CollectionNo
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeAttrBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.DataContainerNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.ListNodeBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeContainerBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAnyXmlNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableAugmentationNodeBuilder;
@@ -338,5 +340,53 @@ public class ImmutableNormalizedNodeStreamWriter implements NormalizedNodeStream
         nextSchema = null;
         builders.clear();
         builders.push(builder);
+    }
+
+    @SuppressWarnings("rawtypes")
+    protected static final class NormalizedNodeResultBuilder implements NormalizedNodeContainerBuilder {
+        private final @NonNull NormalizedNodeResult result;
+
+        NormalizedNodeResultBuilder() {
+            this.result = new NormalizedNodeResult();
+        }
+
+        NormalizedNodeResultBuilder(final NormalizedNodeResult result) {
+            this.result = requireNonNull(result);
+        }
+
+        @NonNull NormalizedNodeResult result() {
+            return result;
+        }
+
+        @Override
+        public NormalizedNodeBuilder withValue(final Object value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder withValue(final Collection value) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNode build() {
+            throw new IllegalStateException("Can not close NormalizedNodeResult");
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder withNodeIdentifier(final PathArgument nodeIdentifier) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder addChild(final NormalizedNode child) {
+            result.setResult(child);
+            return this;
+        }
+
+        @Override
+        public NormalizedNodeContainerBuilder removeChild(final PathArgument key) {
+            throw new UnsupportedOperationException();
+        }
     }
 }
