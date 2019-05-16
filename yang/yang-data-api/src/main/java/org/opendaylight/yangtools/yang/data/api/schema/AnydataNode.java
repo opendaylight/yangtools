@@ -12,7 +12,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 
 /**
  * A NormalizedNode holding the contents of an {@code anydata} node in some object model. This interface is a common
- * capture for all object model specializations -- such as {@link OpaqueAnydataNode}.
+ * capture for all object model specializations -- such as {@link OpaqueAnydataNode} and {@link NormalizedAnydataNode}.
  *
  * @param <V> Value type, uniquely identifying the object model used for values
  */
