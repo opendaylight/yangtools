@@ -31,7 +31,9 @@ import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStre
  * so that the metadata is emitted along with data.
  */
 final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormalizedNodeStreamWriter {
-    private final Deque<NormalizedMetadata> stack = new ArrayDeque<>();
+    private static final Object ABSENT_METADATA = new Object();
+
+    private final Deque<Object> stack = new ArrayDeque<>();
     private final NormalizedMetadataStreamWriter metaWriter;
     private final NormalizedNodeStreamWriter writer;
     private final NormalizedMetadata metadata;
@@ -143,17 +145,24 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
         final NormalizedMetadata child = findMetadata(name);
         if (child != null) {
             emitAnnotations(child.getAnnotations());
+            stack.push(metadata);
+        } else {
+            stack.push(ABSENT_METADATA);
         }
-        stack.push(child);
     }
 
     private @Nullable NormalizedMetadata findMetadata(final PathArgument name) {
-        final NormalizedMetadata current = stack.peek();
-        if (current == null) {
-            // This may either be the first entry or unattached metadata nesting
-            return stack.isEmpty() ? metadata : null;
+        final Object current = stack.peek();
+        if (ABSENT_METADATA == current) {
+            // We do not have any metadata here
+            return null;
         }
-        return current.getChildren().get(name);
+
+        return current instanceof NormalizedMetadata
+                // Find child and return it
+                ? ((NormalizedMetadata) current).getChildren().get(name)
+                        // Empty stack: return first entry
+                        : metadata;
     }
 
     private void emitAnnotations(final Map<QName, Object> annotations) throws IOException {
