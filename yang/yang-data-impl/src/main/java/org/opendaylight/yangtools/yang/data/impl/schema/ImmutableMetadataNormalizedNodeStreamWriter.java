@@ -12,12 +12,13 @@ import static java.util.Objects.requireNonNull;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.ObjectExtensions;
+import org.opendaylight.yangtools.concepts.ObjectExtensions.Factory;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata;
@@ -25,6 +26,7 @@ import org.opendaylight.yangtools.rfc7952.data.util.ImmutableNormalizedMetadata.
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.api.NormalizedNodeBuilder;
 
 /**
@@ -55,6 +57,10 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
         }
     }
 
+    private static final Factory<ImmutableMetadataNormalizedNodeStreamWriter, ?, NormalizedNodeStreamWriterExtension>
+        EXTENSIONS_FACTORY = ObjectExtensions.factory(ImmutableMetadataNormalizedNodeStreamWriter.class,
+            OpaqueAnydataExtension.class, NormalizedMetadataStreamWriter.class);
+
     private final Deque<Builder> builders = new ArrayDeque<>();
     private final NormalizedNodeMetadataResult result;
 
@@ -71,7 +77,7 @@ public class ImmutableMetadataNormalizedNodeStreamWriter extends ImmutableNormal
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
+        return EXTENSIONS_FACTORY.newInstance(this);
     }
 
     @Override
