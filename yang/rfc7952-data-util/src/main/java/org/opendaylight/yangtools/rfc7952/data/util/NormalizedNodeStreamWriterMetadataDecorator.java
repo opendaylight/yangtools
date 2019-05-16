@@ -14,7 +14,6 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Map;
-import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadata;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
@@ -35,6 +34,8 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
     private final NormalizedMetadataStreamWriter metaWriter;
     private final NormalizedNodeStreamWriter writer;
     private final NormalizedMetadata metadata;
+
+    private int absentDepth = 0;
 
     NormalizedNodeStreamWriterMetadataDecorator(final NormalizedNodeStreamWriter writer,
             final NormalizedMetadataStreamWriter metaWriter, final NormalizedMetadata metadata) {
@@ -136,29 +137,39 @@ final class NormalizedNodeStreamWriterMetadataDecorator extends ForwardingNormal
     @Override
     public void endNode() throws IOException {
         super.endNode();
-        stack.pop();
+
+        if (absentDepth > 0) {
+            absentDepth--;
+        } else {
+            stack.pop();
+        }
     }
 
     private void enterMetadataNode(final PathArgument name) throws IOException {
-        final NormalizedMetadata child = findMetadata(name);
-        if (child != null) {
-            emitAnnotations(child.getAnnotations());
+        if (absentDepth > 0) {
+            absentDepth++;
+            return;
         }
-        stack.push(child);
-    }
 
-    private @Nullable NormalizedMetadata findMetadata(final PathArgument name) {
         final NormalizedMetadata current = stack.peek();
-        if (current == null) {
-            // This may either be the first entry or unattached metadata nesting
-            return stack.isEmpty() ? metadata : null;
+        if (current != null) {
+            final NormalizedMetadata child = current.getChildren().get(name);
+            if (child != null) {
+                enterChild(child);
+            } else {
+                absentDepth = 1;
+            }
+        } else {
+            // Empty stack: enter first entry
+            enterChild(metadata);
         }
-        return current.getChildren().get(name);
     }
 
-    private void emitAnnotations(final Map<QName, Object> annotations) throws IOException {
+    private void enterChild(final NormalizedMetadata child) throws IOException {
+        final Map<QName, Object> annotations = child.getAnnotations();
         if (!annotations.isEmpty()) {
             metaWriter.metadata(ImmutableMap.copyOf(annotations));
         }
+        stack.push(child);
     }
 }
