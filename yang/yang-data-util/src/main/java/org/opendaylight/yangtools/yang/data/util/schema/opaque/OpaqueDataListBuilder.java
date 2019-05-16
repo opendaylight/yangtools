@@ -32,6 +32,12 @@ public final class OpaqueDataListBuilder extends AbstractOpaqueDataContainerBuil
     }
 
     @Override
+    public OpaqueDataListBuilder withIdentifier(final NodeIdentifier newIdentifier) {
+        super.withIdentifier(newIdentifier);
+        return this;
+    }
+
+    @Override
     OpaqueDataList build(final NodeIdentifier identifier, final ImmutableList<OpaqueDataNode> children) {
         for (OpaqueDataNode child : children) {
             checkState(identifier.equals(child.getIdentifier()), "Child %s does not match list identifier %s", child,
