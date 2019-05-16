@@ -24,6 +24,8 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedAnydataNode;
+import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNodeContainer;
 import org.opendaylight.yangtools.yang.data.api.schema.OpaqueAnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -52,6 +54,7 @@ import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMa
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapEntryNodeSchemaAwareBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableMapNodeSchemaAwareBuilder;
+import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableNormalizedAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOpaqueAnydataNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeBuilder;
 import org.opendaylight.yangtools.yang.data.impl.schema.builder.impl.ImmutableOrderedLeafSetNodeSchemaAwareBuilder;
@@ -112,6 +115,13 @@ public final class Builders {
     @Beta
     public static @NonNull NormalizedNodeBuilder<NodeIdentifier, OpaqueData, OpaqueAnydataNode> opaqueAnydataBuilder() {
         return ImmutableOpaqueAnydataNodeBuilder.create();
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Beta
+    public static @NonNull NormalizedNodeBuilder<NodeIdentifier, NormalizedNodeContainer, NormalizedAnydataNode>
+            normalizedAnydataBuilder() {
+        return ImmutableNormalizedAnydataNodeBuilder.create();
     }
 
     public static <T> ListNodeBuilder<T, LeafSetEntryNode<T>> orderedLeafSetBuilder() {
