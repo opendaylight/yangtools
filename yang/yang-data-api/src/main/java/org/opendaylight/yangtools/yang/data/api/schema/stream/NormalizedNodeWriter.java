@@ -19,6 +19,8 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.Set;
 import javax.xml.stream.XMLStreamReader;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.AnyXmlNode;
@@ -31,6 +33,7 @@ import org.opendaylight.yangtools.yang.data.api.schema.LeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapEntryNode;
 import org.opendaylight.yangtools.yang.data.api.schema.MapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
+import org.opendaylight.yangtools.yang.data.api.schema.OpaqueAnydataNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedLeafSetNode;
 import org.opendaylight.yangtools.yang.data.api.schema.OrderedMapNode;
 import org.opendaylight.yangtools.yang.data.api.schema.UnkeyedListEntryNode;
@@ -47,10 +50,14 @@ import org.slf4j.LoggerFactory;
  */
 @Beta
 public class NormalizedNodeWriter implements Closeable, Flushable {
-    private final NormalizedNodeStreamWriter writer;
+    private static final Logger LOG = LoggerFactory.getLogger(NormalizedNodeWriter.class);
+
+    private final @NonNull NormalizedNodeStreamWriter writer;
+    private final @Nullable OpaqueAnydataExtension opaqueAnydataExt;
 
     protected NormalizedNodeWriter(final NormalizedNodeStreamWriter writer) {
         this.writer = requireNonNull(writer);
+        opaqueAnydataExt = writer.getExtensions().getInstance(OpaqueAnydataExtension.class);
     }
 
     protected final NormalizedNodeStreamWriter getWriter() {
@@ -147,9 +154,21 @@ public class NormalizedNodeWriter implements Closeable, Flushable {
             writer.domSourceValue(anyXmlNode.getValue());
             writer.endNode();
             return true;
+        } else if (node instanceof OpaqueAnydataNode) {
+            return writeAnydata((OpaqueAnydataNode) node);
+        }
+        return false;
+    }
+
+    private boolean writeAnydata(final OpaqueAnydataNode node) throws IOException {
+        if (opaqueAnydataExt == null) {
+            LOG.debug("Writer {} cannot support anydata node {}", writer, node);
+            return false;
         }
 
-        return false;
+        opaqueAnydataExt.streamOpaqueAnydataNode(node.getIdentifier(), node.getValue());
+        writer.endNode();
+        return true;
     }
 
     /**
