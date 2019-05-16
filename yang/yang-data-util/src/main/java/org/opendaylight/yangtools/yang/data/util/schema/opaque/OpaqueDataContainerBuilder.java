@@ -31,6 +31,12 @@ public final class OpaqueDataContainerBuilder extends AbstractOpaqueDataContaine
     }
 
     @Override
+    public OpaqueDataContainerBuilder withIdentifier(final NodeIdentifier newIdentifier) {
+        super.withIdentifier(newIdentifier);
+        return this;
+    }
+
+    @Override
     OpaqueDataContainer build(final NodeIdentifier identifier, final ImmutableList<@NonNull OpaqueDataNode> children) {
         return new ImmutableOpaqueDataContainer(identifier, children);
     }
