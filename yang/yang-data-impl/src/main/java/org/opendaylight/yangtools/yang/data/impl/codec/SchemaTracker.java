@@ -26,6 +26,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithV
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.SchemaUtils;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AugmentationTarget;
@@ -250,6 +251,12 @@ public final class SchemaTracker {
 
     public void startAnyxmlNode(final NodeIdentifier name) {
         schemaStack.push(anyxmlNode(name));
+    }
+
+    public AnyDataSchemaNode anydataNode(final NodeIdentifier name) {
+        final SchemaNode schema = getSchema(name);
+        checkArgument(schema instanceof AnyDataSchemaNode, "Node %s is not anydata", schema.getPath());
+        return (AnyDataSchemaNode)schema;
     }
 
     public Object endNode() {
