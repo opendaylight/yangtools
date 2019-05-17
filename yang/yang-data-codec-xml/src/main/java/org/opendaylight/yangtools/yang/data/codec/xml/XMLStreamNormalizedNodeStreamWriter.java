@@ -10,9 +10,10 @@ package org.opendaylight.yangtools.yang.data.codec.xml;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ClassToInstanceMap;
-import com.google.common.collect.ImmutableClassToInstanceMap;
 import com.google.common.collect.ImmutableMap;
 import java.io.IOException;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,13 +21,16 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 import javax.xml.transform.dom.DOMSource;
 import org.eclipse.jdt.annotation.NonNull;
+import org.opendaylight.yangtools.concepts.ObjectExtensions;
 import org.opendaylight.yangtools.rfc7952.data.api.NormalizedMetadataStreamWriter;
+import org.opendaylight.yangtools.rfc7952.data.api.OpaqueAnydataStreamWriter;
 import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifier;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdentifierWithPredicates;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriterExtension;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.OpaqueAnydataExtension;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
@@ -49,9 +53,15 @@ import org.w3c.dom.Node;
  * removed in a future version.
  */
 public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements NormalizedNodeStreamWriter,
-        NormalizedMetadataStreamWriter {
+        NormalizedMetadataStreamWriter, OpaqueAnydataExtension {
     private static final Logger LOG = LoggerFactory.getLogger(XMLStreamNormalizedNodeStreamWriter.class);
     private static final Set<String> BROKEN_ATTRIBUTES = ConcurrentHashMap.newKeySet();
+
+    @SuppressWarnings("rawtypes")
+    static final ObjectExtensions.Factory<XMLStreamNormalizedNodeStreamWriter, NormalizedNodeStreamWriter,
+        NormalizedNodeStreamWriterExtension> EXTENSIONS_BUILDER = ObjectExtensions.factory(
+            XMLStreamNormalizedNodeStreamWriter.class, NormalizedMetadataStreamWriter.class,
+            OpaqueAnydataExtension.class);
 
     private final @NonNull StreamWriterFacade facade;
 
@@ -111,8 +121,10 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
 
     @Override
     public final ClassToInstanceMap<NormalizedNodeStreamWriterExtension> getExtensions() {
-        return ImmutableClassToInstanceMap.of(NormalizedMetadataStreamWriter.class, this);
+        return EXTENSIONS_BUILDER.newInstance(this);
     }
+
+    abstract T startAnydata(NodeIdentifier name);
 
     abstract void startList(NodeIdentifier name);
 
@@ -234,6 +246,60 @@ public abstract class XMLStreamNormalizedNodeStreamWriter<T> implements Normaliz
                 }
             } catch (final XMLStreamException e) {
                 throw new IOException("Unable to emit attribute " + qname, e);
+            }
+        }
+    }
+
+    @Override
+    public final OpaqueAnydataExtension.StreamWriter startOpaqueAnydataNode(final NodeIdentifier name,
+            final boolean accurateLists) throws IOException {
+        final T schema = startAnydata(name);
+        startElement(name.getNodeType());
+        return new XMLOpaqueStreamWriter(schema);
+    }
+
+    private final class XMLOpaqueStreamWriter implements OpaqueAnydataStreamWriter {
+        private final Deque<Boolean> stack = new ArrayDeque<>();
+        private final T valueContext;
+
+        XMLOpaqueStreamWriter(final T valueContext) {
+            this.valueContext = valueContext;
+        }
+
+        @Override
+        public void startOpaqueList(final NodeIdentifier name, final int childSizeHint) throws IOException {
+            stack.push(Boolean.FALSE);
+        }
+
+        @Override
+        public void startOpaqueContainer(final NodeIdentifier name, final int childSizeHint) throws IOException {
+            stack.push(Boolean.TRUE);
+            startElement(name.getNodeType());
+        }
+
+        @Override
+        public void opaqueValue(final Object value) throws IOException {
+            writeValue(value, valueContext);
+        }
+
+        @Override
+        public void endOpaqueNode() throws IOException {
+            if (stack.pop()) {
+                endElement();
+            }
+        }
+
+        @Override
+        public boolean requireMetadataFirst() {
+            return true;
+        }
+
+        @Override
+        public void metadata(final ImmutableMap<QName, Object> metadata) throws IOException {
+            if (stack.peek()) {
+                XMLStreamNormalizedNodeStreamWriter.this.metadata(metadata);
+            } else {
+                LOG.debug("Ignoring metadata {}", metadata);
             }
         }
     }
