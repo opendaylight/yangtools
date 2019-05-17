@@ -159,4 +159,9 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         checkState(current instanceof AnyXmlSchemaNode, "Unexpected scala value %s with %s", value, current);
         anyxmlValue(value);
     }
+
+    @Override
+    SchemaNode startAnydata(final NodeIdentifier name) {
+        return tracker.anydataNode(name);
+    }
 }
