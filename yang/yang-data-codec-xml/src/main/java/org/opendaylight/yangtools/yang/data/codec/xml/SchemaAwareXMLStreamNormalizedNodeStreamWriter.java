@@ -24,6 +24,7 @@ import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeIdent
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.NodeWithValue;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.data.impl.codec.SchemaTracker;
+import org.opendaylight.yangtools.yang.model.api.AnyDataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.AnyXmlSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.ContainerSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.LeafListSchemaNode;
@@ -85,7 +86,8 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
             if (parent == schema) {
                 endElement();
             }
-        } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode) {
+        } else if (schema instanceof ContainerSchemaNode || schema instanceof LeafSchemaNode
+                || schema instanceof AnyDataSchemaNode) {
             endElement();
         }
     }
@@ -158,5 +160,10 @@ final class SchemaAwareXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorm
         final Object current = tracker.getParent();
         checkState(current instanceof AnyXmlSchemaNode, "Unexpected scala value %s with %s", value, current);
         anyxmlValue(value);
+    }
+
+    @Override
+    SchemaNode startAnydata(final NodeIdentifier name) {
+        return tracker.startAnydataNode(name);
     }
 }
