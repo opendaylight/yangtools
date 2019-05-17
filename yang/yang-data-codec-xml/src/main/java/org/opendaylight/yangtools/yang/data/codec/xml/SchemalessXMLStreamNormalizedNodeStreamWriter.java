@@ -138,4 +138,10 @@ final class SchemalessXMLStreamNormalizedNodeStreamWriter extends XMLStreamNorma
                 break;
         }
     }
+
+    @Override
+    Object startAnydata(final NodeIdentifier name) {
+        nodeTypeStack.push(NodeType.ANY_XML);
+        return null;
+    }
 }
